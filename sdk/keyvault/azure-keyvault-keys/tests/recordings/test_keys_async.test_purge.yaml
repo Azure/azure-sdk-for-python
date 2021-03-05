@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/key0/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey092670ac9/create?api-version=7.2-preview
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -20,22 +20,21 @@ interactions:
       cache-control: no-cache
       content-length: '87'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:01 GMT
+      date: Sat, 06 Feb 2021 02:39:44 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       www-authenticate: Bearer authorization="https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
         resource="https://vault.azure.net"
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 401
       message: Unauthorized
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/keys/key0/create?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey092670ac9/create?api-version=7.2-preview
 - request:
     body: '{"kty": "RSA"}'
     headers:
@@ -46,30 +45,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/key0/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey092670ac9/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/key0/31bbdd6f1b4243549cd2b0fef08d2ad5","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tpM8Zg-IRUhYUFRM9L6uAR3HSxDiCfSFjnDBlDC5bP51kb75r1wNMbLRxNee9tEurhuRJ8gXKf-ci882pjQ2lvwKxc6sDcJhqSo_IZohfJck3uEmMuK1uz9c2jSssA9Osn-S7hYrkGG9lnF7C9t1iPOhR_IHYCjFvAm-jgpVXiVUunswM3x3YqX-w_HFi41oio2iB2KF0FBZ8ldZZGrCh54v3UKrlmtEzQT4C97izZ5x_WkVvIkIU0Q9648_6Yyux2_sjXM2Fki5T93gor_8Dlw4K2QuU_Mf1qc_rgpGM28-x7fiHRWRgiRFCKywlvFPTnpNs0on113rxJeXA_WeUQ","e":"AQAB"},"attributes":{"enabled":true,"created":1596039243,"updated":1596039243,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey092670ac9/bf97157a72f8493eb292f9b25309ab37","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"v3dCBBbvl9Vl0Gxb3pdI8bKmYXr7mtfrbPEhy8OwyxZU8nG3Fk9rEOUubnrVw1DL5KJ3pODqLj6-5NPpsxjeKn3NkzlHX4BHJUdTIewPthK-HmI_U3pLcvp_1iCQtdX5Ez4SaPIEpsBSJVfoemI8t3RE0u23ghnOJq95B_zNuiyRiahawRcnmstTZrqS9d0OZXlWiP8HNXQzVNb7sAYHJKk4CyTK6MmqxFumPP86N62hQQBSP36wxe9Lm9UnPX6ladW-ypOnBcjv9T33dz7my1rwS9i2EdeGTw03_bItTZWK3HltVK-LkbcqOKW0LM3zCb0etnoaLoOooMBJN0h3aQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579185,"updated":1612579185,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '684'
+      content-length: '690'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:02 GMT
+      date: Sat, 06 Feb 2021 02:39:45 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/keys/key0/create?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey092670ac9/create?api-version=7.2-preview
 - request:
     body: '{"kty": "RSA"}'
     headers:
@@ -80,30 +78,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/key1/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey192670ac9/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/key1/de3f4400b5724850aeb68b208c4fd53e","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"jt8JBMaiGHk0t8j1XIB9CJ5kgN28fmxP3VySE5yI8Futx79v9Io55ZYDmr9akaYjcnGSsLsqVY-ikjl0yeGAiRBq7RP0WuItzSzPQKljFriyq5s4TOg_7yKNqiaMZGMZw4R-Sr_lFyjJFsZdAxXGW_IFeCFIwWwA-0eN4zVFTVZpKpKGB4rVf1YRmLtTJSyf5KV5-Dxsvss7fRFDSO2nw95ZYbp_Y_gjow1Gt4JhE0FRrFRiNIsBZjyRxxIkcDA_d4idq90NB0wQ6vAlEK0S_sMnkidndwy0t4p5tPb7I2lbyb_fhb6rI3FQyw0xmq5OVNw1Fj6j9rUzfXs6ssyYfQ","e":"AQAB"},"attributes":{"enabled":true,"created":1596039243,"updated":1596039243,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey192670ac9/142f62845a8941ce938c1e50895d8b95","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"2oV2vsaubzdICqL22kBvBJzWo4QtW8_gfl0EOk6rhmpW1dohXPM0-1rz8kbQGnqap7cyG__62_ax9C_9BW7BYAUaueP0O2Gst6nkRc8PQC1P5bMNvKFVsbFS_Mh8g4QIMnm9z1zlcc5C53Mbk9DftGsfsSVNvjZX3K3zII-1XGUQ9409wjQYWEpgmWkc_mJo4cRWggLCL5EsPcixX9Fpi3uyCj05GVD4s2XH855GbOx1MoT_3kNI_dFfUa9lvUAtBjhJiOSjwx3qYWJfZdjCnHtywHh5p13FgAUz3LSgDBZZjVBPZ-t7JoGL3qRY5f7IkpEtpWcFTjR_Y-J2W2OkFQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579186,"updated":1612579186,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '684'
+      content-length: '690'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:02 GMT
+      date: Sat, 06 Feb 2021 02:39:45 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/keys/key1/create?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey192670ac9/create?api-version=7.2-preview
 - request:
     body: '{"kty": "RSA"}'
     headers:
@@ -114,30 +111,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/key2/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey292670ac9/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/key2/7cd77439e3e942f6b836bb1d5c4f2b86","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"ps2x2CGJ9vV7zxDVV8NnVhVC1tke4HdrzFRmLkst3avUmPdxtvG24P6PUDQwK92vgkt32mEEFx40Uw8tuGtqmdl4LUMfqoiqf2V-0znPD6Lq25emjyOXjgZOH7dUOo8x9pnqAqCVWZy6khda1EYkAfu-sVRmAzihDDvXetMfZViONw2eol0j4bE1SwMdqWTCLiJIjfF8VUl577csOy39eak5aaABLdlbhCPSeFSHVCLOpT-z_HcT9hmOY_P6i-dU7FAlw-5Grl0Ki0YXY5oXJ_wnRsjL7tI0FZpfjoUTElaDc9Y7aMfEWG0dEuCrHL-a47St01A32JDXZt4drDhpwQ","e":"AQAB"},"attributes":{"enabled":true,"created":1596039243,"updated":1596039243,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey292670ac9/993b1df4b10d4cf6b0aa8cca1b5f6efc","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"v4YKWEVHblI-xxNsGfqKmDY-7EQbXER-Q4KQSxi0g0-Ovp81pQJB03O70Tli3UEfjZ7qKvwHyfnAP4pctF_zzv1iiTdf2v0UKGZB8ttgXvFD3xRpcK6_w2UPVPIhu4zQCdFa95V4gsS0kV2teQfOVXggu089oFtvYsCP8W_9ur2gH3KlLOVMcFg-kR7a7w2snuJiCDuroU3D0zf2McVA25sklw5dM8sMcOCB3EsUOPXA5dxYMKj-OdksYpW4MwrVK5LRvQWLObJCR1h7y0Iqf5HCQ1csF3IVjUIcgNdGRG_lh2zxO-QBOTCnKir78ONOa-ET2bz2fMG53ws5Ra2zNQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579186,"updated":1612579186,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '684'
+      content-length: '690'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:03 GMT
+      date: Sat, 06 Feb 2021 02:39:45 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/keys/key2/create?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey292670ac9/create?api-version=7.2-preview
 - request:
     body: '{"kty": "RSA"}'
     headers:
@@ -148,30 +144,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/key3/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey392670ac9/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/key3/ca82f342aef3440fb850c3909a96828b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"rQG4Q1PMcRbZhQwNUou-4QPc8VAklhzM3rhIAjNzMu18t6IVZSvKLDJk8TZ5kX0HgnGx9v_LQek7n4a90-Rr0oeS9aFj6VmrQVm8_ODYiKe2bqI0kBN-rjVurYZl3BP5_MTdYUQlxAm3pSVT5qYKzuyWcTBbr9m-QOdODW_IZ-oB-vYa4O8jCoG4FkOi95wJkY_zaoNUEz_2rz0tyso0kDzBXn0K3zus8_VL67srdo66lV--mmF6bufqD7trluWaBrlZIkj-2e2Nu4YPWBWwl-uG1rhPz4BKHbMgJ9yGb725irvNKH7hylDuzJZs0AgSBSE-LaFUEdaNobEF7JX-AQ","e":"AQAB"},"attributes":{"enabled":true,"created":1596039244,"updated":1596039244,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey392670ac9/39e5db57f31c4653a70d93f0ad0708c2","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tMUdiDHvPdtPNi8ZNNThC_8z9api-kCX-dowJVhVto-JJpVfVdOe9anXtmAZkm-ED_gQ06crWrTu3gf1PEHSNF48lkGi5xdjeSUDj-QscYPYWPmkUiykMFoy2JgmuPiQ-B9cAREHwrbLeN0Qv854zRn1pGXvL-_SIzpoW3qW8TM0jnNcaOdJY-HdB4YOt8vkhqsjD1zvCh_PnHQwC2Z_filMa6gqgz9J-oAeblTX84D6aLfb-TJ033IjrUZde3WLZHNCzVDDBnLYiJ6RjYUopSkL43p5wqFPnkArF0JHBz1X_-g8IL8L6WMMXmSUvu1soKjs2jTha-Wmui-uLpbVwQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579186,"updated":1612579186,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '684'
+      content-length: '690'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:03 GMT
+      date: Sat, 06 Feb 2021 02:39:47 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/keys/key3/create?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey392670ac9/create?api-version=7.2-preview
 - request:
     body: '{"kty": "RSA"}'
     headers:
@@ -182,30 +177,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/key4/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey492670ac9/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/key4/151dd4ffae464c6da86dc27b10dd157b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"q0BAnFm4QrZEyldsGuMZ8dImex97jmzrU4vtOH0hr6U8ChUvanp3lLJFPpvJhKYIlOxihXNyuAMalNtZJT-HYhCjkobxGcQjqZy_1u80DEa-TzpdoFJYt0BTcMJvGswQYgpF6tJsq1crmq0RuFZebAuFePFWv9k8OZSTX2fe52g1icSW8PVJAbe6NppfbZYpwbZkLATQyu-WbkeDqzxifGceymagNfWrURB1zNQmX7j_4Mb1mxRxhKcjQFFRtOLyPVtTAJGdVdUETDKXUWOiQJ7A_C-_rtu9ULe51dKmrQfmN_stSe9aFsedd4dPWc4cFAvZsHhZ_xdWL7JtKeOiVQ","e":"AQAB"},"attributes":{"enabled":true,"created":1596039244,"updated":1596039244,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey492670ac9/1379e2f36c784f07a3b81ee22c2d2c7c","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"9JhPBm2rs7A4fqJvoKNfb9ntjC6g8DPu7522wO01Ed0N41abJgUwcl82vetx6I_zoL2IYrWpE7uTdIXKeEJ7K8ocQ8lWDJDdSX2e9zTu2SfBGT-diqqfmWNmVnkr8LDm8d4selFKTVfQ8xaT0yRLGZyO28b_LFVFd8opvNzRI9UhksfbqcYSfXkzleW3QPJPOsK4uF8FQkyGjqcYfIeRZakXX5BMTxWcTq702p2MB9K1UKb-UpeAVZZk_M9oZW_4AeVtZuGEamoTUKpSRT1zNTJOzhu44jV5uSBjMZaK-O_A7aV1PdZmBKg6FoDQCYgDJkzKH_ai7oRkie7SLITkPQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579187,"updated":1612579187,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '684'
+      content-length: '690'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:03 GMT
+      date: Sat, 06 Feb 2021 02:39:47 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/keys/key4/create?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey492670ac9/create?api-version=7.2-preview
 - request:
     body: '{"kty": "RSA"}'
     headers:
@@ -216,30 +210,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/key5/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey592670ac9/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/key5/d514ceebb47843f79302b5bac6d9181a","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"rMMsndwMCnG1lSWEg3SZ9FGuTRYH2RHevUqKqikxocwvmD6IJuJmUOuikpJzVqrLvM4Q69KCI5Ds1WvNv9c1cQpW8CtWi4TU54rXwAQfsn8hwLP3_GP4qT8UHWpSHuJzsz361qo6OE_J-6sSrQSjqfdoKbH3WC9L_Ghyh8hKah4b9XFw-RMGIySiIXr1jdH_lNAZr8_x9KvDCRjPLSm4rhnCqfJy2x5N-lNo6wZq-fXTtK4FoiBPNyhSsl9scUqH45MZyRrsCfSoP7JGL9tn5Zar_EUPbjWTj_yyXwN6OtPmNveaiwLBCm19krNGJfFvlLhIblSnlq3k7WMCMukpmw","e":"AQAB"},"attributes":{"enabled":true,"created":1596039244,"updated":1596039244,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey592670ac9/69eadfaee7bb4379866c1740dfbe0440","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"xogincFwLBxpDiEfQnnFM67pYam7i4RuwZbtzgVX8T5OVocGDX9Wi56KzH0XssRipGzBg4WhJKfz2S7r0FLYz7pll0okpKBZlKaRaZJgjAOGy2LAML1HApt111N_pEuqIbYThzUvIGug4bxabZsl8-aiwOdRd8xpC5p_X5BiadxqKWR_1cJy_152p__qj9C5GYkcNN8nYuFYnkkMDLcHJzx4xn-WmO0fMZC8XPwZpk9gmLaGNzSrQmsBv4_GZhQiqHIxKYQG5_dvgKZE8lD9uRM36v3OkPMICHs_5W1FatXfgrewXZpZDihn8vhI043hUaU13xRqv-U0gwtlRLuuJQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579187,"updated":1612579187,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '684'
+      content-length: '690'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:03 GMT
+      date: Sat, 06 Feb 2021 02:39:47 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/keys/key5/create?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey592670ac9/create?api-version=7.2-preview
 - request:
     body: '{"kty": "RSA"}'
     headers:
@@ -250,3060 +243,1196 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/key6/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey692670ac9/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/key6/26f379adf9de4e2ab5a7cae330ad78f0","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"pP49gLNNmOMXBZIzX4hcN2OEF2uYaLN0a_tTeh3TzOa3pnzu_IBCr9FfhgwzoOKgBS-OBqmHmTv8rmjsl7vtQ_szaWetbbBvImlU1kMsjEhrxrqiE2ODVxFkobixxxM0LafobadyWRufIbHHopEXmbNFZhv0zdddjMG4fEwqEW_CeI_rAh8N74lTpjgMUYaCcI0pDutW_S0ogS0DNM3QScSoa96Xa_Qs-zSHPLv8A9LwCFb1BfFZpU7BM-XVfnNKNSieVVSxmzkyCCFWplOCe7RhXXQbWz_7zpY4mtXHWPzE9Q14yxf6vOYSa5kRMubXu1unFXHEBK5FiLs91dD32w","e":"AQAB"},"attributes":{"enabled":true,"created":1596039244,"updated":1596039244,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey692670ac9/e77fcaf150e3469591f8c8f310bb660a","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"5hCxC_JEu31cj0AGFCorAtITP_NNyM1Vp_KWoJY8pZBkOeU-8cErURd5Mjm9pdhMCLFrzbk_1UeTkjLndeOCZysnGkj-5W2Av4iv3P7hIBKH6lQPpE63qo0l6fvyRTZtBkXjfoizFQv5piacolmWzagE3DdPOrpSNL_XTUb3UFlnSCUdjS8Vb19RwQlUUUdyXAs7UKOQCUd2jP-zNdDWm9ogUkZOYRvGuuQPoZc8PRDfRk2NrkfjTd5koj8q5wO0F9-lcKQ-ad6dnrcMlAoEQqp1AbmE5gvwkyJDnxjG9j0NkJ0Qy_l3qPbUN9c3puA0EKpV2gHT1YdGfu8gDGEy7Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612579188,"updated":1612579188,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '684'
+      content-length: '690'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:03 GMT
+      date: Sat, 06 Feb 2021 02:39:48 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/keys/key6/create?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey692670ac9/create?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.net/keys/key0?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey092670ac9?api-version=7.2-preview
   response:
     body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/key0","deletedDate":1596039245,"scheduledPurgeDate":1603815245,"key":{"kid":"https://vaultname.vault.azure.net/keys/key0/31bbdd6f1b4243549cd2b0fef08d2ad5","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tpM8Zg-IRUhYUFRM9L6uAR3HSxDiCfSFjnDBlDC5bP51kb75r1wNMbLRxNee9tEurhuRJ8gXKf-ci882pjQ2lvwKxc6sDcJhqSo_IZohfJck3uEmMuK1uz9c2jSssA9Osn-S7hYrkGG9lnF7C9t1iPOhR_IHYCjFvAm-jgpVXiVUunswM3x3YqX-w_HFi41oio2iB2KF0FBZ8ldZZGrCh54v3UKrlmtEzQT4C97izZ5x_WkVvIkIU0Q9648_6Yyux2_sjXM2Fki5T93gor_8Dlw4K2QuU_Mf1qc_rgpGM28-x7fiHRWRgiRFCKywlvFPTnpNs0on113rxJeXA_WeUQ","e":"AQAB"},"attributes":{"enabled":true,"created":1596039243,"updated":1596039243,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey092670ac9","deletedDate":1612579188,"scheduledPurgeDate":1620355188,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey092670ac9/bf97157a72f8493eb292f9b25309ab37","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"v3dCBBbvl9Vl0Gxb3pdI8bKmYXr7mtfrbPEhy8OwyxZU8nG3Fk9rEOUubnrVw1DL5KJ3pODqLj6-5NPpsxjeKn3NkzlHX4BHJUdTIewPthK-HmI_U3pLcvp_1iCQtdX5Ez4SaPIEpsBSJVfoemI8t3RE0u23ghnOJq95B_zNuiyRiahawRcnmstTZrqS9d0OZXlWiP8HNXQzVNb7sAYHJKk4CyTK6MmqxFumPP86N62hQQBSP36wxe9Lm9UnPX6ladW-ypOnBcjv9T33dz7my1rwS9i2EdeGTw03_bItTZWK3HltVK-LkbcqOKW0LM3zCb0etnoaLoOooMBJN0h3aQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579185,"updated":1612579185,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '822'
+      content-length: '834'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:05 GMT
+      date: Sat, 06 Feb 2021 02:39:48 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/keys/key0?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey092670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key0?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey092670ac9?api-version=7.2-preview
   response:
     body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key0"}}'
+      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: livekvtestkey092670ac9"}}'
     headers:
       cache-control: no-cache
-      content-length: '72'
+      content-length: '90'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:05 GMT
+      date: Sat, 06 Feb 2021 02:39:48 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 404
       message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key0?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey092670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key0?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey092670ac9?api-version=7.2-preview
   response:
     body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key0"}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey092670ac9","deletedDate":1612579188,"scheduledPurgeDate":1620355188,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey092670ac9/bf97157a72f8493eb292f9b25309ab37","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"v3dCBBbvl9Vl0Gxb3pdI8bKmYXr7mtfrbPEhy8OwyxZU8nG3Fk9rEOUubnrVw1DL5KJ3pODqLj6-5NPpsxjeKn3NkzlHX4BHJUdTIewPthK-HmI_U3pLcvp_1iCQtdX5Ez4SaPIEpsBSJVfoemI8t3RE0u23ghnOJq95B_zNuiyRiahawRcnmstTZrqS9d0OZXlWiP8HNXQzVNb7sAYHJKk4CyTK6MmqxFumPP86N62hQQBSP36wxe9Lm9UnPX6ladW-ypOnBcjv9T33dz7my1rwS9i2EdeGTw03_bItTZWK3HltVK-LkbcqOKW0LM3zCb0etnoaLoOooMBJN0h3aQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579185,"updated":1612579185,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '72'
+      content-length: '834'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:07 GMT
+      date: Sat, 06 Feb 2021 02:39:50 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key0?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key0?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key0"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:09 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key0?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key0?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key0"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:11 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key0?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key0?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key0"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:13 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key0?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key0?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key0"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:15 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key0?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key0?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key0"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:17 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key0?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key0?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key0"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:19 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key0?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key0?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key0"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:21 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key0?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key0?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key0"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:23 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key0?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key0?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key0"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:25 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key0?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key0?api-version=7.1
-  response:
-    body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/key0","deletedDate":1596039245,"scheduledPurgeDate":1603815245,"key":{"kid":"https://vaultname.vault.azure.net/keys/key0/31bbdd6f1b4243549cd2b0fef08d2ad5","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tpM8Zg-IRUhYUFRM9L6uAR3HSxDiCfSFjnDBlDC5bP51kb75r1wNMbLRxNee9tEurhuRJ8gXKf-ci882pjQ2lvwKxc6sDcJhqSo_IZohfJck3uEmMuK1uz9c2jSssA9Osn-S7hYrkGG9lnF7C9t1iPOhR_IHYCjFvAm-jgpVXiVUunswM3x3YqX-w_HFi41oio2iB2KF0FBZ8ldZZGrCh54v3UKrlmtEzQT4C97izZ5x_WkVvIkIU0Q9648_6Yyux2_sjXM2Fki5T93gor_8Dlw4K2QuU_Mf1qc_rgpGM28-x7fiHRWRgiRFCKywlvFPTnpNs0on113rxJeXA_WeUQ","e":"AQAB"},"attributes":{"enabled":true,"created":1596039243,"updated":1596039243,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
-    headers:
-      cache-control: no-cache
-      content-length: '822'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:27 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key0?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey092670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.net/keys/key1?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey192670ac9?api-version=7.2-preview
   response:
     body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/key1","deletedDate":1596039268,"scheduledPurgeDate":1603815268,"key":{"kid":"https://vaultname.vault.azure.net/keys/key1/de3f4400b5724850aeb68b208c4fd53e","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"jt8JBMaiGHk0t8j1XIB9CJ5kgN28fmxP3VySE5yI8Futx79v9Io55ZYDmr9akaYjcnGSsLsqVY-ikjl0yeGAiRBq7RP0WuItzSzPQKljFriyq5s4TOg_7yKNqiaMZGMZw4R-Sr_lFyjJFsZdAxXGW_IFeCFIwWwA-0eN4zVFTVZpKpKGB4rVf1YRmLtTJSyf5KV5-Dxsvss7fRFDSO2nw95ZYbp_Y_gjow1Gt4JhE0FRrFRiNIsBZjyRxxIkcDA_d4idq90NB0wQ6vAlEK0S_sMnkidndwy0t4p5tPb7I2lbyb_fhb6rI3FQyw0xmq5OVNw1Fj6j9rUzfXs6ssyYfQ","e":"AQAB"},"attributes":{"enabled":true,"created":1596039243,"updated":1596039243,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey192670ac9","deletedDate":1612579191,"scheduledPurgeDate":1620355191,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey192670ac9/142f62845a8941ce938c1e50895d8b95","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"2oV2vsaubzdICqL22kBvBJzWo4QtW8_gfl0EOk6rhmpW1dohXPM0-1rz8kbQGnqap7cyG__62_ax9C_9BW7BYAUaueP0O2Gst6nkRc8PQC1P5bMNvKFVsbFS_Mh8g4QIMnm9z1zlcc5C53Mbk9DftGsfsSVNvjZX3K3zII-1XGUQ9409wjQYWEpgmWkc_mJo4cRWggLCL5EsPcixX9Fpi3uyCj05GVD4s2XH855GbOx1MoT_3kNI_dFfUa9lvUAtBjhJiOSjwx3qYWJfZdjCnHtywHh5p13FgAUz3LSgDBZZjVBPZ-t7JoGL3qRY5f7IkpEtpWcFTjR_Y-J2W2OkFQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579186,"updated":1612579186,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '822'
+      content-length: '834'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:27 GMT
+      date: Sat, 06 Feb 2021 02:39:50 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/keys/key1?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey192670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key1?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey192670ac9?api-version=7.2-preview
   response:
     body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key1"}}'
+      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: livekvtestkey192670ac9"}}'
     headers:
       cache-control: no-cache
-      content-length: '72'
+      content-length: '90'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:28 GMT
+      date: Sat, 06 Feb 2021 02:39:50 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 404
       message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key1?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey192670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key1?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey192670ac9?api-version=7.2-preview
   response:
     body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key1"}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey192670ac9","deletedDate":1612579191,"scheduledPurgeDate":1620355191,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey192670ac9/142f62845a8941ce938c1e50895d8b95","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"2oV2vsaubzdICqL22kBvBJzWo4QtW8_gfl0EOk6rhmpW1dohXPM0-1rz8kbQGnqap7cyG__62_ax9C_9BW7BYAUaueP0O2Gst6nkRc8PQC1P5bMNvKFVsbFS_Mh8g4QIMnm9z1zlcc5C53Mbk9DftGsfsSVNvjZX3K3zII-1XGUQ9409wjQYWEpgmWkc_mJo4cRWggLCL5EsPcixX9Fpi3uyCj05GVD4s2XH855GbOx1MoT_3kNI_dFfUa9lvUAtBjhJiOSjwx3qYWJfZdjCnHtywHh5p13FgAUz3LSgDBZZjVBPZ-t7JoGL3qRY5f7IkpEtpWcFTjR_Y-J2W2OkFQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579186,"updated":1612579186,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '72'
+      content-length: '834'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:30 GMT
+      date: Sat, 06 Feb 2021 02:39:52 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key1?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key1?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key1"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:32 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key1?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key1?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key1"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:34 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key1?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key1?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key1"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:36 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key1?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key1?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key1"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:38 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key1?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key1?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key1"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:40 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key1?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key1?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key1"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:42 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key1?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key1?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key1"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:44 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key1?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key1?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key1"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:46 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key1?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key1?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key1"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:48 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key1?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key1?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key1"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:50 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key1?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key1?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key1"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:52 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key1?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key1?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key1"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:55 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key1?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key1?api-version=7.1
-  response:
-    body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/key1","deletedDate":1596039268,"scheduledPurgeDate":1603815268,"key":{"kid":"https://vaultname.vault.azure.net/keys/key1/de3f4400b5724850aeb68b208c4fd53e","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"jt8JBMaiGHk0t8j1XIB9CJ5kgN28fmxP3VySE5yI8Futx79v9Io55ZYDmr9akaYjcnGSsLsqVY-ikjl0yeGAiRBq7RP0WuItzSzPQKljFriyq5s4TOg_7yKNqiaMZGMZw4R-Sr_lFyjJFsZdAxXGW_IFeCFIwWwA-0eN4zVFTVZpKpKGB4rVf1YRmLtTJSyf5KV5-Dxsvss7fRFDSO2nw95ZYbp_Y_gjow1Gt4JhE0FRrFRiNIsBZjyRxxIkcDA_d4idq90NB0wQ6vAlEK0S_sMnkidndwy0t4p5tPb7I2lbyb_fhb6rI3FQyw0xmq5OVNw1Fj6j9rUzfXs6ssyYfQ","e":"AQAB"},"attributes":{"enabled":true,"created":1596039243,"updated":1596039243,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
-    headers:
-      cache-control: no-cache
-      content-length: '822'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:57 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key1?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey192670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.net/keys/key2?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey292670ac9?api-version=7.2-preview
   response:
     body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/key2","deletedDate":1596039298,"scheduledPurgeDate":1603815298,"key":{"kid":"https://vaultname.vault.azure.net/keys/key2/7cd77439e3e942f6b836bb1d5c4f2b86","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"ps2x2CGJ9vV7zxDVV8NnVhVC1tke4HdrzFRmLkst3avUmPdxtvG24P6PUDQwK92vgkt32mEEFx40Uw8tuGtqmdl4LUMfqoiqf2V-0znPD6Lq25emjyOXjgZOH7dUOo8x9pnqAqCVWZy6khda1EYkAfu-sVRmAzihDDvXetMfZViONw2eol0j4bE1SwMdqWTCLiJIjfF8VUl577csOy39eak5aaABLdlbhCPSeFSHVCLOpT-z_HcT9hmOY_P6i-dU7FAlw-5Grl0Ki0YXY5oXJ_wnRsjL7tI0FZpfjoUTElaDc9Y7aMfEWG0dEuCrHL-a47St01A32JDXZt4drDhpwQ","e":"AQAB"},"attributes":{"enabled":true,"created":1596039243,"updated":1596039243,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey292670ac9","deletedDate":1612579193,"scheduledPurgeDate":1620355193,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey292670ac9/993b1df4b10d4cf6b0aa8cca1b5f6efc","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"v4YKWEVHblI-xxNsGfqKmDY-7EQbXER-Q4KQSxi0g0-Ovp81pQJB03O70Tli3UEfjZ7qKvwHyfnAP4pctF_zzv1iiTdf2v0UKGZB8ttgXvFD3xRpcK6_w2UPVPIhu4zQCdFa95V4gsS0kV2teQfOVXggu089oFtvYsCP8W_9ur2gH3KlLOVMcFg-kR7a7w2snuJiCDuroU3D0zf2McVA25sklw5dM8sMcOCB3EsUOPXA5dxYMKj-OdksYpW4MwrVK5LRvQWLObJCR1h7y0Iqf5HCQ1csF3IVjUIcgNdGRG_lh2zxO-QBOTCnKir78ONOa-ET2bz2fMG53ws5Ra2zNQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579186,"updated":1612579186,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '822'
+      content-length: '834'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:57 GMT
+      date: Sat, 06 Feb 2021 02:39:52 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/keys/key2?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey292670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key2?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey292670ac9?api-version=7.2-preview
   response:
     body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key2"}}'
+      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: livekvtestkey292670ac9"}}'
     headers:
       cache-control: no-cache
-      content-length: '72'
+      content-length: '90'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:14:58 GMT
+      date: Sat, 06 Feb 2021 02:39:53 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 404
       message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key2?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey292670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key2?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey292670ac9?api-version=7.2-preview
   response:
     body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key2"}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey292670ac9","deletedDate":1612579193,"scheduledPurgeDate":1620355193,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey292670ac9/993b1df4b10d4cf6b0aa8cca1b5f6efc","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"v4YKWEVHblI-xxNsGfqKmDY-7EQbXER-Q4KQSxi0g0-Ovp81pQJB03O70Tli3UEfjZ7qKvwHyfnAP4pctF_zzv1iiTdf2v0UKGZB8ttgXvFD3xRpcK6_w2UPVPIhu4zQCdFa95V4gsS0kV2teQfOVXggu089oFtvYsCP8W_9ur2gH3KlLOVMcFg-kR7a7w2snuJiCDuroU3D0zf2McVA25sklw5dM8sMcOCB3EsUOPXA5dxYMKj-OdksYpW4MwrVK5LRvQWLObJCR1h7y0Iqf5HCQ1csF3IVjUIcgNdGRG_lh2zxO-QBOTCnKir78ONOa-ET2bz2fMG53ws5Ra2zNQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579186,"updated":1612579186,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '72'
+      content-length: '834'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:00 GMT
+      date: Sat, 06 Feb 2021 02:39:56 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key2?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key2?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key2"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:02 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key2?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key2?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key2"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:04 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key2?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key2?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key2"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:06 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key2?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key2?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key2"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:08 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key2?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key2?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key2"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:10 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key2?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key2?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key2"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:12 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key2?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key2?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key2"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:14 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key2?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key2?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key2"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:16 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key2?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key2?api-version=7.1
-  response:
-    body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/key2","deletedDate":1596039298,"scheduledPurgeDate":1603815298,"key":{"kid":"https://vaultname.vault.azure.net/keys/key2/7cd77439e3e942f6b836bb1d5c4f2b86","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"ps2x2CGJ9vV7zxDVV8NnVhVC1tke4HdrzFRmLkst3avUmPdxtvG24P6PUDQwK92vgkt32mEEFx40Uw8tuGtqmdl4LUMfqoiqf2V-0znPD6Lq25emjyOXjgZOH7dUOo8x9pnqAqCVWZy6khda1EYkAfu-sVRmAzihDDvXetMfZViONw2eol0j4bE1SwMdqWTCLiJIjfF8VUl577csOy39eak5aaABLdlbhCPSeFSHVCLOpT-z_HcT9hmOY_P6i-dU7FAlw-5Grl0Ki0YXY5oXJ_wnRsjL7tI0FZpfjoUTElaDc9Y7aMfEWG0dEuCrHL-a47St01A32JDXZt4drDhpwQ","e":"AQAB"},"attributes":{"enabled":true,"created":1596039243,"updated":1596039243,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
-    headers:
-      cache-control: no-cache
-      content-length: '822'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:18 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key2?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey292670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.net/keys/key3?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey392670ac9?api-version=7.2-preview
   response:
     body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/key3","deletedDate":1596039319,"scheduledPurgeDate":1603815319,"key":{"kid":"https://vaultname.vault.azure.net/keys/key3/ca82f342aef3440fb850c3909a96828b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"rQG4Q1PMcRbZhQwNUou-4QPc8VAklhzM3rhIAjNzMu18t6IVZSvKLDJk8TZ5kX0HgnGx9v_LQek7n4a90-Rr0oeS9aFj6VmrQVm8_ODYiKe2bqI0kBN-rjVurYZl3BP5_MTdYUQlxAm3pSVT5qYKzuyWcTBbr9m-QOdODW_IZ-oB-vYa4O8jCoG4FkOi95wJkY_zaoNUEz_2rz0tyso0kDzBXn0K3zus8_VL67srdo66lV--mmF6bufqD7trluWaBrlZIkj-2e2Nu4YPWBWwl-uG1rhPz4BKHbMgJ9yGb725irvNKH7hylDuzJZs0AgSBSE-LaFUEdaNobEF7JX-AQ","e":"AQAB"},"attributes":{"enabled":true,"created":1596039244,"updated":1596039244,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey392670ac9","deletedDate":1612579196,"scheduledPurgeDate":1620355196,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey392670ac9/39e5db57f31c4653a70d93f0ad0708c2","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tMUdiDHvPdtPNi8ZNNThC_8z9api-kCX-dowJVhVto-JJpVfVdOe9anXtmAZkm-ED_gQ06crWrTu3gf1PEHSNF48lkGi5xdjeSUDj-QscYPYWPmkUiykMFoy2JgmuPiQ-B9cAREHwrbLeN0Qv854zRn1pGXvL-_SIzpoW3qW8TM0jnNcaOdJY-HdB4YOt8vkhqsjD1zvCh_PnHQwC2Z_filMa6gqgz9J-oAeblTX84D6aLfb-TJ033IjrUZde3WLZHNCzVDDBnLYiJ6RjYUopSkL43p5wqFPnkArF0JHBz1X_-g8IL8L6WMMXmSUvu1soKjs2jTha-Wmui-uLpbVwQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579186,"updated":1612579186,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '822'
+      content-length: '834'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:18 GMT
+      date: Sat, 06 Feb 2021 02:39:56 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/keys/key3?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey392670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key3?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey392670ac9?api-version=7.2-preview
   response:
     body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key3"}}'
+      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: livekvtestkey392670ac9"}}'
     headers:
       cache-control: no-cache
-      content-length: '72'
+      content-length: '90'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:18 GMT
+      date: Sat, 06 Feb 2021 02:39:56 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 404
       message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key3?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey392670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key3?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey392670ac9?api-version=7.2-preview
   response:
     body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key3"}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey392670ac9","deletedDate":1612579196,"scheduledPurgeDate":1620355196,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey392670ac9/39e5db57f31c4653a70d93f0ad0708c2","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tMUdiDHvPdtPNi8ZNNThC_8z9api-kCX-dowJVhVto-JJpVfVdOe9anXtmAZkm-ED_gQ06crWrTu3gf1PEHSNF48lkGi5xdjeSUDj-QscYPYWPmkUiykMFoy2JgmuPiQ-B9cAREHwrbLeN0Qv854zRn1pGXvL-_SIzpoW3qW8TM0jnNcaOdJY-HdB4YOt8vkhqsjD1zvCh_PnHQwC2Z_filMa6gqgz9J-oAeblTX84D6aLfb-TJ033IjrUZde3WLZHNCzVDDBnLYiJ6RjYUopSkL43p5wqFPnkArF0JHBz1X_-g8IL8L6WMMXmSUvu1soKjs2jTha-Wmui-uLpbVwQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579186,"updated":1612579186,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '72'
+      content-length: '834'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:20 GMT
+      date: Sat, 06 Feb 2021 02:39:58 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key3?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key3?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key3"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:22 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key3?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key3?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key3"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:24 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key3?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key3?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key3"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:26 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key3?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key3?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key3"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:28 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key3?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key3?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key3"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:31 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key3?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key3?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key3"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:34 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key3?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key3?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key3"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:36 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key3?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key3?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key3"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:38 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key3?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key3?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key3"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:40 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key3?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key3?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key3"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:42 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key3?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key3?api-version=7.1
-  response:
-    body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/key3","deletedDate":1596039319,"scheduledPurgeDate":1603815319,"key":{"kid":"https://vaultname.vault.azure.net/keys/key3/ca82f342aef3440fb850c3909a96828b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"rQG4Q1PMcRbZhQwNUou-4QPc8VAklhzM3rhIAjNzMu18t6IVZSvKLDJk8TZ5kX0HgnGx9v_LQek7n4a90-Rr0oeS9aFj6VmrQVm8_ODYiKe2bqI0kBN-rjVurYZl3BP5_MTdYUQlxAm3pSVT5qYKzuyWcTBbr9m-QOdODW_IZ-oB-vYa4O8jCoG4FkOi95wJkY_zaoNUEz_2rz0tyso0kDzBXn0K3zus8_VL67srdo66lV--mmF6bufqD7trluWaBrlZIkj-2e2Nu4YPWBWwl-uG1rhPz4BKHbMgJ9yGb725irvNKH7hylDuzJZs0AgSBSE-LaFUEdaNobEF7JX-AQ","e":"AQAB"},"attributes":{"enabled":true,"created":1596039244,"updated":1596039244,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
-    headers:
-      cache-control: no-cache
-      content-length: '822'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:44 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key3?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey392670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.net/keys/key4?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey492670ac9?api-version=7.2-preview
   response:
     body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/key4","deletedDate":1596039344,"scheduledPurgeDate":1603815344,"key":{"kid":"https://vaultname.vault.azure.net/keys/key4/151dd4ffae464c6da86dc27b10dd157b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"q0BAnFm4QrZEyldsGuMZ8dImex97jmzrU4vtOH0hr6U8ChUvanp3lLJFPpvJhKYIlOxihXNyuAMalNtZJT-HYhCjkobxGcQjqZy_1u80DEa-TzpdoFJYt0BTcMJvGswQYgpF6tJsq1crmq0RuFZebAuFePFWv9k8OZSTX2fe52g1icSW8PVJAbe6NppfbZYpwbZkLATQyu-WbkeDqzxifGceymagNfWrURB1zNQmX7j_4Mb1mxRxhKcjQFFRtOLyPVtTAJGdVdUETDKXUWOiQJ7A_C-_rtu9ULe51dKmrQfmN_stSe9aFsedd4dPWc4cFAvZsHhZ_xdWL7JtKeOiVQ","e":"AQAB"},"attributes":{"enabled":true,"created":1596039244,"updated":1596039244,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey492670ac9","deletedDate":1612579199,"scheduledPurgeDate":1620355199,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey492670ac9/1379e2f36c784f07a3b81ee22c2d2c7c","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"9JhPBm2rs7A4fqJvoKNfb9ntjC6g8DPu7522wO01Ed0N41abJgUwcl82vetx6I_zoL2IYrWpE7uTdIXKeEJ7K8ocQ8lWDJDdSX2e9zTu2SfBGT-diqqfmWNmVnkr8LDm8d4selFKTVfQ8xaT0yRLGZyO28b_LFVFd8opvNzRI9UhksfbqcYSfXkzleW3QPJPOsK4uF8FQkyGjqcYfIeRZakXX5BMTxWcTq702p2MB9K1UKb-UpeAVZZk_M9oZW_4AeVtZuGEamoTUKpSRT1zNTJOzhu44jV5uSBjMZaK-O_A7aV1PdZmBKg6FoDQCYgDJkzKH_ai7oRkie7SLITkPQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579187,"updated":1612579187,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '822'
+      content-length: '834'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:44 GMT
+      date: Sat, 06 Feb 2021 02:39:58 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/keys/key4?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey492670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key4?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey492670ac9?api-version=7.2-preview
   response:
     body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key4"}}'
+      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: livekvtestkey492670ac9"}}'
     headers:
       cache-control: no-cache
-      content-length: '72'
+      content-length: '90'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:44 GMT
+      date: Sat, 06 Feb 2021 02:39:59 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 404
       message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key4?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey492670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key4?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey492670ac9?api-version=7.2-preview
   response:
     body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key4"}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey492670ac9","deletedDate":1612579199,"scheduledPurgeDate":1620355199,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey492670ac9/1379e2f36c784f07a3b81ee22c2d2c7c","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"9JhPBm2rs7A4fqJvoKNfb9ntjC6g8DPu7522wO01Ed0N41abJgUwcl82vetx6I_zoL2IYrWpE7uTdIXKeEJ7K8ocQ8lWDJDdSX2e9zTu2SfBGT-diqqfmWNmVnkr8LDm8d4selFKTVfQ8xaT0yRLGZyO28b_LFVFd8opvNzRI9UhksfbqcYSfXkzleW3QPJPOsK4uF8FQkyGjqcYfIeRZakXX5BMTxWcTq702p2MB9K1UKb-UpeAVZZk_M9oZW_4AeVtZuGEamoTUKpSRT1zNTJOzhu44jV5uSBjMZaK-O_A7aV1PdZmBKg6FoDQCYgDJkzKH_ai7oRkie7SLITkPQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579187,"updated":1612579187,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '72'
+      content-length: '834'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:46 GMT
+      date: Sat, 06 Feb 2021 02:40:01 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key4?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key4?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key4"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:48 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key4?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key4?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key4"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:50 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key4?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key4?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key4"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:52 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key4?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key4?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key4"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:54 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key4?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key4?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key4"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:56 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key4?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key4?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key4"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:15:58 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key4?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key4?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key4"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:00 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key4?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key4?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key4"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:03 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key4?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key4?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key4"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:05 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key4?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key4?api-version=7.1
-  response:
-    body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/key4","deletedDate":1596039344,"scheduledPurgeDate":1603815344,"key":{"kid":"https://vaultname.vault.azure.net/keys/key4/151dd4ffae464c6da86dc27b10dd157b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"q0BAnFm4QrZEyldsGuMZ8dImex97jmzrU4vtOH0hr6U8ChUvanp3lLJFPpvJhKYIlOxihXNyuAMalNtZJT-HYhCjkobxGcQjqZy_1u80DEa-TzpdoFJYt0BTcMJvGswQYgpF6tJsq1crmq0RuFZebAuFePFWv9k8OZSTX2fe52g1icSW8PVJAbe6NppfbZYpwbZkLATQyu-WbkeDqzxifGceymagNfWrURB1zNQmX7j_4Mb1mxRxhKcjQFFRtOLyPVtTAJGdVdUETDKXUWOiQJ7A_C-_rtu9ULe51dKmrQfmN_stSe9aFsedd4dPWc4cFAvZsHhZ_xdWL7JtKeOiVQ","e":"AQAB"},"attributes":{"enabled":true,"created":1596039244,"updated":1596039244,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
-    headers:
-      cache-control: no-cache
-      content-length: '822'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:08 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key4?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey492670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.net/keys/key5?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey592670ac9?api-version=7.2-preview
   response:
     body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/key5","deletedDate":1596039368,"scheduledPurgeDate":1603815368,"key":{"kid":"https://vaultname.vault.azure.net/keys/key5/d514ceebb47843f79302b5bac6d9181a","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"rMMsndwMCnG1lSWEg3SZ9FGuTRYH2RHevUqKqikxocwvmD6IJuJmUOuikpJzVqrLvM4Q69KCI5Ds1WvNv9c1cQpW8CtWi4TU54rXwAQfsn8hwLP3_GP4qT8UHWpSHuJzsz361qo6OE_J-6sSrQSjqfdoKbH3WC9L_Ghyh8hKah4b9XFw-RMGIySiIXr1jdH_lNAZr8_x9KvDCRjPLSm4rhnCqfJy2x5N-lNo6wZq-fXTtK4FoiBPNyhSsl9scUqH45MZyRrsCfSoP7JGL9tn5Zar_EUPbjWTj_yyXwN6OtPmNveaiwLBCm19krNGJfFvlLhIblSnlq3k7WMCMukpmw","e":"AQAB"},"attributes":{"enabled":true,"created":1596039244,"updated":1596039244,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey592670ac9","deletedDate":1612579201,"scheduledPurgeDate":1620355201,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey592670ac9/69eadfaee7bb4379866c1740dfbe0440","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"xogincFwLBxpDiEfQnnFM67pYam7i4RuwZbtzgVX8T5OVocGDX9Wi56KzH0XssRipGzBg4WhJKfz2S7r0FLYz7pll0okpKBZlKaRaZJgjAOGy2LAML1HApt111N_pEuqIbYThzUvIGug4bxabZsl8-aiwOdRd8xpC5p_X5BiadxqKWR_1cJy_152p__qj9C5GYkcNN8nYuFYnkkMDLcHJzx4xn-WmO0fMZC8XPwZpk9gmLaGNzSrQmsBv4_GZhQiqHIxKYQG5_dvgKZE8lD9uRM36v3OkPMICHs_5W1FatXfgrewXZpZDihn8vhI043hUaU13xRqv-U0gwtlRLuuJQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579187,"updated":1612579187,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '822'
+      content-length: '834'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:08 GMT
+      date: Sat, 06 Feb 2021 02:40:01 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/keys/key5?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey592670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key5?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey592670ac9?api-version=7.2-preview
   response:
     body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key5"}}'
+      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: livekvtestkey592670ac9"}}'
     headers:
       cache-control: no-cache
-      content-length: '72'
+      content-length: '90'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:08 GMT
+      date: Sat, 06 Feb 2021 02:40:01 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 404
       message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key5?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey592670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key5?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey592670ac9?api-version=7.2-preview
   response:
     body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key5"}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey592670ac9","deletedDate":1612579201,"scheduledPurgeDate":1620355201,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey592670ac9/69eadfaee7bb4379866c1740dfbe0440","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"xogincFwLBxpDiEfQnnFM67pYam7i4RuwZbtzgVX8T5OVocGDX9Wi56KzH0XssRipGzBg4WhJKfz2S7r0FLYz7pll0okpKBZlKaRaZJgjAOGy2LAML1HApt111N_pEuqIbYThzUvIGug4bxabZsl8-aiwOdRd8xpC5p_X5BiadxqKWR_1cJy_152p__qj9C5GYkcNN8nYuFYnkkMDLcHJzx4xn-WmO0fMZC8XPwZpk9gmLaGNzSrQmsBv4_GZhQiqHIxKYQG5_dvgKZE8lD9uRM36v3OkPMICHs_5W1FatXfgrewXZpZDihn8vhI043hUaU13xRqv-U0gwtlRLuuJQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579187,"updated":1612579187,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '72'
+      content-length: '834'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:10 GMT
+      date: Sat, 06 Feb 2021 02:40:03 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key5?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key5?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key5"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:12 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key5?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key5?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key5"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:14 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key5?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key5?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key5"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:16 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key5?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key5?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key5"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:18 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key5?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key5?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key5"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:20 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key5?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key5?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key5"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:22 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key5?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key5?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key5"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:24 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key5?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key5?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key5"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:26 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key5?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key5?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key5"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:28 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key5?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key5?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key5"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:31 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key5?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key5?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key5"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:33 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key5?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key5?api-version=7.1
-  response:
-    body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/key5","deletedDate":1596039368,"scheduledPurgeDate":1603815368,"key":{"kid":"https://vaultname.vault.azure.net/keys/key5/d514ceebb47843f79302b5bac6d9181a","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"rMMsndwMCnG1lSWEg3SZ9FGuTRYH2RHevUqKqikxocwvmD6IJuJmUOuikpJzVqrLvM4Q69KCI5Ds1WvNv9c1cQpW8CtWi4TU54rXwAQfsn8hwLP3_GP4qT8UHWpSHuJzsz361qo6OE_J-6sSrQSjqfdoKbH3WC9L_Ghyh8hKah4b9XFw-RMGIySiIXr1jdH_lNAZr8_x9KvDCRjPLSm4rhnCqfJy2x5N-lNo6wZq-fXTtK4FoiBPNyhSsl9scUqH45MZyRrsCfSoP7JGL9tn5Zar_EUPbjWTj_yyXwN6OtPmNveaiwLBCm19krNGJfFvlLhIblSnlq3k7WMCMukpmw","e":"AQAB"},"attributes":{"enabled":true,"created":1596039244,"updated":1596039244,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
-    headers:
-      cache-control: no-cache
-      content-length: '822'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:35 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key5?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey592670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.net/keys/key6?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey692670ac9?api-version=7.2-preview
   response:
     body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/key6","deletedDate":1596039395,"scheduledPurgeDate":1603815395,"key":{"kid":"https://vaultname.vault.azure.net/keys/key6/26f379adf9de4e2ab5a7cae330ad78f0","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"pP49gLNNmOMXBZIzX4hcN2OEF2uYaLN0a_tTeh3TzOa3pnzu_IBCr9FfhgwzoOKgBS-OBqmHmTv8rmjsl7vtQ_szaWetbbBvImlU1kMsjEhrxrqiE2ODVxFkobixxxM0LafobadyWRufIbHHopEXmbNFZhv0zdddjMG4fEwqEW_CeI_rAh8N74lTpjgMUYaCcI0pDutW_S0ogS0DNM3QScSoa96Xa_Qs-zSHPLv8A9LwCFb1BfFZpU7BM-XVfnNKNSieVVSxmzkyCCFWplOCe7RhXXQbWz_7zpY4mtXHWPzE9Q14yxf6vOYSa5kRMubXu1unFXHEBK5FiLs91dD32w","e":"AQAB"},"attributes":{"enabled":true,"created":1596039244,"updated":1596039244,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey692670ac9","deletedDate":1612579204,"scheduledPurgeDate":1620355204,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey692670ac9/e77fcaf150e3469591f8c8f310bb660a","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"5hCxC_JEu31cj0AGFCorAtITP_NNyM1Vp_KWoJY8pZBkOeU-8cErURd5Mjm9pdhMCLFrzbk_1UeTkjLndeOCZysnGkj-5W2Av4iv3P7hIBKH6lQPpE63qo0l6fvyRTZtBkXjfoizFQv5piacolmWzagE3DdPOrpSNL_XTUb3UFlnSCUdjS8Vb19RwQlUUUdyXAs7UKOQCUd2jP-zNdDWm9ogUkZOYRvGuuQPoZc8PRDfRk2NrkfjTd5koj8q5wO0F9-lcKQ-ad6dnrcMlAoEQqp1AbmE5gvwkyJDnxjG9j0NkJ0Qy_l3qPbUN9c3puA0EKpV2gHT1YdGfu8gDGEy7Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612579188,"updated":1612579188,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '822'
+      content-length: '834'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:35 GMT
+      date: Sat, 06 Feb 2021 02:40:03 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/keys/key6?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey692670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key6?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey692670ac9?api-version=7.2-preview
   response:
     body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key6"}}'
+      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: livekvtestkey692670ac9"}}'
     headers:
       cache-control: no-cache
-      content-length: '72'
+      content-length: '90'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:35 GMT
+      date: Sat, 06 Feb 2021 02:40:04 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 404
       message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key6?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey692670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key6?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey692670ac9?api-version=7.2-preview
   response:
     body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key6"}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey692670ac9","deletedDate":1612579204,"scheduledPurgeDate":1620355204,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey692670ac9/e77fcaf150e3469591f8c8f310bb660a","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"5hCxC_JEu31cj0AGFCorAtITP_NNyM1Vp_KWoJY8pZBkOeU-8cErURd5Mjm9pdhMCLFrzbk_1UeTkjLndeOCZysnGkj-5W2Av4iv3P7hIBKH6lQPpE63qo0l6fvyRTZtBkXjfoizFQv5piacolmWzagE3DdPOrpSNL_XTUb3UFlnSCUdjS8Vb19RwQlUUUdyXAs7UKOQCUd2jP-zNdDWm9ogUkZOYRvGuuQPoZc8PRDfRk2NrkfjTd5koj8q5wO0F9-lcKQ-ad6dnrcMlAoEQqp1AbmE5gvwkyJDnxjG9j0NkJ0Qy_l3qPbUN9c3puA0EKpV2gHT1YdGfu8gDGEy7Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612579188,"updated":1612579188,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '72'
+      content-length: '834'
       content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:37 GMT
+      date: Sat, 06 Feb 2021 02:40:06 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key6?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key6?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key6"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:39 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key6?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key6?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key6"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:42 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key6?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key6?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key6"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:44 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key6?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key6?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key6"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:46 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key6?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key6?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key6"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:48 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key6?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key6?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key6"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:50 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key6?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key6?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key6"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:52 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key6?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key6?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: key6"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '72'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:54 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
-      x-powered-by: ASP.NET
-    status:
-      code: 404
-      message: Not Found
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key6?api-version=7.1
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/key6?api-version=7.1
-  response:
-    body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/key6","deletedDate":1596039395,"scheduledPurgeDate":1603815395,"key":{"kid":"https://vaultname.vault.azure.net/keys/key6/26f379adf9de4e2ab5a7cae330ad78f0","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"pP49gLNNmOMXBZIzX4hcN2OEF2uYaLN0a_tTeh3TzOa3pnzu_IBCr9FfhgwzoOKgBS-OBqmHmTv8rmjsl7vtQ_szaWetbbBvImlU1kMsjEhrxrqiE2ODVxFkobixxxM0LafobadyWRufIbHHopEXmbNFZhv0zdddjMG4fEwqEW_CeI_rAh8N74lTpjgMUYaCcI0pDutW_S0ogS0DNM3QScSoa96Xa_Qs-zSHPLv8A9LwCFb1BfFZpU7BM-XVfnNKNSieVVSxmzkyCCFWplOCe7RhXXQbWz_7zpY4mtXHWPzE9Q14yxf6vOYSa5kRMubXu1unFXHEBK5FiLs91dD32w","e":"AQAB"},"attributes":{"enabled":true,"created":1596039244,"updated":1596039244,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
-    headers:
-      cache-control: no-cache
-      content-length: '822'
-      content-type: application/json; charset=utf-8
-      date: Wed, 29 Jul 2020 16:16:57 GMT
-      expires: '-1'
-      pragma: no-cache
-      strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
-      x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key6?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey692670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.net/deletedkeys/key0?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey092670ac9?api-version=7.2-preview
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
-      date: Wed, 29 Jul 2020 16:16:57 GMT
+      date: Sat, 06 Feb 2021 02:40:06 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 204
       message: No Content
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key0?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey092670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.net/deletedkeys/key1?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey192670ac9?api-version=7.2-preview
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
-      date: Wed, 29 Jul 2020 16:16:57 GMT
+      date: Sat, 06 Feb 2021 02:40:07 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 204
       message: No Content
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key1?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey192670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.net/deletedkeys/key2?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey292670ac9?api-version=7.2-preview
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
-      date: Wed, 29 Jul 2020 16:16:57 GMT
+      date: Sat, 06 Feb 2021 02:40:08 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 204
       message: No Content
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key2?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey292670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.net/deletedkeys/key3?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey392670ac9?api-version=7.2-preview
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
-      date: Wed, 29 Jul 2020 16:16:57 GMT
+      date: Sat, 06 Feb 2021 02:40:08 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 204
       message: No Content
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key3?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey392670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.net/deletedkeys/key4?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey492670ac9?api-version=7.2-preview
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
-      date: Wed, 29 Jul 2020 16:16:57 GMT
+      date: Sat, 06 Feb 2021 02:40:10 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 204
       message: No Content
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key4?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey492670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.net/deletedkeys/key5?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey592670ac9?api-version=7.2-preview
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
-      date: Wed, 29 Jul 2020 16:16:58 GMT
+      date: Sat, 06 Feb 2021 02:40:10 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 204
       message: No Content
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key5?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey592670ac9?api-version=7.2-preview
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.net/deletedkeys/key6?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey692670ac9?api-version=7.2-preview
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
-      date: Wed, 29 Jul 2020 16:16:58 GMT
+      date: Sat, 06 Feb 2021 02:40:11 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.10.0
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 204
       message: No Content
-    url: https://nu4aaxk4euwlzrldwtpscuij.vault.azure.net/deletedkeys/key6?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey692670ac9?api-version=7.2-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey092670ac9?api-version=7.2-preview
+  response:
+    body:
+      string: '{"error":{"code":"KeyNotFound","message":"A key with (name/id) livekvtestkey092670ac9
+        was not found in this key vault. If you recently deleted this key you may
+        be able to recover it using the correct recovery command. For help resolving
+        this issue, please see https://go.microsoft.com/fwlink/?linkid=2125182"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '310'
+      content-type: application/json; charset=utf-8
+      date: Sat, 06 Feb 2021 02:40:14 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
+      x-powered-by: ASP.NET
+    status:
+      code: 404
+      message: Not Found
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey092670ac9?api-version=7.2-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey192670ac9?api-version=7.2-preview
+  response:
+    body:
+      string: '{"error":{"code":"KeyNotFound","message":"A key with (name/id) livekvtestkey192670ac9
+        was not found in this key vault. If you recently deleted this key you may
+        be able to recover it using the correct recovery command. For help resolving
+        this issue, please see https://go.microsoft.com/fwlink/?linkid=2125182"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '310'
+      content-type: application/json; charset=utf-8
+      date: Sat, 06 Feb 2021 02:40:14 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
+      x-powered-by: ASP.NET
+    status:
+      code: 404
+      message: Not Found
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey192670ac9?api-version=7.2-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey292670ac9?api-version=7.2-preview
+  response:
+    body:
+      string: '{"error":{"code":"KeyNotFound","message":"A key with (name/id) livekvtestkey292670ac9
+        was not found in this key vault. If you recently deleted this key you may
+        be able to recover it using the correct recovery command. For help resolving
+        this issue, please see https://go.microsoft.com/fwlink/?linkid=2125182"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '310'
+      content-type: application/json; charset=utf-8
+      date: Sat, 06 Feb 2021 02:40:14 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
+      x-powered-by: ASP.NET
+    status:
+      code: 404
+      message: Not Found
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey292670ac9?api-version=7.2-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey392670ac9?api-version=7.2-preview
+  response:
+    body:
+      string: '{"error":{"code":"KeyNotFound","message":"A key with (name/id) livekvtestkey392670ac9
+        was not found in this key vault. If you recently deleted this key you may
+        be able to recover it using the correct recovery command. For help resolving
+        this issue, please see https://go.microsoft.com/fwlink/?linkid=2125182"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '310'
+      content-type: application/json; charset=utf-8
+      date: Sat, 06 Feb 2021 02:40:15 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
+      x-powered-by: ASP.NET
+    status:
+      code: 404
+      message: Not Found
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey392670ac9?api-version=7.2-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey492670ac9?api-version=7.2-preview
+  response:
+    body:
+      string: '{"error":{"code":"KeyNotFound","message":"A key with (name/id) livekvtestkey492670ac9
+        was not found in this key vault. If you recently deleted this key you may
+        be able to recover it using the correct recovery command. For help resolving
+        this issue, please see https://go.microsoft.com/fwlink/?linkid=2125182"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '310'
+      content-type: application/json; charset=utf-8
+      date: Sat, 06 Feb 2021 02:40:15 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
+      x-powered-by: ASP.NET
+    status:
+      code: 404
+      message: Not Found
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey492670ac9?api-version=7.2-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey592670ac9?api-version=7.2-preview
+  response:
+    body:
+      string: '{"error":{"code":"KeyNotFound","message":"A key with (name/id) livekvtestkey592670ac9
+        was not found in this key vault. If you recently deleted this key you may
+        be able to recover it using the correct recovery command. For help resolving
+        this issue, please see https://go.microsoft.com/fwlink/?linkid=2125182"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '310'
+      content-type: application/json; charset=utf-8
+      date: Sat, 06 Feb 2021 02:40:15 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
+      x-powered-by: ASP.NET
+    status:
+      code: 404
+      message: Not Found
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey592670ac9?api-version=7.2-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey692670ac9?api-version=7.2-preview
+  response:
+    body:
+      string: '{"error":{"code":"KeyNotFound","message":"A key with (name/id) livekvtestkey692670ac9
+        was not found in this key vault. If you recently deleted this key you may
+        be able to recover it using the correct recovery command. For help resolving
+        this issue, please see https://go.microsoft.com/fwlink/?linkid=2125182"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '310'
+      content-type: application/json; charset=utf-8
+      date: Sat, 06 Feb 2021 02:40:15 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
+      x-powered-by: ASP.NET
+    status:
+      code: 404
+      message: Not Found
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey692670ac9?api-version=7.2-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://vaultname.vault.azure.net/deletedkeys?api-version=7.2-preview
+  response:
+    body:
+      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestcrud-rsa-key51c4108d","deletedDate":1612578997,"scheduledPurgeDate":1620354997,"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrud-rsa-key51c4108d","attributes":{"enabled":true,"exp":2524723200,"created":1612578995,"updated":1612578997,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"foo":"updated
+        tag"}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestcrud-rsa-key5416109f","deletedDate":1612579135,"scheduledPurgeDate":1620355135,"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrud-rsa-key5416109f","attributes":{"enabled":true,"exp":2524723200,"created":1612579133,"updated":1612579134,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"foo":"updated
+        tag"}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey030c90fa1","deletedDate":1612579032,"scheduledPurgeDate":1620355032,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey030c90fa1","attributes":{"enabled":true,"created":1612579007,"updated":1612579007,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey032f70fb3","deletedDate":1612579164,"scheduledPurgeDate":1620355164,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey032f70fb3","attributes":{"enabled":true,"created":1612579144,"updated":1612579144,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EVTVJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpNRUkwUkVRd1F6QkJMekJETURnek16UTBOME0yT1RSRlFUQTRRVGRDUmpVMU56TXhNVFUyUVVNM0lUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1888'
+      content-type: application/json; charset=utf-8
+      date: Sat, 06 Feb 2021 02:40:16 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinotest.vault.azure.net/deletedkeys?api-version=7.2-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EVTVJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpNRUkwUkVRd1F6QkJMekJETURnek16UTBOME0yT1RSRlFUQTRRVGRDUmpVMU56TXhNVFUyUVVNM0lUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+  response:
+    body:
+      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey130c90fa1","deletedDate":1612579022,"scheduledPurgeDate":1620355022,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey130c90fa1","attributes":{"enabled":true,"created":1612579007,"updated":1612579007,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey132f70fb3","deletedDate":1612579160,"scheduledPurgeDate":1620355160,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey132f70fb3","attributes":{"enabled":true,"created":1612579145,"updated":1612579145,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey230c90fa1","deletedDate":1612579009,"scheduledPurgeDate":1620355009,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey230c90fa1","attributes":{"enabled":true,"created":1612579007,"updated":1612579007,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey232f70fb3","deletedDate":1612579147,"scheduledPurgeDate":1620355147,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey232f70fb3","attributes":{"enabled":true,"created":1612579145,"updated":1612579145,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey330c90fa1","deletedDate":1612579027,"scheduledPurgeDate":1620355027,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey330c90fa1","attributes":{"enabled":true,"created":1612579008,"updated":1612579008,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey332f70fb3","deletedDate":1612579169,"scheduledPurgeDate":1620355169,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey332f70fb3","attributes":{"enabled":true,"created":1612579145,"updated":1612579145,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk16a3hNVEV3UVVJM0lUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
+    headers:
+      cache-control: no-cache
+      content-length: '2408'
+      content-type: application/json; charset=utf-8
+      date: Sat, 06 Feb 2021 02:40:16 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EVTVJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpNRUkwUkVRd1F6QkJMekJETURnek16UTBOME0yT1RSRlFUQTRRVGRDUmpVMU56TXhNVFUyUVVNM0lUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk16a3hNVEV3UVVJM0lUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+  response:
+    body:
+      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey430c90fa1","deletedDate":1612579034,"scheduledPurgeDate":1620355034,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey430c90fa1","attributes":{"enabled":true,"created":1612579008,"updated":1612579008,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey432f70fb3","deletedDate":1612579152,"scheduledPurgeDate":1620355152,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey432f70fb3","attributes":{"enabled":true,"created":1612579146,"updated":1612579146,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey530c90fa1","deletedDate":1612579012,"scheduledPurgeDate":1620355012,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey530c90fa1","attributes":{"enabled":true,"created":1612579009,"updated":1612579009,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey532f70fb3","deletedDate":1612579154,"scheduledPurgeDate":1620355154,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey532f70fb3","attributes":{"enabled":true,"created":1612579146,"updated":1612579146,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EVTVJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpOVUkwUkVRd1F6QkJMekZFT1VZd1F6STJRelJFUXpReE5EZENRamswUTBJNVFrVTRNVFZFT1RZNElUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1764'
+      content-type: application/json; charset=utf-8
+      date: Sat, 06 Feb 2021 02:40:17 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk16a3hNVEV3UVVJM0lUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EVTVJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpOVUkwUkVRd1F6QkJMekZFT1VZd1F6STJRelJFUXpReE5EZENRamswUTBJNVFrVTRNVFZFT1RZNElUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+  response:
+    body:
+      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey630c90fa1","deletedDate":1612579017,"scheduledPurgeDate":1620355017,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey630c90fa1","attributes":{"enabled":true,"created":1612579009,"updated":1612579009,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey632f70fb3","deletedDate":1612579157,"scheduledPurgeDate":1620355157,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey632f70fb3","attributes":{"enabled":true,"created":1612579147,"updated":1612579147,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMDAhTURBd01ESTVJV3RsZVM5TVNWWkZTMVpVUlZOVVZFVlRWRXRGV1VZM1JUQXdSVE5CSVRBd01EQXlPQ0U1T1RrNUxURXlMVE14VkRJek9qVTVPalU1TGprNU9UazVPVGxhSVEtLSIsIlRhcmdldExvY2F0aW9uIjowfQ"}'
+    headers:
+      cache-control: no-cache
+      content-length: '1007'
+      content-type: application/json; charset=utf-8
+      date: Sat, 06 Feb 2021 02:40:17 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EVTVJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpOVUkwUkVRd1F6QkJMekZFT1VZd1F6STJRelJFUXpReE5EZENRamswUTBJNVFrVTRNVFZFT1RZNElUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMDAhTURBd01ESTVJV3RsZVM5TVNWWkZTMVpVUlZOVVZFVlRWRXRGV1VZM1JUQXdSVE5CSVRBd01EQXlPQ0U1T1RrNUxURXlMVE14VkRJek9qVTVPalU1TGprNU9UazVPVGxhSVEtLSIsIlRhcmdldExvY2F0aW9uIjowfQ
+  response:
+    body:
+      string: '{"value":[],"nextLink":null}'
+    headers:
+      cache-control: no-cache
+      content-length: '28'
+      content-type: application/json; charset=utf-8
+      date: Sat, 06 Feb 2021 02:40:17 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: northeurope
+      x-ms-keyvault-service-version: 1.2.164.0
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMDAhTURBd01ESTVJV3RsZVM5TVNWWkZTMVpVUlZOVVZFVlRWRXRGV1VZM1JUQXdSVE5CSVRBd01EQXlPQ0U1T1RrNUxURXlMVE14VkRJek9qVTVPalU1TGprNU9UazVPVGxhSVEtLSIsIlRhcmdldExvY2F0aW9uIjowfQ
 version: 1

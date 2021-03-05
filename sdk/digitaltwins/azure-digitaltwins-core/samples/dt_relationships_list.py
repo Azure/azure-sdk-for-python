@@ -33,7 +33,7 @@ try:
     digital_twint_id = "<DIGITAL_TWIN_ID>" # from the samples: BuildingTwin, FloorTwin, HVACTwin, RoomTwin
     relationships = service_client.list_relationships(digital_twint_id)
     for relationship in relationships:
-        print(relationship + '\n')
+        print(relationship)
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

@@ -1,0 +1,54 @@
+interactions:
+- request:
+    body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
+      "latest", "stringIndexType": "UnicodeCodePoint"}}], "entityRecognitionPiiTasks":
+      [{"parameters": {"model-version": "latest", "stringIndexType": "UnicodeCodePoint"}}],
+      "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest"}}]},
+      "analysisInput": {"documents": [{"id": "0", "text": "input document", "language":
+      "en"}, {"id": "1", "text": "input document", "language": "en"}, {"id": "2",
+      "text": "input document", "language": "en"}, {"id": "3", "text": "input document",
+      "language": "en"}, {"id": "4", "text": "input document", "language": "en"},
+      {"id": "5", "text": "input document", "language": "en"}, {"id": "6", "text":
+      "input document", "language": "en"}, {"id": "7", "text": "input document", "language":
+      "en"}, {"id": "8", "text": "input document", "language": "en"}, {"id": "9",
+      "text": "input document", "language": "en"}, {"id": "10", "text": "input document",
+      "language": "en"}, {"id": "11", "text": "input document", "language": "en"},
+      {"id": "12", "text": "input document", "language": "en"}, {"id": "13", "text":
+      "input document", "language": "en"}, {"id": "14", "text": "input document",
+      "language": "en"}, {"id": "15", "text": "input document", "language": "en"},
+      {"id": "16", "text": "input document", "language": "en"}, {"id": "17", "text":
+      "input document", "language": "en"}, {"id": "18", "text": "input document",
+      "language": "en"}, {"id": "19", "text": "input document", "language": "en"},
+      {"id": "20", "text": "input document", "language": "en"}, {"id": "21", "text":
+      "input document", "language": "en"}, {"id": "22", "text": "input document",
+      "language": "en"}, {"id": "23", "text": "input document", "language": "en"},
+      {"id": "24", "text": "input document", "language": "en"}, {"id": "25", "text":
+      "input document", "language": "en"}]}}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Content-Length:
+      - '1845'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze
+  response:
+    body:
+      string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innerError":{"code":"InvalidDocumentBatch","message":"Batch
+        request contains too many documents. Max 25 documents are permitted."}}}'
+    headers:
+      apim-request-id: de79dedf-0672-477b-b8db-1cecc3270e90
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:06:54 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '4'
+    status:
+      code: 400
+      message: Bad Request
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/analyze
+version: 1

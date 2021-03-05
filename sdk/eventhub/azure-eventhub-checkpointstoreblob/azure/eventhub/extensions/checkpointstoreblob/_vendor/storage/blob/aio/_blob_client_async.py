@@ -3,41 +3,37 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines
-
+# pylint: disable=too-many-lines, invalid-overridden-method
+from functools import partial
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
     TYPE_CHECKING
 )
 
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import return_response_headers, process_storage_error
-from .._deserialize import get_page_ranges_result
-from .._serialize import get_modify_conditions, get_api_version
-from .._generated import VERSION
+from .._deserialize import get_page_ranges_result, parse_tags, deserialize_pipeline_response_into_cls
+from .._serialize import get_modify_conditions, get_api_version, get_access_conditions
 from .._generated.aio import AzureBlobStorage
-from .._generated.models import StorageErrorException, CpkInfo
+from .._generated.models import CpkInfo
 from .._deserialize import deserialize_blob_properties
 from .._blob_client import BlobClient as BlobClientBase
 from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
     upload_page_blob)
-from .._models import BlobType, BlobBlock
-from .._lease import get_access_conditions
+from .._models import BlobType, BlobBlock, BlobProperties
 from ._lease_async import BlobLeaseClient
 from ._download_async import StorageStreamDownloader
 
+
 if TYPE_CHECKING:
     from datetime import datetime
-    from azure.core.pipeline.policies import HTTPPolicy
     from .._models import (  # pylint: disable=unused-import
-        ContainerProperties,
-        BlobProperties,
-        BlobSasPermissions,
         ContentSettings,
         PremiumPageBlobTier,
         StandardBlobTier,
@@ -61,9 +57,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         or the response returned from :func:`create_snapshot`.
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, an account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the URL already has a SAS token, specifying an explicit credential will take priority.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
         Setting to an older version may result in reduced feature compatibility.
@@ -74,7 +72,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         The hostname of the secondary endpoint.
     :keyword int max_block_size: The maximum chunk size for uploading a block blob in chunks.
         Defaults to 4*1024*1024, or 4MB.
-    :keyword int max_single_put_size: If the blob size is less than max_single_put_size, then the blob will be
+    :keyword int max_single_put_size: If the blob size is less than or equal max_single_put_size, then the blob will be
         uploaded with only one http PUT request. If the blob size is larger than max_single_put_size,
         the blob will be uploaded in chunks. Defaults to 64*1024*1024, or 64MB.
     :keyword int min_large_block_upload_threshold: The minimum chunk size required to use the memory efficient
@@ -120,7 +118,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             credential=credential,
             **kwargs)
         self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
+        default_api_version = self._client._config.version  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, default_api_version)  # pylint: disable=protected-access
         self._loop = kwargs.get('loop', None)
 
     @distributed_trace_async
@@ -136,7 +135,106 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
         try:
             return await self._client.blob.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    @distributed_trace_async
+    async def upload_blob_from_url(self, source_url, **kwargs):
+        # type: (str, Any) -> Dict[str, Any]
+        """
+        Creates a new Block Blob where the content of the blob is read from a given URL.
+        The content of an existing blob is overwritten with the new blob.
+
+        :param str source_url:
+            A URL of up to 2 KB in length that specifies a file or blob.
+            The value should be URL-encoded as it would appear in a request URI.
+            If the source is in another account, the source must either be public
+            or must be authenticated via a shared access signature. If the source
+            is public, no authentication is required.
+            Examples:
+            https://myaccount.blob.core.windows.net/mycontainer/myblob
+
+            https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
+
+            https://otheraccount.blob.core.windows.net/mycontainer/myblob?sastoken
+        :keyword bool overwrite: Whether the blob to be uploaded should overwrite the current data.
+            If True, upload_blob will overwrite the existing data. If set to False, the
+            operation will fail with ResourceExistsError.
+        :keyword bool include_source_blob_properties:
+            Indicates if properties from the source blob should be copied. Defaults to True.
+        :keyword tags:
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+        :paramtype tags: dict(str, str)
+        :keyword bytearray source_content_md5:
+            Specify the md5 that is used to verify the integrity of the source bytes.
+        :keyword ~datetime.datetime source_if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the source resource has been modified since the specified time.
+        :keyword ~datetime.datetime source_if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the source resource has not been modified since the specified date/time.
+        :keyword str source_etag:
+            The source ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions source_match_condition:
+            The source match condition to use upon the etag.
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str etag:
+            The destination ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The destination match condition to use upon the etag.
+        :keyword destination_lease:
+            The lease ID specified for this header must match the lease ID of the
+            destination blob. If the request does not include the lease ID or it is not
+            valid, the operation fails with status code 412 (Precondition Failed).
+        :paramtype destination_lease: ~azure.storage.blob.BlobLeaseClient or str
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :keyword ~azure.storage.blob.ContentSettings content_settings:
+            ContentSettings object used to set blob properties. Used to set content type, encoding,
+            language, disposition, md5, and cache control.
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+        :keyword ~azure.storage.blob.StandardBlobTier standard_blob_tier:
+            A standard blob tier value to set the blob to. For this version of the library,
+            this is only applicable to block blobs on standard storage accounts.
+        """
+        options = self._upload_blob_from_url_options(
+            source_url=self._encode_source_url(source_url),
+            **kwargs)
+        try:
+            return await self._client.block_blob.put_blob_from_url(**options)
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -159,6 +257,16 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
+        :keyword tags:
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+
+            .. versionadded:: 12.4.0
+
+        :paramtype tags: dict(str, str)
         :keyword bool overwrite: Whether the blob to be uploaded should overwrite the current data.
             If True, upload_blob will overwrite the existing data. If set to False, the
             operation will fail with ResourceExistsError. The exception to the above is with Append
@@ -199,6 +307,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
         :keyword ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
@@ -271,6 +385,13 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param int length:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
+        :keyword str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to download.
+
+            .. versionadded:: 12.4.0
+            This keyword argument was introduced in API version '2019-12-12'.
+
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the blob. The storage
             service checks the hash of the content that has arrived with the hash
@@ -302,6 +423,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -337,7 +464,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async
     async def delete_blob(self, delete_snapshots=False, **kwargs):
-        # type: (bool, Any) -> None
+        # type: (str, Any) -> None
         """Marks the specified blob for deletion.
 
         The blob is later deleted during garbage collection.
@@ -355,6 +482,13 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Required if the blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
              - "include": Deletes the blob along with all snapshots.
+        :keyword str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to delete.
+
+            .. versionadded:: 12.4.0
+            This keyword argument was introduced in API version '2019-12-12'.
+
         :keyword lease:
             Required if the blob has an active lease. If specified, delete_blob only
             succeeds if the blob's lease is active and matches this ID. Value can be a
@@ -377,6 +511,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -393,7 +533,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._delete_blob_options(delete_snapshots=delete_snapshots, **kwargs)
         try:
             await self._client.blob.delete(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -419,8 +559,33 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
         try:
             await self._client.blob.undelete(timeout=kwargs.pop('timeout', None), **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
+
+    @distributed_trace_async
+    async def exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a blob exists with the defined parameters, and returns
+        False otherwise.
+
+        :param str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to check if it exists.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        try:
+            await self._client.blob.get_properties(
+                snapshot=self.snapshot,
+                **kwargs)
+            return True
+        except HttpResponseError as error:
+            try:
+                process_storage_error(error)
+            except ResourceNotFoundError:
+                return False
 
     @distributed_trace_async
     async def get_blob_properties(self, **kwargs):
@@ -432,6 +597,13 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.aio.BlobLeaseClient or str
+        :keyword str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to get properties.
+
+            .. versionadded:: 12.4.0
+            This keyword argument was introduced in API version '2019-12-12'.
+
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -449,6 +621,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -478,18 +656,24 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
         try:
+            cls_method = kwargs.pop('cls', None)
+            if cls_method:
+                kwargs['cls'] = partial(deserialize_pipeline_response_into_cls, cls_method)
             blob_props = await self._client.blob.get_properties(
                 timeout=kwargs.pop('timeout', None),
+                version_id=kwargs.pop('version_id', None),
                 snapshot=self.snapshot,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
-                cls=deserialize_blob_properties,
+                cls=kwargs.pop('cls', None) or deserialize_blob_properties,
                 cpk_info=cpk_info,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         blob_props.name = self.blob_name
-        blob_props.container = self.container_name
+        if isinstance(blob_props, BlobProperties):
+            blob_props.container = self.container_name
+            blob_props.snapshot = self.snapshot
         return blob_props # type: ignore
 
     @distributed_trace_async
@@ -523,6 +707,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified)
@@ -531,7 +721,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._set_http_headers_options(content_settings=content_settings, **kwargs)
         try:
             return await self._client.blob.set_http_headers(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -565,6 +755,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -585,7 +781,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._set_blob_metadata_options(metadata=metadata, **kwargs)
         try:
             return await self._client.blob.set_metadata(**options)  # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -612,6 +808,16 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
+        :keyword tags:
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+
+            .. versionadded:: 12.4.0
+
+        :paramtype tags: dict(str, str)
         :keyword int sequence_number:
             Only for Page blobs. The sequence number is a user-controlled value that you can use to
             track requests. The value of the sequence number must be between 0
@@ -663,7 +869,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs)
         try:
             return await self._client.page_blob.create(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -677,6 +883,16 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
+        :keyword tags:
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+
+            .. versionadded:: 12.4.0
+
+        :paramtype tags: dict(str, str)
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -722,7 +938,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs)
         try:
             return await self._client.append_blob.create(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -758,6 +974,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -792,7 +1014,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._create_snapshot_options(metadata=metadata, **kwargs)
         try:
             return await self._client.blob.create_snapshot(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -854,6 +1076,16 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             the previously copied snapshot are transferred to the destination.
             The copied snapshots are complete copies of the original snapshot and
             can be read or copied from as usual. Defaults to False.
+        :keyword tags:
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+
+            .. versionadded:: 12.4.0
+
+        :paramtype tags: dict(str, str)
         :keyword ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -892,6 +1124,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The destination match condition to use upon the etag.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
         :keyword destination_lease:
             The lease ID specified for this header must match the lease ID of the
             destination blob. If the request does not include the lease ID or it is not
@@ -912,6 +1150,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             this is only applicable to block blobs on standard storage accounts.
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
+        :keyword bool seal_destination_blob:
+            Seal the destination append blob. This operation is only for append blob.
+
+            .. versionadded:: 12.4.0
+
         :keyword bool requires_sync:
             Enforces that the service will not return a response until the copy is complete.
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
@@ -927,7 +1170,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 :caption: Copy a blob from a URL.
         """
         options = self._start_copy_from_url_options(
-            source_url,
+            source_url=self._encode_source_url(source_url),
             metadata=metadata,
             incremental_copy=incremental_copy,
             **kwargs)
@@ -935,7 +1178,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             if incremental_copy:
                 return await self._client.page_blob.copy_incremental(**options)
             return await self._client.blob.start_copy_from_url(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -964,7 +1207,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._abort_copy_options(copy_id, **kwargs)
         try:
             await self._client.blob.abort_copy_from_url(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1001,6 +1244,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A BlobLeaseClient object.
@@ -1037,6 +1286,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :type standard_blob_tier: str or ~azure.storage.blob.StandardBlobTier
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword lease:
@@ -1046,15 +1301,17 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :rtype: None
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        mod_conditions = get_modify_conditions(kwargs)
         if standard_blob_tier is None:
             raise ValueError("A StandardBlobTier must be specified")
         try:
             await self._client.blob.set_tier(
                 tier=standard_blob_tier,
                 timeout=kwargs.pop('timeout', None),
+                modified_access_conditions=mod_conditions,
                 lease_access_conditions=access_conditions,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1067,10 +1324,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         # type: (...) -> None
         """Creates a new block to be committed as part of a blob.
 
-        :param str block_id: A valid Base64 string value that identifies the
-             block. Prior to encoding, the string must be less than or equal to 64
-             bytes in size. For a given blob, the length of the value specified for
-             the block_id parameter must be the same size for each block.
+        :param str block_id: A string value that identifies the block.
+             The string should be less than or equal to 64 bytes in size.
+             For a given blob, the block_id must be the same size for each block.
         :param data: The blob data.
         :param int length: Size of the block.
         :keyword bool validate_content:
@@ -1111,8 +1367,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             length=length,
             **kwargs)
         try:
-            await self._client.block_blob.stage_block(**options)
-        except StorageErrorException as error:
+            return await self._client.block_blob.stage_block(**options)
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1128,10 +1384,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """Creates a new block to be committed as part of a blob where
         the contents are read from a URL.
 
-        :param str block_id: A valid Base64 string value that identifies the
-             block. Prior to encoding, the string must be less than or equal to 64
-             bytes in size. For a given blob, the length of the value specified for
-             the block_id parameter must be the same size for each block.
+        :param str block_id: A string value that identifies the block.
+             The string should be less than or equal to 64 bytes in size.
+             For a given blob, the block_id must be the same size for each block.
         :param str source_url: The URL.
         :param int source_offset:
             Start of byte range to use for the block.
@@ -1163,14 +1418,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
         options = self._stage_block_from_url_options(
             block_id,
-            source_url,
+            source_url=self._encode_source_url(source_url),
             source_offset=source_offset,
             source_length=source_length,
             source_content_md5=source_content_md5,
             **kwargs)
         try:
-            await self._client.block_blob.stage_block_from_url(**options)
-        except StorageErrorException as error:
+            return await self._client.block_blob.stage_block_from_url(**options)
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1187,20 +1442,28 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.aio.BlobLeaseClient or str
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A tuple of two lists - committed and uncommitted blocks
         :rtype: tuple(list(~azure.storage.blob.BlobBlock), list(~azure.storage.blob.BlobBlock))
         """
         access_conditions = get_access_conditions(kwargs.pop('kease', None))
+        mod_conditions = get_modify_conditions(kwargs)
         try:
             blocks = await self._client.block_blob.get_block_list(
                 list_type=block_list_type,
                 snapshot=self.snapshot,
                 timeout=kwargs.pop('timeout', None),
                 lease_access_conditions=access_conditions,
+                modified_access_conditions=mod_conditions,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return self._get_block_list_result(blocks)
 
@@ -1223,6 +1486,16 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict[str, str]
+        :keyword tags:
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+
+            .. versionadded:: 12.4.0
+
+        :paramtype tags: dict(str, str)
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -1251,6 +1524,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
         :keyword ~azure.storage.blob.StandardBlobTier standard_blob_tier:
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
@@ -1279,7 +1558,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs)
         try:
             return await self._client.block_blob.commit_block_list(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1292,6 +1571,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
         :type premium_page_blob_tier: ~azure.storage.blob.PremiumPageBlobTier
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
@@ -1303,6 +1588,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :rtype: None
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        mod_conditions = get_modify_conditions(kwargs)
         if premium_page_blob_tier is None:
             raise ValueError("A PremiumPageBlobTiermust be specified")
         try:
@@ -1310,8 +1596,84 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 tier=premium_page_blob_tier,
                 timeout=kwargs.pop('timeout', None),
                 lease_access_conditions=access_conditions,
+                modified_access_conditions=mod_conditions,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    @distributed_trace_async
+    async def set_blob_tags(self, tags=None, **kwargs):
+        # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+        """The Set Tags operation enables users to set tags on a blob or specific blob version, but not snapshot.
+            Each call to this operation replaces all existing tags attached to the blob. To remove all
+            tags from the blob, call this operation with no tags set.
+
+        .. versionadded:: 12.4.0
+            This operation was introduced in API version '2019-12-12'.
+
+        :param tags:
+            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+        :type tags: dict(str, str)
+        :keyword str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to delete.
+        :keyword bool validate_content:
+            If true, calculates an MD5 hash of the tags content. The storage
+            service checks the hash of the content that has arrived
+            with the hash that was sent. This is primarily valuable for detecting
+            bitflips on the wire if using http instead of https, as https (the default),
+            will already validate. Note that this MD5 hash is not stored with the
+            blob.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+        :keyword lease:
+            Required if the blob has an active lease. Value can be a BlobLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Blob-updated property dict (Etag and last modified)
+        :rtype: Dict[str, Any]
+        """
+        options = self._set_blob_tags_options(tags=tags, **kwargs)
+        try:
+            return await self._client.blob.set_tags(**options)
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    @distributed_trace_async
+    async def get_blob_tags(self, **kwargs):
+        # type: (**Any) -> Dict[str, str]
+        """The Get Tags operation enables users to get tags on a blob or specific blob version, but not snapshot.
+
+        .. versionadded:: 12.4.0
+            This operation was introduced in API version '2019-12-12'.
+
+        :keyword str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to add tags to.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+        :keyword lease:
+            Required if the blob has an active lease. Value can be a BlobLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Key value pairs of blob tags.
+        :rtype: Dict[str, str]
+        """
+        options = self._get_blob_tags_options(**kwargs)
+        try:
+            _, tags = await self._client.blob.get_tags(**options)
+            return parse_tags(tags)  # pylint: disable=protected-access
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1364,6 +1726,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns:
@@ -1381,7 +1749,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 ranges = await self._client.page_blob.get_page_ranges_diff(**options)
             else:
                 ranges = await self._client.page_blob.get_page_ranges(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return get_page_ranges_result(ranges)
 
@@ -1454,7 +1822,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs)
         try:
             ranges = await self._client.page_blob.get_page_ranges_diff(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return get_page_ranges_result(ranges)
 
@@ -1495,6 +1863,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -1504,7 +1878,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             sequence_number_action, sequence_number=sequence_number, **kwargs)
         try:
             return await self._client.page_blob.update_sequence_number(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1539,6 +1913,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
         :keyword ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
@@ -1551,7 +1931,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._resize_blob_options(size, **kwargs)
         try:
             return await self._client.page_blob.resize(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1613,6 +1993,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -1640,7 +2026,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs)
         try:
             return await self._client.page_blob.upload_pages(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1720,6 +2106,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The destination match condition to use upon the etag.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -1738,7 +2130,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
 
         options = self._upload_pages_from_url_options(
-            source_url=source_url,
+            source_url=self._encode_source_url(source_url),
             offset=offset,
             length=length,
             source_offset=source_offset,
@@ -1746,7 +2138,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         )
         try:
             return await self._client.page_blob.upload_pages_from_url(**options)  # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1794,6 +2186,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -1807,7 +2205,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._clear_page_options(offset, length, **kwargs)
         try:
             return await self._client.page_blob.clear_pages(**options)  # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1863,6 +2261,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
         :keyword str encoding:
             Defaults to UTF-8.
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
@@ -1890,7 +2294,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         )
         try:
             return await self._client.append_blob.append_block(**options)  # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async()
@@ -1945,6 +2349,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The destination match condition to use upon the etag.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
         :keyword ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -1979,12 +2389,57 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The timeout parameter is expressed in seconds.
         """
         options = self._append_block_from_url_options(
-            copy_source_url,
+            copy_source_url=self._encode_source_url(copy_source_url),
             source_offset=source_offset,
             source_length=source_length,
             **kwargs
         )
         try:
             return await self._client.append_blob.append_block_from_url(**options)  # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    @distributed_trace_async()
+    async def seal_append_blob(self, **kwargs):
+        # type: (...) -> Dict[str, Union[str, datetime, int]]
+        """The Seal operation seals the Append Blob to make it read-only.
+
+            .. versionadded:: 12.4.0
+
+        :keyword int appendpos_condition:
+            Optional conditional header, used only for the Append Block operation.
+            A number indicating the byte offset to compare. Append Block will
+            succeed only if the append position is equal to this number. If it
+            is not, the request will fail with the AppendPositionConditionNotMet error
+            (HTTP status code 412 - Precondition Failed).
+        :keyword lease:
+            Required if the blob has an active lease. Value can be a BlobLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
+        :rtype: dict(str, Any)
+        """
+        options = self._seal_append_blob_options(**kwargs)
+        try:
+            return await self._client.append_blob.seal(**options) # type: ignore
+        except HttpResponseError as error:
             process_storage_error(error)

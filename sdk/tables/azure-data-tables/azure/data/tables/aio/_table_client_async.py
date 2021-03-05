@@ -22,6 +22,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._base_client import parse_connection_str
+from .._constants import CONNECTION_TIMEOUT
 from .._entity import TableEntity
 from .._generated.aio import AzureTable
 from .._generated.models import SignedIdentifier, TableProperties
@@ -43,11 +44,11 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
 
     def __init__(
-            self,
-            account_url,  # type: str
-            table_name,  # type: str
-            credential=None,  # type: str
-            **kwargs  # type: Any
+        self,
+        account_url,  # type: str
+        table_name,  # type: str
+        credential=None,  # type: str
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Create TableClient from a Credential.
@@ -66,19 +67,33 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
         :returns: None
         """
-        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
-        loop = kwargs.pop('loop', None)
-        super(TableClient, self).__init__(
-            account_url, table_name=table_name, credential=credential, loop=loop, **kwargs
+        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(
+            **kwargs
         )
-        self._client = AzureTable(self.url, pipeline=self._pipeline, loop=loop)
+        loop = kwargs.pop("loop", None)
+        super(TableClient, self).__init__(
+            account_url,
+            table_name=table_name,
+            credential=credential,
+            loop=loop,
+            **kwargs
+        )
+        kwargs['connection_timeout'] = kwargs.get('connection_timeout') or CONNECTION_TIMEOUT
+        self._configure_policies(**kwargs)
+        self._client = AzureTable(
+            self.url,
+            policies=kwargs.pop('policies', self._policies),
+            loop=loop,
+            **kwargs
+        )
         self._loop = loop
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
-            table_name,  # type: str
-            **kwargs  # type: Any
+        cls,
+        conn_str,  # type: str
+        table_name,  # type: str
+        **kwargs  # type: Any
     ):
         # type: (...) -> TableClient
         """Create TableClient from a Connection string.
@@ -101,7 +116,8 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :caption: Creating the TableClient from a connection string.
         """
         account_url, credential = parse_connection_str(
-            conn_str=conn_str, credential=None, service='table', keyword_args=kwargs)
+            conn_str=conn_str, credential=None, service="table", keyword_args=kwargs
+        )
         return cls(account_url, table_name=table_name, credential=credential, **kwargs)
 
     @classmethod
@@ -120,33 +136,35 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :rtype: ~azure.data.tables.TableClient
         """
         try:
-            if not table_url.lower().startswith('http'):
+            if not table_url.lower().startswith("http"):
                 table_url = "https://" + table_url
         except AttributeError:
             raise ValueError("Table URL must be a string.")
-        parsed_url = urlparse(table_url.rstrip('/'))
+        parsed_url = urlparse(table_url.rstrip("/"))
 
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(table_url))
 
-        table_path = parsed_url.path.lstrip('/').split('/')
+        table_path = parsed_url.path.lstrip("/").split("/")
         account_path = ""
         if len(table_path) > 1:
             account_path = "/" + "/".join(table_path[:-1])
         account_url = "{}://{}{}?{}".format(
             parsed_url.scheme,
-            parsed_url.netloc.rstrip('/'),
+            parsed_url.netloc.rstrip("/"),
             account_path,
-            parsed_url.query)
+            parsed_url.query,
+        )
         table_name = unquote(table_path[-1])
         if not table_name:
-            raise ValueError("Invalid URL. Please provide a URL with a valid table name")
+            raise ValueError(
+                "Invalid URL. Please provide a URL with a valid table name"
+            )
         return cls(account_url, table_name=table_name, credential=credential, **kwargs)
 
     @distributed_trace_async
     async def get_table_access_policy(
-            self,
-            **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> dict[str,AccessPolicy]
         """
@@ -157,22 +175,28 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :rtype: dict[str,~azure.data.tables.AccessPolicy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        timeout = kwargs.pop('timeout', None)
+        timeout = kwargs.pop("timeout", None)
         try:
             _, identifiers = await self._client.table.get_access_policy(
                 table=self.table_name,
                 timeout=timeout,
-                cls=kwargs.pop('cls', None) or _return_headers_and_deserialized,
-                **kwargs)
+                cls=kwargs.pop("cls", None) or _return_headers_and_deserialized,
+                **kwargs
+            )
         except HttpResponseError as error:
             _process_table_error(error)
-        return {s.id: s.access_policy or AccessPolicy(start=None, expiry=None, permission=None) for s in identifiers}
+        return {
+            s.id: s.access_policy
+            or AccessPolicy(start=None, expiry=None, permission=None)
+            for s in identifiers
+        }
 
     @distributed_trace_async
     async def set_table_access_policy(
-            self,
-            signed_identifiers,  # type: dict[str,AccessPolicy]
-            **kwargs):
+        self,
+        signed_identifiers,  # type: dict[str,AccessPolicy]
+        **kwargs
+    ):
         # type: (...) -> None
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
 
@@ -192,16 +216,14 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         signed_identifiers = identifiers  # type: ignore
         try:
             await self._client.table.set_access_policy(
-                table=self.table_name,
-                table_acl=signed_identifiers or None,
-                **kwargs)
+                table=self.table_name, table_acl=signed_identifiers or None, **kwargs
+            )
         except HttpResponseError as error:
             _process_table_error(error)
 
     @distributed_trace_async
     async def create_table(
-            self,
-            **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str,str]
         """Creates a new table under the given account.
@@ -223,15 +245,15 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         try:
             metadata, _ = await self._client.table.create(
                 table_properties,
-                cls=kwargs.pop('cls', _return_headers_and_deserialized))
+                cls=kwargs.pop("cls", _return_headers_and_deserialized),
+            )
             return _trim_service_metadata(metadata)
         except HttpResponseError as error:
             _process_table_error(error)
 
     @distributed_trace_async
     async def delete_table(
-            self,
-            **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Deletes the table under the current account.
@@ -256,10 +278,10 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
     @distributed_trace_async
     async def delete_entity(
-            self,
-            partition_key,  # type: str
-            row_key,  # type: str
-            **kwargs  # type: Any
+        self,
+        partition_key,  # type: str
+        row_key,  # type: str
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Deletes the specified entity in a table.
@@ -283,24 +305,31 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :dedent: 8
                 :caption: Adding an entity to a Table
         """
-        if_match, _ = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
-                                                                match_condition=kwargs.pop('match_condition', None)),
-                                                    etag_param='etag', match_param='match_condition')
+        if_match, _ = _get_match_headers(
+            kwargs=dict(
+                kwargs,
+                etag=kwargs.pop("etag", None),
+                match_condition=kwargs.pop("match_condition", None),
+            ),
+            etag_param="etag",
+            match_param="match_condition",
+        )
         try:
             await self._client.table.delete_entity(
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                if_match=if_match or '*',
-                **kwargs)
+                if_match=if_match or "*",
+                **kwargs
+            )
         except HttpResponseError as error:
             _process_table_error(error)
 
     @distributed_trace_async
     async def create_entity(
-            self,
-            entity,  # type: Union[TableEntity, Dict[str,str]]
-            **kwargs  # type: Any
+        self,
+        entity,  # type: Union[TableEntity, Dict[str,str]]
+        **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str,str]
         """Insert entity in a table.
@@ -323,12 +352,12 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         if "PartitionKey" in entity and "RowKey" in entity:
             entity = _add_entity_properties(entity)
         else:
-            raise ValueError('PartitionKey and RowKey were not provided in entity')
+            raise ValueError("PartitionKey and RowKey were not provided in entity")
         try:
             metadata, _ = await self._client.table.insert_entity(
                 table=self.table_name,
                 table_entity_properties=entity,
-                cls=kwargs.pop('cls', _return_headers_and_deserialized),
+                cls=kwargs.pop("cls", _return_headers_and_deserialized),
                 **kwargs
             )
             return _trim_service_metadata(metadata)
@@ -337,10 +366,10 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
     @distributed_trace_async
     async def update_entity(
-            self,
-            entity,  # type: Union[TableEntity, Dict[str,str]]
-            mode=UpdateMode.MERGE,  # type: UpdateMode
-            **kwargs  # type: Any
+        self,
+        entity,  # type: Union[TableEntity, Dict[str,str]]
+        mode=UpdateMode.MERGE,  # type: UpdateMode
+        **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str,str]
         """Update entity in a table.
@@ -366,12 +395,18 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :dedent: 8
                 :caption: Querying entities from a TableClient
         """
-        if_match, _ = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
-                                                                match_condition=kwargs.pop('match_condition', None)),
-                                                    etag_param='etag', match_param='match_condition')
+        if_match, _ = _get_match_headers(
+            kwargs=dict(
+                kwargs,
+                etag=kwargs.pop("etag", None),
+                match_condition=kwargs.pop("match_condition", None),
+            ),
+            etag_param="etag",
+            match_param="match_condition",
+        )
 
-        partition_key = entity['PartitionKey']
-        row_key = entity['RowKey']
+        partition_key = entity["PartitionKey"]
+        row_key = entity["RowKey"]
         entity = _add_entity_properties(entity)
         try:
             metadata = None
@@ -382,26 +417,28 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                     row_key=row_key,
                     table_entity_properties=entity,
                     if_match=if_match or "*",
-                    cls=kwargs.pop('cls', _return_headers_and_deserialized),
-                    **kwargs)
+                    cls=kwargs.pop("cls", _return_headers_and_deserialized),
+                    **kwargs
+                )
             elif mode is UpdateMode.MERGE:
                 metadata, _ = await self._client.table.merge_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
                     if_match=if_match or "*",
-                    cls=kwargs.pop('cls', _return_headers_and_deserialized),
-                    table_entity_properties=entity, **kwargs)
+                    cls=kwargs.pop("cls", _return_headers_and_deserialized),
+                    table_entity_properties=entity,
+                    **kwargs
+                )
             else:
-                raise ValueError('Mode type is not supported')
+                raise ValueError("Mode type is not supported")
             return _trim_service_metadata(metadata)
         except HttpResponseError as error:
             _process_table_error(error)
 
     @distributed_trace
     def list_entities(
-            self,
-            **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[TableEntity]
         """Lists entities in a table.
@@ -422,10 +459,10 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :dedent: 8
                 :caption: Querying entities from a TableClient
         """
-        user_select = kwargs.pop('select', None)
+        user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
             user_select = ", ".join(user_select)
-        top = kwargs.pop('results_per_page', None)
+        top = kwargs.pop("results_per_page", None)
 
         command = functools.partial(self._client.table.query_entities, **kwargs)
         return AsyncItemPaged(
@@ -433,14 +470,14 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             table=self.table_name,
             results_per_page=top,
             select=user_select,
-            page_iterator_class=TableEntityPropertiesPaged
+            page_iterator_class=TableEntityPropertiesPaged,
         )
 
     @distributed_trace
     def query_entities(
-            self,
-            filter,  # type: str  # pylint: disable = W0622
-            **kwargs
+        self,
+        filter,  # type: str  # pylint: disable=redefined-builtin
+        **kwargs
     ):
         # type: (...) -> AsyncItemPaged[TableEntity]
         """Lists entities in a table.
@@ -463,10 +500,12 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :dedent: 8
                 :caption: Querying entities from a TableClient
         """
-        parameters = kwargs.pop('parameters', None)
-        filter = self._parameter_filter_substitution(parameters, filter)  # pylint: disable = W0622
-        top = kwargs.pop('results_per_page', None)
-        user_select = kwargs.pop('select', None)
+        parameters = kwargs.pop("parameters", None)
+        filter = self._parameter_filter_substitution(
+            parameters, filter
+        )  # pylint: disable = redefined-builtin
+        top = kwargs.pop("results_per_page", None)
+        user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
             user_select = ", ".join(user_select)
 
@@ -477,15 +516,15 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             results_per_page=top,
             filter=filter,
             select=user_select,
-            page_iterator_class=TableEntityPropertiesPaged
+            page_iterator_class=TableEntityPropertiesPaged,
         )
 
     @distributed_trace_async
     async def get_entity(
-            self,
-            partition_key,  # type: str
-            row_key,  # type: str
-            **kwargs  # type: Any
+        self,
+        partition_key,  # type: str
+        row_key,  # type: str
+        **kwargs  # type: Any
     ):
         # type: (...) -> TableEntity
         """Get a single entity in a table.
@@ -508,10 +547,12 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :caption: Getting an entity from PartitionKey and RowKey
         """
         try:
-            entity = await self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
-                                                                                        partition_key=partition_key,
-                                                                                        row_key=row_key,
-                                                                                        **kwargs)
+            entity = await self._client.table.query_entity_with_partition_and_row_key(
+                table=self.table_name,
+                partition_key=partition_key,
+                row_key=row_key,
+                **kwargs
+            )
 
             properties = _convert_to_entity(entity)
             return properties
@@ -520,10 +561,10 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
     @distributed_trace_async
     async def upsert_entity(
-            self,
-            entity,  # type: Union[TableEntity, Dict[str,str]]
-            mode=UpdateMode.MERGE,  # type: UpdateMode
-            **kwargs  # type: Any
+        self,
+        entity,  # type: Union[TableEntity, Dict[str,str]]
+        mode=UpdateMode.MERGE,  # type: UpdateMode
+        **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str,str]
         """Update/Merge or Insert entity into table.
@@ -546,8 +587,8 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :caption: Update/Merge or Insert an entity into a table
         """
 
-        partition_key = entity['PartitionKey']
-        row_key = entity['RowKey']
+        partition_key = entity["PartitionKey"]
+        row_key = entity["RowKey"]
         entity = _add_entity_properties(entity)
 
         try:
@@ -558,7 +599,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=entity,
-                    cls=kwargs.pop('cls', _return_headers_and_deserialized),
+                    cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
                 )
             elif mode is UpdateMode.REPLACE:
@@ -567,19 +608,22 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=entity,
-                    cls=kwargs.pop('cls', _return_headers_and_deserialized),
-                    **kwargs)
+                    cls=kwargs.pop("cls", _return_headers_and_deserialized),
+                    **kwargs
+                )
             else:
-                raise ValueError("""Update mode {} is not supported.
-                    For a list of supported modes see the UpdateMode enum""".format(mode))
+                raise ValueError(
+                    """Update mode {} is not supported.
+                    For a list of supported modes see the UpdateMode enum""".format(
+                        mode
+                    )
+                )
             return _trim_service_metadata(metadata)
         except HttpResponseError as error:
             _process_table_error(error)
 
     @distributed_trace
-    def create_batch(
-        self, **kwargs: Dict[str, Any]
-    ) -> TableBatchOperations:
+    def create_batch(self, **kwargs: Dict[str, Any]) -> TableBatchOperations:
         """Create a Batching object from a Table Client
 
         :return: Object containing requests and responses
@@ -596,9 +640,9 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         """
         return TableBatchOperations(
             self._client,
-            self._client._serialize,  # pylint:disable=protected-access
-            self._client._deserialize,  # pylint:disable=protected-access
-            self._client._config,  # pylint:disable=protected-access
+            self._client._serialize,  # pylint: disable=protected-access
+            self._client._deserialize,  # pylint: disable=protected-access
+            self._client._config,  # pylint: disable=protected-access
             self.table_name,
             self,
             **kwargs
@@ -606,9 +650,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
     @distributed_trace_async
     async def send_batch(
-        self,
-        batch: TableBatchOperations,
-        **kwargs: Dict[Any, str]
+        self, batch: TableBatchOperations, **kwargs: Dict[Any, str]
     ) -> BatchTransactionResult:
         """Commit a TableBatchOperations to send requests to the server
 
@@ -625,4 +667,6 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :dedent: 8
                 :caption: Using batches to send multiple requests at once
         """
-        return await self._batch_send(batch._entities, *batch._requests, **kwargs) # pylint:disable=protected-access
+        return await self._batch_send(
+            batch._entities, *batch._requests, **kwargs  # pylint: disable=protected-access
+        )

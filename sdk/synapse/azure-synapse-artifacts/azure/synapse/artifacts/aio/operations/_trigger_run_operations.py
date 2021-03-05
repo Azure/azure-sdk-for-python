@@ -12,7 +12,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -31,7 +31,7 @@ class TriggerRunOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -87,7 +87,7 @@ class TriggerRunOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CloudError, response)
+            error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -143,7 +143,7 @@ class TriggerRunOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CloudError, response)
+            error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -153,9 +153,9 @@ class TriggerRunOperations:
 
     async def query_trigger_runs_by_workspace(
         self,
-        filter_parameters: "models.RunFilterParameters",
+        filter_parameters: "_models.RunFilterParameters",
         **kwargs
-    ) -> "models.TriggerRunsQueryResponse":
+    ) -> "_models.TriggerRunsQueryResponse":
         """Query trigger runs.
 
         :param filter_parameters: Parameters to filter the pipeline run.
@@ -165,7 +165,7 @@ class TriggerRunOperations:
         :rtype: ~azure.synapse.artifacts.models.TriggerRunsQueryResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerRunsQueryResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerRunsQueryResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -199,7 +199,7 @@ class TriggerRunOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CloudError, response)
+            error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('TriggerRunsQueryResponse', pipeline_response)

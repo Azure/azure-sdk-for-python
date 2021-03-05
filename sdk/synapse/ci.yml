@@ -4,6 +4,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -15,6 +16,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -28,15 +30,19 @@ extends:
   parameters:
     ServiceDirectory: synapse
     Artifacts:
-    - name: azure_synapse_accesscontrol
+    - name: azure-synapse-accesscontrol
       safeName: azuresynapseaccesscontrol
-    - name: azure_synapse_spark
+    - name: azure-synapse-spark
       safeName: azuresynapsespark
-    - name: azure_synapse_artifacts
+    - name: azure-synapse-artifacts
       safeName: azuresynapseartifacts
-    - name: azure_synapse
+    - name: azure-synapse-monitoring
+      safeName: azuresynapsemonitoring
+    - name: azure-synapse-managedprivateendpoints
+      safeName: azuresynapsemanagedprivateendpoints
+    - name: azure-synapse
       safeName: azuresynapse
-    - name: azure_synapse_nspkg
+    - name: azure-synapse-nspkg
       safeName: azuresynapsenspkg
-    - name: azure_mgmt_synapse
+    - name: azure-mgmt-synapse
       safeName: azuremgmtsynapse

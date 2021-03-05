@@ -21,14 +21,15 @@ class AppServiceCredential(AsyncContextManager, GetTokenMixin):
 
         client_args = _get_client_args(**kwargs)
         if client_args:
+            self._available = True
             self._client = AsyncManagedIdentityClient(**client_args)
         else:
-            self._client = None
+            self._available = False
 
     async def get_token(  # pylint:disable=invalid-overridden-method
         self, *scopes: str, **kwargs: "Any"
     ) -> "AccessToken":
-        if not self._client:
+        if not self._available:
             raise CredentialUnavailableError(
                 message="App Service managed identity configuration not found in environment"
             )

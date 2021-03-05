@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class BastionHostsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -137,7 +137,13 @@ class BastionHostsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'bastionHostName': self._serialize.url("bastion_host_name", bastion_host_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -157,7 +163,7 @@ class BastionHostsOperations(object):
         bastion_host_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BastionHost"
+        # type: (...) -> "_models.BastionHost"
         """Gets the specified Bastion Host.
 
         :param resource_group_name: The name of the resource group.
@@ -169,7 +175,7 @@ class BastionHostsOperations(object):
         :rtype: ~azure.mgmt.network.v2020_06_01.models.BastionHost
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BastionHost"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BastionHost"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -214,11 +220,11 @@ class BastionHostsOperations(object):
         self,
         resource_group_name,  # type: str
         bastion_host_name,  # type: str
-        parameters,  # type: "models.BastionHost"
+        parameters,  # type: "_models.BastionHost"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BastionHost"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BastionHost"]
+        # type: (...) -> "_models.BastionHost"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BastionHost"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -272,10 +278,10 @@ class BastionHostsOperations(object):
         self,
         resource_group_name,  # type: str
         bastion_host_name,  # type: str
-        parameters,  # type: "models.BastionHost"
+        parameters,  # type: "_models.BastionHost"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.BastionHost"]
+        # type: (...) -> LROPoller["_models.BastionHost"]
         """Creates or updates the specified Bastion Host.
 
         :param resource_group_name: The name of the resource group.
@@ -295,7 +301,7 @@ class BastionHostsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BastionHost"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BastionHost"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -320,7 +326,13 @@ class BastionHostsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'bastionHostName': self._serialize.url("bastion_host_name", bastion_host_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -338,7 +350,7 @@ class BastionHostsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.BastionHostListResult"]
+        # type: (...) -> Iterable["_models.BastionHostListResult"]
         """Lists all Bastion Hosts in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -346,7 +358,7 @@ class BastionHostsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_06_01.models.BastionHostListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BastionHostListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BastionHostListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -406,7 +418,7 @@ class BastionHostsOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.BastionHostListResult"]
+        # type: (...) -> Iterable["_models.BastionHostListResult"]
         """Lists all Bastion Hosts in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -416,7 +428,7 @@ class BastionHostsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_06_01.models.BastionHostListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BastionHostListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BastionHostListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

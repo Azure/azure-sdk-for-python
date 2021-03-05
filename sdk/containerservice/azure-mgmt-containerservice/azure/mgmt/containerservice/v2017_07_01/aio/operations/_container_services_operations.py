@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ContainerServicesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,7 +46,7 @@ class ContainerServicesOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.ContainerServiceListResult"]:
+    ) -> AsyncIterable["_models.ContainerServiceListResult"]:
         """Gets a list of container services in the specified subscription.
 
         Gets a list of container services in the specified subscription. The operation returns
@@ -58,7 +58,7 @@ class ContainerServicesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ContainerServiceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContainerServiceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -117,10 +117,10 @@ class ContainerServicesOperations:
         self,
         resource_group_name: str,
         container_service_name: str,
-        parameters: "models.ContainerService",
+        parameters: "_models.ContainerService",
         **kwargs
-    ) -> "models.ContainerService":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ContainerService"]
+    ) -> "_models.ContainerService":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContainerService"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -177,9 +177,9 @@ class ContainerServicesOperations:
         self,
         resource_group_name: str,
         container_service_name: str,
-        parameters: "models.ContainerService",
+        parameters: "_models.ContainerService",
         **kwargs
-    ) -> AsyncLROPoller["models.ContainerService"]:
+    ) -> AsyncLROPoller["_models.ContainerService"]:
         """Creates or updates a container service.
 
         Creates or updates a container service with the specified configuration of orchestrator,
@@ -203,7 +203,7 @@ class ContainerServicesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ContainerService"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContainerService"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -228,7 +228,13 @@ class ContainerServicesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'containerServiceName': self._serialize.url("container_service_name", container_service_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -247,7 +253,7 @@ class ContainerServicesOperations:
         resource_group_name: str,
         container_service_name: str,
         **kwargs
-    ) -> "models.ContainerService":
+    ) -> "_models.ContainerService":
         """Gets the properties of the specified container service.
 
         Gets the properties of the specified container service in the specified subscription and
@@ -264,7 +270,7 @@ class ContainerServicesOperations:
         :rtype: ~azure.mgmt.containerservice.v2017_07_01.models.ContainerService
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ContainerService"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContainerService"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -397,7 +403,13 @@ class ContainerServicesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'containerServiceName': self._serialize.url("container_service_name", container_service_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -415,7 +427,7 @@ class ContainerServicesOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ContainerServiceListResult"]:
+    ) -> AsyncIterable["_models.ContainerServiceListResult"]:
         """Gets a list of container services in the specified resource group.
 
         Gets a list of container services in the specified subscription and resource group. The
@@ -429,7 +441,7 @@ class ContainerServicesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ContainerServiceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContainerServiceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -490,7 +502,7 @@ class ContainerServicesOperations:
         location: str,
         resource_type: Optional[str] = None,
         **kwargs
-    ) -> "models.OrchestratorVersionProfileListResult":
+    ) -> "_models.OrchestratorVersionProfileListResult":
         """Gets a list of supported orchestrators in the specified subscription.
 
         Gets a list of supported orchestrators in the specified subscription. The operation returns
@@ -506,7 +518,7 @@ class ContainerServicesOperations:
         :rtype: ~azure.mgmt.containerservice.v2017_07_01.models.OrchestratorVersionProfileListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OrchestratorVersionProfileListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OrchestratorVersionProfileListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

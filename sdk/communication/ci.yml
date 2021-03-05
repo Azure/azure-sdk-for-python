@@ -5,6 +5,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -16,6 +17,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -29,13 +31,15 @@ extends:
   parameters:
     ServiceDirectory: communication
     Artifacts:
-    - name: azure_communication_nspkg
+    - name: azure-communication-nspkg
       safeName: azurecommunicationnspkg
-    - name: azure_communication_administration
-      safeName: azurecommunicationadministration
-    - name: azure_communication_chat
+    - name: azure-communication-identity
+      safeName: azurecommunicationidentity
+    - name: azure-communication-chat
       safeName: azurecommunicationchat
-    - name: azure_mgmt_communication
+    - name: azure-mgmt-communication
       safeName: azuremgmtcommunication
-    - name: azure_communication_sms
+    - name: azure-communication-sms
       safeName: azurecommunicationsms
+    - name: azure-communication-phonenumbers
+      safeName: azurecommunicationphonenumbers

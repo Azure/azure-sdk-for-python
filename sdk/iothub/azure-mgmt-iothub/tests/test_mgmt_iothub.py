@@ -24,11 +24,13 @@ class MgmtIoTHubTest(AzureMgmtTestCase):
         account_name = self.get_resource_name('iot')
         
         is_available = self.iothub_client.iot_hub_resource.check_name_availability(
-            account_name
+            {
+                "name": account_name
+            }
         )
         self.assertTrue(is_available.name_available)
 
-        async_iot_hub = self.iothub_client.iot_hub_resource.create_or_update(
+        async_iot_hub = self.iothub_client.iot_hub_resource.begin_create_or_update(
             resource_group.name,
             account_name,
             {
@@ -88,7 +90,7 @@ class MgmtIoTHubTest(AzureMgmtTestCase):
             account_name
         ))
 
-        async_delete = self.iothub_client.iot_hub_resource.delete(
+        async_delete = self.iothub_client.iot_hub_resource.begin_delete(
             resource_group.name,
             account_name
         )
@@ -98,7 +100,7 @@ class MgmtIoTHubTest(AzureMgmtTestCase):
     def test_iothub_consumer_group(self, resource_group, location):
         account_name = self.get_resource_name('iot')
 
-        async_iot_hub = self.iothub_client.iot_hub_resource.create_or_update(
+        async_iot_hub = self.iothub_client.iot_hub_resource.begin_create_or_update(
             resource_group.name,
             account_name,
             {

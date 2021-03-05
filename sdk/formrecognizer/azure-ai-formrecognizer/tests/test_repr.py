@@ -35,8 +35,9 @@ def form_word(bounding_box):
 
 @pytest.fixture
 def form_line(bounding_box, form_word):
-    model = _models.FormLine(text="Word Word", bounding_box=bounding_box[0], words=[form_word[0], form_word[0]], page_number=1)
-    model_repr = "FormLine(text=Word Word, bounding_box={}, words=[{}, {}], page_number=1, kind=line)".format(bounding_box[1], form_word[1], form_word[1])[:1024]
+    appearance = _models.TextAppearance(style=_models.TextStyle(name="other", confidence=1.0))
+    model = _models.FormLine(text="Word Word", bounding_box=bounding_box[0], words=[form_word[0], form_word[0]], page_number=1, appearance=appearance)
+    model_repr = "FormLine(text=Word Word, bounding_box={}, words=[{}, {}], page_number=1, kind=line, appearance={})".format(bounding_box[1], form_word[1], form_word[1], appearance)[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -52,9 +53,9 @@ def form_table_cell(bounding_box, form_word):
     return model, model_repr
 
 @pytest.fixture
-def form_table(form_table_cell):
-    model = _models.FormTable(page_number=1, cells=[form_table_cell[0], form_table_cell[0]], row_count=3, column_count=4)
-    model_repr = "FormTable(page_number=1, cells=[{}, {}], row_count=3, column_count=4)".format(form_table_cell[1], form_table_cell[1])[:1024]
+def form_table(form_table_cell, bounding_box):
+    model = _models.FormTable(page_number=1, cells=[form_table_cell[0], form_table_cell[0]], row_count=3, column_count=4, bounding_box=bounding_box[0])
+    model_repr = "FormTable(page_number=1, cells=[{}, {}], row_count=3, column_count=4, bounding_box={})".format(form_table_cell[1], form_table_cell[1], bounding_box[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class DeletedWebAppsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,7 +49,7 @@ class DeletedWebAppsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DeletedWebAppCollection"]
+        # type: (...) -> Iterable["_models.DeletedWebAppCollection"]
         """Get all deleted apps for a subscription.
 
         Description for Get all deleted apps for a subscription.
@@ -59,7 +59,7 @@ class DeletedWebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.DeletedWebAppCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedWebAppCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedWebAppCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -104,7 +104,7 @@ class DeletedWebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -120,7 +120,7 @@ class DeletedWebAppsOperations(object):
         location,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DeletedWebAppCollection"]
+        # type: (...) -> Iterable["_models.DeletedWebAppCollection"]
         """Get all deleted apps for a subscription at location.
 
         Description for Get all deleted apps for a subscription at location.
@@ -132,7 +132,7 @@ class DeletedWebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.DeletedWebAppCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedWebAppCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedWebAppCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -178,7 +178,7 @@ class DeletedWebAppsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -195,7 +195,7 @@ class DeletedWebAppsOperations(object):
         deleted_site_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeletedSite"
+        # type: (...) -> "_models.DeletedSite"
         """Get deleted app for a subscription at location.
 
         Description for Get deleted app for a subscription at location.
@@ -209,7 +209,7 @@ class DeletedWebAppsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.DeletedSite
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedSite"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedSite"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -240,7 +240,7 @@ class DeletedWebAppsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DeletedSite', pipeline_response)

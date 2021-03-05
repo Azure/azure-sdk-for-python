@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-resource/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions?api-version=2019-11-01
   response:
@@ -24,7 +24,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 17 Sep 2020 09:04:47 GMT
+      - Fri, 26 Feb 2021 07:40:58 GMT
       expires:
       - '-1'
       pragma:
@@ -48,7 +48,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-resource/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/locations?api-version=2019-11-01
   response:
@@ -106,7 +106,8 @@ interactions:
         Pacific"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/centraluseuap","name":"centraluseuap","displayName":"Central
         US EUAP","regionalDisplayName":"(US) Central US EUAP","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"US","longitude":"-93.6208","latitude":"41.5908","pairedRegion":[{"name":"eastus2euap","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastus2euap"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastus2euap","name":"eastus2euap","displayName":"East
         US 2 EUAP","regionalDisplayName":"(US) East US 2 EUAP","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"US","longitude":"-78.3889","latitude":"36.6681","pairedRegion":[{"name":"centraluseuap","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/centraluseuap"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/westcentralus","name":"westcentralus","displayName":"West
-        Central US","regionalDisplayName":"(US) West Central US","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"US","longitude":"-110.234","latitude":"40.890","physicalLocation":"Wyoming","pairedRegion":[{"name":"westus2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/westus2"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/southafricawest","name":"southafricawest","displayName":"South
+        Central US","regionalDisplayName":"(US) West Central US","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"US","longitude":"-110.234","latitude":"40.890","physicalLocation":"Wyoming","pairedRegion":[{"name":"westus2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/westus2"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/westus3","name":"westus3","displayName":"West
+        US 3","regionalDisplayName":"(US) West US 3","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"US","longitude":"-112.074036","latitude":"33.448376","physicalLocation":"Phoenix","pairedRegion":[{"name":"eastus","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastus"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/southafricawest","name":"southafricawest","displayName":"South
         Africa West","regionalDisplayName":"(Africa) South Africa West","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"Africa","longitude":"18.843266","latitude":"-34.075691","physicalLocation":"Cape
         Town","pairedRegion":[{"name":"southafricanorth","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/southafricanorth"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/australiacentral","name":"australiacentral","displayName":"Australia
         Central","regionalDisplayName":"(Asia Pacific) Australia Central","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"Asia
@@ -138,11 +139,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '25098'
+      - '25532'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 17 Sep 2020 09:04:48 GMT
+      - Fri, 26 Feb 2021 07:40:59 GMT
       expires:
       - '-1'
       pragma:
@@ -166,7 +167,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-resource/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000?api-version=2019-11-01
   response:
@@ -181,7 +182,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 17 Sep 2020 09:04:48 GMT
+      - Fri, 26 Feb 2021 07:40:59 GMT
       expires:
       - '-1'
       pragma:

@@ -5,25 +5,27 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
 import time
 import pytest
-from azure.data.tables._models import TableAnalyticsLogging, Metrics, RetentionPolicy, CorsRule
 
-from msrest.exceptions import ValidationError  # TODO This should be an azure-core error.
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils import AzureTestCase
+
+from azure.data.tables import (
+    TableServiceClient,
+    TableAnalyticsLogging,
+    Metrics,
+    RetentionPolicy,
+    CorsRule
+)
 from azure.core.exceptions import HttpResponseError
 
-from azure.data.tables import TableServiceClient
-
 from _shared.testcase import TableTestCase
-
-from devtools_testutils import CachedResourceGroupPreparer, CachedStorageAccountPreparer
+from preparers import TablesPreparer
 
 # ------------------------------------------------------------------------------
 
 
-class TableServicePropertiesTest(TableTestCase):
+class TableServicePropertiesTest(AzureTestCase, TableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):
         assert prop is not None
@@ -99,14 +101,11 @@ class TableServicePropertiesTest(TableTestCase):
         assert ret1.days ==  ret2.days
 
     # --Test cases per service ---------------------------------------
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_table_service_properties(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_table_service_properties(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support service properties")
-        tsc = TableServiceClient(url, storage_account_key)
+        url = self.account_url(tables_storage_account_name, "table")
+        tsc = TableServiceClient(url, tables_primary_storage_account_key)
         # Act
         resp = tsc.set_service_properties(
             analytics_logging=TableAnalyticsLogging(),
@@ -120,16 +119,12 @@ class TableServicePropertiesTest(TableTestCase):
             time.sleep(30)
         self._assert_properties_default(tsc.get_service_properties())
 
-
     # --Test cases per feature ---------------------------------------
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_set_logging(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_set_logging(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support service properties")
-        tsc = TableServiceClient(url, storage_account_key)
+        url = self.account_url(tables_storage_account_name, "table")
+        tsc = TableServiceClient(url, tables_primary_storage_account_key)
         logging = TableAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
@@ -141,14 +136,11 @@ class TableServicePropertiesTest(TableTestCase):
         received_props = tsc.get_service_properties()
         self._assert_logging_equal(received_props['analytics_logging'], logging)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_set_hour_metrics(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_set_hour_metrics(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support service properties")
-        tsc = TableServiceClient(url, storage_account_key)
+        url = self.account_url(tables_storage_account_name, "table")
+        tsc = TableServiceClient(url, tables_primary_storage_account_key)
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
@@ -160,14 +152,11 @@ class TableServicePropertiesTest(TableTestCase):
         received_props = tsc.get_service_properties()
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_set_minute_metrics(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_set_minute_metrics(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support service properties")
-        tsc = TableServiceClient(url, storage_account_key)
+        url = self.account_url(tables_storage_account_name, "table")
+        tsc = TableServiceClient(url, tables_primary_storage_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=5))
 
@@ -180,14 +169,11 @@ class TableServicePropertiesTest(TableTestCase):
         received_props = tsc.get_service_properties()
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_set_cors(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_set_cors(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support service properties")
-        tsc = TableServiceClient(url, storage_account_key)
+        url = self.account_url(tables_storage_account_name, "table")
+        tsc = TableServiceClient(url, tables_primary_storage_account_key)
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
 
         allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
@@ -214,19 +200,10 @@ class TableServicePropertiesTest(TableTestCase):
         self._assert_cors_equal(received_props['cors'], cors)
 
     # --Test cases for errors ---------------------------------------
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_retention_no_days(self, resource_group, location, storage_account, storage_account_key):
-        # Assert
-        pytest.raises(ValueError,
-                          RetentionPolicy,
-                          True, None)
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_too_many_cors_rules(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_too_many_cors_rules(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        tsc = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)
         cors = []
         for i in range(0, 6):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
@@ -235,11 +212,10 @@ class TableServicePropertiesTest(TableTestCase):
         pytest.raises(HttpResponseError,
                           tsc.set_service_properties, None, None, None, cors)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_retention_too_long(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_retention_too_long(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        tsc = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=366))
 
@@ -249,6 +225,9 @@ class TableServicePropertiesTest(TableTestCase):
                           None, None, minute_metrics)
 
 
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()
+class TestTableUnitTest(TableTestCase):
+    def test_retention_no_days(self):
+        # Assert
+        pytest.raises(ValueError,
+                          RetentionPolicy,
+                          True, None)

@@ -1,0 +1,846 @@
+interactions:
+- request:
+    body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
+      "latest", "stringIndexType": "UnicodeCodePoint"}}], "entityRecognitionPiiTasks":
+      [{"parameters": {"model-version": "latest", "stringIndexType": "UnicodeCodePoint"}}],
+      "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest"}}]},
+      "analysisInput": {"documents": [{"id": "0", "text": "hello world", "language":
+      "en"}, {"id": "1", "text": "hello world", "language": "en"}, {"id": "2", "text":
+      "hello world", "language": "en"}, {"id": "3", "text": "hello world", "language":
+      "en"}, {"id": "4", "text": "hello world", "language": "en"}, {"id": "5", "text":
+      "hello world", "language": "en"}, {"id": "6", "text": "hello world", "language":
+      "en"}, {"id": "7", "text": "hello world", "language": "en"}, {"id": "8", "text":
+      "hello world", "language": "en"}, {"id": "9", "text": "hello world", "language":
+      "en"}, {"id": "10", "text": "hello world", "language": "en"}, {"id": "11", "text":
+      "hello world", "language": "en"}, {"id": "12", "text": "hello world", "language":
+      "en"}, {"id": "13", "text": "hello world", "language": "en"}, {"id": "14", "text":
+      "hello world", "language": "en"}, {"id": "15", "text": "hello world", "language":
+      "en"}, {"id": "16", "text": "hello world", "language": "en"}, {"id": "17", "text":
+      "hello world", "language": "en"}, {"id": "18", "text": "hello world", "language":
+      "en"}, {"id": "19", "text": "hello world", "language": "en"}, {"id": "20", "text":
+      "hello world", "language": "en"}, {"id": "21", "text": "hello world", "language":
+      "en"}, {"id": "22", "text": "hello world", "language": "en"}, {"id": "23", "text":
+      "hello world", "language": "en"}, {"id": "24", "text": "hello world", "language":
+      "en"}]}}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Content-Length:
+      - '1712'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: ec521aa4-992e-487d-94a2-713460d28b30
+      date: Tue, 23 Feb 2021 17:07:49 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '32'
+    status:
+      code: 202
+      message: Accepted
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/analyze
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":0,"failed":0,"inProgress":3,"total":3}}'
+    headers:
+      apim-request-id: 7889bd5f-6481-4143-a5ff-908e3cfb7803
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:07:55 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '202'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: fc93ae72-bd48-450e-be58-dbe133ad9dd3
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:08:00 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '235'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: 34707db6-18fe-4044-b5a1-cf5bb5f741ba
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:08:05 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '220'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: 458bd468-aea7-4bd1-9073-a9b0d5780adf
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:08:10 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '235'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: dc3f860b-6b0d-4bee-a0a8-a0b4345331a4
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:08:16 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '295'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: c2343d5b-1cce-4ad8-8087-a6d7e7e8862d
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:08:22 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '241'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: fca3127f-d504-4f85-9c99-dfd5d9f47eb0
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:08:27 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '260'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: 5c8cb6f9-24bf-464b-bb21-f6ed299e1811
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:08:33 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '265'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: 2adfc1fc-2675-4300-bb6a-b74eb7f70fc3
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:08:38 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '247'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: f9c2df66-ede1-4d87-bccd-132045acee9d
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:08:43 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '246'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: d04ed350-1d1a-43cc-8c80-c237f53739f0
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:08:49 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '311'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: 59439c94-aace-46c7-8ca1-71e4d4929e61
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:08:54 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '261'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: d3332c46-80de-48f2-998d-fd01bd24b3aa
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:08:59 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '414'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: 9e6025b2-d26c-48d3-8de4-6f13f2039fce
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:09:06 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '275'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: 223a2453-73d3-412b-9018-e5456de6be58
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:09:11 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '249'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: a92ce705-97ad-453c-8ff1-55ba5ef9fb43
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:09:16 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '259'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: 56e385d4-fc41-4ded-a030-b30ea530fedf
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:09:22 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '214'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: 78176b53-5b17-438e-9e94-6091ae3de497
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:09:27 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '263'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: 21ae39ef-a2c4-4490-afc5-92a71ac6b56a
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:09:32 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '239'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: 311c6cdd-0039-4cd1-baf1-19b312ce4a30
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:09:38 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '280'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: 42ebf63f-b909-4757-84c6-38f69240448b
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:09:44 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '241'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: c14ad1f8-efe6-4d7d-8b97-aac62fa048e3
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:09:49 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '287'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: 3df3a729-98d4-4ef0-bb97-5ca793611d22
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:09:54 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '682'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: 061bb153-b2cb-474e-8fab-cab65ccd08ba
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:10:00 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '306'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"1","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"2","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"3","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"4","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"5","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"6","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"7","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"8","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"9","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"10","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"11","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"12","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"13","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"14","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"15","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"16","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"17","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"18","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"19","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: 61f833b1-f4cb-4eb4-a7de-bf0614b06657
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:10:05 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '396'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"1","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"2","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"3","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"4","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"5","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"6","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"7","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"8","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"9","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"10","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"11","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"12","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"13","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"14","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"15","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"16","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"17","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"18","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"19","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: e2e94764-39ea-4928-8617-299706ec11b5
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:10:11 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '447'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"1","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"2","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"3","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"4","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"5","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"6","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"7","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"8","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"9","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"10","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"11","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"12","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"13","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"14","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"15","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"16","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"17","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"18","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"19","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: a78ebeb0-eb1a-4ec2-a343-9044d452c5f8
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:10:17 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '388'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"1","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"2","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"3","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"4","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"5","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"6","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"7","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"8","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"9","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"10","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"11","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"12","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"13","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"14","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"15","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"16","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"17","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"18","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"19","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: b6ff2adf-307f-443e-8913-7cf3f16edbdc
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:10:23 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '426'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"1","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"2","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"3","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"4","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"5","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"6","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"7","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"8","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"9","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"10","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"11","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"12","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"13","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"14","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"15","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"16","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"17","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"18","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"19","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: ac5109ff-fed3-42c2-9b29-a2044f668841
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:10:28 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '394'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"1","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"2","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"3","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"4","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"5","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"6","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"7","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"8","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"9","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"10","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"11","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"12","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"13","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"14","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"15","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"16","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"17","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"18","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"19","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: f8d0b51c-4eb5-44b4-9898-02502874a2ee
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:10:34 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '406'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"1","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"2","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"3","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"4","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"5","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"6","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"7","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"8","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"9","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"10","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"11","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"12","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"13","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"14","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"15","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"16","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"17","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"18","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"19","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: fde072ee-9c15-4b20-8185-ce73372deb3e
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:10:39 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '388'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"1","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"2","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"3","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"4","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"5","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"6","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"7","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"8","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"9","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"10","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"11","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"12","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"13","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"14","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"15","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"16","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"17","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"18","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"19","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: ff7dcf46-fa60-45c5-9ec2-35ec8b32a726
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:10:45 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '395'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"1","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"2","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"3","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"4","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"5","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"6","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"7","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"8","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"9","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"10","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"11","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"12","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"13","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"14","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"15","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"16","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"17","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"18","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"19","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: c9d8abb5-67fe-4e46-a5fc-54c4a09e235b
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:10:50 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '425'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"succeeded","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":3,"failed":0,"inProgress":0,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"1","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"2","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"3","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"4","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"5","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"6","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"7","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"8","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"9","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"10","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"11","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"12","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"13","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"14","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"15","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"16","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"17","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"18","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"19","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"redactedText":"hello
+        world","id":"0","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"1","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"2","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"3","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"4","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"5","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"6","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"7","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"8","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"9","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"10","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"11","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"12","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"13","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"14","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"15","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"16","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"17","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"18","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"19","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"statistics":{"documentsCount":20,"validDocumentsCount":20,"erroneousDocumentsCount":0,"transactionsCount":20},"documents":[{"id":"0","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"1","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"3","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"4","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"5","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"6","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"7","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"8","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"9","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"10","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"11","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"12","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"13","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"14","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"15","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"16","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"17","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"18","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]},{"id":"19","keyPhrases":["world"],"statistics":{"charactersCount":11,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]},"@nextLink":"https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?$skip=20&$top=20"}'
+    headers:
+      apim-request-id: 6cd2402e-c1db-4cc7-a590-691ba21336b5
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:10:56 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '571'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=True
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json, text/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=false&$top=20&$skip=20
+  response:
+    body:
+      string: '{"jobId":"89c50b51-757d-44cf-9e81-c280e1f2444a","lastUpdateDateTime":"2021-02-23T17:07:52Z","createdDateTime":"2021-02-23T17:07:50Z","expirationDateTime":"2021-02-24T17:07:50Z","status":"succeeded","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:07:52Z"},"completed":3,"failed":0,"inProgress":0,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"documents":[{"id":"20","entities":[],"warnings":[]},{"id":"21","entities":[],"warnings":[]},{"id":"22","entities":[],"warnings":[]},{"id":"23","entities":[],"warnings":[]},{"id":"24","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"documents":[{"redactedText":"hello
+        world","id":"20","entities":[],"warnings":[]},{"redactedText":"hello world","id":"21","entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"22","entities":[],"warnings":[]},{"redactedText":"hello world","id":"23","entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"24","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:07:52.2170953Z","state":"succeeded","results":{"documents":[{"id":"20","keyPhrases":["world"],"warnings":[]},{"id":"21","keyPhrases":["world"],"warnings":[]},{"id":"22","keyPhrases":["world"],"warnings":[]},{"id":"23","keyPhrases":["world"],"warnings":[]},{"id":"24","keyPhrases":["world"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 88318578-e1ac-42db-902d-ecffd4637d07
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:10:56 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '287'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/analyze/jobs/89c50b51-757d-44cf-9e81-c280e1f2444a?showStats=false&$top=20&$skip=20
+version: 1

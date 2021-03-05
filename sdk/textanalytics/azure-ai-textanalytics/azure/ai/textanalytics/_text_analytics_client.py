@@ -12,10 +12,13 @@ from typing import (  # pylint: disable=unused-import
     Dict,
     TYPE_CHECKING,
 )
+from functools import partial
+from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._base_client import TextAnalyticsClientBase
-from ._request_handlers import _validate_input
+from ._request_handlers import _validate_input, _determine_action_type, _check_string_index_type_arg
 from ._response_handlers import (
     process_http_response_error,
     entities_result,
@@ -23,7 +26,18 @@ from ._response_handlers import (
     key_phrases_result,
     sentiment_result,
     language_result,
-    pii_entities_result
+    pii_entities_result,
+    healthcare_paged_result,
+    analyze_paged_result,
+    _get_deserialize
+)
+
+from ._models import AnalyzeBatchActionsType
+
+from ._lro import (
+    TextAnalyticsOperationResourcePolling,
+    AnalyzeBatchActionsLROPollingMethod,
+    AnalyzeHealthcareEntitiesLROPollingMethod,
 )
 
 if TYPE_CHECKING:
@@ -38,6 +52,11 @@ if TYPE_CHECKING:
         AnalyzeSentimentResult,
         DocumentError,
         RecognizePiiEntitiesResult,
+        RecognizeEntitiesAction,
+        RecognizePiiEntitiesAction,
+        ExtractKeyPhrasesAction,
+        AnalyzeHealthcareEntitiesResultItem,
+        AnalyzeBatchActionsResult,
     )
 
 
@@ -91,9 +110,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             credential=credential,
             **kwargs
         )
+        self._api_version = kwargs.get("api_version")
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
-        self._string_code_unit = None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
+        self._string_index_type_default = None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
+        self._deserialize = _get_deserialize()
+
 
     @distributed_trace
     def detect_language(  # type: ignore
@@ -126,6 +148,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword str model_version: Version of the model used on the service side for scoring,
             e.g. "latest", "2019-10-01". If a model version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :return: The combined list of :class:`~azure.ai.textanalytics.DetectLanguageResult` and
@@ -192,8 +215,13 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
+        :keyword str string_index_type: Specifies the method used to interpret string offsets.
+            `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+            you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
+            see https://aka.ms/text-analytics-offsets
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeEntitiesResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
@@ -215,8 +243,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
-        if self._string_code_unit:
-            kwargs.update({"string_index_type": self._string_code_unit})
+        string_index_type = _check_string_index_type_arg(
+            kwargs.pop("string_index_type", None),
+            self._api_version,
+            string_index_type_default=self._string_index_type_default
+        )
+        if string_index_type:
+            kwargs.update({"string_index_type": string_index_type})
+
         try:
             return self._client.entities_recognition_general(
                 documents=docs,
@@ -260,12 +294,17 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword domain_filter: Filters the response entities to ones only included in the specified domain.
-            I.e., if set to 'PHI', will only return entities in the Protected Healthcare Information domain.
+            I.e., if set to 'phi', will only return entities in the Protected Healthcare Information domain.
             See https://aka.ms/tanerpii for more information.
         :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomainType
+        :keyword str string_index_type: Specifies the method used to interpret string offsets.
+            `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+            you can also pass in `Utf16CodePoint` or `TextElements_v8`. For additional information
+            see https://aka.ms/text-analytics-offsets
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizePiiEntitiesResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
@@ -288,8 +327,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         domain_filter = kwargs.pop("domain_filter", None)
-        if self._string_code_unit:
-            kwargs.update({"string_index_type": self._string_code_unit})
+
+        string_index_type = _check_string_index_type_arg(
+            kwargs.pop("string_index_type", None),
+            self._api_version,
+            string_index_type_default=self._string_index_type_default
+        )
+        if string_index_type:
+            kwargs.update({"string_index_type": string_index_type})
+
         try:
             return self._client.entities_recognition_pii(
                 documents=docs,
@@ -341,8 +387,13 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
+        :keyword str string_index_type: Specifies the method used to interpret string offsets.
+            `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+            you can also pass in `Utf16CodePoint` or `TextElements_v8`. For additional information
+            see https://aka.ms/text-analytics-offsets
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeLinkedEntitiesResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
@@ -364,8 +415,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
-        if self._string_code_unit:
-            kwargs.update({"string_index_type": self._string_code_unit})
+
+        string_index_type = _check_string_index_type_arg(
+            kwargs.pop("string_index_type", None),
+            self._api_version,
+            string_index_type_default=self._string_index_type_default
+        )
+        if string_index_type:
+            kwargs.update({"string_index_type": string_index_type})
+
         try:
             return self._client.entities_linking(
                 documents=docs,
@@ -376,6 +434,113 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             )
         except HttpResponseError as error:
             process_http_response_error(error)
+
+    def _healthcare_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
+        healthcare_result = self._deserialize(
+            self._client.models(api_version="v3.1-preview.3").HealthcareJobState,
+            raw_response
+        )
+        return healthcare_paged_result(
+            doc_id_order,
+            self._client.health_status,
+            raw_response,
+            healthcare_result,
+            headers,
+            show_stats=show_stats
+        )
+
+    @distributed_trace
+    def begin_analyze_healthcare_entities(  # type: ignore
+        self,
+        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        **kwargs  # type: Any
+    ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeHealthcareEntitiesResultItem]]
+        """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
+
+        NOTE: this endpoint is currently in gated preview, meaning your subscription needs to be allow-listed
+        for you to use this endpoint. More information about that here:
+        https://aka.ms/text-analytics-health-request-access
+
+        Entities are associated with references that can be found in existing knowledge bases,
+        such as UMLS, CHV, MSH, etc.
+
+        Relations are comprised of a pair of entities and a directional relationship.
+
+        :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
+            list[dict[str, str]]
+        :keyword str model_version: This value indicates which model will
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword str string_index_type: Specifies the method used to interpret string offsets.
+            `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+            you can also pass in `Utf16CodePoint` or `TextElements_v8`. For additional information
+            see https://aka.ms/text-analytics-offsets
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an AnalyzeHealthcareEntitiesLROPoller. Call `result()` on the this
+            object to return a pageable of :class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResultItem`.
+        :rtype:
+            ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[
+            ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResultItem]]
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_analyze_healthcare_entities.py
+                :start-after: [START analyze_healthcare_entities]
+                :end-before: [END analyze_healthcare_entities]
+                :language: python
+                :dedent: 8
+                :caption: Recognize healthcare entities in a batch of documents.
+        """
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
+        docs = _validate_input(documents, "language", language)
+        model_version = kwargs.pop("model_version", None)
+        show_stats = kwargs.pop("show_stats", False)
+        polling_interval = kwargs.pop("polling_interval", 5)
+        continuation_token = kwargs.pop("continuation_token", None)
+        string_index_type = kwargs.pop("string_index_type", self._string_index_type_default)
+
+        doc_id_order = [doc.get("id") for doc in docs]
+
+        try:
+            return self._client.begin_health(
+                docs,
+                model_version=model_version,
+                string_index_type=string_index_type,
+                cls=kwargs.pop("cls", partial(self._healthcare_result_callback, doc_id_order, show_stats=show_stats)),
+                polling=AnalyzeHealthcareEntitiesLROPollingMethod(
+                    text_analytics_client=self._client,
+                    timeout=polling_interval,
+                    lro_algorithms=[
+                        TextAnalyticsOperationResourcePolling(show_stats=show_stats)
+                    ],
+                    **kwargs),
+                continuation_token=continuation_token,
+                **kwargs
+            )
+
+        except ValueError as error:
+            if "API version v3.0 does not have operation 'begin_health'" in str(error):
+                raise ValueError(
+                    "'begin_analyze_healthcare_entities' method is only available for API version \
+                    v3.1-preview.3 and up."
+                )
+            raise error
+
+        except HttpResponseError as error:
+            process_http_response_error(error)
+
 
     @distributed_trace
     def extract_key_phrases(  # type: ignore
@@ -410,6 +575,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :return: The combined list of :class:`~azure.ai.textanalytics.ExtractKeyPhrasesResult` and
@@ -474,6 +640,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             :class:`~azure.ai.textanalytics.SentenceSentiment` objects
             will have property `mined_opinions` containing the result of this analysis. Only available for
             API version v3.1-preview and up.
+        :keyword str string_index_type: Specifies the method used to interpret string offsets.  Possible values are
+            'UnicodeCodePoint', 'TextElements_v8', or 'Utf16CodeUnit'.  The default value is 'UnicodeCodePoint'.
+            Only available for API version v3.1-preview and up.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -482,10 +651,16 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
+        :keyword str string_index_type: Specifies the method used to interpret string offsets.
+            `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+            you can also pass in `Utf16CodePoint` or `TextElements_v8`. For additional information
+            see https://aka.ms/text-analytics-offsets
         .. versionadded:: v3.1-preview
             The *show_opinion_mining* parameter.
+            The *string_index_type* parameter.
         :return: The combined list of :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
@@ -508,11 +683,18 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         show_opinion_mining = kwargs.pop("show_opinion_mining", None)
-        if self._string_code_unit:
-            kwargs.update({"string_index_type": self._string_code_unit})
+
+        string_index_type = _check_string_index_type_arg(
+            kwargs.pop("string_index_type", None),
+            self._api_version,
+            string_index_type_default=self._string_index_type_default
+        )
+        if string_index_type:
+            kwargs.update({"string_index_type": string_index_type})
 
         if show_opinion_mining is not None:
             kwargs.update({"opinion_mining": show_opinion_mining})
+
         try:
             return self._client.sentiment(
                 documents=docs,
@@ -527,5 +709,129 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     "'show_opinion_mining' is only available for API version v3.1-preview and up"
                 )
             raise error
+        except HttpResponseError as error:
+            process_http_response_error(error)
+
+    def _analyze_result_callback(self, doc_id_order, task_order, raw_response, _, headers, show_stats=False):
+        analyze_result = self._deserialize(
+            self._client.models(api_version="v3.1-preview.3").AnalyzeJobState, # pylint: disable=protected-access
+            raw_response
+        )
+        return analyze_paged_result(
+            doc_id_order,
+            task_order,
+            self._client.analyze_status,
+            raw_response,
+            analyze_result,
+            headers,
+            show_stats=show_stats
+        )
+
+    @distributed_trace
+    def begin_analyze_batch_actions(  # type: ignore
+        self,
+        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        actions,  # type: List[Union[RecognizeEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction]]
+        **kwargs  # type: Any
+    ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeBatchActionsResult]]
+        """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
+
+        :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
+            list[dict[str, str]]
+        :param actions: A heterogeneous list of actions to perform on the inputted documents.
+            Each action object encapsulates the parameters used for the particular action type.
+            The outputted action results will be in the same order you inputted your actions.
+            Duplicate actions in list not supported.
+        :type actions:
+            list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction]
+        :keyword str display_name: An optional display name to set for the requested analysis.
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
+            entire batch. For example, use "en" for English; "es" for Spanish etc.
+            If not set, uses "en" for English as default. Per-document language will
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Text Analytics API.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 30 seconds.
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return a pageable heterogeneous list of the action results in the order
+            the actions were sent in this method.
+        :rtype:
+            ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[
+            ~azure.ai.textanalytics.AnalyzeBatchActionsResult]]
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_analyze_batch_actions.py
+                :start-after: [START analyze]
+                :end-before: [END analyze]
+                :language: python
+                :dedent: 8
+                :caption: Start a long-running operation to perform a variety of text analysis
+                    actions over a batch of documents.
+        """
+
+        display_name = kwargs.pop("display_name", None)
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
+        docs = self._client.models(api_version="v3.1-preview.3").MultiLanguageBatchInput(
+            documents=_validate_input(documents, "language", language)
+        )
+        show_stats = kwargs.pop("show_stats", False)
+        polling_interval = kwargs.pop("polling_interval", 5)
+        continuation_token = kwargs.pop("continuation_token", None)
+
+        doc_id_order = [doc.get("id") for doc in docs.documents]
+        task_order = [_determine_action_type(action) for action in actions]
+
+        try:
+            analyze_tasks = self._client.models(api_version='v3.1-preview.3').JobManifestTasks(
+                entity_recognition_tasks=[
+                    t.to_generated() for t in
+                    [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES]
+                ],
+                entity_recognition_pii_tasks=[
+                    t.to_generated() for t in
+                    [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES]
+                ],
+                key_phrase_extraction_tasks=[
+                    t.to_generated() for t in
+                    [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES]
+                ]
+            )
+            analyze_body = self._client.models(api_version='v3.1-preview.3').AnalyzeBatchInput(
+                display_name=display_name,
+                tasks=analyze_tasks,
+                analysis_input=docs
+            )
+            return self._client.begin_analyze(
+                body=analyze_body,
+                cls=kwargs.pop("cls", partial(
+                    self._analyze_result_callback, doc_id_order, task_order, show_stats=show_stats
+                )),
+                polling=AnalyzeBatchActionsLROPollingMethod(
+                    timeout=polling_interval,
+                    lro_algorithms=[
+                        TextAnalyticsOperationResourcePolling(show_stats=show_stats)
+                    ],
+                    **kwargs),
+                continuation_token=continuation_token,
+                **kwargs
+            )
+
+        except ValueError as error:
+            if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
+                raise ValueError(
+                    "'begin_analyze_batch_actions' endpoint is only available for API version v3.1-preview.3"
+                )
+            raise error
+
         except HttpResponseError as error:
             process_http_response_error(error)

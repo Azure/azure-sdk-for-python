@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class AppServicePlansOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,7 +47,7 @@ class AppServicePlansOperations:
         self,
         detailed: Optional[bool] = None,
         **kwargs
-    ) -> AsyncIterable["models.AppServicePlanCollection"]:
+    ) -> AsyncIterable["_models.AppServicePlanCollection"]:
         """Get all App Service plans for a subscription.
 
         Description for Get all App Service plans for a subscription.
@@ -61,7 +61,7 @@ class AppServicePlansOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.AppServicePlanCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServicePlanCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServicePlanCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -108,7 +108,7 @@ class AppServicePlansOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -123,7 +123,7 @@ class AppServicePlansOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.AppServicePlanCollection"]:
+    ) -> AsyncIterable["_models.AppServicePlanCollection"]:
         """Get all App Service plans in a resource group.
 
         Description for Get all App Service plans in a resource group.
@@ -135,7 +135,7 @@ class AppServicePlansOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.AppServicePlanCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServicePlanCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServicePlanCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -181,7 +181,7 @@ class AppServicePlansOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -197,7 +197,7 @@ class AppServicePlansOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> Optional["models.AppServicePlan"]:
+    ) -> Optional["_models.AppServicePlan"]:
         """Get an App Service plan.
 
         Description for Get an App Service plan.
@@ -211,7 +211,7 @@ class AppServicePlansOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.AppServicePlan or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.AppServicePlan"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.AppServicePlan"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -242,7 +242,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -259,10 +259,10 @@ class AppServicePlansOperations:
         self,
         resource_group_name: str,
         name: str,
-        app_service_plan: "models.AppServicePlan",
+        app_service_plan: "_models.AppServicePlan",
         **kwargs
-    ) -> "models.AppServicePlan":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServicePlan"]
+    ) -> "_models.AppServicePlan":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServicePlan"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -298,7 +298,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -317,9 +317,9 @@ class AppServicePlansOperations:
         self,
         resource_group_name: str,
         name: str,
-        app_service_plan: "models.AppServicePlan",
+        app_service_plan: "_models.AppServicePlan",
         **kwargs
-    ) -> AsyncLROPoller["models.AppServicePlan"]:
+    ) -> AsyncLROPoller["_models.AppServicePlan"]:
         """Creates or updates an App Service Plan.
 
         Description for Creates or updates an App Service Plan.
@@ -341,7 +341,7 @@ class AppServicePlansOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServicePlan"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServicePlan"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -366,7 +366,13 @@ class AppServicePlansOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -430,7 +436,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -442,9 +448,9 @@ class AppServicePlansOperations:
         self,
         resource_group_name: str,
         name: str,
-        app_service_plan: "models.AppServicePlanPatchResource",
+        app_service_plan: "_models.AppServicePlanPatchResource",
         **kwargs
-    ) -> "models.AppServicePlan":
+    ) -> "_models.AppServicePlan":
         """Creates or updates an App Service Plan.
 
         Description for Creates or updates an App Service Plan.
@@ -460,7 +466,7 @@ class AppServicePlansOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.AppServicePlan
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServicePlan"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServicePlan"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -496,7 +502,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -516,7 +522,7 @@ class AppServicePlansOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> List["models.Capability"]:
+    ) -> List["_models.Capability"]:
         """List all capabilities of an App Service plan.
 
         Description for List all capabilities of an App Service plan.
@@ -530,7 +536,7 @@ class AppServicePlansOperations:
         :rtype: list[~azure.mgmt.web.v2019_08_01.models.Capability]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.Capability"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.Capability"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -561,7 +567,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[Capability]', pipeline_response)
@@ -579,7 +585,7 @@ class AppServicePlansOperations:
         namespace_name: str,
         relay_name: str,
         **kwargs
-    ) -> "models.HybridConnection":
+    ) -> "_models.HybridConnection":
         """Retrieve a Hybrid Connection in use in an App Service plan.
 
         Description for Retrieve a Hybrid Connection in use in an App Service plan.
@@ -597,7 +603,7 @@ class AppServicePlansOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.HybridConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HybridConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -630,7 +636,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
@@ -699,7 +705,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -714,7 +720,7 @@ class AppServicePlansOperations:
         namespace_name: str,
         relay_name: str,
         **kwargs
-    ) -> "models.HybridConnectionKey":
+    ) -> "_models.HybridConnectionKey":
         """Get the send key name and value of a Hybrid Connection.
 
         Description for Get the send key name and value of a Hybrid Connection.
@@ -732,7 +738,7 @@ class AppServicePlansOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.HybridConnectionKey
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnectionKey"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HybridConnectionKey"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -765,7 +771,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnectionKey', pipeline_response)
@@ -783,7 +789,7 @@ class AppServicePlansOperations:
         namespace_name: str,
         relay_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ResourceCollection"]:
+    ) -> AsyncIterable["_models.ResourceCollection"]:
         """Get all apps that use a Hybrid Connection in an App Service Plan.
 
         Description for Get all apps that use a Hybrid Connection in an App Service Plan.
@@ -801,7 +807,7 @@ class AppServicePlansOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.ResourceCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -850,7 +856,7 @@ class AppServicePlansOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -866,7 +872,7 @@ class AppServicePlansOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> "models.HybridConnectionLimits":
+    ) -> "_models.HybridConnectionLimits":
         """Get the maximum number of Hybrid Connections allowed in an App Service plan.
 
         Description for Get the maximum number of Hybrid Connections allowed in an App Service plan.
@@ -880,7 +886,7 @@ class AppServicePlansOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.HybridConnectionLimits
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnectionLimits"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HybridConnectionLimits"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -911,7 +917,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnectionLimits', pipeline_response)
@@ -927,7 +933,7 @@ class AppServicePlansOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> AsyncIterable["models.HybridConnectionCollection"]:
+    ) -> AsyncIterable["_models.HybridConnectionCollection"]:
         """Retrieve all Hybrid Connections in use in an App Service plan.
 
         Description for Retrieve all Hybrid Connections in use in an App Service plan.
@@ -941,7 +947,7 @@ class AppServicePlansOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.HybridConnectionCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnectionCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HybridConnectionCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -988,7 +994,7 @@ class AppServicePlansOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1056,7 +1062,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1072,7 +1078,7 @@ class AppServicePlansOperations:
         filter: Optional[str] = None,
         top: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.WebAppCollection"]:
+    ) -> AsyncIterable["_models.WebAppCollection"]:
         """Get all apps associated with an App Service plan.
 
         Description for Get all apps associated with an App Service plan.
@@ -1095,7 +1101,7 @@ class AppServicePlansOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.WebAppCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebAppCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1148,7 +1154,7 @@ class AppServicePlansOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1209,7 +1215,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('object', pipeline_response)
@@ -1226,7 +1232,7 @@ class AppServicePlansOperations:
         name: str,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.CsmUsageQuotaCollection"]:
+    ) -> AsyncIterable["_models.CsmUsageQuotaCollection"]:
         """Gets server farm usage information.
 
         Description for Gets server farm usage information.
@@ -1243,7 +1249,7 @@ class AppServicePlansOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.CsmUsageQuotaCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CsmUsageQuotaCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CsmUsageQuotaCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1292,7 +1298,7 @@ class AppServicePlansOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1308,7 +1314,7 @@ class AppServicePlansOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> List["models.VnetInfo"]:
+    ) -> List["_models.VnetInfo"]:
         """Get all Virtual Networks associated with an App Service plan.
 
         Description for Get all Virtual Networks associated with an App Service plan.
@@ -1322,7 +1328,7 @@ class AppServicePlansOperations:
         :rtype: list[~azure.mgmt.web.v2019_08_01.models.VnetInfo]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.VnetInfo"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.VnetInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1353,7 +1359,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[VnetInfo]', pipeline_response)
@@ -1370,7 +1376,7 @@ class AppServicePlansOperations:
         name: str,
         vnet_name: str,
         **kwargs
-    ) -> Optional["models.VnetInfo"]:
+    ) -> Optional["_models.VnetInfo"]:
         """Get a Virtual Network associated with an App Service plan.
 
         Description for Get a Virtual Network associated with an App Service plan.
@@ -1386,7 +1392,7 @@ class AppServicePlansOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetInfo or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VnetInfo"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.VnetInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1418,7 +1424,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -1438,7 +1444,7 @@ class AppServicePlansOperations:
         vnet_name: str,
         gateway_name: str,
         **kwargs
-    ) -> "models.VnetGateway":
+    ) -> "_models.VnetGateway":
         """Get a Virtual Network gateway.
 
         Description for Get a Virtual Network gateway.
@@ -1456,7 +1462,7 @@ class AppServicePlansOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetGateway
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VnetGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1489,7 +1495,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetGateway', pipeline_response)
@@ -1506,9 +1512,9 @@ class AppServicePlansOperations:
         name: str,
         vnet_name: str,
         gateway_name: str,
-        connection_envelope: "models.VnetGateway",
+        connection_envelope: "_models.VnetGateway",
         **kwargs
-    ) -> "models.VnetGateway":
+    ) -> "_models.VnetGateway":
         """Update a Virtual Network gateway.
 
         Description for Update a Virtual Network gateway.
@@ -1528,7 +1534,7 @@ class AppServicePlansOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetGateway
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VnetGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1566,7 +1572,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetGateway', pipeline_response)
@@ -1583,7 +1589,7 @@ class AppServicePlansOperations:
         name: str,
         vnet_name: str,
         **kwargs
-    ) -> List["models.VnetRoute"]:
+    ) -> List["_models.VnetRoute"]:
         """Get all routes that are associated with a Virtual Network in an App Service plan.
 
         Description for Get all routes that are associated with a Virtual Network in an App Service
@@ -1600,7 +1606,7 @@ class AppServicePlansOperations:
         :rtype: list[~azure.mgmt.web.v2019_08_01.models.VnetRoute]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.VnetRoute"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.VnetRoute"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1632,7 +1638,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[VnetRoute]', pipeline_response)
@@ -1650,7 +1656,7 @@ class AppServicePlansOperations:
         vnet_name: str,
         route_name: str,
         **kwargs
-    ) -> Optional[List["models.VnetRoute"]]:
+    ) -> Optional[List["_models.VnetRoute"]]:
         """Get a Virtual Network route in an App Service plan.
 
         Description for Get a Virtual Network route in an App Service plan.
@@ -1668,7 +1674,7 @@ class AppServicePlansOperations:
         :rtype: list[~azure.mgmt.web.v2019_08_01.models.VnetRoute] or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[List["models.VnetRoute"]]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[List["_models.VnetRoute"]]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1701,7 +1707,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -1720,9 +1726,9 @@ class AppServicePlansOperations:
         name: str,
         vnet_name: str,
         route_name: str,
-        route: "models.VnetRoute",
+        route: "_models.VnetRoute",
         **kwargs
-    ) -> Optional["models.VnetRoute"]:
+    ) -> Optional["_models.VnetRoute"]:
         """Create or update a Virtual Network route in an App Service plan.
 
         Description for Create or update a Virtual Network route in an App Service plan.
@@ -1742,7 +1748,7 @@ class AppServicePlansOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetRoute or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VnetRoute"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.VnetRoute"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1780,7 +1786,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200, 400, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -1851,7 +1857,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1865,9 +1871,9 @@ class AppServicePlansOperations:
         name: str,
         vnet_name: str,
         route_name: str,
-        route: "models.VnetRoute",
+        route: "_models.VnetRoute",
         **kwargs
-    ) -> Optional["models.VnetRoute"]:
+    ) -> Optional["_models.VnetRoute"]:
         """Create or update a Virtual Network route in an App Service plan.
 
         Description for Create or update a Virtual Network route in an App Service plan.
@@ -1887,7 +1893,7 @@ class AppServicePlansOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetRoute or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VnetRoute"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.VnetRoute"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1925,7 +1931,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [200, 400, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -1992,7 +1998,7 @@ class AppServicePlansOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

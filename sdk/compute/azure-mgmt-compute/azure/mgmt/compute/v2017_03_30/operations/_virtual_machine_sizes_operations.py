@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class VirtualMachineSizesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class VirtualMachineSizesOperations(object):
         location,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.VirtualMachineSizeListResult"]
+        # type: (...) -> Iterable["_models.VirtualMachineSizeListResult"]
         """Lists all available virtual machine sizes for a subscription in a location.
 
         :param location: The location upon which virtual-machine-sizes is queried.
@@ -60,7 +60,7 @@ class VirtualMachineSizesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.v2017_03_30.models.VirtualMachineSizeListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineSizeListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineSizeListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

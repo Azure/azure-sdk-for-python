@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class VpnConnectionsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -54,7 +54,7 @@ class VpnConnectionsOperations(object):
         connection_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VpnConnection"
+        # type: (...) -> "_models.VpnConnection"
         """Retrieves the details of a vpn connection.
 
         :param resource_group_name: The resource group name of the VpnGateway.
@@ -68,7 +68,7 @@ class VpnConnectionsOperations(object):
         :rtype: ~azure.mgmt.network.v2018_06_01.models.VpnConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -100,7 +100,7 @@ class VpnConnectionsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VpnConnection', pipeline_response)
@@ -116,11 +116,11 @@ class VpnConnectionsOperations(object):
         resource_group_name,  # type: str
         gateway_name,  # type: str
         connection_name,  # type: str
-        vpn_connection_parameters,  # type: "models.VpnConnection"
+        vpn_connection_parameters,  # type: "_models.VpnConnection"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VpnConnection"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnConnection"]
+        # type: (...) -> "_models.VpnConnection"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -157,7 +157,7 @@ class VpnConnectionsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -177,10 +177,10 @@ class VpnConnectionsOperations(object):
         resource_group_name,  # type: str
         gateway_name,  # type: str
         connection_name,  # type: str
-        vpn_connection_parameters,  # type: "models.VpnConnection"
+        vpn_connection_parameters,  # type: "_models.VpnConnection"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.VpnConnection"]
+        # type: (...) -> LROPoller["_models.VpnConnection"]
         """Creates a vpn connection to a scalable vpn gateway if it doesn't exist else updates the
         existing connection.
 
@@ -203,7 +203,7 @@ class VpnConnectionsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnConnection"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -229,7 +229,14 @@ class VpnConnectionsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str'),
+            'connectionName': self._serialize.url("connection_name", connection_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -283,7 +290,7 @@ class VpnConnectionsOperations(object):
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -340,7 +347,14 @@ class VpnConnectionsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str'),
+            'connectionName': self._serialize.url("connection_name", connection_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -360,7 +374,7 @@ class VpnConnectionsOperations(object):
         gateway_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ListVpnConnectionsResult"]
+        # type: (...) -> Iterable["_models.ListVpnConnectionsResult"]
         """Retrieves all vpn connections for a particular virtual wan vpn gateway.
 
         :param resource_group_name: The resource group name of the VpnGateway.
@@ -372,7 +386,7 @@ class VpnConnectionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2018_06_01.models.ListVpnConnectionsResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListVpnConnectionsResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListVpnConnectionsResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -419,7 +433,7 @@ class VpnConnectionsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.Error, response)
+                error = self._deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

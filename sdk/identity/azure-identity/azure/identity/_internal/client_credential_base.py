@@ -23,8 +23,8 @@ class ClientCredentialBase(MsalCredential, GetTokenMixin):
     """Base class for credentials authenticating a service principal with a certificate or secret"""
 
     def __init__(self, **kwargs):
-        if kwargs.pop("_enable_persistent_cache", False):
-            allow_unencrypted = kwargs.pop("_allow_unencrypted_cache", False)
+        if kwargs.pop("enable_persistent_cache", False):
+            allow_unencrypted = kwargs.pop("allow_unencrypted_cache", False)
             cache = load_service_principal_cache(allow_unencrypted)
         else:
             cache = msal.TokenCache()

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class VpnLinkConnectionsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,7 +52,7 @@ class VpnLinkConnectionsOperations(object):
         connection_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ListVpnSiteLinkConnectionsResult"]
+        # type: (...) -> Iterable["_models.ListVpnSiteLinkConnectionsResult"]
         """Retrieves all vpn site link connections for a particular virtual wan vpn gateway vpn
         connection.
 
@@ -67,7 +67,7 @@ class VpnLinkConnectionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2019_12_01.models.ListVpnSiteLinkConnectionsResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListVpnSiteLinkConnectionsResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListVpnSiteLinkConnectionsResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

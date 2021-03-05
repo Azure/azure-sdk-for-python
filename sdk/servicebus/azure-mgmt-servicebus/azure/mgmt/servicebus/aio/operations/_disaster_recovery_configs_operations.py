@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class DisasterRecoveryConfigsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,9 +45,9 @@ class DisasterRecoveryConfigsOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        parameters: "models.CheckNameAvailability",
+        parameters: "_models.CheckNameAvailability",
         **kwargs
-    ) -> "models.CheckNameAvailabilityResult":
+    ) -> "_models.CheckNameAvailabilityResult":
         """Check the give namespace name availability.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -61,12 +61,12 @@ class DisasterRecoveryConfigsOperations:
         :rtype: ~azure.mgmt.servicebus.models.CheckNameAvailabilityResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CheckNameAvailabilityResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckNameAvailabilityResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -97,7 +97,7 @@ class DisasterRecoveryConfigsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CheckNameAvailabilityResult', pipeline_response)
@@ -113,7 +113,7 @@ class DisasterRecoveryConfigsOperations:
         resource_group_name: str,
         namespace_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ArmDisasterRecoveryListResult"]:
+    ) -> AsyncIterable["_models.ArmDisasterRecoveryListResult"]:
         """Gets all Alias(Disaster Recovery configurations).
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -125,12 +125,12 @@ class DisasterRecoveryConfigsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicebus.models.ArmDisasterRecoveryListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ArmDisasterRecoveryListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ArmDisasterRecoveryListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -172,7 +172,7 @@ class DisasterRecoveryConfigsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -188,9 +188,9 @@ class DisasterRecoveryConfigsOperations:
         resource_group_name: str,
         namespace_name: str,
         alias: str,
-        parameters: "models.ArmDisasterRecovery",
+        parameters: "_models.ArmDisasterRecovery",
         **kwargs
-    ) -> Optional["models.ArmDisasterRecovery"]:
+    ) -> Optional["_models.ArmDisasterRecovery"]:
         """Creates or updates a new Alias(Disaster Recovery configuration).
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -206,12 +206,12 @@ class DisasterRecoveryConfigsOperations:
         :rtype: ~azure.mgmt.servicebus.models.ArmDisasterRecovery or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ArmDisasterRecovery"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ArmDisasterRecovery"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -243,7 +243,7 @@ class DisasterRecoveryConfigsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -281,7 +281,7 @@ class DisasterRecoveryConfigsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -308,7 +308,7 @@ class DisasterRecoveryConfigsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -322,7 +322,7 @@ class DisasterRecoveryConfigsOperations:
         namespace_name: str,
         alias: str,
         **kwargs
-    ) -> "models.ArmDisasterRecovery":
+    ) -> "_models.ArmDisasterRecovery":
         """Retrieves Alias(Disaster Recovery configuration) for primary or secondary namespace.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -336,12 +336,12 @@ class DisasterRecoveryConfigsOperations:
         :rtype: ~azure.mgmt.servicebus.models.ArmDisasterRecovery
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ArmDisasterRecovery"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ArmDisasterRecovery"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -368,7 +368,7 @@ class DisasterRecoveryConfigsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ArmDisasterRecovery', pipeline_response)
@@ -405,7 +405,7 @@ class DisasterRecoveryConfigsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -432,7 +432,7 @@ class DisasterRecoveryConfigsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -445,6 +445,7 @@ class DisasterRecoveryConfigsOperations:
         resource_group_name: str,
         namespace_name: str,
         alias: str,
+        parameters: Optional["_models.FailoverProperties"] = None,
         **kwargs
     ) -> None:
         """Invokes GEO DR failover and reconfigure the alias to point to the secondary namespace.
@@ -455,6 +456,8 @@ class DisasterRecoveryConfigsOperations:
         :type namespace_name: str
         :param alias: The Disaster Recovery configuration name.
         :type alias: str
+        :param parameters: Parameters required to create an Alias(Disaster Recovery configuration).
+        :type parameters: ~azure.mgmt.servicebus.models.FailoverProperties
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -465,7 +468,8 @@ class DisasterRecoveryConfigsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
+        content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
@@ -484,15 +488,22 @@ class DisasterRecoveryConfigsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        request = self._client.post(url, query_parameters, header_parameters)
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        if parameters is not None:
+            body_content = self._serialize.body(parameters, 'FailoverProperties')
+        else:
+            body_content = None
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -506,7 +517,7 @@ class DisasterRecoveryConfigsOperations:
         namespace_name: str,
         alias: str,
         **kwargs
-    ) -> AsyncIterable["models.SBAuthorizationRuleListResult"]:
+    ) -> AsyncIterable["_models.SBAuthorizationRuleListResult"]:
         """Gets the authorization rules for a namespace.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -520,12 +531,12 @@ class DisasterRecoveryConfigsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicebus.models.SBAuthorizationRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SBAuthorizationRuleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SBAuthorizationRuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -568,7 +579,7 @@ class DisasterRecoveryConfigsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -577,7 +588,7 @@ class DisasterRecoveryConfigsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_authorization_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/AuthorizationRules'}  # type: ignore
+    list_authorization_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/authorizationRules'}  # type: ignore
 
     async def get_authorization_rule(
         self,
@@ -586,7 +597,7 @@ class DisasterRecoveryConfigsOperations:
         alias: str,
         authorization_rule_name: str,
         **kwargs
-    ) -> "models.SBAuthorizationRule":
+    ) -> "_models.SBAuthorizationRule":
         """Gets an authorization rule for a namespace by rule name.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -602,12 +613,12 @@ class DisasterRecoveryConfigsOperations:
         :rtype: ~azure.mgmt.servicebus.models.SBAuthorizationRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SBAuthorizationRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SBAuthorizationRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -635,7 +646,7 @@ class DisasterRecoveryConfigsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SBAuthorizationRule', pipeline_response)
@@ -644,7 +655,7 @@ class DisasterRecoveryConfigsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/AuthorizationRules/{authorizationRuleName}'}  # type: ignore
+    get_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/authorizationRules/{authorizationRuleName}'}  # type: ignore
 
     async def list_keys(
         self,
@@ -653,7 +664,7 @@ class DisasterRecoveryConfigsOperations:
         alias: str,
         authorization_rule_name: str,
         **kwargs
-    ) -> "models.AccessKeys":
+    ) -> "_models.AccessKeys":
         """Gets the primary and secondary connection strings for the namespace.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -669,12 +680,12 @@ class DisasterRecoveryConfigsOperations:
         :rtype: ~azure.mgmt.servicebus.models.AccessKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AccessKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AccessKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -702,7 +713,7 @@ class DisasterRecoveryConfigsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AccessKeys', pipeline_response)
@@ -711,4 +722,4 @@ class DisasterRecoveryConfigsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/AuthorizationRules/{authorizationRuleName}/listKeys'}  # type: ignore
+    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/authorizationRules/{authorizationRuleName}/listKeys'}  # type: ignore

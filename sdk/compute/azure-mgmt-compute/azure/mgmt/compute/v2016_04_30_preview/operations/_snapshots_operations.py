@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class SnapshotsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,11 +51,11 @@ class SnapshotsOperations(object):
         self,
         resource_group_name,  # type: str
         snapshot_name,  # type: str
-        snapshot,  # type: "models.Snapshot"
+        snapshot,  # type: "_models.Snapshot"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Snapshot"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Snapshot"]
+        # type: (...) -> "_models.Snapshot"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Snapshot"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -109,10 +109,10 @@ class SnapshotsOperations(object):
         self,
         resource_group_name,  # type: str
         snapshot_name,  # type: str
-        snapshot,  # type: "models.Snapshot"
+        snapshot,  # type: "_models.Snapshot"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.Snapshot"]
+        # type: (...) -> LROPoller["_models.Snapshot"]
         """Creates or updates a snapshot.
 
         :param resource_group_name: The name of the resource group.
@@ -133,7 +133,7 @@ class SnapshotsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Snapshot"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Snapshot"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -158,7 +158,13 @@ class SnapshotsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'snapshotName': self._serialize.url("snapshot_name", snapshot_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -176,11 +182,11 @@ class SnapshotsOperations(object):
         self,
         resource_group_name,  # type: str
         snapshot_name,  # type: str
-        snapshot,  # type: "models.SnapshotUpdate"
+        snapshot,  # type: "_models.SnapshotUpdate"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Snapshot"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Snapshot"]
+        # type: (...) -> "_models.Snapshot"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Snapshot"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -234,10 +240,10 @@ class SnapshotsOperations(object):
         self,
         resource_group_name,  # type: str
         snapshot_name,  # type: str
-        snapshot,  # type: "models.SnapshotUpdate"
+        snapshot,  # type: "_models.SnapshotUpdate"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.Snapshot"]
+        # type: (...) -> LROPoller["_models.Snapshot"]
         """Updates (patches) a snapshot.
 
         :param resource_group_name: The name of the resource group.
@@ -258,7 +264,7 @@ class SnapshotsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Snapshot"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Snapshot"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -283,7 +289,13 @@ class SnapshotsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'snapshotName': self._serialize.url("snapshot_name", snapshot_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -303,7 +315,7 @@ class SnapshotsOperations(object):
         snapshot_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Snapshot"
+        # type: (...) -> "_models.Snapshot"
         """Gets information about a snapshot.
 
         :param resource_group_name: The name of the resource group.
@@ -316,7 +328,7 @@ class SnapshotsOperations(object):
         :rtype: ~azure.mgmt.compute.v2016_04_30_preview.models.Snapshot
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Snapshot"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Snapshot"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -363,8 +375,8 @@ class SnapshotsOperations(object):
         snapshot_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.OperationStatusResponse"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
+        # type: (...) -> Optional["_models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatusResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -413,7 +425,7 @@ class SnapshotsOperations(object):
         snapshot_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.OperationStatusResponse"]
+        # type: (...) -> LROPoller["_models.OperationStatusResponse"]
         """Deletes a snapshot.
 
         :param resource_group_name: The name of the resource group.
@@ -432,7 +444,7 @@ class SnapshotsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationStatusResponse"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -456,7 +468,13 @@ class SnapshotsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'snapshotName': self._serialize.url("snapshot_name", snapshot_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -475,7 +493,7 @@ class SnapshotsOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SnapshotList"]
+        # type: (...) -> Iterable["_models.SnapshotList"]
         """Lists snapshots under a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -485,7 +503,7 @@ class SnapshotsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.v2016_04_30_preview.models.SnapshotList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SnapshotList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SnapshotList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -545,7 +563,7 @@ class SnapshotsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SnapshotList"]
+        # type: (...) -> Iterable["_models.SnapshotList"]
         """Lists snapshots under a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -553,7 +571,7 @@ class SnapshotsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.v2016_04_30_preview.models.SnapshotList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SnapshotList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SnapshotList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -612,11 +630,11 @@ class SnapshotsOperations(object):
         self,
         resource_group_name,  # type: str
         snapshot_name,  # type: str
-        grant_access_data,  # type: "models.GrantAccessData"
+        grant_access_data,  # type: "_models.GrantAccessData"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.AccessUri"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.AccessUri"]]
+        # type: (...) -> Optional["_models.AccessUri"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.AccessUri"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -668,10 +686,10 @@ class SnapshotsOperations(object):
         self,
         resource_group_name,  # type: str
         snapshot_name,  # type: str
-        grant_access_data,  # type: "models.GrantAccessData"
+        grant_access_data,  # type: "_models.GrantAccessData"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.AccessUri"]
+        # type: (...) -> LROPoller["_models.AccessUri"]
         """Grants access to a snapshot.
 
         :param resource_group_name: The name of the resource group.
@@ -693,7 +711,7 @@ class SnapshotsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AccessUri"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AccessUri"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -718,7 +736,13 @@ class SnapshotsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'snapshotName': self._serialize.url("snapshot_name", snapshot_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -738,8 +762,8 @@ class SnapshotsOperations(object):
         snapshot_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.OperationStatusResponse"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
+        # type: (...) -> Optional["_models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatusResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -788,7 +812,7 @@ class SnapshotsOperations(object):
         snapshot_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.OperationStatusResponse"]
+        # type: (...) -> LROPoller["_models.OperationStatusResponse"]
         """Revokes access to a snapshot.
 
         :param resource_group_name: The name of the resource group.
@@ -807,7 +831,7 @@ class SnapshotsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationStatusResponse"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -831,7 +855,13 @@ class SnapshotsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'snapshotName': self._serialize.url("snapshot_name", snapshot_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

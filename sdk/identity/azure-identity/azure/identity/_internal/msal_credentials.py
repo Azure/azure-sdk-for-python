@@ -40,8 +40,8 @@ class MsalCredential(ABC):
 
         self._cache = kwargs.pop("_cache", None)  # internal, for use in tests
         if not self._cache:
-            if kwargs.pop("_enable_persistent_cache", False):
-                allow_unencrypted = kwargs.pop("_allow_unencrypted_cache", False)
+            if kwargs.pop("enable_persistent_cache", False):
+                allow_unencrypted = kwargs.pop("allow_unencrypted_cache", False)
                 self._cache = load_user_cache(allow_unencrypted)
             else:
                 self._cache = msal.TokenCache()
@@ -57,14 +57,15 @@ class MsalCredential(ABC):
         # type: () -> msal.ClientApplication
         pass
 
-    def _create_app(self, cls):
-        # type: (Type[msal.ClientApplication]) -> msal.ClientApplication
+    def _create_app(self, cls, **kwargs):
+        # type: (Type[msal.ClientApplication], **Any) -> msal.ClientApplication
         app = cls(
             client_id=self._client_id,
             client_credential=self._client_credential,
             authority="{}/{}".format(self._authority, self._tenant_id),
             token_cache=self._cache,
             http_client=self._client,
+            **kwargs
         )
 
         return app

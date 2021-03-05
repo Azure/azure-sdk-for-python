@@ -20,12 +20,13 @@ from azure.mgmt.datamigration.models import (DataMigrationService,
                                              MigrationValidationOptions)
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
+@unittest.skip("skip test")
 class MgmtDataMigrationTest(AzureMgmtTestCase):
     location_name = 'centralus'
 
     def setUp(self):
         super(MgmtDataMigrationTest, self).setUp()
-        self.dms_sdk_client = self.create_mgmt_client(azure.mgmt.datamigration.DataMigrationServiceClient)
+        self.dms_sdk_client = self.create_mgmt_client(azure.mgmt.datamigration.DataMigrationManagementClient)
         self.network_sdk_client = self.create_mgmt_client(azure.mgmt.network.NetworkManagementClient)
 
     @ResourceGroupPreparer(name_prefix='dms_sdk_test', location=location_name)

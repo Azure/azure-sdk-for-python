@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 07 Nov 2020 01:23:17 GMT
+      - Fri, 18 Dec 2020 15:42:17 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:23:17 GMT
+      - Fri, 18 Dec 2020 15:42:17 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/Tables
+    uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttablee2da0d47"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttablee2da0d47"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Sat, 07 Nov 2020 01:23:17 GMT
+      - Fri, 18 Dec 2020 15:42:17 GMT
       location:
-      - https://tablesteststorname.table.core.windows.net/Tables('uttablee2da0d47')
+      - https://fake_table_account.table.core.windows.net/Tables('uttablee2da0d47')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -48,10 +48,10 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: '{"test5@odata.type": "Edm.DateTime", "test5": "2020-11-07T01:23:17Z", "test3":
-      3, "PartitionKey": "001", "test": true, "RowKey": "batch_merge", "test4": 1234567890,
-      "RowKey@odata.type": "Edm.String", "test2@odata.type": "Edm.String", "test2":
-      "value", "PartitionKey@odata.type": "Edm.String"}'
+    body: '{"PartitionKey": "001", "PartitionKey@odata.type": "Edm.String", "RowKey":
+      "batch_merge", "RowKey@odata.type": "Edm.String", "test": true, "test2": "value",
+      "test2@odata.type": "Edm.String", "test3": 3, "test4": 1234567890, "test5":
+      "2020-12-18T15:42:17Z", "test5@odata.type": "Edm.DateTime"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -66,29 +66,29 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 07 Nov 2020 01:23:17 GMT
+      - Fri, 18 Dec 2020 15:42:17 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:23:17 GMT
+      - Fri, 18 Dec 2020 15:42:17 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/uttablee2da0d47
+    uri: https://fake_table_account.table.core.windows.net/uttablee2da0d47
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttablee2da0d47/@Element","odata.etag":"W/\"datetime''2020-11-07T01%3A23%3A18.2808112Z''\"","PartitionKey":"001","RowKey":"batch_merge","Timestamp":"2020-11-07T01:23:18.2808112Z","test5@odata.type":"Edm.DateTime","test5":"2020-11-07T01:23:17Z","test3":3,"test":true,"test4":1234567890,"test2":"value"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttablee2da0d47/@Element","odata.etag":"W/\"datetime''2020-12-18T15%3A42%3A18.3088158Z''\"","PartitionKey":"001","RowKey":"batch_merge","Timestamp":"2020-12-18T15:42:18.3088158Z","test":true,"test2":"value","test3":3,"test4":1234567890,"test5@odata.type":"Edm.DateTime","test5":"2020-12-18T15:42:17Z"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Sat, 07 Nov 2020 01:23:17 GMT
+      - Fri, 18 Dec 2020 15:42:17 GMT
       etag:
-      - W/"datetime'2020-11-07T01%3A23%3A18.2808112Z'"
+      - W/"datetime'2020-12-18T15%3A42%3A18.3088158Z'"
       location:
-      - https://tablesteststorname.table.core.windows.net/uttablee2da0d47(PartitionKey='001',RowKey='batch_merge')
+      - https://fake_table_account.table.core.windows.net/uttablee2da0d47(PartitionKey='001',RowKey='batch_merge')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -112,27 +112,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 07 Nov 2020 01:23:17 GMT
+      - Fri, 18 Dec 2020 15:42:18 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:23:17 GMT
+      - Fri, 18 Dec 2020 15:42:18 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://tablesteststorname.table.core.windows.net/uttablee2da0d47(PartitionKey='001',RowKey='batch_merge')
+    uri: https://fake_table_account.table.core.windows.net/uttablee2da0d47(PartitionKey='001',RowKey='batch_merge')
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttablee2da0d47/@Element","odata.etag":"W/\"datetime''2020-11-07T01%3A23%3A18.2808112Z''\"","PartitionKey":"001","RowKey":"batch_merge","Timestamp":"2020-11-07T01:23:18.2808112Z","test5@odata.type":"Edm.DateTime","test5":"2020-11-07T01:23:17Z","test3":3,"test":true,"test4":1234567890,"test2":"value"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttablee2da0d47/@Element","odata.etag":"W/\"datetime''2020-12-18T15%3A42%3A18.3088158Z''\"","PartitionKey":"001","RowKey":"batch_merge","Timestamp":"2020-12-18T15:42:18.3088158Z","test":true,"test2":"value","test3":3,"test4":1234567890,"test5@odata.type":"Edm.DateTime","test5":"2020-12-18T15:42:17Z"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Sat, 07 Nov 2020 01:23:17 GMT
+      - Fri, 18 Dec 2020 15:42:17 GMT
       etag:
-      - W/"datetime'2020-11-07T01%3A23%3A18.2808112Z'"
+      - W/"datetime'2020-12-18T15%3A42%3A18.3088158Z'"
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -145,16 +145,18 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: "--batch_3d782e81-083b-4e2b-8867-791fede992b9\r\nContent-Type: multipart/mixed;
-      boundary=changeset_7ca66d10-46d9-4244-8097-2f418edef720\r\n\r\n--changeset_7ca66d10-46d9-4244-8097-2f418edef720\r\nContent-Type:
-      application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 0\r\n\r\nPATCH
-      https://tablestestxjz4vq7ewcdgud.table.core.windows.net/uttablee2da0d47(PartitionKey='001',RowKey='batch_merge')
-      HTTP/1.1\r\nIf-Match: *\r\nContent-Type: application/json\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion:
-      3.0\r\nAccept: application/json\r\nContent-Length: 177\r\nx-ms-date: Sat, 07
-      Nov 2020 01:23:17 GMT\r\nDate: Sat, 07 Nov 2020 01:23:17 GMT\r\nx-ms-client-request-id:
-      d0823f9e-2097-11eb-93ff-58961df361d1\r\n\r\n{\"PartitionKey\": \"001\", \"PartitionKey@odata.type\":
-      \"Edm.String\", \"RowKey@odata.type\": \"Edm.String\", \"RowKey\": \"batch_merge\",
-      \"test2\": \"value1\", \"test2@odata.type\": \"Edm.String\"}\r\n--changeset_7ca66d10-46d9-4244-8097-2f418edef720--\r\n\r\n--batch_3d782e81-083b-4e2b-8867-791fede992b9--\r\n"
+    body: "--batch_e124d559-e59e-4fcb-9619-470853598980\r\nContent-Type: multipart/mixed;\
+      \ boundary=changeset_f98c5483-d73d-4a26-983c-f9e4414fa2de\r\n\r\n--changeset_f98c5483-d73d-4a26-983c-f9e4414fa2de\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 0\r\n\r\nPATCH https://seankaneprim.table.core.windows.net/uttablee2da0d47(PartitionKey='001',RowKey='batch_merge')\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nIf-Match:\
+      \ *\r\nContent-Type: application/json\r\nAccept: application/json\r\nContent-Length:\
+      \ 177\r\nx-ms-date: Fri, 18 Dec 2020 15:42:18 GMT\r\nDate: Fri, 18 Dec 2020\
+      \ 15:42:18 GMT\r\nx-ms-client-request-id: 9c0c0329-4147-11eb-b429-58961df361d1\r\
+      \n\r\n{\"PartitionKey\": \"001\", \"PartitionKey@odata.type\": \"Edm.String\"\
+      , \"RowKey\": \"batch_merge\", \"RowKey@odata.type\": \"Edm.String\", \"test2\"\
+      : \"value1\", \"test2@odata.type\": \"Edm.String\"}\r\n--changeset_f98c5483-d73d-4a26-983c-f9e4414fa2de--\r\
+      \n\r\n--batch_e124d559-e59e-4fcb-9619-470853598980--\r\n"
     headers:
       Accept:
       - '*/*'
@@ -163,37 +165,40 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '966'
+      - '954'
       Content-Type:
-      - multipart/mixed; boundary=batch_3d782e81-083b-4e2b-8867-791fede992b9
+      - multipart/mixed; boundary=batch_e124d559-e59e-4fcb-9619-470853598980
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 07 Nov 2020 01:23:17 GMT
+      - Fri, 18 Dec 2020 15:42:18 GMT
       MaxDataServiceVersion:
       - 3.0;NetFx
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:23:17 GMT
+      - Fri, 18 Dec 2020 15:42:18 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/$batch
+    uri: https://fake_table_account.table.core.windows.net/$batch
   response:
     body:
-      string: "--batchresponse_deb6053d-cdbb-436a-89ab-879827f1ccdb\r\nContent-Type:
-        multipart/mixed; boundary=changesetresponse_11ca83d6-5c2c-4608-a4c5-c4b9936a7bbe\r\n\r\n--changesetresponse_11ca83d6-5c2c-4608-a4c5-c4b9936a7bbe\r\nContent-Type:
-        application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 204
-        No Content\r\nX-Content-Type-Options: nosniff\r\nCache-Control: no-cache\r\nDataServiceVersion:
-        1.0;\r\nETag: W/\"datetime'2020-11-07T01%3A23%3A18.380487Z'\"\r\n\r\n\r\n--changesetresponse_11ca83d6-5c2c-4608-a4c5-c4b9936a7bbe--\r\n--batchresponse_deb6053d-cdbb-436a-89ab-879827f1ccdb--\r\n"
+      string: "--batchresponse_df90005e-a9fd-4579-82d2-9c52c85e9175\r\nContent-Type:\
+        \ multipart/mixed; boundary=changesetresponse_6243b5d9-0a8d-4459-9282-eb6fb5ec1fb6\r\
+        \n\r\n--changesetresponse_6243b5d9-0a8d-4459-9282-eb6fb5ec1fb6\r\nContent-Type:\
+        \ application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 204\
+        \ No Content\r\nX-Content-Type-Options: nosniff\r\nCache-Control: no-cache\r\
+        \nDataServiceVersion: 1.0;\r\nETag: W/\"datetime'2020-12-18T15%3A42%3A18.5678851Z'\"\
+        \r\n\r\n\r\n--changesetresponse_6243b5d9-0a8d-4459-9282-eb6fb5ec1fb6--\r\n\
+        --batchresponse_df90005e-a9fd-4579-82d2-9c52c85e9175--\r\n"
     headers:
       cache-control:
       - no-cache
       content-type:
-      - multipart/mixed; boundary=batchresponse_deb6053d-cdbb-436a-89ab-879827f1ccdb
+      - multipart/mixed; boundary=batchresponse_df90005e-a9fd-4579-82d2-9c52c85e9175
       date:
-      - Sat, 07 Nov 2020 01:23:17 GMT
+      - Fri, 18 Dec 2020 15:42:17 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -217,27 +222,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 07 Nov 2020 01:23:17 GMT
+      - Fri, 18 Dec 2020 15:42:18 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:23:17 GMT
+      - Fri, 18 Dec 2020 15:42:18 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://tablesteststorname.table.core.windows.net/uttablee2da0d47(PartitionKey='001',RowKey='batch_merge')
+    uri: https://fake_table_account.table.core.windows.net/uttablee2da0d47(PartitionKey='001',RowKey='batch_merge')
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttablee2da0d47/@Element","odata.etag":"W/\"datetime''2020-11-07T01%3A23%3A18.380487Z''\"","PartitionKey":"001","RowKey":"batch_merge","Timestamp":"2020-11-07T01:23:18.380487Z","test":true,"test2":"value1","test3":3,"test4":1234567890,"test5@odata.type":"Edm.DateTime","test5":"2020-11-07T01:23:17Z"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttablee2da0d47/@Element","odata.etag":"W/\"datetime''2020-12-18T15%3A42%3A18.5678851Z''\"","PartitionKey":"001","RowKey":"batch_merge","Timestamp":"2020-12-18T15:42:18.5678851Z","test":true,"test2":"value1","test3":3,"test4":1234567890,"test5@odata.type":"Edm.DateTime","test5":"2020-12-18T15:42:17Z"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Sat, 07 Nov 2020 01:23:17 GMT
+      - Fri, 18 Dec 2020 15:42:17 GMT
       etag:
-      - W/"datetime'2020-11-07T01%3A23%3A18.380487Z'"
+      - W/"datetime'2020-12-18T15%3A42%3A18.5678851Z'"
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -261,15 +266,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 07 Nov 2020 01:23:17 GMT
+      - Fri, 18 Dec 2020 15:42:18 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:23:17 GMT
+      - Fri, 18 Dec 2020 15:42:18 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://tablesteststorname.table.core.windows.net/Tables('uttablee2da0d47')
+    uri: https://fake_table_account.table.core.windows.net/Tables('uttablee2da0d47')
   response:
     body:
       string: ''
@@ -279,7 +284,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sat, 07 Nov 2020 01:23:17 GMT
+      - Fri, 18 Dec 2020 15:42:18 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

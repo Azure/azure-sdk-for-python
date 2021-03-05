@@ -1,0 +1,83 @@
+{
+    "clusterLocation": {
+        "value": "<REPLACE THIS: Use the same location as the resource group the cluster will deploy to>"
+    },
+    "adminUserName": {
+        "value": "<REPLACE THIS: Don't use common names like 'admin'>"
+    },
+    "adminPassword": {
+        "value": "<REPLACE THIS: Include at least one lower-case, upper-case, number, and special character>"
+    },
+    "sourceVaultValue": {
+        "value": "<REPLACE THIS: Looks like /subscriptions/myguid/resourceGroups/myrg/providers/Microsoft.KeyVault/vaults/mykv, can be found as ResourceID under properties in the key vault>"
+    },
+    "certificateUrlValue": {
+        "value": "<REPLACE THIS: Looks like https://mykv.vault.azure.net/secrets/mycert/guid, can be found as secret identifier in the certificate's page>"
+    },
+    "certificateThumbprint": {
+        "value": "<REPLACE THIS: Hexadecimal string that can be found as Thumbprint or X.509 SHA-1 Thumbprint (in hex) in the certificate's properties>"
+    },
+    "sshKeyData": {
+        "value": "<REPLACE THIS: An SSH public key (the content of the key's .pub file, with no trailing whitespace). Looks like ssh-rsa {base64 content} {user}@{machine}>"
+    },
+    "nicName": {
+        "value": "NIC-sfmi-test"
+    },
+    "publicIPAddressName": {
+        "value": "sfmi-test-PubIP"
+    },
+    "dnsName": {
+        "value": "sfmi-test"
+    },
+    "virtualNetworkName": {
+        "value": "VNet-sfmi-test"
+    },
+    "lbName": {
+        "value": "LB-sfmi-test"
+    },
+    "lbIPName": {
+        "value": "LBIP-sfmi-test"
+    },
+    "clusterName": {
+        "value": "sfmi-test"
+    },
+    "applicationDiagnosticsStorageAccountName": {
+        "value": "sfdgsfmitest8275"
+    },
+    "supportLogStorageAccountName": {
+        "value": "sflogssfmitest8890"
+    },
+    "vmImagePublisher": {
+        "value": "Canonical"
+    },
+    "vmImageOffer": {
+        "value": "UbuntuServer"
+    },
+    "vmImageSku": {
+        "value": "16.04-LTS"
+    },
+    "vmImageVersion": {
+        "value": "latest"
+    },
+    "nt0InstanceCount": {
+        "value": 5
+    },
+    "nt0ephemeralStartPort": {
+        "value": 49152
+    },
+    "nt0ephemeralEndPort": {
+        "value": 65534
+    },
+    "nt0applicationStartPort": {
+        "value": 20000
+    },
+    "nt0applicationEndPort": {
+        "value": 30000
+    },
+    "nt0fabricTcpGatewayPort": {
+        "value": 19000
+    },
+    "nt0fabricHttpGatewayPort": {
+        "value": 19080
+    }
+}

@@ -12,6 +12,7 @@ from typing import ( # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
+
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
@@ -19,12 +20,12 @@ except ImportError:
     from urllib2 import quote, unquote # type: ignore
 
 import six
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged  # pylint: disable=ungrouped-imports
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated import AzureFileStorage
-from ._generated.version import VERSION
-from ._generated.models import StorageErrorException, FileHTTPHeaders
+from ._generated.models import FileHTTPHeaders
 from ._shared.uploads import IterStreamer, FileChunkUploader, upload_data_chunks
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, get_length
@@ -89,7 +90,7 @@ def _upload_file_helper(
             **kwargs
         )
         return sorted(responses, key=lambda r: r.get('last_modified'))[-1]
-    except StorageErrorException as error:
+    except HttpResponseError as error:
         process_storage_error(error)
 
 
@@ -110,7 +111,8 @@ class ShareFileClient(StorageAccountHostsMixin):
         or the response returned from :func:`ShareClient.create_snapshot`.
     :param credential:
         The credential with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string or an account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials or an account
         shared access key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
@@ -165,8 +167,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
         super(ShareFileClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
-        self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
+        self._client = AzureFileStorage(url=self.url, pipeline=self._pipeline)
+        default_api_version = self._client._config.version  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, default_api_version) # pylint: disable=protected-access
 
     @classmethod
     def from_file_url(
@@ -184,7 +187,8 @@ class ShareFileClient(StorageAccountHostsMixin):
             or the response returned from :func:`ShareClient.create_snapshot`.
         :param credential:
             The credential with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a SAS token string or an account
+            account URL already has a SAS token. The value can be a SAS token string,
+            an instance of a AzureSasCredential from azure.core.credentials or an account
             shared access key.
         :returns: A File client.
         :rtype: ~azure.storage.fileshare.ShareFileClient
@@ -244,7 +248,8 @@ class ShareFileClient(StorageAccountHostsMixin):
             or the response returned from :func:`ShareClient.create_snapshot`.
         :param credential:
             The credential with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a SAS token string or an account
+            account URL already has a SAS token. The value can be a SAS token string,
+            an instance of a AzureSasCredential from azure.core.credentials or an account
             shared access key.
         :returns: A File client.
         :rtype: ~azure.storage.fileshare.ShareFileClient
@@ -396,7 +401,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                 timeout=timeout,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -631,7 +636,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                 cls=return_response_headers,
                 timeout=timeout,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def abort_copy(self, copy_id, **kwargs):
@@ -669,7 +674,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             self._client.file.abort_copy(copy_id=copy_id,
                                          lease_access_conditions=access_conditions,
                                          timeout=timeout, **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -772,7 +777,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         try:
             self._client.file.delete(lease_access_conditions=access_conditions, timeout=timeout, **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -802,7 +807,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                 timeout=timeout,
                 cls=deserialize_file_properties,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         file_props.name = self.file_name
         file_props.share = self.share_name
@@ -884,7 +889,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                 timeout=timeout,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -924,7 +929,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                 metadata=metadata,
                 lease_access_conditions=access_conditions,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -987,7 +992,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                 lease_access_conditions=access_conditions,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @staticmethod
@@ -1091,7 +1096,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         )
         try:
             return self._client.file.upload_range_from_url(**options)  # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _get_ranges_options( # type: ignore
@@ -1161,7 +1166,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             **kwargs)
         try:
             ranges = self._client.file.get_range_list(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return [{'start': file_range.start, 'end': file_range.end} for file_range in ranges.ranges]
 
@@ -1204,7 +1209,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             **kwargs)
         try:
             ranges = self._client.file.get_range_list(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return get_file_ranges_result(ranges)
 
@@ -1252,11 +1257,12 @@ class ShareFileClient(StorageAccountHostsMixin):
                 timeout=timeout,
                 cls=return_response_headers,
                 content_length=0,
+                optionalbody=None,
                 file_range_write="clear",
                 range=content_range,
                 lease_access_conditions=access_conditions,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -1291,7 +1297,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                 cls=return_response_headers,
                 timeout=timeout,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -1348,7 +1354,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                 'closed_handles_count': response.get('number_of_handles_closed', 0),
                 'failed_handles_count': response.get('number_of_handles_failed', 0)
             }
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -1381,7 +1387,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                     cls=return_response_headers,
                     **kwargs
                 )
-            except StorageErrorException as error:
+            except HttpResponseError as error:
                 process_storage_error(error)
             continuation_token = response.get('marker')
             try_close = bool(continuation_token)

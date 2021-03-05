@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceManifest Name="sfmitestsystemfrontPkg" Version="1.0.0"
+                 xmlns="http://schemas.microsoft.com/2011/01/fabric" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+
+  <ServiceTypes>
+    <StatelessServiceType ServiceTypeName="sfmitestsystemfrontType" UseImplicitHost="true">
+    </StatelessServiceType>
+  </ServiceTypes>
+
+  <CodePackage Name="code" Version="1.0.0">
+    <EntryPoint>
+      <ContainerHost>
+        <ImageName>{ACR_NAME}.azurecr.io/sfmitestsystem</ImageName>
+        <Commands></Commands>
+      </ContainerHost>
+    </EntryPoint>
+    <EnvironmentVariables>
+      <EnvironmentVariable Name="AZURE_IDENTITY_TEST_VAULT_URL" Value="<KEY_VAULT_URL>"/>
+    </EnvironmentVariables>
+  </CodePackage>
+
+  <Resources>
+    <Endpoints>
+      <!-- This endpoint is used by the communication listener to obtain the port on which to 
+           listen. Please note that if your service is partitioned, this port is shared with 
+           replicas of different partitions that are placed in your code. -->
+      <Endpoint Name="sfmitestsystemfrontTypeEndpoint" UriScheme="http" Port="80" Protocol="http"/>
+    </Endpoints>
+    <ManagedIdentities DefaultIdentity="WebAdmin">
+      <ManagedIdentity Name="WebAdmin" />
+    </ManagedIdentities>
+  </Resources>
+</ServiceManifest>

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class CertificateRegistrationProviderOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,7 +49,7 @@ class CertificateRegistrationProviderOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.CsmOperationCollection"]
+        # type: (...) -> Iterable["_models.CsmOperationCollection"]
         """Implements Csm operations Api to exposes the list of available Csm Apis under the resource provider.
 
         Implements Csm operations Api to exposes the list of available Csm Apis under the resource
@@ -60,7 +60,7 @@ class CertificateRegistrationProviderOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2015_08_01.models.CsmOperationCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CsmOperationCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CsmOperationCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

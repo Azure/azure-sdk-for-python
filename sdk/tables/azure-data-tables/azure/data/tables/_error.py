@@ -13,35 +13,34 @@ from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceExistsError,
     ClientAuthenticationError,
-    DecodeError)
+    DecodeError,
+)
 from azure.core.pipeline.policies import ContentDecodePolicy
 
 if version_info < (3,):
+
     def _str(value):
         if isinstance(value, unicode):  # pylint: disable=undefined-variable
-            return value.encode('utf-8')
+            return value.encode("utf-8")
 
         return str(value)
 else:
     _str = str
 
 
-def _to_utc_datetime(value):
-    return value.strftime('%Y-%m-%dT%H:%M:%SZ')
-
 
 def _to_str(value):
     return _str(value) if value is not None else None
 
 
-_ERROR_ATTRIBUTE_MISSING = '\'{0}\' object has no attribute \'{1}\''
-_ERROR_BATCH_COMMIT_FAIL = 'Batch Commit Fail'
-_ERROR_TYPE_NOT_SUPPORTED = 'Type not supported when sending data to the service: {0}.'
-_ERROR_VALUE_TOO_LARGE = '{0} is too large to be cast to type {1}.'
-_ERROR_ATTRIBUTE_MISSING = '\'{0}\' object has no attribute \'{1}\''
-_ERROR_UNKNOWN = 'Unknown error ({0})'
-_ERROR_VALUE_NONE = '{0} should not be None.'
-_ERROR_UNKNOWN_KEY_WRAP_ALGORITHM = 'Unknown key wrap algorithm.'
+_ERROR_ATTRIBUTE_MISSING = "'{0}' object has no attribute '{1}'"
+_ERROR_BATCH_COMMIT_FAIL = "Batch Commit Fail"
+_ERROR_TYPE_NOT_SUPPORTED = "Type not supported when sending data to the service: {0}."
+_ERROR_VALUE_TOO_LARGE = "{0} is too large to be cast to type {1}."
+_ERROR_ATTRIBUTE_MISSING = "'{0}' object has no attribute '{1}'"
+_ERROR_UNKNOWN = "Unknown error ({0})"
+_ERROR_VALUE_NONE = "{0} should not be None."
+_ERROR_UNKNOWN_KEY_WRAP_ALGORITHM = "Unknown key wrap algorithm."
 
 
 def _validate_not_none(param_name, param):
@@ -51,17 +50,17 @@ def _validate_not_none(param_name, param):
 
 def _wrap_exception(ex, desired_type):
     msg = ""
-    if len(ex.args) > 0:  # pylint: disable=C1801
+    if len(ex.args) > 0:
         msg = ex.args[0]
-    if version_info >= (3,):  # pylint: disable=R1705
+    if version_info >= (3,):
         # Automatic chaining in Python 3 means we keep the trace
         return desired_type(msg)
-    else:
-        # There isn't a good solution in 2 for keeping the stack trace
-        # in general, or that will not result in an error in 3
-        # However, we can keep the previous error type and message
-        # TODO: In the future we will log the trace
-        return desired_type('{}: {}'.format(ex.__class__.__name__, msg))
+
+    # There isn't a good solution in 2 for keeping the stack trace
+    # in general, or that will not result in an error in 3
+    # However, we can keep the previous error type and message
+    # TODO: In the future we will log the trace
+    return desired_type("{}: {}".format(ex.__class__.__name__, msg))
 
 
 def _validate_table_name(table_name):
@@ -73,25 +72,27 @@ def _validate_table_name(table_name):
 
 def _process_table_error(storage_error):
     raise_error = HttpResponseError
-    error_code = storage_error.response.headers.get('x-ms-error-code')
+    error_code = storage_error.response.headers.get("x-ms-error-code")
     error_message = storage_error.message
     additional_data = {}
     try:
-        error_body = ContentDecodePolicy.deserialize_from_http_generics(storage_error.response)
+        error_body = ContentDecodePolicy.deserialize_from_http_generics(
+            storage_error.response
+        )
         if isinstance(error_body, dict):
-            for info in error_body['odata.error']:
-                if info == 'code':
-                    error_code = error_body['odata.error'][info]
-                elif info == 'message':
-                    error_message = error_body['odata.error'][info]['value']
+            for info in error_body["odata.error"]:
+                if info == "code":
+                    error_code = error_body["odata.error"][info]
+                elif info == "message":
+                    error_message = error_body["odata.error"][info]["value"]
                 else:
                     additional_data[info.tag] = info.text
         else:
             if error_body:
                 for info in error_body.iter():
-                    if info.tag.lower().find('code') != -1:
+                    if info.tag.lower().find("code") != -1:
                         error_code = info.text
-                    elif info.tag.lower().find('message') != -1:
+                    elif info.tag.lower().find("message") != -1:
                         error_message = info.text
                     else:
                         additional_data[info.tag] = info.text
@@ -103,19 +104,25 @@ def _process_table_error(storage_error):
             error_code = TableErrorCode(error_code)
             if error_code in [TableErrorCode.condition_not_met]:
                 raise_error = ResourceModifiedError
-            if error_code in [TableErrorCode.invalid_authentication_info,
-                              TableErrorCode.authentication_failed]:
+            if error_code in [
+                TableErrorCode.invalid_authentication_info,
+                TableErrorCode.authentication_failed,
+            ]:
                 raise_error = ClientAuthenticationError
-            if error_code in [TableErrorCode.resource_not_found,
-                              TableErrorCode.table_not_found,
-                              TableErrorCode.entity_not_found,
-                              ResourceNotFoundError]:
+            if error_code in [
+                TableErrorCode.resource_not_found,
+                TableErrorCode.table_not_found,
+                TableErrorCode.entity_not_found,
+                ResourceNotFoundError,
+            ]:
                 raise_error = ResourceNotFoundError
-            if error_code in [TableErrorCode.resource_already_exists,
-                              TableErrorCode.table_already_exists,
-                              TableErrorCode.account_already_exists,
-                              TableErrorCode.entity_already_exists,
-                              ResourceExistsError]:
+            if error_code in [
+                TableErrorCode.resource_already_exists,
+                TableErrorCode.table_already_exists,
+                TableErrorCode.account_already_exists,
+                TableErrorCode.entity_already_exists,
+                ResourceExistsError,
+            ]:
                 raise_error = ResourceExistsError
     except ValueError:
         # Got an unknown error code

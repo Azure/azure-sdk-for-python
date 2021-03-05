@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class PrivateLinkScopeOperationStatusOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,7 +45,7 @@ class PrivateLinkScopeOperationStatusOperations:
         async_operation_id: str,
         resource_group_name: str,
         **kwargs
-    ) -> "models.OperationStatus":
+    ) -> "_models.OperationStatus":
         """Get the status of an azure asynchronous operation associated with a private link scope
         operation.
 
@@ -58,7 +58,7 @@ class PrivateLinkScopeOperationStatusOperations:
         :rtype: ~$(python-base-namespace).v2019_10_17.models.OperationStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationStatus"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

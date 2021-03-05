@@ -770,6 +770,15 @@ class CRUDTests(unittest.TestCase):
         # create a document
         before_create_documents_count = len(documents)
 
+        # create a document with auto ID generation
+        document_definition = {'name': 'sample document',
+                               'spam': 'eggs',
+                               'key': 'value'}
+
+        created_document = created_collection.create_item(body=document_definition, enable_automatic_id_generation=True)
+        self.assertEqual(created_document.get('name'),
+                         document_definition['name'])
+
         document_definition = {'name': 'sample document',
                                'spam': 'eggs',
                                'key': 'value',
@@ -790,7 +799,7 @@ class CRUDTests(unittest.TestCase):
         documents = list(created_collection.read_all_items())
         self.assertEqual(
             len(documents),
-            before_create_documents_count + 1,
+            before_create_documents_count + 2,
             'create should increase the number of documents')
         # query documents
         documents = list(created_collection.query_items(

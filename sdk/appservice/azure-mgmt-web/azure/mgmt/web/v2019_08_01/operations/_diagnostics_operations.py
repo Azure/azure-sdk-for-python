@@ -15,7 +15,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -38,7 +38,7 @@ class DiagnosticsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,7 +52,7 @@ class DiagnosticsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DetectorResponseCollection"]
+        # type: (...) -> Iterable["_models.DetectorResponseCollection"]
         """List Hosting Environment Detector Responses.
 
         Description for List Hosting Environment Detector Responses.
@@ -66,7 +66,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.DetectorResponseCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DetectorResponseCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DetectorResponseCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -113,7 +113,7 @@ class DiagnosticsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -134,7 +134,7 @@ class DiagnosticsOperations(object):
         time_grain=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DetectorResponse"
+        # type: (...) -> "_models.DetectorResponse"
         """Get Hosting Environment Detector Response.
 
         Description for Get Hosting Environment Detector Response.
@@ -156,7 +156,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.DetectorResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DetectorResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DetectorResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -194,7 +194,7 @@ class DiagnosticsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DetectorResponse', pipeline_response)
@@ -211,7 +211,7 @@ class DiagnosticsOperations(object):
         site_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DetectorResponseCollection"]
+        # type: (...) -> Iterable["_models.DetectorResponseCollection"]
         """List Site Detector Responses.
 
         Description for List Site Detector Responses.
@@ -225,7 +225,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.DetectorResponseCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DetectorResponseCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DetectorResponseCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -272,7 +272,7 @@ class DiagnosticsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -293,7 +293,7 @@ class DiagnosticsOperations(object):
         time_grain=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DetectorResponse"
+        # type: (...) -> "_models.DetectorResponse"
         """Get site detector response.
 
         Description for Get site detector response.
@@ -315,7 +315,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.DetectorResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DetectorResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DetectorResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -353,7 +353,7 @@ class DiagnosticsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DetectorResponse', pipeline_response)
@@ -370,7 +370,7 @@ class DiagnosticsOperations(object):
         site_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DiagnosticCategoryCollection"]
+        # type: (...) -> Iterable["_models.DiagnosticCategoryCollection"]
         """Get Diagnostics Categories.
 
         Description for Get Diagnostics Categories.
@@ -384,7 +384,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.DiagnosticCategoryCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticCategoryCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticCategoryCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -431,7 +431,7 @@ class DiagnosticsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -449,7 +449,7 @@ class DiagnosticsOperations(object):
         diagnostic_category,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DiagnosticCategory"
+        # type: (...) -> "_models.DiagnosticCategory"
         """Get Diagnostics Category.
 
         Description for Get Diagnostics Category.
@@ -465,7 +465,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.DiagnosticCategory
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticCategory"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticCategory"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -497,7 +497,7 @@ class DiagnosticsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticCategory', pipeline_response)
@@ -515,7 +515,7 @@ class DiagnosticsOperations(object):
         diagnostic_category,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DiagnosticAnalysisCollection"]
+        # type: (...) -> Iterable["_models.DiagnosticAnalysisCollection"]
         """Get Site Analyses.
 
         Description for Get Site Analyses.
@@ -531,7 +531,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.DiagnosticAnalysisCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticAnalysisCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticAnalysisCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -579,7 +579,7 @@ class DiagnosticsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -598,7 +598,7 @@ class DiagnosticsOperations(object):
         analysis_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AnalysisDefinition"
+        # type: (...) -> "_models.AnalysisDefinition"
         """Get Site Analysis.
 
         Description for Get Site Analysis.
@@ -616,7 +616,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.AnalysisDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AnalysisDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalysisDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -649,7 +649,7 @@ class DiagnosticsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AnalysisDefinition', pipeline_response)
@@ -671,7 +671,7 @@ class DiagnosticsOperations(object):
         time_grain=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DiagnosticAnalysis"
+        # type: (...) -> "_models.DiagnosticAnalysis"
         """Execute Analysis.
 
         Description for Execute Analysis.
@@ -695,7 +695,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.DiagnosticAnalysis
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticAnalysis"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticAnalysis"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -734,7 +734,7 @@ class DiagnosticsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticAnalysis', pipeline_response)
@@ -752,7 +752,7 @@ class DiagnosticsOperations(object):
         diagnostic_category,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DiagnosticDetectorCollection"]
+        # type: (...) -> Iterable["_models.DiagnosticDetectorCollection"]
         """Get Detectors.
 
         Description for Get Detectors.
@@ -768,7 +768,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.DiagnosticDetectorCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticDetectorCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticDetectorCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -816,7 +816,7 @@ class DiagnosticsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -835,7 +835,7 @@ class DiagnosticsOperations(object):
         detector_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DetectorDefinition"
+        # type: (...) -> "_models.DetectorDefinition"
         """Get Detector.
 
         Description for Get Detector.
@@ -853,7 +853,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.DetectorDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DetectorDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DetectorDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -886,7 +886,7 @@ class DiagnosticsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DetectorDefinition', pipeline_response)
@@ -908,7 +908,7 @@ class DiagnosticsOperations(object):
         time_grain=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DiagnosticDetectorResponse"
+        # type: (...) -> "_models.DiagnosticDetectorResponse"
         """Execute Detector.
 
         Description for Execute Detector.
@@ -932,7 +932,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.DiagnosticDetectorResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticDetectorResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticDetectorResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -971,7 +971,7 @@ class DiagnosticsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticDetectorResponse', pipeline_response)
@@ -989,7 +989,7 @@ class DiagnosticsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DetectorResponseCollection"]
+        # type: (...) -> Iterable["_models.DetectorResponseCollection"]
         """List Site Detector Responses.
 
         Description for List Site Detector Responses.
@@ -1005,7 +1005,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.DetectorResponseCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DetectorResponseCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DetectorResponseCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1053,7 +1053,7 @@ class DiagnosticsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1075,7 +1075,7 @@ class DiagnosticsOperations(object):
         time_grain=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DetectorResponse"
+        # type: (...) -> "_models.DetectorResponse"
         """Get site detector response.
 
         Description for Get site detector response.
@@ -1099,7 +1099,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.DetectorResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DetectorResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DetectorResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1138,7 +1138,7 @@ class DiagnosticsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DetectorResponse', pipeline_response)
@@ -1156,7 +1156,7 @@ class DiagnosticsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DiagnosticCategoryCollection"]
+        # type: (...) -> Iterable["_models.DiagnosticCategoryCollection"]
         """Get Diagnostics Categories.
 
         Description for Get Diagnostics Categories.
@@ -1172,7 +1172,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.DiagnosticCategoryCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticCategoryCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticCategoryCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1220,7 +1220,7 @@ class DiagnosticsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1239,7 +1239,7 @@ class DiagnosticsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DiagnosticCategory"
+        # type: (...) -> "_models.DiagnosticCategory"
         """Get Diagnostics Category.
 
         Description for Get Diagnostics Category.
@@ -1257,7 +1257,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.DiagnosticCategory
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticCategory"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticCategory"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1290,7 +1290,7 @@ class DiagnosticsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticCategory', pipeline_response)
@@ -1309,7 +1309,7 @@ class DiagnosticsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DiagnosticAnalysisCollection"]
+        # type: (...) -> Iterable["_models.DiagnosticAnalysisCollection"]
         """Get Site Analyses.
 
         Description for Get Site Analyses.
@@ -1327,7 +1327,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.DiagnosticAnalysisCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticAnalysisCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticAnalysisCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1376,7 +1376,7 @@ class DiagnosticsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1396,7 +1396,7 @@ class DiagnosticsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AnalysisDefinition"
+        # type: (...) -> "_models.AnalysisDefinition"
         """Get Site Analysis.
 
         Description for Get Site Analysis.
@@ -1416,7 +1416,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.AnalysisDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AnalysisDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalysisDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1450,7 +1450,7 @@ class DiagnosticsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AnalysisDefinition', pipeline_response)
@@ -1473,7 +1473,7 @@ class DiagnosticsOperations(object):
         time_grain=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DiagnosticAnalysis"
+        # type: (...) -> "_models.DiagnosticAnalysis"
         """Execute Analysis.
 
         Description for Execute Analysis.
@@ -1499,7 +1499,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.DiagnosticAnalysis
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticAnalysis"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticAnalysis"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1539,7 +1539,7 @@ class DiagnosticsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticAnalysis', pipeline_response)
@@ -1558,7 +1558,7 @@ class DiagnosticsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DiagnosticDetectorCollection"]
+        # type: (...) -> Iterable["_models.DiagnosticDetectorCollection"]
         """Get Detectors.
 
         Description for Get Detectors.
@@ -1576,7 +1576,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.DiagnosticDetectorCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticDetectorCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticDetectorCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1625,7 +1625,7 @@ class DiagnosticsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1645,7 +1645,7 @@ class DiagnosticsOperations(object):
         slot,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DetectorDefinition"
+        # type: (...) -> "_models.DetectorDefinition"
         """Get Detector.
 
         Description for Get Detector.
@@ -1665,7 +1665,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.DetectorDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DetectorDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DetectorDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1699,7 +1699,7 @@ class DiagnosticsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DetectorDefinition', pipeline_response)
@@ -1722,7 +1722,7 @@ class DiagnosticsOperations(object):
         time_grain=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DiagnosticDetectorResponse"
+        # type: (...) -> "_models.DiagnosticDetectorResponse"
         """Execute Detector.
 
         Description for Execute Detector.
@@ -1748,7 +1748,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.DiagnosticDetectorResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticDetectorResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticDetectorResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1788,7 +1788,7 @@ class DiagnosticsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticDetectorResponse', pipeline_response)

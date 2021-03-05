@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class RulesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -55,7 +55,7 @@ class RulesOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RuleListResult"]
+        # type: (...) -> Iterable["_models.RuleListResult"]
         """List all the rules within given topic-subscription.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -77,7 +77,7 @@ class RulesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.servicebus.models.RuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RuleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -130,7 +130,7 @@ class RulesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -148,10 +148,10 @@ class RulesOperations(object):
         topic_name,  # type: str
         subscription_name,  # type: str
         rule_name,  # type: str
-        parameters,  # type: "models.Rule"
+        parameters,  # type: "_models.Rule"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Rule"
+        # type: (...) -> "_models.Rule"
         """Creates a new rule and updates an existing rule.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -171,7 +171,7 @@ class RulesOperations(object):
         :rtype: ~azure.mgmt.servicebus.models.Rule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Rule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Rule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -210,7 +210,7 @@ class RulesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Rule', pipeline_response)
@@ -282,7 +282,7 @@ class RulesOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -299,7 +299,7 @@ class RulesOperations(object):
         rule_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Rule"
+        # type: (...) -> "_models.Rule"
         """Retrieves the description for the specified rule.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -317,7 +317,7 @@ class RulesOperations(object):
         :rtype: ~azure.mgmt.servicebus.models.Rule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Rule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Rule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -351,7 +351,7 @@ class RulesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Rule', pipeline_response)

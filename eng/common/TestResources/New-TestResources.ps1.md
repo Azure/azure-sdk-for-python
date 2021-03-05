@@ -56,12 +56,7 @@ specified in $ProvisionerApplicationId and $ProvisionerApplicationSecret.
 ### EXAMPLE 1
 ```
 Connect-AzAccount -Subscription "REPLACE_WITH_SUBSCRIPTION_ID"
-$testAadApp = New-AzADServicePrincipal -Role Owner -DisplayName 'azure-sdk-live-test-app'
-New-TestResources.ps1 `
-    -BaseName 'uuid123' `
-    -ServiceDirectory 'keyvault' `
-    -TestApplicationId $testAadApp.ApplicationId.ToString() `
-    -TestApplicationSecret (ConvertFrom-SecureString $testAadApp.Secret -AsPlainText)
+New-TestResources.ps1 -ServiceDirectory 'keyvault'
 ```
 
 Run this in a desktop environment to create new AAD apps and Service Principals
@@ -236,6 +231,8 @@ Optional subscription ID to use for new resources when logging in as a
 provisioner.
 You can also use Set-AzContext if not provisioning.
 
+The default is the Azure SDK Developer Playground subscription ID.
+
 ```yaml
 Type: String
 Parameter Sets: Provisioner
@@ -243,7 +240,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value: faa080af-c1d8-40ad-9cce-e1a450ca5b57
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

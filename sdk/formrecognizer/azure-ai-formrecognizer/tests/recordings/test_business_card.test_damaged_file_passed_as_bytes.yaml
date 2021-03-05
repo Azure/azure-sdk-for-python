@@ -13,22 +13,22 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/businessCard/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/businessCard/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error": {"code": "BadArgument", "innerError": {"requestId": "8912b525-8a8e-4eaf-8c5d-107361d1fbe2"},
+      string: '{"error": {"code": "BadArgument", "innerError": {"requestId": "2c115161-4074-45e4-a1b4-0e45c89ce2bc"},
         "message": "Bad or unrecognizable request JSON or binary file."}}'
     headers:
       apim-request-id:
-      - 8912b525-8a8e-4eaf-8c5d-107361d1fbe2
+      - 2c115161-4074-45e4-a1b4-0e45c89ce2bc
       content-length:
       - '161'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 06 Oct 2020 18:58:22 GMT
+      - Wed, 11 Nov 2020 17:51:21 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:

@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class LocalNetworkGatewaysOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,10 +47,10 @@ class LocalNetworkGatewaysOperations:
         self,
         resource_group_name: str,
         local_network_gateway_name: str,
-        parameters: "models.LocalNetworkGateway",
+        parameters: "_models.LocalNetworkGateway",
         **kwargs
-    ) -> "models.LocalNetworkGateway":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LocalNetworkGateway"]
+    ) -> "_models.LocalNetworkGateway":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LocalNetworkGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -104,9 +104,9 @@ class LocalNetworkGatewaysOperations:
         self,
         resource_group_name: str,
         local_network_gateway_name: str,
-        parameters: "models.LocalNetworkGateway",
+        parameters: "_models.LocalNetworkGateway",
         **kwargs
-    ) -> AsyncLROPoller["models.LocalNetworkGateway"]:
+    ) -> AsyncLROPoller["_models.LocalNetworkGateway"]:
         """Creates or updates a local network gateway in the specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -126,7 +126,7 @@ class LocalNetworkGatewaysOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LocalNetworkGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LocalNetworkGateway"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -151,7 +151,13 @@ class LocalNetworkGatewaysOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'localNetworkGatewayName': self._serialize.url("local_network_gateway_name", local_network_gateway_name, 'str', min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -170,7 +176,7 @@ class LocalNetworkGatewaysOperations:
         resource_group_name: str,
         local_network_gateway_name: str,
         **kwargs
-    ) -> "models.LocalNetworkGateway":
+    ) -> "_models.LocalNetworkGateway":
         """Gets the specified local network gateway in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -182,7 +188,7 @@ class LocalNetworkGatewaysOperations:
         :rtype: ~azure.mgmt.network.v2017_03_01.models.LocalNetworkGateway
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LocalNetworkGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LocalNetworkGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -309,7 +315,13 @@ class LocalNetworkGatewaysOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'localNetworkGatewayName': self._serialize.url("local_network_gateway_name", local_network_gateway_name, 'str', min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -327,7 +339,7 @@ class LocalNetworkGatewaysOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.LocalNetworkGatewayListResult"]:
+    ) -> AsyncIterable["_models.LocalNetworkGatewayListResult"]:
         """Gets all the local network gateways in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -337,7 +349,7 @@ class LocalNetworkGatewaysOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2017_03_01.models.LocalNetworkGatewayListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LocalNetworkGatewayListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LocalNetworkGatewayListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

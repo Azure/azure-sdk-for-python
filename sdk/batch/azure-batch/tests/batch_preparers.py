@@ -42,6 +42,7 @@ class AccountPreparer(AzureMgmtPreparer):
         self.parameter_name = parameter_name
         self.creds_parameter = 'credentials'
         self.parameter_name_for_location='location'
+        self.resource_moniker=name_prefix
 
     def _get_resource_group(self, **kwargs):
         try:
@@ -100,7 +101,10 @@ class AccountPreparer(AzureMgmtPreparer):
                 keys.primary)
             if storage:
                 self._add_app_package(group.name, name)
-
+            self.test_class_instance.scrubber.register_name_pair(
+                name,
+                self.resource_moniker
+            )
         else:
             self.resource = FakeAccount(
                 name=name,
@@ -244,6 +248,7 @@ class JobPreparer(AzureMgmtPreparer):
         self.batch_credentials_parameter_name = batch_credentials_parameter_name
         self.batch_pool_parameter_name = batch_pool_parameter_name
         self.extra_args = extra_args
+        self.resource_moniker=name_prefix
 
     def _get_batch_client(self, **kwargs):
         try:

@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class AppServicePlansOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,7 +52,7 @@ class AppServicePlansOperations(object):
         detailed=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.AppServicePlanCollection"]
+        # type: (...) -> Iterable["_models.AppServicePlanCollection"]
         """Get all App Service plans for a subscription.
 
         Get all App Service plans for a subscription.
@@ -66,7 +66,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2016_09_01.models.AppServicePlanCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServicePlanCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServicePlanCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -128,7 +128,7 @@ class AppServicePlansOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.AppServicePlanCollection"]
+        # type: (...) -> Iterable["_models.AppServicePlanCollection"]
         """Get all App Service plans in a resource group.
 
         Get all App Service plans in a resource group.
@@ -140,7 +140,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2016_09_01.models.AppServicePlanCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServicePlanCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServicePlanCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -202,7 +202,7 @@ class AppServicePlansOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.AppServicePlan"]
+        # type: (...) -> Optional["_models.AppServicePlan"]
         """Get an App Service plan.
 
         Get an App Service plan.
@@ -216,7 +216,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2016_09_01.models.AppServicePlan or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.AppServicePlan"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.AppServicePlan"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -263,11 +263,11 @@ class AppServicePlansOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        app_service_plan,  # type: "models.AppServicePlan"
+        app_service_plan,  # type: "_models.AppServicePlan"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AppServicePlan"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServicePlan"]
+        # type: (...) -> "_models.AppServicePlan"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServicePlan"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -324,10 +324,10 @@ class AppServicePlansOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        app_service_plan,  # type: "models.AppServicePlan"
+        app_service_plan,  # type: "_models.AppServicePlan"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.AppServicePlan"]
+        # type: (...) -> LROPoller["_models.AppServicePlan"]
         """Creates or updates an App Service Plan.
 
         Creates or updates an App Service Plan.
@@ -349,7 +349,7 @@ class AppServicePlansOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServicePlan"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServicePlan"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -374,7 +374,13 @@ class AppServicePlansOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -448,10 +454,10 @@ class AppServicePlansOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        app_service_plan,  # type: "models.AppServicePlanPatchResource"
+        app_service_plan,  # type: "_models.AppServicePlanPatchResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AppServicePlan"
+        # type: (...) -> "_models.AppServicePlan"
         """Creates or updates an App Service Plan.
 
         Creates or updates an App Service Plan.
@@ -467,7 +473,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2016_09_01.models.AppServicePlan
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServicePlan"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServicePlan"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -523,7 +529,7 @@ class AppServicePlansOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.Capability"]
+        # type: (...) -> List["_models.Capability"]
         """List all capabilities of an App Service plan.
 
         List all capabilities of an App Service plan.
@@ -537,7 +543,7 @@ class AppServicePlansOperations(object):
         :rtype: list[~azure.mgmt.web.v2016_09_01.models.Capability]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.Capability"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.Capability"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -586,7 +592,7 @@ class AppServicePlansOperations(object):
         relay_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.HybridConnection"
+        # type: (...) -> "_models.HybridConnection"
         """Retrieve a Hybrid Connection in use in an App Service plan.
 
         Retrieve a Hybrid Connection in use in an App Service plan.
@@ -604,7 +610,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2016_09_01.models.HybridConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HybridConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -719,7 +725,7 @@ class AppServicePlansOperations(object):
         relay_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.HybridConnectionKey"
+        # type: (...) -> "_models.HybridConnectionKey"
         """Get the send key name and value of a Hybrid Connection.
 
         Get the send key name and value of a Hybrid Connection.
@@ -737,7 +743,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2016_09_01.models.HybridConnectionKey
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnectionKey"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HybridConnectionKey"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -788,7 +794,7 @@ class AppServicePlansOperations(object):
         relay_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ResourceCollection"]
+        # type: (...) -> Iterable["_models.ResourceCollection"]
         """Get all apps that use a Hybrid Connection in an App Service Plan.
 
         Get all apps that use a Hybrid Connection in an App Service Plan.
@@ -806,7 +812,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2016_09_01.models.ResourceCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -871,7 +877,7 @@ class AppServicePlansOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.HybridConnectionLimits"
+        # type: (...) -> "_models.HybridConnectionLimits"
         """Get the maximum number of Hybrid Connections allowed in an App Service plan.
 
         Get the maximum number of Hybrid Connections allowed in an App Service plan.
@@ -885,7 +891,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2016_09_01.models.HybridConnectionLimits
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnectionLimits"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HybridConnectionLimits"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -932,7 +938,7 @@ class AppServicePlansOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.HybridConnectionCollection"]
+        # type: (...) -> Iterable["_models.HybridConnectionCollection"]
         """Retrieve all Hybrid Connections in use in an App Service plan.
 
         Retrieve all Hybrid Connections in use in an App Service plan.
@@ -946,7 +952,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2016_09_01.models.HybridConnectionCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnectionCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HybridConnectionCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1009,7 +1015,7 @@ class AppServicePlansOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ResourceMetricDefinitionCollection"]
+        # type: (...) -> Iterable["_models.ResourceMetricDefinitionCollection"]
         """Get metrics that can be queried for an App Service plan, and their definitions.
 
         Get metrics that can be queried for an App Service plan, and their definitions.
@@ -1023,7 +1029,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2016_09_01.models.ResourceMetricDefinitionCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceMetricDefinitionCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceMetricDefinitionCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1088,7 +1094,7 @@ class AppServicePlansOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ResourceMetricCollection"]
+        # type: (...) -> Iterable["_models.ResourceMetricCollection"]
         """Get metrics for an App Service plan.
 
         Get metrics for an App Service plan.
@@ -1110,7 +1116,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2016_09_01.models.ResourceMetricCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceMetricCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceMetricCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1243,7 +1249,7 @@ class AppServicePlansOperations(object):
         top=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.WebAppCollection"]
+        # type: (...) -> Iterable["_models.WebAppCollection"]
         """Get all apps associated with an App Service plan.
 
         Get all apps associated with an App Service plan.
@@ -1266,7 +1272,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2016_09_01.models.WebAppCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebAppCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1397,7 +1403,7 @@ class AppServicePlansOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.CsmUsageQuotaCollection"]
+        # type: (...) -> Iterable["_models.CsmUsageQuotaCollection"]
         """Gets server farm usage information.
 
         Gets server farm usage information.
@@ -1414,7 +1420,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2016_09_01.models.CsmUsageQuotaCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CsmUsageQuotaCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CsmUsageQuotaCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1479,7 +1485,7 @@ class AppServicePlansOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.VnetInfo"]
+        # type: (...) -> List["_models.VnetInfo"]
         """Get all Virtual Networks associated with an App Service plan.
 
         Get all Virtual Networks associated with an App Service plan.
@@ -1493,7 +1499,7 @@ class AppServicePlansOperations(object):
         :rtype: list[~azure.mgmt.web.v2016_09_01.models.VnetInfo]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.VnetInfo"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.VnetInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1541,7 +1547,7 @@ class AppServicePlansOperations(object):
         vnet_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.VnetInfo"]
+        # type: (...) -> Optional["_models.VnetInfo"]
         """Get a Virtual Network associated with an App Service plan.
 
         Get a Virtual Network associated with an App Service plan.
@@ -1557,7 +1563,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2016_09_01.models.VnetInfo or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VnetInfo"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.VnetInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1609,7 +1615,7 @@ class AppServicePlansOperations(object):
         gateway_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VnetGateway"
+        # type: (...) -> "_models.VnetGateway"
         """Get a Virtual Network gateway.
 
         Get a Virtual Network gateway.
@@ -1627,7 +1633,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2016_09_01.models.VnetGateway
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VnetGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1676,10 +1682,10 @@ class AppServicePlansOperations(object):
         name,  # type: str
         vnet_name,  # type: str
         gateway_name,  # type: str
-        connection_envelope,  # type: "models.VnetGateway"
+        connection_envelope,  # type: "_models.VnetGateway"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VnetGateway"
+        # type: (...) -> "_models.VnetGateway"
         """Update a Virtual Network gateway.
 
         Update a Virtual Network gateway.
@@ -1699,7 +1705,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2016_09_01.models.VnetGateway
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VnetGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1754,7 +1760,7 @@ class AppServicePlansOperations(object):
         vnet_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.VnetRoute"]
+        # type: (...) -> List["_models.VnetRoute"]
         """Get all routes that are associated with a Virtual Network in an App Service plan.
 
         Get all routes that are associated with a Virtual Network in an App Service plan.
@@ -1770,7 +1776,7 @@ class AppServicePlansOperations(object):
         :rtype: list[~azure.mgmt.web.v2016_09_01.models.VnetRoute]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.VnetRoute"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.VnetRoute"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1820,7 +1826,7 @@ class AppServicePlansOperations(object):
         route_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional[List["models.VnetRoute"]]
+        # type: (...) -> Optional[List["_models.VnetRoute"]]
         """Get a Virtual Network route in an App Service plan.
 
         Get a Virtual Network route in an App Service plan.
@@ -1838,7 +1844,7 @@ class AppServicePlansOperations(object):
         :rtype: list[~azure.mgmt.web.v2016_09_01.models.VnetRoute] or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[List["models.VnetRoute"]]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[List["_models.VnetRoute"]]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1889,10 +1895,10 @@ class AppServicePlansOperations(object):
         name,  # type: str
         vnet_name,  # type: str
         route_name,  # type: str
-        route,  # type: "models.VnetRoute"
+        route,  # type: "_models.VnetRoute"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.VnetRoute"]
+        # type: (...) -> Optional["_models.VnetRoute"]
         """Create or update a Virtual Network route in an App Service plan.
 
         Create or update a Virtual Network route in an App Service plan.
@@ -1912,7 +1918,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2016_09_01.models.VnetRoute or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VnetRoute"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.VnetRoute"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2032,10 +2038,10 @@ class AppServicePlansOperations(object):
         name,  # type: str
         vnet_name,  # type: str
         route_name,  # type: str
-        route,  # type: "models.VnetRoute"
+        route,  # type: "_models.VnetRoute"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.VnetRoute"]
+        # type: (...) -> Optional["_models.VnetRoute"]
         """Create or update a Virtual Network route in an App Service plan.
 
         Create or update a Virtual Network route in an App Service plan.
@@ -2055,7 +2061,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2016_09_01.models.VnetRoute or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VnetRoute"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.VnetRoute"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

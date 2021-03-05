@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class AppServiceEnvironmentsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,7 +46,7 @@ class AppServiceEnvironmentsOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.AppServiceEnvironmentCollection"]:
+    ) -> AsyncIterable["_models.AppServiceEnvironmentCollection"]:
         """Get all App Service Environments for a subscription.
 
         Description for Get all App Service Environments for a subscription.
@@ -56,7 +56,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.AppServiceEnvironmentCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceEnvironmentCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServiceEnvironmentCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -101,7 +101,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -116,7 +116,7 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.AppServiceEnvironmentCollection"]:
+    ) -> AsyncIterable["_models.AppServiceEnvironmentCollection"]:
         """Get all App Service Environments in a resource group.
 
         Description for Get all App Service Environments in a resource group.
@@ -128,7 +128,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.AppServiceEnvironmentCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceEnvironmentCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServiceEnvironmentCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -174,7 +174,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -190,7 +190,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> "models.AppServiceEnvironmentResource":
+    ) -> "_models.AppServiceEnvironmentResource":
         """Get the properties of an App Service Environment.
 
         Description for Get the properties of an App Service Environment.
@@ -204,7 +204,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.AppServiceEnvironmentResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceEnvironmentResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServiceEnvironmentResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -235,7 +235,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AppServiceEnvironmentResource', pipeline_response)
@@ -250,10 +250,10 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        hosting_environment_envelope: "models.AppServiceEnvironmentResource",
+        hosting_environment_envelope: "_models.AppServiceEnvironmentResource",
         **kwargs
-    ) -> "models.AppServiceEnvironmentResource":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceEnvironmentResource"]
+    ) -> "_models.AppServiceEnvironmentResource":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServiceEnvironmentResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -289,7 +289,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -311,9 +311,9 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        hosting_environment_envelope: "models.AppServiceEnvironmentResource",
+        hosting_environment_envelope: "_models.AppServiceEnvironmentResource",
         **kwargs
-    ) -> AsyncLROPoller["models.AppServiceEnvironmentResource"]:
+    ) -> AsyncLROPoller["_models.AppServiceEnvironmentResource"]:
         """Create or update an App Service Environment.
 
         Description for Create or update an App Service Environment.
@@ -335,7 +335,7 @@ class AppServiceEnvironmentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceEnvironmentResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServiceEnvironmentResource"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -360,7 +360,13 @@ class AppServiceEnvironmentsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -414,7 +420,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -473,7 +479,13 @@ class AppServiceEnvironmentsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -491,9 +503,9 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        hosting_environment_envelope: "models.AppServiceEnvironmentPatchResource",
+        hosting_environment_envelope: "_models.AppServiceEnvironmentPatchResource",
         **kwargs
-    ) -> "models.AppServiceEnvironmentResource":
+    ) -> "_models.AppServiceEnvironmentResource":
         """Create or update an App Service Environment.
 
         Description for Create or update an App Service Environment.
@@ -509,7 +521,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.AppServiceEnvironmentResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceEnvironmentResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServiceEnvironmentResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -545,7 +557,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -568,7 +580,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> AsyncIterable["models.StampCapacityCollection"]:
+    ) -> AsyncIterable["_models.StampCapacityCollection"]:
         """Get the used, available, and total worker capacity an App Service Environment.
 
         Description for Get the used, available, and total worker capacity an App Service Environment.
@@ -582,7 +594,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.StampCapacityCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StampCapacityCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StampCapacityCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -629,7 +641,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -645,7 +657,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> "models.AddressResponse":
+    ) -> "_models.AddressResponse":
         """Get IP addresses assigned to an App Service Environment.
 
         Description for Get IP addresses assigned to an App Service Environment.
@@ -659,7 +671,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.AddressResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AddressResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AddressResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -690,7 +702,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AddressResponse', pipeline_response)
@@ -705,10 +717,10 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        vnet_info: "models.VirtualNetworkProfile",
+        vnet_info: "_models.VirtualNetworkProfile",
         **kwargs
-    ) -> "models.WebAppCollection":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
+    ) -> "_models.WebAppCollection":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebAppCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -744,7 +756,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -763,9 +775,9 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        vnet_info: "models.VirtualNetworkProfile",
+        vnet_info: "_models.VirtualNetworkProfile",
         **kwargs
-    ) -> AsyncLROPoller[AsyncItemPaged["models.WebAppCollection"]]:
+    ) -> AsyncLROPoller[AsyncItemPaged["_models.WebAppCollection"]]:
         """Move an App Service Environment to a different VNET.
 
         Description for Move an App Service Environment to a different VNET.
@@ -786,7 +798,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.WebAppCollection]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebAppCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -841,14 +853,14 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebAppCollection"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -875,7 +887,13 @@ class AppServiceEnvironmentsOperations:
             return AsyncItemPaged(
                 internal_get_next, extract_data
             )
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -894,7 +912,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> List["models.HostingEnvironmentDiagnostics"]:
+    ) -> List["_models.HostingEnvironmentDiagnostics"]:
         """Get diagnostic information for an App Service Environment.
 
         Description for Get diagnostic information for an App Service Environment.
@@ -908,7 +926,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: list[~azure.mgmt.web.v2019_08_01.models.HostingEnvironmentDiagnostics]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.HostingEnvironmentDiagnostics"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.HostingEnvironmentDiagnostics"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -939,7 +957,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[HostingEnvironmentDiagnostics]', pipeline_response)
@@ -956,7 +974,7 @@ class AppServiceEnvironmentsOperations:
         name: str,
         diagnostics_name: str,
         **kwargs
-    ) -> "models.HostingEnvironmentDiagnostics":
+    ) -> "_models.HostingEnvironmentDiagnostics":
         """Get a diagnostics item for an App Service Environment.
 
         Description for Get a diagnostics item for an App Service Environment.
@@ -972,7 +990,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.HostingEnvironmentDiagnostics
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HostingEnvironmentDiagnostics"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HostingEnvironmentDiagnostics"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1004,7 +1022,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HostingEnvironmentDiagnostics', pipeline_response)
@@ -1020,7 +1038,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> AsyncIterable["models.InboundEnvironmentEndpointCollection"]:
+    ) -> AsyncIterable["_models.InboundEnvironmentEndpointCollection"]:
         """Get the network endpoints of all inbound dependencies of an App Service Environment.
 
         Description for Get the network endpoints of all inbound dependencies of an App Service
@@ -1035,7 +1053,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.InboundEnvironmentEndpointCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.InboundEnvironmentEndpointCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.InboundEnvironmentEndpointCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1082,7 +1100,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1098,7 +1116,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> AsyncIterable["models.WorkerPoolCollection"]:
+    ) -> AsyncIterable["_models.WorkerPoolCollection"]:
         """Get all multi-role pools.
 
         Description for Get all multi-role pools.
@@ -1112,7 +1130,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.WorkerPoolCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkerPoolCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkerPoolCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1159,7 +1177,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1175,7 +1193,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> "models.WorkerPoolResource":
+    ) -> "_models.WorkerPoolResource":
         """Get properties of a multi-role pool.
 
         Description for Get properties of a multi-role pool.
@@ -1189,7 +1207,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.WorkerPoolResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkerPoolResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkerPoolResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1220,7 +1238,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WorkerPoolResource', pipeline_response)
@@ -1235,10 +1253,10 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        multi_role_pool_envelope: "models.WorkerPoolResource",
+        multi_role_pool_envelope: "_models.WorkerPoolResource",
         **kwargs
-    ) -> "models.WorkerPoolResource":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkerPoolResource"]
+    ) -> "_models.WorkerPoolResource":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkerPoolResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1274,7 +1292,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -1293,9 +1311,9 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        multi_role_pool_envelope: "models.WorkerPoolResource",
+        multi_role_pool_envelope: "_models.WorkerPoolResource",
         **kwargs
-    ) -> AsyncLROPoller["models.WorkerPoolResource"]:
+    ) -> AsyncLROPoller["_models.WorkerPoolResource"]:
         """Create or update a multi-role pool.
 
         Description for Create or update a multi-role pool.
@@ -1317,7 +1335,7 @@ class AppServiceEnvironmentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkerPoolResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkerPoolResource"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1342,7 +1360,13 @@ class AppServiceEnvironmentsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1360,9 +1384,9 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        multi_role_pool_envelope: "models.WorkerPoolResource",
+        multi_role_pool_envelope: "_models.WorkerPoolResource",
         **kwargs
-    ) -> "models.WorkerPoolResource":
+    ) -> "_models.WorkerPoolResource":
         """Create or update a multi-role pool.
 
         Description for Create or update a multi-role pool.
@@ -1378,7 +1402,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.WorkerPoolResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkerPoolResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkerPoolResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1414,7 +1438,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -1435,7 +1459,7 @@ class AppServiceEnvironmentsOperations:
         name: str,
         instance: str,
         **kwargs
-    ) -> AsyncIterable["models.ResourceMetricDefinitionCollection"]:
+    ) -> AsyncIterable["_models.ResourceMetricDefinitionCollection"]:
         """Get metric definitions for a specific instance of a multi-role pool of an App Service Environment.
 
         Description for Get metric definitions for a specific instance of a multi-role pool of an App
@@ -1452,7 +1476,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.ResourceMetricDefinitionCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceMetricDefinitionCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceMetricDefinitionCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1500,7 +1524,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1516,7 +1540,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> AsyncIterable["models.ResourceMetricDefinitionCollection"]:
+    ) -> AsyncIterable["_models.ResourceMetricDefinitionCollection"]:
         """Get metric definitions for a multi-role pool of an App Service Environment.
 
         Description for Get metric definitions for a multi-role pool of an App Service Environment.
@@ -1530,7 +1554,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.ResourceMetricDefinitionCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceMetricDefinitionCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceMetricDefinitionCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1577,7 +1601,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1593,7 +1617,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> AsyncIterable["models.SkuInfoCollection"]:
+    ) -> AsyncIterable["_models.SkuInfoCollection"]:
         """Get available SKUs for scaling a multi-role pool.
 
         Description for Get available SKUs for scaling a multi-role pool.
@@ -1607,7 +1631,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.SkuInfoCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SkuInfoCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SkuInfoCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1654,7 +1678,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1670,7 +1694,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> AsyncIterable["models.UsageCollection"]:
+    ) -> AsyncIterable["_models.UsageCollection"]:
         """Get usage metrics for a multi-role pool of an App Service Environment.
 
         Description for Get usage metrics for a multi-role pool of an App Service Environment.
@@ -1684,7 +1708,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.UsageCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.UsageCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.UsageCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1731,7 +1755,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1747,7 +1771,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> List["models.Operation"]:
+    ) -> List["_models.Operation"]:
         """List all currently running operations on the App Service Environment.
 
         Description for List all currently running operations on the App Service Environment.
@@ -1761,7 +1785,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: list[~azure.mgmt.web.v2019_08_01.models.Operation]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.Operation"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.Operation"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1792,7 +1816,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[Operation]', pipeline_response)
@@ -1808,7 +1832,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> AsyncIterable["models.OutboundEnvironmentEndpointCollection"]:
+    ) -> AsyncIterable["_models.OutboundEnvironmentEndpointCollection"]:
         """Get the network endpoints of all outbound dependencies of an App Service Environment.
 
         Description for Get the network endpoints of all outbound dependencies of an App Service
@@ -1823,7 +1847,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.OutboundEnvironmentEndpointCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OutboundEnvironmentEndpointCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OutboundEnvironmentEndpointCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1870,7 +1894,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1931,7 +1955,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1944,8 +1968,8 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> "models.WebAppCollection":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
+    ) -> "_models.WebAppCollection":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebAppCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1976,7 +2000,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -1996,7 +2020,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> AsyncLROPoller[AsyncItemPaged["models.WebAppCollection"]]:
+    ) -> AsyncLROPoller[AsyncItemPaged["_models.WebAppCollection"]]:
         """Resume an App Service Environment.
 
         Description for Resume an App Service Environment.
@@ -2015,7 +2039,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.WebAppCollection]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebAppCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2062,14 +2086,14 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebAppCollection"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -2095,7 +2119,13 @@ class AppServiceEnvironmentsOperations:
             return AsyncItemPaged(
                 internal_get_next, extract_data
             )
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -2114,7 +2144,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> AsyncIterable["models.AppServicePlanCollection"]:
+    ) -> AsyncIterable["_models.AppServicePlanCollection"]:
         """Get all App Service plans in an App Service Environment.
 
         Description for Get all App Service plans in an App Service Environment.
@@ -2128,7 +2158,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.AppServicePlanCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServicePlanCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServicePlanCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2175,7 +2205,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -2192,7 +2222,7 @@ class AppServiceEnvironmentsOperations:
         name: str,
         properties_to_include: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.WebAppCollection"]:
+    ) -> AsyncIterable["_models.WebAppCollection"]:
         """Get all apps in an App Service Environment.
 
         Description for Get all apps in an App Service Environment.
@@ -2208,7 +2238,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.WebAppCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebAppCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2257,7 +2287,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -2273,8 +2303,8 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> "models.WebAppCollection":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
+    ) -> "_models.WebAppCollection":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebAppCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2305,7 +2335,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -2325,7 +2355,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> AsyncLROPoller[AsyncItemPaged["models.WebAppCollection"]]:
+    ) -> AsyncLROPoller[AsyncItemPaged["_models.WebAppCollection"]]:
         """Suspend an App Service Environment.
 
         Description for Suspend an App Service Environment.
@@ -2344,7 +2374,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.WebAppCollection]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebAppCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2391,14 +2421,14 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebAppCollection"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -2424,7 +2454,13 @@ class AppServiceEnvironmentsOperations:
             return AsyncItemPaged(
                 internal_get_next, extract_data
             )
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -2444,7 +2480,7 @@ class AppServiceEnvironmentsOperations:
         name: str,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.CsmUsageQuotaCollection"]:
+    ) -> AsyncIterable["_models.CsmUsageQuotaCollection"]:
         """Get global usage metrics of an App Service Environment.
 
         Description for Get global usage metrics of an App Service Environment.
@@ -2463,7 +2499,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.CsmUsageQuotaCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CsmUsageQuotaCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CsmUsageQuotaCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2512,7 +2548,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -2528,7 +2564,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> AsyncIterable["models.WorkerPoolCollection"]:
+    ) -> AsyncIterable["_models.WorkerPoolCollection"]:
         """Get all worker pools of an App Service Environment.
 
         Description for Get all worker pools of an App Service Environment.
@@ -2542,7 +2578,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.WorkerPoolCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkerPoolCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkerPoolCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2589,7 +2625,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -2606,7 +2642,7 @@ class AppServiceEnvironmentsOperations:
         name: str,
         worker_pool_name: str,
         **kwargs
-    ) -> "models.WorkerPoolResource":
+    ) -> "_models.WorkerPoolResource":
         """Get properties of a worker pool.
 
         Description for Get properties of a worker pool.
@@ -2622,7 +2658,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.WorkerPoolResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkerPoolResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkerPoolResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2654,7 +2690,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WorkerPoolResource', pipeline_response)
@@ -2670,10 +2706,10 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         worker_pool_name: str,
-        worker_pool_envelope: "models.WorkerPoolResource",
+        worker_pool_envelope: "_models.WorkerPoolResource",
         **kwargs
-    ) -> "models.WorkerPoolResource":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkerPoolResource"]
+    ) -> "_models.WorkerPoolResource":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkerPoolResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2710,7 +2746,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -2730,9 +2766,9 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         worker_pool_name: str,
-        worker_pool_envelope: "models.WorkerPoolResource",
+        worker_pool_envelope: "_models.WorkerPoolResource",
         **kwargs
-    ) -> AsyncLROPoller["models.WorkerPoolResource"]:
+    ) -> AsyncLROPoller["_models.WorkerPoolResource"]:
         """Create or update a worker pool.
 
         Description for Create or update a worker pool.
@@ -2756,7 +2792,7 @@ class AppServiceEnvironmentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkerPoolResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkerPoolResource"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -2782,7 +2818,14 @@ class AppServiceEnvironmentsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'workerPoolName': self._serialize.url("worker_pool_name", worker_pool_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -2801,9 +2844,9 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         worker_pool_name: str,
-        worker_pool_envelope: "models.WorkerPoolResource",
+        worker_pool_envelope: "_models.WorkerPoolResource",
         **kwargs
-    ) -> "models.WorkerPoolResource":
+    ) -> "_models.WorkerPoolResource":
         """Create or update a worker pool.
 
         Description for Create or update a worker pool.
@@ -2821,7 +2864,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.WorkerPoolResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkerPoolResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkerPoolResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2858,7 +2901,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -2880,7 +2923,7 @@ class AppServiceEnvironmentsOperations:
         worker_pool_name: str,
         instance: str,
         **kwargs
-    ) -> AsyncIterable["models.ResourceMetricDefinitionCollection"]:
+    ) -> AsyncIterable["_models.ResourceMetricDefinitionCollection"]:
         """Get metric definitions for a specific instance of a worker pool of an App Service Environment.
 
         Description for Get metric definitions for a specific instance of a worker pool of an App
@@ -2899,7 +2942,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.ResourceMetricDefinitionCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceMetricDefinitionCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceMetricDefinitionCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2948,7 +2991,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -2965,7 +3008,7 @@ class AppServiceEnvironmentsOperations:
         name: str,
         worker_pool_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ResourceMetricDefinitionCollection"]:
+    ) -> AsyncIterable["_models.ResourceMetricDefinitionCollection"]:
         """Get metric definitions for a worker pool of an App Service Environment.
 
         Description for Get metric definitions for a worker pool of an App Service Environment.
@@ -2981,7 +3024,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.ResourceMetricDefinitionCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceMetricDefinitionCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceMetricDefinitionCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -3029,7 +3072,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -3046,7 +3089,7 @@ class AppServiceEnvironmentsOperations:
         name: str,
         worker_pool_name: str,
         **kwargs
-    ) -> AsyncIterable["models.SkuInfoCollection"]:
+    ) -> AsyncIterable["_models.SkuInfoCollection"]:
         """Get available SKUs for scaling a worker pool.
 
         Description for Get available SKUs for scaling a worker pool.
@@ -3062,7 +3105,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.SkuInfoCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SkuInfoCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SkuInfoCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -3110,7 +3153,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -3127,7 +3170,7 @@ class AppServiceEnvironmentsOperations:
         name: str,
         worker_pool_name: str,
         **kwargs
-    ) -> AsyncIterable["models.UsageCollection"]:
+    ) -> AsyncIterable["_models.UsageCollection"]:
         """Get usage metrics for a worker pool of an App Service Environment.
 
         Description for Get usage metrics for a worker pool of an App Service Environment.
@@ -3143,7 +3186,7 @@ class AppServiceEnvironmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.UsageCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.UsageCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.UsageCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -3191,7 +3234,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

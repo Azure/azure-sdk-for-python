@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class DenyAssignmentsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -50,7 +50,7 @@ class DenyAssignmentsOperations:
         resource_name: str,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.DenyAssignmentListResult"]:
+    ) -> AsyncIterable["_models.DenyAssignmentListResult"]:
         """Gets deny assignments for a resource.
 
         :param resource_group_name: The name of the resource group.
@@ -79,7 +79,7 @@ class DenyAssignmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.authorization.v2018_07_01_preview.models.DenyAssignmentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DenyAssignmentListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DenyAssignmentListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -146,7 +146,7 @@ class DenyAssignmentsOperations:
         resource_group_name: str,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.DenyAssignmentListResult"]:
+    ) -> AsyncIterable["_models.DenyAssignmentListResult"]:
         """Gets deny assignments for a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -167,7 +167,7 @@ class DenyAssignmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.authorization.v2018_07_01_preview.models.DenyAssignmentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DenyAssignmentListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DenyAssignmentListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -229,7 +229,7 @@ class DenyAssignmentsOperations:
         self,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.DenyAssignmentListResult"]:
+    ) -> AsyncIterable["_models.DenyAssignmentListResult"]:
         """Gets all deny assignments for the subscription.
 
         :param filter: The filter to apply on the operation. Use $filter=atScope() to return all deny
@@ -248,7 +248,7 @@ class DenyAssignmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.authorization.v2018_07_01_preview.models.DenyAssignmentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DenyAssignmentListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DenyAssignmentListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -310,7 +310,7 @@ class DenyAssignmentsOperations:
         scope: str,
         deny_assignment_id: str,
         **kwargs
-    ) -> "models.DenyAssignment":
+    ) -> "_models.DenyAssignment":
         """Get the specified deny assignment.
 
         :param scope: The scope of the deny assignment.
@@ -322,7 +322,7 @@ class DenyAssignmentsOperations:
         :rtype: ~azure.mgmt.authorization.v2018_07_01_preview.models.DenyAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DenyAssignment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DenyAssignment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -366,7 +366,7 @@ class DenyAssignmentsOperations:
         self,
         deny_assignment_id: str,
         **kwargs
-    ) -> "models.DenyAssignment":
+    ) -> "_models.DenyAssignment":
         """Gets a deny assignment by ID.
 
         :param deny_assignment_id: The fully qualified deny assignment ID. For example, use the format,
@@ -380,7 +380,7 @@ class DenyAssignmentsOperations:
         :rtype: ~azure.mgmt.authorization.v2018_07_01_preview.models.DenyAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DenyAssignment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DenyAssignment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -424,7 +424,7 @@ class DenyAssignmentsOperations:
         scope: str,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.DenyAssignmentListResult"]:
+    ) -> AsyncIterable["_models.DenyAssignmentListResult"]:
         """Gets deny assignments for a scope.
 
         :param scope: The scope of the deny assignments.
@@ -445,7 +445,7 @@ class DenyAssignmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.authorization.v2018_07_01_preview.models.DenyAssignmentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DenyAssignmentListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DenyAssignmentListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

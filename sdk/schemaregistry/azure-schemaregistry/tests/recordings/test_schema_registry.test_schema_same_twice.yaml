@@ -13,21 +13,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.7.7 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       X-Schema-Type:
       - Avro
     method: PUT
-    uri: https://sr-playground.servicebus.windows.net/$schemagroups/azsdk_python_test_group/schemas/test-schema-twice863b11a7?api-version=2017-04
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7?api-version=2017-04
   response:
     body:
-      string: '{"id":"07a69522b495454e80c9dfee0bf43cc3"}'
+      string: '{"id":"84d9f43dc1e0477b83247f48a2757eae"}'
     headers:
       content-type:
       - application/json
       date:
-      - Fri, 04 Sep 2020 22:02:14 GMT
+      - Thu, 12 Nov 2020 05:59:42 GMT
       location:
-      - https://sr-playground.servicebus.windows.net:443/$schemagroups/azsdk_python_test_group/schemas/test-schema-twice863b11a7/versions/1?api-version=2017-04
+      - https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2017-04
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -35,15 +35,15 @@ interactions:
       transfer-encoding:
       - chunked
       x-schema-id:
-      - 07a69522b495454e80c9dfee0bf43cc3
+      - 84d9f43dc1e0477b83247f48a2757eae
       x-schema-id-location:
-      - https://sr-playground.servicebus.windows.net:443/$schemagroups/getschemabyid/07a69522b495454e80c9dfee0bf43cc3?api-version=2017-04
+      - https://seankane.servicebus.windows.net:443/$schemagroups/getschemabyid/84d9f43dc1e0477b83247f48a2757eae?api-version=2017-04
       x-schema-type:
       - Avro
       x-schema-version:
       - '1'
       x-schema-versions-location:
-      - https://sr-playground.servicebus.windows.net:443/$schemagroups/azsdk_python_test_group/schemas/test-schema-twice863b11a7/versions?api-version=2017-04
+      - https://seankane.servicebus.windows.net:443/$schemagroups/azsdk_net_test_group/schemas/test-schema-twice863b11a7/versions?api-version=2017-04
     status:
       code: 200
       message: OK
@@ -61,21 +61,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.7.7 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       X-Schema-Type:
       - Avro
     method: PUT
-    uri: https://sr-playground.servicebus.windows.net/$schemagroups/azsdk_python_test_group/schemas/test-schema-twice863b11a7?api-version=2017-04
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7?api-version=2017-04
   response:
     body:
-      string: '{"id":"07a69522b495454e80c9dfee0bf43cc3"}'
+      string: '{"id":"84d9f43dc1e0477b83247f48a2757eae"}'
     headers:
       content-type:
       - application/json
       date:
-      - Fri, 04 Sep 2020 22:02:14 GMT
+      - Thu, 12 Nov 2020 05:59:43 GMT
       location:
-      - https://sr-playground.servicebus.windows.net:443/$schemagroups/azsdk_python_test_group/schemas/test-schema-twice863b11a7/versions/1?api-version=2017-04
+      - https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2017-04
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -83,15 +83,15 @@ interactions:
       transfer-encoding:
       - chunked
       x-schema-id:
-      - 07a69522b495454e80c9dfee0bf43cc3
+      - 84d9f43dc1e0477b83247f48a2757eae
       x-schema-id-location:
-      - https://sr-playground.servicebus.windows.net:443/$schemagroups/getschemabyid/07a69522b495454e80c9dfee0bf43cc3?api-version=2017-04
+      - https://seankane.servicebus.windows.net:443/$schemagroups/getschemabyid/84d9f43dc1e0477b83247f48a2757eae?api-version=2017-04
       x-schema-type:
       - Avro
       x-schema-version:
       - '1'
       x-schema-versions-location:
-      - https://sr-playground.servicebus.windows.net:443/$schemagroups/azsdk_python_test_group/schemas/test-schema-twice863b11a7/versions?api-version=2017-04
+      - https://seankane.servicebus.windows.net:443/$schemagroups/azsdk_net_test_group/schemas/test-schema-twice863b11a7/versions?api-version=2017-04
     status:
       code: 200
       message: OK

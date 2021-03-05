@@ -1,5 +1,111 @@
 # Release History
 
+## 10.0.0 (2021-01-19)
+
+**Features**
+
+  - Model ProxyResource has a new parameter system_data
+  - Model OriginGroup has a new parameter system_data
+  - Model Endpoint has a new parameter system_data
+  - Model EdgeNode has a new parameter system_data
+  - Model Origin has a new parameter system_data
+  - Model TrackedResource has a new parameter system_data
+  - Model Profile has a new parameter system_data
+  - Model Profile has a new parameter frontdoor_id
+  - Model CdnWebApplicationFirewallPolicy has a new parameter system_data
+  - Model CustomDomain has a new parameter system_data
+  - Added operation group AFDOriginsOperations
+  - Added operation group AFDProfilesOperations
+  - Added operation group AFDEndpointsOperations
+  - Added operation group RoutesOperations
+  - Added operation group LogAnalyticsOperations
+  - Added operation group RulesOperations
+  - Added operation group ValidateOperations
+  - Added operation group AFDOriginGroupsOperations
+  - Added operation group SecretsOperations
+  - Added operation group SecurityPoliciesOperations
+  - Added operation group AFDCustomDomainsOperations
+  - Added operation group RuleSetsOperations
+
+**Breaking changes**
+
+  - Parameter odata_type of model UrlSigningActionParameters is now required
+  - Operation PoliciesOperations.begin_update has a new signature
+  - Operation EndpointsOperations.validate_custom_domain has a new signature
+  - Operation EndpointsOperations.begin_load_content has a new signature
+  - Operation EndpointsOperations.begin_purge_content has a new signature
+  - Operation ProfilesOperations.begin_update has a new signature
+  - Operation CdnManagementClientOperationsMixin.check_name_availability has a new signature
+  - Operation CdnManagementClientOperationsMixin.check_name_availability_with_subscription has a new signature
+  - Operation CdnManagementClientOperationsMixin.validate_probe has a new signature
+  - Operation CustomDomainsOperations.begin_create has a new signature
+  - Model UrlSigningActionParameters no longer has parameter ip_subnets
+  - Model UrlSigningActionParameters no longer has parameter key_id
+
+## 10.0.0b1 (2020-10-31)
+This is beta preview version.
+For detailed changelog please refer to equivalent stable version 5.1.0 (https://pypi.org/project/azure-mgmt-cdn/5.1.0/)
+
+This version uses a next-generation code generator that introduces important breaking changes, but also important new features (like unified authentication and async programming).
+
+**General breaking changes**
+
+- Credential system has been completly revamped:
+
+  - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
+  - `credentials` parameter has been renamed `credential`
+
+- The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+- You can't import a `version` module anymore, use `__version__` instead
+- Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
+- Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
+- Most of the operation kwarg have changed. Some of the most noticeable:
+
+  - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
+  - For a complete set of supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+
+**General new features**
+
+- Type annotations support using `typing`. SDKs are mypy ready.
+- This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+
+## 5.1.0 (2020-08-10)
+
+**Features**
+  - Add UrlSigningAction
+
+## 5.0.0 (2020-07-21)
+
+**Features**
+
+  - Model Origin has a new parameter private_link_approval_message
+  - Model Origin has a new parameter enabled
+  - Model Origin has a new parameter weight
+  - Model Origin has a new parameter origin_host_header
+  - Model Origin has a new parameter private_link_resource_id
+  - Model Origin has a new parameter private_link_location
+  - Model Origin has a new parameter private_link_alias
+  - Model Origin has a new parameter priority
+  - Model Origin has a new parameter private_endpoint_status
+  - Model EndpointUpdateParameters has a new parameter url_signing_keys
+  - Model EndpointUpdateParameters has a new parameter default_origin_group
+  - Model Endpoint has a new parameter url_signing_keys
+  - Model Endpoint has a new parameter origin_groups
+  - Model Endpoint has a new parameter default_origin_group
+  - Added operation OriginsOperations.create
+  - Added operation OriginsOperations.delete
+  - Added operation group OriginGroupsOperations
+
+**Breaking changes**
+
+  - Model Origin no longer has parameter location
+  - Model Origin no longer has parameter tags
+  - Model CustomDomain no longer has parameter custom_https_parameters
+  - Model DeepCreatedOrigin has a new signature
+  - Model OriginUpdateParameters has a new signature
+
 ## 4.1.0rc1 (2020-01-18)
 
 **Features**

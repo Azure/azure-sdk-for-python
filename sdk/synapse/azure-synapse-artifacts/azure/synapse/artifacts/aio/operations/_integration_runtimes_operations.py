@@ -12,7 +12,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -31,7 +31,7 @@ class IntegrationRuntimesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -42,7 +42,7 @@ class IntegrationRuntimesOperations:
     async def list(
         self,
         **kwargs
-    ) -> "models.IntegrationRuntimeListResponse":
+    ) -> "_models.IntegrationRuntimeListResponse":
         """List Integration Runtimes.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -50,7 +50,7 @@ class IntegrationRuntimesOperations:
         :rtype: ~azure.synapse.artifacts.models.IntegrationRuntimeListResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationRuntimeListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationRuntimeListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -79,7 +79,7 @@ class IntegrationRuntimesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorContract, response)
+            error = self._deserialize(_models.ErrorContract, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('IntegrationRuntimeListResponse', pipeline_response)
@@ -94,7 +94,7 @@ class IntegrationRuntimesOperations:
         self,
         integration_runtime_name: str,
         **kwargs
-    ) -> "models.IntegrationRuntimeResource":
+    ) -> "_models.IntegrationRuntimeResource":
         """Get Integration Runtime.
 
         :param integration_runtime_name: The Integration Runtime name.
@@ -104,7 +104,7 @@ class IntegrationRuntimesOperations:
         :rtype: ~azure.synapse.artifacts.models.IntegrationRuntimeResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationRuntimeResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationRuntimeResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -134,7 +134,7 @@ class IntegrationRuntimesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorContract, response)
+            error = self._deserialize(_models.ErrorContract, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('IntegrationRuntimeResource', pipeline_response)

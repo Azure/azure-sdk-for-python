@@ -1,7 +1,11 @@
 # Release History
 
-## 9.0.1 (Unreleased)
+## 10.0.0 (2020-09-01)
 
+### Features
+- **[Breaking]** Replaced property `maxTasksPerNode` with `taskSlotsPerNode` on the pool. Using this property tasks in a job can consume a dynamic amount of slots allowing for more fine-grained control over resource consumption.
+- **[Breaking]** Changed the response type of `GetTaskCounts` to return `TaskCountsResult`, which is a complex object containing the previous `TaskCounts` object and a new `TaskSlotCounts` object providing similar information in the context of slots being used.
+- Added property `requiredSlots` to the task allowing user to specify how many slots on a node it should take up.
 
 ## 9.0.0 (2020-03-24)
 

@@ -1,0 +1,152 @@
+interactions:
+- request:
+    body: 'b''{"source": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.tiff"}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '164'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyze?includeTextDetails=false
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - 144ae00b-acd0-46ab-b3e2-458acb4eb920
+      content-length:
+      - '0'
+      date:
+      - Fri, 30 Oct 2020 01:12:28 GMT
+      operation-location:
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/144ae00b-acd0-46ab-b3e2-458acb4eb920
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '59'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/144ae00b-acd0-46ab-b3e2-458acb4eb920
+  response:
+    body:
+      string: '{"status": "running", "createdDateTime": "2020-10-30T01:12:28Z", "lastUpdatedDateTime":
+        "2020-10-30T01:12:29Z"}'
+    headers:
+      apim-request-id:
+      - 748c5dc8-9beb-44d0-a6b5-947d2b22c6d6
+      content-length:
+      - '106'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 30 Oct 2020 01:12:32 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '12'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/144ae00b-acd0-46ab-b3e2-458acb4eb920
+  response:
+    body:
+      string: '{"status": "succeeded", "createdDateTime": "2020-10-30T01:12:28Z",
+        "lastUpdatedDateTime": "2020-10-30T01:12:36Z", "analyzeResult": {"version":
+        "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 1700, "height":
+        2200, "unit": "pixel"}], "pageResults": [{"page": 1, "tables": [{"rows": 3,
+        "columns": 6, "cells": [{"rowIndex": 0, "columnIndex": 0, "text": "Invoice
+        Number", "boundingBox": [101, 556, 380, 558, 380, 662, 101, 661]}, {"rowIndex":
+        0, "columnIndex": 1, "text": "Invoice Date", "boundingBox": [380, 558, 658,
+        558, 659, 662, 380, 662]}, {"rowIndex": 0, "columnIndex": 2, "text": "Invoice
+        Due Date", "boundingBox": [658, 558, 941, 558, 941, 662, 659, 662]}, {"rowIndex":
+        0, "columnIndex": 3, "columnSpan": 2, "text": "Charges", "boundingBox": [941,
+        558, 1220, 558, 1220, 662, 941, 662]}, {"rowIndex": 0, "columnIndex": 5, "text":
+        "VAT ID", "boundingBox": [1220, 558, 1499, 556, 1500, 661, 1220, 662]}, {"rowIndex":
+        1, "columnIndex": 0, "rowSpan": 2, "text": "34278587", "boundingBox": [101,
+        661, 380, 662, 380, 771, 101, 771]}, {"rowIndex": 1, "columnIndex": 1, "rowSpan":
+        2, "text": "6/18/2017", "boundingBox": [380, 662, 659, 662, 661, 771, 380,
+        771]}, {"rowIndex": 1, "columnIndex": 2, "rowSpan": 2, "text": "6/24/2017",
+        "boundingBox": [659, 662, 941, 662, 941, 771, 661, 771]}, {"rowIndex": 1,
+        "columnIndex": 3, "rowSpan": 2, "columnSpan": 2, "text": "$56,651.49", "boundingBox":
+        [941, 662, 1220, 662, 1220, 771, 941, 771]}, {"rowIndex": 1, "columnIndex":
+        5, "rowSpan": 2, "text": "PT", "boundingBox": [1220, 662, 1500, 661, 1500,
+        769, 1220, 771]}], "boundingBox": [100, 556, 1499, 556, 1498, 771, 99, 771]}]}],
+        "documentResults": [{"docType": "prebuilt:invoice", "pageRange": [1, 1], "fields":
+        {"VendorName": {"type": "string", "valueString": "Contoso", "text": "Contoso",
+        "boundingBox": [106, 232, 288, 234, 288, 274, 105, 274], "page": 1, "confidence":
+        0.921}, "CustomerAddressRecipient": {"type": "string", "valueString": "Microsoft",
+        "text": "Microsoft", "boundingBox": [1035, 299, 1164, 300, 1165, 326, 1036,
+        327], "page": 1, "confidence": 0.993}, "VendorAddress": {"type": "string",
+        "valueString": "1 Redmond way Suite 6000 Redmond, WA 99243", "text": "1 Redmond
+        way Suite 6000 Redmond, WA 99243", "boundingBox": [158, 337, 433, 337, 433,
+        441, 158, 441], "page": 1, "confidence": 0.907}, "CustomerAddress": {"type":
+        "string", "valueString": "1020 Enterprise Way Sunnayvale, CA 87659", "text":
+        "1020 Enterprise Way Sunnayvale, CA 87659", "boundingBox": [1036.1, 337.1,
+        1333.2, 338.1, 1333, 408.4, 1035.9, 407.5], "page": 1, "confidence": 0.995},
+        "InvoiceId": {"type": "string", "valueString": "34278587", "text": "34278587",
+        "boundingBox": [105, 680, 229, 680, 230, 705, 106, 705], "page": 1, "confidence":
+        0.768}, "InvoiceDate": {"type": "date", "valueDate": "2017-06-18", "text":
+        "6/18/2017", "boundingBox": [387, 680, 510, 680, 510, 705, 387, 705], "page":
+        1, "confidence": 0.89}, "DueDate": {"type": "date", "valueDate": "2017-06-24",
+        "text": "6/24/2017", "boundingBox": [668, 679, 792, 679, 792, 705, 667, 705],
+        "page": 1, "confidence": 0.988}, "InvoiceTotal": {"type": "number", "valueNumber":
+        56651.49, "text": "$56,651.49", "boundingBox": [1075, 680, 1224, 680, 1225,
+        705, 1075, 707], "page": 1, "confidence": 0.847}, "CustomerName": {"type":
+        "string", "valueString": "Microsoft", "text": "Microsoft", "boundingBox":
+        [1035, 299, 1164, 300, 1165, 326, 1036, 327], "page": 1, "confidence": 0.993}}}]}}'
+    headers:
+      apim-request-id:
+      - fce46998-a369-41f1-84bf-673122bee269
+      content-length:
+      - '3042'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 30 Oct 2020 01:12:38 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '15'
+    status:
+      code: 200
+      message: OK
+version: 1

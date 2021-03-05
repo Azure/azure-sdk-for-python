@@ -48,6 +48,79 @@ pip install --pre azure-data-tables
 2. Set the environment variables specified in the sample file you wish to run.
 3. Follow the usage described in the file, e.g. `python sample_create_table.py`
 
+## Writing Filters
+
+### Supported Comparison Operators
+|**Operator**|**URI expression**|
+|------------|------------------|
+|`Equal`|`eq`|
+|`GreaterThan`|`gt`|
+|`GreaterTahnOrEqual`|`ge`|
+|`LessThan`|`lt`|
+|`LessThanOrEqual`|`le`|
+|`NotEqual`|`ne`|
+|`And`|`and`|
+|`Not`|`not`|
+|`Or`|`or`|
+
+### Example Filters
+
+#### Filter on `PartitionKey` and `RowKey`:
+```python
+parameters = {
+    "pk": PartitionKey,
+    "rk": RowKey
+}
+filter = "PartitionKey eq @pk and RowKey eq @rk"
+table_client.query_entities(filter=filter, parameter=pk)
+```
+
+#### Filter on Properties
+```python
+parameters = {
+    "first": first_name,
+    "last": last_name
+}
+filter = "FirstName eq @first or LastName eq @last"
+table_client.query_entities(filter=filter, parameter=pk)
+```
+
+#### Filter with string comparison operators
+```python
+filter = "LastName ge 'A' and LastName lt 'B'"
+table_client.query_entities(filter=filter)
+```
+
+#### Filter with numeric properties
+```python
+filter = "Age gt 30"
+table_client.query_entities(filter=filter)
+```
+
+```python
+filter = "AmountDue le 100.25"
+table_client.query_entities(filter=filter)
+```
+
+#### Filter with boolean properties
+```python
+filter = "IsActive eq true"
+table_client.query_entities(filter=filter)
+```
+
+#### Filter with DateTime properties
+```python
+filter = "CustomerSince eq datetime'2008-07-10T00:00:00Z'"
+table_client.query_entities(filter=filter)
+```
+
+#### Filter with GUID properties
+```python
+filter = "GuidValue eq guid'a455c695-df98-5678-aaaa-81d3367e5a34'"
+table_client.query_entities(filter=filter)
+```
+
+
 ## Next steps
 
 Check out the [API reference documentation][api_reference_documentation] to learn more about

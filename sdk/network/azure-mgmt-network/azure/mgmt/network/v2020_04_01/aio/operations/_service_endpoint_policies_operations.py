@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ServiceEndpointPoliciesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -131,7 +131,13 @@ class ServiceEndpointPoliciesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serviceEndpointPolicyName': self._serialize.url("service_endpoint_policy_name", service_endpoint_policy_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -151,7 +157,7 @@ class ServiceEndpointPoliciesOperations:
         service_endpoint_policy_name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.ServiceEndpointPolicy":
+    ) -> "_models.ServiceEndpointPolicy":
         """Gets the specified service Endpoint Policies in a specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -165,7 +171,7 @@ class ServiceEndpointPoliciesOperations:
         :rtype: ~azure.mgmt.network.v2020_04_01.models.ServiceEndpointPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceEndpointPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceEndpointPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -212,10 +218,10 @@ class ServiceEndpointPoliciesOperations:
         self,
         resource_group_name: str,
         service_endpoint_policy_name: str,
-        parameters: "models.ServiceEndpointPolicy",
+        parameters: "_models.ServiceEndpointPolicy",
         **kwargs
-    ) -> "models.ServiceEndpointPolicy":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceEndpointPolicy"]
+    ) -> "_models.ServiceEndpointPolicy":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceEndpointPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -269,9 +275,9 @@ class ServiceEndpointPoliciesOperations:
         self,
         resource_group_name: str,
         service_endpoint_policy_name: str,
-        parameters: "models.ServiceEndpointPolicy",
+        parameters: "_models.ServiceEndpointPolicy",
         **kwargs
-    ) -> AsyncLROPoller["models.ServiceEndpointPolicy"]:
+    ) -> AsyncLROPoller["_models.ServiceEndpointPolicy"]:
         """Creates or updates a service Endpoint Policies.
 
         :param resource_group_name: The name of the resource group.
@@ -292,7 +298,7 @@ class ServiceEndpointPoliciesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceEndpointPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceEndpointPolicy"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -317,7 +323,13 @@ class ServiceEndpointPoliciesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serviceEndpointPolicyName': self._serialize.url("service_endpoint_policy_name", service_endpoint_policy_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -335,9 +347,9 @@ class ServiceEndpointPoliciesOperations:
         self,
         resource_group_name: str,
         service_endpoint_policy_name: str,
-        parameters: "models.TagsObject",
+        parameters: "_models.TagsObject",
         **kwargs
-    ) -> "models.ServiceEndpointPolicy":
+    ) -> "_models.ServiceEndpointPolicy":
         """Updates tags of a service endpoint policy.
 
         :param resource_group_name: The name of the resource group.
@@ -351,7 +363,7 @@ class ServiceEndpointPoliciesOperations:
         :rtype: ~azure.mgmt.network.v2020_04_01.models.ServiceEndpointPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceEndpointPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceEndpointPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -400,7 +412,7 @@ class ServiceEndpointPoliciesOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.ServiceEndpointPolicyListResult"]:
+    ) -> AsyncIterable["_models.ServiceEndpointPolicyListResult"]:
         """Gets all the service endpoint policies in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -408,7 +420,7 @@ class ServiceEndpointPoliciesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2020_04_01.models.ServiceEndpointPolicyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceEndpointPolicyListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceEndpointPolicyListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -467,7 +479,7 @@ class ServiceEndpointPoliciesOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ServiceEndpointPolicyListResult"]:
+    ) -> AsyncIterable["_models.ServiceEndpointPolicyListResult"]:
         """Gets all service endpoint Policies in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -477,7 +489,7 @@ class ServiceEndpointPoliciesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2020_04_01.models.ServiceEndpointPolicyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceEndpointPolicyListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceEndpointPolicyListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -11,7 +11,7 @@ import sys
 import time
 
 from azure.servicebus import ServiceBusClient, AutoLockRenewer
-from azure.servicebus._common.constants import ReceiveMode
+from azure.servicebus._common.constants import ServiceBusReceiveMode
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 
@@ -107,7 +107,8 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=LOGGING_ENABLE)
 
         stress_test = StressTestRunner(senders = [sb_client.get_queue_sender(servicebus_queue.name)],
-                                       receivers = [sb_client.get_queue_receiver(servicebus_queue.name, receive_mode=ReceiveMode.ReceiveAndDelete)],
+                                       receivers = [sb_client.get_queue_receiver(servicebus_queue.name, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE)],
+                                       should_complete_messages = False,
                                        duration=timedelta(seconds=60))
 
         result = stress_test.run()
@@ -186,8 +187,8 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
     class LongRenewStressTestRunner(StressTestRunner):
         def on_receive(self, state, received_message, receiver):
             '''Called on every successful receive'''
-            renewer = AutoLockRenew()
-            renewer.register(received_message, timeout=300)
+            renewer = AutoLockRenewer()
+            renewer.register(receiver, received_message, max_lock_renewal_duration=300)
             time.sleep(300)
 
     @pytest.mark.liveTest
@@ -216,7 +217,7 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
             renewer = AutoLockRenewer()
             def on_fail(renewable, error):
                 print("FAILED AUTOLOCKRENEW: " + str(error))
-            renewer.register(receiver.session, timeout=600, on_lock_renew_failure=on_fail)
+            renewer.register(receiver, receiver.session, max_lock_renewal_duration=600, on_lock_renew_failure=on_fail)
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -282,6 +283,7 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
+    @pytest.mark.skip(reason='This test is disabled unless re-openability of handlers is desired and re-enabled')
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest')
@@ -295,6 +297,55 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
                                        duration = timedelta(seconds=300),
                                        receive_delay = 30,
                                        send_delay = 10)
+
+        result = stress_test.run()
+        assert(result.total_sent > 0)
+        assert(result.total_received > 0)
+
+    # This test validates that all individual messages are received contiguously over a long time period.
+    # (e.g. not dropped for whatever reason, not sent, or not received)
+    class DroppedMessageCheckerStressTestRunner(StressTestRunner):
+        def on_receive(self, state, received_message, receiver):
+            '''Called on every successful receive'''
+            last_seen = getattr(state, 'last_seen', -1)
+            noncontiguous = getattr(state, 'noncontiguous', set())
+            body = int(str(received_message))
+            if body == last_seen+1:
+                last_seen += 1
+                if noncontiguous:
+                    while (last_seen+1) in noncontiguous:
+                        last_seen += 1
+                        noncontiguous.remove(last_seen)
+            else:
+                noncontiguous.add(body)
+            state.noncontiguous = noncontiguous
+            state.last_seen = last_seen
+
+        def pre_process_message_body(self, payload):
+            '''Called when constructing message body'''
+            try:
+                body = self._message_id
+            except:
+                self._message_id = 0
+                body = 0
+            self._message_id += 1
+
+            return str(body)
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest')
+    def test_stress_queue_check_for_dropped_messages(self, servicebus_namespace_connection_string, servicebus_queue):
+        sb_client = ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, debug=False)
+
+        stress_test = ServiceBusQueueStressTests.DroppedMessageCheckerStressTestRunner(
+                                       senders = [sb_client.get_queue_sender(servicebus_queue.name)],
+                                       receivers = [sb_client.get_queue_receiver(servicebus_queue.name)],
+                                       receive_type=ReceiveType.pull,
+                                       duration=timedelta(seconds=3000))
 
         result = stress_test.run()
         assert(result.total_sent > 0)

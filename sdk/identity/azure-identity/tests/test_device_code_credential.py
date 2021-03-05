@@ -6,8 +6,7 @@ import datetime
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.identity import DeviceCodeCredential
-from azure.identity._exceptions import AuthenticationRequiredError
+from azure.identity import AuthenticationRequiredError, DeviceCodeCredential
 from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
 import pytest
@@ -16,15 +15,16 @@ from helpers import (
     build_aad_response,
     build_id_token,
     get_discovery_response,
+    id_token_claims,
     mock_response,
     Request,
     validating_transport,
 )
 
 try:
-    from unittest.mock import Mock
+    from unittest.mock import Mock, patch
 except ImportError:  # python < 3.3
-    from mock import Mock  # type: ignore
+    from mock import Mock, patch  # type: ignore
 
 
 def test_tenant_id_validation():
@@ -91,7 +91,7 @@ def test_authenticate():
         tenant_id=tenant_id,
         _cache=TokenCache(),
     )
-    record = credential._authenticate(scopes=(scope,))
+    record = credential.authenticate(scopes=(scope,))
     assert record.authority == environment
     assert record.home_account_id == object_id + "." + home_tenant
     assert record.tenant_id == home_tenant
@@ -108,7 +108,7 @@ def test_disable_automatic_authentication():
     empty_cache = TokenCache()  # empty cache makes silent auth impossible
     transport = Mock(send=Mock(side_effect=Exception("no request should be sent")))
     credential = DeviceCodeCredential(
-        "client-id", _disable_automatic_authentication=True, transport=transport, _cache=empty_cache
+        "client-id", disable_automatic_authentication=True, transport=transport, _cache=empty_cache
     )
 
     with pytest.raises(AuthenticationRequiredError):
@@ -261,3 +261,47 @@ def test_timeout():
     with pytest.raises(ClientAuthenticationError) as ex:
         credential.get_token("scope")
     assert "timed out" in ex.value.message.lower()
+
+
+def test_client_capabilities():
+    """the credential should configure MSAL for capability CP1 (ability to handle claims challenges)"""
+
+    transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
+    credential = DeviceCodeCredential(transport=transport)
+
+    with patch("msal.PublicClientApplication") as PublicClientApplication:
+        credential._get_app()
+
+    assert PublicClientApplication.call_count == 1
+    _, kwargs = PublicClientApplication.call_args
+    assert kwargs["client_capabilities"] == ["CP1"]
+
+
+def test_claims_challenge():
+    """get_token should pass any claims challenge to MSAL token acquisition APIs"""
+
+    msal_acquire_token_result = dict(
+        build_aad_response(access_token="**", id_token=build_id_token()),
+        id_token_claims=id_token_claims("issuer", "subject", "audience", upn="upn"),
+    )
+    expected_claims = '{"access_token": {"essential": "true"}'
+
+    transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
+    credential = DeviceCodeCredential(transport=transport)
+    with patch.object(DeviceCodeCredential, "_get_app") as get_mock_app:
+        msal_app = get_mock_app()
+        msal_app.initiate_device_flow.return_value = {"message": "it worked"}
+        msal_app.acquire_token_by_device_flow.return_value = msal_acquire_token_result
+        credential.get_token("scope", claims=expected_claims)
+
+        assert msal_app.acquire_token_by_device_flow.call_count == 1
+        args, kwargs = msal_app.acquire_token_by_device_flow.call_args
+        assert kwargs["claims_challenge"] == expected_claims
+
+        msal_app.get_accounts.return_value = [{"home_account_id": credential._auth_record.home_account_id}]
+        msal_app.acquire_token_silent_with_error.return_value = msal_acquire_token_result
+        credential.get_token("scope", claims=expected_claims)
+
+        assert msal_app.acquire_token_silent_with_error.call_count == 1
+        args, kwargs = msal_app.acquire_token_silent_with_error.call_args
+        assert kwargs["claims_challenge"] == expected_claims

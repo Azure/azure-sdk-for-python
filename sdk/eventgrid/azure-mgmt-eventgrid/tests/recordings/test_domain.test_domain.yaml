@@ -1,0 +1,390 @@
+interactions:
+- request:
+    body: '{"location": "westus"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '22'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-eventgrid/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_domain_test_domain70eb095d/providers/Microsoft.EventGrid/domains/domain70eb095d?api-version=2020-06-01
+  response:
+    body:
+      string: '{"properties":{"provisioningState":"Creating","endpoint":null},"location":"westus","tags":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_domain_test_domain70eb095d/providers/Microsoft.EventGrid/domains/domain70eb095d","name":"domain70eb095d","type":"Microsoft.EventGrid/domains"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com:443/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/westus/operationsStatus/023AF0E9-A53C-44D7-B3BC-C7C625D69F42?api-version=2020-06-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '315'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 21 Dec 2020 09:35:16 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-eventgrid/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/westus/operationsStatus/023AF0E9-A53C-44D7-B3BC-C7C625D69F42?api-version=2020-06-01
+  response:
+    body:
+      string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/westus/operationsStatus/023AF0E9-A53C-44D7-B3BC-C7C625D69F42?api-version=2020-06-01","name":"023af0e9-a53c-44d7-b3bc-c7c625d69f42","status":"Succeeded"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '279'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 21 Dec 2020 09:35:26 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-eventgrid/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_domain_test_domain70eb095d/providers/Microsoft.EventGrid/domains/domain70eb095d?api-version=2020-06-01
+  response:
+    body:
+      string: '{"properties":{"provisioningState":"Succeeded","endpoint":"https://domain70eb095d.westus-1.eventgrid.azure.net/api/events","inputSchema":"EventGridSchema","metricResourceId":"38191fc9-ce96-4157-97f7-870f648e5b44","publicNetworkAccess":"Enabled"},"location":"westus","tags":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_domain_test_domain70eb095d/providers/Microsoft.EventGrid/domains/domain70eb095d","name":"domain70eb095d","type":"Microsoft.EventGrid/domains"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '498'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 21 Dec 2020 09:35:27 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"tags": {"tag1": "value1", "tag2": "value2"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '46'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-eventgrid/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_domain_test_domain70eb095d/providers/Microsoft.EventGrid/domains/domain70eb095d?api-version=2020-06-01
+  response:
+    body:
+      string: '{"properties":{"provisioningState":"Updating","endpoint":"https://domain70eb095d.westus-1.eventgrid.azure.net/api/events","inputSchema":"EventGridSchema","metricResourceId":"38191fc9-ce96-4157-97f7-870f648e5b44","publicNetworkAccess":"Enabled"},"location":"westus","tags":{"tag1":"value1","tag2":"value2"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_domain_test_domain70eb095d/providers/Microsoft.EventGrid/domains/domain70eb095d","name":"domain70eb095d","type":"Microsoft.EventGrid/domains"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com:443/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/westus/operationsStatus/B6D958FE-FF20-4187-BB7B-3B13D688AF7B?api-version=2020-06-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '526'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 21 Dec 2020 09:35:29 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-eventgrid/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/westus/operationsStatus/B6D958FE-FF20-4187-BB7B-3B13D688AF7B?api-version=2020-06-01
+  response:
+    body:
+      string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/westus/operationsStatus/B6D958FE-FF20-4187-BB7B-3B13D688AF7B?api-version=2020-06-01","name":"b6d958fe-ff20-4187-bb7b-3b13d688af7b","status":"Succeeded"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '279'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 21 Dec 2020 09:35:39 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-eventgrid/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_domain_test_domain70eb095d/providers/Microsoft.EventGrid/domains/domain70eb095d?api-version=2020-06-01
+  response:
+    body:
+      string: '{"properties":{"provisioningState":"Succeeded","endpoint":"https://domain70eb095d.westus-1.eventgrid.azure.net/api/events","inputSchema":"EventGridSchema","metricResourceId":"38191fc9-ce96-4157-97f7-870f648e5b44","publicNetworkAccess":"Enabled"},"location":"westus","tags":{"tag1":"value1","tag2":"value2"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_domain_test_domain70eb095d/providers/Microsoft.EventGrid/domains/domain70eb095d","name":"domain70eb095d","type":"Microsoft.EventGrid/domains"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '527'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 21 Dec 2020 09:35:39 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-eventgrid/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_domain_test_domain70eb095d/providers/Microsoft.EventGrid/domains/domain70eb095d?api-version=2020-06-01
+  response:
+    body:
+      string: '{"properties":{"provisioningState":"Succeeded","endpoint":"https://domain70eb095d.westus-1.eventgrid.azure.net/api/events","inputSchema":"EventGridSchema","metricResourceId":"38191fc9-ce96-4157-97f7-870f648e5b44","publicNetworkAccess":"Enabled"},"location":"westus","tags":{"tag1":"value1","tag2":"value2"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_domain_test_domain70eb095d/providers/Microsoft.EventGrid/domains/domain70eb095d","name":"domain70eb095d","type":"Microsoft.EventGrid/domains"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '527'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 21 Dec 2020 09:35:39 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-mgmt-eventgrid/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_domain_test_domain70eb095d/providers/Microsoft.EventGrid/domains/domain70eb095d?api-version=2020-06-01
+  response:
+    body:
+      string: ''
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com:443/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/westus/operationsStatus/C45C1FCB-D891-4A02-AFF9-950BA7336CF5?api-version=2020-06-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Mon, 21 Dec 2020 09:35:40 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/westus/operationResults/C45C1FCB-D891-4A02-AFF9-950BA7336CF5?api-version=2020-06-01
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-eventgrid/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/westus/operationsStatus/C45C1FCB-D891-4A02-AFF9-950BA7336CF5?api-version=2020-06-01
+  response:
+    body:
+      string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventGrid/locations/westus/operationsStatus/C45C1FCB-D891-4A02-AFF9-950BA7336CF5?api-version=2020-06-01","name":"c45c1fcb-d891-4a02-aff9-950ba7336cf5","status":"Succeeded"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '279'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 21 Dec 2020 09:35:50 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1

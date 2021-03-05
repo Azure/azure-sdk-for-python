@@ -11,50 +11,37 @@ interactions:
       Content-Length:
       - '59'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"name\":\"profilename\",\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename\"\
-        ,\"type\":\"Microsoft.Cdn/profiles\",\"tags\":{\r\n    \r\n  },\"location\"\
-        :\"WestUs\",\"sku\":{\r\n    \"name\":\"Standard_Verizon\"\r\n  },\"properties\"\
-        :{\r\n    \"provisioningState\":\"Creating\",\"resourceState\":\"Creating\"\
-        \r\n  }\r\n}"
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename","type":"Microsoft.Cdn/profiles","name":"profilename","location":"WestUs","kind":"cdn","tags":{},"sku":{"name":"Standard_Verizon"},"properties":{"resourceState":"Creating","provisioningState":"Creating"}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/ce469ee6-5adb-48b5-b4b0-02b6515c5f72?api-version=2019-06-15-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e2c8a893-4277-4296-ad75-a4ece217a8b9?api-version=2020-09-01
       cache-control:
       - no-cache
       content-length:
-      - '381'
+      - '358'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:27:53 GMT
+      - Tue, 19 Jan 2021 09:13:16 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '23'
-      x-powered-by:
-      - ASP.NET
+      - '24'
     status:
       code: 201
       message: Created
@@ -62,49 +49,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/ce469ee6-5adb-48b5-b4b0-02b6515c5f72?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e2c8a893-4277-4296-ad75-a4ece217a8b9?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:28:05 GMT
+      - Tue, 19 Jan 2021 09:13:26 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -112,49 +91,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/ce469ee6-5adb-48b5-b4b0-02b6515c5f72?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e2c8a893-4277-4296-ad75-a4ece217a8b9?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:28:36 GMT
+      - Tue, 19 Jan 2021 09:13:57 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -162,49 +133,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/ce469ee6-5adb-48b5-b4b0-02b6515c5f72?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e2c8a893-4277-4296-ad75-a4ece217a8b9?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"Succeeded\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '77'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:29:07 GMT
+      - Tue, 19 Jan 2021 09:14:27 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -212,59 +175,218 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e2c8a893-4277-4296-ad75-a4ece217a8b9?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"name\":\"profilename\",\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename\"\
-        ,\"type\":\"Microsoft.Cdn/profiles\",\"tags\":{\r\n    \r\n  },\"location\"\
-        :\"WestUs\",\"sku\":{\r\n    \"name\":\"Standard_Verizon\"\r\n  },\"properties\"\
-        :{\r\n    \"provisioningState\":\"Succeeded\",\"resourceState\":\"Active\"\
-        \r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '380'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:29:08 GMT
+      - Tue, 19 Jan 2021 09:14:58 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
 - request:
-    body: '{"location": "WestUs", "tags": {"kay1": "value1"}, "properties": {"originHostHeader":
-      "www.bing.com", "originPath": "/image", "contentTypesToCompress": ["text/html",
-      "application/octet-stream"], "isCompressionEnabled": true, "isHttpAllowed":
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e2c8a893-4277-4296-ad75-a4ece217a8b9?api-version=2020-09-01
+  response:
+    body:
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '62'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 Jan 2021 09:15:28 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e2c8a893-4277-4296-ad75-a4ece217a8b9?api-version=2020-09-01
+  response:
+    body:
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '62'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 Jan 2021 09:15:59 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e2c8a893-4277-4296-ad75-a4ece217a8b9?api-version=2020-09-01
+  response:
+    body:
+      string: '{"status":"Succeeded","error":{"code":"None","message":null}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '61'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 Jan 2021 09:16:30 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename?api-version=2020-09-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename","type":"Microsoft.Cdn/profiles","name":"profilename","location":"WestUs","kind":"cdn","tags":{},"sku":{"name":"Standard_Verizon"},"properties":{"resourceState":"Active","provisioningState":"Succeeded"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '357'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 Jan 2021 09:16:31 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-resource-requests:
+      - '49'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"location": "WestUs", "tags": {"kay1": "value1"}, "properties": {"originPath":
+      "/image", "contentTypesToCompress": ["text/html", "application/octet-stream"],
+      "originHostHeader": "www.bing.com", "isCompressionEnabled": true, "isHttpAllowed":
       true, "isHttpsAllowed": true, "queryStringCachingBehavior": "BypassCaching",
       "origins": [{"name": "origin1", "properties": {"hostName": "host1.hello.com"}}]}}'
     headers:
@@ -277,58 +399,37 @@ interactions:
       Content-Length:
       - '400'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"name\":\"endpoint9527x\",\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x\"\
-        ,\"type\":\"Microsoft.Cdn/profiles/endpoints\",\"tags\":{\r\n    \"kay1\"\
-        :\"value1\"\r\n  },\"location\":\"WestUs\",\"properties\":{\r\n    \"hostName\"\
-        :\"endpoint9527x.azureedge.net\",\"originHostHeader\":\"www.bing.com\",\"\
-        provisioningState\":\"Creating\",\"resourceState\":\"Creating\",\"isHttpAllowed\"\
-        :true,\"isHttpsAllowed\":true,\"queryStringCachingBehavior\":\"BypassCaching\"\
-        ,\"originPath\":\"/image\",\"origins\":[\r\n      {\r\n        \"name\":\"\
-        origin1\",\"properties\":{\r\n          \"hostName\":\"host1.hello.com\",\"\
-        httpPort\":null,\"httpsPort\":null\r\n        }\r\n      }\r\n    ],\"customDomains\"\
-        :[\r\n      \r\n    ],\"contentTypesToCompress\":[\r\n      \"text/html\"\
-        ,\"application/octet-stream\"\r\n    ],\"isCompressionEnabled\":true,\"optimizationType\"\
-        :null,\"probePath\":null,\"geoFilters\":[\r\n      \r\n    ],\"deliveryPolicy\"\
-        :null,\"webApplicationFirewallPolicyLink\":null\r\n  }\r\n}"
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x","type":"Microsoft.Cdn/profiles/endpoints","name":"endpoint9527x","location":"WestUs","tags":{"kay1":"value1"},"properties":{"hostName":"endpoint9527x.azureedge.net","originHostHeader":"www.bing.com","originPath":"/image","contentTypesToCompress":["text/html","application/octet-stream"],"isCompressionEnabled":true,"isHttpAllowed":true,"isHttpsAllowed":true,"queryStringCachingBehavior":"BypassCaching","optimizationType":null,"probePath":null,"origins":[{"name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":null,"httpsPort":null,"originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null}}],"originGroups":[],"defaultOriginGroup":null,"customDomains":[],"geoFilters":[],"deliveryPolicy":null,"urlSigningKeys":null,"webApplicationFirewallPolicyLink":null,"resourceState":"Creating","provisioningState":"Creating"}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8247b581-57fd-443d-86a6-34492ea955ab?api-version=2019-06-15-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/f86afc75-fa03-4090-838a-97f98a89de9a?api-version=2020-09-01
       cache-control:
       - no-cache
       content-length:
-      - '1009'
+      - '1165'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:29:30 GMT
+      - Tue, 19 Jan 2021 09:16:47 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '98'
-      x-powered-by:
-      - ASP.NET
+      - '99'
     status:
       code: 201
       message: Created
@@ -336,49 +437,127 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8247b581-57fd-443d-86a6-34492ea955ab?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/f86afc75-fa03-4090-838a-97f98a89de9a?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:29:48 GMT
+      - Tue, 19 Jan 2021 09:16:57 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/f86afc75-fa03-4090-838a-97f98a89de9a?api-version=2020-09-01
+  response:
+    body:
+      string: '{"status":"Succeeded","error":{"code":"None","message":null}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '61'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 Jan 2021 09:17:27 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x?api-version=2020-09-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x","type":"Microsoft.Cdn/profiles/endpoints","name":"endpoint9527x","location":"WestUs","tags":{"kay1":"value1"},"properties":{"hostName":"endpoint9527x.azureedge.net","originHostHeader":"www.bing.com","originPath":"/image","contentTypesToCompress":["text/html","application/octet-stream"],"isCompressionEnabled":true,"isHttpAllowed":true,"isHttpsAllowed":true,"queryStringCachingBehavior":"BypassCaching","optimizationType":null,"probePath":null,"origins":[{"name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":null,"httpsPort":null,"originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null}}],"originGroups":[],"defaultOriginGroup":null,"customDomains":[],"geoFilters":[],"deliveryPolicy":null,"urlSigningKeys":[],"webApplicationFirewallPolicyLink":null,"resourceState":"Running","provisioningState":"Succeeded"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1163'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 Jan 2021 09:17:28 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-resource-requests:
+      - '49'
     status:
       code: 200
       message: OK
@@ -392,43 +571,35 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8247b581-57fd-443d-86a6-34492ea955ab?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/origins/origin1?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"Succeeded\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/origins/origin1","type":"Microsoft.Cdn/profiles/endpoints/origins","name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":null,"httpsPort":null,"resourceState":"Active","originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null,"provisioningState":"Succeeded"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '77'
+      - '608'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:30:19 GMT
+      - Tue, 19 Jan 2021 09:17:29 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -442,54 +613,37 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"name\":\"endpoint9527x\",\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x\"\
-        ,\"type\":\"Microsoft.Cdn/profiles/endpoints\",\"tags\":{\r\n    \"kay1\"\
-        :\"value1\"\r\n  },\"location\":\"WestUs\",\"properties\":{\r\n    \"hostName\"\
-        :\"endpoint9527x.azureedge.net\",\"originHostHeader\":\"www.bing.com\",\"\
-        provisioningState\":\"Succeeded\",\"resourceState\":\"Running\",\"isHttpAllowed\"\
-        :true,\"isHttpsAllowed\":true,\"queryStringCachingBehavior\":\"BypassCaching\"\
-        ,\"originPath\":\"/image\",\"origins\":[\r\n      {\r\n        \"name\":\"\
-        origin1\",\"properties\":{\r\n          \"hostName\":\"host1.hello.com\",\"\
-        httpPort\":null,\"httpsPort\":null\r\n        }\r\n      }\r\n    ],\"customDomains\"\
-        :[\r\n      \r\n    ],\"contentTypesToCompress\":[\r\n      \"text/html\"\
-        ,\"application/octet-stream\"\r\n    ],\"isCompressionEnabled\":true,\"optimizationType\"\
-        :null,\"probePath\":null,\"geoFilters\":[\r\n      \r\n    ],\"deliveryPolicy\"\
-        :null,\"webApplicationFirewallPolicyLink\":null\r\n  }\r\n}"
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x","type":"Microsoft.Cdn/profiles/endpoints","name":"endpoint9527x","location":"WestUs","tags":{"kay1":"value1"},"properties":{"hostName":"endpoint9527x.azureedge.net","originHostHeader":"www.bing.com","originPath":"/image","contentTypesToCompress":["text/html","application/octet-stream"],"isCompressionEnabled":true,"isHttpAllowed":true,"isHttpsAllowed":true,"queryStringCachingBehavior":"BypassCaching","optimizationType":null,"probePath":null,"origins":[{"name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":null,"httpsPort":null,"originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null}}],"originGroups":[],"defaultOriginGroup":null,"customDomains":[],"geoFilters":[],"deliveryPolicy":null,"urlSigningKeys":[],"webApplicationFirewallPolicyLink":null,"resourceState":"Running","provisioningState":"Succeeded"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1009'
+      - '1163'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:30:20 GMT
+      - Tue, 19 Jan 2021 09:17:30 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
+      x-ms-ratelimit-remaining-subscription-resource-requests:
+      - '48'
     status:
       code: 200
       message: OK
@@ -503,165 +657,37 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/origins/origin1?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"name\":\"origin1\",\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/origins/origin1\"\
-        ,\"type\":\"Microsoft.Cdn/profiles/endpoints/origins\",\"properties\":{\r\n\
-        \    \"provisioningState\":\"Succeeded\",\"resourceState\":\"Active\",\"hostName\"\
-        :\"host1.hello.com\",\"httpPort\":null,\"httpsPort\":null\r\n  }\r\n}"
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename","type":"Microsoft.Cdn/profiles","name":"profilename","location":"WestUs","kind":"cdn","tags":{},"sku":{"name":"Standard_Verizon"},"properties":{"resourceState":"Active","provisioningState":"Succeeded"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '412'
+      - '357'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:30:21 GMT
+      - Tue, 19 Jan 2021 09:17:30 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x?api-version=2019-06-15-preview
-  response:
-    body:
-      string: "{\r\n  \"name\":\"endpoint9527x\",\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x\"\
-        ,\"type\":\"Microsoft.Cdn/profiles/endpoints\",\"tags\":{\r\n    \"kay1\"\
-        :\"value1\"\r\n  },\"location\":\"WestUs\",\"properties\":{\r\n    \"hostName\"\
-        :\"endpoint9527x.azureedge.net\",\"originHostHeader\":\"www.bing.com\",\"\
-        provisioningState\":\"Succeeded\",\"resourceState\":\"Running\",\"isHttpAllowed\"\
-        :true,\"isHttpsAllowed\":true,\"queryStringCachingBehavior\":\"BypassCaching\"\
-        ,\"originPath\":\"/image\",\"origins\":[\r\n      {\r\n        \"name\":\"\
-        origin1\",\"properties\":{\r\n          \"hostName\":\"host1.hello.com\",\"\
-        httpPort\":null,\"httpsPort\":null\r\n        }\r\n      }\r\n    ],\"customDomains\"\
-        :[\r\n      \r\n    ],\"contentTypesToCompress\":[\r\n      \"text/html\"\
-        ,\"application/octet-stream\"\r\n    ],\"isCompressionEnabled\":true,\"optimizationType\"\
-        :null,\"probePath\":null,\"geoFilters\":[\r\n      \r\n    ],\"deliveryPolicy\"\
-        :null,\"webApplicationFirewallPolicyLink\":null\r\n  }\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '1009'
-      content-type:
-      - application/json; odata.metadata=minimal
-      date:
-      - Tue, 18 Feb 2020 13:30:23 GMT
-      expires:
-      - '-1'
-      odata-version:
-      - '4.0'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/8.5
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename?api-version=2019-06-15-preview
-  response:
-    body:
-      string: "{\r\n  \"name\":\"profilename\",\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename\"\
-        ,\"type\":\"Microsoft.Cdn/profiles\",\"tags\":{\r\n    \r\n  },\"location\"\
-        :\"WestUs\",\"sku\":{\r\n    \"name\":\"Standard_Verizon\"\r\n  },\"properties\"\
-        :{\r\n    \"provisioningState\":\"Succeeded\",\"resourceState\":\"Active\"\
-        \r\n  }\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '380'
-      content-type:
-      - application/json; odata.metadata=minimal
-      date:
-      - Tue, 18 Feb 2020 13:30:25 GMT
-      expires:
-      - '-1'
-      odata-version:
-      - '4.0'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/8.5
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-powered-by:
-      - ASP.NET
+      x-ms-ratelimit-remaining-subscription-resource-requests:
+      - '48'
     status:
       code: 200
       message: OK
@@ -677,51 +703,39 @@ interactions:
       Content-Length:
       - '49'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/origins/origin1?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/origins/origin1?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"name\":\"origin1\",\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/origins/origin1\"\
-        ,\"type\":\"Microsoft.Cdn/profiles/endpoints/origins\",\"properties\":{\r\n\
-        \    \"provisioningState\":\"Succeeded\",\"resourceState\":\"Active\",\"hostName\"\
-        :\"host1.hello.com\",\"httpPort\":42,\"httpsPort\":43\r\n  }\r\n}"
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/origins/origin1","type":"Microsoft.Cdn/profiles/endpoints/origins","name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":42,"httpsPort":43,"resourceState":"Active","originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null,"provisioningState":"Succeeded"}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/0d253052-e1cf-4a83-95f7-4c3bacce8474?api-version=2019-06-15-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/719b058f-4577-4e53-88cc-9bdb1b210ab6?api-version=2020-09-01
       cache-control:
       - no-cache
       content-length:
-      - '408'
+      - '604'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:30:34 GMT
+      - Tue, 19 Jan 2021 09:17:33 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/0d253052-e1cf-4a83-95f7-4c3bacce8474/profileresults/profilename/endpointresults/endpoint9527x/originresults/origin1?api-version=2019-06-15-preview
-      odata-version:
-      - '4.0'
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/719b058f-4577-4e53-88cc-9bdb1b210ab6/profileresults/profilename/endpointresults/endpoint9527x/originresults/origin1?api-version=2020-09-01
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
-      x-powered-by:
-      - ASP.NET
+      - '1198'
     status:
       code: 202
       message: Accepted
@@ -729,49 +743,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/0d253052-e1cf-4a83-95f7-4c3bacce8474?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/719b058f-4577-4e53-88cc-9bdb1b210ab6?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:30:45 GMT
+      - Tue, 19 Jan 2021 09:17:44 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -779,49 +785,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/0d253052-e1cf-4a83-95f7-4c3bacce8474?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/719b058f-4577-4e53-88cc-9bdb1b210ab6?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"Succeeded\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"Succeeded","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '77'
+      - '61'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:31:15 GMT
+      - Tue, 19 Jan 2021 09:18:14 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -829,51 +827,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/origins/origin1?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/origins/origin1?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"name\":\"origin1\",\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/origins/origin1\"\
-        ,\"type\":\"Microsoft.Cdn/profiles/endpoints/origins\",\"properties\":{\r\n\
-        \    \"provisioningState\":\"Succeeded\",\"resourceState\":\"Active\",\"hostName\"\
-        :\"host1.hello.com\",\"httpPort\":42,\"httpsPort\":43\r\n  }\r\n}"
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/origins/origin1","type":"Microsoft.Cdn/profiles/endpoints/origins","name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":42,"httpsPort":43,"resourceState":"Active","originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null,"provisioningState":"Succeeded"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '408'
+      - '604'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:31:17 GMT
+      - Tue, 19 Jan 2021 09:18:15 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -889,51 +877,42 @@ interactions:
       Content-Length:
       - '34'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/validateCustomDomain?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/validateCustomDomain?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"customDomainValidated\":false,\"message\":\"We couldn't find\
-        \ a DNS record for custom domain that points to endpoint. To map a domain\
-        \ to this endpoint, create a CNAME record with your DNS provider for custom\
-        \ domain that points to endpoint.\",\"reason\":\"IncorrectMapping\"\r\n}"
+      string: '{"customDomainValidated":false,"reason":"IncorrectMapping","message":"We
+        couldn''t find a DNS record for custom domain that points to endpoint. To
+        map a domain to this endpoint, create a CNAME record with your DNS provider
+        for custom domain that points to endpoint."}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '272'
+      - '266'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:31:21 GMT
+      - Tue, 19 Jan 2021 09:18:16 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
-      x-powered-by:
-      - ASP.NET
+      - '1197'
     status:
       code: 200
       message: OK
@@ -949,44 +928,37 @@ interactions:
       Content-Length:
       - '30'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/purge?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/purge?api-version=2020-09-01
   response:
     body:
       string: ''
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/a502bdf2-6b9b-42a7-97a6-6a5d17399cdd?api-version=2019-06-15-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7ef531fb-7029-4c6e-80a5-55ea49334cea?api-version=2020-09-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Tue, 18 Feb 2020 13:31:30 GMT
+      - Tue, 19 Jan 2021 09:18:19 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/a502bdf2-6b9b-42a7-97a6-6a5d17399cdd/profileresults/profilename/endpointresults/endpoint9527x?api-version=2019-06-15-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7ef531fb-7029-4c6e-80a5-55ea49334cea/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
       - '499'
-      x-powered-by:
-      - ASP.NET
     status:
       code: 202
       message: Accepted
@@ -994,49 +966,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/a502bdf2-6b9b-42a7-97a6-6a5d17399cdd?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7ef531fb-7029-4c6e-80a5-55ea49334cea?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:31:42 GMT
+      - Tue, 19 Jan 2021 09:18:31 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -1044,49 +1008,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/a502bdf2-6b9b-42a7-97a6-6a5d17399cdd?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7ef531fb-7029-4c6e-80a5-55ea49334cea?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:32:14 GMT
+      - Tue, 19 Jan 2021 09:19:01 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -1094,49 +1050,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/a502bdf2-6b9b-42a7-97a6-6a5d17399cdd?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7ef531fb-7029-4c6e-80a5-55ea49334cea?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:32:44 GMT
+      - Tue, 19 Jan 2021 09:19:31 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -1144,49 +1092,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/a502bdf2-6b9b-42a7-97a6-6a5d17399cdd?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7ef531fb-7029-4c6e-80a5-55ea49334cea?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:33:18 GMT
+      - Tue, 19 Jan 2021 09:20:01 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -1194,49 +1134,83 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/a502bdf2-6b9b-42a7-97a6-6a5d17399cdd?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7ef531fb-7029-4c6e-80a5-55ea49334cea?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"Succeeded\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"Succeeded","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '77'
+      - '61'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:33:49 GMT
+      - Tue, 19 Jan 2021 09:20:32 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7ef531fb-7029-4c6e-80a5-55ea49334cea/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7ef531fb-7029-4c6e-80a5-55ea49334cea/profileresults/profilename/endpointresults/endpoint9527x","type":"Microsoft.Cdn/operationresults/profileresults/endpointresults","name":"endpoint9527x","location":"WestUs","tags":{"kay1":"value1"},"properties":{"hostName":"endpoint9527x.azureedge.net","originHostHeader":"www.bing.com","originPath":"/image","contentTypesToCompress":["text/html","application/octet-stream"],"isCompressionEnabled":true,"isHttpAllowed":true,"isHttpsAllowed":true,"queryStringCachingBehavior":"BypassCaching","optimizationType":null,"probePath":null,"origins":[{"name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":42,"httpsPort":43,"originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null}}],"originGroups":[],"defaultOriginGroup":null,"customDomains":[],"geoFilters":[],"deliveryPolicy":null,"urlSigningKeys":[],"webApplicationFirewallPolicyLink":null,"resourceState":"Running","provisioningState":"Succeeded"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1254'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 Jan 2021 09:20:33 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
     status:
       code: 200
       message: OK
@@ -1252,55 +1226,37 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/stop?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/stop?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"hostName\":\"endpoint9527x.azureedge.net\",\"originHostHeader\"\
-        :\"www.bing.com\",\"provisioningState\":\"Succeeded\",\"resourceState\":\"\
-        Stopping\",\"isHttpAllowed\":true,\"isHttpsAllowed\":true,\"queryStringCachingBehavior\"\
-        :\"BypassCaching\",\"originPath\":\"/image\",\"origins\":[\r\n    {\r\n  \
-        \    \"name\":\"origin1\",\"properties\":{\r\n        \"hostName\":\"host1.hello.com\"\
-        ,\"httpPort\":42,\"httpsPort\":43\r\n      }\r\n    }\r\n  ],\"customDomains\"\
-        :[\r\n    \r\n  ],\"contentTypesToCompress\":[\r\n    \"text/html\",\"application/octet-stream\"\
-        \r\n  ],\"isCompressionEnabled\":true,\"optimizationType\":null,\"probePath\"\
-        :null,\"geoFilters\":[\r\n    \r\n  ],\"deliveryPolicy\":null,\"webApplicationFirewallPolicyLink\"\
-        :null\r\n}"
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x","type":"Microsoft.Cdn/profiles/endpoints","name":"endpoint9527x","location":"WestUs","tags":{"kay1":"value1"},"properties":{"hostName":"endpoint9527x.azureedge.net","originHostHeader":"www.bing.com","originPath":"/image","contentTypesToCompress":["text/html","application/octet-stream"],"isCompressionEnabled":true,"isHttpAllowed":true,"isHttpsAllowed":true,"queryStringCachingBehavior":"BypassCaching","optimizationType":null,"probePath":null,"origins":[{"name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":42,"httpsPort":43,"originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null}}],"originGroups":[],"defaultOriginGroup":null,"customDomains":[],"geoFilters":[],"deliveryPolicy":null,"urlSigningKeys":[],"webApplicationFirewallPolicyLink":null,"resourceState":"Stopping","provisioningState":"Succeeded"}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/f732ec03-f672-4c84-a213-82644709d8ca?api-version=2019-06-15-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/a031b57a-b7e7-4583-8a22-5de6e5997cce?api-version=2020-09-01
       cache-control:
       - no-cache
       content-length:
-      - '659'
+      - '1160'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:34:07 GMT
+      - Tue, 19 Jan 2021 09:20:37 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/f732ec03-f672-4c84-a213-82644709d8ca/profileresults/profilename/endpointresults/endpoint9527x?api-version=2019-06-15-preview
-      odata-version:
-      - '4.0'
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/a031b57a-b7e7-4583-8a22-5de6e5997cce/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
       - '49'
-      x-powered-by:
-      - ASP.NET
     status:
       code: 202
       message: Accepted
@@ -1308,49 +1264,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/f732ec03-f672-4c84-a213-82644709d8ca?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/a031b57a-b7e7-4583-8a22-5de6e5997cce?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:34:32 GMT
+      - Tue, 19 Jan 2021 09:20:47 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -1358,49 +1306,83 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/f732ec03-f672-4c84-a213-82644709d8ca?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/a031b57a-b7e7-4583-8a22-5de6e5997cce?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"Succeeded\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"Succeeded","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '77'
+      - '61'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:35:03 GMT
+      - Tue, 19 Jan 2021 09:21:17 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/a031b57a-b7e7-4583-8a22-5de6e5997cce/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/a031b57a-b7e7-4583-8a22-5de6e5997cce/profileresults/profilename/endpointresults/endpoint9527x","type":"Microsoft.Cdn/operationresults/profileresults/endpointresults","name":"endpoint9527x","location":"WestUs","tags":{"kay1":"value1"},"properties":{"hostName":"endpoint9527x.azureedge.net","originHostHeader":"www.bing.com","originPath":"/image","contentTypesToCompress":["text/html","application/octet-stream"],"isCompressionEnabled":true,"isHttpAllowed":true,"isHttpsAllowed":true,"queryStringCachingBehavior":"BypassCaching","optimizationType":null,"probePath":null,"origins":[{"name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":42,"httpsPort":43,"originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null}}],"originGroups":[],"defaultOriginGroup":null,"customDomains":[],"geoFilters":[],"deliveryPolicy":null,"urlSigningKeys":[],"webApplicationFirewallPolicyLink":null,"resourceState":"Stopped","provisioningState":"Succeeded"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1254'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 Jan 2021 09:21:18 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
     status:
       code: 200
       message: OK
@@ -1416,55 +1398,37 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/start?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/start?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"hostName\":\"endpoint9527x.azureedge.net\",\"originHostHeader\"\
-        :\"www.bing.com\",\"provisioningState\":\"Succeeded\",\"resourceState\":\"\
-        Starting\",\"isHttpAllowed\":true,\"isHttpsAllowed\":true,\"queryStringCachingBehavior\"\
-        :\"BypassCaching\",\"originPath\":\"/image\",\"origins\":[\r\n    {\r\n  \
-        \    \"name\":\"origin1\",\"properties\":{\r\n        \"hostName\":\"host1.hello.com\"\
-        ,\"httpPort\":42,\"httpsPort\":43\r\n      }\r\n    }\r\n  ],\"customDomains\"\
-        :[\r\n    \r\n  ],\"contentTypesToCompress\":[\r\n    \"text/html\",\"application/octet-stream\"\
-        \r\n  ],\"isCompressionEnabled\":true,\"optimizationType\":null,\"probePath\"\
-        :null,\"geoFilters\":[\r\n    \r\n  ],\"deliveryPolicy\":null,\"webApplicationFirewallPolicyLink\"\
-        :null\r\n}"
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x","type":"Microsoft.Cdn/profiles/endpoints","name":"endpoint9527x","location":"WestUs","tags":{"kay1":"value1"},"properties":{"hostName":"endpoint9527x.azureedge.net","originHostHeader":"www.bing.com","originPath":"/image","contentTypesToCompress":["text/html","application/octet-stream"],"isCompressionEnabled":true,"isHttpAllowed":true,"isHttpsAllowed":true,"queryStringCachingBehavior":"BypassCaching","optimizationType":null,"probePath":null,"origins":[{"name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":42,"httpsPort":43,"originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null}}],"originGroups":[],"defaultOriginGroup":null,"customDomains":[],"geoFilters":[],"deliveryPolicy":null,"urlSigningKeys":[],"webApplicationFirewallPolicyLink":null,"resourceState":"Starting","provisioningState":"Succeeded"}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/f0e0219e-0585-4072-b234-f432b5131f9f?api-version=2019-06-15-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/5e8fa28d-bf6a-4436-884c-823bd8e37eb2?api-version=2020-09-01
       cache-control:
       - no-cache
       content-length:
-      - '659'
+      - '1160'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:35:13 GMT
+      - Tue, 19 Jan 2021 09:21:21 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/f0e0219e-0585-4072-b234-f432b5131f9f/profileresults/profilename/endpointresults/endpoint9527x?api-version=2019-06-15-preview
-      odata-version:
-      - '4.0'
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/5e8fa28d-bf6a-4436-884c-823bd8e37eb2/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
       - '49'
-      x-powered-by:
-      - ASP.NET
     status:
       code: 202
       message: Accepted
@@ -1472,49 +1436,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/f0e0219e-0585-4072-b234-f432b5131f9f?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/5e8fa28d-bf6a-4436-884c-823bd8e37eb2?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:35:25 GMT
+      - Tue, 19 Jan 2021 09:21:32 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -1522,49 +1478,83 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/f0e0219e-0585-4072-b234-f432b5131f9f?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/5e8fa28d-bf6a-4436-884c-823bd8e37eb2?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"Succeeded\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"Succeeded","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '77'
+      - '61'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:35:55 GMT
+      - Tue, 19 Jan 2021 09:22:02 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/5e8fa28d-bf6a-4436-884c-823bd8e37eb2/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/5e8fa28d-bf6a-4436-884c-823bd8e37eb2/profileresults/profilename/endpointresults/endpoint9527x","type":"Microsoft.Cdn/operationresults/profileresults/endpointresults","name":"endpoint9527x","location":"WestUs","tags":{"kay1":"value1"},"properties":{"hostName":"endpoint9527x.azureedge.net","originHostHeader":"www.bing.com","originPath":"/image","contentTypesToCompress":["text/html","application/octet-stream"],"isCompressionEnabled":true,"isHttpAllowed":true,"isHttpsAllowed":true,"queryStringCachingBehavior":"BypassCaching","optimizationType":null,"probePath":null,"origins":[{"name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":42,"httpsPort":43,"originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null}}],"originGroups":[],"defaultOriginGroup":null,"customDomains":[],"geoFilters":[],"deliveryPolicy":null,"urlSigningKeys":[],"webApplicationFirewallPolicyLink":null,"resourceState":"Running","provisioningState":"Succeeded"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1254'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 Jan 2021 09:22:03 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
     status:
       code: 200
       message: OK
@@ -1580,44 +1570,37 @@ interactions:
       Content-Length:
       - '30'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/load?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/load?api-version=2020-09-01
   response:
     body:
       string: ''
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Tue, 18 Feb 2020 13:36:01 GMT
+      - Tue, 19 Jan 2021 09:22:06 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5/profileresults/profilename/endpointresults/endpoint9527x?api-version=2019-06-15-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
       - '499'
-      x-powered-by:
-      - ASP.NET
     status:
       code: 202
       message: Accepted
@@ -1625,49 +1608,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:36:16 GMT
+      - Tue, 19 Jan 2021 09:22:17 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -1675,49 +1650,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:36:47 GMT
+      - Tue, 19 Jan 2021 09:22:47 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -1725,49 +1692,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:37:17 GMT
+      - Tue, 19 Jan 2021 09:23:17 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -1775,49 +1734,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:37:48 GMT
+      - Tue, 19 Jan 2021 09:23:48 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -1825,49 +1776,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:38:20 GMT
+      - Tue, 19 Jan 2021 09:24:19 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -1875,49 +1818,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:38:50 GMT
+      - Tue, 19 Jan 2021 09:24:49 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -1925,49 +1860,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:39:22 GMT
+      - Tue, 19 Jan 2021 09:25:20 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -1975,49 +1902,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:39:52 GMT
+      - Tue, 19 Jan 2021 09:25:50 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -2025,49 +1944,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:40:23 GMT
+      - Tue, 19 Jan 2021 09:26:20 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -2075,49 +1986,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:40:54 GMT
+      - Tue, 19 Jan 2021 09:26:52 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -2125,49 +2028,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:41:24 GMT
+      - Tue, 19 Jan 2021 09:27:22 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -2175,49 +2070,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:41:56 GMT
+      - Tue, 19 Jan 2021 09:27:52 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -2225,49 +2112,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:42:27 GMT
+      - Tue, 19 Jan 2021 09:28:23 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -2275,49 +2154,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:42:57 GMT
+      - Tue, 19 Jan 2021 09:28:53 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -2325,49 +2196,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:43:28 GMT
+      - Tue, 19 Jan 2021 09:29:24 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -2375,49 +2238,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:43:59 GMT
+      - Tue, 19 Jan 2021 09:29:54 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -2425,49 +2280,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:44:30 GMT
+      - Tue, 19 Jan 2021 09:30:25 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -2475,49 +2322,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"Succeeded","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '61'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:45:00 GMT
+      - Tue, 19 Jan 2021 09:30:55 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -2525,649 +2364,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3/profileresults/profilename/endpointresults/endpoint9527x","type":"Microsoft.Cdn/operationresults/profileresults/endpointresults","name":"endpoint9527x","location":"WestUs","tags":{"kay1":"value1"},"properties":{"hostName":"endpoint9527x.azureedge.net","originHostHeader":"www.bing.com","originPath":"/image","contentTypesToCompress":["text/html","application/octet-stream"],"isCompressionEnabled":true,"isHttpAllowed":true,"isHttpsAllowed":true,"queryStringCachingBehavior":"BypassCaching","optimizationType":null,"probePath":null,"origins":[{"name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":42,"httpsPort":43,"originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null}}],"originGroups":[],"defaultOriginGroup":null,"customDomains":[],"geoFilters":[],"deliveryPolicy":null,"urlSigningKeys":[],"webApplicationFirewallPolicyLink":null,"resourceState":"Running","provisioningState":"Succeeded"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '1254'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:45:31 GMT
+      - Tue, 19 Jan 2021 09:30:56 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
-  response:
-    body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '78'
-      content-type:
-      - application/json; odata.metadata=minimal
-      date:
-      - Tue, 18 Feb 2020 13:46:02 GMT
-      expires:
-      - '-1'
-      odata-version:
-      - '4.0'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/8.5
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
-  response:
-    body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '78'
-      content-type:
-      - application/json; odata.metadata=minimal
-      date:
-      - Tue, 18 Feb 2020 13:46:34 GMT
-      expires:
-      - '-1'
-      odata-version:
-      - '4.0'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/8.5
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
-  response:
-    body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '78'
-      content-type:
-      - application/json; odata.metadata=minimal
-      date:
-      - Tue, 18 Feb 2020 13:47:05 GMT
-      expires:
-      - '-1'
-      odata-version:
-      - '4.0'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/8.5
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
-  response:
-    body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '78'
-      content-type:
-      - application/json; odata.metadata=minimal
-      date:
-      - Tue, 18 Feb 2020 13:47:37 GMT
-      expires:
-      - '-1'
-      odata-version:
-      - '4.0'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/8.5
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
-  response:
-    body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '78'
-      content-type:
-      - application/json; odata.metadata=minimal
-      date:
-      - Tue, 18 Feb 2020 13:48:11 GMT
-      expires:
-      - '-1'
-      odata-version:
-      - '4.0'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/8.5
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
-  response:
-    body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '78'
-      content-type:
-      - application/json; odata.metadata=minimal
-      date:
-      - Tue, 18 Feb 2020 13:48:42 GMT
-      expires:
-      - '-1'
-      odata-version:
-      - '4.0'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/8.5
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
-  response:
-    body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '78'
-      content-type:
-      - application/json; odata.metadata=minimal
-      date:
-      - Tue, 18 Feb 2020 13:49:13 GMT
-      expires:
-      - '-1'
-      odata-version:
-      - '4.0'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/8.5
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
-  response:
-    body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '78'
-      content-type:
-      - application/json; odata.metadata=minimal
-      date:
-      - Tue, 18 Feb 2020 13:49:44 GMT
-      expires:
-      - '-1'
-      odata-version:
-      - '4.0'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/8.5
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
-  response:
-    body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '78'
-      content-type:
-      - application/json; odata.metadata=minimal
-      date:
-      - Tue, 18 Feb 2020 13:50:15 GMT
-      expires:
-      - '-1'
-      odata-version:
-      - '4.0'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/8.5
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
-  response:
-    body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '78'
-      content-type:
-      - application/json; odata.metadata=minimal
-      date:
-      - Tue, 18 Feb 2020 13:50:46 GMT
-      expires:
-      - '-1'
-      odata-version:
-      - '4.0'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/8.5
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
-  response:
-    body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '78'
-      content-type:
-      - application/json; odata.metadata=minimal
-      date:
-      - Tue, 18 Feb 2020 13:51:16 GMT
-      expires:
-      - '-1'
-      odata-version:
-      - '4.0'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/8.5
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/32649d5f-304c-403f-b9e4-aba49fbacaf5?api-version=2019-06-15-preview
-  response:
-    body:
-      string: "{\r\n  \"status\":\"Succeeded\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '77'
-      content-type:
-      - application/json; odata.metadata=minimal
-      date:
-      - Tue, 18 Feb 2020 13:51:48 GMT
-      expires:
-      - '-1'
-      odata-version:
-      - '4.0'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/8.5
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -3183,47 +2414,37 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/getSupportedOptimizationTypes?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/getSupportedOptimizationTypes?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"supportedOptimizationTypes\":[\r\n    \"GeneralWebDelivery\"\
-        ,\"DynamicSiteAcceleration\"\r\n  ]\r\n}"
+      string: '{"supportedOptimizationTypes":["GeneralWebDelivery","DynamicSiteAcceleration"]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '95'
+      - '79'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:51:53 GMT
+      - Tue, 19 Jan 2021 09:30:57 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
-      x-powered-by:
-      - ASP.NET
+      - '1196'
     status:
       code: 200
       message: OK
@@ -3239,60 +2460,39 @@ interactions:
       Content-Length:
       - '43'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"name\":\"endpoint9527x\",\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x\"\
-        ,\"type\":\"Microsoft.Cdn/profiles/endpoints\",\"tags\":{\r\n    \"additional_properties\"\
-        :\"Tag1\"\r\n  },\"location\":\"WestUs\",\"properties\":{\r\n    \"hostName\"\
-        :\"endpoint9527x.azureedge.net\",\"originHostHeader\":\"www.bing.com\",\"\
-        provisioningState\":\"Succeeded\",\"resourceState\":\"Running\",\"isHttpAllowed\"\
-        :true,\"isHttpsAllowed\":true,\"queryStringCachingBehavior\":\"BypassCaching\"\
-        ,\"originPath\":\"/image\",\"origins\":[\r\n      {\r\n        \"name\":\"\
-        origin1\",\"properties\":{\r\n          \"hostName\":\"host1.hello.com\",\"\
-        httpPort\":42,\"httpsPort\":43\r\n        }\r\n      }\r\n    ],\"customDomains\"\
-        :[\r\n      \r\n    ],\"contentTypesToCompress\":[\r\n      \"text/html\"\
-        ,\"application/octet-stream\"\r\n    ],\"isCompressionEnabled\":true,\"optimizationType\"\
-        :null,\"probePath\":null,\"geoFilters\":[\r\n      \r\n    ],\"deliveryPolicy\"\
-        :null,\"webApplicationFirewallPolicyLink\":null\r\n  }\r\n}"
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x","type":"Microsoft.Cdn/profiles/endpoints","name":"endpoint9527x","location":"WestUs","tags":{"additional_properties":"Tag1"},"properties":{"hostName":"endpoint9527x.azureedge.net","originHostHeader":"www.bing.com","originPath":"/image","contentTypesToCompress":["text/html","application/octet-stream"],"isCompressionEnabled":true,"isHttpAllowed":true,"isHttpsAllowed":true,"queryStringCachingBehavior":"BypassCaching","optimizationType":null,"probePath":null,"origins":[{"name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":42,"httpsPort":43,"originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null}}],"originGroups":[],"defaultOriginGroup":null,"customDomains":[],"geoFilters":[],"deliveryPolicy":null,"urlSigningKeys":[],"webApplicationFirewallPolicyLink":null,"resourceState":"Running","provisioningState":"Succeeded"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1020'
+      - '1174'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:52:03 GMT
+      - Tue, 19 Jan 2021 09:31:05 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
       - '98'
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -3308,52 +2508,42 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/generateSsoUri?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/generateSsoUri?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"ssoUriValue\":\"https://cdn.windowsazure.com/account/loginexternal/?token=dzRWAN1%2fapxv0Myk06dS64aaP8TnbOyCRH00SSBk15I%3d&timestamp=2020-02-18T13:52:06.5535290Z&cdnAccountId=D7216&userCustomId=SSO-0fc64203-7d6c-4d40-b9e1-77d68997479e&restEndpointId=0\"\
-        \r\n}"
+      string: '{"ssoUriValue":"https://cdn.windowsazure.com/account/loginexternal/?token=HHH62oZ2NImhVjehJbhWewufxl%2fXiOso7COYzafMX%2bs%3d&timestamp=2021-01-19T09:31:06.9462439Z&cdnAccountId=1073D0&userCustomId=SSO-f4fef8bd-1bba-4dbc-ab03-001753a41877&restEndpointId=0"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '259'
+      - '256'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:52:05 GMT
+      - Tue, 19 Jan 2021 09:31:06 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
-      x-powered-by:
-      - ASP.NET
+      - '1195'
     status:
       code: 200
       message: OK
 - request:
-    body: '{"tags": {"tags": "{''additional_properties'': ''Tag1''}"}}'
+    body: '{"tags": {"additional_properties": "Tag1"}}'
     headers:
       Accept:
       - application/json
@@ -3362,54 +2552,41 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '55'
+      - '43'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"name\":\"profilename\",\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename\"\
-        ,\"type\":\"Microsoft.Cdn/profiles\",\"tags\":{\r\n    \"tags\":\"{'additional_properties':\
-        \ 'Tag1'}\"\r\n  },\"location\":\"WestUs\",\"sku\":{\r\n    \"name\":\"Standard_Verizon\"\
-        \r\n  },\"properties\":{\r\n    \"provisioningState\":\"Succeeded\",\"resourceState\"\
-        :\"Active\"\r\n  }\r\n}"
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename","type":"Microsoft.Cdn/profiles","name":"profilename","location":"WestUs","kind":"cdn","tags":{"additional_properties":"Tag1"},"sku":{"name":"Standard_Verizon"},"properties":{"resourceState":"Active","provisioningState":"Succeeded"}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/86724eab-48a5-4c55-a30b-1abf41dfaafd?api-version=2019-06-15-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7508941d-62c7-4b10-aa2b-ee3d0d7c3718?api-version=2020-09-01
       cache-control:
       - no-cache
       content-length:
-      - '422'
+      - '387'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:52:15 GMT
+      - Tue, 19 Jan 2021 09:31:08 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/86724eab-48a5-4c55-a30b-1abf41dfaafd/profileresults/profilename?api-version=2019-06-15-preview
-      odata-version:
-      - '4.0'
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7508941d-62c7-4b10-aa2b-ee3d0d7c3718/profileresults/profilename?api-version=2020-09-01
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
       - '23'
-      x-powered-by:
-      - ASP.NET
     status:
       code: 202
       message: Accepted
@@ -3417,49 +2594,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/86724eab-48a5-4c55-a30b-1abf41dfaafd?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7508941d-62c7-4b10-aa2b-ee3d0d7c3718?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"Succeeded\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"Succeeded","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '77'
+      - '61'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:52:27 GMT
+      - Tue, 19 Jan 2021 09:31:19 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -3467,52 +2636,43 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"name\":\"profilename\",\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename\"\
-        ,\"type\":\"Microsoft.Cdn/profiles\",\"tags\":{\r\n    \"tags\":\"{'additional_properties':\
-        \ 'Tag1'}\"\r\n  },\"location\":\"WestUs\",\"sku\":{\r\n    \"name\":\"Standard_Verizon\"\
-        \r\n  },\"properties\":{\r\n    \"provisioningState\":\"Succeeded\",\"resourceState\"\
-        :\"Active\"\r\n  }\r\n}"
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename","type":"Microsoft.Cdn/profiles","name":"profilename","location":"WestUs","kind":"cdn","tags":{"additional_properties":"Tag1"},"sku":{"name":"Standard_Verizon"},"properties":{"resourceState":"Active","provisioningState":"Succeeded"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '422'
+      - '387'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:52:29 GMT
+      - Tue, 19 Jan 2021 09:31:19 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
+      x-ms-ratelimit-remaining-subscription-resource-requests:
+      - '49'
     status:
       code: 200
       message: OK
@@ -3528,48 +2688,39 @@ interactions:
       Content-Length:
       - '66'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Cdn/checkNameAvailability?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Cdn/checkNameAvailability?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"nameAvailable\":true,\"reason\":null,\"message\":null\r\n}"
+      string: '{"nameAvailable":true,"reason":null,"message":null}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '57'
+      - '51'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:52:33 GMT
+      - Tue, 19 Jan 2021 09:31:21 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
-      x-powered-by:
-      - ASP.NET
+      - '1194'
     status:
       code: 200
       message: OK
@@ -3585,49 +2736,39 @@ interactions:
       Content-Length:
       - '42'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Cdn/validateProbe?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Cdn/validateProbe?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"isValid\":true,\"errorCode\":\"None\",\"message\":null\r\n\
-        }"
+      string: '{"isValid":true,"errorCode":"None","message":null}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '56'
+      - '50'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:52:34 GMT
+      - Tue, 19 Jan 2021 09:31:21 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1195'
-      x-powered-by:
-      - ASP.NET
+      - '1193'
     status:
       code: 200
       message: OK
@@ -3643,48 +2784,39 @@ interactions:
       Content-Length:
       - '66'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/providers/Microsoft.Cdn/checkNameAvailability?api-version=2019-06-15-preview
+    uri: https://management.azure.com/providers/Microsoft.Cdn/checkNameAvailability?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"nameAvailable\":true,\"reason\":null,\"message\":null\r\n}"
+      string: '{"nameAvailable":true,"reason":null,"message":null}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '57'
+      - '51'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:52:36 GMT
+      - Tue, 19 Jan 2021 09:31:22 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-tenant-writes:
       - '1199'
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -3700,12 +2832,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/customDomains/someDomain?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/customDomains/someDomain?api-version=2020-09-01
   response:
     body:
       string: ''
@@ -3713,23 +2842,19 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Tue, 18 Feb 2020 13:52:38 GMT
+      - Tue, 19 Jan 2021 09:31:24 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
-      x-powered-by:
-      - ASP.NET
+      - '14997'
     status:
       code: 204
       message: No Content
@@ -3745,42 +2870,35 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x?api-version=2020-09-01
   response:
     body:
       string: ''
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e144b196-ea17-4ce5-ae58-e583561a852e?api-version=2019-06-15-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e4554fb3-b027-4f3b-9ae0-ee71958abaad?api-version=2020-09-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Tue, 18 Feb 2020 13:52:44 GMT
+      - Tue, 19 Jan 2021 09:31:27 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e144b196-ea17-4ce5-ae58-e583561a852e/profileresults/profilename/endpointresults/endpoint9527x?api-version=2019-06-15-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e4554fb3-b027-4f3b-9ae0-ee71958abaad/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14997'
-      x-powered-by:
-      - ASP.NET
+      - '14996'
     status:
       code: 202
       message: Accepted
@@ -3788,49 +2906,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e144b196-ea17-4ce5-ae58-e583561a852e?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e4554fb3-b027-4f3b-9ae0-ee71958abaad?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:52:58 GMT
+      - Tue, 19 Jan 2021 09:31:37 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -3838,49 +2948,83 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e144b196-ea17-4ce5-ae58-e583561a852e?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e4554fb3-b027-4f3b-9ae0-ee71958abaad?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"Succeeded\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '77'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:53:29 GMT
+      - Tue, 19 Jan 2021 09:32:09 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e4554fb3-b027-4f3b-9ae0-ee71958abaad?api-version=2020-09-01
+  response:
+    body:
+      string: '{"status":"Succeeded","error":{"code":"None","message":null}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '61'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 19 Jan 2021 09:32:39 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
     status:
       code: 200
       message: OK
@@ -3896,42 +3040,35 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename?api-version=2020-09-01
   response:
     body:
       string: ''
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/16da5f66-87f7-4df2-9fa0-5e6274f63b41?api-version=2019-06-15-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/3fe4f8f1-364e-4dcb-b956-c0921cf3aba0?api-version=2020-09-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Tue, 18 Feb 2020 13:53:44 GMT
+      - Tue, 19 Jan 2021 09:32:41 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/16da5f66-87f7-4df2-9fa0-5e6274f63b41/profileresults/profilename?api-version=2019-06-15-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/3fe4f8f1-364e-4dcb-b956-c0921cf3aba0/profileresults/profilename?api-version=2020-09-01
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14996'
-      x-powered-by:
-      - ASP.NET
+      - '14995'
     status:
       code: 202
       message: Accepted
@@ -3939,49 +3076,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/16da5f66-87f7-4df2-9fa0-5e6274f63b41?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/3fe4f8f1-364e-4dcb-b956-c0921cf3aba0?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"InProgress\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '78'
+      - '62'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:53:57 GMT
+      - Tue, 19 Jan 2021 09:32:51 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK
@@ -3989,49 +3118,41 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cdn/4.1.0rc1 Azure-SDK-For-Python
+      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/16da5f66-87f7-4df2-9fa0-5e6274f63b41?api-version=2019-06-15-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/3fe4f8f1-364e-4dcb-b956-c0921cf3aba0?api-version=2020-09-01
   response:
     body:
-      string: "{\r\n  \"status\":\"Succeeded\",\"error\":{\r\n    \"code\":\"None\"\
-        ,\"message\":null\r\n  }\r\n}"
+      string: '{"status":"Succeeded","error":{"code":"None","message":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '77'
+      - '61'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 18 Feb 2020 13:54:28 GMT
+      - Tue, 19 Jan 2021 09:33:22 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
       server:
-      - Microsoft-IIS/8.5
+      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
       vary:
       - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-powered-by:
-      - ASP.NET
     status:
       code: 200
       message: OK

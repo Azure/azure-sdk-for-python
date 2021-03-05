@@ -21,6 +21,7 @@ from ..._credentials.managed_identity import _ManagedIdentityBase
 if TYPE_CHECKING:
     from typing import Any, Optional
     from azure.core.configuration import Configuration
+    from azure.core.credentials_async import AsyncTokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -32,10 +33,14 @@ class ManagedIdentityCredential(AsyncContextManager):
     the keyword arguments.
 
     :keyword str client_id: a user-assigned identity's client ID. This is supported in all hosting environments.
+    :keyword identity_config: a mapping ``{parameter_name: value}`` specifying a user-assigned identity by its object
+      or resource ID, for example ``{"object_id": "..."}``. Check the documentation for your hosting environment to
+      learn what values it expects.
+    :paramtype identity_config: Mapping[str, str]
     """
 
     def __init__(self, **kwargs: "Any") -> None:
-        self._credential = None
+        self._credential = None  # type: Optional[AsyncTokenCredential]
 
         if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
             if os.environ.get(EnvironmentVariables.MSI_SECRET):
@@ -44,8 +49,10 @@ class ManagedIdentityCredential(AsyncContextManager):
 
                 self._credential = AppServiceCredential(**kwargs)
             else:
-                _LOGGER.info("%s will use MSI", self.__class__.__name__)
-                self._credential = MsiCredential(**kwargs)
+                _LOGGER.info("%s will use Cloud Shell managed identity", self.__class__.__name__)
+                from .cloud_shell import CloudShellCredential
+
+                self._credential = CloudShellCredential(**kwargs)
         elif os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
             if (
                 os.environ.get(EnvironmentVariables.IDENTITY_HEADER)
@@ -187,63 +194,3 @@ class ImdsCredential(_AsyncManagedIdentityBase):
             # any other error is unexpected
             raise ClientAuthenticationError(message=ex.message, response=ex.response) from None
         return token
-
-
-class MsiCredential(_AsyncManagedIdentityBase):
-    """Authenticates via the MSI endpoint in an App Service or Cloud Shell environment.
-
-    :keyword str client_id: ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
-    """
-
-    def __init__(self, **kwargs: "Any") -> None:
-        self._endpoint = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
-        if self._endpoint:
-            super().__init__(endpoint=self._endpoint, **kwargs)
-
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> AccessToken:  # pylint:disable=unused-argument
-        """Asynchronously request an access token for `scopes`.
-
-        This method is called automatically by Azure SDK clients.
-
-        :param str scopes: desired scope for the access token. This credential allows only one scope per request.
-        :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.identity.CredentialUnavailableError: the MSI endpoint is unavailable
-        """
-        if not self._endpoint:
-            message = "ManagedIdentityCredential authentication unavailable, no managed identity endpoint found."
-            raise CredentialUnavailableError(message=message)
-
-        if len(scopes) != 1:
-            raise ValueError("This credential requires exactly one scope per token request.")
-
-        token = self._client.get_cached_token(scopes)
-        if not token:
-            token = await self._refresh_token(*scopes)
-        elif self._client.should_refresh(token):
-            try:
-                token = await self._refresh_token(*scopes)
-            except Exception:  # pylint: disable=broad-except
-                pass
-        return token
-
-    async def _refresh_token(self, *scopes):
-        resource = scopes[0]
-        if resource.endswith("/.default"):
-            resource = resource[: -len("/.default")]
-
-        secret = os.environ.get(EnvironmentVariables.MSI_SECRET)
-        if secret:
-            # MSI_ENDPOINT and MSI_SECRET set -> App Service
-            token = await self._request_app_service_token(scopes=scopes, resource=resource, secret=secret)
-        else:
-            # only MSI_ENDPOINT set -> legacy-style MSI (Cloud Shell)
-            token = await self._request_legacy_token(scopes=scopes, resource=resource)
-        return token
-
-    async def _request_app_service_token(self, scopes, resource, secret):
-        params = {"api-version": "2017-09-01", "resource": resource, **self._identity_config}
-        return await self._client.request_token(scopes, method="GET", headers={"secret": secret}, params=params)
-
-    async def _request_legacy_token(self, scopes, resource):
-        form_data = {"resource": resource, **self._identity_config}
-        return await self._client.request_token(scopes, method="POST", form_data=form_data)

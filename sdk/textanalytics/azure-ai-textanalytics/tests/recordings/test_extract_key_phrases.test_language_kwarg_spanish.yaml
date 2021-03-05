@@ -14,22 +14,22 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/keyPhrases?model-version=latest&showStats=true
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/keyPhrases?model-version=latest&showStats=true
   response:
     body:
       string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","keyPhrases":["Bill
         Gates","the CEO of Microsoft"],"statistics":{"charactersCount":35,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
       apim-request-id:
-      - 33bbe77e-97b6-419d-ac05-c13c73c54f14
+      - 058b01f0-5ed5-4008-bc5d-89f89929d65d
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Wed, 30 Sep 2020 16:02:45 GMT
+      - Tue, 23 Feb 2021 17:08:30 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -37,7 +37,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '8'
+      - '10'
     status:
       code: 200
       message: OK

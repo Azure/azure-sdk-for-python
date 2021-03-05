@@ -8,22 +8,20 @@
 
 from enum import Enum
 from collections import namedtuple
-from ._helpers import (
-    adjust_value_type,
-    adjust_text_angle,
-    adjust_confidence,
-    adjust_page_number,
-    get_element
-)
+from ._helpers import adjust_value_type, adjust_confidence, get_element
 
 
 def get_bounding_box(field):
-    return [
-        Point(x=field.bounding_box[0], y=field.bounding_box[1]),
-        Point(x=field.bounding_box[2], y=field.bounding_box[3]),
-        Point(x=field.bounding_box[4], y=field.bounding_box[5]),
-        Point(x=field.bounding_box[6], y=field.bounding_box[7])
-    ] if field.bounding_box else None
+    return (
+        [
+            Point(x=field.bounding_box[0], y=field.bounding_box[1]),
+            Point(x=field.bounding_box[2], y=field.bounding_box[3]),
+            Point(x=field.bounding_box[4], y=field.bounding_box[5]),
+            Point(x=field.bounding_box[6], y=field.bounding_box[7]),
+        ]
+        if field.bounding_box
+        else None
+    )
 
 
 def resolve_element(element, read_result):
@@ -37,7 +35,9 @@ def resolve_element(element, read_result):
     raise ValueError("Failed to parse element reference.")
 
 
-def get_field_value(field, value, read_result, **kwargs):  # pylint: disable=too-many-return-statements
+def get_field_value(
+    field, value, read_result
+):  # pylint: disable=too-many-return-statements
     if value is None:
         return value
     if value.type == "string":
@@ -53,27 +53,25 @@ def get_field_value(field, value, read_result, **kwargs):  # pylint: disable=too
     if value.type == "time":
         return value.value_time
     if value.type == "array":
-        # business cards pre-built model doesn't return a page number for the `ContactNames` field
-        if "business_card" in kwargs and field == "ContactNames":
-            value = adjust_page_number(value)
         return [
-            FormField._from_generated(field, value, read_result, **kwargs)
+            FormField._from_generated(field, value, read_result)
             for value in value.value_array
         ]
     if value.type == "object":
         return {
-            key: FormField._from_generated(key, value, read_result, **kwargs)
+            key: FormField._from_generated(key, value, read_result)
             for key, value in value.value_object.items()
         }
     if value.type == "selectionMark":
-        return value.text
+        return (
+            value.text
+        )  # FIXME https://github.com/Azure/azure-sdk-for-python/issues/15276
 
     return None
 
 
 class FieldValueType(str, Enum):
-    """Semantic data type of the field value.
-    """
+    """Semantic data type of the field value."""
 
     STRING = "string"
     DATE = "date"
@@ -96,8 +94,7 @@ class LengthUnit(str, Enum):
 
 
 class TrainingStatus(str, Enum):
-    """Status of the training operation.
-    """
+    """Status of the training operation."""
 
     SUCCEEDED = "succeeded"
     PARTIALLY_SUCCEEDED = "partiallySucceeded"
@@ -105,8 +102,7 @@ class TrainingStatus(str, Enum):
 
 
 class CustomFormModelStatus(str, Enum):
-    """Status indicating the model's readiness for use.
-    """
+    """Status indicating the model's readiness for use."""
 
     CREATING = "creating"
     READY = "ready"
@@ -115,12 +111,16 @@ class CustomFormModelStatus(str, Enum):
 
 class FormContentType(str, Enum):
     """Content type for upload.
+
+    .. versionadded:: v2.1-preview
+        Support for image/bmp
     """
 
     APPLICATION_PDF = "application/pdf"
     IMAGE_JPEG = "image/jpeg"
     IMAGE_PNG = "image/png"
     IMAGE_TIFF = "image/tiff"
+    IMAGE_BMP = "image/bmp"
 
 
 class Point(namedtuple("Point", "x y")):
@@ -146,13 +146,15 @@ class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_num
     __slots__ = ()
 
     def __new__(cls, first_page_number, last_page_number):
-        return super(FormPageRange, cls).__new__(cls, first_page_number, last_page_number)
+        return super(FormPageRange, cls).__new__(
+            cls, first_page_number, last_page_number
+        )
 
 
 class FormElement(object):
     """Base type which includes properties for a form element.
 
-    :ivar str text: The text content of the line.
+    :ivar str text: The text content of the element.
     :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
         A list of 4 points representing the quadrilateral bounding box
         that outlines the text. The points are listed in clockwise
@@ -165,6 +167,7 @@ class FormElement(object):
         correspond to a :class:`~azure.ai.formrecognizer.FormWord` :class:`~azure.ai.formrecognizer.FormLine`,
         or :class:`~azure.ai.formrecognizer.FormSelectionMark`, respectively.
     """
+
     def __init__(self, **kwargs):
         self.bounding_box = kwargs.get("bounding_box", None)
         self.page_number = kwargs.get("page_number", None)
@@ -192,29 +195,32 @@ class RecognizedForm(object):
         The first and last page number of the input form.
     :ivar list[~azure.ai.formrecognizer.FormPage] pages:
         A list of pages recognized from the input document. Contains lines,
-        words, tables and page metadata.
+        words, selection marks, tables and page metadata.
+
     .. versionadded:: v2.1-preview
         The *form_type_confidence* and *model_id* properties
     """
+
     def __init__(self, **kwargs):
         self.fields = kwargs.get("fields", None)
         self.form_type = kwargs.get("form_type", None)
         self.page_range = kwargs.get("page_range", None)
         self.pages = kwargs.get("pages", None)
-        self.model_id = kwargs.get('model_id', None)
-        self.form_type_confidence = kwargs.get('form_type_confidence', None)
+        self.model_id = kwargs.get("model_id", None)
+        self.form_type_confidence = kwargs.get("form_type_confidence", None)
 
     def __repr__(self):
-        return "RecognizedForm(form_type={}, fields={}, page_range={}, pages={}, form_type_confidence={}, " \
-               "model_id={})" \
-            .format(
+        return (
+            "RecognizedForm(form_type={}, fields={}, page_range={}, pages={}, form_type_confidence={}, "
+            "model_id={})".format(
                 self.form_type,
                 repr(self.fields),
                 repr(self.page_range),
                 repr(self.pages),
                 self.form_type_confidence,
-                self.model_id
+                self.model_id,
             )[:1024]
+        )
 
 
 class FormField(object):
@@ -247,12 +253,12 @@ class FormField(object):
         self.confidence = kwargs.get("confidence", None)
 
     @classmethod
-    def _from_generated(cls, field, value, read_result, **kwargs):
+    def _from_generated(cls, field, value, read_result):
         return cls(
             value_type=adjust_value_type(value.type) if value else None,
             label_data=None,  # not returned with receipt/supervised
             value_data=FieldData._from_generated(value, read_result),
-            value=get_field_value(field, value, read_result, **kwargs),
+            value=get_field_value(field, value, read_result),
             name=field,
             confidence=adjust_confidence(value.confidence) if value else None,
         )
@@ -261,23 +267,28 @@ class FormField(object):
     def _from_generated_unlabeled(cls, field, idx, page, read_result):
         return cls(
             value_type="string",  # unlabeled only returns string
-            label_data=FieldData._from_generated_unlabeled(field.key, page, read_result),
-            value_data=FieldData._from_generated_unlabeled(field.value, page, read_result),
+            label_data=FieldData._from_generated_unlabeled(
+                field.key, page, read_result
+            ),
+            value_data=FieldData._from_generated_unlabeled(
+                field.value, page, read_result
+            ),
             value=field.value.text,
             name="field-" + str(idx),
             confidence=adjust_confidence(field.confidence),
         )
 
     def __repr__(self):
-        return "FormField(value_type={}, label_data={}, value_data={}, name={}, value={}, confidence={})" \
-            .format(
-                self.value_type,
-                repr(self.label_data),
-                repr(self.value_data),
-                self.name,
-                repr(self.value),
-                self.confidence
-            )[:1024]
+        return "FormField(value_type={}, label_data={}, value_data={}, name={}, value={}, confidence={})".format(
+            self.value_type,
+            repr(self.label_data),
+            repr(self.value_data),
+            self.name,
+            repr(self.value),
+            self.confidence,
+        )[
+            :1024
+        ]
 
 
 class FieldData(object):
@@ -296,9 +307,12 @@ class FieldData(object):
     :ivar field_elements:
         When `include_field_elements` is set to true, a list of
         elements constituting this field or value is returned. The list
-        constitutes of elements such as lines and words.
+        constitutes of elements such as lines, words, and selection marks.
     :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord,
         ~azure.ai.formrecognizer.FormLine,  ~azure.ai.formrecognizer.FormSelectionMark]]
+
+    .. versionadded:: v2.1-preview
+        *FormSelectionMark* is added to the types returned in the list of field_elements
     """
 
     def __init__(self, **kwargs):
@@ -309,14 +323,20 @@ class FieldData(object):
 
     @classmethod
     def _from_generated(cls, field, read_result):
-        if field is None or all(field_data is None for field_data in [field.page, field.text, field.bounding_box]):
+        if field is None or all(
+            field_data is None
+            for field_data in [field.page, field.text, field.bounding_box]
+        ):
             return None
         return cls(
             page_number=field.page,
             text=field.text,
             bounding_box=get_bounding_box(field),
-            field_elements=[resolve_element(element, read_result) for element in field.elements]
-            if field.elements else None
+            field_elements=[
+                resolve_element(element, read_result) for element in field.elements
+            ]
+            if field.elements
+            else None,
         )
 
     @classmethod
@@ -325,23 +345,24 @@ class FieldData(object):
             page_number=page,
             text=field.text,
             bounding_box=get_bounding_box(field),
-            field_elements=[resolve_element(element, read_result) for element in field.elements]
-            if field.elements else None
+            field_elements=[
+                resolve_element(element, read_result) for element in field.elements
+            ]
+            if field.elements
+            else None,
         )
 
     def __repr__(self):
-        return "FieldData(page_number={}, text={}, bounding_box={}, field_elements={})" \
-            .format(
-                self.page_number,
-                self.text,
-                self.bounding_box,
-                repr(self.field_elements)
-            )[:1024]
+        return "FieldData(page_number={}, text={}, bounding_box={}, field_elements={})".format(
+            self.page_number, self.text, self.bounding_box, repr(self.field_elements)
+        )[
+            :1024
+        ]
 
 
 class FormPage(object):
     """Represents a page recognized from the input document. Contains lines,
-    words, tables and page metadata.
+    words, selection marks, tables and page metadata.
 
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
@@ -367,6 +388,7 @@ class FormPage(object):
         logic should be built upon the actual line location instead of order.
     :ivar selection_marks: List of selection marks extracted from the page.
     :vartype selection_marks: list[~azure.ai.formrecognizer.FormSelectionMark]
+
     .. versionadded:: v2.1-preview
         *selection_marks* property
     """
@@ -381,23 +403,10 @@ class FormPage(object):
         self.lines = kwargs.get("lines", None)
         self.selection_marks = kwargs.get("selection_marks", None)
 
-    @classmethod
-    def _from_generated_prebuilt_model(cls, read_result):
-        return [cls(
-            page_number=page.page,
-            text_angle=adjust_text_angle(page.angle),
-            width=page.width,
-            height=page.height,
-            unit=page.unit,
-            tables=None,  # prebuilt model does not return tables
-            lines=[FormLine._from_generated(line, page=page.page) for line in page.lines]
-            if page.lines else None
-        ) for page in read_result]
-
     def __repr__(self):
-        return "FormPage(page_number={}, text_angle={}, width={}, height={}, unit={}, tables={}, lines={}," \
-               "selection_marks={})" \
-            .format(
+        return (
+            "FormPage(page_number={}, text_angle={}, width={}, height={}, unit={}, tables={}, lines={},"
+            "selection_marks={})".format(
                 self.page_number,
                 self.text_angle,
                 self.width,
@@ -405,8 +414,9 @@ class FormPage(object):
                 self.unit,
                 repr(self.tables),
                 repr(self.lines),
-                repr(self.selection_marks)
+                repr(self.selection_marks),
             )[:1024]
+        )
 
 
 class FormLine(FormElement):
@@ -423,31 +433,46 @@ class FormLine(FormElement):
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
     :ivar str kind: For FormLine, this is "line".
+    :ivar appearance: An object representing the appearance of the line.
+    :vartype appearance: ~azure.ai.formrecognizer.Appearance
+
+    .. versionadded:: v2.1-preview
+        *appearance* property
     """
 
     def __init__(self, **kwargs):
         super(FormLine, self).__init__(kind="line", **kwargs)
         self.words = kwargs.get("words", None)
+        self.appearance = kwargs.get("appearance", None)
 
     @classmethod
     def _from_generated(cls, line, page):
+        line_appearance = (
+            TextAppearance._from_generated(line.appearance)
+            if hasattr(line, "appearance")
+            else None
+        )
         return cls(
             text=line.text,
             bounding_box=get_bounding_box(line),
             page_number=page,
             words=[FormWord._from_generated(word, page) for word in line.words]
-            if line.words else None
+            if line.words
+            else None,
+            appearance=line_appearance,
         )
 
     def __repr__(self):
-        return "FormLine(text={}, bounding_box={}, words={}, page_number={}, kind={})" \
-            .format(
-                self.text,
-                self.bounding_box,
-                repr(self.words),
-                self.page_number,
-                self.kind
-            )[:1024]
+        return "FormLine(text={}, bounding_box={}, words={}, page_number={}, kind={}, appearance={})".format(
+            self.text,
+            self.bounding_box,
+            repr(self.words),
+            self.page_number,
+            self.kind,
+            self.appearance,
+        )[
+            :1024
+        ]
 
 
 class FormWord(FormElement):
@@ -476,18 +501,15 @@ class FormWord(FormElement):
             text=word.text,
             bounding_box=get_bounding_box(word),
             confidence=adjust_confidence(word.confidence),
-            page_number=page
+            page_number=page,
         )
 
     def __repr__(self):
-        return "FormWord(text={}, bounding_box={}, confidence={}, page_number={}, kind={})" \
-            .format(
-                self.text,
-                self.bounding_box,
-                self.confidence,
-                self.page_number,
-                self.kind
-            )[:1024]
+        return "FormWord(text={}, bounding_box={}, confidence={}, page_number={}, kind={})".format(
+            self.text, self.bounding_box, self.confidence, self.page_number, self.kind
+        )[
+            :1024
+        ]
 
 
 class FormSelectionMark(FormElement):
@@ -499,40 +521,35 @@ class FormSelectionMark(FormElement):
         that outlines the text. The points are listed in clockwise
         order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
-    :ivar float confidence: Confidence value.
-    :ivar str state: Required. State of the selection mark. Possible values include: "selected",
+    :ivar float confidence:
+        Measures the degree of certainty of the recognition result. Value is between [0.0, 1.0].
+    :ivar str state: State of the selection mark. Possible values include: "selected",
      "unselected".
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
     :ivar str kind: For FormSelectionMark, this is "selectionMark".
     """
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(FormSelectionMark, self).__init__(kind="selectionMark", **kwargs)
-        self.confidence = kwargs['confidence']
-        self.state = kwargs['state']
+        self.confidence = kwargs["confidence"]
+        self.state = kwargs["state"]
 
     @classmethod
     def _from_generated(cls, mark, page):
         return cls(
-            confidence=mark.confidence,
+            confidence=adjust_confidence(mark.confidence),
             state=mark.state,
             bounding_box=get_bounding_box(mark),
-            page_number=page
+            page_number=page,
         )
 
     def __repr__(self):
-        return "FormSelectionMark(text={}, bounding_box={}, confidence={}, page_number={}, state={})" \
-            .format(
-                self.text,
-                self.bounding_box,
-                self.confidence,
-                self.page_number,
-                self.state
-            )[:1024]
+        return "FormSelectionMark(text={}, bounding_box={}, confidence={}, page_number={}, state={})".format(
+            self.text, self.bounding_box, self.confidence, self.page_number, self.state
+        )[
+            :1024
+        ]
 
 
 class FormTable(object):
@@ -546,6 +563,14 @@ class FormTable(object):
         Number of rows in table.
     :ivar int column_count:
         Number of columns in table.
+    :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
+        A list of 4 points representing the quadrilateral bounding box
+        that outlines the table. The points are listed in clockwise
+        order: top-left, top-right, bottom-right, bottom-left.
+        Units are in pixels for images and inches for PDF.
+
+    .. versionadded:: v2.1-preview
+        The *bounding_box* property.
     """
 
     def __init__(self, **kwargs):
@@ -553,15 +578,18 @@ class FormTable(object):
         self.cells = kwargs.get("cells", None)
         self.row_count = kwargs.get("row_count", None)
         self.column_count = kwargs.get("column_count", None)
+        self.bounding_box = kwargs.get("bounding_box", None)
 
     def __repr__(self):
-        return "FormTable(page_number={}, cells={}, row_count={}, column_count={})" \
-            .format(
-                self.page_number,
-                repr(self.cells),
-                self.row_count,
-                self.column_count
-            )[:1024]
+        return "FormTable(page_number={}, cells={}, row_count={}, column_count={}, bounding_box={})".format(
+            self.page_number,
+            repr(self.cells),
+            self.row_count,
+            self.column_count,
+            self.bounding_box,
+        )[
+            :1024
+        ]
 
 
 class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
@@ -586,10 +614,13 @@ class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
     :ivar field_elements:
         When `include_field_elements` is set to true, a list of
         elements constituting this cell is returned. The list
-        constitutes of elements such as lines and words.
+        constitutes of elements such as lines, words, and selection marks.
         For calls to begin_recognize_content(), this list is always populated.
     :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord,
         ~azure.ai.formrecognizer.FormLine, ~azure.ai.formrecognizer.FormSelectionMark]]
+
+    .. versionadded:: v2.1-preview
+        *FormSelectionMark* is added to the types returned in the list of field_elements
     """
 
     def __init__(self, **kwargs):
@@ -618,14 +649,17 @@ class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
             is_header=cell.is_header or False,
             is_footer=cell.is_footer or False,
             page_number=page,
-            field_elements=[resolve_element(element, read_result) for element in cell.elements]
-            if cell.elements else None
+            field_elements=[
+                resolve_element(element, read_result) for element in cell.elements
+            ]
+            if cell.elements
+            else None,
         )
 
     def __repr__(self):
-        return "FormTableCell(text={}, row_index={}, column_index={}, row_span={}, column_span={}, " \
-            "bounding_box={}, confidence={}, is_header={}, is_footer={}, page_number={}, field_elements={})" \
-            .format(
+        return (
+            "FormTableCell(text={}, row_index={}, column_index={}, row_span={}, column_span={}, "
+            "bounding_box={}, confidence={}, is_header={}, is_footer={}, page_number={}, field_elements={})".format(
                 self.text,
                 self.row_index,
                 self.column_index,
@@ -636,8 +670,11 @@ class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
                 self.is_header,
                 self.is_footer,
                 self.page_number,
-                repr(self.field_elements)
-            )[:1024]
+                repr(self.field_elements),
+            )[
+                :1024
+            ]
+        )
 
 
 class CustomFormModel(object):
@@ -662,6 +699,7 @@ class CustomFormModel(object):
     :ivar str model_name: Optional user defined model name.
     :ivar properties: Optional model properties.
     :vartype properties: ~azure.ai.formrecognizer.CustomFormModelProperties
+
     .. versionadded:: v2.1-preview
         The *model_name* and *properties* properties.
     """
@@ -679,24 +717,34 @@ class CustomFormModel(object):
 
     @classmethod
     def _from_generated(cls, model, api_version):
-        model_name = model.model_info.model_name if hasattr(model.model_info, "model_name") else None
-        properties = CustomFormModelProperties._from_generated(model.model_info) \
-            if hasattr(model.model_info, "attributes") else None
+        model_name = (
+            model.model_info.model_name
+            if hasattr(model.model_info, "model_name")
+            else None
+        )
+        properties = (
+            CustomFormModelProperties._from_generated(model.model_info)
+            if hasattr(model.model_info, "attributes")
+            else None
+        )
         return cls(
             model_id=model.model_info.model_id,
             status=model.model_info.status,
             training_started_on=model.model_info.created_date_time,
             training_completed_on=model.model_info.last_updated_date_time,
             submodels=CustomFormSubmodel._from_generated_unlabeled(model)
-            if model.keys else CustomFormSubmodel._from_generated_labeled(
+            if model.keys
+            else CustomFormSubmodel._from_generated_labeled(
                 model, api_version, model_name=model_name
             ),
             errors=FormRecognizerError._from_generated(model.train_result.errors)
-            if model.train_result else None,
+            if model.train_result
+            else None,
             training_documents=TrainingDocumentInfo._from_generated(model.train_result)
-            if model.train_result else None,
+            if model.train_result
+            else None,
             properties=properties,
-            model_name=model_name
+            model_name=model_name,
         )
 
     @classmethod
@@ -709,23 +757,26 @@ class CustomFormModel(object):
             submodels=CustomFormSubmodel._from_generated_composed(model),
             training_documents=TrainingDocumentInfo._from_generated_composed(model),
             properties=CustomFormModelProperties._from_generated(model.model_info),
-            model_name=model.model_info.model_name
+            model_name=model.model_info.model_name,
         )
 
     def __repr__(self):
-        return "CustomFormModel(model_id={}, status={}, training_started_on={}, training_completed_on={}, " \
-               "submodels={}, errors={}, training_documents={}, model_name={}, properties={})" \
-                .format(
-                    self.model_id,
-                    self.status,
-                    self.training_started_on,
-                    self.training_completed_on,
-                    repr(self.submodels),
-                    repr(self.errors),
-                    repr(self.training_documents),
-                    self.model_name,
-                    repr(self.properties)
-                )[:1024]
+        return (
+            "CustomFormModel(model_id={}, status={}, training_started_on={}, training_completed_on={}, "
+            "submodels={}, errors={}, training_documents={}, model_name={}, properties={})".format(
+                self.model_id,
+                self.status,
+                self.training_started_on,
+                self.training_completed_on,
+                repr(self.submodels),
+                repr(self.errors),
+                repr(self.training_documents),
+                self.model_name,
+                repr(self.properties),
+            )[
+                :1024
+            ]
+        )
 
 
 class CustomFormSubmodel(object):
@@ -740,9 +791,11 @@ class CustomFormSubmodel(object):
         is generated for each field.
     :vartype fields: dict[str, ~azure.ai.formrecognizer.CustomFormModelField]
     :ivar str form_type: Type of form this submodel recognizes.
+
     .. versionadded:: v2.1-preview
         The *model_id* property
     """
+
     def __init__(self, **kwargs):
         self.model_id = kwargs.get("model_id", None)
         self.accuracy = kwargs.get("accuracy", None)
@@ -756,8 +809,9 @@ class CustomFormSubmodel(object):
                 model_id=model.model_info.model_id,
                 accuracy=None,
                 fields=CustomFormModelField._from_generated_unlabeled(fields),
-                form_type="form-" + cluster_id
-            ) for cluster_id, fields in model.keys.clusters.items()
+                form_type="form-" + cluster_id,
+            )
+            for cluster_id, fields in model.keys.clusters.items()
         ]
 
     @classmethod
@@ -769,36 +823,54 @@ class CustomFormSubmodel(object):
         else:
             form_type = "custom:" + model.model_info.model_id
 
-        return [
-            cls(
-                model_id=model.model_info.model_id,
-                accuracy=model.train_result.average_model_accuracy,
-                fields={field.field_name: CustomFormModelField._from_generated_labeled(field)
-                        for field in model.train_result.fields} if model.train_result.fields else None,
-                form_type=form_type
-            )
-        ] if model.train_result else None
+        return (
+            [
+                cls(
+                    model_id=model.model_info.model_id,
+                    accuracy=model.train_result.average_model_accuracy,
+                    fields={
+                        field.field_name: CustomFormModelField._from_generated_labeled(
+                            field
+                        )
+                        for field in model.train_result.fields
+                    }
+                    if model.train_result.fields
+                    else None,
+                    form_type=form_type,
+                )
+            ]
+            if model.train_result
+            else None
+        )
 
     @classmethod
     def _from_generated_composed(cls, model):
         return [
             cls(
                 accuracy=train_result.average_model_accuracy,
-                fields={field.field_name: CustomFormModelField._from_generated_labeled(field)
-                        for field in train_result.fields} if train_result.fields else None,
+                fields={
+                    field.field_name: CustomFormModelField._from_generated_labeled(
+                        field
+                    )
+                    for field in train_result.fields
+                }
+                if train_result.fields
+                else None,
                 form_type="custom:" + train_result.model_id,
-                model_id=train_result.model_id
-            ) for train_result in model.composed_train_results
+                model_id=train_result.model_id,
+            )
+            for train_result in model.composed_train_results
         ]
 
     def __repr__(self):
-        return "CustomFormSubmodel(accuracy={}, model_id={}, fields={}, form_type={})" \
-            .format(
-                self.accuracy,
-                self.model_id,
-                repr(self.fields),
-                self.form_type,
-            )[:1024]
+        return "CustomFormSubmodel(accuracy={}, model_id={}, fields={}, form_type={})".format(
+            self.accuracy,
+            self.model_id,
+            repr(self.fields),
+            self.form_type,
+        )[
+            :1024
+        ]
 
 
 class CustomFormModelField(object):
@@ -808,6 +880,7 @@ class CustomFormModelField(object):
     :ivar str name: Canonical name; uniquely identifies a field within the form.
     :ivar float accuracy: The estimated recognition accuracy for this field.
     """
+
     def __init__(self, **kwargs):
         self.label = kwargs.get("label", None)
         self.name = kwargs.get("name", None)
@@ -815,10 +888,7 @@ class CustomFormModelField(object):
 
     @classmethod
     def _from_generated_labeled(cls, field):
-        return cls(
-            name=field.field_name,
-            accuracy=field.accuracy
-        )
+        return cls(name=field.field_name, accuracy=field.accuracy)
 
     @classmethod
     def _from_generated_unlabeled(cls, fields):
@@ -826,16 +896,14 @@ class CustomFormModelField(object):
             "field-{}".format(idx): cls(
                 name="field-{}".format(idx),
                 label=field_name,
-            ) for idx, field_name in enumerate(fields)
+            )
+            for idx, field_name in enumerate(fields)
         }
 
     def __repr__(self):
-        return "CustomFormModelField(label={}, name={}, accuracy={})" \
-            .format(
-                self.label,
-                self.name,
-                self.accuracy
-            )[:1024]
+        return "CustomFormModelField(label={}, name={}, accuracy={})".format(
+            self.label, self.name, self.accuracy
+        )[:1024]
 
 
 class TrainingDocumentInfo(object):
@@ -854,6 +922,7 @@ class TrainingDocumentInfo(object):
         List of any errors for document.
     :ivar str model_id:
         The model ID that used the document to train.
+
     .. versionadded:: v2.1-preview
         The *model_id* property
     """
@@ -867,15 +936,22 @@ class TrainingDocumentInfo(object):
 
     @classmethod
     def _from_generated(cls, train_result):
-        return [
-            cls(
-                name=doc.document_name,
-                status=doc.status,
-                page_count=doc.pages,
-                errors=FormRecognizerError._from_generated(doc.errors),
-                model_id=train_result.model_id if hasattr(train_result, "model_id") else None
-            ) for doc in train_result.training_documents
-        ] if train_result.training_documents else None
+        return (
+            [
+                cls(
+                    name=doc.document_name,
+                    status=doc.status,
+                    page_count=doc.pages,
+                    errors=FormRecognizerError._from_generated(doc.errors),
+                    model_id=train_result.model_id
+                    if hasattr(train_result, "model_id")
+                    else None,
+                )
+                for doc in train_result.training_documents
+            ]
+            if train_result.training_documents
+            else None
+        )
 
     @classmethod
     def _from_generated_composed(cls, model):
@@ -888,20 +964,17 @@ class TrainingDocumentInfo(object):
                         status=doc.status,
                         page_count=doc.pages,
                         errors=FormRecognizerError._from_generated(doc.errors),
-                        model_id=train_result.model_id
+                        model_id=train_result.model_id,
                     )
                 )
         return training_document_info
 
     def __repr__(self):
-        return "TrainingDocumentInfo(name={}, status={}, page_count={}, errors={}, model_id={})" \
-            .format(
-                self.name,
-                self.status,
-                self.page_count,
-                repr(self.errors),
-                self.model_id
-            )[:1024]
+        return "TrainingDocumentInfo(name={}, status={}, page_count={}, errors={}, model_id={})".format(
+            self.name, self.status, self.page_count, repr(self.errors), self.model_id
+        )[
+            :1024
+        ]
 
 
 class FormRecognizerError(object):
@@ -917,12 +990,16 @@ class FormRecognizerError(object):
 
     @classmethod
     def _from_generated(cls, err):
-        return [
-            cls(code=error.code, message=error.message) for error in err
-        ] if err else []
+        return (
+            [cls(code=error.code, message=error.message) for error in err]
+            if err
+            else []
+        )
 
     def __repr__(self):
-        return "FormRecognizerError(code={}, message={})".format(self.code, self.message)[:1024]
+        return "FormRecognizerError(code={}, message={})".format(
+            self.code, self.message
+        )[:1024]
 
 
 class CustomFormModelInfo(object):
@@ -940,6 +1017,7 @@ class CustomFormModelInfo(object):
     :vartype model_name: str
     :ivar properties: Optional model properties.
     :vartype properties: ~azure.ai.formrecognizer.CustomFormModelProperties
+
     .. versionadded:: v2.1-preview
         The *model_name* and *properties* properties
     """
@@ -972,20 +1050,21 @@ class CustomFormModelInfo(object):
             training_started_on=model.created_date_time,
             training_completed_on=model.last_updated_date_time,
             properties=properties,
-            model_name=model_name
+            model_name=model_name,
         )
 
     def __repr__(self):
-        return "CustomFormModelInfo(model_id={}, status={}, training_started_on={}, training_completed_on={}, " \
-               "properties={}, model_name={})" \
-                .format(
-                    self.model_id,
-                    self.status,
-                    self.training_started_on,
-                    self.training_completed_on,
-                    repr(self.properties),
-                    self.model_name
-                )[:1024]
+        return (
+            "CustomFormModelInfo(model_id={}, status={}, training_started_on={}, training_completed_on={}, "
+            "properties={}, model_name={})".format(
+                self.model_id,
+                self.status,
+                self.training_started_on,
+                self.training_completed_on,
+                repr(self.properties),
+                self.model_name,
+            )[:1024]
+        )
 
 
 class AccountProperties(object):
@@ -1007,11 +1086,9 @@ class AccountProperties(object):
         )
 
     def __repr__(self):
-        return "AccountProperties(custom_model_count={}, custom_model_limit={})" \
-            .format(
-                self.custom_model_count,
-                self.custom_model_limit
-            )[:1024]
+        return "AccountProperties(custom_model_count={}, custom_model_limit={})".format(
+            self.custom_model_count, self.custom_model_limit
+        )[:1024]
 
 
 class CustomFormModelProperties(object):
@@ -1020,21 +1097,58 @@ class CustomFormModelProperties(object):
     :ivar bool is_composed_model: Is this model composed? (default: false).
     """
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        self.is_composed_model = kwargs.get('is_composed_model', False)
+    def __init__(self, **kwargs):
+        self.is_composed_model = kwargs.get("is_composed_model", False)
 
     @classmethod
     def _from_generated(cls, model_info):
         if model_info.attributes:
-            return cls(
-                is_composed_model=model_info.attributes.is_composed
-            )
+            return cls(is_composed_model=model_info.attributes.is_composed)
+        return cls(is_composed_model=False)
+
+    def __repr__(self):
+        return "CustomFormModelProperties(is_composed_model={})".format(
+            self.is_composed_model
+        )
+
+
+class TextAppearance(object):
+    """An object representing the appearance of the text line.
+
+    :param style: An object representing the style of the text line.
+    :type style: ~azure.ai.formrecognizer.TextStyle
+    """
+
+    def __init__(self, **kwargs):
+        self.style = kwargs.get("style", None)
+
+    @classmethod
+    def _from_generated(cls, appearance):
+        if appearance is None:
+            return appearance
         return cls(
-            is_composed_model=False
+            style=TextStyle(
+                name=appearance.style.name, confidence=appearance.style.confidence
+            )
         )
 
     def __repr__(self):
-        return "CustomFormModelProperties(is_composed_model={})".format(self.is_composed_model)
+        return "TextAppearance(style={})".format(repr(self.style))
+
+
+class TextStyle(object):
+    """An object representing the style of the text line.
+
+    :param name: The text line style name.
+        Possible values include: "other", "handwriting".
+    :type name: str
+    :param confidence: The confidence of text line style.
+    :type confidence: float
+    """
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.get("name", None)
+        self.confidence = kwargs.get("confidence", None)
+
+    def __repr__(self):
+        return "TextStyle(name={}, confidence={})".format(self.name, self.confidence)

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class ProviderOperationsMetadataOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,7 +46,7 @@ class ProviderOperationsMetadataOperations:
         resource_provider_namespace: str,
         expand: Optional[str] = "resourceTypes",
         **kwargs
-    ) -> "models.ProviderOperationsMetadata":
+    ) -> "_models.ProviderOperationsMetadata":
         """Gets provider operations metadata for the specified resource provider.
 
         :param resource_provider_namespace: The namespace of the resource provider.
@@ -58,7 +58,7 @@ class ProviderOperationsMetadataOperations:
         :rtype: ~azure.mgmt.authorization.v2015_07_01.models.ProviderOperationsMetadata
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProviderOperationsMetadata"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProviderOperationsMetadata"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -103,7 +103,7 @@ class ProviderOperationsMetadataOperations:
         self,
         expand: Optional[str] = "resourceTypes",
         **kwargs
-    ) -> AsyncIterable["models.ProviderOperationsMetadataListResult"]:
+    ) -> AsyncIterable["_models.ProviderOperationsMetadataListResult"]:
         """Gets provider operations metadata for all resource providers.
 
         :param expand: Specifies whether to expand the values.
@@ -113,7 +113,7 @@ class ProviderOperationsMetadataOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.authorization.v2015_07_01.models.ProviderOperationsMetadataListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProviderOperationsMetadataListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProviderOperationsMetadataListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

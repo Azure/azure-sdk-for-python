@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class ContainerGroupsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class ContainerGroupsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ContainerGroupListResult"]
+        # type: (...) -> Iterable["_models.ContainerGroupListResult"]
         """Get a list of container groups in the specified subscription.
 
         Get a list of container groups in the specified subscription. This operation returns properties
@@ -63,7 +63,7 @@ class ContainerGroupsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerinstance.models.ContainerGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ContainerGroupListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContainerGroupListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -123,7 +123,7 @@ class ContainerGroupsOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ContainerGroupListResult"]
+        # type: (...) -> Iterable["_models.ContainerGroupListResult"]
         """Get a list of container groups in the specified subscription and resource group.
 
         Get a list of container groups in a specified subscription and resource group. This operation
@@ -137,7 +137,7 @@ class ContainerGroupsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerinstance.models.ContainerGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ContainerGroupListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContainerGroupListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -199,7 +199,7 @@ class ContainerGroupsOperations(object):
         container_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ContainerGroup"
+        # type: (...) -> "_models.ContainerGroup"
         """Get the properties of the specified container group.
 
         Gets the properties of the specified container group in the specified subscription and resource
@@ -215,7 +215,7 @@ class ContainerGroupsOperations(object):
         :rtype: ~azure.mgmt.containerinstance.models.ContainerGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ContainerGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContainerGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -260,11 +260,11 @@ class ContainerGroupsOperations(object):
         self,
         resource_group_name,  # type: str
         container_group_name,  # type: str
-        container_group,  # type: "models.ContainerGroup"
+        container_group,  # type: "_models.ContainerGroup"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ContainerGroup"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ContainerGroup"]
+        # type: (...) -> "_models.ContainerGroup"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContainerGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -318,10 +318,10 @@ class ContainerGroupsOperations(object):
         self,
         resource_group_name,  # type: str
         container_group_name,  # type: str
-        container_group,  # type: "models.ContainerGroup"
+        container_group,  # type: "_models.ContainerGroup"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ContainerGroup"]
+        # type: (...) -> LROPoller["_models.ContainerGroup"]
         """Create or update container groups.
 
         Create or update container groups with specified configurations.
@@ -343,7 +343,7 @@ class ContainerGroupsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ContainerGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContainerGroup"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -368,7 +368,13 @@ class ContainerGroupsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'containerGroupName': self._serialize.url("container_group_name", container_group_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -386,10 +392,10 @@ class ContainerGroupsOperations(object):
         self,
         resource_group_name,  # type: str
         container_group_name,  # type: str
-        resource,  # type: "models.Resource"
+        resource,  # type: "_models.Resource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ContainerGroup"
+        # type: (...) -> "_models.ContainerGroup"
         """Update container groups.
 
         Updates container group tags with specified values.
@@ -405,7 +411,7 @@ class ContainerGroupsOperations(object):
         :rtype: ~azure.mgmt.containerinstance.models.ContainerGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ContainerGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContainerGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -457,8 +463,8 @@ class ContainerGroupsOperations(object):
         container_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.ContainerGroup"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ContainerGroup"]]
+        # type: (...) -> Optional["_models.ContainerGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ContainerGroup"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -507,7 +513,7 @@ class ContainerGroupsOperations(object):
         container_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ContainerGroup"]
+        # type: (...) -> LROPoller["_models.ContainerGroup"]
         """Delete the specified container group.
 
         Delete the specified container group in the specified subscription and resource group. The
@@ -528,7 +534,7 @@ class ContainerGroupsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ContainerGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContainerGroup"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -552,7 +558,13 @@ class ContainerGroupsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'containerGroupName': self._serialize.url("container_group_name", container_group_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -659,7 +671,13 @@ class ContainerGroupsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'containerGroupName': self._serialize.url("container_group_name", container_group_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -825,7 +843,13 @@ class ContainerGroupsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'containerGroupName': self._serialize.url("container_group_name", container_group_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

@@ -215,8 +215,8 @@ class MgmtSqlTest(AzureMgmtTestCase):
         TENANT_ID = self.settings.TENANT_ID
         CLIENT_OID = self.settings.CLIENT_OID if self.is_live else "000"
         RESOURCE_GROUP = resource_group.name
-        SERVER_NAME = "myserverxpcz"
-        KEY_VAULT_NAME = self.get_resource_name("keyvaultxmmxk")
+        SERVER_NAME = "myserverxpczk"
+        KEY_VAULT_NAME = self.get_resource_name("keyvaultxmmxkk")
         ENCRYPTION_PROTECTOR_NAME = "current"
 
 #--------------------------------------------------------------------------
@@ -332,8 +332,8 @@ class MgmtSqlTest(AzureMgmtTestCase):
         TENANT_ID = self.settings.TENANT_ID
         CLIENT_OID = self.settings.CLIENT_OID if self.is_live else "000"
         RESOURCE_GROUP = resource_group.name
-        SERVER_NAME = "myserverxpcz"
-        KEY_VAULT_NAME = self.get_resource_name("keyvaultxmmxh")
+        SERVER_NAME = "myserverxpczk"
+        KEY_VAULT_NAME = self.get_resource_name("keyvaultxmmxhh")
         # KEY_NAME = "mykeyzz"
 
 #--------------------------------------------------------------------------

@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class PublicIPPrefixesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -129,7 +129,13 @@ class PublicIPPrefixesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'publicIpPrefixName': self._serialize.url("public_ip_prefix_name", public_ip_prefix_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -149,7 +155,7 @@ class PublicIPPrefixesOperations:
         public_ip_prefix_name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.PublicIPPrefix":
+    ) -> "_models.PublicIPPrefix":
         """Gets the specified public IP prefix in a specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -163,7 +169,7 @@ class PublicIPPrefixesOperations:
         :rtype: ~azure.mgmt.network.v2018_11_01.models.PublicIPPrefix
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicIPPrefix"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PublicIPPrefix"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -210,10 +216,10 @@ class PublicIPPrefixesOperations:
         self,
         resource_group_name: str,
         public_ip_prefix_name: str,
-        parameters: "models.PublicIPPrefix",
+        parameters: "_models.PublicIPPrefix",
         **kwargs
-    ) -> "models.PublicIPPrefix":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicIPPrefix"]
+    ) -> "_models.PublicIPPrefix":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PublicIPPrefix"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -267,9 +273,9 @@ class PublicIPPrefixesOperations:
         self,
         resource_group_name: str,
         public_ip_prefix_name: str,
-        parameters: "models.PublicIPPrefix",
+        parameters: "_models.PublicIPPrefix",
         **kwargs
-    ) -> AsyncLROPoller["models.PublicIPPrefix"]:
+    ) -> AsyncLROPoller["_models.PublicIPPrefix"]:
         """Creates or updates a static or dynamic public IP prefix.
 
         :param resource_group_name: The name of the resource group.
@@ -289,7 +295,7 @@ class PublicIPPrefixesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicIPPrefix"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PublicIPPrefix"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -314,7 +320,13 @@ class PublicIPPrefixesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'publicIpPrefixName': self._serialize.url("public_ip_prefix_name", public_ip_prefix_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -332,10 +344,10 @@ class PublicIPPrefixesOperations:
         self,
         resource_group_name: str,
         public_ip_prefix_name: str,
-        parameters: "models.TagsObject",
+        parameters: "_models.TagsObject",
         **kwargs
-    ) -> "models.PublicIPPrefix":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicIPPrefix"]
+    ) -> "_models.PublicIPPrefix":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PublicIPPrefix"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -385,9 +397,9 @@ class PublicIPPrefixesOperations:
         self,
         resource_group_name: str,
         public_ip_prefix_name: str,
-        parameters: "models.TagsObject",
+        parameters: "_models.TagsObject",
         **kwargs
-    ) -> AsyncLROPoller["models.PublicIPPrefix"]:
+    ) -> AsyncLROPoller["_models.PublicIPPrefix"]:
         """Updates public IP prefix tags.
 
         :param resource_group_name: The name of the resource group.
@@ -407,7 +419,7 @@ class PublicIPPrefixesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicIPPrefix"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PublicIPPrefix"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -432,7 +444,13 @@ class PublicIPPrefixesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'publicIpPrefixName': self._serialize.url("public_ip_prefix_name", public_ip_prefix_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -449,7 +467,7 @@ class PublicIPPrefixesOperations:
     def list_all(
         self,
         **kwargs
-    ) -> AsyncIterable["models.PublicIPPrefixListResult"]:
+    ) -> AsyncIterable["_models.PublicIPPrefixListResult"]:
         """Gets all the public IP prefixes in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -457,7 +475,7 @@ class PublicIPPrefixesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2018_11_01.models.PublicIPPrefixListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicIPPrefixListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PublicIPPrefixListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -516,7 +534,7 @@ class PublicIPPrefixesOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.PublicIPPrefixListResult"]:
+    ) -> AsyncIterable["_models.PublicIPPrefixListResult"]:
         """Gets all public IP prefixes in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -526,7 +544,7 @@ class PublicIPPrefixesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2018_11_01.models.PublicIPPrefixListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicIPPrefixListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PublicIPPrefixListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

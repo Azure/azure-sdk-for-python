@@ -1,5 +1,68 @@
 # Release History
 
+## 17.1.0 (2021-01-26)
+
+**Features**
+  - Model PrivateEndpoint has a new parameter extended_location
+  - Model VpnGateway has a new parameter nat_rules
+  - Model ExpressRouteConnection has a new parameter express_route_gateway_bypass
+  - Model SecurityRule has a new parameter type
+  - Model PrivateLinkService has a new parameter extended_location
+  - Model Route has a new parameter type
+  - Model Route has a new parameter has_bgp_override
+  - Model RouteTable has a new parameter resource_guid
+  - Model VpnSiteLinkConnection has a new parameter ingress_nat_rules
+  - Model VpnSiteLinkConnection has a new parameter vpn_link_connection_mode
+  - Model VpnSiteLinkConnection has a new parameter egress_nat_rules
+  - Model BackendAddressPool has a new parameter location
+  - Model CustomIpPrefix has a new parameter extended_location
+  - Added operation ExpressRouteGatewaysOperations.begin_update_tags
+  - Added operation VirtualNetworkGatewayConnectionsOperations.begin_get_ike_sas
+  - Added operation group NatRulesOperations
+
+## 17.0.0 (2020-11-25)
+
+**Features**
+
+  - Model PublicIPPrefix has a new parameter extended_location
+  - Model PublicIPPrefixSku has a new parameter tier
+  - Model NatRule has a new parameter translated_fqdn
+  - Model NetworkInterface has a new parameter extended_location
+  - Model ApplicationRule has a new parameter terminate_tls
+  - Model ApplicationRule has a new parameter web_categories
+  - Model ApplicationRule has a new parameter target_urls
+  - Model VirtualNetworkGatewayConnection has a new parameter connection_mode
+  - Model LoadBalancer has a new parameter extended_location
+  - Model PublicIPAddress has a new parameter extended_location
+  - Model LoadBalancerSku has a new parameter tier
+  - Model VirtualNetwork has a new parameter extended_location
+  - Model P2SVpnGateway has a new parameter is_routing_preference_internet
+  - Model IpGroup has a new parameter firewall_policies
+  - Model VpnGateway has a new parameter is_routing_preference_internet
+  - Model VirtualNetworkGateway has a new parameter extended_location
+  - Model VirtualNetworkGateway has a new parameter virtual_network_extended_location_resource_id
+  - Model VirtualNetworkGatewayConnectionListEntity has a new parameter connection_mode
+  - Model FirewallPolicy has a new parameter sku
+  - Model FirewallPolicy has a new parameter transport_security
+  - Model FirewallPolicy has a new parameter identity
+  - Model FirewallPolicy has a new parameter intrusion_detection
+  - Model VirtualHub has a new parameter allow_branch_to_branch_traffic
+  - Model PublicIPAddressSku has a new parameter tier
+  - Model ServiceTagsListResult has a new parameter next_link
+  - Model LoadBalancerBackendAddress has a new parameter load_balancer_frontend_ip_configuration
+  - Added operation NetworkInterfacesOperations.list_cloud_service_network_interfaces
+  - Added operation NetworkInterfacesOperations.get_cloud_service_network_interface
+  - Added operation NetworkInterfacesOperations.list_cloud_service_role_instance_network_interfaces
+  - Added operation PublicIPAddressesOperations.list_cloud_service_role_instance_public_ip_addresses
+  - Added operation PublicIPAddressesOperations.list_cloud_service_public_ip_addresses
+  - Added operation PublicIPAddressesOperations.get_cloud_service_public_ip_address
+  - Added operation group WebCategoriesOperations
+
+**Breaking changes**
+
+  - Operation ConnectionMonitorsOperations.begin_create_or_update has a new signature
+  - Model VirtualHub no longer has parameter enable_virtual_router_route_propogation
+  
 ## 16.0.0 (2020-09-15)
 
 **Features**

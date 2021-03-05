@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class BillingMetersOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,7 +45,7 @@ class BillingMetersOperations:
         self,
         billing_location: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.BillingMeterCollection"]:
+    ) -> AsyncIterable["_models.BillingMeterCollection"]:
         """Gets a list of meters for a given location.
 
         Gets a list of meters for a given location.
@@ -57,7 +57,7 @@ class BillingMetersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2016_03_01.models.BillingMeterCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BillingMeterCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BillingMeterCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

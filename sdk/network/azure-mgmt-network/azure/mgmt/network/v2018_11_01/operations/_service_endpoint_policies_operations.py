@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class ServiceEndpointPoliciesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -135,7 +135,13 @@ class ServiceEndpointPoliciesOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serviceEndpointPolicyName': self._serialize.url("service_endpoint_policy_name", service_endpoint_policy_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -156,7 +162,7 @@ class ServiceEndpointPoliciesOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ServiceEndpointPolicy"
+        # type: (...) -> "_models.ServiceEndpointPolicy"
         """Gets the specified service Endpoint Policies in a specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -170,7 +176,7 @@ class ServiceEndpointPoliciesOperations(object):
         :rtype: ~azure.mgmt.network.v2018_11_01.models.ServiceEndpointPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceEndpointPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceEndpointPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -217,11 +223,11 @@ class ServiceEndpointPoliciesOperations(object):
         self,
         resource_group_name,  # type: str
         service_endpoint_policy_name,  # type: str
-        parameters,  # type: "models.ServiceEndpointPolicy"
+        parameters,  # type: "_models.ServiceEndpointPolicy"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ServiceEndpointPolicy"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceEndpointPolicy"]
+        # type: (...) -> "_models.ServiceEndpointPolicy"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceEndpointPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -275,10 +281,10 @@ class ServiceEndpointPoliciesOperations(object):
         self,
         resource_group_name,  # type: str
         service_endpoint_policy_name,  # type: str
-        parameters,  # type: "models.ServiceEndpointPolicy"
+        parameters,  # type: "_models.ServiceEndpointPolicy"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ServiceEndpointPolicy"]
+        # type: (...) -> LROPoller["_models.ServiceEndpointPolicy"]
         """Creates or updates a service Endpoint Policies.
 
         :param resource_group_name: The name of the resource group.
@@ -299,7 +305,7 @@ class ServiceEndpointPoliciesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceEndpointPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceEndpointPolicy"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -324,7 +330,13 @@ class ServiceEndpointPoliciesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serviceEndpointPolicyName': self._serialize.url("service_endpoint_policy_name", service_endpoint_policy_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -342,11 +354,11 @@ class ServiceEndpointPoliciesOperations(object):
         self,
         resource_group_name,  # type: str
         service_endpoint_policy_name,  # type: str
-        parameters,  # type: "models.TagsObject"
+        parameters,  # type: "_models.TagsObject"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ServiceEndpointPolicy"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceEndpointPolicy"]
+        # type: (...) -> "_models.ServiceEndpointPolicy"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceEndpointPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -396,10 +408,10 @@ class ServiceEndpointPoliciesOperations(object):
         self,
         resource_group_name,  # type: str
         service_endpoint_policy_name,  # type: str
-        parameters,  # type: "models.TagsObject"
+        parameters,  # type: "_models.TagsObject"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ServiceEndpointPolicy"]
+        # type: (...) -> LROPoller["_models.ServiceEndpointPolicy"]
         """Updates service Endpoint Policies.
 
         :param resource_group_name: The name of the resource group.
@@ -419,7 +431,7 @@ class ServiceEndpointPoliciesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceEndpointPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceEndpointPolicy"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -444,7 +456,13 @@ class ServiceEndpointPoliciesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serviceEndpointPolicyName': self._serialize.url("service_endpoint_policy_name", service_endpoint_policy_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -462,7 +480,7 @@ class ServiceEndpointPoliciesOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ServiceEndpointPolicyListResult"]
+        # type: (...) -> Iterable["_models.ServiceEndpointPolicyListResult"]
         """Gets all the service endpoint policies in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -470,7 +488,7 @@ class ServiceEndpointPoliciesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2018_11_01.models.ServiceEndpointPolicyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceEndpointPolicyListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceEndpointPolicyListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -530,7 +548,7 @@ class ServiceEndpointPoliciesOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ServiceEndpointPolicyListResult"]
+        # type: (...) -> Iterable["_models.ServiceEndpointPolicyListResult"]
         """Gets all service endpoint Policies in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -540,7 +558,7 @@ class ServiceEndpointPoliciesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2018_11_01.models.ServiceEndpointPolicyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceEndpointPolicyListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceEndpointPolicyListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -9,7 +9,8 @@ import datetime
 import logging
 import functools
 import platform
-from typing import Optional, Dict, Tuple, Union, TYPE_CHECKING
+from typing import Optional, Dict, Tuple, Iterable, Type, TYPE_CHECKING, Union, Iterator
+from contextlib import contextmanager
 from msrest.serialization import UTC
 
 try:
@@ -19,6 +20,9 @@ except ImportError:
 
 from uamqp import authentication, types
 
+from azure.core.settings import settings
+from azure.core.tracing import SpanKind
+
 from .._version import VERSION
 from .constants import (
     JWT_TOKEN_SCOPE,
@@ -27,10 +31,21 @@ from .constants import (
     DEAD_LETTER_QUEUE_SUFFIX,
     TRANSFER_DEAD_LETTER_QUEUE_SUFFIX,
     USER_AGENT_PREFIX,
+    SPAN_NAME_SEND,
+    SPAN_NAME_MESSAGE,
+    TRACE_PARENT_PROPERTY,
+    TRACE_NAMESPACE,
+    TRACE_NAMESPACE_PROPERTY,
+    TRACE_PROPERTY_ENCODING,
+    TRACE_ENQUEUED_TIME_PROPERTY,
+    SPAN_ENQUEUED_TIME_PROPERTY,
+    SPAN_NAME_RECEIVE,
 )
 
 if TYPE_CHECKING:
-    from .message import ServiceBusReceivedMessage
+    from .message import ServiceBusReceivedMessage, ServiceBusMessage
+    from azure.core.tracing import AbstractSpan
+    from .receiver_mixins import ReceiverMixin
     from .._servicebus_session import BaseSession
 
 _log = logging.getLogger(__name__)
@@ -93,18 +108,24 @@ def get_renewable_start_time(renewable):
     try:
         return renewable._session_start  # pylint: disable=protected-access
     except AttributeError:
-        raise TypeError("Registered object is not renewable, renewable must be" +
-                        "a ServiceBusReceivedMessage or a ServiceBusSession from a sessionful ServiceBusReceiver.")
+        raise TypeError(
+            "Registered object is not renewable, renewable must be"
+            + "a ServiceBusReceivedMessage or a ServiceBusSession from a sessionful ServiceBusReceiver."
+        )
 
 
 def get_renewable_lock_duration(renewable):
     # type: (Union[ServiceBusReceivedMessage, BaseSession]) -> datetime.timedelta
     # pylint: disable=protected-access
     try:
-        return max(renewable.locked_until_utc - utc_now(), datetime.timedelta(seconds=0))
+        return max(
+            renewable.locked_until_utc - utc_now(), datetime.timedelta(seconds=0)
+        )
     except AttributeError:
-        raise TypeError("Registered object is not renewable, renewable must be" +
-                        "a ServiceBusReceivedMessage or a ServiceBusSession from a sessionful ServiceBusReceiver.")
+        raise TypeError(
+            "Registered object is not renewable, renewable must be"
+            + "a ServiceBusReceivedMessage or a ServiceBusSession from a sessionful ServiceBusReceiver."
+        )
 
 
 def create_authentication(client):
@@ -174,3 +195,117 @@ def transform_messages_to_sendable_if_needed(messages):
             return messages._to_outgoing_message()
         except AttributeError:
             return messages
+
+
+def strip_protocol_from_uri(uri):
+    # type: (str) -> str
+    """Removes the protocol (e.g. http:// or sb://) from a URI, such as the FQDN."""
+    left_slash_pos = uri.find("//")
+    if left_slash_pos != -1:
+        return uri[left_slash_pos + 2 :]
+    return uri
+
+
+@contextmanager
+def send_trace_context_manager(span_name=SPAN_NAME_SEND):
+    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+
+    if span_impl_type is not None:
+        with span_impl_type(name=span_name) as child:
+            child.kind = SpanKind.CLIENT
+            yield child
+    else:
+        yield None
+
+
+@contextmanager
+def receive_trace_context_manager(receiver, message=None, span_name=SPAN_NAME_RECEIVE):
+    # type: (ReceiverMixin, Optional[Union[ServiceBusMessage, Iterable[ServiceBusMessage]]], str) -> Iterator[None]
+    """Tracing"""
+    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+    if span_impl_type is None:
+        yield
+    else:
+        receive_span = span_impl_type(name=span_name)
+        receiver._add_span_request_attributes(receive_span)  # type: ignore  # pylint: disable=protected-access
+        receive_span.kind = SpanKind.CONSUMER
+
+        # If it is desired to create link before span open
+        if message:
+            trace_link_message(message, receive_span)
+
+        with receive_span:
+            yield
+
+
+def add_link_to_send(message, send_span):
+    """Add Diagnostic-Id from message to span as link."""
+    try:
+        if send_span and message.message.application_properties:
+            traceparent = message.message.application_properties.get(
+                TRACE_PARENT_PROPERTY, ""
+            ).decode(TRACE_PROPERTY_ENCODING)
+            if traceparent:
+                send_span.link(traceparent)
+    except Exception as exp:  # pylint:disable=broad-except
+        _log.warning("add_link_to_send had an exception %r", exp)
+
+
+def trace_message(message, parent_span=None):
+    # type: (ServiceBusMessage, Optional[AbstractSpan]) -> None
+    """Add tracing information to this message.
+    Will open and close a "Azure.Servicebus.message" span, and
+    add the "DiagnosticId" as app properties of the message.
+    """
+    try:
+        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+        if span_impl_type is not None:
+            current_span = parent_span or span_impl_type(
+                span_impl_type.get_current_span()
+            )
+            with current_span.span(name=SPAN_NAME_MESSAGE) as message_span:
+                message_span.kind = SpanKind.PRODUCER
+                message_span.add_attribute(TRACE_NAMESPACE_PROPERTY, TRACE_NAMESPACE)
+                # TODO: Remove intermediary message; this is standin while this var is being renamed in a concurrent PR
+                if not message.message.application_properties:
+                    message.message.application_properties = dict()
+                message.message.application_properties.setdefault(
+                    TRACE_PARENT_PROPERTY,
+                    message_span.get_trace_parent().encode(TRACE_PROPERTY_ENCODING),
+                )
+    except Exception as exp:  # pylint:disable=broad-except
+        _log.warning("trace_message had an exception %r", exp)
+
+
+def trace_link_message(messages, parent_span=None):
+    # type: (Union[ServiceBusMessage, Iterable[ServiceBusMessage]], Optional[AbstractSpan]) -> None
+    """Link the current message(s) to current span or provided parent span.
+    Will extract DiagnosticId if available.
+    """
+    trace_messages = (
+        messages if isinstance(messages, Iterable)  # pylint:disable=isinstance-second-argument-not-valid-type
+        else (messages,)
+    )
+    try:  # pylint:disable=too-many-nested-blocks
+        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+        if span_impl_type is not None:
+            current_span = parent_span or span_impl_type(
+                span_impl_type.get_current_span()
+            )
+            if current_span:
+                for message in trace_messages:  # type: ignore
+                    if message.message.application_properties:
+                        traceparent = message.message.application_properties.get(
+                            TRACE_PARENT_PROPERTY, ""
+                        ).decode(TRACE_PROPERTY_ENCODING)
+                        if traceparent:
+                            current_span.link(
+                                traceparent,
+                                attributes={
+                                    SPAN_ENQUEUED_TIME_PROPERTY: message.message.annotations.get(
+                                        TRACE_ENQUEUED_TIME_PROPERTY
+                                    )
+                                },
+                            )
+    except Exception as exp:  # pylint:disable=broad-except
+        _log.warning("trace_link_message had an exception %r", exp)

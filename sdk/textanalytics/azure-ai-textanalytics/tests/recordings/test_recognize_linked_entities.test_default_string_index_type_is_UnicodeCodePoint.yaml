@@ -1,0 +1,44 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "Hello world", "language": "en"}]}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '69'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
+  response:
+    body:
+      string: '{"documents":[{"id":"0","entities":[{"bingId":"7b4d3717-77ab-39ff-d8ec-1c7fd8723bd2","name":"\"Hello,
+        World!\" program","matches":[{"text":"Hello world","offset":0,"length":11,"confidenceScore":0.03}],"language":"en","id":"\"Hello,
+        World!\" program","url":"https://en.wikipedia.org/wiki/\"Hello,_World!\"_program","dataSource":"Wikipedia"}],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
+    headers:
+      apim-request-id:
+      - 23754cb3-e0b9-44b0-b187-7a17c93b3c33
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=1
+      date:
+      - Tue, 23 Feb 2021 17:09:30 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '22'
+    status:
+      code: 200
+      message: OK
+version: 1

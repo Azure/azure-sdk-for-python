@@ -41,8 +41,7 @@ class AzureDigitalTwinsAPIConfiguration(Configuration):
 
         self.credential = credential
         self.api_version = "2020-10-31"
-        self.credential_scopes = ['https://digitaltwins.azure.net/.default']
-        self.credential_scopes.extend(kwargs.pop('credential_scopes', []))
+        self.credential_scopes = kwargs.pop('credential_scopes', ['https://digitaltwins.azure.net/.default'])
         kwargs.setdefault('sdk_moniker', 'azuredigitaltwinsapi/{}'.format(VERSION))
         self._configure(**kwargs)
 

@@ -7,10 +7,10 @@
 # --------------------------------------------------------------------------
 import unittest
 from datetime import datetime, timedelta
-
 import pytest
 
 from azure.core import MatchConditions
+from azure.core.credentials import AzureSasCredential
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, \
     ClientAuthenticationError, ResourceModifiedError
@@ -20,7 +20,6 @@ from azure.storage.filedatalake import ContentSettings, generate_account_sas, ge
     DataLakeFileClient, FileSystemClient, DataLakeDirectoryClient, FileSasPermissions, generate_file_system_sas, \
     FileSystemSasPermissions
 from azure.storage.filedatalake import DataLakeServiceClient
-from azure.storage.filedatalake._generated.models import StorageErrorException
 from testcase import (
     StorageTestCase,
     record,
@@ -283,6 +282,20 @@ class FileTest(StorageTestCase):
         with self.assertRaises(HttpResponseError) as e:
             file_client.create_snapshot(lease=bad_lease)
         self.assertEqual('LeaseIdMismatchWithBlobOperation', e.exception.error_code)
+
+    def test_file_exists(self):
+        # Arrange
+        directory_name = self._get_directory_reference()
+
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        file_client1 = directory_client.get_file_client('filename')
+        file_client2 = directory_client.get_file_client('nonexistentfile')
+        file_client1.create_file()
+
+        self.assertTrue(file_client1.exists())
+        self.assertFalse(file_client2.exists())
 
     @record
     def test_create_file_using_oauth_token_credential(self):
@@ -685,16 +698,21 @@ class FileTest(StorageTestCase):
             datetime.utcnow() + timedelta(hours=1),
         )
 
-        # read the created file which is under root directory
-        file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, file_name, credential=token)
-        properties = file_client.get_file_properties()
+        for credential in [token, AzureSasCredential(token)]:
+            # read the created file which is under root directory
+            file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, file_name, credential=credential)
+            properties = file_client.get_file_properties()
 
-        # make sure we can read the file properties
-        self.assertIsNotNone(properties)
+            # make sure we can read the file properties
+            self.assertIsNotNone(properties)
 
-        # try to write to the created file with the token
-        with self.assertRaises(HttpResponseError):
-            file_client.append_data(b"abcd", 0, 4)
+            # try to write to the created file with the token
+            with self.assertRaises(HttpResponseError):
+                file_client.append_data(b"abcd", 0, 4)
+
+    def test_account_sas_raises_if_sas_already_in_uri(self):
+        with self.assertRaises(ValueError):
+            DataLakeFileClient(self.dsc.url + "?sig=foo", self.file_system_name, "foo", credential=AzureSasCredential("?foo=bar"))
 
     @record
     def test_file_sas_only_applies_to_file_level(self):
@@ -1030,5 +1048,7 @@ class FileTest(StorageTestCase):
             f3.download_file().readall()
 
 # ------------------------------------------------------------------------------
+
+
 if __name__ == '__main__':
     unittest.main()

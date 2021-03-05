@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class VirtualApplianceSitesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -143,7 +143,14 @@ class VirtualApplianceSitesOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkVirtualApplianceName': self._serialize.url("network_virtual_appliance_name", network_virtual_appliance_name, 'str'),
+            'siteName': self._serialize.url("site_name", site_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -164,7 +171,7 @@ class VirtualApplianceSitesOperations(object):
         site_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VirtualApplianceSite"
+        # type: (...) -> "_models.VirtualApplianceSite"
         """Gets the specified Virtual Appliance Site.
 
         :param resource_group_name: The name of the resource group.
@@ -178,7 +185,7 @@ class VirtualApplianceSitesOperations(object):
         :rtype: ~azure.mgmt.network.v2020_06_01.models.VirtualApplianceSite
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualApplianceSite"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualApplianceSite"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -225,11 +232,11 @@ class VirtualApplianceSitesOperations(object):
         resource_group_name,  # type: str
         network_virtual_appliance_name,  # type: str
         site_name,  # type: str
-        parameters,  # type: "models.VirtualApplianceSite"
+        parameters,  # type: "_models.VirtualApplianceSite"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VirtualApplianceSite"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualApplianceSite"]
+        # type: (...) -> "_models.VirtualApplianceSite"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualApplianceSite"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -285,10 +292,10 @@ class VirtualApplianceSitesOperations(object):
         resource_group_name,  # type: str
         network_virtual_appliance_name,  # type: str
         site_name,  # type: str
-        parameters,  # type: "models.VirtualApplianceSite"
+        parameters,  # type: "_models.VirtualApplianceSite"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.VirtualApplianceSite"]
+        # type: (...) -> LROPoller["_models.VirtualApplianceSite"]
         """Creates or updates the specified Network Virtual Appliance Site.
 
         :param resource_group_name: The name of the resource group.
@@ -311,7 +318,7 @@ class VirtualApplianceSitesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualApplianceSite"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualApplianceSite"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -337,7 +344,14 @@ class VirtualApplianceSitesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkVirtualApplianceName': self._serialize.url("network_virtual_appliance_name", network_virtual_appliance_name, 'str'),
+            'siteName': self._serialize.url("site_name", site_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -357,7 +371,7 @@ class VirtualApplianceSitesOperations(object):
         network_virtual_appliance_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.NetworkVirtualApplianceSiteListResult"]
+        # type: (...) -> Iterable["_models.NetworkVirtualApplianceSiteListResult"]
         """Lists all Network Virtual Appliance Sites in a Network Virtual Appliance resource.
 
         :param resource_group_name: The name of the resource group.
@@ -369,7 +383,7 @@ class VirtualApplianceSitesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_06_01.models.NetworkVirtualApplianceSiteListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkVirtualApplianceSiteListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkVirtualApplianceSiteListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -4,6 +4,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -15,6 +16,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -28,49 +30,49 @@ extends:
   parameters:
     ServiceDirectory: cognitiveservices
     Artifacts:
-    - name: azure_cognitiveservices_anomalydetector
+    - name: azure-cognitiveservices-anomalydetector
       safeName: azurecognitiveservicesanomalydetector
-    - name: azure_cognitiveservices_knowledge_nspkg
+    - name: azure-cognitiveservices-knowledge-nspkg
       safeName: azurecognitiveservicesknowledgenspkg
-    - name: azure_cognitiveservices_knowledge_qnamaker
+    - name: azure-cognitiveservices-knowledge-qnamaker
       safeName: azurecognitiveservicesknowledgeqnamaker
-    - name: azure_cognitiveservices_language_luis
+    - name: azure-cognitiveservices-language-luis
       safeName: azurecognitiveserviceslanguageluis
-    - name: azure_cognitiveservices_language_nspkg
+    - name: azure-cognitiveservices-language-nspkg
       safeName: azurecognitiveserviceslanguagenspkg
-    - name: azure_cognitiveservices_language_spellcheck
+    - name: azure-cognitiveservices-language-spellcheck
       safeName: azurecognitiveserviceslanguagespellcheck
-    - name: azure_cognitiveservices_language_textanalytics
+    - name: azure-cognitiveservices-language-textanalytics
       safeName: azurecognitiveserviceslanguagetextanalytics
-    - name: azure_cognitiveservices_nspkg
+    - name: azure-cognitiveservices-nspkg
       safeName: azurecognitiveservicesnspkg
-    - name: azure_cognitiveservices_personalizer
+    - name: azure-cognitiveservices-personalizer
       safeName: azurecognitiveservicespersonalizer
-    - name: azure_cognitiveservices_search_autosuggest
+    - name: azure-cognitiveservices-search-autosuggest
       safeName: azurecognitiveservicessearchautosuggest
-    - name: azure_cognitiveservices_search_customimagesearch
+    - name: azure-cognitiveservices-search-customimagesearch
       safeName: azurecognitiveservicessearchcustomimagesearch
-    - name: azure_cognitiveservices_search_customsearch
+    - name: azure-cognitiveservices-search-customsearch
       safeName: azurecognitiveservicessearchcustomsearch
-    - name: azure_cognitiveservices_search_entitysearch
+    - name: azure-cognitiveservices-search-entitysearch
       safeName: azurecognitiveservicessearchentitysearch
-    - name: azure_cognitiveservices_search_imagesearch
+    - name: azure-cognitiveservices-search-imagesearch
       safeName: azurecognitiveservicessearchimagesearch
-    - name: azure_cognitiveservices_search_newssearch
+    - name: azure-cognitiveservices-search-newssearch
       safeName: azurecognitiveservicessearchnewssearch
-    - name: azure_cognitiveservices_search_videosearch
+    - name: azure-cognitiveservices-search-videosearch
       safeName: azurecognitiveservicessearchvideosearch
-    - name: azure_cognitiveservices_search_visualsearch
+    - name: azure-cognitiveservices-search-visualsearch
       safeName: azurecognitiveservicessearchvisualsearch
-    - name: azure_cognitiveservices_search_websearch
+    - name: azure-cognitiveservices-search-websearch
       safeName: azurecognitiveservicessearchwebsearch
-    - name: azure_cognitiveservices_vision_computervision
+    - name: azure-cognitiveservices-vision-computervision
       safeName: azurecognitiveservicesvisioncomputervision
-    - name: azure_cognitiveservices_vision_contentmoderator
+    - name: azure-cognitiveservices-vision-contentmoderator
       safeName: azurecognitiveservicesvisioncontentmoderator
-    - name: azure_cognitiveservices_vision_customvision
+    - name: azure-cognitiveservices-vision-customvision
       safeName: azurecognitiveservicesvisioncustomvision
-    - name: azure_cognitiveservices_vision_face
+    - name: azure-cognitiveservices-vision-face
       safeName: azurecognitiveservicesvisionface
-    - name: azure_mgmt_cognitiveservices
+    - name: azure-mgmt-cognitiveservices
       safeName: azuremgmtcognitiveservices

@@ -26,7 +26,7 @@ from azure.servicebus.aio import ServiceBusClient
 import os
 import asyncio
 
-connstr = os.environ['SERVICE_BUS_CONN_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 
 async def run():
     async with ServiceBusClient.from_connection_string(connstr) as client:

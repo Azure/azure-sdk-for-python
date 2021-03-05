@@ -4,6 +4,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -18,6 +19,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -34,11 +36,12 @@ extends:
   parameters:
     ServiceDirectory: eventhub
     Artifacts:
-    - name: azure_eventhub
+    - name: azure-eventhub
       safeName: azureeventhub
-    - name: azure_eventhub_checkpointstoreblob_aio
+    - name: azure-eventhub-checkpointstoreblob-aio
       safeName: azureeventhubcheckpointstoreblobaio
-    - name: azure_eventhub_checkpointstoreblob
+    - name: azure-eventhub-checkpointstoreblob
       safeName: azureeventhubcheckpointstoreblob
-    - name: azure_mgmt_eventhub
+    - name: azure-mgmt-eventhub
       safeName: azuremgmteventhub
+    SkipPythonVersion: 'pypy3'

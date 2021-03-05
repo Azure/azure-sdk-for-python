@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class LocationOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class LocationOperations(object):
         location,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.UsageListResult"]
+        # type: (...) -> Iterable["_models.UsageListResult"]
         """Get the usage for a subscription.
 
         :param location: The identifier for the physical azure location.
@@ -60,7 +60,7 @@ class LocationOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerinstance.models.UsageListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.UsageListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.UsageListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -121,7 +121,7 @@ class LocationOperations(object):
         location,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.CachedImagesListResult"]
+        # type: (...) -> Iterable["_models.CachedImagesListResult"]
         """Get the list of cached images.
 
         Get the list of cached images on specific OS type for a subscription in a region.
@@ -133,7 +133,7 @@ class LocationOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerinstance.models.CachedImagesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CachedImagesListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CachedImagesListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -194,7 +194,7 @@ class LocationOperations(object):
         location,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.CapabilitiesListResult"]
+        # type: (...) -> Iterable["_models.CapabilitiesListResult"]
         """Get the list of capabilities of the location.
 
         Get the list of CPU/memory/GPU capabilities of a region.
@@ -206,7 +206,7 @@ class LocationOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerinstance.models.CapabilitiesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CapabilitiesListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CapabilitiesListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

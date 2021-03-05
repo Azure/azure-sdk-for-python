@@ -31,11 +31,11 @@ try:
 
     # Publish telemetry message
     digita_twin_id = "<DIGITAL TWIN ID>"
-    component_path = "<COMPONENT_PATH>"
+    component_name = "<COMPONENT_NAME>"
     telemetry_payload = '{"Telemetry1": 5}'
     service_client.publish_component_telemetry(
         digita_twin_id,
-        component_path,
+        component_name,
         telemetry_payload
     )
 

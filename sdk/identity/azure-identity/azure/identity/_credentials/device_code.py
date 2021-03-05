@@ -48,6 +48,13 @@ class DeviceCodeCredential(InteractiveCredential):
             - ``expires_on`` (datetime.datetime) the UTC time at which the code will expire
           If this argument isn't provided, the credential will print instructions to stdout.
     :paramtype prompt_callback: Callable[str, str, ~datetime.datetime]
+    :keyword AuthenticationRecord authentication_record: :class:`AuthenticationRecord` returned by :func:`authenticate`
+    :keyword bool disable_automatic_authentication: if True, :func:`get_token` will raise
+          :class:`AuthenticationRequiredError` when user interaction is required to acquire a token. Defaults to False.
+    :keyword bool enable_persistent_cache: if True, the credential will store tokens in a persistent cache shared by
+         other user credentials. Defaults to False.
+    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache on platforms
+          where encryption is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
     """
 
     def __init__(self, client_id=DEVELOPER_SIGN_ON_CLIENT_ID, **kwargs):
@@ -80,10 +87,12 @@ class DeviceCodeCredential(InteractiveCredential):
         if self._timeout is not None and self._timeout < flow["expires_in"]:
             # user specified an effective timeout we will observe
             deadline = int(time.time()) + self._timeout
-            result = app.acquire_token_by_device_flow(flow, exit_condition=lambda flow: time.time() > deadline)
+            result = app.acquire_token_by_device_flow(
+                flow, exit_condition=lambda flow: time.time() > deadline, claims_challenge=kwargs.get("claims")
+            )
         else:
             # MSAL will stop polling when the device code expires
-            result = app.acquire_token_by_device_flow(flow)
+            result = app.acquire_token_by_device_flow(flow, claims_challenge=kwargs.get("claims"))
 
         if "access_token" not in result:
             if result.get("error") == "authorization_pending":

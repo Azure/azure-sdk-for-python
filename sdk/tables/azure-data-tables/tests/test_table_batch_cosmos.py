@@ -5,14 +5,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import sys
-import unittest
-import pytest
-from time import sleep
-
-import uuid
 from datetime import datetime
 from dateutil.tz import tzutc
+import sys
+from time import sleep
+import uuid
+
+import pytest
+
+from devtools_testutils import AzureTestCase
 
 from azure.core import MatchConditions
 from azure.core.exceptions import (
@@ -21,28 +22,29 @@ from azure.core.exceptions import (
     HttpResponseError,
     ClientAuthenticationError
 )
-from azure.data.tables import EdmType, TableEntity, EntityProperty, UpdateMode, BatchTransactionResult
-
-from _shared.testcase import TableTestCase, LogCaptured, RERUNS_DELAY, SLEEP_DELAY
-from _shared.cosmos_testcase import CachedCosmosAccountPreparer
-
-from devtools_testutils import CachedResourceGroupPreparer
-
-from azure.data.tables._models import PartialBatchErrorException, BatchErrorException
 from azure.data.tables import (
+    EdmType,
+    TableEntity,
+    EntityProperty,
+    UpdateMode,
+    BatchTransactionResult,
+    BatchErrorException,
     TableServiceClient,
     TableEntity,
-    UpdateMode,
+    UpdateMode
 )
+
+from _shared.testcase import TableTestCase, SLEEP_DELAY
+from preparers import CosmosPreparer
 
 #------------------------------------------------------------------------------
 TEST_TABLE_PREFIX = 'table'
 #------------------------------------------------------------------------------
 
-class StorageTableClientTest(TableTestCase):
+class StorageTableClientTest(AzureTestCase, TableTestCase):
 
-    def _set_up(self, cosmos_account, cosmos_account_key):
-        self.ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
+    def _set_up(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        self.ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         self.table_name = self.get_resource_name('uttable')
         self.table = self.ts.get_table_client(self.table_name)
         if self.is_live:
@@ -155,32 +157,6 @@ class StorageTableClientTest(TableTestCase):
         assert entity['_metadata']['etag'] is not None
 
     #--Test cases for batch ---------------------------------------------
-
-    def test_inferred_types(self):
-        # Arrange
-        # Act
-        entity = TableEntity()
-        entity.PartitionKey = '003'
-        entity.RowKey = 'batch_all_operations_together-1'
-        entity.test = EntityProperty(True)
-        entity.test2 = EntityProperty(b'abcdef')
-        entity.test3 = EntityProperty(u'c9da6455-213d-42c9-9a79-3e9149a57833')
-        entity.test4 = EntityProperty(datetime(1973, 10, 4, tzinfo=tzutc()))
-        entity.test5 = EntityProperty(u"stringystring")
-        entity.test6 = EntityProperty(3.14159)
-        entity.test7 = EntityProperty(100)
-        entity.test8 = EntityProperty(10, EdmType.INT64)
-
-        # Assert
-        assert entity.test.type ==  EdmType.BOOLEAN
-        assert entity.test2.type ==  EdmType.BINARY
-        assert entity.test3.type ==  EdmType.GUID
-        assert entity.test4.type ==  EdmType.DATETIME
-        assert entity.test5.type ==  EdmType.STRING
-        assert entity.test6.type ==  EdmType.DOUBLE
-        assert entity.test7.type ==  EdmType.INT32
-        assert entity.test8.type ==  EdmType.INT64
-
     def _assert_valid_batch_transaction(self, transaction, length):
         assert isinstance(transaction,  BatchTransactionResult)
         assert length ==  len(transaction.entities)
@@ -188,11 +164,10 @@ class StorageTableClientTest(TableTestCase):
         assert length ==  len(transaction.requests)
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_batch_insert(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    def test_batch_insert(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(cosmos_account, cosmos_account_key)
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             # Act
             entity = Entity()
@@ -217,11 +192,10 @@ class StorageTableClientTest(TableTestCase):
 
     @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_batch_update(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    def test_batch_update(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(cosmos_account, cosmos_account_key)
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -254,11 +228,10 @@ class StorageTableClientTest(TableTestCase):
 
     @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_batch_merge(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    def test_batch_merge(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(cosmos_account, cosmos_account_key)
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -292,11 +265,10 @@ class StorageTableClientTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_batch_update_if_match(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    def test_batch_update_if_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(cosmos_account, cosmos_account_key)
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             entity = self._create_random_entity_dict()
             resp = self.table.create_entity(entity=entity)
@@ -323,11 +295,10 @@ class StorageTableClientTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_batch_update_if_doesnt_match(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    def test_batch_update_if_doesnt_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(cosmos_account, cosmos_account_key)
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             entity = self._create_random_entity_dict()
             self.table.create_entity(entity)
@@ -353,11 +324,10 @@ class StorageTableClientTest(TableTestCase):
 
     @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_batch_insert_replace(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    def test_batch_insert_replace(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(cosmos_account, cosmos_account_key)
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -385,11 +355,10 @@ class StorageTableClientTest(TableTestCase):
 
     @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_batch_insert_merge(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    def test_batch_insert_merge(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(cosmos_account, cosmos_account_key)
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -416,11 +385,10 @@ class StorageTableClientTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_batch_delete(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    def test_batch_delete(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(cosmos_account, cosmos_account_key)
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -450,11 +418,10 @@ class StorageTableClientTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_batch_inserts(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    def test_batch_inserts(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(cosmos_account, cosmos_account_key)
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -487,11 +454,10 @@ class StorageTableClientTest(TableTestCase):
 
     @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_batch_all_operations_together(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    def test_batch_all_operations_together(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(cosmos_account, cosmos_account_key)
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -537,11 +503,10 @@ class StorageTableClientTest(TableTestCase):
 
     @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_batch_all_operations_together_context_manager(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    def test_batch_all_operations_together_context_manager(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(cosmos_account, cosmos_account_key)
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             # Act
             entity = TableEntity()
@@ -583,73 +548,11 @@ class StorageTableClientTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("Not sure this is how the batching should operate, will consult w/ Anna")
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_batch_reuse(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    def test_batch_same_row_operations_fail(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(cosmos_account, cosmos_account_key)
-        try:
-            table2 = self._get_table_reference('table2')
-            table2.create_table()
-
-            # Act
-            entity = TableEntity()
-            entity.PartitionKey = '003'
-            entity.RowKey = 'batch_all_operations_together-1'
-            entity.test = EntityProperty(True)
-            entity.test2 = 'value'
-            entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
-            entity.test5 = datetime.utcnow()
-
-            batch = TableBatchClient()
-            batch.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-2'
-            batch.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-3'
-            batch.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-4'
-            batch.create_entity(entity)
-
-            self.table.send_batch(batch)
-            table2.send_batch(batch)
-
-            batch = TableBatchClient()
-            entity.RowKey = 'batch_all_operations_together'
-            batch.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-1'
-            batch.delete_item(entity.PartitionKey, entity.RowKey)
-            entity.RowKey = 'batch_all_operations_together-2'
-            entity.test3 = 10
-            batch.update_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-3'
-            entity.test3 = 100
-            batch.update_entity(entity, mode='MERGE')
-            entity.RowKey = 'batch_all_operations_together-4'
-            entity.test3 = 10
-            batch.upsert_item(entity)
-            entity.RowKey = 'batch_all_operations_together-5'
-            batch.upsert_item(entity, mode='MERGE')
-
-            self.table.send_batch(batch)
-            resp = table2.send_batch(batch)
-
-            # Assert
-            assert 6 ==  len(list(resp))
-            entities = list(self.table.query_items("PartitionKey eq '003'"))
-            assert 5 ==  len(entities)
-        finally:
-            self._tear_down()
-
-    # @pytest.mark.skip("This does not throw an error, but it should")
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_batch_same_row_operations_fail(self, resource_group, location, cosmos_account, cosmos_account_key):
-        # Arrange
-        self._set_up(cosmos_account, cosmos_account_key)
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
             self.table.create_entity(entity)
@@ -670,11 +573,10 @@ class StorageTableClientTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_batch_different_partition_operations_fail(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    def test_batch_different_partition_operations_fail(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(cosmos_account, cosmos_account_key)
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
             self.table.create_entity(entity)
@@ -695,19 +597,18 @@ class StorageTableClientTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("This does not throw an error, but it should")
+    @pytest.mark.skip("On Cosmos, the limit is not specified.")
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_batch_too_many_ops(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    def test_batch_too_many_ops(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(cosmos_account, cosmos_account_key)
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
             self.table.create_entity(entity)
 
             # Act
-            with pytest.raises(ValueError):
+            with pytest.raises(BatchErrorException):
                 batch = self.table.create_batch()
                 for i in range(0, 101):
                     entity = TableEntity()
@@ -720,11 +621,10 @@ class StorageTableClientTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_new_non_existent_table(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    def test_new_non_existent_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(cosmos_account, cosmos_account_key)
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
 
@@ -739,36 +639,12 @@ class StorageTableClientTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("Cannot fake cosmos credential")
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_new_invalid_key(self, resource_group, location, cosmos_account, cosmos_account_key):
-        # Arrange
-        invalid_key = cosmos_account_key[0:-6] + "==" # cut off a bit from the end to invalidate
-        key_list = list(cosmos_account_key)
-
-        key_list[-6:] = list("0000==")
-        invalid_key = ''.join(key_list)
-
-        self.ts = TableServiceClient(self.account_url(cosmos_account, "table"), invalid_key)
-        self.table_name = self.get_resource_name('uttable')
-        self.table = self.ts.get_table_client(self.table_name)
-
-        entity = self._create_random_entity_dict('001', 'batch_negative_1')
-
-        batch = self.table.create_batch()
-        batch.create_entity(entity)
-
-        with pytest.raises(ClientAuthenticationError):
-            resp = self.table.send_batch(batch)
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_new_delete_nonexistent_entity(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    def test_new_delete_nonexistent_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        self._set_up(cosmos_account, cosmos_account_key)
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
 
@@ -780,8 +656,3 @@ class StorageTableClientTest(TableTestCase):
 
         finally:
             self._tear_down()
-
-
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()

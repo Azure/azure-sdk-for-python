@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class ProviderOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -47,10 +47,10 @@ class ProviderOperations(object):
 
     def get_available_stacks(
         self,
-        os_type_selected=None,  # type: Optional[Union[str, "models.Enum4"]]
+        os_type_selected=None,  # type: Optional[Union[str, "_models.Enum4"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ApplicationStackCollection"]
+        # type: (...) -> Iterable["_models.ApplicationStackCollection"]
         """Get available application frameworks and their versions.
 
         Get available application frameworks and their versions.
@@ -62,7 +62,7 @@ class ProviderOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2018_02_01.models.ApplicationStackCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationStackCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationStackCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -105,7 +105,7 @@ class ProviderOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -120,7 +120,7 @@ class ProviderOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.CsmOperationCollection"]
+        # type: (...) -> Iterable["_models.CsmOperationCollection"]
         """Gets all available operations for the Microsoft.Web resource provider. Also exposes resource metric definitions.
 
         Gets all available operations for the Microsoft.Web resource provider. Also exposes resource
@@ -131,7 +131,7 @@ class ProviderOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2018_02_01.models.CsmOperationCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CsmOperationCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CsmOperationCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -172,7 +172,7 @@ class ProviderOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -185,10 +185,10 @@ class ProviderOperations(object):
 
     def get_available_stacks_on_prem(
         self,
-        os_type_selected=None,  # type: Optional[Union[str, "models.Enum5"]]
+        os_type_selected=None,  # type: Optional[Union[str, "_models.Enum5"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ApplicationStackCollection"]
+        # type: (...) -> Iterable["_models.ApplicationStackCollection"]
         """Get available application frameworks and their versions.
 
         Get available application frameworks and their versions.
@@ -200,7 +200,7 @@ class ProviderOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2018_02_01.models.ApplicationStackCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationStackCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationStackCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -247,7 +247,7 @@ class ProviderOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

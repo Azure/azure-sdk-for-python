@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class StaticSitesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,7 +44,7 @@ class StaticSitesOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.StaticSiteCollection"]:
+    ) -> AsyncIterable["_models.StaticSiteCollection"]:
         """Get all Static Sites for a subscription.
 
         Description for Get all Static Sites for a subscription.
@@ -54,7 +54,7 @@ class StaticSitesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.StaticSiteCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StaticSiteCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StaticSiteCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -99,7 +99,7 @@ class StaticSitesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -114,7 +114,7 @@ class StaticSitesOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.StaticSiteCollection"]:
+    ) -> AsyncIterable["_models.StaticSiteCollection"]:
         """Gets all static sites in the specified resource group.
 
         Description for Gets all static sites in the specified resource group.
@@ -126,7 +126,7 @@ class StaticSitesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.StaticSiteCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StaticSiteCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StaticSiteCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -172,7 +172,7 @@ class StaticSitesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -188,7 +188,7 @@ class StaticSitesOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> "models.StaticSiteARMResource":
+    ) -> "_models.StaticSiteARMResource":
         """Gets the details of a static site.
 
         Description for Gets the details of a static site.
@@ -202,7 +202,7 @@ class StaticSitesOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.StaticSiteARMResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StaticSiteARMResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StaticSiteARMResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -233,7 +233,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StaticSiteARMResource', pipeline_response)
@@ -248,9 +248,9 @@ class StaticSitesOperations:
         self,
         resource_group_name: str,
         name: str,
-        static_site_envelope: "models.StaticSiteARMResource",
+        static_site_envelope: "_models.StaticSiteARMResource",
         **kwargs
-    ) -> "models.StaticSiteARMResource":
+    ) -> "_models.StaticSiteARMResource":
         """Creates a new static site in an existing resource group, or updates an existing static site.
 
         Description for Creates a new static site in an existing resource group, or updates an existing
@@ -267,7 +267,7 @@ class StaticSitesOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.StaticSiteARMResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StaticSiteARMResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StaticSiteARMResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -303,7 +303,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -368,7 +368,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -380,9 +380,9 @@ class StaticSitesOperations:
         self,
         resource_group_name: str,
         name: str,
-        static_site_envelope: "models.StaticSitePatchResource",
+        static_site_envelope: "_models.StaticSitePatchResource",
         **kwargs
-    ) -> "models.StaticSiteARMResource":
+    ) -> "_models.StaticSiteARMResource":
         """Creates a new static site in an existing resource group, or updates an existing static site.
 
         Description for Creates a new static site in an existing resource group, or updates an existing
@@ -399,7 +399,7 @@ class StaticSitesOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.StaticSiteARMResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StaticSiteARMResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StaticSiteARMResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -435,7 +435,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -456,7 +456,7 @@ class StaticSitesOperations:
         name: str,
         authprovider: str,
         **kwargs
-    ) -> AsyncIterable["models.StaticSiteUserCollection"]:
+    ) -> AsyncIterable["_models.StaticSiteUserCollection"]:
         """Gets the list of users of a static site.
 
         Description for Gets the list of users of a static site.
@@ -472,7 +472,7 @@ class StaticSitesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.StaticSiteUserCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StaticSiteUserCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StaticSiteUserCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -520,7 +520,7 @@ class StaticSitesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -589,7 +589,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -603,9 +603,9 @@ class StaticSitesOperations:
         name: str,
         authprovider: str,
         userid: str,
-        static_site_user_envelope: "models.StaticSiteUserARMResource",
+        static_site_user_envelope: "_models.StaticSiteUserARMResource",
         **kwargs
-    ) -> "models.StaticSiteUserARMResource":
+    ) -> "_models.StaticSiteUserARMResource":
         """Updates a user entry with the listed roles.
 
         Description for Updates a user entry with the listed roles.
@@ -626,7 +626,7 @@ class StaticSitesOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.StaticSiteUserARMResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StaticSiteUserARMResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StaticSiteUserARMResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -664,7 +664,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StaticSiteUserARMResource', pipeline_response)
@@ -680,7 +680,7 @@ class StaticSitesOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> AsyncIterable["models.StaticSiteBuildCollection"]:
+    ) -> AsyncIterable["_models.StaticSiteBuildCollection"]:
         """Gets all static site builds for a particular static site.
 
         Description for Gets all static site builds for a particular static site.
@@ -694,7 +694,7 @@ class StaticSitesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.StaticSiteBuildCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StaticSiteBuildCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StaticSiteBuildCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -741,7 +741,7 @@ class StaticSitesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -758,7 +758,7 @@ class StaticSitesOperations:
         name: str,
         pr_id: str,
         **kwargs
-    ) -> "models.StaticSiteBuildARMResource":
+    ) -> "_models.StaticSiteBuildARMResource":
         """Gets the details of a static site build.
 
         Description for Gets the details of a static site build.
@@ -774,7 +774,7 @@ class StaticSitesOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.StaticSiteBuildARMResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StaticSiteBuildARMResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StaticSiteBuildARMResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -806,7 +806,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StaticSiteBuildARMResource', pipeline_response)
@@ -871,7 +871,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -884,9 +884,9 @@ class StaticSitesOperations:
         resource_group_name: str,
         name: str,
         pr_id: str,
-        app_settings: "models.StringDictionary",
+        app_settings: "_models.StringDictionary",
         **kwargs
-    ) -> "models.StringDictionary":
+    ) -> "_models.StringDictionary":
         """Creates or updates the function app settings of a static site build.
 
         Description for Creates or updates the function app settings of a static site build.
@@ -904,7 +904,7 @@ class StaticSitesOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.StringDictionary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StringDictionary"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -941,7 +941,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -962,7 +962,7 @@ class StaticSitesOperations:
         name: str,
         pr_id: str,
         **kwargs
-    ) -> AsyncIterable["models.StaticSiteFunctionOverviewCollection"]:
+    ) -> AsyncIterable["_models.StaticSiteFunctionOverviewCollection"]:
         """Gets the functions of a particular static site build.
 
         Description for Gets the functions of a particular static site build.
@@ -978,7 +978,7 @@ class StaticSitesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.StaticSiteFunctionOverviewCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StaticSiteFunctionOverviewCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StaticSiteFunctionOverviewCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1026,7 +1026,7 @@ class StaticSitesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1043,7 +1043,7 @@ class StaticSitesOperations:
         name: str,
         pr_id: str,
         **kwargs
-    ) -> "models.StringDictionary":
+    ) -> "_models.StringDictionary":
         """Gets the application settings of a static site.
 
         Description for Gets the application settings of a static site.
@@ -1059,7 +1059,7 @@ class StaticSitesOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.StringDictionary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StringDictionary"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1091,7 +1091,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -1110,9 +1110,9 @@ class StaticSitesOperations:
         self,
         resource_group_name: str,
         name: str,
-        app_settings: "models.StringDictionary",
+        app_settings: "_models.StringDictionary",
         **kwargs
-    ) -> "models.StringDictionary":
+    ) -> "_models.StringDictionary":
         """Creates or updates the function app settings of a static site.
 
         Description for Creates or updates the function app settings of a static site.
@@ -1128,7 +1128,7 @@ class StaticSitesOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.StringDictionary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StringDictionary"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1164,7 +1164,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -1183,9 +1183,9 @@ class StaticSitesOperations:
         self,
         resource_group_name: str,
         name: str,
-        static_site_user_roles_invitation_envelope: "models.StaticSiteUserInvitationRequestResource",
+        static_site_user_roles_invitation_envelope: "_models.StaticSiteUserInvitationRequestResource",
         **kwargs
-    ) -> "models.StaticSiteUserInvitationResponseResource":
+    ) -> "_models.StaticSiteUserInvitationResponseResource":
         """Creates an invitation link for a user with the role.
 
         Description for Creates an invitation link for a user with the role.
@@ -1201,7 +1201,7 @@ class StaticSitesOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.StaticSiteUserInvitationResponseResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StaticSiteUserInvitationResponseResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StaticSiteUserInvitationResponseResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1237,7 +1237,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StaticSiteUserInvitationResponseResource', pipeline_response)
@@ -1253,7 +1253,7 @@ class StaticSitesOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> AsyncIterable["models.StaticSiteCustomDomainOverviewCollection"]:
+    ) -> AsyncIterable["_models.StaticSiteCustomDomainOverviewCollection"]:
         """Gets all static site custom domains for a particular static site.
 
         Description for Gets all static site custom domains for a particular static site.
@@ -1267,7 +1267,7 @@ class StaticSitesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.StaticSiteCustomDomainOverviewCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StaticSiteCustomDomainOverviewCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StaticSiteCustomDomainOverviewCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1314,7 +1314,7 @@ class StaticSitesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1331,7 +1331,7 @@ class StaticSitesOperations:
         name: str,
         domain_name: str,
         **kwargs
-    ) -> "models.StaticSiteCustomDomainOverviewARMResource":
+    ) -> "_models.StaticSiteCustomDomainOverviewARMResource":
         """Creates a new static site custom domain in an existing resource group and static site.
 
         Description for Creates a new static site custom domain in an existing resource group and
@@ -1348,7 +1348,7 @@ class StaticSitesOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.StaticSiteCustomDomainOverviewARMResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StaticSiteCustomDomainOverviewARMResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StaticSiteCustomDomainOverviewARMResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1380,7 +1380,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -1449,7 +1449,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1511,7 +1511,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1569,7 +1569,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1582,7 +1582,7 @@ class StaticSitesOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> AsyncIterable["models.StaticSiteFunctionOverviewCollection"]:
+    ) -> AsyncIterable["_models.StaticSiteFunctionOverviewCollection"]:
         """Gets the functions of a static site.
 
         Description for Gets the functions of a static site.
@@ -1596,7 +1596,7 @@ class StaticSitesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2019_08_01.models.StaticSiteFunctionOverviewCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StaticSiteFunctionOverviewCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StaticSiteFunctionOverviewCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1643,7 +1643,7 @@ class StaticSitesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1659,7 +1659,7 @@ class StaticSitesOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> "models.StringDictionary":
+    ) -> "_models.StringDictionary":
         """Gets the application settings of a static site.
 
         Description for Gets the application settings of a static site.
@@ -1673,7 +1673,7 @@ class StaticSitesOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.StringDictionary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StringDictionary"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1704,7 +1704,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -1724,7 +1724,7 @@ class StaticSitesOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> "models.StringDictionary":
+    ) -> "_models.StringDictionary":
         """Lists the secrets for an existing static site.
 
         Description for Lists the secrets for an existing static site.
@@ -1738,7 +1738,7 @@ class StaticSitesOperations:
         :rtype: ~azure.mgmt.web.v2019_08_01.models.StringDictionary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StringDictionary"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StringDictionary"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1769,7 +1769,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
@@ -1784,7 +1784,7 @@ class StaticSitesOperations:
         self,
         resource_group_name: str,
         name: str,
-        reset_properties_envelope: "models.StaticSiteResetPropertiesARMResource",
+        reset_properties_envelope: "_models.StaticSiteResetPropertiesARMResource",
         **kwargs
     ) -> None:
         """Resets the api key for an existing static site.
@@ -1838,7 +1838,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

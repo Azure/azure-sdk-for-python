@@ -17,6 +17,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import functools
 import pytest
 import uuid
 
@@ -24,9 +25,9 @@ from azure.schemaregistry import SchemaRegistryClient
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 
-from schemaregistry_preparer import SchemaRegistryPreparer
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureTestCase, PowerShellPreparer
 
+SchemaRegistryPowerShellPreparer = functools.partial(PowerShellPreparer, "schemaregistry", schemaregistry_endpoint="fake_resource.servicebus.windows.net", schemaregistry_group="fakegroup")
 
 class SchemaRegistryTests(AzureTestCase):
 
@@ -34,7 +35,7 @@ class SchemaRegistryTests(AzureTestCase):
         credential = self.get_credential(SchemaRegistryClient)
         return self.create_client_from_credential(SchemaRegistryClient, credential, endpoint=endpoint)
 
-    @SchemaRegistryPreparer()
+    @SchemaRegistryPowerShellPreparer()
     def test_schema_basic(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         client = self.create_client(schemaregistry_endpoint)
         schema_name = self.get_resource_name('test-schema-basic')
@@ -65,7 +66,7 @@ class SchemaRegistryTests(AzureTestCase):
         assert returned_schema_properties.version == 1
         assert returned_schema_properties.serialization_type == "Avro"
 
-    @SchemaRegistryPreparer()
+    @SchemaRegistryPowerShellPreparer()
     def test_schema_update(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         client = self.create_client(schemaregistry_endpoint)
         schema_name = self.get_resource_name('test-schema-update')
@@ -98,7 +99,7 @@ class SchemaRegistryTests(AzureTestCase):
         assert new_schema.schema_properties.version == schema_properties.version + 1
         assert new_schema.schema_properties.serialization_type == "Avro"
 
-    @SchemaRegistryPreparer()
+    @SchemaRegistryPowerShellPreparer()
     def test_schema_same_twice(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         client = self.create_client(schemaregistry_endpoint)
         schema_name = self.get_resource_name('test-schema-twice')
@@ -108,7 +109,7 @@ class SchemaRegistryTests(AzureTestCase):
         schema_properties_second = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
         assert schema_properties.schema_id == schema_properties_second.schema_id
 
-    @SchemaRegistryPreparer()
+    @SchemaRegistryPowerShellPreparer()
     def test_schema_negative_wrong_credential(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         credential = ClientSecretCredential(tenant_id="fake", client_id="fake", client_secret="fake")
         client = SchemaRegistryClient(endpoint=schemaregistry_endpoint, credential=credential)
@@ -118,7 +119,7 @@ class SchemaRegistryTests(AzureTestCase):
         with pytest.raises(ClientAuthenticationError):
             client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
 
-    @SchemaRegistryPreparer()
+    @SchemaRegistryPowerShellPreparer()
     def test_schema_negative_wrong_endpoint(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         client = self.create_client("nonexist.servicebus.windows.net")
         schema_name = self.get_resource_name('test-schema-nonexist')
@@ -127,7 +128,7 @@ class SchemaRegistryTests(AzureTestCase):
         with pytest.raises(ServiceRequestError):
             client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
 
-    @SchemaRegistryPreparer()
+    @SchemaRegistryPowerShellPreparer()
     def test_schema_negative_no_schema(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         client = self.create_client(schemaregistry_endpoint)
         with pytest.raises(HttpResponseError):

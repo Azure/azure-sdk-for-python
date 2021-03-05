@@ -188,11 +188,13 @@ def sample_list_alerts(alert_config_id):
         end_time=datetime.datetime(2020, 9, 9),
         time_mode="AnomalyTime",
     )
+
+    tolist = []
     for result in results:
+        tolist.append(result)
         print("Alert id: {}".format(result.id))
         print("Create on: {}".format(result.created_on))
-    return results
-
+    return tolist
     # [END list_alerts]
 
 
@@ -252,11 +254,12 @@ def sample_update_alert_config(alert_config):
     )
     alert_config.metric_alert_configurations.append(additional_alert)
 
-    updated = client.update_alert_configuration(
+    client.update_alert_configuration(
         alert_config,
         cross_metrics_operator="OR",
         description="updated alert config"
     )
+    updated = client.get_alert_configuration(alert_config.id)
 
     print("Updated alert name: {}".format(updated.name))
     print("Updated alert description: {}".format(updated.description))

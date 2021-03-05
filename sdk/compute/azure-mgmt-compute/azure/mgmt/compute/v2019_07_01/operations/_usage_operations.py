@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class UsageOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class UsageOperations(object):
         location,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ListUsagesResult"]
+        # type: (...) -> Iterable["_models.ListUsagesResult"]
         """Gets, for the specified location, the current compute resource usage information as well as the
         limits for compute resources under the subscription.
 
@@ -61,7 +61,7 @@ class UsageOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.v2019_07_01.models.ListUsagesResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListUsagesResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListUsagesResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

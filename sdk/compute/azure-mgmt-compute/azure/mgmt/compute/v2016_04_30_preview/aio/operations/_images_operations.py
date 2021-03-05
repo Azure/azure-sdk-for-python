@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ImagesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,10 +47,10 @@ class ImagesOperations:
         self,
         resource_group_name: str,
         image_name: str,
-        parameters: "models.Image",
+        parameters: "_models.Image",
         **kwargs
-    ) -> "models.Image":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Image"]
+    ) -> "_models.Image":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Image"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -104,9 +104,9 @@ class ImagesOperations:
         self,
         resource_group_name: str,
         image_name: str,
-        parameters: "models.Image",
+        parameters: "_models.Image",
         **kwargs
-    ) -> AsyncLROPoller["models.Image"]:
+    ) -> AsyncLROPoller["_models.Image"]:
         """Create or update an image.
 
         :param resource_group_name: The name of the resource group.
@@ -126,7 +126,7 @@ class ImagesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Image"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Image"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -151,7 +151,13 @@ class ImagesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'imageName': self._serialize.url("image_name", image_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -170,8 +176,8 @@ class ImagesOperations:
         resource_group_name: str,
         image_name: str,
         **kwargs
-    ) -> Optional["models.OperationStatusResponse"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
+    ) -> Optional["_models.OperationStatusResponse"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatusResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -219,7 +225,7 @@ class ImagesOperations:
         resource_group_name: str,
         image_name: str,
         **kwargs
-    ) -> AsyncLROPoller["models.OperationStatusResponse"]:
+    ) -> AsyncLROPoller["_models.OperationStatusResponse"]:
         """Deletes an Image.
 
         :param resource_group_name: The name of the resource group.
@@ -237,7 +243,7 @@ class ImagesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationStatusResponse"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -261,7 +267,13 @@ class ImagesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'imageName': self._serialize.url("image_name", image_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -281,7 +293,7 @@ class ImagesOperations:
         image_name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.Image":
+    ) -> "_models.Image":
         """Gets an image.
 
         :param resource_group_name: The name of the resource group.
@@ -295,7 +307,7 @@ class ImagesOperations:
         :rtype: ~azure.mgmt.compute.v2016_04_30_preview.models.Image
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Image"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Image"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -342,7 +354,7 @@ class ImagesOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ImageListResult"]:
+    ) -> AsyncIterable["_models.ImageListResult"]:
         """Gets the list of images under a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -352,7 +364,7 @@ class ImagesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.v2016_04_30_preview.models.ImageListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ImageListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ImageListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -411,7 +423,7 @@ class ImagesOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.ImageListResult"]:
+    ) -> AsyncIterable["_models.ImageListResult"]:
         """Gets the list of Images in the subscription. Use nextLink property in the response to get the
         next page of Images. Do this till nextLink is null to fetch all the Images.
 
@@ -420,7 +432,7 @@ class ImagesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.v2016_04_30_preview.models.ImageListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ImageListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ImageListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

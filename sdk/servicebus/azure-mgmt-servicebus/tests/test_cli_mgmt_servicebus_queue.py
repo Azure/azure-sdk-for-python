@@ -28,7 +28,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
     def test_queue(self, resource_group):
 
         RESOURCE_GROUP = resource_group.name
-        NAMESPACE_NAME = "myNamespacexxyyzzy"
+        NAMESPACE_NAME = "myNamespacexxyyzzybx"
         AUTHORIZATION_RULE_NAME = "myAuthorizationRule"
         QUEUE_NAME = "myQueue"
 

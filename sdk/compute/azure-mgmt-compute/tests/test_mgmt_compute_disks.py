@@ -123,13 +123,14 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     def create_key(self, group_name, location, key_vault, tenant_id, object_id):
         if self.is_live:
-            result = self.keyvault_client.vaults.create_or_update(
+            result = self.keyvault_client.vaults.begin_create_or_update(
                 group_name,
                 key_vault,
                 {
                   'location': location,
                   'properties': {
                     'sku': {
+                      'family': "A",
                       'name': 'standard'
                     },
                     'tenant_id': tenant_id,
@@ -190,7 +191,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         TENANT_ID = self.settings.TENANT_ID
         CLIENT_OID = self.settings.CLIENT_OID if self.is_live else "000"
         RESOURCE_GROUP = resource_group.name
-        KEY_VAULT_NAME = self.get_resource_name("keyvaultxmm")
+        KEY_VAULT_NAME = self.get_resource_name("keyvaultxmmky")
         DISK_ENCRYPTION_SET_NAME = self.get_resource_name("diskencryptionset")
 
         VAULT_ID, KEY_URI = self.create_key(RESOURCE_GROUP, AZURE_LOCATION, KEY_VAULT_NAME, TENANT_ID, CLIENT_OID)

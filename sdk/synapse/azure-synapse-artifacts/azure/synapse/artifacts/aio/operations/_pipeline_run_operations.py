@@ -12,7 +12,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -31,7 +31,7 @@ class PipelineRunOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -41,9 +41,9 @@ class PipelineRunOperations:
 
     async def query_pipeline_runs_by_workspace(
         self,
-        filter_parameters: "models.RunFilterParameters",
+        filter_parameters: "_models.RunFilterParameters",
         **kwargs
-    ) -> "models.PipelineRunsQueryResponse":
+    ) -> "_models.PipelineRunsQueryResponse":
         """Query pipeline runs in the workspace based on input filter conditions.
 
         :param filter_parameters: Parameters to filter the pipeline run.
@@ -53,7 +53,7 @@ class PipelineRunOperations:
         :rtype: ~azure.synapse.artifacts.models.PipelineRunsQueryResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PipelineRunsQueryResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PipelineRunsQueryResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -87,7 +87,7 @@ class PipelineRunOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CloudError, response)
+            error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('PipelineRunsQueryResponse', pipeline_response)
@@ -102,7 +102,7 @@ class PipelineRunOperations:
         self,
         run_id: str,
         **kwargs
-    ) -> "models.PipelineRun":
+    ) -> "_models.PipelineRun":
         """Get a pipeline run by its run ID.
 
         :param run_id: The pipeline run identifier.
@@ -112,7 +112,7 @@ class PipelineRunOperations:
         :rtype: ~azure.synapse.artifacts.models.PipelineRun
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PipelineRun"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PipelineRun"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -142,7 +142,7 @@ class PipelineRunOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CloudError, response)
+            error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('PipelineRun', pipeline_response)
@@ -157,9 +157,9 @@ class PipelineRunOperations:
         self,
         pipeline_name: str,
         run_id: str,
-        filter_parameters: "models.RunFilterParameters",
+        filter_parameters: "_models.RunFilterParameters",
         **kwargs
-    ) -> "models.ActivityRunsQueryResponse":
+    ) -> "_models.ActivityRunsQueryResponse":
         """Query activity runs based on input filter conditions.
 
         :param pipeline_name: The pipeline name.
@@ -173,7 +173,7 @@ class PipelineRunOperations:
         :rtype: ~azure.synapse.artifacts.models.ActivityRunsQueryResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ActivityRunsQueryResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ActivityRunsQueryResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -209,7 +209,7 @@ class PipelineRunOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CloudError, response)
+            error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('ActivityRunsQueryResponse', pipeline_response)
@@ -270,7 +270,7 @@ class PipelineRunOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CloudError, response)
+            error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:

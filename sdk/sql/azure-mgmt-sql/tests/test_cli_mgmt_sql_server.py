@@ -157,7 +157,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
 
         RESOURCE_GROUP = resource_group.name
         SERVER_NAME = "myserverxpxy"
-        STORAGE_ACCOUNT_NAME = "mystorageaccountxyc"
+        STORAGE_ACCOUNT_NAME = "mystorageaccountxyd"
         BLOB_CONTAINER_NAME = "myblobcontainer"
         SECURITY_ALERT_POLICY_NAME = "default"
 
@@ -453,7 +453,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
         SERVER_NAME = "myserverxpxy"
         PARTNER_SERVER_NAME = "mypartnerserverxpxy"
         COMMUNICATION_LINK_NAME = "mycommunicationlink"
-        STORAGE_ACCOUNT_NAME = "mystorageaccountxyc"
+        STORAGE_ACCOUNT_NAME = "mystorageaccountxyr"
         BLOB_CONTAINER_NAME = "myblobcontainer"
         SECURITY_ALERT_POLICY_NAME = "default"
 

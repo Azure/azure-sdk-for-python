@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class DomainsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,9 +45,9 @@ class DomainsOperations:
 
     async def check_availability(
         self,
-        identifier: "models.NameIdentifier",
+        identifier: "_models.NameIdentifier",
         **kwargs
-    ) -> "models.DomainAvailablilityCheckResult":
+    ) -> "_models.DomainAvailablilityCheckResult":
         """Check if a domain is available for registration.
 
         Check if a domain is available for registration.
@@ -59,7 +59,7 @@ class DomainsOperations:
         :rtype: ~azure.mgmt.web.v2015_04_01.models.DomainAvailablilityCheckResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainAvailablilityCheckResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainAvailablilityCheckResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -106,7 +106,7 @@ class DomainsOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.DomainCollection"]:
+    ) -> AsyncIterable["_models.DomainCollection"]:
         """Get all domains in a subscription.
 
         Get all domains in a subscription.
@@ -116,7 +116,7 @@ class DomainsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2015_04_01.models.DomainCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -174,7 +174,7 @@ class DomainsOperations:
     async def get_control_center_sso_request(
         self,
         **kwargs
-    ) -> "models.DomainControlCenterSsoRequest":
+    ) -> "_models.DomainControlCenterSsoRequest":
         """Generate a single sign-on request for the domain management portal.
 
         Generate a single sign-on request for the domain management portal.
@@ -184,7 +184,7 @@ class DomainsOperations:
         :rtype: ~azure.mgmt.web.v2015_04_01.models.DomainControlCenterSsoRequest
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainControlCenterSsoRequest"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainControlCenterSsoRequest"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -225,9 +225,9 @@ class DomainsOperations:
 
     def list_recommendations(
         self,
-        parameters: "models.DomainRecommendationSearchParameters",
+        parameters: "_models.DomainRecommendationSearchParameters",
         **kwargs
-    ) -> AsyncIterable["models.NameIdentifierCollection"]:
+    ) -> AsyncIterable["_models.NameIdentifierCollection"]:
         """Get domain name recommendations based on keywords.
 
         Get domain name recommendations based on keywords.
@@ -239,7 +239,7 @@ class DomainsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2015_04_01.models.NameIdentifierCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NameIdentifierCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NameIdentifierCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -306,7 +306,7 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.DomainCollection"]:
+    ) -> AsyncIterable["_models.DomainCollection"]:
         """Get all domains in a resource group.
 
         Get all domains in a resource group.
@@ -318,7 +318,7 @@ class DomainsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2015_04_01.models.DomainCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -379,7 +379,7 @@ class DomainsOperations:
         resource_group_name: str,
         domain_name: str,
         **kwargs
-    ) -> "models.Domain":
+    ) -> "_models.Domain":
         """Get a domain.
 
         Get a domain.
@@ -393,7 +393,7 @@ class DomainsOperations:
         :rtype: ~azure.mgmt.web.v2015_04_01.models.Domain
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Domain"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Domain"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -438,10 +438,10 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        domain: "models.Domain",
+        domain: "_models.Domain",
         **kwargs
-    ) -> "models.Domain":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Domain"]
+    ) -> "_models.Domain":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Domain"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -495,9 +495,9 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        domain: "models.Domain",
+        domain: "_models.Domain",
         **kwargs
-    ) -> AsyncLROPoller["models.Domain"]:
+    ) -> AsyncLROPoller["_models.Domain"]:
         """Creates or updates a domain.
 
         Creates or updates a domain.
@@ -519,7 +519,7 @@ class DomainsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Domain"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Domain"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -544,7 +544,13 @@ class DomainsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'domainName': self._serialize.url("domain_name", domain_name, 'str', pattern=r'[a-zA-Z0-9][a-zA-Z0-9\.-]+'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -623,9 +629,9 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        domain: "models.DomainPatchResource",
+        domain: "_models.DomainPatchResource",
         **kwargs
-    ) -> "models.Domain":
+    ) -> "_models.Domain":
         """Creates or updates a domain.
 
         Creates or updates a domain.
@@ -641,7 +647,7 @@ class DomainsOperations:
         :rtype: ~azure.mgmt.web.v2015_04_01.models.Domain
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Domain"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Domain"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -696,7 +702,7 @@ class DomainsOperations:
         resource_group_name: str,
         domain_name: str,
         **kwargs
-    ) -> AsyncIterable["models.DomainOwnershipIdentifierCollection"]:
+    ) -> AsyncIterable["_models.DomainOwnershipIdentifierCollection"]:
         """Lists domain ownership identifiers.
 
         Lists domain ownership identifiers.
@@ -710,7 +716,7 @@ class DomainsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2015_04_01.models.DomainOwnershipIdentifierCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainOwnershipIdentifierCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainOwnershipIdentifierCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -773,7 +779,7 @@ class DomainsOperations:
         domain_name: str,
         name: str,
         **kwargs
-    ) -> "models.DomainOwnershipIdentifier":
+    ) -> "_models.DomainOwnershipIdentifier":
         """Get ownership identifier for domain.
 
         Get ownership identifier for domain.
@@ -789,7 +795,7 @@ class DomainsOperations:
         :rtype: ~azure.mgmt.web.v2015_04_01.models.DomainOwnershipIdentifier
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainOwnershipIdentifier"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainOwnershipIdentifier"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -836,9 +842,9 @@ class DomainsOperations:
         resource_group_name: str,
         domain_name: str,
         name: str,
-        domain_ownership_identifier: "models.DomainOwnershipIdentifier",
+        domain_ownership_identifier: "_models.DomainOwnershipIdentifier",
         **kwargs
-    ) -> "models.DomainOwnershipIdentifier":
+    ) -> "_models.DomainOwnershipIdentifier":
         """Creates an ownership identifier for a domain or updates identifier details for an existing identifer.
 
         Creates an ownership identifier for a domain or updates identifier details for an existing
@@ -857,7 +863,7 @@ class DomainsOperations:
         :rtype: ~azure.mgmt.web.v2015_04_01.models.DomainOwnershipIdentifier
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainOwnershipIdentifier"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainOwnershipIdentifier"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -968,9 +974,9 @@ class DomainsOperations:
         resource_group_name: str,
         domain_name: str,
         name: str,
-        domain_ownership_identifier: "models.DomainOwnershipIdentifier",
+        domain_ownership_identifier: "_models.DomainOwnershipIdentifier",
         **kwargs
-    ) -> "models.DomainOwnershipIdentifier":
+    ) -> "_models.DomainOwnershipIdentifier":
         """Creates an ownership identifier for a domain or updates identifier details for an existing identifer.
 
         Creates an ownership identifier for a domain or updates identifier details for an existing
@@ -989,7 +995,7 @@ class DomainsOperations:
         :rtype: ~azure.mgmt.web.v2015_04_01.models.DomainOwnershipIdentifier
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainOwnershipIdentifier"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainOwnershipIdentifier"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1086,7 +1092,7 @@ class DomainsOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

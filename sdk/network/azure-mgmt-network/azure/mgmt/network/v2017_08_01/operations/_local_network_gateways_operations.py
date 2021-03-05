@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class LocalNetworkGatewaysOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,11 +51,11 @@ class LocalNetworkGatewaysOperations(object):
         self,
         resource_group_name,  # type: str
         local_network_gateway_name,  # type: str
-        parameters,  # type: "models.LocalNetworkGateway"
+        parameters,  # type: "_models.LocalNetworkGateway"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.LocalNetworkGateway"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LocalNetworkGateway"]
+        # type: (...) -> "_models.LocalNetworkGateway"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LocalNetworkGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -109,10 +109,10 @@ class LocalNetworkGatewaysOperations(object):
         self,
         resource_group_name,  # type: str
         local_network_gateway_name,  # type: str
-        parameters,  # type: "models.LocalNetworkGateway"
+        parameters,  # type: "_models.LocalNetworkGateway"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.LocalNetworkGateway"]
+        # type: (...) -> LROPoller["_models.LocalNetworkGateway"]
         """Creates or updates a local network gateway in the specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -132,7 +132,7 @@ class LocalNetworkGatewaysOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LocalNetworkGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LocalNetworkGateway"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -157,7 +157,13 @@ class LocalNetworkGatewaysOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'localNetworkGatewayName': self._serialize.url("local_network_gateway_name", local_network_gateway_name, 'str', min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -177,7 +183,7 @@ class LocalNetworkGatewaysOperations(object):
         local_network_gateway_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.LocalNetworkGateway"
+        # type: (...) -> "_models.LocalNetworkGateway"
         """Gets the specified local network gateway in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -189,7 +195,7 @@ class LocalNetworkGatewaysOperations(object):
         :rtype: ~azure.mgmt.network.v2017_08_01.models.LocalNetworkGateway
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LocalNetworkGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LocalNetworkGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -318,7 +324,13 @@ class LocalNetworkGatewaysOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'localNetworkGatewayName': self._serialize.url("local_network_gateway_name", local_network_gateway_name, 'str', min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -337,7 +349,7 @@ class LocalNetworkGatewaysOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.LocalNetworkGatewayListResult"]
+        # type: (...) -> Iterable["_models.LocalNetworkGatewayListResult"]
         """Gets all the local network gateways in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -347,7 +359,7 @@ class LocalNetworkGatewaysOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2017_08_01.models.LocalNetworkGatewayListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LocalNetworkGatewayListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LocalNetworkGatewayListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

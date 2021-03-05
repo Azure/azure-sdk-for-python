@@ -25,7 +25,8 @@ from azure.storage.fileshare import (
     ShareDirectoryClient,
     ShareFileClient,
     ShareClient,
-    generate_share_sas)
+    generate_share_sas,
+    ShareRootSquash, ShareProtocols)
 
 from azure.storage.fileshare._generated.models import DeleteSnapshotsOptionType, ListSharesIncludeType
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
@@ -62,10 +63,10 @@ class StorageShareTest(StorageTestCase):
         self.test_shares.append(share_name)
         return share
 
-    def _create_share(self, prefix=TEST_SHARE_PREFIX):
+    def _create_share(self, prefix=TEST_SHARE_PREFIX, **kwargs):
         share_client = self._get_share_reference(prefix)
         try:
-            share_client.create_share()
+            share_client.create_share(**kwargs)
         except:
             pass
         return share_client
@@ -826,6 +827,65 @@ class StorageShareTest(StorageTestCase):
         self.assertEqual(share1_tier, "Hot")
         self.assertEqual(share2_quota, 2)
         self.assertEqual(share2_tier, "Cool")
+        self._delete_shares()
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_create_share_with_protocol(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+
+        # Act
+        share_client = self._get_share_reference("testshare2")
+        with self.assertRaises(ValueError):
+            share_client.create_share(protocols="SMB", root_squash=ShareRootSquash.all_squash)
+        share_client.create_share(protocols="NFS", root_squash=ShareRootSquash.root_squash)
+        share_enabled_protocol = share_client.get_share_properties().protocols
+        share_root_squash = share_client.get_share_properties().root_squash
+
+        # Assert
+        self.assertEqual(share_enabled_protocol, ["NFS"])
+        self.assertEqual(share_root_squash, ShareRootSquash.root_squash)
+        share_client.delete_share()
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_set_share_properties_with_root_squash(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share1 = self._create_share("share1", protocols=ShareProtocols.NFS)
+        share2 = self._create_share("share2", protocols=ShareProtocols.NFS)
+
+        share1.set_share_properties(root_squash="NoRootSquash")
+        share2.set_share_properties(root_squash=ShareRootSquash.root_squash)
+
+        # Act
+        share1_props = share1.get_share_properties()
+        share2_props = share2.get_share_properties()
+
+        # # Assert
+        self.assertEqual(share1_props.root_squash, ShareRootSquash.no_root_squash)
+        self.assertEqual(share1_props.protocols, ['NFS'])
+        self.assertEqual(share2_props.root_squash, ShareRootSquash.root_squash)
+        self.assertEqual(share2_props.protocols, ['NFS'])
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_list_shares_with_root_squash_and_protocols(
+            self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        self._create_share(prefix="testshare1", protocols="NFS", root_squash=ShareRootSquash.all_squash)
+        self._create_share(prefix="testshare2", protocols=ShareProtocols.SMB)
+        # Act
+        shares = list(self.fsc.list_shares())
+        share1_props = shares[0]
+        share2_props = shares[1]
+
+        # Assert
+        self.assertIsNotNone(shares)
+        self.assertGreaterEqual(len(shares), 2)
+        self.assertEqual(share1_props.root_squash, ShareRootSquash.all_squash)
+        self.assertEqual(share1_props.protocols, ["NFS"])
+        self.assertEqual(share2_props.root_squash, None)
+        self.assertEqual(share2_props.protocols, ["SMB"])
         self._delete_shares()
 
     @GlobalResourceGroupPreparer()

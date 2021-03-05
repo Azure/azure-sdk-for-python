@@ -1,5 +1,64 @@
 # Release History
 
+## 8.0.0 (2020-12-25)
+
+**Breaking changes**
+
+  - Change client name from OperationalInsightsManagementClient to LogAnalyticsManagementClient
+
+## 7.0.0 (2020-12-17)
+
+- GA release
+
+## 7.0.0b1 (2020-11-16)
+
+This is beta preview version.
+
+This version uses a next-generation code generator that introduces important breaking changes, but also important new features (like unified authentication and async programming).
+
+**General breaking changes**
+
+- Credential system has been completly revamped:
+
+  - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
+  - `credentials` parameter has been renamed `credential`
+
+- The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+- You can't import a `version` module anymore, use `__version__` instead
+- Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
+- Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
+- Most of the operation kwarg have changed. Some of the most noticeable:
+
+  - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
+  - For a complete set of
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+
+## 2.0.0(2020-11-09)
+
+**Breaking changes**
+
+  - Model DataExport no longer has parameter all_tables
+
+## 1.0.0 (2020-08-31)
+
+**Features**
+
+  - REST call api-version changes from 2020-03-01-preview to 2020-08-01
+  - DataSourceType has new enum values
+
+## 0.7.0 (2020-07-09)
+
+**Features**
+
+  - Model DataSource has a new parameter etag
+  - Model SavedSearch has a new parameter etag
+
+**Breaking changes**
+
+  - Model DataSource no longer has parameter e_tag
+  - Model SavedSearch no longer has parameter e_tag
+
 ## 0.6.0 (2020-05-28)
 
 **Features**

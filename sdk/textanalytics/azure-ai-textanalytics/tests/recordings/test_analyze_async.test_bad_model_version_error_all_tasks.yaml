@@ -1,0 +1,63 @@
+interactions:
+- request:
+    body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
+      "bad", "stringIndexType": "UnicodeCodePoint"}}], "entityRecognitionPiiTasks":
+      [{"parameters": {"model-version": "bad", "stringIndexType": "UnicodeCodePoint"}}],
+      "keyPhraseExtractionTasks": [{"parameters": {"model-version": "bad"}}]}, "analysisInput":
+      {"documents": [{"id": "1", "text": "I did not like the hotel we stayed at.",
+      "language": "english"}]}}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Content-Length:
+      - '424'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: 4cad6d68-ab78-4bba-a1e1-4befd8c9965c
+      date: Tue, 23 Feb 2021 17:08:39 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/620939b6-38d8-4474-8ca0-cc2658501c4f
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '30'
+    status:
+      code: 202
+      message: Accepted
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/analyze
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/620939b6-38d8-4474-8ca0-cc2658501c4f
+  response:
+    body:
+      string: '{"jobId":"620939b6-38d8-4474-8ca0-cc2658501c4f","lastUpdateDateTime":"2021-02-23T17:08:40Z","createdDateTime":"2021-02-23T17:08:40Z","expirationDateTime":"2021-02-24T17:08:40Z","status":"failed","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01,2021-01-15.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"},{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:40Z"},"completed":0,"failed":3,"inProgress":0,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:40.4694622Z","state":"failed"}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:40.4694622Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:40.4694622Z","state":"failed"}]}}'
+    headers:
+      apim-request-id: 33507c94-7fde-4814-bd11-e0d6707e8362
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:08:44 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '16'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/620939b6-38d8-4474-8ca0-cc2658501c4f
+version: 1

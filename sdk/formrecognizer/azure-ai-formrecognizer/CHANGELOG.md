@@ -1,13 +1,38 @@
 # Release History
 
-## 3.1.0b1 (Unreleased)
+## 3.1.0b4 (Unreleased)
+
+
+## 3.1.0b3 (2021-02-09)
+
+**Breaking Changes**
+
+- `Appearance` is renamed to `TextAppearance`
+- `Style` is renamed to `TextStyle`
+- Client property `api_version` is no longer exposed. Pass keyword argument `api_version` into the client to select the
+API version
+
+**Dependency Updates**
+
+- Bumped `six` requirement from `1.6` to `1.11.0`.
+
+## 3.1.0b2 (2021-01-12)
+
+**Bug Fixes**
+
+- Package requires [azure-core](https://pypi.org/project/azure-core/) version 1.8.2 or greater
+
+
+## 3.1.0b1 (2020-11-23)
 
 This version of the SDK defaults to the latest supported API version, which currently is v2.1-preview.
 
 **New features**
 
 - New methods `begin_recognize_business_cards` and `begin_recognize_business_cards_from_url` introduced to the SDK. Use these
-methods to recognize data from business cards.
+methods to recognize data from business cards
+- New methods `begin_recognize_invoices` and `begin_recognize_invoices_from_url` introduced to the SDK. Use these
+methods to recognize data from invoices
 - Recognize receipt methods now take keyword argument `locale` to optionally indicate the locale of the receipt for
 improved results
 - Added ability to create a composed model from the `FormTrainingClient` by calling method `begin_create_composed_model()`
@@ -21,6 +46,13 @@ also be populated with any selection marks found on the page
 - Added model type `CustomFormModelProperties` that includes information like if a model is a composed model
 - Added property `model_id` to `CustomFormSubmodel` and `TrainingDocumentInfo`
 - Added properties `model_id` and `form_type_confidence` to `RecognizedForm`
+- `appearance` property added to `FormLine` to indicate the style of extracted text - like "handwriting" or "other"
+- Added keyword argument `pages` to `begin_recognize_content` and `begin_recognize_content_from_url` to specify the page
+numbers to analyze
+- Added property `bounding_box` to `FormTable`
+- Content-type `image/bmp` now supported by recognize content and prebuilt models
+- Added keyword argument `language` to `begin_recognize_content` and `begin_recognize_content_from_url` to specify
+which language to process document in
 
 **Dependency updates**
 

@@ -44,23 +44,31 @@ class KeyVaultPreparer(AzureMgmtPreparer):
         name = name.replace('_', '-')
         #raise Exception(name)
         if self.is_live:
+            TENANT_ID = os.environ.get("AZURE_TENANT_ID", None)
+            CLIENT_OID = os.environ.get("CLIENT_OID", None)
             self.client = self.create_mgmt_client(
                 azure.mgmt.keyvault.KeyVaultManagementClient)
             group = self._get_resource_group(**kwargs)
-            self.resource = self.client.vaults.create_or_update(
+            self.resource = self.client.vaults.begin_create_or_update(
                 group.name,
                 name,
                 {
                     'location': self.location,
                     'properties': {
-                        'sku': {'name': 'standard'},
-                        'tenant_id': "72f988bf-86f1-41af-91ab-2d7cd011db47",
+                        'sku': {
+                            'name': 'standard',
+                            'family': 'A'
+                        },
+                        # 'tenant_id': "72f988bf-86f1-41af-91ab-2d7cd011db47",
+                        'tenant_id': TENANT_ID,
                         'enabled_for_deployment': True,
                         'enabled_for_disk_encryption': True,
                         'enabled_for_template_deployment': True,
                         'access_policies': [ {
-                            'tenant_id': "72f988bf-86f1-41af-91ab-2d7cd011db47",
-                            'object_id': "f520d84c-3fd3-4cc8-88d4-2ed25b00d27a",
+                            # 'tenant_id': "72f988bf-86f1-41af-91ab-2d7cd011db47",
+                            'tenant_id': TENANT_ID,
+                            # 'object_id': "f520d84c-3fd3-4cc8-88d4-2ed25b00d27a",
+                            'object_id': CLIENT_OID,
                             'permissions': {
                                 'keys': ['all'],
                                 'secrets': ['all']
@@ -110,12 +118,12 @@ class SimpleBatchPreparer(AzureMgmtPreparer):
     def create_resource(self, name, **kwargs):
         if self.is_live:
             self.client = self.create_mgmt_client(
-                azure.mgmt.batch.BatchManagementClient)
+                azure.mgmt.batch.BatchManagement)
             group = self._get_resource_group(**kwargs)
             batch_account = azure.mgmt.batch.models.BatchAccountCreateParameters(
                 location=self.location,
             )
-            account_setup = self.client.batch_account.create(
+            account_setup = self.client.batch_account.begin_create(
                 group.name,
                 name,
                 batch_account)
@@ -129,7 +137,7 @@ class SimpleBatchPreparer(AzureMgmtPreparer):
     def remove_resource(self, name, **kwargs):
         if self.is_live:
             group = self._get_resource_group(**kwargs)
-            deleting = self.client.batch_account.delete(group.name, name)
+            deleting = self.client.batch_account.begin_delete(group.name, name)
             try:
                 deleting.wait()
             except:

@@ -30,7 +30,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
     def test_subscrpition_and_rule(self, resource_group):
 
         RESOURCE_GROUP = resource_group.name
-        NAMESPACE_NAME = "myNamespacexxyyzzy"
+        NAMESPACE_NAME = "myNamespacexxyyzzxyye"
         TOPIC_NAME = "myTopic"
         SUBSCRIPTION_NAME = "mySubscription"
         RULE_NAME = "myRule"
@@ -119,7 +119,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
     def test_topic(self, resource_group):
 
         RESOURCE_GROUP = resource_group.name
-        NAMESPACE_NAME = "myNamespacexxyyzzy"
+        NAMESPACE_NAME = "myNamespacexxyyzzxyyf"
         AUTHORIZATION_RULE_NAME = "myAuthorizationRule"
         TOPIC_NAME = "myTopic"
 

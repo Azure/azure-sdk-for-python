@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class DeletedWebAppsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,7 +49,7 @@ class DeletedWebAppsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DeletedWebAppCollection"]
+        # type: (...) -> Iterable["_models.DeletedWebAppCollection"]
         """Get all deleted apps for a subscription.
 
         Get all deleted apps for a subscription.
@@ -59,7 +59,7 @@ class DeletedWebAppsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2016_03_01.models.DeletedWebAppCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedWebAppCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedWebAppCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

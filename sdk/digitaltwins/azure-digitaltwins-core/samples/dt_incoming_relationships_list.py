@@ -33,7 +33,7 @@ try:
     digital_twin_id = "<DIGITAL_TWIN_ID>" # from the samples: BuildingTwin, FloorTwin, HVACTwin, RoomTwin
     incoming_relationships = service_client.list_incoming_relationships(digital_twin_id)
     for incoming_relationship in incoming_relationships:
-        print(incoming_relationship + '\n')
+        print(incoming_relationship)
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class VirtualHubIpConfigurationOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -54,7 +54,7 @@ class VirtualHubIpConfigurationOperations(object):
         ip_config_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.HubIpConfiguration"
+        # type: (...) -> "_models.HubIpConfiguration"
         """Retrieves the details of a Virtual Hub Ip configuration.
 
         :param resource_group_name: The resource group name of the VirtualHub.
@@ -68,7 +68,7 @@ class VirtualHubIpConfigurationOperations(object):
         :rtype: ~azure.mgmt.network.v2020_06_01.models.HubIpConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HubIpConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HubIpConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -115,11 +115,11 @@ class VirtualHubIpConfigurationOperations(object):
         resource_group_name,  # type: str
         virtual_hub_name,  # type: str
         ip_config_name,  # type: str
-        parameters,  # type: "models.HubIpConfiguration"
+        parameters,  # type: "_models.HubIpConfiguration"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.HubIpConfiguration"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HubIpConfiguration"]
+        # type: (...) -> "_models.HubIpConfiguration"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HubIpConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -175,10 +175,10 @@ class VirtualHubIpConfigurationOperations(object):
         resource_group_name,  # type: str
         virtual_hub_name,  # type: str
         ip_config_name,  # type: str
-        parameters,  # type: "models.HubIpConfiguration"
+        parameters,  # type: "_models.HubIpConfiguration"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.HubIpConfiguration"]
+        # type: (...) -> LROPoller["_models.HubIpConfiguration"]
         """Creates a VirtualHubIpConfiguration resource if it doesn't exist else updates the existing
         VirtualHubIpConfiguration.
 
@@ -201,7 +201,7 @@ class VirtualHubIpConfigurationOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HubIpConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HubIpConfiguration"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -227,7 +227,14 @@ class VirtualHubIpConfigurationOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualHubName': self._serialize.url("virtual_hub_name", virtual_hub_name, 'str'),
+            'ipConfigName': self._serialize.url("ip_config_name", ip_config_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -337,7 +344,14 @@ class VirtualHubIpConfigurationOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualHubName': self._serialize.url("virtual_hub_name", virtual_hub_name, 'str'),
+            'ipConfigName': self._serialize.url("ip_config_name", ip_config_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -357,7 +371,7 @@ class VirtualHubIpConfigurationOperations(object):
         virtual_hub_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ListVirtualHubIpConfigurationResults"]
+        # type: (...) -> Iterable["_models.ListVirtualHubIpConfigurationResults"]
         """Retrieves the details of all VirtualHubIpConfigurations.
 
         :param resource_group_name: The resource group name of the VirtualHub.
@@ -369,7 +383,7 @@ class VirtualHubIpConfigurationOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_06_01.models.ListVirtualHubIpConfigurationResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListVirtualHubIpConfigurationResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListVirtualHubIpConfigurationResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

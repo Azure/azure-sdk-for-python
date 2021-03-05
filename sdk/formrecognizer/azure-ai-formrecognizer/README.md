@@ -5,8 +5,10 @@ from form documents. It includes the following main functionalities:
 
 * Custom models - Recognize field values and table data from forms. These models are trained with your own data, so they're tailored to your forms.
 * Content API - Recognize text, table structures, and selection marks, along with their bounding box coordinates, from documents. Corresponds to the REST service's Layout API.
-* Prebuilt receipt model - Recognize data from sales receipts using a prebuilt model.
-* Prebuilt business card model - Recognize data from business cards using a prebuilt model.
+* Prebuilt models - Recognize data using the following prebuilt models
+    * Receipt model - Recognize data from sales receipts using a prebuilt model.
+    * Business card model - Recognize data from business cards using a prebuilt model.
+    * Invoice model - Recognize data from invoices using a prebuilt model.
 
 [Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs]| [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
 
@@ -24,14 +26,14 @@ Install the Azure Form Recognizer client library for Python with [pip][pip]:
 pip install azure-ai-formrecognizer --pre
 ```
 
-> Note: This version of the client library defaults to the v2.1-preview version of the service
+> Note: This version of the client library defaults to the v2.1-preview.2 version of the service
 
 This table shows the relationship between SDK versions and supported API versions of the service
 
 |SDK version|Supported API version of service
 |-|-
 |3.0.0 - Latest GA release (can be installed by removing the `--pre` flag)| 2.0
-|3.1.0b1 - Latest release (beta)| 2.0, 2.1-preview
+|3.1.0b3 - Latest release (beta)| 2.0, 2.1-preview.2
 
 
 #### Create a Form Recognizer resource
@@ -132,8 +134,10 @@ form_recognizer_client = FormRecognizerClient(
 `FormRecognizerClient` provides operations for:
 
  - Recognizing form fields and content using custom models trained to recognize your custom forms. These values are returned in a collection of `RecognizedForm` objects.
- - Recognizing common fields from sales receipts, using a pre-trained receipt model. These fields and metadata are returned in a collection of `RecognizedForm` objects.
- - Recognizing common fields from business cards, using a pre-trained business card model. These fields and metadata are returned in a collection of `RecognizedForm` objects.
+ - Recognizing common fields from the following form types using prebuilt models. These fields and metadata are returned in a collection of `RecognizedForm` objects.
+    - Sales receipts. See fields found on a receipt [here][service_recognize_receipt].
+    - Business cards. See fields found on a business card [here][service_recognize_business_cards].
+    - Invoices. See fields found on an invoice [here][service_recognize_invoice].
  - Recognizing form content, including tables, lines, words, and selection marks, without the need to train a model. Form content is returned in a collection of `FormPage` objects.
 
 Sample code snippets are provided to illustrate using a FormRecognizerClient [here](#recognize-forms-using-a-custom-model "Recognize Forms Using a Custom Model").
@@ -156,7 +160,7 @@ Long-running operations are operations which consist of an initial request sent 
 followed by polling the service at intervals to determine whether the operation has completed or failed, and if it has
 succeeded, to get the result.
 
-Methods that train models, recognize values from forms, or copy models are modeled as long-running operations.
+Methods that train models, recognize values from forms, or copy/compose models are modeled as long-running operations.
 The client exposes a `begin_<method-name>` method that returns an `LROPoller` or `AsyncLROPoller`. Callers should wait
 for the operation to complete by calling `result()` on the poller object returned from the `begin_<method-name>` method.
 Sample code snippets are provided to illustrate using long-running operations [below](#examples "Examples").
@@ -170,6 +174,7 @@ The following section provides several code snippets covering some of the most c
 * [Recognize Content](#recognize-content "Recognize Content")
 * [Recognize Receipts](#recognize-receipts "Recognize receipts")
 * [Recognize Business Cards](#recognize-business-cards "Recognize business cards")
+* [Recognize Invoices](#recognize-invoices "Recognize invoices")
 * [Train a Model](#train-a-model "Train a model")
 * [Manage Your Models](#manage-your-models "Manage Your Models")
 
@@ -216,7 +221,7 @@ result = poller.result()
 ```
 
 ### Recognize Content
-Recognize text and table structures, along with their bounding box coordinates, from documents.
+Recognize text, selection marks, and table structures, along with their bounding box coordinates, from documents.
 
 ```python
 from azure.ai.formrecognizer import FormRecognizerClient
@@ -231,22 +236,25 @@ with open("<path to your form>", "rb") as fd:
     form = fd.read()
 
 poller = form_recognizer_client.begin_recognize_content(form)
-page = poller.result()
+form_pages = poller.result()
 
-table = page[0].tables[0] # page 1, table 1
-print("Table found on page {}:".format(table.page_number))
-for cell in table.cells:
-    print("Cell text: {}".format(cell.text))
-    print("Location: {}".format(cell.bounding_box))
-    print("Confidence score: {}\n".format(cell.confidence))
+for content in form_pages:
+    for table in content.tables:
+        print("Table found on page {}:".format(table.page_number))
+        print("Table location {}:".format(table.bounding_box))
+        for cell in table.cells:
+            print("Cell text: {}".format(cell.text))
+            print("Location: {}".format(cell.bounding_box))
+            print("Confidence score: {}\n".format(cell.confidence))
 
-print("Selection marks found on page {}:".format(page[0].page_number))
-for selection_mark in page[0].selection_marks:
-    print("Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
-        selection_mark.state,
-        selection_mark.bounding_box,
-        selection_mark.confidence
-    ))
+    if content.selection_marks:
+        print("Selection marks found on page {}:".format(content.page_number))
+        for selection_mark in content.selection_marks:
+            print("Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
+                selection_mark.state,
+                selection_mark.bounding_box,
+                selection_mark.confidence
+            ))
 ```
 
 ### Recognize Receipts
@@ -308,6 +316,30 @@ for business_card in result:
             for item in field.value:
                 print("{}: {} has confidence {}".format(item.name, item.value, item.confidence))
 ```
+
+### Recognize Invoices
+Recognize data from invoices using a prebuilt model. Invoice fields recognized by the service can be found [here][service_recognize_invoice].
+
+```python
+from azure.ai.formrecognizer import FormRecognizerClient
+from azure.core.credentials import AzureKeyCredential
+
+endpoint = "https://<region>.api.cognitive.microsoft.com/"
+credential = AzureKeyCredential("<api_key>")
+
+form_recognizer_client = FormRecognizerClient(endpoint, credential)
+
+with open("<path to your invoice>", "rb") as fd:
+    invoice = fd.read()
+
+poller = form_recognizer_client.begin_recognize_invoices(invoice)
+result = poller.result()
+
+for invoice in result:
+    for name, field in invoice.fields.items():
+        print("{}: {} has confidence {}".format(name, field.value, field.confidence))
+```
+
 
 ### Train a model
 Train a custom model on your own form type. The resulting model can be used to recognize values from the types of forms it was trained on.
@@ -439,13 +471,14 @@ These code samples show common scenario operations with the Azure Form Recognize
 * Recognize receipts: [sample_recognize_receipts.py][sample_recognize_receipts]
 * Recognize receipts from a URL: [sample_recognize_receipts_from_url.py][sample_recognize_receipts_from_url]
 * Recognize business cards: [sample_recognize_business_cards.py][sample_recognize_business_cards]
+* Recognize invoices: [sample_recognize_invoices.py][sample_recognize_invoices]
 * Recognize content: [sample_recognize_content.py][sample_recognize_content]
 * Recognize custom forms: [sample_recognize_custom_forms.py][sample_recognize_custom_forms]
 * Train a model without labels: [sample_train_model_without_labels.py][sample_train_model_without_labels]
 * Train a model with labels: [sample_train_model_with_labels.py][sample_train_model_with_labels]
 * Manage custom models: [sample_manage_custom_models.py][sample_manage_custom_models]
 * Copy a model between Form Recognizer resources: [sample_copy_model.py][sample_copy_model]
-* Create a composed model from a collection of models trained with labels: |[sample_create_composed_model.py][sample_create_composed_model]
+* Create a composed model from a collection of models trained with labels: [sample_create_composed_model.py][sample_create_composed_model]
 
 ### Async APIs
 This library also includes a complete async API supported on Python 3.5+. To use it, you must
@@ -456,6 +489,7 @@ are found under the `azure.ai.formrecognizer.aio` namespace.
 * Recognize receipts: [sample_recognize_receipts_async.py][sample_recognize_receipts_async]
 * Recognize receipts from a URL: [sample_recognize_receipts_from_url_async.py][sample_recognize_receipts_from_url_async]
 * Recognize business cards: [sample_recognize_business_cards_async.py][sample_recognize_business_cards_async]
+* Recognize invoices: [sample_recognize_invoices_async.py][sample_recognize_invoices_async]
 * Recognize content: [sample_recognize_content_async.py][sample_recognize_content_async]
 * Recognize custom forms: [sample_recognize_custom_forms_async.py][sample_recognize_custom_forms_async]
 * Train a model without labels: [sample_train_model_without_labels_async.py][sample_train_model_without_labels_async]
@@ -510,6 +544,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential
 [service_recognize_receipt]: https://aka.ms/formrecognizer/receiptfields
 [service_recognize_business_cards]: https://aka.ms/formrecognizer/businesscardfields
+[service_recognize_invoice]: https://aka.ms/formrecognizer/invoicefields
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
 
 [cla]: https://cla.microsoft.com
@@ -531,6 +566,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sample_recognize_receipts_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_receipts_async.py
 [sample_recognize_business_cards]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_business_cards.py
 [sample_recognize_business_cards_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_business_cards_async.py
+[sample_recognize_invoices]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_invoices.py
+[sample_recognize_invoices_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_invoices_async.py
 [sample_train_model_with_labels]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_model_with_labels.py
 [sample_train_model_with_labels_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_model_with_labels_async.py
 [sample_train_model_without_labels]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_model_without_labels.py

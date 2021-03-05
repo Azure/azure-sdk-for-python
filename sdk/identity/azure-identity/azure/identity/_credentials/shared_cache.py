@@ -24,7 +24,7 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Optional
-    from .._auth_record import AuthenticationRecord
+    from .. import AuthenticationRecord
     from .._internal import AadClientBase
 
 
@@ -40,12 +40,16 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         defines authorities for other clouds.
     :keyword str tenant_id: an Azure Active Directory tenant ID. Used to select an account when the cache contains
         tokens for multiple identities.
+    :keyword AuthenticationRecord authentication_record: an authentication record returned by a user credential such as
+        :class:`DeviceCodeCredential` or :class:`InteractiveBrowserCredential`
+    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
+        is unavailable. Defaults to False.
     """
 
     def __init__(self, username=None, **kwargs):
         # type: (Optional[str], **Any) -> None
 
-        self._auth_record = kwargs.pop("_authentication_record", None)  # type: Optional[AuthenticationRecord]
+        self._auth_record = kwargs.pop("authentication_record", None)  # type: Optional[AuthenticationRecord]
         if self._auth_record:
             # authenticate in the tenant that produced the record unless "tenant_id" specifies another
             self._tenant_id = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id
@@ -67,6 +71,8 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+        :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
+          claims challenge following an authorization failure
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.identity.CredentialUnavailableError: the cache is unavailable or contains insufficient user
             information
@@ -83,7 +89,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
             raise CredentialUnavailableError(message="Shared token cache unavailable")
 
         if self._auth_record:
-            return self._acquire_token_silent(*scopes)
+            return self._acquire_token_silent(*scopes, **kwargs)
 
         account = self._get_account(self._username, self._tenant_id)
 
@@ -117,6 +123,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
                 authority="https://{}/{}".format(self._auth_record.authority, self._tenant_id),
                 token_cache=self._cache,
                 http_client=MsalClient(**self._client_kwargs),
+                client_capabilities=["CP1"]
             )
 
         self._initialized = True
@@ -125,6 +132,11 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
     def _acquire_token_silent(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Silently acquire a token from MSAL. Requires an AuthenticationRecord."""
+
+        # self._auth_record and ._app will not be None when this method is called by get_token
+        # but should either be None anyway (and to satisfy mypy) we raise
+        if self._app is None or self._auth_record is None:
+            raise CredentialUnavailableError("Initialization failed")
 
         result = None
 
@@ -137,7 +149,9 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
                 continue
 
             now = int(time.time())
-            result = self._app.acquire_token_silent_with_error(list(scopes), account=account, **kwargs)
+            result = self._app.acquire_token_silent_with_error(
+                list(scopes), account=account, claims_challenge=kwargs.get("claims")
+            )
             if result and "access_token" in result and "expires_in" in result:
                 return AccessToken(result["access_token"], now + int(result["expires_in"]))
 

@@ -14,16 +14,12 @@ jobs:
   - template: ./templates/variables/globals.yml
 
   pool:
-    vmImage: 'windows-2019'
+    name: azsdk-pool-mms-win-2019-general
+    vmImage: MMS2019
 
   steps:
-  - template: ../common/pipelines/templates/steps/verify-links.yml
-    parameters:
-      Directory: ""
-      CheckLinkGuidance: $true
-
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
-
+  
   - task: AzureFileCopy@2
     displayName: 'Upload dependency report'
     condition: and(succeededOrFailed(), eq(variables['System.TeamProject'], 'internal'))
@@ -41,3 +37,31 @@ jobs:
       pwsh: true
       workingDirectory: $(Build.SourcesDirectory)
       filePath: eng/common/scripts/Verify-Resource-Ref.ps1
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@3
+    displayName: 'Run CredScan'
+    condition: succeededOrFailed()
+    inputs:
+      suppressionsFile: 'eng\CredScanSuppression.json'
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-postanalysis.PostAnalysis@2
+    displayName: 'Post Analysis'
+    condition: succeededOrFailed()
+    inputs:
+      GdnBreakAllTools: false
+      GdnBreakGdnToolCredScan: true
+      GdnBreakGdnToolCredScanSeverity: Error
+      GdnBreakBaselineFiles: $(Build.SourcesDirectory)\eng\python.gdnbaselines
+      GdnBreakBaselines: baseline   
+      # Used for generating baseline file.   
+      # GdnBreakOutputBaselineFile: python
+      # GdnBreakOutputBaseline: baseline
+    continueOnError: true
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@3
+    displayName: 'Publish Security Analysis Logs'
+    continueOnError: true
+    condition: succeededOrFailed()
+  - template: ../common/pipelines/templates/steps/verify-links.yml
+    parameters:
+      Directory: ""
+      CheckLinkGuidance: $true
+      Condition: succeededOrFailed()

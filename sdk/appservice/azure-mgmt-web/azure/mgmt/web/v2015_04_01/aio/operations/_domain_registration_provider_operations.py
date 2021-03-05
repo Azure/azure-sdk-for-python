@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class DomainRegistrationProviderOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,7 +44,7 @@ class DomainRegistrationProviderOperations:
     def list_operations(
         self,
         **kwargs
-    ) -> AsyncIterable["models.CsmOperationCollection"]:
+    ) -> AsyncIterable["_models.CsmOperationCollection"]:
         """Implements Csm operations Api to exposes the list of available Csm Apis under the resource provider.
 
         Implements Csm operations Api to exposes the list of available Csm Apis under the resource
@@ -55,7 +55,7 @@ class DomainRegistrationProviderOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2015_04_01.models.CsmOperationCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CsmOperationCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CsmOperationCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

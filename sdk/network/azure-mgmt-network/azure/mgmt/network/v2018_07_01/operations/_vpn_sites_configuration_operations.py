@@ -15,7 +15,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -38,7 +38,7 @@ class VpnSitesConfigurationOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class VpnSitesConfigurationOperations(object):
         self,
         resource_group_name,  # type: str
         virtual_wan_name,  # type: str
-        request,  # type: "models.GetVpnSitesConfigurationRequest"
+        request,  # type: "_models.GetVpnSitesConfigurationRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -90,7 +90,7 @@ class VpnSitesConfigurationOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -102,7 +102,7 @@ class VpnSitesConfigurationOperations(object):
         self,
         resource_group_name,  # type: str
         virtual_wan_name,  # type: str
-        request,  # type: "models.GetVpnSitesConfigurationRequest"
+        request,  # type: "_models.GetVpnSitesConfigurationRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -148,7 +148,13 @@ class VpnSitesConfigurationOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualWANName': self._serialize.url("virtual_wan_name", virtual_wan_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

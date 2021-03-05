@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class AgentPoolsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,7 +48,7 @@ class AgentPoolsOperations:
         resource_group_name: str,
         resource_name: str,
         **kwargs
-    ) -> AsyncIterable["models.AgentPoolListResult"]:
+    ) -> AsyncIterable["_models.AgentPoolListResult"]:
         """Gets a list of agent pools in the specified managed cluster.
 
         Gets a list of agent pools in the specified managed cluster. The operation returns properties
@@ -63,7 +63,7 @@ class AgentPoolsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerservice.v2020_01_01.models.AgentPoolListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AgentPoolListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AgentPoolListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -126,7 +126,7 @@ class AgentPoolsOperations:
         resource_name: str,
         agent_pool_name: str,
         **kwargs
-    ) -> "models.AgentPool":
+    ) -> "_models.AgentPool":
         """Gets the agent pool.
 
         Gets the details of the agent pool by managed cluster and resource group.
@@ -142,7 +142,7 @@ class AgentPoolsOperations:
         :rtype: ~azure.mgmt.containerservice.v2020_01_01.models.AgentPool
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AgentPool"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AgentPool"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -189,10 +189,10 @@ class AgentPoolsOperations:
         resource_group_name: str,
         resource_name: str,
         agent_pool_name: str,
-        parameters: "models.AgentPool",
+        parameters: "_models.AgentPool",
         **kwargs
-    ) -> "models.AgentPool":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AgentPool"]
+    ) -> "_models.AgentPool":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AgentPool"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -248,9 +248,9 @@ class AgentPoolsOperations:
         resource_group_name: str,
         resource_name: str,
         agent_pool_name: str,
-        parameters: "models.AgentPool",
+        parameters: "_models.AgentPool",
         **kwargs
-    ) -> AsyncLROPoller["models.AgentPool"]:
+    ) -> AsyncLROPoller["_models.AgentPool"]:
         """Creates or updates an agent pool.
 
         Creates or updates an agent pool in the specified managed cluster.
@@ -274,7 +274,7 @@ class AgentPoolsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AgentPool"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AgentPool"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -300,7 +300,14 @@ class AgentPoolsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=63, min_length=1, pattern=r'^[a-zA-Z0-9]$|^[a-zA-Z0-9][-_a-zA-Z0-9]{0,61}[a-zA-Z0-9]$'),
+            'agentPoolName': self._serialize.url("agent_pool_name", agent_pool_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -410,7 +417,14 @@ class AgentPoolsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=63, min_length=1, pattern=r'^[a-zA-Z0-9]$|^[a-zA-Z0-9][-_a-zA-Z0-9]{0,61}[a-zA-Z0-9]$'),
+            'agentPoolName': self._serialize.url("agent_pool_name", agent_pool_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -430,7 +444,7 @@ class AgentPoolsOperations:
         resource_name: str,
         agent_pool_name: str,
         **kwargs
-    ) -> "models.AgentPoolUpgradeProfile":
+    ) -> "_models.AgentPoolUpgradeProfile":
         """Gets upgrade profile for an agent pool.
 
         Gets the details of the upgrade profile for an agent pool with a specified resource group and
@@ -447,7 +461,7 @@ class AgentPoolsOperations:
         :rtype: ~azure.mgmt.containerservice.v2020_01_01.models.AgentPoolUpgradeProfile
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AgentPoolUpgradeProfile"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AgentPoolUpgradeProfile"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -494,7 +508,7 @@ class AgentPoolsOperations:
         resource_group_name: str,
         resource_name: str,
         **kwargs
-    ) -> "models.AgentPoolAvailableVersions":
+    ) -> "_models.AgentPoolAvailableVersions":
         """Gets a list of supported versions for the specified agent pool.
 
         Gets a list of supported versions for the specified agent pool.
@@ -508,7 +522,7 @@ class AgentPoolsOperations:
         :rtype: ~azure.mgmt.containerservice.v2020_01_01.models.AgentPoolAvailableVersions
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AgentPoolAvailableVersions"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AgentPoolAvailableVersions"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

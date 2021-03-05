@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class NamespacesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -43,32 +43,119 @@ class NamespacesOperations:
         self._deserialize = deserializer
         self._config = config
 
-    async def check_name_availability(
+    def list_ip_filter_rules(
         self,
-        parameters: "models.CheckNameAvailability",
+        resource_group_name: str,
+        namespace_name: str,
         **kwargs
-    ) -> "models.CheckNameAvailabilityResult":
-        """Check the give namespace name availability.
+    ) -> AsyncIterable["_models.IpFilterRuleListResult"]:
+        """Gets a list of IP Filter rules for a Namespace.
 
-        :param parameters: Parameters to check availability of the given namespace name.
-        :type parameters: ~azure.mgmt.servicebus.models.CheckNameAvailability
+        :param resource_group_name: Name of the Resource group within the Azure subscription.
+        :type resource_group_name: str
+        :param namespace_name: The namespace name.
+        :type namespace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CheckNameAvailabilityResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.servicebus.models.CheckNameAvailabilityResult
+        :return: An iterator like instance of either IpFilterRuleListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicebus.models.IpFilterRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CheckNameAvailabilityResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IpFilterRuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
+        accept = "application/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+            if not next_link:
+                # Construct URL
+                url = self.list_ip_filter_rules.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+                request = self._client.get(url, query_parameters, header_parameters)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize('IpFilterRuleListResult', pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                error = self._deserialize(_models.ErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+    list_ip_filter_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/ipfilterrules'}  # type: ignore
+
+    async def create_or_update_ip_filter_rule(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        ip_filter_rule_name: str,
+        parameters: "_models.IpFilterRule",
+        **kwargs
+    ) -> "_models.IpFilterRule":
+        """Creates or updates an IpFilterRule for a Namespace.
+
+        :param resource_group_name: Name of the Resource group within the Azure subscription.
+        :type resource_group_name: str
+        :param namespace_name: The namespace name.
+        :type namespace_name: str
+        :param ip_filter_rule_name: The IP Filter Rule name.
+        :type ip_filter_rule_name: str
+        :param parameters: The Namespace IpFilterRule.
+        :type parameters: ~azure.mgmt.servicebus.models.IpFilterRule
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: IpFilterRule, or the result of cls(response)
+        :rtype: ~azure.mgmt.servicebus.models.IpFilterRule
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IpFilterRule"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2018-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
-        url = self.check_name_availability.metadata['url']  # type: ignore
+        url = self.create_or_update_ip_filter_rule.metadata['url']  # type: ignore
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'ipFilterRuleName': self._serialize.url("ip_filter_rule_name", ip_filter_rule_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -83,29 +170,152 @@ class NamespacesOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'CheckNameAvailability')
+        body_content = self._serialize.body(parameters, 'IpFilterRule')
         body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('CheckNameAvailabilityResult', pipeline_response)
+        deserialized = self._deserialize('IpFilterRule', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ServiceBus/CheckNameAvailability'}  # type: ignore
+    create_or_update_ip_filter_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/ipfilterrules/{ipFilterRuleName}'}  # type: ignore
+
+    async def delete_ip_filter_rule(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        ip_filter_rule_name: str,
+        **kwargs
+    ) -> None:
+        """Deletes an IpFilterRule for a Namespace.
+
+        :param resource_group_name: Name of the Resource group within the Azure subscription.
+        :type resource_group_name: str
+        :param namespace_name: The namespace name.
+        :type namespace_name: str
+        :param ip_filter_rule_name: The IP Filter Rule name.
+        :type ip_filter_rule_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2018-01-01-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.delete_ip_filter_rule.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'ipFilterRuleName': self._serialize.url("ip_filter_rule_name", ip_filter_rule_name, 'str', min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.delete(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    delete_ip_filter_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/ipfilterrules/{ipFilterRuleName}'}  # type: ignore
+
+    async def get_ip_filter_rule(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        ip_filter_rule_name: str,
+        **kwargs
+    ) -> "_models.IpFilterRule":
+        """Gets an IpFilterRule for a Namespace by rule name.
+
+        :param resource_group_name: Name of the Resource group within the Azure subscription.
+        :type resource_group_name: str
+        :param namespace_name: The namespace name.
+        :type namespace_name: str
+        :param ip_filter_rule_name: The IP Filter Rule name.
+        :type ip_filter_rule_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: IpFilterRule, or the result of cls(response)
+        :rtype: ~azure.mgmt.servicebus.models.IpFilterRule
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IpFilterRule"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2018-01-01-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_ip_filter_rule.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'ipFilterRuleName': self._serialize.url("ip_filter_rule_name", ip_filter_rule_name, 'str', min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('IpFilterRule', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_ip_filter_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/ipfilterrules/{ipFilterRuleName}'}  # type: ignore
 
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.SBNamespaceListResult"]:
+    ) -> AsyncIterable["_models.SBNamespaceListResult"]:
         """Gets all the available namespaces within the subscription, irrespective of the resource groups.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -113,12 +323,12 @@ class NamespacesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicebus.models.SBNamespaceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SBNamespaceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SBNamespaceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -158,7 +368,7 @@ class NamespacesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -173,7 +383,7 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.SBNamespaceListResult"]:
+    ) -> AsyncIterable["_models.SBNamespaceListResult"]:
         """Gets the available namespaces within a resource group.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -183,12 +393,12 @@ class NamespacesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicebus.models.SBNamespaceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SBNamespaceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SBNamespaceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -229,7 +439,7 @@ class NamespacesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -244,15 +454,15 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        parameters: "models.SBNamespace",
+        parameters: "_models.SBNamespace",
         **kwargs
-    ) -> Optional["models.SBNamespace"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.SBNamespace"]]
+    ) -> Optional["_models.SBNamespace"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SBNamespace"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -283,7 +493,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -303,9 +513,9 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        parameters: "models.SBNamespace",
+        parameters: "_models.SBNamespace",
         **kwargs
-    ) -> AsyncLROPoller["models.SBNamespace"]:
+    ) -> AsyncLROPoller["_models.SBNamespace"]:
         """Creates or updates a service namespace. Once created, this namespace's resource manifest is
         immutable. This operation is idempotent.
 
@@ -326,7 +536,7 @@ class NamespacesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SBNamespace"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SBNamespace"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -351,7 +561,13 @@ class NamespacesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -376,7 +592,7 @@ class NamespacesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -402,7 +618,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -455,7 +671,13 @@ class NamespacesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -474,7 +696,7 @@ class NamespacesOperations:
         resource_group_name: str,
         namespace_name: str,
         **kwargs
-    ) -> "models.SBNamespace":
+    ) -> "_models.SBNamespace":
         """Gets a description for the specified namespace.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -486,12 +708,12 @@ class NamespacesOperations:
         :rtype: ~azure.mgmt.servicebus.models.SBNamespace
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SBNamespace"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SBNamespace"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -517,7 +739,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SBNamespace', pipeline_response)
@@ -532,9 +754,9 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        parameters: "models.SBNamespaceUpdateParameters",
+        parameters: "_models.SBNamespaceUpdateParameters",
         **kwargs
-    ) -> Optional["models.SBNamespace"]:
+    ) -> Optional["_models.SBNamespace"]:
         """Updates a service namespace. Once created, this namespace's resource manifest is immutable.
         This operation is idempotent.
 
@@ -549,12 +771,12 @@ class NamespacesOperations:
         :rtype: ~azure.mgmt.servicebus.models.SBNamespace or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.SBNamespace"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SBNamespace"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -585,7 +807,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -601,12 +823,407 @@ class NamespacesOperations:
         return deserialized
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}'}  # type: ignore
 
+    async def create_or_update_network_rule_set(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        parameters: "_models.NetworkRuleSet",
+        **kwargs
+    ) -> "_models.NetworkRuleSet":
+        """Gets NetworkRuleSet for a Namespace.
+
+        :param resource_group_name: Name of the Resource group within the Azure subscription.
+        :type resource_group_name: str
+        :param namespace_name: The namespace name.
+        :type namespace_name: str
+        :param parameters: The Namespace NetworkRuleSet.
+        :type parameters: ~azure.mgmt.servicebus.models.NetworkRuleSet
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: NetworkRuleSet, or the result of cls(response)
+        :rtype: ~azure.mgmt.servicebus.models.NetworkRuleSet
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkRuleSet"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2018-01-01-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.create_or_update_network_rule_set.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(parameters, 'NetworkRuleSet')
+        body_content_kwargs['content'] = body_content
+        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('NetworkRuleSet', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    create_or_update_network_rule_set.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/networkrulesets/default'}  # type: ignore
+
+    async def get_network_rule_set(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        **kwargs
+    ) -> "_models.NetworkRuleSet":
+        """Gets NetworkRuleSet for a Namespace.
+
+        :param resource_group_name: Name of the Resource group within the Azure subscription.
+        :type resource_group_name: str
+        :param namespace_name: The namespace name.
+        :type namespace_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: NetworkRuleSet, or the result of cls(response)
+        :rtype: ~azure.mgmt.servicebus.models.NetworkRuleSet
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkRuleSet"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2018-01-01-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_network_rule_set.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('NetworkRuleSet', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_network_rule_set.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/networkrulesets/default'}  # type: ignore
+
+    def list_virtual_network_rules(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        **kwargs
+    ) -> AsyncIterable["_models.VirtualNetworkRuleListResult"]:
+        """Gets a list of VirtualNetwork rules for a Namespace.
+
+        :param resource_group_name: Name of the Resource group within the Azure subscription.
+        :type resource_group_name: str
+        :param namespace_name: The namespace name.
+        :type namespace_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either VirtualNetworkRuleListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicebus.models.VirtualNetworkRuleListResult]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkRuleListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2018-01-01-preview"
+        accept = "application/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+            if not next_link:
+                # Construct URL
+                url = self.list_virtual_network_rules.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+                request = self._client.get(url, query_parameters, header_parameters)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize('VirtualNetworkRuleListResult', pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                error = self._deserialize(_models.ErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+    list_virtual_network_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/virtualnetworkrules'}  # type: ignore
+
+    async def create_or_update_virtual_network_rule(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        virtual_network_rule_name: str,
+        parameters: "_models.VirtualNetworkRule",
+        **kwargs
+    ) -> "_models.VirtualNetworkRule":
+        """Creates or updates an VirtualNetworkRule for a Namespace.
+
+        :param resource_group_name: Name of the Resource group within the Azure subscription.
+        :type resource_group_name: str
+        :param namespace_name: The namespace name.
+        :type namespace_name: str
+        :param virtual_network_rule_name: The Virtual Network Rule name.
+        :type virtual_network_rule_name: str
+        :param parameters: The Namespace VirtualNetworkRule.
+        :type parameters: ~azure.mgmt.servicebus.models.VirtualNetworkRule
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: VirtualNetworkRule, or the result of cls(response)
+        :rtype: ~azure.mgmt.servicebus.models.VirtualNetworkRule
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkRule"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2018-01-01-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.create_or_update_virtual_network_rule.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'virtualNetworkRuleName': self._serialize.url("virtual_network_rule_name", virtual_network_rule_name, 'str', min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(parameters, 'VirtualNetworkRule')
+        body_content_kwargs['content'] = body_content
+        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('VirtualNetworkRule', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    create_or_update_virtual_network_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/virtualnetworkrules/{virtualNetworkRuleName}'}  # type: ignore
+
+    async def delete_virtual_network_rule(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        virtual_network_rule_name: str,
+        **kwargs
+    ) -> None:
+        """Deletes an VirtualNetworkRule for a Namespace.
+
+        :param resource_group_name: Name of the Resource group within the Azure subscription.
+        :type resource_group_name: str
+        :param namespace_name: The namespace name.
+        :type namespace_name: str
+        :param virtual_network_rule_name: The Virtual Network Rule name.
+        :type virtual_network_rule_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2018-01-01-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.delete_virtual_network_rule.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'virtualNetworkRuleName': self._serialize.url("virtual_network_rule_name", virtual_network_rule_name, 'str', min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.delete(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    delete_virtual_network_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/virtualnetworkrules/{virtualNetworkRuleName}'}  # type: ignore
+
+    async def get_virtual_network_rule(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        virtual_network_rule_name: str,
+        **kwargs
+    ) -> "_models.VirtualNetworkRule":
+        """Gets an VirtualNetworkRule for a Namespace by rule name.
+
+        :param resource_group_name: Name of the Resource group within the Azure subscription.
+        :type resource_group_name: str
+        :param namespace_name: The namespace name.
+        :type namespace_name: str
+        :param virtual_network_rule_name: The Virtual Network Rule name.
+        :type virtual_network_rule_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: VirtualNetworkRule, or the result of cls(response)
+        :rtype: ~azure.mgmt.servicebus.models.VirtualNetworkRule
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkRule"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2018-01-01-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_virtual_network_rule.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'virtualNetworkRuleName': self._serialize.url("virtual_network_rule_name", virtual_network_rule_name, 'str', min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('VirtualNetworkRule', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_virtual_network_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/virtualnetworkrules/{virtualNetworkRuleName}'}  # type: ignore
+
     def list_authorization_rules(
         self,
         resource_group_name: str,
         namespace_name: str,
         **kwargs
-    ) -> AsyncIterable["models.SBAuthorizationRuleListResult"]:
+    ) -> AsyncIterable["_models.SBAuthorizationRuleListResult"]:
         """Gets the authorization rules for a namespace.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -618,7 +1235,7 @@ class NamespacesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicebus.models.SBAuthorizationRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SBAuthorizationRuleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SBAuthorizationRuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -665,7 +1282,7 @@ class NamespacesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -681,9 +1298,9 @@ class NamespacesOperations:
         resource_group_name: str,
         namespace_name: str,
         authorization_rule_name: str,
-        parameters: "models.SBAuthorizationRule",
+        parameters: "_models.SBAuthorizationRule",
         **kwargs
-    ) -> "models.SBAuthorizationRule":
+    ) -> "_models.SBAuthorizationRule":
         """Creates or updates an authorization rule for a namespace.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -699,7 +1316,7 @@ class NamespacesOperations:
         :rtype: ~azure.mgmt.servicebus.models.SBAuthorizationRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SBAuthorizationRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SBAuthorizationRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -736,7 +1353,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SBAuthorizationRule', pipeline_response)
@@ -799,7 +1416,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -813,7 +1430,7 @@ class NamespacesOperations:
         namespace_name: str,
         authorization_rule_name: str,
         **kwargs
-    ) -> "models.SBAuthorizationRule":
+    ) -> "_models.SBAuthorizationRule":
         """Gets an authorization rule for a namespace by rule name.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -827,7 +1444,7 @@ class NamespacesOperations:
         :rtype: ~azure.mgmt.servicebus.models.SBAuthorizationRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SBAuthorizationRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SBAuthorizationRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -859,7 +1476,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SBAuthorizationRule', pipeline_response)
@@ -876,7 +1493,7 @@ class NamespacesOperations:
         namespace_name: str,
         authorization_rule_name: str,
         **kwargs
-    ) -> "models.AccessKeys":
+    ) -> "_models.AccessKeys":
         """Gets the primary and secondary connection strings for the namespace.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -890,7 +1507,7 @@ class NamespacesOperations:
         :rtype: ~azure.mgmt.servicebus.models.AccessKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AccessKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AccessKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -922,7 +1539,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AccessKeys', pipeline_response)
@@ -938,9 +1555,9 @@ class NamespacesOperations:
         resource_group_name: str,
         namespace_name: str,
         authorization_rule_name: str,
-        parameters: "models.RegenerateAccessKeyParameters",
+        parameters: "_models.RegenerateAccessKeyParameters",
         **kwargs
-    ) -> "models.AccessKeys":
+    ) -> "_models.AccessKeys":
         """Regenerates the primary or secondary connection strings for the namespace.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -956,7 +1573,7 @@ class NamespacesOperations:
         :rtype: ~azure.mgmt.servicebus.models.AccessKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AccessKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AccessKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -993,7 +1610,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AccessKeys', pipeline_response)
@@ -1004,11 +1621,70 @@ class NamespacesOperations:
         return deserialized
     regenerate_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/AuthorizationRules/{authorizationRuleName}/regenerateKeys'}  # type: ignore
 
+    async def check_name_availability(
+        self,
+        parameters: "_models.CheckNameAvailability",
+        **kwargs
+    ) -> "_models.CheckNameAvailabilityResult":
+        """Check the give namespace name availability.
+
+        :param parameters: Parameters to check availability of the given namespace name.
+        :type parameters: ~azure.mgmt.servicebus.models.CheckNameAvailability
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: CheckNameAvailabilityResult, or the result of cls(response)
+        :rtype: ~azure.mgmt.servicebus.models.CheckNameAvailabilityResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckNameAvailabilityResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2017-04-01"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.check_name_availability.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(parameters, 'CheckNameAvailability')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('CheckNameAvailabilityResult', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ServiceBus/CheckNameAvailability'}  # type: ignore
+
     async def migrate(
         self,
         resource_group_name: str,
         namespace_name: str,
-        parameters: "models.SBNamespaceMigrate",
+        parameters: "_models.SBNamespaceMigrate",
         **kwargs
     ) -> None:
         """This operation Migrate the given namespace to provided name type.
@@ -1060,211 +1736,10 @@ class NamespacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
     migrate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrate'}  # type: ignore
-
-    async def create_or_update_network_rule_set(
-        self,
-        resource_group_name: str,
-        namespace_name: str,
-        parameters: "models.NetworkRuleSet",
-        **kwargs
-    ) -> "models.NetworkRuleSet":
-        """Create or update NetworkRuleSet for a Namespace.
-
-        :param resource_group_name: Name of the Resource group within the Azure subscription.
-        :type resource_group_name: str
-        :param namespace_name: The namespace name.
-        :type namespace_name: str
-        :param parameters: The Namespace IpFilterRule.
-        :type parameters: ~azure.mgmt.servicebus.models.NetworkRuleSet
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: NetworkRuleSet, or the result of cls(response)
-        :rtype: ~azure.mgmt.servicebus.models.NetworkRuleSet
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkRuleSet"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.create_or_update_network_rule_set.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'NetworkRuleSet')
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('NetworkRuleSet', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    create_or_update_network_rule_set.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/networkRuleSets/default'}  # type: ignore
-
-    async def get_network_rule_set(
-        self,
-        resource_group_name: str,
-        namespace_name: str,
-        **kwargs
-    ) -> "models.NetworkRuleSet":
-        """Gets NetworkRuleSet for a Namespace.
-
-        :param resource_group_name: Name of the Resource group within the Azure subscription.
-        :type resource_group_name: str
-        :param namespace_name: The namespace name.
-        :type namespace_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: NetworkRuleSet, or the result of cls(response)
-        :rtype: ~azure.mgmt.servicebus.models.NetworkRuleSet
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkRuleSet"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.get_network_rule_set.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('NetworkRuleSet', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    get_network_rule_set.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/networkRuleSets/default'}  # type: ignore
-
-    def list_network_rule_sets(
-        self,
-        resource_group_name: str,
-        namespace_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.NetworkRuleSetListResult"]:
-        """Gets list of NetworkRuleSet for a Namespace.
-
-        :param resource_group_name: Name of the Resource group within the Azure subscription.
-        :type resource_group_name: str
-        :param namespace_name: The namespace name.
-        :type namespace_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either NetworkRuleSetListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicebus.models.NetworkRuleSetListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkRuleSetListResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
-        accept = "application/json"
-
-        def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-            if not next_link:
-                # Construct URL
-                url = self.list_network_rule_sets.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-                request = self._client.get(url, query_parameters, header_parameters)
-            else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize('NetworkRuleSetListResult', pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_network_rule_sets.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/networkRuleSets'}  # type: ignore

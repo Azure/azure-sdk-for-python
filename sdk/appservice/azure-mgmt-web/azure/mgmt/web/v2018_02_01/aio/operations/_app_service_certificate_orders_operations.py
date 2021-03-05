@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class AppServiceCertificateOrdersOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,7 +46,7 @@ class AppServiceCertificateOrdersOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.AppServiceCertificateOrderCollection"]:
+    ) -> AsyncIterable["_models.AppServiceCertificateOrderCollection"]:
         """List all certificate orders in a subscription.
 
         List all certificate orders in a subscription.
@@ -56,7 +56,7 @@ class AppServiceCertificateOrdersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateOrderCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceCertificateOrderCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServiceCertificateOrderCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -101,7 +101,7 @@ class AppServiceCertificateOrdersOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -114,7 +114,7 @@ class AppServiceCertificateOrdersOperations:
 
     async def validate_purchase_information(
         self,
-        app_service_certificate_order: "models.AppServiceCertificateOrder",
+        app_service_certificate_order: "_models.AppServiceCertificateOrder",
         **kwargs
     ) -> None:
         """Validate information for a certificate order.
@@ -171,7 +171,7 @@ class AppServiceCertificateOrdersOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.AppServiceCertificateOrderCollection"]:
+    ) -> AsyncIterable["_models.AppServiceCertificateOrderCollection"]:
         """Get certificate orders in a resource group.
 
         Get certificate orders in a resource group.
@@ -183,7 +183,7 @@ class AppServiceCertificateOrdersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateOrderCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceCertificateOrderCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServiceCertificateOrderCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -229,7 +229,7 @@ class AppServiceCertificateOrdersOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -245,7 +245,7 @@ class AppServiceCertificateOrdersOperations:
         resource_group_name: str,
         certificate_order_name: str,
         **kwargs
-    ) -> "models.AppServiceCertificateOrder":
+    ) -> "_models.AppServiceCertificateOrder":
         """Get a certificate order.
 
         Get a certificate order.
@@ -259,7 +259,7 @@ class AppServiceCertificateOrdersOperations:
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateOrder
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceCertificateOrder"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServiceCertificateOrder"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -290,7 +290,7 @@ class AppServiceCertificateOrdersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AppServiceCertificateOrder', pipeline_response)
@@ -305,10 +305,10 @@ class AppServiceCertificateOrdersOperations:
         self,
         resource_group_name: str,
         certificate_order_name: str,
-        certificate_distinguished_name: "models.AppServiceCertificateOrder",
+        certificate_distinguished_name: "_models.AppServiceCertificateOrder",
         **kwargs
-    ) -> "models.AppServiceCertificateOrder":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceCertificateOrder"]
+    ) -> "_models.AppServiceCertificateOrder":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServiceCertificateOrder"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -344,7 +344,7 @@ class AppServiceCertificateOrdersOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -363,9 +363,9 @@ class AppServiceCertificateOrdersOperations:
         self,
         resource_group_name: str,
         certificate_order_name: str,
-        certificate_distinguished_name: "models.AppServiceCertificateOrder",
+        certificate_distinguished_name: "_models.AppServiceCertificateOrder",
         **kwargs
-    ) -> AsyncLROPoller["models.AppServiceCertificateOrder"]:
+    ) -> AsyncLROPoller["_models.AppServiceCertificateOrder"]:
         """Create or update a certificate purchase order.
 
         Create or update a certificate purchase order.
@@ -387,7 +387,7 @@ class AppServiceCertificateOrdersOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceCertificateOrder"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServiceCertificateOrder"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -412,7 +412,13 @@ class AppServiceCertificateOrdersOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'certificateOrderName': self._serialize.url("certificate_order_name", certificate_order_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -485,9 +491,9 @@ class AppServiceCertificateOrdersOperations:
         self,
         resource_group_name: str,
         certificate_order_name: str,
-        certificate_distinguished_name: "models.AppServiceCertificateOrderPatchResource",
+        certificate_distinguished_name: "_models.AppServiceCertificateOrderPatchResource",
         **kwargs
-    ) -> "models.AppServiceCertificateOrder":
+    ) -> "_models.AppServiceCertificateOrder":
         """Create or update a certificate purchase order.
 
         Create or update a certificate purchase order.
@@ -503,7 +509,7 @@ class AppServiceCertificateOrdersOperations:
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateOrder
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceCertificateOrder"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServiceCertificateOrder"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -539,7 +545,7 @@ class AppServiceCertificateOrdersOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -559,7 +565,7 @@ class AppServiceCertificateOrdersOperations:
         resource_group_name: str,
         certificate_order_name: str,
         **kwargs
-    ) -> AsyncIterable["models.AppServiceCertificateCollection"]:
+    ) -> AsyncIterable["_models.AppServiceCertificateCollection"]:
         """List all certificates associated with a certificate order.
 
         List all certificates associated with a certificate order.
@@ -573,7 +579,7 @@ class AppServiceCertificateOrdersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceCertificateCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServiceCertificateCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -620,7 +626,7 @@ class AppServiceCertificateOrdersOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -637,7 +643,7 @@ class AppServiceCertificateOrdersOperations:
         certificate_order_name: str,
         name: str,
         **kwargs
-    ) -> "models.AppServiceCertificateResource":
+    ) -> "_models.AppServiceCertificateResource":
         """Get the certificate associated with a certificate order.
 
         Get the certificate associated with a certificate order.
@@ -653,7 +659,7 @@ class AppServiceCertificateOrdersOperations:
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceCertificateResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServiceCertificateResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -685,7 +691,7 @@ class AppServiceCertificateOrdersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AppServiceCertificateResource', pipeline_response)
@@ -701,10 +707,10 @@ class AppServiceCertificateOrdersOperations:
         resource_group_name: str,
         certificate_order_name: str,
         name: str,
-        key_vault_certificate: "models.AppServiceCertificateResource",
+        key_vault_certificate: "_models.AppServiceCertificateResource",
         **kwargs
-    ) -> "models.AppServiceCertificateResource":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceCertificateResource"]
+    ) -> "_models.AppServiceCertificateResource":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServiceCertificateResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -741,7 +747,7 @@ class AppServiceCertificateOrdersOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -761,9 +767,9 @@ class AppServiceCertificateOrdersOperations:
         resource_group_name: str,
         certificate_order_name: str,
         name: str,
-        key_vault_certificate: "models.AppServiceCertificateResource",
+        key_vault_certificate: "_models.AppServiceCertificateResource",
         **kwargs
-    ) -> AsyncLROPoller["models.AppServiceCertificateResource"]:
+    ) -> AsyncLROPoller["_models.AppServiceCertificateResource"]:
         """Creates or updates a certificate and associates with key vault secret.
 
         Creates or updates a certificate and associates with key vault secret.
@@ -787,7 +793,7 @@ class AppServiceCertificateOrdersOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceCertificateResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServiceCertificateResource"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -813,7 +819,14 @@ class AppServiceCertificateOrdersOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'certificateOrderName': self._serialize.url("certificate_order_name", certificate_order_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -891,9 +904,9 @@ class AppServiceCertificateOrdersOperations:
         resource_group_name: str,
         certificate_order_name: str,
         name: str,
-        key_vault_certificate: "models.AppServiceCertificatePatchResource",
+        key_vault_certificate: "_models.AppServiceCertificatePatchResource",
         **kwargs
-    ) -> "models.AppServiceCertificateResource":
+    ) -> "_models.AppServiceCertificateResource":
         """Creates or updates a certificate and associates with key vault secret.
 
         Creates or updates a certificate and associates with key vault secret.
@@ -911,7 +924,7 @@ class AppServiceCertificateOrdersOperations:
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceCertificateResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServiceCertificateResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -948,7 +961,7 @@ class AppServiceCertificateOrdersOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -967,7 +980,7 @@ class AppServiceCertificateOrdersOperations:
         self,
         resource_group_name: str,
         certificate_order_name: str,
-        reissue_certificate_order_request: "models.ReissueCertificateOrderRequest",
+        reissue_certificate_order_request: "_models.ReissueCertificateOrderRequest",
         **kwargs
     ) -> None:
         """Reissue an existing certificate order.
@@ -1030,7 +1043,7 @@ class AppServiceCertificateOrdersOperations:
         self,
         resource_group_name: str,
         certificate_order_name: str,
-        renew_certificate_order_request: "models.RenewCertificateOrderRequest",
+        renew_certificate_order_request: "_models.RenewCertificateOrderRequest",
         **kwargs
     ) -> None:
         """Renew an existing certificate order.
@@ -1148,7 +1161,7 @@ class AppServiceCertificateOrdersOperations:
         self,
         resource_group_name: str,
         certificate_order_name: str,
-        name_identifier: "models.NameIdentifier",
+        name_identifier: "_models.NameIdentifier",
         **kwargs
     ) -> None:
         """Verify domain ownership for this certificate order.
@@ -1211,9 +1224,9 @@ class AppServiceCertificateOrdersOperations:
         self,
         resource_group_name: str,
         certificate_order_name: str,
-        site_seal_request: "models.SiteSealRequest",
+        site_seal_request: "_models.SiteSealRequest",
         **kwargs
-    ) -> "models.SiteSeal":
+    ) -> "_models.SiteSeal":
         """Verify domain ownership for this certificate order.
 
         Verify domain ownership for this certificate order.
@@ -1229,7 +1242,7 @@ class AppServiceCertificateOrdersOperations:
         :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteSeal
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteSeal"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteSeal"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1265,7 +1278,7 @@ class AppServiceCertificateOrdersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteSeal', pipeline_response)
@@ -1336,7 +1349,7 @@ class AppServiceCertificateOrdersOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> List["models.CertificateOrderAction"]:
+    ) -> List["_models.CertificateOrderAction"]:
         """Retrieve the list of certificate actions.
 
         Retrieve the list of certificate actions.
@@ -1350,7 +1363,7 @@ class AppServiceCertificateOrdersOperations:
         :rtype: list[~azure.mgmt.web.v2018_02_01.models.CertificateOrderAction]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.CertificateOrderAction"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.CertificateOrderAction"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1381,7 +1394,7 @@ class AppServiceCertificateOrdersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[CertificateOrderAction]', pipeline_response)
@@ -1397,7 +1410,7 @@ class AppServiceCertificateOrdersOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> List["models.CertificateEmail"]:
+    ) -> List["_models.CertificateEmail"]:
         """Retrieve email history.
 
         Retrieve email history.
@@ -1411,7 +1424,7 @@ class AppServiceCertificateOrdersOperations:
         :rtype: list[~azure.mgmt.web.v2018_02_01.models.CertificateEmail]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.CertificateEmail"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.CertificateEmail"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1442,7 +1455,7 @@ class AppServiceCertificateOrdersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[CertificateEmail]', pipeline_response)

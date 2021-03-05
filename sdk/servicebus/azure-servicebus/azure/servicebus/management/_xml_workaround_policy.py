@@ -14,13 +14,14 @@ class ServiceBusXMLWorkaroundPolicy(SansIOHTTPPolicy):
     in the following xml. This workaround is to remove it.
 
     <ns0:content type="application/xml">
-		<ns1:RuleDescription>
-			<ns1:Filter xsi:type="CorrelationFilter">
-				<ns1:CorrelationId>1</ns1:CorrelationId>
-				<ns1:MessageId>1</ns1:MessageId>
-	    ...
-	</ns0:content>
+        <ns1:RuleDescription>
+            <ns1:Filter xsi:type="CorrelationFilter">
+                <ns1:CorrelationId>1</ns1:CorrelationId>
+                <ns1:MessageId>1</ns1:MessageId>
+            ...
+    </ns0:content>
     """
+
     def on_request(self, request):
         # type: (PipelineRequest) -> None
         """Mutate serialized (QueueDescription, TopicDescription, SubscriptionDescription, RuleDescription)
@@ -31,9 +32,9 @@ class ServiceBusXMLWorkaroundPolicy(SansIOHTTPPolicy):
         """
         request_body = request.http_request.body
         if request_body:
-            if b'<ns1:' in request_body:
-                request_body = request_body.replace(b'ns1:', b'')
-                request_body = request_body.replace(b':ns1', b'')
+            if b"<ns1:" in request_body:
+                request_body = request_body.replace(b"ns1:", b"")
+                request_body = request_body.replace(b":ns1", b"")
             request.http_request.body = request_body
             request.http_request.data = request_body
             request.http_request.headers["Content-Length"] = str(len(request_body))

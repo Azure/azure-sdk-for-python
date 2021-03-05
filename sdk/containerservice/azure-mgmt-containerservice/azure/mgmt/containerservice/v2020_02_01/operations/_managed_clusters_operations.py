@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class ManagedClustersOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class ManagedClustersOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ManagedClusterListResult"]
+        # type: (...) -> Iterable["_models.ManagedClusterListResult"]
         """Gets a list of managed clusters in the specified subscription.
 
         Gets a list of managed clusters in the specified subscription. The operation returns properties
@@ -62,7 +62,7 @@ class ManagedClustersOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerservice.v2020_02_01.models.ManagedClusterListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedClusterListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedClusterListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -122,7 +122,7 @@ class ManagedClustersOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ManagedClusterListResult"]
+        # type: (...) -> Iterable["_models.ManagedClusterListResult"]
         """Lists managed clusters in the specified subscription and resource group.
 
         Lists managed clusters in the specified subscription and resource group. The operation returns
@@ -135,7 +135,7 @@ class ManagedClustersOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerservice.v2020_02_01.models.ManagedClusterListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedClusterListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedClusterListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -197,7 +197,7 @@ class ManagedClustersOperations(object):
         resource_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ManagedClusterUpgradeProfile"
+        # type: (...) -> "_models.ManagedClusterUpgradeProfile"
         """Gets upgrade profile for a managed cluster.
 
         Gets the details of the upgrade profile for a managed cluster with a specified resource group
@@ -212,7 +212,7 @@ class ManagedClustersOperations(object):
         :rtype: ~azure.mgmt.containerservice.v2020_02_01.models.ManagedClusterUpgradeProfile
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedClusterUpgradeProfile"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedClusterUpgradeProfile"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -260,7 +260,7 @@ class ManagedClustersOperations(object):
         role_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ManagedClusterAccessProfile"
+        # type: (...) -> "_models.ManagedClusterAccessProfile"
         """Gets an access profile of a managed cluster.
 
         Gets the accessProfile for the specified role name of the managed cluster with a specified
@@ -277,7 +277,7 @@ class ManagedClustersOperations(object):
         :rtype: ~azure.mgmt.containerservice.v2020_02_01.models.ManagedClusterAccessProfile
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedClusterAccessProfile"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedClusterAccessProfile"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -325,7 +325,7 @@ class ManagedClustersOperations(object):
         resource_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CredentialResults"
+        # type: (...) -> "_models.CredentialResults"
         """Gets cluster admin credential of a managed cluster.
 
         Gets cluster admin credential of the managed cluster with a specified resource group and name.
@@ -339,7 +339,7 @@ class ManagedClustersOperations(object):
         :rtype: ~azure.mgmt.containerservice.v2020_02_01.models.CredentialResults
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CredentialResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CredentialResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -386,7 +386,7 @@ class ManagedClustersOperations(object):
         resource_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CredentialResults"
+        # type: (...) -> "_models.CredentialResults"
         """Gets cluster user credential of a managed cluster.
 
         Gets cluster user credential of the managed cluster with a specified resource group and name.
@@ -400,7 +400,7 @@ class ManagedClustersOperations(object):
         :rtype: ~azure.mgmt.containerservice.v2020_02_01.models.CredentialResults
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CredentialResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CredentialResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -447,7 +447,7 @@ class ManagedClustersOperations(object):
         resource_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CredentialResults"
+        # type: (...) -> "_models.CredentialResults"
         """Gets cluster monitoring user credential of a managed cluster.
 
         Gets cluster monitoring user credential of the managed cluster with a specified resource group
@@ -462,7 +462,7 @@ class ManagedClustersOperations(object):
         :rtype: ~azure.mgmt.containerservice.v2020_02_01.models.CredentialResults
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CredentialResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CredentialResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -509,7 +509,7 @@ class ManagedClustersOperations(object):
         resource_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ManagedCluster"
+        # type: (...) -> "_models.ManagedCluster"
         """Gets a managed cluster.
 
         Gets the details of the managed cluster with a specified resource group and name.
@@ -523,7 +523,7 @@ class ManagedClustersOperations(object):
         :rtype: ~azure.mgmt.containerservice.v2020_02_01.models.ManagedCluster
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedCluster"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedCluster"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -568,11 +568,11 @@ class ManagedClustersOperations(object):
         self,
         resource_group_name,  # type: str
         resource_name,  # type: str
-        parameters,  # type: "models.ManagedCluster"
+        parameters,  # type: "_models.ManagedCluster"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ManagedCluster"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedCluster"]
+        # type: (...) -> "_models.ManagedCluster"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedCluster"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -626,10 +626,10 @@ class ManagedClustersOperations(object):
         self,
         resource_group_name,  # type: str
         resource_name,  # type: str
-        parameters,  # type: "models.ManagedCluster"
+        parameters,  # type: "_models.ManagedCluster"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ManagedCluster"]
+        # type: (...) -> LROPoller["_models.ManagedCluster"]
         """Creates or updates a managed cluster.
 
         Creates or updates a managed cluster with the specified configuration for agents and Kubernetes
@@ -652,7 +652,7 @@ class ManagedClustersOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedCluster"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedCluster"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -677,7 +677,13 @@ class ManagedClustersOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=63, min_length=1, pattern=r'^[a-zA-Z0-9]$|^[a-zA-Z0-9][-_a-zA-Z0-9]{0,61}[a-zA-Z0-9]$'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -695,11 +701,11 @@ class ManagedClustersOperations(object):
         self,
         resource_group_name,  # type: str
         resource_name,  # type: str
-        parameters,  # type: "models.TagsObject"
+        parameters,  # type: "_models.TagsObject"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ManagedCluster"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedCluster"]
+        # type: (...) -> "_models.ManagedCluster"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedCluster"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -749,10 +755,10 @@ class ManagedClustersOperations(object):
         self,
         resource_group_name,  # type: str
         resource_name,  # type: str
-        parameters,  # type: "models.TagsObject"
+        parameters,  # type: "_models.TagsObject"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ManagedCluster"]
+        # type: (...) -> LROPoller["_models.ManagedCluster"]
         """Updates tags on a managed cluster.
 
         Updates a managed cluster with the specified tags.
@@ -774,7 +780,7 @@ class ManagedClustersOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedCluster"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedCluster"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -799,7 +805,13 @@ class ManagedClustersOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=63, min_length=1, pattern=r'^[a-zA-Z0-9]$|^[a-zA-Z0-9][-_a-zA-Z0-9]{0,61}[a-zA-Z0-9]$'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -905,7 +917,13 @@ class ManagedClustersOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=63, min_length=1, pattern=r'^[a-zA-Z0-9]$|^[a-zA-Z0-9][-_a-zA-Z0-9]{0,61}[a-zA-Z0-9]$'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -923,7 +941,7 @@ class ManagedClustersOperations(object):
         self,
         resource_group_name,  # type: str
         resource_name,  # type: str
-        parameters,  # type: "models.ManagedClusterServicePrincipalProfile"
+        parameters,  # type: "_models.ManagedClusterServicePrincipalProfile"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -974,7 +992,7 @@ class ManagedClustersOperations(object):
         self,
         resource_group_name,  # type: str
         resource_name,  # type: str
-        parameters,  # type: "models.ManagedClusterServicePrincipalProfile"
+        parameters,  # type: "_models.ManagedClusterServicePrincipalProfile"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -1022,7 +1040,13 @@ class ManagedClustersOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=63, min_length=1, pattern=r'^[a-zA-Z0-9]$|^[a-zA-Z0-9][-_a-zA-Z0-9]{0,61}[a-zA-Z0-9]$'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1040,7 +1064,7 @@ class ManagedClustersOperations(object):
         self,
         resource_group_name,  # type: str
         resource_name,  # type: str
-        parameters,  # type: "models.ManagedClusterAADProfile"
+        parameters,  # type: "_models.ManagedClusterAADProfile"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -1091,7 +1115,7 @@ class ManagedClustersOperations(object):
         self,
         resource_group_name,  # type: str
         resource_name,  # type: str
-        parameters,  # type: "models.ManagedClusterAADProfile"
+        parameters,  # type: "_models.ManagedClusterAADProfile"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -1139,7 +1163,13 @@ class ManagedClustersOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=63, min_length=1, pattern=r'^[a-zA-Z0-9]$|^[a-zA-Z0-9][-_a-zA-Z0-9]{0,61}[a-zA-Z0-9]$'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1245,7 +1275,13 @@ class ManagedClustersOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=63, min_length=1, pattern=r'^[a-zA-Z0-9]$|^[a-zA-Z0-9][-_a-zA-Z0-9]{0,61}[a-zA-Z0-9]$'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

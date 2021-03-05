@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -29,7 +29,7 @@ class WebSiteManagementClientOperationsMixin(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.User"
+        # type: (...) -> "_models.User"
         """Gets publishing user.
 
         Gets publishing user.
@@ -39,7 +39,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2016_03_01.models.User
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.User"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.User"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -76,10 +76,10 @@ class WebSiteManagementClientOperationsMixin(object):
 
     def update_publishing_user(
         self,
-        user_details,  # type: "models.User"
+        user_details,  # type: "_models.User"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.User"
+        # type: (...) -> "_models.User"
         """Updates publishing user.
 
         Updates publishing user.
@@ -91,7 +91,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2016_03_01.models.User
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.User"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.User"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -135,7 +135,7 @@ class WebSiteManagementClientOperationsMixin(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SourceControlCollection"]
+        # type: (...) -> Iterable["_models.SourceControlCollection"]
         """Gets the source controls available for Azure websites.
 
         Gets the source controls available for Azure websites.
@@ -145,7 +145,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2016_03_01.models.SourceControlCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SourceControlCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SourceControlCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -201,7 +201,7 @@ class WebSiteManagementClientOperationsMixin(object):
         source_control_type,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SourceControl"
+        # type: (...) -> "_models.SourceControl"
         """Gets source control token.
 
         Gets source control token.
@@ -213,7 +213,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2016_03_01.models.SourceControl
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SourceControl"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SourceControl"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -255,10 +255,10 @@ class WebSiteManagementClientOperationsMixin(object):
     def update_source_control(
         self,
         source_control_type,  # type: str
-        request_message,  # type: "models.SourceControl"
+        request_message,  # type: "_models.SourceControl"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SourceControl"
+        # type: (...) -> "_models.SourceControl"
         """Updates source control token.
 
         Updates source control token.
@@ -272,7 +272,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2016_03_01.models.SourceControl
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SourceControl"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SourceControl"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -319,11 +319,11 @@ class WebSiteManagementClientOperationsMixin(object):
     def check_name_availability(
         self,
         name,  # type: str
-        type,  # type: Union[str, "models.CheckNameResourceTypes"]
+        type,  # type: Union[str, "_models.CheckNameResourceTypes"]
         is_fqdn=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ResourceNameAvailability"
+        # type: (...) -> "_models.ResourceNameAvailability"
         """Check if a resource name is available.
 
         Check if a resource name is available.
@@ -339,13 +339,13 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2016_03_01.models.ResourceNameAvailability
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceNameAvailability"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceNameAvailability"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _request = models.ResourceNameAvailabilityRequest(name=name, type=type, is_fqdn=is_fqdn)
+        _request = _models.ResourceNameAvailabilityRequest(name=name, type=type, is_fqdn=is_fqdn)
         api_version = "2016-03-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -389,7 +389,7 @@ class WebSiteManagementClientOperationsMixin(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeploymentLocations"
+        # type: (...) -> "_models.DeploymentLocations"
         """Gets list of available geo regions plus ministamps.
 
         Gets list of available geo regions plus ministamps.
@@ -399,7 +399,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2016_03_01.models.DeploymentLocations
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentLocations"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentLocations"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -440,11 +440,11 @@ class WebSiteManagementClientOperationsMixin(object):
 
     def list_geo_regions(
         self,
-        sku=None,  # type: Optional[Union[str, "models.SkuName"]]
+        sku=None,  # type: Optional[Union[str, "_models.SkuName"]]
         linux_workers_enabled=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.GeoRegionCollection"]
+        # type: (...) -> Iterable["_models.GeoRegionCollection"]
         """Get a list of available geographical regions.
 
         Get a list of available geographical regions.
@@ -459,7 +459,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2016_03_01.models.GeoRegionCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GeoRegionCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GeoRegionCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -520,10 +520,10 @@ class WebSiteManagementClientOperationsMixin(object):
 
     def list_site_identifiers_assigned_to_host_name(
         self,
-        name_identifier,  # type: "models.NameIdentifier"
+        name_identifier,  # type: "_models.NameIdentifier"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.IdentifierCollection"]
+        # type: (...) -> Iterable["_models.IdentifierCollection"]
         """List all apps that are assigned to a hostname.
 
         List all apps that are assigned to a hostname.
@@ -535,7 +535,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2016_03_01.models.IdentifierCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IdentifierCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IdentifierCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -602,7 +602,7 @@ class WebSiteManagementClientOperationsMixin(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PremierAddOnOfferCollection"]
+        # type: (...) -> Iterable["_models.PremierAddOnOfferCollection"]
         """List all premier add-on offers.
 
         List all premier add-on offers.
@@ -612,7 +612,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2016_03_01.models.PremierAddOnOfferCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PremierAddOnOfferCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PremierAddOnOfferCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -671,7 +671,7 @@ class WebSiteManagementClientOperationsMixin(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SkuInfos"
+        # type: (...) -> "_models.SkuInfos"
         """List all SKUs.
 
         List all SKUs.
@@ -681,7 +681,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2016_03_01.models.SkuInfos
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SkuInfos"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SkuInfos"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -722,10 +722,10 @@ class WebSiteManagementClientOperationsMixin(object):
 
     def verify_hosting_environment_vnet(
         self,
-        parameters,  # type: "models.VnetParameters"
+        parameters,  # type: "_models.VnetParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VnetValidationFailureDetails"
+        # type: (...) -> "_models.VnetValidationFailureDetails"
         """Verifies if this VNET is compatible with an App Service Environment by analyzing the Network Security Group rules.
 
         Verifies if this VNET is compatible with an App Service Environment by analyzing the Network
@@ -738,7 +738,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2016_03_01.models.VnetValidationFailureDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetValidationFailureDetails"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VnetValidationFailureDetails"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -785,7 +785,7 @@ class WebSiteManagementClientOperationsMixin(object):
     def move(
         self,
         resource_group_name,  # type: str
-        move_resource_envelope,  # type: "models.CsmMoveResourceEnvelope"
+        move_resource_envelope,  # type: "_models.CsmMoveResourceEnvelope"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -845,10 +845,10 @@ class WebSiteManagementClientOperationsMixin(object):
     def validate(
         self,
         resource_group_name,  # type: str
-        validate_request,  # type: "models.ValidateRequest"
+        validate_request,  # type: "_models.ValidateRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ValidateResponse"
+        # type: (...) -> "_models.ValidateResponse"
         """Validate if a resource can be created.
 
         Validate if a resource can be created.
@@ -862,7 +862,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2016_03_01.models.ValidateResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ValidateResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ValidateResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -910,7 +910,7 @@ class WebSiteManagementClientOperationsMixin(object):
     def validate_move(
         self,
         resource_group_name,  # type: str
-        move_resource_envelope,  # type: "models.CsmMoveResourceEnvelope"
+        move_resource_envelope,  # type: "_models.CsmMoveResourceEnvelope"
         **kwargs  # type: Any
     ):
         # type: (...) -> None

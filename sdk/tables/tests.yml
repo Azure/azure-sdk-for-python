@@ -1,11 +1,13 @@
 trigger: none
 
-jobs:
-  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+stages:
+  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       BuildTargetingString: azure-data-tables
       ServiceDirectory: tables
-      AllocateResourceGroup: 'false'
+      AllocateResourceGroup: false
+      DeployArmTemplate: true
+      TestSamples: true
       EnvVars:
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)

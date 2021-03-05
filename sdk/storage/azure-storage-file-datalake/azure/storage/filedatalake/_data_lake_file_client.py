@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from io import BytesIO
+from typing import Any
 
 try:
     from urllib.parse import quote, unquote
@@ -12,13 +13,13 @@ except ImportError:
 
 import six
 
+from azure.core.exceptions import HttpResponseError
 from ._quick_query_helper import DataLakeFileQueryReader
 from ._shared.base_client import parse_connection_str
 from ._shared.request_handlers import get_length, read_length
 from ._shared.response_handlers import return_response_headers
 from ._shared.uploads import IterStreamer
 from ._upload_helper import upload_datalake_file
-from ._generated.models import StorageErrorException
 from ._download import StorageStreamDownloader
 from ._path_client import PathClient
 from ._serialize import get_mod_conditions, get_path_http_headers, get_access_conditions, add_metadata_headers, \
@@ -47,9 +48,11 @@ class DataLakeFileClient(PathClient):
     :type file_path: str
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, and account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the URL already has a SAS token, specifying an explicit credential will take priority.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
 
     .. admonition:: Example:
 
@@ -93,7 +96,8 @@ class DataLakeFileClient(PathClient):
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, and account shared access
+            access key values. The value can be a SAS token string,
+            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
         :return a DataLakeFileClient
@@ -445,7 +449,7 @@ class DataLakeFileClient(PathClient):
             **kwargs)
         try:
             return self._client.path.append_data(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @staticmethod
@@ -536,7 +540,7 @@ class DataLakeFileClient(PathClient):
             retain_uncommitted_data=retain_uncommitted_data, **kwargs)
         try:
             return self._client.path.flush_data(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def download_file(self, offset=None, length=None, **kwargs):
@@ -636,9 +640,19 @@ class DataLakeFileClient(PathClient):
         """
         return self._blob_client.create_snapshot(metadata, **kwargs) # type: ignore
 
-    def rename_file(self, new_name,  # type: str
-                    **kwargs):
-        # type: (**Any) -> DataLakeFileClient
+    def exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a file exists and returns False otherwise.
+
+        :kwarg int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        return self._exists(**kwargs)
+
+    def rename_file(self, new_name, **kwargs):
+        # type: (str, **Any) -> DataLakeFileClient
         """
         Rename the source file.
 

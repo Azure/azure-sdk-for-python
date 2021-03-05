@@ -11,11 +11,11 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.1.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 8a6b42e2-f477-11ea-a588-001a7dda7113
+      - 1b9fe46c-38ce-11eb-9601-001a7dda7113
       x-ms-date:
-      - Fri, 11 Sep 2020 21:41:24 GMT
+      - Mon, 07 Dec 2020 20:52:24 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -29,13 +29,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 11 Sep 2020 21:41:24 GMT
+      - Mon, 07 Dec 2020 20:52:23 GMT
       ETag:
-      - '"0x8D8569B6EDE9D6F"'
+      - '"0x8D89AF200232944"'
       Last-Modified:
-      - Fri, 11 Sep 2020 21:41:25 GMT
+      - Mon, 07 Dec 2020 20:52:24 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - ddbf5a49-d01f-0006-7684-881999000000
+      - 807a4670-d01f-00bc-48da-cc20e0000000
       x-ms-version:
       - '2020-02-10'
     status:
@@ -59,11 +61,11 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-dfs/12.1.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 8ac7d776-f477-11ea-aed4-001a7dda7113
+      - 1bf5a4f8-38ce-11eb-996c-001a7dda7113
       x-ms-date:
-      - Fri, 11 Sep 2020 21:41:25 GMT
+      - Mon, 07 Dec 2020 20:52:24 GMT
       x-ms-version:
       - '2020-02-10'
     method: PATCH
@@ -75,11 +77,13 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 11 Sep 2020 21:41:24 GMT
+      - Mon, 07 Dec 2020 20:52:24 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - ddbf5a4a-d01f-0006-7784-881999000000
+      - 807a4671-d01f-00bc-49da-cc20e0000000
       x-ms-request-server-encrypted:
-      - 'false'
+      - 'true'
       x-ms-version:
       - '2020-02-10'
     status:
@@ -97,17 +101,17 @@ interactions:
       Content-Length:
       - '0'
       If-Match:
-      - '"0x8D8569B6EDE9D6F"'
+      - '"0x8D89AF200232944"'
       User-Agent:
-      - azsdk-python-storage-dfs/12.1.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 8ad4d4b0-f477-11ea-b511-001a7dda7113
+      - 1c0c581c-38ce-11eb-a2d8-001a7dda7113
       x-ms-date:
-      - Fri, 11 Sep 2020 21:41:25 GMT
+      - Mon, 07 Dec 2020 20:52:24 GMT
       x-ms-version:
       - '2020-02-10'
     method: PATCH
-    uri: https://storagename.dfs.core.windows.net/utqqcontainer9d4d1789/csvfile9d4d1789?position=32&action=flush
+    uri: https://storagename.dfs.core.windows.net/utqqcontainer9d4d1789/csvfile9d4d1789?position=32&close=true&action=flush
   response:
     body:
       string: ''
@@ -115,13 +119,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 11 Sep 2020 21:41:24 GMT
+      - Mon, 07 Dec 2020 20:52:24 GMT
       ETag:
-      - '"0x8D8569B6EF8B486"'
+      - '"0x8D89AF200536F83"'
       Last-Modified:
-      - Fri, 11 Sep 2020 21:41:25 GMT
+      - Mon, 07 Dec 2020 20:52:25 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - ddbf5a4b-d01f-0006-7884-881999000000
+      - 807a4672-d01f-00bc-4ada-cc20e0000000
       x-ms-request-server-encrypted:
       - 'false'
       x-ms-version:
@@ -146,11 +152,11 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-dfs/12.1.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 8ae1c068-f477-11ea-a8a8-001a7dda7113
+      - 1c261666-38ce-11eb-ba10-001a7dda7113
       x-ms-date:
-      - Fri, 11 Sep 2020 21:41:25 GMT
+      - Mon, 07 Dec 2020 20:52:25 GMT
       x-ms-version:
       - '2020-02-10'
     method: POST
@@ -192,39 +198,43 @@ interactions:
         aGF0IGFsbCByZXN1bHRzIGhhdmUgYmVlbiBzZW50LiIsCiAgICAiZmllbGRzIjogWwogICAgICB7
         CiAgICAgICAgIm5hbWUiOiAidG90YWxCeXRlcyIsCiAgICAgICAgInR5cGUiOiAibG9uZyIsCiAg
         ICAgICAgImRvYyI6ICJUaGUgdG90YWwgbnVtYmVyIG9mIGJ5dGVzIHRvIGJlIHNjYW5uZWQgaW4g
-        dGhpcyBxdWVyeSIKICAgICAgfQogICAgXQogIH0KXQoAx7a7c8s6SUGx6YZlanjA4QL2AwDwA///
+        dGhpcyBxdWVyeSIKICAgICAgfQogICAgXQogIH0KXQoARqP3wuZdrEKJENLgeVxZCgL2AwDwA///
         //94AAAAEAAAAAAACgAMAAYABQAIAAoAAAAAAQMADAAAAAgACAAAAAQACAAAAAQAAAABAAAAFAAA
         ABAAFAAIAAYABwAMAAAAEAAQAAAAAAABByQAAAAUAAAABAAAAAAAAAAIAAwABAAIAAgAAAAEAAAA
         AgAAAAMAAABhYmMA/////3AAAAAQAAAAAAAKAA4ABgAFAAgACgAAAAADAwAQAAAAAAAKAAwAAAAE
         AAgACgAAADAAAAAEAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEA
-        AAAAAAAAAAAAAAAAAAAAAAAAx7a7c8s6SUGx6YZlanjA4QLGAgDAAv////+IAAAAFAAAAAAAAAAM
+        AAAAAAAAAAAAAAAAAAAAAAAARqP3wuZdrEKJENLgeVxZCgLGAgDAAv////+IAAAAFAAAAAAAAAAM
         ABYABgAFAAgADAAMAAAAAAMDABgAAAAQAAAAAAAAAAAACgAYAAwABAAIAAoAAAA8AAAAEAAAAAEA
         AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAABAAAAAQAA
-        AAAAAAAAAAAAAAAAAJABAAAAAAAAAAAAAAAAAADHtrtzyzpJQbHphmVqeMDhAgYEQEDHtrtzyzpJ
-        QbHphmVqeMDhAgQGQMe2u3PLOklBsemGZWp4wOE=
+        AAAAAAAAAAAAAAAAAJABAAAAAAAAAAAAAAAAAABGo/fC5l2sQokQ0uB5XFkKAgYEQEBGo/fC5l2s
+        QokQ0uB5XFkKAgQGQEaj98LmXaxCiRDS4HlcWQo=
     headers:
       Accept-Ranges:
       - bytes
       Content-Type:
       - avro/binary
       Date:
-      - Fri, 11 Sep 2020 21:41:25 GMT
+      - Mon, 07 Dec 2020 20:52:26 GMT
       ETag:
-      - '"0x8D8569B6EF8B486"'
+      - '"0x8D89AF200536F83"'
       Last-Modified:
-      - Fri, 11 Sep 2020 21:41:25 GMT
+      - Mon, 07 Dec 2020 20:52:25 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
       - chunked
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Fri, 11 Sep 2020 21:41:25 GMT
+      - Mon, 07 Dec 2020 20:52:24 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
       - unlocked
       x-ms-request-id:
-      - 07a14690-801e-0008-3e84-88d877000000
+      - 7b7b2fb0-f01e-00c9-2ada-cc4bcc000000
+      x-ms-server-encrypted:
+      - 'false'
       x-ms-version:
       - '2020-02-10'
     status:

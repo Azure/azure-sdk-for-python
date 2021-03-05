@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class DedicatedHostGroupsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,9 +45,9 @@ class DedicatedHostGroupsOperations:
         self,
         resource_group_name: str,
         host_group_name: str,
-        parameters: "models.DedicatedHostGroup",
+        parameters: "_models.DedicatedHostGroup",
         **kwargs
-    ) -> "models.DedicatedHostGroup":
+    ) -> "_models.DedicatedHostGroup":
         """Create or update a dedicated host group. For details of Dedicated Host and Dedicated Host
         Groups please see [Dedicated Host Documentation]
         (https://go.microsoft.com/fwlink/?linkid=2082596).
@@ -63,7 +63,7 @@ class DedicatedHostGroupsOperations:
         :rtype: ~azure.mgmt.compute.v2019_12_01.models.DedicatedHostGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DedicatedHostGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DedicatedHostGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -117,9 +117,9 @@ class DedicatedHostGroupsOperations:
         self,
         resource_group_name: str,
         host_group_name: str,
-        parameters: "models.DedicatedHostGroupUpdate",
+        parameters: "_models.DedicatedHostGroupUpdate",
         **kwargs
-    ) -> "models.DedicatedHostGroup":
+    ) -> "_models.DedicatedHostGroup":
         """Update an dedicated host group.
 
         :param resource_group_name: The name of the resource group.
@@ -133,7 +133,7 @@ class DedicatedHostGroupsOperations:
         :rtype: ~azure.mgmt.compute.v2019_12_01.models.DedicatedHostGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DedicatedHostGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DedicatedHostGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -237,7 +237,7 @@ class DedicatedHostGroupsOperations:
         resource_group_name: str,
         host_group_name: str,
         **kwargs
-    ) -> "models.DedicatedHostGroup":
+    ) -> "_models.DedicatedHostGroup":
         """Retrieves information about a dedicated host group.
 
         :param resource_group_name: The name of the resource group.
@@ -249,7 +249,7 @@ class DedicatedHostGroupsOperations:
         :rtype: ~azure.mgmt.compute.v2019_12_01.models.DedicatedHostGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DedicatedHostGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DedicatedHostGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -294,7 +294,7 @@ class DedicatedHostGroupsOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.DedicatedHostGroupListResult"]:
+    ) -> AsyncIterable["_models.DedicatedHostGroupListResult"]:
         """Lists all of the dedicated host groups in the specified resource group. Use the nextLink
         property in the response to get the next page of dedicated host groups.
 
@@ -305,7 +305,7 @@ class DedicatedHostGroupsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.v2019_12_01.models.DedicatedHostGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DedicatedHostGroupListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DedicatedHostGroupListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -364,7 +364,7 @@ class DedicatedHostGroupsOperations:
     def list_by_subscription(
         self,
         **kwargs
-    ) -> AsyncIterable["models.DedicatedHostGroupListResult"]:
+    ) -> AsyncIterable["_models.DedicatedHostGroupListResult"]:
         """Lists all of the dedicated host groups in the subscription. Use the nextLink property in the
         response to get the next page of dedicated host groups.
 
@@ -373,7 +373,7 @@ class DedicatedHostGroupsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.v2019_12_01.models.DedicatedHostGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DedicatedHostGroupListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DedicatedHostGroupListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

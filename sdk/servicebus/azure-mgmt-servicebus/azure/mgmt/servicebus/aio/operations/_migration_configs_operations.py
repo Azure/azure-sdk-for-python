@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class MigrationConfigsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,7 +48,7 @@ class MigrationConfigsOperations:
         resource_group_name: str,
         namespace_name: str,
         **kwargs
-    ) -> AsyncIterable["models.MigrationConfigListResult"]:
+    ) -> AsyncIterable["_models.MigrationConfigListResult"]:
         """Gets all migrationConfigurations.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -60,7 +60,7 @@ class MigrationConfigsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicebus.models.MigrationConfigListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MigrationConfigListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MigrationConfigListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -107,7 +107,7 @@ class MigrationConfigsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -122,11 +122,11 @@ class MigrationConfigsOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        config_name: Union[str, "models.MigrationConfigurationName"],
-        parameters: "models.MigrationConfigProperties",
+        config_name: Union[str, "_models.MigrationConfigurationName"],
+        parameters: "_models.MigrationConfigProperties",
         **kwargs
-    ) -> Optional["models.MigrationConfigProperties"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.MigrationConfigProperties"]]
+    ) -> Optional["_models.MigrationConfigProperties"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MigrationConfigProperties"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -163,7 +163,7 @@ class MigrationConfigsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -180,10 +180,10 @@ class MigrationConfigsOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        config_name: Union[str, "models.MigrationConfigurationName"],
-        parameters: "models.MigrationConfigProperties",
+        config_name: Union[str, "_models.MigrationConfigurationName"],
+        parameters: "_models.MigrationConfigProperties",
         **kwargs
-    ) -> AsyncLROPoller["models.MigrationConfigProperties"]:
+    ) -> AsyncLROPoller["_models.MigrationConfigProperties"]:
         """Creates Migration configuration and starts migration of entities from Standard to Premium
         namespace.
 
@@ -206,7 +206,7 @@ class MigrationConfigsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MigrationConfigProperties"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MigrationConfigProperties"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -232,7 +232,14 @@ class MigrationConfigsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'configName': self._serialize.url("config_name", config_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -250,7 +257,7 @@ class MigrationConfigsOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        config_name: Union[str, "models.MigrationConfigurationName"],
+        config_name: Union[str, "_models.MigrationConfigurationName"],
         **kwargs
     ) -> None:
         """Deletes a MigrationConfiguration.
@@ -298,7 +305,7 @@ class MigrationConfigsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -310,9 +317,9 @@ class MigrationConfigsOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        config_name: Union[str, "models.MigrationConfigurationName"],
+        config_name: Union[str, "_models.MigrationConfigurationName"],
         **kwargs
-    ) -> "models.MigrationConfigProperties":
+    ) -> "_models.MigrationConfigProperties":
         """Retrieves Migration Config.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
@@ -326,7 +333,7 @@ class MigrationConfigsOperations:
         :rtype: ~azure.mgmt.servicebus.models.MigrationConfigProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MigrationConfigProperties"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MigrationConfigProperties"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -358,7 +365,7 @@ class MigrationConfigsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MigrationConfigProperties', pipeline_response)
@@ -373,7 +380,7 @@ class MigrationConfigsOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        config_name: Union[str, "models.MigrationConfigurationName"],
+        config_name: Union[str, "_models.MigrationConfigurationName"],
         **kwargs
     ) -> None:
         """This operation Completes Migration of entities by pointing the connection strings to Premium
@@ -423,7 +430,7 @@ class MigrationConfigsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -435,7 +442,7 @@ class MigrationConfigsOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        config_name: Union[str, "models.MigrationConfigurationName"],
+        config_name: Union[str, "_models.MigrationConfigurationName"],
         **kwargs
     ) -> None:
         """This operation reverts Migration.
@@ -483,7 +490,7 @@ class MigrationConfigsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

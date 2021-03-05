@@ -82,8 +82,8 @@ def _build_auth_record(response):
 
 class InteractiveCredential(MsalCredential):
     def __init__(self, **kwargs):
-        self._disable_automatic_authentication = kwargs.pop("_disable_automatic_authentication", False)
-        self._auth_record = kwargs.pop("_authentication_record", None)  # type: Optional[AuthenticationRecord]
+        self._disable_automatic_authentication = kwargs.pop("disable_automatic_authentication", False)
+        self._auth_record = kwargs.pop("authentication_record", None)  # type: Optional[AuthenticationRecord]
         if self._auth_record:
             kwargs.pop("client_id", None)  # authentication_record overrides client_id argument
             tenant_id = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id
@@ -103,11 +103,15 @@ class InteractiveCredential(MsalCredential):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+        :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
+          claims challenge following an authorization failure
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
           required data, state, or platform support
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
           attribute gives a reason.
+        :raises AuthenticationRequiredError: user interaction is necessary to acquire a token, and the credential is
+          configured not to begin this automatically. Call :func:`authenticate` to begin interactive authentication.
         """
         if not scopes:
             message = "'get_token' requires at least one scope"
@@ -149,7 +153,7 @@ class InteractiveCredential(MsalCredential):
         _LOGGER.info("%s.get_token succeeded", self.__class__.__name__)
         return AccessToken(result["access_token"], now + int(result["expires_in"]))
 
-    def _authenticate(self, **kwargs):
+    def authenticate(self, **kwargs):
         # type: (**Any) -> AuthenticationRecord
         """Interactively authenticate a user.
 
@@ -185,7 +189,9 @@ class InteractiveCredential(MsalCredential):
                     continue
 
                 now = int(time.time())
-                result = app.acquire_token_silent_with_error(list(scopes), account=account, **kwargs)
+                result = app.acquire_token_silent_with_error(
+                    list(scopes), account=account, claims_challenge=kwargs.get("claims")
+                )
                 if result and "access_token" in result and "expires_in" in result:
                     return AccessToken(result["access_token"], now + int(result["expires_in"]))
 
@@ -198,7 +204,7 @@ class InteractiveCredential(MsalCredential):
     def _get_app(self):
         # type: () -> msal.PublicClientApplication
         if not self._msal_app:
-            self._msal_app = self._create_app(msal.PublicClientApplication)
+            self._msal_app = self._create_app(msal.PublicClientApplication, client_capabilities=["CP1"])
         return self._msal_app
 
     @abc.abstractmethod

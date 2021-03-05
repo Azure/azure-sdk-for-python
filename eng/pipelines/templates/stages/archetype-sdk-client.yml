@@ -35,7 +35,6 @@ parameters:
 - name: BuildTargetingString
   type: string
   default: azure-*
-  
 
 stages:
   - stage: Build
@@ -43,7 +42,9 @@ stages:
     - template: ../jobs/archetype-sdk-client.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        TestPipeline: ${{ parameters.TestPipeline }}
+        Artifacts: ${{ parameters.Artifacts }}
+        ${{ if eq(parameters.ServiceDirectory, 'template') }}:
+          TestPipeline: true
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         BuildDocs: ${{ parameters.BuildDocs }}
         InjectedPackages: ${{ parameters.InjectedPackages }}
@@ -59,7 +60,8 @@ stages:
         DependsOn: Build
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         Artifacts: ${{ parameters.Artifacts }}
-        TestPipeline: ${{ parameters.TestPipeline }}
+        ${{ if eq(parameters.ServiceDirectory, 'template') }}:
+          TestPipeline: true
         ArtifactName: packages
         DocArtifact: documentation
         TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}

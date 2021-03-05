@@ -18,13 +18,9 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 from ._configuration import MicrosoftDatadogClientConfiguration
-from .operations import ApiKeysOperations
-from .operations import HostsOperations
-from .operations import LinkedResourcesOperations
-from .operations import MonitoredResourcesOperations
-from .operations import Operations
+from .operations import MarketplaceAgreementsOperations
 from .operations import MonitorsOperations
-from .operations import RefreshSetPasswordOperations
+from .operations import Operations
 from .operations import TagRulesOperations
 from .operations import SingleSignOnConfigurationsOperations
 from . import models
@@ -33,20 +29,12 @@ from . import models
 class MicrosoftDatadogClient(object):
     """MicrosoftDatadogClient.
 
-    :ivar api_keys: ApiKeysOperations operations
-    :vartype api_keys: microsoft_datadog_client.operations.ApiKeysOperations
-    :ivar hosts: HostsOperations operations
-    :vartype hosts: microsoft_datadog_client.operations.HostsOperations
-    :ivar linked_resources: LinkedResourcesOperations operations
-    :vartype linked_resources: microsoft_datadog_client.operations.LinkedResourcesOperations
-    :ivar monitored_resources: MonitoredResourcesOperations operations
-    :vartype monitored_resources: microsoft_datadog_client.operations.MonitoredResourcesOperations
-    :ivar operations: Operations operations
-    :vartype operations: microsoft_datadog_client.operations.Operations
+    :ivar marketplace_agreements: MarketplaceAgreementsOperations operations
+    :vartype marketplace_agreements: microsoft_datadog_client.operations.MarketplaceAgreementsOperations
     :ivar monitors: MonitorsOperations operations
     :vartype monitors: microsoft_datadog_client.operations.MonitorsOperations
-    :ivar refresh_set_password: RefreshSetPasswordOperations operations
-    :vartype refresh_set_password: microsoft_datadog_client.operations.RefreshSetPasswordOperations
+    :ivar operations: Operations operations
+    :vartype operations: microsoft_datadog_client.operations.Operations
     :ivar tag_rules: TagRulesOperations operations
     :vartype tag_rules: microsoft_datadog_client.operations.TagRulesOperations
     :ivar single_sign_on_configurations: SingleSignOnConfigurationsOperations operations
@@ -76,19 +64,11 @@ class MicrosoftDatadogClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.api_keys = ApiKeysOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.hosts = HostsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.linked_resources = LinkedResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.monitored_resources = MonitoredResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(
+        self.marketplace_agreements = MarketplaceAgreementsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.monitors = MonitorsOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.refresh_set_password = RefreshSetPasswordOperations(
+        self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
         self.tag_rules = TagRulesOperations(
             self._client, self._config, self._serialize, self._deserialize)
