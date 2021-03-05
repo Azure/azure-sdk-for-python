@@ -387,3 +387,5 @@ class TestHealth(TextAnalyticsTest):
         assert all([
             e for e in result[0].entities if hasattr(e, "normalized_text")
         ])
+        histologically_entity = next(filter(lambda x: x.text == "histologically", result[0].entities))
+        assert histologically_entity.normalized_text == "Histology Procedure"
