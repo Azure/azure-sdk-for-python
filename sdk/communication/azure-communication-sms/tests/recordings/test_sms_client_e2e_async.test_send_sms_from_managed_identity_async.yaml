@@ -15,18 +15,19 @@ interactions:
     method: POST
     uri: https://sanitized.communication.azure.com/sms?api-version=2021-03-07
   response:
-    body: '{"value": [{"to": "sanitized", "messageId": "sanitized", "httpStatusCode":
-      202, "repeatabilityResult": "accepted", "successful": true}]}'
+    body:
+      string: '{"value": [{"to": "sanitized", "messageId": "sanitized", "httpStatusCode":
+        202, "repeatabilityResult": "accepted", "successful": true}]}'
     headers:
       api-supported-versions: 2020-07-20-preview1, 2020-08-20-preview, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Thu, 04 Mar 2021 00:31:08 GMT
-      ms-cv: CDwkRA+Ck0C5wP70+kqzIQ.0
+      date: Fri, 05 Mar 2021 18:37:15 GMT
+      ms-cv: a1SwoBis1keCMxOoKRaeig.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 538ms
+      x-processing-time: 480ms
     status:
       code: 202
       message: Accepted
-    url: https://sanitized.communication.azure.com/sms?api-version=2021-03-07
+    url: https://smstestapp.communication.azure.com/sms?api-version=2021-03-07
 version: 1

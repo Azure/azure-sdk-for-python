@@ -11,7 +11,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Thu, 04 Mar 2021 00:31:11 GMT
+      - Fri, 05 Mar 2021 18:37:19 GMT
       User-Agent:
       - azsdk-python-communication-sms/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -24,12 +24,12 @@ interactions:
     headers:
       api-supported-versions: 2020-07-20-preview1, 2020-08-20-preview, 2021-03-07
       content-length: '0'
-      date: Thu, 04 Mar 2021 00:31:10 GMT
-      ms-cv: lNw4HQ9+tUuT/H2rUP5xrg.0
+      date: Fri, 05 Mar 2021 18:37:18 GMT
+      ms-cv: i5Bs78O5VEKGm+PxY9rgLg.0
       request-context: appId=
-      x-processing-time: 281ms
+      x-processing-time: 390ms
     status:
       code: 404
       message: Not Found
-    url: https://sanitized.communication.azure.com/sms?api-version=2021-03-07
+    url: https://smstestapp.communication.azure.com/sms?api-version=2021-03-07
 version: 1

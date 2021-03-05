@@ -36,11 +36,9 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
             self.phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER")
 
         self.recording_processors.extend([
-            BodyReplacerProcessor(keys=["to", "from", "messageId", "repeatabilityRequestId", "repeatabilityFirstSent"]),
-            ResponseReplacerProcessor(keys=[self._resource_name])])
+            BodyReplacerProcessor(keys=["to", "from", "messageId", "repeatabilityRequestId", "repeatabilityFirstSent"])])
 
     @AsyncCommunicationTestCase.await_prepared_test
-    @pytest.mark.live_test_only
     async def test_send_sms_single_async(self):
 
         sms_client = SmsClient.from_connection_string(self.connection_str)
@@ -52,12 +50,11 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
                 to=self.phone_number,
                 message="Hello World via SMS")
             
-            assert len(sms_responses) is 1
+            assert len(sms_responses) == 1
             
             self.verify_successful_sms_response(sms_responses[0])
     
     @AsyncCommunicationTestCase.await_prepared_test
-    @pytest.mark.live_test_only
     async def test_send_sms_multiple_with_options_async(self):
 
         sms_client = SmsClient.from_connection_string(self.connection_str)
@@ -71,13 +68,12 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
                 enable_delivery_report=True,  # optional property
                 tag="custom-tag")  # optional property
             
-            assert len(sms_responses) is 2
+            assert len(sms_responses) == 2
 
             self.verify_successful_sms_response(sms_responses[0])
             self.verify_successful_sms_response(sms_responses[1])
 
     @AsyncCommunicationTestCase.await_prepared_test
-    @pytest.mark.live_test_only
     async def test_send_sms_from_managed_identity_async(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
         from devtools_testutils import is_live
@@ -94,12 +90,11 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
                 to=[self.phone_number],
                 message="Hello World via SMS")
             
-            assert len(sms_responses) is 1
+            assert len(sms_responses) == 1
 
             self.verify_successful_sms_response(sms_responses[0])
     
     @AsyncCommunicationTestCase.await_prepared_test
-    @pytest.mark.live_test_only
     async def test_send_sms_fake_from_phone_number_async(self):
 
         sms_client = SmsClient.from_connection_string(self.connection_str)
@@ -116,7 +111,6 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
         assert ex.value.message is not None
     
     @AsyncCommunicationTestCase.await_prepared_test
-    @pytest.mark.live_test_only
     async def test_send_sms_fake_to_phone_number_async(self):
 
         sms_client = SmsClient.from_connection_string(self.connection_str)
@@ -128,7 +122,7 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
                 to=["+15550000000"],
                 message="Hello World via SMS")
             
-            assert len(sms_responses) is 1
+            assert len(sms_responses) == 1
 
             assert sms_responses[0].message_id is None
             assert sms_responses[0].http_status_code == 400
@@ -136,7 +130,6 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
             assert not sms_responses[0].successful
     
     @AsyncCommunicationTestCase.await_prepared_test
-    @pytest.mark.live_test_only
     async def test_send_sms_unauthorized_from_phone_number_async(self):
 
         sms_client = SmsClient.from_connection_string(self.connection_str)
@@ -177,7 +170,8 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
             assert sms_responses_1[0].message_id != sms_responses_2[0].message_id
     
     def verify_successful_sms_response(self, sms_response):
-        assert sms_response.to == self.phone_number
+        if self.is_live:
+            assert sms_response.to == self.phone_number
         assert sms_response.message_id is not None
         assert sms_response.http_status_code == 202
         assert sms_response.error_message is None

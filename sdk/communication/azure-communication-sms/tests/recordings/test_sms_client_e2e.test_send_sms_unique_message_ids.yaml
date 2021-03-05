@@ -15,7 +15,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Thu, 04 Mar 2021 00:31:06 GMT
+      - Fri, 05 Mar 2021 18:37:13 GMT
       User-Agent:
       - azsdk-python-communication-sms/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -23,23 +23,24 @@ interactions:
     method: POST
     uri: https://sanitized.communication.azure.com/sms?api-version=2021-03-07
   response:
-    body: '{"value": [{"to": "sanitized", "messageId": "sanitized", "httpStatusCode":
-      202, "repeatabilityResult": "accepted", "successful": true}]}'
+    body:
+      string: '{"value": [{"to": "sanitized", "messageId": "sanitized", "httpStatusCode":
+        202, "repeatabilityResult": "accepted", "successful": true}]}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview1, 2020-08-20-preview, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 04 Mar 2021 00:31:05 GMT
+      - Fri, 05 Mar 2021 18:37:13 GMT
       ms-cv:
-      - MgYOqPnQ7k6Mjuc2hjuSMg.0
+      - ZpEFmFafv0SGN9X2r6jlQg.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 893ms
+      - 486ms
     status:
       code: 202
       message: Accepted
@@ -59,7 +60,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Thu, 04 Mar 2021 00:31:07 GMT
+      - Fri, 05 Mar 2021 18:37:14 GMT
       User-Agent:
       - azsdk-python-communication-sms/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -67,23 +68,24 @@ interactions:
     method: POST
     uri: https://sanitized.communication.azure.com/sms?api-version=2021-03-07
   response:
-    body: '{"value": [{"to": "sanitized", "messageId": "sanitized", "httpStatusCode":
-      202, "repeatabilityResult": "accepted", "successful": true}]}'
+    body:
+      string: '{"value": [{"to": "sanitized", "messageId": "sanitized", "httpStatusCode":
+        202, "repeatabilityResult": "accepted", "successful": true}]}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview1, 2020-08-20-preview, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 04 Mar 2021 00:31:06 GMT
+      - Fri, 05 Mar 2021 18:37:13 GMT
       ms-cv:
-      - rw6N83QP80KB/1fI7ivypA.0
+      - KGTr2HVoDUq5Bw5oVaduNg.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 503ms
+      - 474ms
     status:
       code: 202
       message: Accepted
