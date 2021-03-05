@@ -8,11 +8,8 @@ from azure_devtools.perfstress_tests import PerfStressTest
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
-import os
-import uuid
 from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider, SpanContext
-from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
+from opentelemetry.sdk.trace import TracerProvider
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
@@ -24,21 +21,16 @@ class MonitorExporterPerfTest(PerfStressTest):
         connection_string = self.get_from_env("APPLICATIONINSIGHTS_CONNECTION_STRING")
 
         # Create clients
-        self.exporter = AzureMonitorTraceExporter.from_connection_string(
-            os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
-        )
+        self.exporter = AzureMonitorTraceExporter.from_connection_string(connection_string)
 
         trace.set_tracer_provider(TracerProvider())
         tracer = trace.get_tracer(__name__)
         self.spans_list = []
         for _ in range(self.args.num_spans):
-            self.spans_list.append(trace._Span(
-                name=str(uuid.uuid4()),
-                context=SpanContext(
-                    trace_id=uuid.uuid4(),
-                    span_id=12030755672171557338,
-                    is_remote=False,
-                )))
+            with tracer.start_as_current_span(
+                name="name"
+            ) as span:
+                self.spans_list.append(span)
 
     def run_sync(self):
         """The synchronous perf test.
