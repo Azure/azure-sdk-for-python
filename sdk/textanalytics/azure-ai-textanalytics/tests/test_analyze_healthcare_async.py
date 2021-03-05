@@ -441,5 +441,5 @@ class TestHealth(AsyncTextAnalyticsTest):
             e for e in result[0].entities if hasattr(e, "normalized_text")
         ])
 
-        histologically_entity = next(filter(lambda x: x.text == "histologically", result[0].entities))
+        histologically_entity = list(filter(lambda x: x.text == "histologically", result[0].entities))[0]
         assert histologically_entity.normalized_text == "Histology Procedure"
