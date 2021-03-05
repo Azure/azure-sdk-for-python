@@ -1,5 +1,68 @@
 # Release History
 
+## 3.0.0 (2021-03-05)
+
+**Features**
+
+  - Model AlertRuleResourcePatch has a new parameter action
+  - Model AlertRuleResourcePatch has a new parameter provisioning_state
+  - Model MetricAlertResource has a new parameter is_migrated
+  - Model BaselineResponse has a new parameter internal_operation_id
+  - Model BaselineResponse has a new parameter metdata
+  - Model BaselineResponse has a new parameter error_type
+  - Model BaselineResponse has a new parameter prediction_result_type
+  - Model Baseline has a new parameter timestamps
+  - Model Baseline has a new parameter error_type
+  - Model Baseline has a new parameter prediction_result_type
+  - Model RuleDataSource has a new parameter resource_location
+  - Model RuleDataSource has a new parameter legacy_resource_id
+  - Model RuleDataSource has a new parameter metric_namespace
+  - Model RuleManagementEventDataSource has a new parameter resource_location
+  - Model RuleManagementEventDataSource has a new parameter legacy_resource_id
+  - Model RuleManagementEventDataSource has a new parameter metric_namespace
+  - Model LogSearchRuleResource has a new parameter etag
+  - Model LogSearchRuleResource has a new parameter created_with_api_version
+  - Model LogSearchRuleResource has a new parameter display_name
+  - Model LogSearchRuleResource has a new parameter is_legacy_log_analytics_rule
+  - Model LogSearchRuleResource has a new parameter kind
+  - Model RuleMetricDataSource has a new parameter resource_location
+  - Model RuleMetricDataSource has a new parameter legacy_resource_id
+  - Model RuleMetricDataSource has a new parameter metric_namespace
+  - Model ActionGroupResource has a new parameter kind
+  - Model ActionGroupResource has a new parameter identity
+  - Model AlertRuleResource has a new parameter action
+  - Model AlertRuleResource has a new parameter provisioning_state
+  - Model TimeSeriesBaseline has a new parameter metadata_values
+  - Model MetricAlertResourcePatch has a new parameter is_migrated
+  - Model ScheduledQueryRuleResource has a new parameter etag
+  - Model ScheduledQueryRuleResource has a new parameter override_query_time_range
+  - Model ScheduledQueryRuleResource has a new parameter created_with_api_version
+  - Model ScheduledQueryRuleResource has a new parameter display_name
+  - Model ScheduledQueryRuleResource has a new parameter is_legacy_log_analytics_rule
+  - Model ScheduledQueryRuleResource has a new parameter kind
+  - Model CalculateBaselineResponse has a new parameter statistics
+  - Model CalculateBaselineResponse has a new parameter error_type
+  - Model CalculateBaselineResponse has a new parameter internal_operation_id
+  - Model ScheduledQueryRuleResourcePatch has a new parameter override_query_time_range
+  - Model ScheduledQueryRuleResourcePatch has a new parameter display_name
+  - Model ScheduledQueryRuleResourcePatch has a new parameter created_with_api_version
+  - Model ScheduledQueryRuleResourcePatch has a new parameter is_legacy_log_analytics_rule
+
+**Breaking changes**
+
+  - Parameter scopes of model MetricAlertResource is now required
+  - Operation ActivityLogAlertsOperations.update has a new signature
+  - Operation ActivityLogAlertsOperations.create_or_update has a new signature
+  - Operation SubscriptionDiagnosticSettingsOperations.list has a new signature
+  - Operation SubscriptionDiagnosticSettingsOperations.get has a new signature
+  - Operation SubscriptionDiagnosticSettingsOperations.delete has a new signature
+  - Operation SubscriptionDiagnosticSettingsOperations.create_or_update has a new signature
+  - Model ErrorResponse no longer has parameter target
+  - Model ErrorResponse no longer has parameter details
+  - Model ErrorResponse no longer has parameter additional_info
+  - Model BaselineResponse no longer has parameter metadata
+  - Model TimeSeriesBaseline no longer has parameter metadata
+
 ## 2.0.0 (2020-12-25)
 
 **Breaking changes**
