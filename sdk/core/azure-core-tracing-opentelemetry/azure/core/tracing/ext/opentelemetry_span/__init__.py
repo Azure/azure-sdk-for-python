@@ -120,7 +120,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         )
         if kind is None:
             raise ValueError("Kind {} is not supported in OpenTelemetry".format(value))
-        self.span_instance.kind = kind
+        self.span_instance.set_attribute("kind", kind)
 
     def __enter__(self):
         """Start a span."""
