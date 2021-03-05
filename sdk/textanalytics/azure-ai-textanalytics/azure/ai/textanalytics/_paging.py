@@ -16,4 +16,4 @@ class AnalyzeHealthcareEntitiesResult(ItemPaged):
 
 class AnalyzeResult(ItemPaged):
     def __init__(self, *args, **kwargs):
-        super(AnalyzeResult, self).__init__(*args, **kwargs)
+        pass # Temporary until we find out if statistics can be implemented at the job level.
