@@ -15,5 +15,6 @@ class AnalyzeHealthcareEntitiesResultAsync(AsyncItemPaged):
 
 
 class AnalyzeResultAsync(AsyncItemPaged):
-    pass # Temporary until we find out if statistics can be implemented at the job level.
-
+    def __init__(self, *args, **kwargs):
+        self.statistics = kwargs.pop('statistics')
+        super(AnalyzeResultAsync, self).__init__(*args, **kwargs)

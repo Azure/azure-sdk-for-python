@@ -16,4 +16,5 @@ class AnalyzeHealthcareEntitiesResult(ItemPaged):
 
 class AnalyzeResult(ItemPaged):
     def __init__(self, *args, **kwargs):
-        pass # Temporary until we find out if statistics can be implemented at the job level.
+        self.statistics = kwargs.pop('statistics')
+        super(AnalyzeResult, self).__init__(*args, **kwargs)

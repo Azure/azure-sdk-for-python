@@ -35,7 +35,6 @@ from ._models import (
     RequestStatistics,
     AnalyzeBatchActionsType,
     AnalyzeBatchActionsError,
-    TextDocumentBatchStatistics,
     _get_indices,
 )
 from ._paging import AnalyzeHealthcareEntitiesResult, AnalyzeResult
