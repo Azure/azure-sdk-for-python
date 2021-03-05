@@ -149,7 +149,8 @@ class AzureCliScript(DeploymentScript):
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.StorageAccountConfiguration
     :param cleanup_preference: The clean up preference when the script
      execution gets in a terminal state. Default setting is 'Always'. Possible
-     values include: 'Always', 'OnSuccess', 'OnExpiration'
+     values include: 'Always', 'OnSuccess', 'OnExpiration'. Default value:
+     "Always" .
     :type cleanup_preference: str or
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.CleanupOptions
     :ivar provisioning_state: State of the script execution. This only appears
@@ -183,10 +184,10 @@ class AzureCliScript(DeploymentScript):
     :param retention_interval: Required. Interval for which the service
      retains the script resource after it reaches a terminal state. Resource
      will be deleted when this duration expires. Duration is based on ISO 8601
-     pattern (for example P7D means one week).
+     pattern (for example P1D means one day).
     :type retention_interval: timedelta
     :param timeout: Maximum allowed script execution time specified in ISO
-     8601 format. Default value is PT1H
+     8601 format. Default value is P1D. Default value: "P1D" .
     :type timeout: timedelta
     :param az_cli_version: Required. Azure CLI module version to be used.
     :type az_cli_version: str
@@ -233,7 +234,7 @@ class AzureCliScript(DeploymentScript):
         'az_cli_version': {'key': 'properties.azCliVersion', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, retention_interval, az_cli_version: str, identity=None, tags=None, container_settings=None, storage_account_settings=None, cleanup_preference=None, primary_script_uri: str=None, supporting_script_uris=None, script_content: str=None, arguments: str=None, environment_variables=None, force_update_tag: str=None, timeout=None, **kwargs) -> None:
+    def __init__(self, *, location: str, retention_interval, az_cli_version: str, identity=None, tags=None, container_settings=None, storage_account_settings=None, cleanup_preference="Always", primary_script_uri: str=None, supporting_script_uris=None, script_content: str=None, arguments: str=None, environment_variables=None, force_update_tag: str=None, timeout="P1D", **kwargs) -> None:
         super(AzureCliScript, self).__init__(identity=identity, location=location, tags=tags, **kwargs)
         self.container_settings = container_settings
         self.storage_account_settings = storage_account_settings
@@ -289,7 +290,8 @@ class AzurePowerShellScript(DeploymentScript):
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.StorageAccountConfiguration
     :param cleanup_preference: The clean up preference when the script
      execution gets in a terminal state. Default setting is 'Always'. Possible
-     values include: 'Always', 'OnSuccess', 'OnExpiration'
+     values include: 'Always', 'OnSuccess', 'OnExpiration'. Default value:
+     "Always" .
     :type cleanup_preference: str or
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.CleanupOptions
     :ivar provisioning_state: State of the script execution. This only appears
@@ -323,10 +325,10 @@ class AzurePowerShellScript(DeploymentScript):
     :param retention_interval: Required. Interval for which the service
      retains the script resource after it reaches a terminal state. Resource
      will be deleted when this duration expires. Duration is based on ISO 8601
-     pattern (for example P7D means one week).
+     pattern (for example P1D means one day).
     :type retention_interval: timedelta
     :param timeout: Maximum allowed script execution time specified in ISO
-     8601 format. Default value is PT1H
+     8601 format. Default value is P1D. Default value: "P1D" .
     :type timeout: timedelta
     :param az_power_shell_version: Required. Azure PowerShell module version
      to be used.
@@ -374,7 +376,7 @@ class AzurePowerShellScript(DeploymentScript):
         'az_power_shell_version': {'key': 'properties.azPowerShellVersion', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, retention_interval, az_power_shell_version: str, identity=None, tags=None, container_settings=None, storage_account_settings=None, cleanup_preference=None, primary_script_uri: str=None, supporting_script_uris=None, script_content: str=None, arguments: str=None, environment_variables=None, force_update_tag: str=None, timeout=None, **kwargs) -> None:
+    def __init__(self, *, location: str, retention_interval, az_power_shell_version: str, identity=None, tags=None, container_settings=None, storage_account_settings=None, cleanup_preference="Always", primary_script_uri: str=None, supporting_script_uris=None, script_content: str=None, arguments: str=None, environment_variables=None, force_update_tag: str=None, timeout="P1D", **kwargs) -> None:
         super(AzurePowerShellScript, self).__init__(identity=identity, location=location, tags=tags, **kwargs)
         self.container_settings = container_settings
         self.storage_account_settings = storage_account_settings
@@ -447,7 +449,8 @@ class DeploymentScriptPropertiesBase(Model):
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.StorageAccountConfiguration
     :param cleanup_preference: The clean up preference when the script
      execution gets in a terminal state. Default setting is 'Always'. Possible
-     values include: 'Always', 'OnSuccess', 'OnExpiration'
+     values include: 'Always', 'OnSuccess', 'OnExpiration'. Default value:
+     "Always" .
     :type cleanup_preference: str or
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.CleanupOptions
     :ivar provisioning_state: State of the script execution. This only appears
@@ -477,7 +480,7 @@ class DeploymentScriptPropertiesBase(Model):
         'outputs': {'key': 'outputs', 'type': '{object}'},
     }
 
-    def __init__(self, *, container_settings=None, storage_account_settings=None, cleanup_preference=None, **kwargs) -> None:
+    def __init__(self, *, container_settings=None, storage_account_settings=None, cleanup_preference="Always", **kwargs) -> None:
         super(DeploymentScriptPropertiesBase, self).__init__(**kwargs)
         self.container_settings = container_settings
         self.storage_account_settings = storage_account_settings
@@ -660,10 +663,15 @@ class ErrorResponse(Model):
 class ManagedServiceIdentity(Model):
     """Managed identity generic object.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param type: Type of the managed identity. Possible values include:
      'UserAssigned'
     :type type: str or
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ManagedServiceIdentityType
+    :ivar tenant_id: ID of the Azure Active Directory.
+    :vartype tenant_id: str
     :param user_assigned_identities: The list of user-assigned managed
      identities associated with the resource. Key is the Azure resource Id of
      the managed identity.
@@ -671,14 +679,20 @@ class ManagedServiceIdentity(Model):
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.UserAssignedIdentity]
     """
 
+    _validation = {
+        'tenant_id': {'readonly': True},
+    }
+
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
     }
 
     def __init__(self, *, type=None, user_assigned_identities=None, **kwargs) -> None:
         super(ManagedServiceIdentity, self).__init__(**kwargs)
         self.type = type
+        self.tenant_id = None
         self.user_assigned_identities = user_assigned_identities
 
 
@@ -709,10 +723,10 @@ class ScriptConfigurationBase(Model):
     :param retention_interval: Required. Interval for which the service
      retains the script resource after it reaches a terminal state. Resource
      will be deleted when this duration expires. Duration is based on ISO 8601
-     pattern (for example P7D means one week).
+     pattern (for example P1D means one day).
     :type retention_interval: timedelta
     :param timeout: Maximum allowed script execution time specified in ISO
-     8601 format. Default value is PT1H
+     8601 format. Default value is P1D. Default value: "P1D" .
     :type timeout: timedelta
     """
 
@@ -732,7 +746,7 @@ class ScriptConfigurationBase(Model):
         'timeout': {'key': 'timeout', 'type': 'duration'},
     }
 
-    def __init__(self, *, retention_interval, primary_script_uri: str=None, supporting_script_uris=None, script_content: str=None, arguments: str=None, environment_variables=None, force_update_tag: str=None, timeout=None, **kwargs) -> None:
+    def __init__(self, *, retention_interval, primary_script_uri: str=None, supporting_script_uris=None, script_content: str=None, arguments: str=None, environment_variables=None, force_update_tag: str=None, timeout="P1D", **kwargs) -> None:
         super(ScriptConfigurationBase, self).__init__(**kwargs)
         self.primary_script_uri = primary_script_uri
         self.supporting_script_uris = supporting_script_uris
@@ -883,8 +897,7 @@ class SystemData(Model):
      'ManagedIdentity', 'Key'
     :type last_modified_by_type: str or
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.CreatedByType
-    :param last_modified_at: The type of identity that last modified the
-     resource.
+    :param last_modified_at: The timestamp of resource last modification (UTC)
     :type last_modified_at: datetime
     """
 
@@ -910,19 +923,27 @@ class SystemData(Model):
 class UserAssignedIdentity(Model):
     """User-assigned managed identity.
 
-    :param principal_id: Azure Active Directory principal ID associated with
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar principal_id: Azure Active Directory principal ID associated with
      this identity.
-    :type principal_id: str
-    :param client_id: Client App Id associated with this identity.
-    :type client_id: str
+    :vartype principal_id: str
+    :ivar client_id: Client App Id associated with this identity.
+    :vartype client_id: str
     """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
 
     _attribute_map = {
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'client_id': {'key': 'clientId', 'type': 'str'},
     }
 
-    def __init__(self, *, principal_id: str=None, client_id: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(UserAssignedIdentity, self).__init__(**kwargs)
-        self.principal_id = principal_id
-        self.client_id = client_id
+        self.principal_id = None
+        self.client_id = None

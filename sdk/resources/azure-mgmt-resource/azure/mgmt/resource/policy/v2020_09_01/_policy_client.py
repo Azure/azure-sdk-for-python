@@ -17,11 +17,12 @@ from .operations import DataPolicyManifestsOperations
 from .operations import PolicyAssignmentsOperations
 from .operations import PolicyDefinitionsOperations
 from .operations import PolicySetDefinitionsOperations
+from .operations import PolicyExemptionsOperations
 from . import models
 
 
 class PolicyClient(SDKClient):
-    """To manage and control access to your resources, you can define customized policies and assign them at a scope.
+    """PolicyClient
 
     :ivar config: Configuration for client.
     :vartype config: PolicyClientConfiguration
@@ -34,6 +35,8 @@ class PolicyClient(SDKClient):
     :vartype policy_definitions: azure.mgmt.resource.policy.v2020_09_01.operations.PolicyDefinitionsOperations
     :ivar policy_set_definitions: PolicySetDefinitions operations
     :vartype policy_set_definitions: azure.mgmt.resource.policy.v2020_09_01.operations.PolicySetDefinitionsOperations
+    :ivar policy_exemptions: PolicyExemptions operations
+    :vartype policy_exemptions: azure.mgmt.resource.policy.v2020_09_01.operations.PolicyExemptionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -50,7 +53,6 @@ class PolicyClient(SDKClient):
         super(PolicyClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2020-09-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -61,4 +63,6 @@ class PolicyClient(SDKClient):
         self.policy_definitions = PolicyDefinitionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.policy_set_definitions = PolicySetDefinitionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.policy_exemptions = PolicyExemptionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
