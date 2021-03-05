@@ -236,7 +236,7 @@ def create_messages_from_dicts_if_needed(messages, message_type):
     This method is used to convert dict representations of one or more messages to
     one or more ServiceBusMessage objects.
 
-    :param Messages messages: A list or single instance of messages of type ServiceBusMessages or
+    :param Messages messages: A list or single instance of messages of type ServiceBusMessage or
         dict representations of type ServiceBusMessage.
     :param Type[ServiceBusMessage] message_type: The class type to return the messages as.
     :rtype: Union[ServiceBusMessage, List[ServiceBusMessage]]

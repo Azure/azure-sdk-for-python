@@ -31,6 +31,7 @@ from azure.servicebus import (
 )
 from azure.servicebus._common.constants import ServiceBusReceiveMode, ServiceBusSubQueue
 from azure.servicebus._common.utils import utc_now
+from azure.servicebus.management._models import DictMixin
 from azure.servicebus.exceptions import (
     ServiceBusConnectionError,
     ServiceBusError,
@@ -1772,6 +1773,53 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
                 # send list of dicts
                 await sender.send_messages(list_message_dicts)
+
+                # create and send BatchMessage with dicts
+                batch_message = await sender.create_message_batch()
+                batch_message._from_list(list_message_dicts)  # pylint: disable=protected-access
+                batch_message.add_message(message_dict)
+                await sender.send_messages(batch_message)
+
+                received_messages = []
+                async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+                    async for message in receiver:
+                        received_messages.append(message)
+                assert len(received_messages) == 6
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest')
+    async def test_queue_async_send_mapping_messages(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        class MappingMessage(DictMixin):
+            def __init__(self, content):
+                self.body = content
+                self.message_id = 'foo'
+        
+        class BadMappingMessage(DictMixin):
+            def __init__(self):
+                self.message_id = 'foo'
+
+        async with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+
+            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+
+                message_dict = MappingMessage("Message")
+                message2_dict = MappingMessage("Message2")
+                message3_dict = BadMappingMessage()
+                list_message_dicts = [message_dict, message2_dict]
+
+                # send single dict
+                await sender.send_messages(message_dict)
+
+                # send list of dicts
+                await sender.send_messages(list_message_dicts)
+
+                # send bad dict
+                with pytest.raises(TypeError):
+                    await sender.send_messages(message3_dict)
 
                 # create and send BatchMessage with dicts
                 batch_message = await sender.create_message_batch()
