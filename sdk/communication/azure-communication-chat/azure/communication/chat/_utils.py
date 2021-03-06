@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from .communication_identifier_serializer import CommunicationUserIdentifierSerializer
+from ._communication_identifier_serializer import CommunicationUserIdentifierSerializer
 
 def _to_utc_datetime(value):
     return value.strftime('%Y-%m-%dT%H:%M:%SZ')
