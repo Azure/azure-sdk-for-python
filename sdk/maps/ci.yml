@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: maps
     Artifacts:
-    - name: azure_mgmt_maps
+    - name: azure-mgmt-maps
       safeName: azuremgmtmaps

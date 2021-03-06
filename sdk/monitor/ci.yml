@@ -31,7 +31,7 @@ extends:
     ServiceDirectory: monitor
     BuildTargetingString: '*'
     Artifacts:
-    - name: azure_mgmt_monitor
+    - name: azure-mgmt-monitor
       safeName: azuremgmtmonitor
-    - name: azure_monitor_opentelemetry_exporter
+    - name: azure-monitor-opentelemetry-exporter
       safeName: azuremonitoropentelemetryexporter

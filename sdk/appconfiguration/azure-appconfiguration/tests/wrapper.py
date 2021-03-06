@@ -9,9 +9,7 @@ from azure.appconfiguration import (
     AzureAppConfigurationClient,
     ConfigurationSetting,
 )
-from azure.core.exceptions import (
-    AzureError,
-)
+from azure.core.exceptions import AzureError
 from consts import (
     KEY,
     LABEL,
@@ -21,7 +19,6 @@ from consts import (
     PAGE_SIZE,
     KEY_UUID,
 )
-import os
 import functools
 import inspect
 
@@ -65,7 +62,6 @@ def trim_kwargs_from_test_function(fn, kwargs):
             for key in [k for k in kwargs if k not in args]:
                 del kwargs[key]
 
-
 def app_config_decorator(func, **kwargs):
 
     @AppConfigPreparer()
@@ -107,55 +103,6 @@ def app_config_decorator(func, **kwargs):
 
         func(*args, **trimmed_kwargs)
 
-        for item in to_delete:
-            client.delete_configuration_setting(
-                key=item.key, label=item.label
-            )
-
-    return wrapper
-
-def async_app_config_decorator(func, **kwargs):
-
-    @AppConfigPreparer()
-    def wrapper(*args, **kwargs):
-        appconfiguration_connection_string = kwargs.pop("appconfiguration_connection_string")
-        client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
-
-        kwargs['client'] = client
-        kwargs['appconfiguration_connection_string'] = appconfiguration_connection_string
-
-        # Do setUp on client
-        test_config_setting = _add_for_test(
-            client,
-            ConfigurationSetting(
-                key=KEY,
-                label=LABEL,
-                value=TEST_VALUE,
-                content_type=TEST_CONTENT_TYPE,
-                tags={"tag1": "tag1", "tag2": "tag2"},
-            )
-        )
-        test_config_setting_no_label = _add_for_test(
-            client,
-            ConfigurationSetting(
-                key=KEY,
-                label=None,
-                value=TEST_VALUE,
-                content_type=TEST_CONTENT_TYPE,
-                tags={"tag1": "tag1", "tag2": "tag2"},
-            )
-        )
-        to_delete = [test_config_setting, test_config_setting_no_label]
-
-        kwargs['test_config_setting'] = test_config_setting
-        kwargs['test_config_setting_no_label'] = test_config_setting_no_label
-
-        trimmed_kwargs = {k:v for k, v in kwargs.items()}
-        trim_kwargs_from_test_function(func, trimmed_kwargs)
-
-        func(*args, **trimmed_kwargs)
-
-        # do tearDown on client
         for item in to_delete:
             client.delete_configuration_setting(
                 key=item.key, label=item.label

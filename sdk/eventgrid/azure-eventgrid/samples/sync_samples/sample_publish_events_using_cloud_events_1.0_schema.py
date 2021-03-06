@@ -16,8 +16,9 @@ USAGE:
 """
 # [START publish_cloud_event_to_topic]
 import os
-from azure.eventgrid import EventGridPublisherClient, CloudEvent
+from azure.eventgrid import EventGridPublisherClient
 from azure.core.credentials import AzureKeyCredential
+from azure.core.messaging import CloudEvent
 
 topic_key = os.environ["CLOUD_ACCESS_KEY"]
 endpoint = os.environ["CLOUD_TOPIC_HOSTNAME"]

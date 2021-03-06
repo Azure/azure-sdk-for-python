@@ -24,7 +24,7 @@ def test_non_rsa_key():
     with pytest.raises(ValueError, match=".*RS256.*"):
         CertificateCredential("tenant-id", "client-id", EC_CERT_PATH)
     with pytest.raises(ValueError, match=".*RS256.*"):
-        CertificateCredential("tenant-id", "client-id", certificate_bytes=open(EC_CERT_PATH, "rb").read())
+        CertificateCredential("tenant-id", "client-id", certificate_data=open(EC_CERT_PATH, "rb").read())
 
 
 def test_tenant_id_validation():
@@ -142,9 +142,9 @@ def test_requires_certificate():
     with pytest.raises(ValueError):
         CertificateCredential("tenant", "client-id", certificate_path="")
     with pytest.raises(ValueError):
-        CertificateCredential("tenant", "client-id", certificate_bytes=None)
+        CertificateCredential("tenant", "client-id", certificate_data=None)
     with pytest.raises(ValueError):
-        CertificateCredential("tenant", "client-id", certificate_path="", certificate_bytes=None)
+        CertificateCredential("tenant", "client-id", certificate_path="", certificate_data=None)
 
 
 @pytest.mark.asyncio
@@ -178,7 +178,7 @@ async def test_request_body(cert_path, cert_password):
     cred = CertificateCredential(
         tenant_id,
         client_id,
-        certificate_bytes=cert_bytes,
+        certificate_data=cert_bytes,
         password=cert_password,
         transport=Mock(send=mock_send),
         authority=authority,

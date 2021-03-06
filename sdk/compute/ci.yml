@@ -30,7 +30,7 @@ extends:
   parameters:
     ServiceDirectory: compute
     Artifacts:
-    - name: azure_mgmt_compute
+    - name: azure-mgmt-compute
       safeName: azuremgmtcompute
-    - name: azure_mgmt_imagebuilder
+    - name: azure-mgmt-imagebuilder
       safeName: azuremgmtimagebuilder

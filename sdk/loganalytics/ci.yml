@@ -30,7 +30,7 @@ extends:
   parameters:
     ServiceDirectory: loganalytics
     Artifacts:
-    - name: azure_loganalytics
+    - name: azure-loganalytics
       safeName: azureloganalytics
-    - name: azure_mgmt_loganalytics
+    - name: azure-mgmt-loganalytics
       safeName: azuremgmtloganalytics

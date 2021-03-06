@@ -4,6 +4,8 @@
 ### Breaking Changes
 > These changes do not impact the API of stable versions such as 1.5.0.
 > Only code written against a beta version such as 1.6.0b1 may be affected.
+- Renamed `CertificateCredential` keyword argument `certificate_bytes` to
+  `certificate_data`
 - Credentials accepting keyword arguments `allow_unencrypted_cache` and
   `enable_persistent_cache` to configure persistent caching accept a
   `cache_persistence_options` argument instead whose value should be an
@@ -21,6 +23,8 @@
   
 ### Added
 - New class `TokenCachePersistenceOptions` configures persistent caching
+- The `AuthenticationRequiredError.claims` property provides any additional
+  claims required by a user credential's `authenticate()` method
 
 ## 1.6.0b1 (2021-02-09)
 ### Changed

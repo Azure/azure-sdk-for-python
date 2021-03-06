@@ -37,7 +37,7 @@ if TYPE_CHECKING:
         List,
         Type,
         Tuple,
-)
+    )
 
 
 def url_quote(url):
@@ -96,11 +96,32 @@ class Timezone(datetime.tzinfo):
 
 def _from_entity_datetime(value):
     # Cosmos returns this with a decimal point that throws an error on deserialization
-    if value[-9:] == ".0000000Z":
-        value = value[:-9] + "Z"
-    return datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(
-        tzinfo=Timezone()
-    )
+    value = clean_up_dotnet_timestamps(value)
+
+    try:
+        return datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(
+            tzinfo=Timezone()
+        )
+    except ValueError:
+        return datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(
+            tzinfo=Timezone()
+        )
+
+
+def clean_up_dotnet_timestamps(value):
+    # .NET has more decimal places than Python supports in datetime objects, this truncates
+    # values after 6 decimal places.
+    value = value.split(".")
+    ms = ""
+    if len(value) == 2:
+        ms = value[-1].replace("Z", "")
+        if len(ms) > 6:
+            ms = ms[:6]
+        ms = ms + "Z"
+        return ".".join([value[0], ms])
+
+    return value[0]
+
 
 
 def _from_entity_guid(value):

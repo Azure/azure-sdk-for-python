@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class TagsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -105,7 +105,7 @@ class TagsOperations:
         tag_name: str,
         tag_value: str,
         **kwargs
-    ) -> "models.TagValue":
+    ) -> "_models.TagValue":
         """Creates a predefined value for a predefined tag name.
 
         This operation allows adding a value to the list of predefined values for an existing
@@ -120,7 +120,7 @@ class TagsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagValue
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagValue"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagValue"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -169,7 +169,7 @@ class TagsOperations:
         self,
         tag_name: str,
         **kwargs
-    ) -> "models.TagDetails":
+    ) -> "_models.TagDetails":
         """Creates a predefined tag name.
 
         This operation allows adding a name to the list of predefined tag names for the given
@@ -184,7 +184,7 @@ class TagsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagDetails"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagDetails"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -286,7 +286,7 @@ class TagsOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.TagsListResult"]:
+    ) -> AsyncIterable["_models.TagsListResult"]:
         """Gets a summary of tag usage under the subscription.
 
         This operation performs a union of predefined tags, resource tags, resource group tags and
@@ -299,7 +299,7 @@ class TagsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.resources.v2019_10_01.models.TagsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -357,9 +357,9 @@ class TagsOperations:
     async def create_or_update_at_scope(
         self,
         scope: str,
-        parameters: "models.TagsResource",
+        parameters: "_models.TagsResource",
         **kwargs
-    ) -> "models.TagsResource":
+    ) -> "_models.TagsResource":
         """Creates or updates the entire set of tags on a resource or subscription.
 
         This operation allows adding or replacing the entire set of tags on the specified resource or
@@ -374,7 +374,7 @@ class TagsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagsResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagsResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagsResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -421,9 +421,9 @@ class TagsOperations:
     async def update_at_scope(
         self,
         scope: str,
-        parameters: "models.TagsPatchResource",
+        parameters: "_models.TagsPatchResource",
         **kwargs
-    ) -> "models.TagsResource":
+    ) -> "_models.TagsResource":
         """Selectively updates the set of tags on a resource or subscription.
 
         This operation allows replacing, merging or selectively deleting tags on the specified resource
@@ -442,7 +442,7 @@ class TagsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagsResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagsResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagsResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -490,7 +490,7 @@ class TagsOperations:
         self,
         scope: str,
         **kwargs
-    ) -> "models.TagsResource":
+    ) -> "_models.TagsResource":
         """Gets the entire set of tags on a resource or subscription.
 
         Gets the entire set of tags on a resource or subscription.
@@ -502,7 +502,7 @@ class TagsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagsResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagsResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagsResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

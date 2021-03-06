@@ -221,12 +221,11 @@ def test_cannot_bind_redirect_uri():
 
 
 def test_claims_challenge():
-    """get_token should pass any claims challenge to MSAL token acquisition APIs"""
+    """get_token and authenticate should pass any claims challenge to MSAL token acquisition APIs"""
 
     expected_claims = '{"access_token": {"essential": "true"}'
 
-    oauth_state = "..."
-    auth_code_response = {"code": "authorization-code", "state": [oauth_state]}
+    auth_code_response = {"code": "authorization-code", "state": ["..."]}
     server_class = Mock(return_value=Mock(wait_for_redirect=lambda: auth_code_response))
 
     msal_acquire_token_result = dict(
@@ -242,9 +241,16 @@ def test_claims_challenge():
         msal_app.acquire_token_by_auth_code_flow.return_value = msal_acquire_token_result
 
         with patch(WEBBROWSER_OPEN, lambda _: True):
-            credential.get_token("scope", claims=expected_claims)
+            credential.authenticate(scopes=["scope"], claims=expected_claims)
 
         assert msal_app.acquire_token_by_auth_code_flow.call_count == 1
+        args, kwargs = msal_app.acquire_token_by_auth_code_flow.call_args
+        assert kwargs["claims_challenge"] == expected_claims
+
+        with patch(WEBBROWSER_OPEN, lambda _: True):
+            credential.get_token("scope", claims=expected_claims)
+
+        assert msal_app.acquire_token_by_auth_code_flow.call_count == 2
         args, kwargs = msal_app.acquire_token_by_auth_code_flow.call_args
         assert kwargs["claims_challenge"] == expected_claims
 

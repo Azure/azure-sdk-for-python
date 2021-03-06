@@ -29,6 +29,7 @@ from azure.data.tables import (
 )
 
 from azure.core import MatchConditions
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -1637,7 +1638,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
             entities = list(table.query_entities(
@@ -1669,7 +1670,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
 
@@ -1704,7 +1705,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
             entity = self._create_random_entity_dict(u'test', u'test1')
@@ -1737,7 +1738,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
             with pytest.raises(HttpResponseError):
@@ -1768,7 +1769,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
             updated_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
@@ -1801,7 +1802,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
             table.delete_entity(entity.PartitionKey, entity.RowKey)
@@ -1835,11 +1836,11 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
             entities = list(table.query_entities(
-                filter="PartitionKey eq '{}'".format(entity['PartitionKey'])))
+                filter="PartitionKey eq '{}'".format(entity.PartitionKey)))
 
             # Assert
             assert len(entities) ==  1
@@ -1847,7 +1848,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("Header authorization is malformed")
     @pytest.mark.live_test_only
     @TablesPreparer()
     def test_sas_signed_identifier(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -1860,7 +1860,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             access_policy = AccessPolicy()
             access_policy.start = datetime(2011, 10, 11)
-            access_policy.expiry = datetime(2020, 10, 12)
+            access_policy.expiry = datetime(2025, 10, 12)
             access_policy.permission = TableSasPermissions(read=True)
             identifiers = {'testid': access_policy}
 
@@ -1876,7 +1876,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
             entities = list(table.query_entities(
@@ -1885,5 +1885,27 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Assert
             assert len(entities) ==  1
             self._assert_default_entity(entities[0])
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
+    def test_datetime_milliseconds(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # SAS URL is calculated from storage key, so this test runs live only
+        url = self.account_url(tables_storage_account_name, "table")
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity = self._create_random_entity_dict()
+
+            entity['milliseconds'] = datetime(2011, 11, 4, 0, 5, 23, 283000, tzinfo=tzutc())
+
+            self.table.create_entity(entity)
+
+            received_entity = self.table.get_entity(
+                partition_key=entity['PartitionKey'],
+                row_key=entity['RowKey']
+            )
+
+            assert entity['milliseconds'] == received_entity['milliseconds']
+
         finally:
             self._tear_down()

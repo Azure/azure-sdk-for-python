@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: datafactory
     Artifacts:
-    - name: azure_mgmt_datafactory
+    - name: azure-mgmt-datafactory
       safeName: azuremgmtdatafactory

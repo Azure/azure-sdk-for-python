@@ -26,6 +26,20 @@ def text_document_statistics():
     return model, model_repr
 
 @pytest.fixture
+def request_statistics():
+    model = _models.RequestStatistics(
+        documents_count=1,
+        valid_documents_count=1,
+        erroneous_documents_count=0,
+        transactions_count=1
+    )
+
+    model_repr = "RequestStatistics(documents_count=1, valid_documents_count=1, erroneous_documents_count=0, transactions_count=1)"
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
 def text_analytics_warning():
     model = _models.TextAnalyticsWarning(
         code="LongWordsInDocument",
@@ -263,6 +277,74 @@ def extract_key_phrases_result(text_analytics_warning, text_document_statistics)
     assert repr(model) == model_repr
     return model, model_repr
 
+@pytest.fixture
+def data_source():
+    model = _models.HealthcareEntityDataSource(
+        entity_id="BONJOUR",
+        name="UMLS",
+    )
+    model_repr = "HealthcareEntityDataSource(entity_id=BONJOUR, name=UMLS)"
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def healthcare_entity_assertion():
+    model = _models.HealthcareEntityAssertion(
+        conditionality="conditionality",
+        certainty="certainty",
+        association="association",
+    )
+    model_repr = "HealthcareEntityAssertion(conditionality=conditionality, certainty=certainty, association=association)"
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def healthcare_entity(data_source, healthcare_entity_assertion):
+    model = _models.HealthcareEntity(
+        text="Bonjour",
+        normalized_text="Bonjour",
+        category="MyCategory",
+        subcategory="MySubcategory",
+        assertion=healthcare_entity_assertion[0],
+        length=7,
+        offset=12,
+        confidence_score=0.95,
+        data_sources=[data_source[0]],
+    )
+    model_repr = (
+        "HealthcareEntity(text=Bonjour, normalized_text=Bonjour, category=MyCategory, subcategory=MySubcategory, assertion={}, length=7, offset=12, "\
+        "confidence_score=0.95, data_sources=[{}])".format(healthcare_entity_assertion[1], data_source[1])
+    )
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def healthcare_relation_role(healthcare_entity):
+    model = _models.HealthcareRelationRole(
+        name="ROLE",
+        entity=healthcare_entity[0]
+    )
+
+    model_repr = "HealthcareRelationRole(name=ROLE, entity={})".format(healthcare_entity[1])
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def healthcare_relation(healthcare_relation_role):
+    model = _models.HealthcareRelation(
+        relation_type="DOSAGE",
+        roles=[healthcare_relation_role[0]]
+    )
+
+    model_repr = "HealthcareRelation(relation_type=DOSAGE, roles=[{}])".format(healthcare_relation_role[1])
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
 class TestRepr():
     def test_text_document_input(self):
         model = _models.TextDocumentInput(
@@ -373,50 +455,73 @@ class TestRepr():
         assert error.code == "UnsupportedLanguageCode"
         assert error.message == "Supplied language not supported. Pass in one of: de,en,es,fr,it,ja,ko,nl,pt-PT,zh-Hans,zh-Hant"
 
-    def test_analyze_batch_actions_result_recognize_entities(self, recognize_entities_result):
+    def test_analyze_batch_actions_result_recognize_entities(self, recognize_entities_result, request_statistics):
         model = _models.AnalyzeBatchActionsResult(
             document_results=[recognize_entities_result[0]],
+            statistics=request_statistics[0],
             is_error=False,
             action_type=_models.AnalyzeBatchActionsType.RECOGNIZE_ENTITIES,
             completed_on=datetime.datetime(1, 1, 1)
         )
 
         model_repr = (
-            "AnalyzeBatchActionsResult(document_results=[{}], is_error={}, action_type={}, completed_on={})".format(
-                recognize_entities_result[1], False, "recognize_entities", datetime.datetime(1, 1, 1)
+            "AnalyzeBatchActionsResult(document_results=[{}], is_error={}, action_type={}, completed_on={}, statistics={})".format(
+                recognize_entities_result[1], False, "recognize_entities", datetime.datetime(1, 1, 1), request_statistics[1]
             )
         )
 
         assert repr(model) == model_repr
 
-    def test_analyze_batch_actions_result_recognize_pii_entities(self, recognize_pii_entities_result):
+    def test_analyze_batch_actions_result_recognize_pii_entities(self, recognize_pii_entities_result, request_statistics):
         model = _models.AnalyzeBatchActionsResult(
             document_results=[recognize_pii_entities_result[0]],
+            statistics=request_statistics[0],
             is_error=False,
             action_type=_models.AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES,
             completed_on=datetime.datetime(1, 1, 1)
         )
 
         model_repr = (
-            "AnalyzeBatchActionsResult(document_results=[{}], is_error={}, action_type={}, completed_on={})".format(
-                recognize_pii_entities_result[1], False, "recognize_pii_entities", datetime.datetime(1, 1, 1)
+            "AnalyzeBatchActionsResult(document_results=[{}], is_error={}, action_type={}, completed_on={}, statistics={})".format(
+                recognize_pii_entities_result[1], False, "recognize_pii_entities", datetime.datetime(1, 1, 1), request_statistics[1]
             )
         )
 
         assert repr(model) == model_repr
 
-    def test_analyze_batch_actions_result_extract_key_phrases(self, extract_key_phrases_result):
+    def test_analyze_batch_actions_result_extract_key_phrases(self, extract_key_phrases_result, request_statistics):
         model = _models.AnalyzeBatchActionsResult(
             document_results=[extract_key_phrases_result[0]],
+            statistics=request_statistics[0],
             is_error=False,
             action_type=_models.AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES,
             completed_on=datetime.datetime(1, 1, 1)
         )
 
         model_repr = (
-            "AnalyzeBatchActionsResult(document_results=[{}], is_error={}, action_type={}, completed_on={})".format(
-                extract_key_phrases_result[1], False, "extract_key_phrases", datetime.datetime(1, 1, 1)
+            "AnalyzeBatchActionsResult(document_results=[{}], is_error={}, action_type={}, completed_on={}, statistics={})".format(
+                extract_key_phrases_result[1], False, "extract_key_phrases", datetime.datetime(1, 1, 1), request_statistics[1]
             )
         )
 
         assert repr(model) == model_repr
+
+    def test_analyze_healthcare_entities_result_item(
+        self, healthcare_entity, healthcare_relation, text_analytics_warning, text_document_statistics
+    ):
+        model = _models.AnalyzeHealthcareEntitiesResultItem(
+            id=1,
+            entities=[healthcare_entity[0]],
+            entity_relations=[healthcare_relation[0]],
+            warnings=[text_analytics_warning[0]],
+            statistics=text_document_statistics[0],
+            is_error=False
+        )
+
+        model_repr = (
+            "AnalyzeHealthcareEntitiesResultItem(id=1, entities=[{}], entity_relations=[{}], warnings=[{}], statistics={}, is_error=False)".format(
+                healthcare_entity[1], healthcare_relation[1], text_analytics_warning[1], text_document_statistics[1]
+            )
+        )
+
+        assert repr(model) == model_repr[:1024]

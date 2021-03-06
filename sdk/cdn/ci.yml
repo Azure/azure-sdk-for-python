@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: cdn
     Artifacts:
-    - name: azure_mgmt_cdn
+    - name: azure-mgmt-cdn
       safeName: azuremgmtcdn

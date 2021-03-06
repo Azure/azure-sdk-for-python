@@ -21,6 +21,7 @@ from .exceptions import (
 from ._common.utils import (
     create_authentication,
     transform_messages_to_sendable_if_needed,
+    create_messages_from_dicts_if_needed,
     send_trace_context_manager,
     trace_message,
     add_link_to_send,
@@ -269,7 +270,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Schedule a message to be sent in future
         """
         # pylint: disable=protected-access
+
         self._check_live()
+        messages = create_messages_from_dicts_if_needed(messages, ServiceBusMessage)    # type: ignore
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -365,7 +368,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Send message.
 
         """
+
         self._check_live()
+        message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -393,11 +398,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 isinstance(message, ServiceBusMessageBatch) and len(message) == 0
             ):  # pylint: disable=len-as-condition
                 return  # Short circuit noop if an empty list or batch is provided.
-            if not isinstance(message, ServiceBusMessageBatch) and not isinstance(
-                message, ServiceBusMessage
-            ):
+            if not isinstance(message, (ServiceBusMessageBatch, ServiceBusMessage)):
                 raise TypeError(
-                    "Can only send azure.servicebus.<ServiceBusMessageBatch,ServiceBusMessage> "
+                    "Can only send azure.servicebus.<ServiceBusMessageBatch, ServiceBusMessage> "
                     "or lists of ServiceBusMessage."
                 )
 

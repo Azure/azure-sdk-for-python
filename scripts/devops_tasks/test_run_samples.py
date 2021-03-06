@@ -79,6 +79,10 @@ IGNORED_SAMPLES = {
         "receive_deferred_message_queue_async.py",
         "receive_iterator_queue_async.py",
         "session_pool_receive_async.py"
+    ],
+    "azure-ai-formrecognizer": [
+        "sample_recognize_receipts_from_url.py",
+        "sample_recognize_receipts_from_url_async.py"
     ]
 }
 

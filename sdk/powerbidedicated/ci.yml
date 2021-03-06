@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: powerbidedicated
     Artifacts:
-    - name: azure_mgmt_powerbidedicated
+    - name: azure-mgmt-powerbidedicated
       safeName: azuremgmtpowerbidedicated

@@ -33,6 +33,6 @@ extends:
   parameters:
     ServiceDirectory: metricsadvisor
     Artifacts:
-    - name: azure_ai_metricsadvisor
+    - name: azure-ai-metricsadvisor
       safeName: azureaimetricsadvisor
 

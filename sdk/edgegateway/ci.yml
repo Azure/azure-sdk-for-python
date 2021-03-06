@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: edgegateway
     Artifacts:
-    - name: azure_mgmt_edgegateway
+    - name: azure-mgmt-edgegateway
       safeName: azuremgmtedgegateway

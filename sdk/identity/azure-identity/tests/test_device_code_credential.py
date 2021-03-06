@@ -262,7 +262,7 @@ def test_client_capabilities():
 
 
 def test_claims_challenge():
-    """get_token should pass any claims challenge to MSAL token acquisition APIs"""
+    """get_token and authenticate should pass any claims challenge to MSAL token acquisition APIs"""
 
     msal_acquire_token_result = dict(
         build_aad_response(access_token="**", id_token=build_id_token()),
@@ -276,9 +276,16 @@ def test_claims_challenge():
         msal_app = get_mock_app()
         msal_app.initiate_device_flow.return_value = {"message": "it worked"}
         msal_app.acquire_token_by_device_flow.return_value = msal_acquire_token_result
-        credential.get_token("scope", claims=expected_claims)
+
+        credential.authenticate(scopes=["scope"], claims=expected_claims)
 
         assert msal_app.acquire_token_by_device_flow.call_count == 1
+        args, kwargs = msal_app.acquire_token_by_device_flow.call_args
+        assert kwargs["claims_challenge"] == expected_claims
+
+        credential.get_token("scope", claims=expected_claims)
+
+        assert msal_app.acquire_token_by_device_flow.call_count == 2
         args, kwargs = msal_app.acquire_token_by_device_flow.call_args
         assert kwargs["claims_challenge"] == expected_claims
 

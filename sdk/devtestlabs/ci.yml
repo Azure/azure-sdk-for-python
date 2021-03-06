@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: devtestlabs
     Artifacts:
-    - name: azure_mgmt_devtestlabs
+    - name: azure-mgmt-devtestlabs
       safeName: azuremgmtdevtestlabs
