@@ -10,10 +10,14 @@ try:
 except ImportError:  # python < 3.3
     import mock  # type: ignore
 
+from azure.core.configuration import Configuration
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
+from azure.core.pipeline.policies import RetryPolicy
+from azure.core.pipeline.transport import HttpRequest
 from azure.identity import ManagedIdentityCredential
 from azure.identity._constants import Endpoints, EnvironmentVariables
+from azure.identity._internal.managed_identity_client import ManagedIdentityClient
 from azure.identity._internal.user_agent import USER_AGENT
 import pytest
 
@@ -670,3 +674,33 @@ def test_azure_arc_client_id():
 
     with pytest.raises(ClientAuthenticationError):
         credential.get_token("scope")
+
+
+def test_managed_identity_client_retry():
+    """ManagedIdentityClient should retry token requests"""
+
+    request_factory = mock.Mock()
+
+    pipeline = mock.Mock(
+        run=mock.Mock(
+            return_value=mock.Mock(
+                http_response=mock_response(json_payload={"access_token": "*", "expires_in": 42, "resource": "..."})
+            )
+        )
+    )
+    def get_pipeline(*_, **kwargs):
+        for policy in kwargs.get("policies") or []:
+            if isinstance(policy, RetryPolicy):
+                return pipeline
+        raise Exception("client should use RetryPolicy")
+
+    with mock.patch(ManagedIdentityClient.__module__ + ".Pipeline", get_pipeline):
+        client = ManagedIdentityClient(request_factory)
+
+    for method in ("GET", "POST"):
+        request_factory.return_value = HttpRequest(method, "https://localhost")
+        client.request_token("scope")
+        assert pipeline.run.call_count == 1
+        _, kwargs = pipeline.run.call_args
+        assert method in kwargs["retry_on_methods"]
+        pipeline.run.reset_mock()

@@ -8,14 +8,17 @@ from unittest import mock
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
+from azure.core.pipeline.policies import AsyncRetryPolicy
+from azure.core.pipeline.transport import HttpRequest
 from azure.identity.aio import ManagedIdentityCredential
+from azure.identity.aio._internal.managed_identity_client import AsyncManagedIdentityClient
 from azure.identity._constants import Endpoints, EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 
 import pytest
 
 from helpers import build_aad_response, mock_response, Request
-from helpers_async import async_validating_transport
+from helpers_async import async_validating_transport, get_completed_future
 
 MANAGED_IDENTITY_ENVIRON = "azure.identity.aio._credentials.managed_identity.os.environ"
 
@@ -638,3 +641,34 @@ async def test_azure_arc_client_id():
 
     with pytest.raises(ClientAuthenticationError):
         await credential.get_token("scope")
+
+
+@pytest.mark.asyncio
+async def test_managed_identity_client_retry():
+    """ManagedIdentityClient should retry token requests"""
+
+    request_factory = mock.Mock()
+
+    pipeline = mock.Mock(
+        run=mock.Mock(
+            return_value=get_completed_future(mock.Mock(
+                http_response=mock_response(json_payload={"access_token": "*", "expires_in": 42, "resource": "..."})
+            )
+        )
+    ))
+    def get_pipeline(*_, policies=[], **kwargs):
+        for policy in policies:
+            if isinstance(policy, AsyncRetryPolicy):
+                return pipeline
+        raise Exception("client should use AsyncRetryPolicy")
+
+    with mock.patch(AsyncManagedIdentityClient.__module__ + ".AsyncPipeline", get_pipeline):
+        client = AsyncManagedIdentityClient(request_factory)
+
+    for method in ("GET", "POST"):
+        request_factory.return_value = HttpRequest(method, "https://localhost")
+        await client.request_token("scope")
+        assert pipeline.run.call_count == 1
+        _, kwargs = pipeline.run.call_args
+        assert method in kwargs["retry_on_methods"]
+        pipeline.run.reset_mock()

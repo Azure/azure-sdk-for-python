@@ -5,14 +5,16 @@
 import functools
 import time
 from azure.core.exceptions import ClientAuthenticationError
+from azure.core.pipeline.policies import RetryPolicy
 from azure.identity._constants import EnvironmentVariables, DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
-from azure.identity._internal.aad_client import AadClient
+from azure.identity._internal import AadClient, AadClientCertificate
 from azure.core.credentials import AccessToken
 import pytest
 from msal import TokenCache
 from six.moves.urllib_parse import urlparse
 
 from helpers import build_aad_response, mock_response
+from test_certificate_credential import CERT_PATH
 
 try:
     from unittest.mock import Mock, patch
@@ -223,3 +225,44 @@ def test_should_refresh():
     client._last_refresh_time = now - DEFAULT_TOKEN_REFRESH_RETRY_DELAY + 1
     should_refresh = client.should_refresh(token)
     assert not should_refresh
+
+
+def test_retries_token_requests():
+    """The client should configure its pipeline to retry its token requests"""
+
+    pipeline = Mock(
+        run=Mock(
+            return_value=Mock(
+                http_response=mock_response(json_payload={"access_token": "***", "expires_in": 42}),
+                http_request=Mock(body={"scope": ""}),
+            )
+        )
+    )
+
+    def get_pipeline(*_, **kwargs):
+        for policy in kwargs.get("policies") or []:
+            if isinstance(policy, RetryPolicy):
+                return pipeline
+        raise Exception("client should use RetryPolicy")
+
+    with patch(AadClient.__module__ + ".Pipeline", get_pipeline):
+        client = AadClient("tenant-id", "client-id")
+
+    client.obtain_token_by_authorization_code("", "", "")
+    _, kwargs = pipeline.run.call_args
+    assert "POST" in kwargs["retry_on_methods"]
+    pipeline.run.reset_mock()
+
+    client.obtain_token_by_client_certificate("", AadClientCertificate(open(CERT_PATH, "rb").read()))
+    _, kwargs = pipeline.run.call_args
+    assert "POST" in kwargs["retry_on_methods"]
+    pipeline.run.reset_mock()
+
+    client.obtain_token_by_client_secret("", "")
+    _, kwargs = pipeline.run.call_args
+    assert "POST" in kwargs["retry_on_methods"]
+    pipeline.run.reset_mock()
+
+    client.obtain_token_by_refresh_token("", "")
+    _, kwargs = pipeline.run.call_args
+    assert "POST" in kwargs["retry_on_methods"]
