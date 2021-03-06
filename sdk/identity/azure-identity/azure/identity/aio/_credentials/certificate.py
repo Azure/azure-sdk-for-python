@@ -4,13 +4,13 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 
-from msal import TokenCache
+import msal
 
 from .._internal import AadClient, AsyncContextManager
 from .._internal.decorators import log_get_token_async
 from ..._credentials.certificate import get_client_credential
 from ..._internal import AadClientCertificate, validate_tenant_id
-from ..._internal.persistent_cache import load_service_principal_cache
+from ..._persistent_cache import _load_persistent_cache, TokenCachePersistenceOptions
 
 if TYPE_CHECKING:
     from typing import Any, Optional
@@ -34,6 +34,9 @@ class CertificateCredential(AsyncContextManager):
     :keyword password: The certificate's password. If a unicode string, it will be encoded as UTF-8. If the certificate
           requires a different encoding, pass appropriately encoded bytes instead.
     :paramtype password: str or bytes
+    :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
+          will cache tokens in memory.
+    :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     """
 
     def __init__(self, tenant_id, client_id, certificate_path=None, **kwargs):
@@ -46,12 +49,11 @@ class CertificateCredential(AsyncContextManager):
             client_credential["private_key"], password=client_credential.get("passphrase")
         )
 
-        enable_persistent_cache = kwargs.pop("enable_persistent_cache", False)
-        if enable_persistent_cache:
-            allow_unencrypted = kwargs.pop("allow_unencrypted_cache", False)
-            cache = load_service_principal_cache(allow_unencrypted)
+        cache_options = kwargs.pop("cache_persistence_options", None)
+        if cache_options:
+            cache = _load_persistent_cache(cache_options)
         else:
-            cache = TokenCache()
+            cache = msal.TokenCache()
 
         self._client = AadClient(tenant_id, client_id, cache=cache, **kwargs)
         self._client_id = client_id
