@@ -4,16 +4,16 @@
 
 **New Features**
 
-* Updated the following methods so that lists and single instances of dict representations are accepted for corresponding strongly-typed object arguments (PR #14807, thanks @bradleydamato):
-  - `update_queue`, `update_topic`, `update_subscription`, and `update_rule` on `ServiceBusAdministrationClient` accept dict representations of `QueueProperties`, `TopicProperties`, `SubscriptionProperties`, and `RuleProperties`, respectively.
-  - `send_messages` and `schedule_messages` on both sync and async versions of `ServiceBusSender` accept a list of or single instance of dict representations of `ServiceBusMessage`.
-  - `add_message` on `ServiceBusMessageBatch` now accepts a dict representation of `ServiceBusMessage`.
-  - Note: This is ongoing work and is the first step in supporting the above as respresentation of type `typing.Mapping`.
+* Updated the following methods so that lists and single instances of Mapping representations are accepted for corresponding strongly-typed object arguments (PR #14807, thanks @bradleydamato):
+  - `update_queue`, `update_topic`, `update_subscription`, and `update_rule` on `ServiceBusAdministrationClient` accept Mapping representations of `QueueProperties`, `TopicProperties`, `SubscriptionProperties`, and `RuleProperties`, respectively.
+  - `send_messages` and `schedule_messages` on both sync and async versions of `ServiceBusSender` accept a list of or single instance of Mapping representations of `ServiceBusMessage`.
+  - `add_message` on `ServiceBusMessageBatch` now accepts a Mapping representation of `ServiceBusMessage`.
 
 **BugFixes**
 
 * Operations failing due to `uamqp.errors.LinkForceDetach` caused by no activity on the connection for 10 minutes will now be retried internally except for the session receiver case.
 * `uamqp.errors.AMQPConnectionError` errors with condition code `amqp:unknown-error` are now categorized into `ServiceBusConnectionError` instead of the general `ServiceBusError`.
+* The `update_*` methods on `ServiceBusManagementClient` will now raise a `TypeError` rather than an `AttributeError` in the case of unsupported input type.
 
 ## 7.0.1 (2021-01-12)
 
