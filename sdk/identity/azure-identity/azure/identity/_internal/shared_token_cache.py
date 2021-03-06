@@ -6,7 +6,7 @@ import abc
 import platform
 import time
 
-from msal import TokenCache
+import msal
 import six
 from six.moves.urllib_parse import urlparse
 
@@ -14,7 +14,7 @@ from azure.core.credentials import AccessToken
 from .. import CredentialUnavailableError
 from .._constants import KnownAuthorities
 from .._internal import get_default_authority, normalize_authority, wrap_exceptions
-from .._internal.persistent_cache import load_user_cache
+from .._persistent_cache import _load_persistent_cache, TokenCachePersistenceOptions
 
 try:
     ABC = abc.ABC
@@ -106,15 +106,20 @@ class SharedTokenCacheBase(ABC):
 
         self._load_cache()
         if self._cache:
-            self._client = self._get_auth_client(authority=self._authority, cache=self._cache, **self._client_kwargs)
+            # pylint:disable=protected-access
+            self._client = self._get_auth_client(
+                authority=self._authority, cache=self._cache, **self._client_kwargs
+            )
 
         self._initialized = True
 
     def _load_cache(self):
         if not self._cache and self.supported():
-            allow_unencrypted = self._client_kwargs.get("allow_unencrypted_cache", False)
             try:
-                self._cache = load_user_cache(allow_unencrypted)
+                # This credential accepts the user's default cache regardless of whether it's encrypted. It doesn't
+                # create a new cache. If the default cache exists, the user must have created it earlier. If it's
+                # unencrypted, the user must have allowed that.
+                self._cache = _load_persistent_cache(TokenCachePersistenceOptions(allow_unencrypted_storage=True))
             except Exception:  # pylint:disable=broad-except
                 pass
 
@@ -124,7 +129,7 @@ class SharedTokenCacheBase(ABC):
         pass
 
     def _get_cache_items_for_authority(self, credential_type):
-        # type: (TokenCache.CredentialType) -> List[CacheItem]
+        # type: (msal.TokenCache.CredentialType) -> List[CacheItem]
         """yield cache items matching this credential's authority or one of its aliases"""
 
         items = []
@@ -138,8 +143,8 @@ class SharedTokenCacheBase(ABC):
         # type: () -> Iterable[CacheItem]
         """returns an iterable of cached accounts which have a matching refresh token"""
 
-        refresh_tokens = self._get_cache_items_for_authority(TokenCache.CredentialType.REFRESH_TOKEN)
-        all_accounts = self._get_cache_items_for_authority(TokenCache.CredentialType.ACCOUNT)
+        refresh_tokens = self._get_cache_items_for_authority(msal.TokenCache.CredentialType.REFRESH_TOKEN)
+        all_accounts = self._get_cache_items_for_authority(msal.TokenCache.CredentialType.ACCOUNT)
 
         accounts = {}
         for refresh_token in refresh_tokens:
@@ -190,7 +195,7 @@ class SharedTokenCacheBase(ABC):
 
         try:
             cache_entries = self._cache.find(
-                TokenCache.CredentialType.ACCESS_TOKEN,
+                msal.TokenCache.CredentialType.ACCESS_TOKEN,
                 target=list(scopes),
                 query={"home_account_id": account["home_account_id"]},
             )
@@ -210,7 +215,7 @@ class SharedTokenCacheBase(ABC):
 
         try:
             cache_entries = self._cache.find(
-                TokenCache.CredentialType.REFRESH_TOKEN, query={"home_account_id": account["home_account_id"]}
+                msal.TokenCache.CredentialType.REFRESH_TOKEN, query={"home_account_id": account["home_account_id"]}
             )
             return [token["secret"] for token in cache_entries if "secret" in token]
         except Exception as ex:  # pylint:disable=broad-except
