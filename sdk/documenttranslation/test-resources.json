@@ -25,55 +25,73 @@
             }
         },
         "tenantId": {
-            "type": "String",
+            "type": "string",
             "metadata": {
                 "description": "The tenant id to which the application and resources belong."
             }
         },
         "testApplicationId": {
-            "type": "String",
+            "type": "string",
             "metadata": {
                 "description": "The application client id used to run tests."
             }
         },
         "testApplicationSecret": {
-            "type": "String",
+            "type": "string",
             "metadata": {
                 "description": "The application client secret used to run tests."
             }
         },
         "docTranslationEndpointSuffix": {
             "defaultValue": ".cognitiveservices.azure.com/",
-            "type": "String"
+            "type": "string"
         },
         "blobStorageAccount": {
             "type": "string",
-            "defaultValue": "azuresdktrainingdata"
+            "defaultValue": "storagedoctranslation"
+        },
+        "blobResourceId": {
+            "type": "string",
+            "defaultValue": "[resourceId('2cd617ea-1866-46b1-90e3-fffb087ebf9b', concat('rg-', parameters('baseName')), 'Microsoft.Storage/storageAccounts', parameters('blobStorageAccount'))]"
         },
         "trainingDataContainer": {
             "type": "string",
-            "defaultValue": "trainingdata"
+            "defaultValue": "[concat(parameters('baseName'), 'container')]"
         },
         "trainingDataSasProperties": {
             "type": "object",
             "defaultValue": {
                 "canonicalizedResource": "[concat('/blob/', parameters('blobStorageAccount'), '/', parameters('trainingDataContainer'))]",
                 "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT2H')]",
-                "signedPermission": "rl",
+                "signedPermission": "rlwd",
                 "signedResource": "c"
             }
         }
     },
     "variables": {
         "authorizationApiVersion": "2018-09-01-preview",
-        "docTranslationBaseName": "[concat('documenttranslation', parameters('baseName'))]",
+        "docTranslationBaseName": "[parameters('baseName')]",
         "docTranslationApiVersion": "2017-04-18",
         "storageMgmtApiVersion": "2019-04-01",
-        "storageAccountName": "[concat(parameters('baseName'), 'docs')]",
-        "containerName": "[concat(parameters('baseName'), 'mycontainer')]",
+        "storageAccountName": "storagedoctranslation",
+        "containerName": "[concat(parameters('baseName'), 'container')]",
         "location": "[resourceGroup().location]",
         "azureDocTranslationUrl": "[concat('https://', variables('docTranslationBaseName'), parameters('docTranslationEndpointSuffix'))]",
-        "cognitiveServiceUserRoleId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]"
+        "cognitiveServiceUserRoleId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
+        "encryption": {
+            "services": {
+                "blob": {
+                    "enabled": true
+                }
+            },
+            "keySource": "Microsoft.Storage"
+        },
+        "networkAcls": {
+            "bypass": "AzureServices",
+            "virtualNetworkRules": [],
+            "ipRules": [],
+            "defaultAction": "Allow"
+        }
     },
     "resources": [
         {
@@ -93,7 +111,7 @@
             "name": "[variables('docTranslationBaseName')]",
             "apiVersion": "[variables('docTranslationApiVersion')]",
             "sku": {
-                "name": "S0"
+                "name": "S1"
             },
             "kind": "TextTranslation",
             "location": "[parameters('location')]",
@@ -129,15 +147,15 @@
     ],
     "outputs": {
         "AZURE_TENANT_ID": {
-            "type": "String",
+            "type": "string",
             "value": "[parameters('tenantId')]"
         },
         "AZURE_CLIENT_ID": {
-            "type": "String",
+            "type": "string",
             "value": "[parameters('testApplicationId')]"
         },
         "AZURE_CLIENT_SECRET": {
-            "type": "String",
+            "type": "string",
             "value": "[parameters('testApplicationSecret')]"
         },
         "DOCTRANSLATION_NAME": {
@@ -151,6 +169,10 @@
         "DOCTRANSLATION_TEST_ENDPOINT": {
             "type": "string",
             "value": "[variables('azureDocTranslationUrl')]"
+        },
+        "DOCTRANSLATION_TARGET_CONTAINER_SAS_URL": {
+            "type": "string",
+            "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('trainingDataContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('trainingDataSasProperties')).serviceSasToken)]"
         }
     }
 }
