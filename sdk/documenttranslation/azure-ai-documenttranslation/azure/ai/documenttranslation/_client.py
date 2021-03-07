@@ -143,9 +143,7 @@ class DocumentTranslationClient(object):
             cls = model_conversion_function,
             **kwargs
         )
-
-
-        return self._client.document_translation.get_operation_documents_status(job_id, **kwargs)
+        
 
     @distributed_trace
     def get_document_status(self, job_id, document_id, **kwargs):
