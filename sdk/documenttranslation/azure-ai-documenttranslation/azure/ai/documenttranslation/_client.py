@@ -129,6 +129,22 @@ class DocumentTranslationClient(object):
         :rtype: ~azure.core.paging.ItemPaged[DocumentStatusDetail]
         """
 
+        skip = kwargs.pop('skip', None)
+        top = kwargs.pop('top', None)
+
+        def _convert_from_generated_model(generated_model):
+            return DocumentStatusDetail._from_generated(generated_model)
+
+        model_conversion_function = kwargs.pop("cls", lambda doc_statuses: [_convert_from_generated_model(doc_status) for doc_status in doc_statuses])
+
+        return self._client.document_translation.get_operation_documents_status(
+            top = top,
+            skip = skip,
+            cls = model_conversion_function,
+            **kwargs
+        )
+
+
         return self._client.document_translation.get_operation_documents_status(job_id, **kwargs)
 
     @distributed_trace
