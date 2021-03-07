@@ -265,6 +265,21 @@ class DocumentStatusDetail(object):
         self.characters_charged = kwargs.get('characters_charged', None)
 
 
+    @classmethod
+    def _from_generated(cls, doc_status):
+        return cls(
+            url = doc_status.path,
+            created_on = doc_status.created_date_time_utc,
+            last_updated_on = doc_status.last_action_date_time_utc,
+            status = doc_status.status,
+            translate_to = doc_status.to,
+            error = DocumentTranslationError._from_generated(doc_status.error),
+            translation_progress = doc_status.progress,
+            id = doc_status.id,
+            characters_charged = doc_status.character_charged
+        )
+
+
 class DocumentTranslationError(object):
     """This contains an outer error with error code, message, details, target and an
     inner error with more descriptive details.

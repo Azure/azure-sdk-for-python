@@ -142,7 +142,9 @@ class DocumentTranslationClient(object):
         :type document_id: str
         :rtype: ~azure.ai.documenttranslation.DocumentStatusDetail
         """
-        return self._client.document_translation.get_document_status(job_id, document_id, **kwargs)
+
+        result = self._client.document_translation.get_document_status(job_id, document_id, **kwargs)
+        return DocumentStatusDetail._from_generated(result)
 
     @distributed_trace
     def get_supported_storage_sources(self, **kwargs):
