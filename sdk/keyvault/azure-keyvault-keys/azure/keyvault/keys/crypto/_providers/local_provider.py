@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 from azure.core.exceptions import AzureError
 
 from .. import DecryptResult, EncryptResult, SignResult, UnwrapResult, VerifyResult, WrapResult
-from ... import JsonWebKey, KeyOperation
+from ... import KeyOperation
 
 try:
     ABC = abc.ABC
@@ -20,6 +20,7 @@ if TYPE_CHECKING:
     from typing import Any, Optional, Union
     from .._internal.key import Key
     from .. import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
+    from ... import JsonWebKey
 
     Algorithm = Union[EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm]
 

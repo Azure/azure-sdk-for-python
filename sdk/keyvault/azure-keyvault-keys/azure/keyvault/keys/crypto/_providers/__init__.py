@@ -8,10 +8,11 @@ from .ec import EllipticCurveCryptographyProvider
 from .local_provider import LocalCryptographyProvider
 from .rsa import RsaCryptographyProvider
 from .symmetric import SymmetricCryptographyProvider
-from ... import JsonWebKey, KeyType
+from ... import KeyType
 
 if TYPE_CHECKING:
     from typing import Any
+    from ... import JsonWebKey
 
 
 def get_local_cryptography_provider(key, **kwargs):
