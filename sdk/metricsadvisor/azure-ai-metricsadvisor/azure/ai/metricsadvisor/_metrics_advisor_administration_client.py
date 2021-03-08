@@ -17,7 +17,6 @@ from typing import (
 import datetime
 import six
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from ._generated._azure_cognitive_service_metrics_advisor_restapi_open_ap_iv2 \
     import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2 as _Client
 from ._generated.models import (
@@ -53,8 +52,6 @@ from ._generated.models import (
     IngestionStatusQueryOptions as _IngestionStatusQueryOptions,
 )
 from ._version import SDK_MONIKER
-from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
-from ._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
 from ._helpers import (
     convert_to_generated_data_feed_type,
     construct_alert_config_dict,
@@ -98,6 +95,7 @@ if TYPE_CHECKING:
         NotificationHook,
         MetricDetectionCondition
     )
+    from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
 
 DataFeedSourceUnion = Union[
     AzureApplicationInsightsDataFeed,

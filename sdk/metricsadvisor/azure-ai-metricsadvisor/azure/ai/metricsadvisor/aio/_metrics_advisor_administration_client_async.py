@@ -11,14 +11,14 @@ from typing import (
     Any,
     List,
     Union,
-    cast
+    cast,
+    TYPE_CHECKING,
 )
 import datetime
 import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from .._generated.aio import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2 as _ClientAsync
 from .._generated.models import (
     AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
@@ -28,8 +28,6 @@ from .._generated.models import (
     IngestionStatusQueryOptions as _IngestionStatusQueryOptions,
 )
 from .._version import SDK_MONIKER
-from .._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
-from .._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
 from .._helpers import (
     convert_to_generated_data_feed_type,
     construct_alert_config_dict,
@@ -59,6 +57,9 @@ from .._metrics_advisor_administration_client import (
     DATA_FEED_PATCH,
     DataFeedSourceUnion
 )
+
+if TYPE_CHECKING:
+    from .._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
 
 
 class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-public-methods

@@ -9,9 +9,6 @@
 from typing import List, Union, Dict, Any, cast, TYPE_CHECKING, overload
 
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy
-from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
-from ._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
 from ._generated.models import (
     MetricFeedbackFilter,
     DetectionSeriesQuery,
@@ -51,7 +48,7 @@ if TYPE_CHECKING:
         CommentFeedback,
         PeriodFeedback
     )
-
+    from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
     from azure.core.paging import ItemPaged
 
 class MetricsAdvisorClient(object):

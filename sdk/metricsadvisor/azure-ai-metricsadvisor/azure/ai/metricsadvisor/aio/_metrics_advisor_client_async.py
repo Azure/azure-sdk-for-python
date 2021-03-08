@@ -12,9 +12,6 @@ import datetime
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
-from .._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
-from .._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
 from .._generated.models import (
     MetricFeedbackFilter,
     DetectionSeriesQuery,
@@ -53,6 +50,7 @@ if TYPE_CHECKING:
         CommentFeedback,
         PeriodFeedback
     )
+    from .._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
 
 class MetricsAdvisorClient(object):
     """Represents an client that calls restful API of Azure Metrics Advisor service.
