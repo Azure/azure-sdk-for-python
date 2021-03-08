@@ -103,9 +103,9 @@ Please have a look at the [samples](https://github.com/Azure/azure-sdk-for-pytho
  **Note:** It is important to know if your topic supports CloudEvents or EventGridEvents before publishing. If you send to a topic that does not support the schema of the event you are sending, send() will throw an exception.
 
 ### System Topics
-A **[system topic](https://docs.microsoft.com/azure/event-grid/system-topics)** in Event Grid represents one or more events published by Azure services such as Azure Storage and Azure Event Hubs. For example, a system topic may represent all blob events or only blob created and blob deleted events published for a specific storage account.
+A **[system topic](https://docs.microsoft.com/azure/event-grid/system-topics)** in Event Grid represents one or more events published by Azure services such as Azure Storage or Azure Event Hubs. For example, a system topic may represent all blob events or only blob creation and blob deletion events published for a specific storage account.
 
-The names of the various event types for the system events published to Azure Event Grid are avaialable in `azure.eventgrid.SystemEventNames`.
+The names of the various event types for the system events published to Azure Event Grid are available in `azure.eventgrid.SystemEventNames`.
 For complete list of recognizable system topics, visit [System Topics](https://docs.microsoft.com/azure/event-grid/system-topics).
 
  For more information about the key concepts on Event Grid, see [Concepts in Azure Event Grid][publisher-service-doc].
