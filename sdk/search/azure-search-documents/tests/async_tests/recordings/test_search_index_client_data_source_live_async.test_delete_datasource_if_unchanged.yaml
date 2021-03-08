@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search950921e4.search.windows.net/datasources?api-version=2020-06-30
+    uri: https://search950921e4.search.windows.net/datasources?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search950921e4.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D84B9BCA3CCF43\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
@@ -25,7 +25,7 @@ interactions:
       elapsed-time: '39'
       etag: W/"0x8D84B9BCA3CCF43"
       expires: '-1'
-      location: https://search950921e4.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
+      location: https://search950921e4.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -34,7 +34,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://search950921e4.search.windows.net/datasources?api-version=2020-06-30
+    url: https://search950921e4.search.windows.net/datasources?api-version=2020-06-30-Preview
 - request:
     body: '{"name": "sample-datasource", "description": "updated", "type": "azureblob",
       "credentials": {"connectionString": "connection_string"},
@@ -51,7 +51,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://search950921e4.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
+    uri: https://search950921e4.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search950921e4.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D84B9BCA914055\"","name":"sample-datasource","description":"updated","type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
@@ -73,7 +73,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search950921e4.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
+    url: https://search950921e4.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30-Preview
 - request:
     body: null
     headers:
@@ -84,7 +84,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://search950921e4.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
+    uri: https://search950921e4.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"error":{"code":"","message":"The precondition given in one of the
@@ -106,5 +106,5 @@ interactions:
     status:
       code: 412
       message: Precondition Failed
-    url: https://search950921e4.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
+    url: https://search950921e4.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30-Preview
 version: 1
