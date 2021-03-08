@@ -48,10 +48,10 @@ setup(
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "License :: OSI Approved :: MIT License",
     ],
     packages=find_packages(
@@ -62,14 +62,11 @@ setup(
         ]
     ),
     install_requires=[
-        #'msrest>=0.5.0',
-        #'msrestazure>=0.4.32,<2.0.0',
-        #'azure-common~=1.1',
         "azure-core>=1.4.0,<2.0.0",
-        "msrest>=0.5.0"
+        "msrest>=0.5.0",
     ],
     extras_require={
-        ":python_version<'3.0'": ["azure-nspkg"],
+        # ":python_version<'3.0'": ["azure-nspkg"],
     },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",

@@ -16,7 +16,7 @@ from ._models import (
     DeletedRepositoryResult,
     RegistryArtifactOrderBy,
     RepositoryProperties,
-    TagOrderBy
+    TagOrderBy,
 )
 from ._storage_models import (
     ArtifactManifest,
@@ -39,7 +39,7 @@ from ._storage_models import (
     OCIManifest,
     OCIManifestAnnotations,
     RuntimePlatform,
-    UploadStatus
+    UploadStatus,
 )
 from ._version import VERSION
 

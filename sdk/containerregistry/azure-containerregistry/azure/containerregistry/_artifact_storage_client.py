@@ -4,8 +4,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-class ArtifactStorageClient(object):
 
+class ArtifactStorageClient(object):
     def __init__(self, endpoint, repository, credential):
         # type: (str, str, TokenCredential) -> None
         pass

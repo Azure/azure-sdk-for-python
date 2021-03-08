@@ -6,6 +6,7 @@
 
 from ._base_client import ContainerRegistryBaseClient
 
+
 class ContainerRegistryClient(ContainerRegistryBaseClient):
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, TokenCredential) -> None
@@ -19,9 +20,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises: None
         """
         super(ContainerRegistryClient, self).__init__(
-            endpoint=endpoint,
-            credential=credential,
-            **kwargs
+            endpoint=endpoint, credential=credential, **kwargs
         )
 
         pass
@@ -49,8 +48,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises: None
         """
         repos = self._client.repository.get_list(
-            last=kwargs.get('last', None),
-            n=kwargs.get('max', None)
+            last=kwargs.get("last", None), n=kwargs.get("max", None)
         )
         pass
 

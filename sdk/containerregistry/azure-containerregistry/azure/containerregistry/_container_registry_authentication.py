@@ -4,8 +4,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-class ContainerRegistryStsClient(object):
 
+class ContainerRegistryStsClient(object):
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, TokenCredential) -> None
         """Create a ContainerRepositoryStsClient from an endpoint and a credential

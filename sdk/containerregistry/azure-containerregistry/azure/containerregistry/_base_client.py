@@ -10,6 +10,7 @@ from ._generated import AzureContainerRegistry
 from ._helpers import get_authentication_policy
 from ._user_agent import USER_AGENT
 
+
 class ContainerRegistryApiVersion(str, Enum):
     """Container Registry API version supported by this package"""
 

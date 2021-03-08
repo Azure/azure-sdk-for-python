@@ -8,12 +8,11 @@ from typing import TYPE_CHECKING
 
 from azure.core.async_paging import AsyncItemPaged
 from .._container_repository_client import ContainerRegistryClient
-from .._models import (
-    RepositoryAttributes
-)
+from .._models import RepositoryAttributes
 
 if TYPE_CHECKING:
     from azure.core.async_credentials import AsyncTokenCredential
+
 
 class ContainerRegistryClient(object):
     def __init__(self, base_url: str, credential: "AsyncTokenCredential", **kwargs):

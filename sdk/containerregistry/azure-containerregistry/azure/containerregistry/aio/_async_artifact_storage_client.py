@@ -6,18 +6,19 @@
 
 from typing import TYPE_CHECKING
 
-from .._models import (
-    CreateUploadResult,
-    ArtifactManifest,
-    ManifestMediaType
-)
+from .._models import CreateUploadResult, ArtifactManifest, ManifestMediaType
 
 if TYPE_CHECKING:
     from azure.core.async_credentials import AsyncTokenCredential
 
+
 class ArtifactStorageClient(object):
     def __init__(
-        self, endpoint: str, repository: str, credential: "AsyncTokenCredential", **kwargs
+        self,
+        endpoint: str,
+        repository: str,
+        credential: "AsyncTokenCredential",
+        **kwargs
     ) -> None:
         pass
 
@@ -31,11 +32,17 @@ class ArtifactStorageClient(object):
         pass
 
     def complete_upload(
-        self, upload_details: CreateUploadResult, digest: str, value: "Stream" = None, **kwargs
+        self,
+        upload_details: CreateUploadResult,
+        digest: str,
+        value: "Stream" = None,
+        **kwargs
     ) -> None:
         pass
 
-    def create_manifest(self, manifest: ArtifactManifest, tag: str = None, **kwargs) -> None:
+    def create_manifest(
+        self, manifest: ArtifactManifest, tag: str = None, **kwargs
+    ) -> None:
         pass
 
     def create_upload(self, **kwargs) -> CreateUploadResult:
@@ -54,7 +61,10 @@ class ArtifactStorageClient(object):
         pass
 
     def get_manifest(
-        self, tag_or_digest: str, accept_media_types: list[ManifestMediaType] = None, **kwargs
+        self,
+        tag_or_digest: str,
+        accept_media_types: list[ManifestMediaType] = None,
+        **kwargs
     ) -> ArtifactManifest:
         pass
 
