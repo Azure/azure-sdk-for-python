@@ -356,7 +356,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                 body_content_kwargs['content'] = body_content
                 request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
             else:
-                url = '/{nextLink}'
+                url = '{nextLink}'  # FIXME: manually edited; was '/{nextLink}'
                 path_format_arguments = {
                     'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                     'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
@@ -1026,7 +1026,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                 body_content_kwargs['content'] = body_content
                 request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
             else:
-                url = '/{nextLink}'
+                url = '{nextLink}'  # FIXME: manually edited; was '/{nextLink}'
                 path_format_arguments = {
                     'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                     'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
@@ -1125,7 +1125,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                 body_content_kwargs['content'] = body_content
                 request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
             else:
-                url = '/{nextLink}'
+                url = '{nextLink}'  # FIXME: manually edited; was '/{nextLink}'
                 path_format_arguments = {
                     'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                     'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
@@ -1866,7 +1866,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                 body_content_kwargs['content'] = body_content
                 request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
             else:
-                url = '/{nextLink}'
+                url = '{nextLink}'  # FIXME: manually edited; was '/{nextLink}'
                 path_format_arguments = {
                     'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                     'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
@@ -2336,7 +2336,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                 body_content_kwargs['content'] = body_content
                 request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
             else:
-                url = '/{nextLink}'
+                url = '{nextLink}'  # FIXME: manually edited; was '/{nextLink}'
                 path_format_arguments = {
                     'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                     'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
@@ -2637,7 +2637,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                 body_content_kwargs['content'] = body_content
                 request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
             else:
-                url = '/{nextLink}'
+                url = '{nextLink}'  # FIXME: manually edited; was '/{nextLink}'
                 path_format_arguments = {
                     'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                     'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
@@ -2736,7 +2736,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                 body_content_kwargs['content'] = body_content
                 request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
             else:
-                url = '/{nextLink}'
+                url = '{nextLink}'  # FIXME: manually edited; was '/{nextLink}'
                 path_format_arguments = {
                     'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                     'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
@@ -2911,7 +2911,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                 body_content_kwargs['content'] = body_content
                 request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
             else:
-                url = '/{nextLink}'
+                url = '{nextLink}'  # FIXME: manually edited; was '/{nextLink}'
                 path_format_arguments = {
                     'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                     'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
