@@ -33,7 +33,7 @@ These options are available for all perf tests:
 - `--duration=10` Number of seconds to run as many operations (the "run" function) as possible. Default is 10.
 - `--iterations=1` Number of test iterations to run. Default is 1.
 - `--parallel=1` Number of tests to run in parallel. Default is 1.
-- `--warm-up=5` Number of seconds to spend warming up the connection before measuing begins. Default is 5.
+- `--warm-up=5` Number of seconds to spend warming up the connection before measuring begins. Default is 5.
 - `--sync` Whether to run the tests in sync or async. Default is False (async).
 
 ### Common Event Hub command line options
