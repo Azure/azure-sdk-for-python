@@ -61,8 +61,8 @@ class InsertDeleteEntity(object):
 
             # [START create_entity]
             try:
-                entity = table_client.create_entity(entity=self.entity)
-                print(entity)
+                resp = table_client.create_entity(entity=self.entity)
+                print(resp)
             except ResourceExistsError:
                 print("Entity already exists")
         # [END create_entity]

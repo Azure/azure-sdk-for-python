@@ -489,8 +489,8 @@ class TablesRetryPolicy(RetryPolicy):
         """
         :param Any request:
         :param kwargs:
-        :return:
-        :rtype:dict
+        :return: Dictionary of metadata
+        :rtype: dict[str, Any]
         """
         body_position = None
         if hasattr(request.http_request.body, "read"):

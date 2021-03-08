@@ -131,7 +131,7 @@ class TableServiceClient(TableServiceClientBase):
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :return: Dictionary of service properties
-        :rtype:dict[str, Any]
+        :rtype: dict[str, Any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         timeout = kwargs.pop("timeout", None)

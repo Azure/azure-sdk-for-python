@@ -66,14 +66,14 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             :end-before: [END auth_from_shared_key]
             :language: python
             :dedent: 8
-            :caption: Creating the tableServiceClient with an account url and credential.
+            :caption: Creating the TableServiceClient with an account url and credential.
 
         .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
             :start-after: [START auth_by_sas]
             :end-before: [END auth_by_sas]
             :language: python
             :dedent: 8
-            :caption: Creating the tableServiceClient with Shared Access Signature.
+            :caption: Creating the TableServiceClient with Shared Access Signature.
     """
 
     def __init__(
@@ -111,7 +111,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             A connection string to an Azure Storage or Cosmos account.
         :type conn_str: str
         :returns: A Table service client.
-        :rtype: ~azure.data.tables.TableServiceClient
+        :rtype: ~azure.data.tables.aio.TableServiceClient
 
         .. admonition:: Example:
 
@@ -120,7 +120,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
                 :end-before: [END auth_from_connection_string]
                 :language: python
                 :dedent: 8
-                :caption: Creating the tableServiceClient from a connection string
+                :caption: Creating the TableServiceClient from a connection string
 
         """
         account_url, credential = parse_connection_str(
@@ -156,8 +156,8 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TableServiceProperties, or the result of cls(response)
-        :rtype: ~azure.data.tables.models.TableServiceProperties
+        :return: Dictionary of service properties
+        :rtype: dict[str, Any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         timeout = kwargs.pop("timeout", None)
@@ -210,13 +210,12 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         **kwargs  # type: Any
     ):
         # type: (...) -> TableClient
-        """Creates a new table under the given account.
+        """Creates a new table under the current account.
 
-        :param headers:
         :param table_name: The Table name.
-        :type table_name: ~azure.data.tables._models.Table
-        :return: TableClient, or the result of cls(response)
-        :rtype: ~azure.data.tables.TableClient or None
+        :type table_name: str
+        :return: TableClient
+        :rtype: ~azure.data.tables.aio.TableClient
         :raises ~azure.core.exceptions.ResourceExistsError:
 
         .. admonition:: Example:
@@ -387,8 +386,8 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             The queue. This can either be the name of the queue,
             or an instance of QueueProperties.
         :type table: str or ~azure.storage.table.TableProperties
-        :returns: A :class:`~azure.data.tables.TableClient` object.
-        :rtype: ~azure.data.tables.TableClient
+        :returns: A :class:`~azure.data.tables.aio.TableClient` object.
+        :rtype: ~azure.data.tables.aio.TableClient
 
         """
         _pipeline = AsyncPipeline(
