@@ -17,6 +17,8 @@ from ._models import (
     CreateChatThreadResult
 )
 
+from ._shared.user_credential import CommunicationTokenCredential
+
 __all__ = [
     'ChatClient',
     'ChatThreadClient',
@@ -29,6 +31,7 @@ __all__ = [
     'ChatThreadParticipant',
     'ChatMessageType',
     'CreateChatThreadResult',
-    'CommunicationError'
+    'CommunicationError',
+    'CommunicationTokenCredential'
 ]
 __version__ = VERSION

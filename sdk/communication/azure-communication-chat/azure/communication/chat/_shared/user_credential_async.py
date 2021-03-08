@@ -9,6 +9,7 @@ from typing import (  # pylint: disable=unused-import
     cast,
     Tuple,
 )
+from .user_token_refresh_options import CommunicationTokenRefreshOptions
 
 from msrest.serialization import TZ_UTC
 
@@ -22,8 +23,9 @@ class CommunicationTokenCredential(object):
     ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
 
     def __init__(self,
-            communication_token_refresh_options
+            token # type: str
         ):
+        communication_token_refresh_options = CommunicationTokenRefreshOptions(token=token)
         self._token = communication_token_refresh_options.get_token()
         self._token_refresher = communication_token_refresh_options.get_token_refresher()
         self._lock = Condition(Lock())

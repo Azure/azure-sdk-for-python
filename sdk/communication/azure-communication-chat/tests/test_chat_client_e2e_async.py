@@ -11,10 +11,9 @@ from msrest.serialization import TZ_UTC
 from uuid import uuid4
 
 from azure.communication.identity import CommunicationIdentityClient
-from azure.communication.identity._shared.user_credential_async import CommunicationTokenCredential
-from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
 from azure.communication.chat.aio import (
-    ChatClient
+    ChatClient,
+    CommunicationTokenCredential
 )
 from azure.communication.chat import (
     ChatThreadParticipant
@@ -48,8 +47,7 @@ class ChatClientTestAsync(AsyncCommunicationTestCase):
         self.token = token_response.token
 
         # create ChatClient
-        refresh_options = CommunicationTokenRefreshOptions(self.token)
-        self.chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
+        self.chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(self.token))
 
     def tearDown(self):
         super(ChatClientTestAsync, self).tearDown()

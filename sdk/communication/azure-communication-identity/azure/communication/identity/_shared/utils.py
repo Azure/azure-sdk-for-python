@@ -65,9 +65,15 @@ def create_access_token(token):
     try:
         padded_base64_payload = base64.b64decode(parts[1] + "==").decode('ascii')
         payload = json.loads(padded_base64_payload)
-        return AccessToken(token, datetime.fromtimestamp(payload['exp']).replace(tzinfo=TZ_UTC))
+        return AccessToken(token,
+            _convert_expires_on_datetime_to_utc_int(datetime.fromtimestamp(payload['exp']).replace(tzinfo=TZ_UTC)))
     except ValueError:
         raise ValueError(token_parse_err_msg)
+
+def _convert_expires_on_datetime_to_utc_int(expires_on):
+    epoch = time.mktime(datetime(1970, 1, 1).timetuple())
+    return epoch-time.mktime(expires_on.timetuple())
+
 
 def get_authentication_policy(
         endpoint, # type: str

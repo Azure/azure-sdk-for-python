@@ -12,10 +12,9 @@ from msrest.serialization import TZ_UTC
 from uuid import uuid4
 
 from azure.communication.identity import CommunicationIdentityClient
-from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
-from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
 from azure.communication.chat import (
     ChatClient,
+    CommunicationTokenCredential,
     ChatThreadParticipant
 )
 from azure.communication.chat._shared.utils import parse_connection_str
@@ -50,8 +49,7 @@ class ChatClientTest(CommunicationTestCase):
         self.token = tokenresponse.token
 
         # create ChatClient
-        refresh_options = CommunicationTokenRefreshOptions(self.token)
-        self.chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
+        self.chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(self.token))
 
     def tearDown(self):
         super(ChatClientTest, self).tearDown()
@@ -82,12 +80,9 @@ class ChatClientTest(CommunicationTestCase):
         This is to make sure that consecutive calls made using the same chat_client or chat_thread_client
         does not throw an exception due to mismatch in the generation of azure.core.credentials.AccessToken
         """
-        from azure.communication.identity._shared.user_token_refresh_options import \
-            CommunicationTokenRefreshOptions as IdentityCommunicationTokenRefreshOptions
 
         # create ChatClient
-        refresh_options = IdentityCommunicationTokenRefreshOptions(self.token)
-        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(self.token))
         raised = False
         try:
             # create chat thread
@@ -109,7 +104,7 @@ class ChatClientTest(CommunicationTestCase):
         except:
            raised = True
 
-        assert raised is True
+        assert raised is False
 
     @pytest.mark.live_test_only
     def test_create_chat_thread(self):
