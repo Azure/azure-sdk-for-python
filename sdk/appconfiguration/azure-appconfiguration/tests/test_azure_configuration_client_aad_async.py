@@ -36,6 +36,7 @@ import os
 import logging
 import asyncio
 import re
+import copy
 
 from async_wrapper import app_config_decorator
 from async_proxy import AzureAppConfigurationClientProxy
@@ -452,7 +453,7 @@ class AppConfigurationClientTest(AzureTestCase):
         )
 
     @app_config_decorator
-    async def test_sync_tokens(self, client):
+    def test_sync_tokens(self, client):
         new = FeatureFlagConfigurationSetting(
             'custom',
             True,
@@ -461,7 +462,7 @@ class AppConfigurationClientTest(AzureTestCase):
             ]
         )
 
-        sync_tokens = copy.deepcopy(client._sync_token_policy._sync_tokens)
+        sync_tokens = copy.deepcopy(client.obj._sync_token_policy._sync_tokens)
         keys = list(sync_tokens.keys())
         seq_num = sync_tokens[keys[0]].sequence_number
         sent = client.set_configuration_setting(new)
@@ -478,7 +479,7 @@ class AppConfigurationClientTest(AzureTestCase):
         )
 
         sent = client.set_configuration_setting(new)
-        sync_tokens2 = copy.deepcopy(client._sync_token_policy._sync_tokens)
+        sync_tokens2 = copy.deepcopy(client.obj._sync_token_policy._sync_tokens)
         keys = list(sync_tokens2.keys())
         seq_num2 = sync_tokens2[keys[0]].sequence_number
 
@@ -491,7 +492,7 @@ class AppConfigurationClientTest(AzureTestCase):
         )
 
         sent = client.set_configuration_setting(new)
-        sync_tokens3 = copy.deepcopy(client._sync_token_policy._sync_tokens)
+        sync_tokens3 = copy.deepcopy(client.obj._sync_token_policy._sync_tokens)
         keys = list(sync_tokens3.keys())
         seq_num3 = sync_tokens3[keys[0]].sequence_number
 

@@ -61,13 +61,13 @@ class ConfigurationSetting(Model):
             if key_value.content_type.startswith(
                 FeatureFlagConfigurationSetting.feature_flag_content_type
             ):
-                return FeatureFlagConfigurationSetting._from_generated(
+                return FeatureFlagConfigurationSetting._from_generated(  # pylint: disable=protected-access
                     key_value
                 )  # pylint: disable=protected-access
             if key_value.content_type.startswith(
                 SecretReferenceConfigurationSetting.secret_reference_content_type
             ):
-                return SecretReferenceConfigurationSetting._from_generated(
+                return SecretReferenceConfigurationSetting._from_generated(  # pylint: disable=protected-access
                     key_value
                 )  # pylint: disable=protected-access
 
@@ -174,7 +174,7 @@ class FeatureFlagConfigurationSetting(
                 key_value.value["conditions"]["client_filters"] = []
             if len(filters) > 0 and filters != [None]:
                 filters = [
-                    FeatureFilterBase._from_generated(f) for f in filters
+                    FeatureFilterBase._from_generated(f) for f in filters  # pylint: disable=protected-access
                 ]  # pylint: disable=protected-access
                 key_value.value["conditions"]["client_filters"] = filters
         except KeyError:
@@ -200,7 +200,7 @@ class FeatureFlagConfigurationSetting(
             u"enabled": self.enabled,
             u"conditions": {
                 u"client_filters": [
-                    f._to_generated()
+                    f._to_generated()  # pylint: disable=protected-access
                     for f in self.feature_filters  # pylint: disable=protected-access
                 ]
             },
@@ -218,7 +218,7 @@ class FeatureFlagConfigurationSetting(
             etag=self.etag,
         )
 
-    def add_feature_filter(self, feature_filter, **kwargs):
+    def add_feature_filter(self, feature_filter):
         # type: (FeatureFilterBase) -> None
 
         """Add a feature filter to the ConfigurationSetting
@@ -358,7 +358,7 @@ class TargetingFeatureFilter(FeatureFilterBase):
         self.groups = groups or []
 
     @classmethod
-    def from_service(cls, dict_repr, **kwargs):
+    def from_service(cls, dict_repr):
         # type: (dict[str, str]) -> TargetingFeatureFilter
 
         """Creates a TargetingFeatureFilter from the generated code call
@@ -410,7 +410,7 @@ class TimeWindowFeatureFilter(FeatureFilterBase):
             self.end = datetime.strptime(self.end, "%a, %d %b %Y %H:%M:%S %Z")
 
     @classmethod
-    def from_service(cls, dict_repr, **kwargs):
+    def from_service(cls, dict_repr):
         # type: (dict[str, str]) -> TimeWindowFeatureFilter
 
         """Creates a TimeWindowFeatureFilter from the generated code call
@@ -441,7 +441,7 @@ class CustomFeatureFilter(FeatureFilterBase):
         self.value = value
 
     @classmethod
-    def from_service(cls, dict_repr, **kwargs):
+    def from_service(cls, dict_repr):
         # type: (dict[str, str]) -> CustomFeatureFilter
 
         """Creates a CustomFeatureFilter from the generated code call
