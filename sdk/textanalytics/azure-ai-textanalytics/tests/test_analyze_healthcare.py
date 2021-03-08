@@ -134,7 +134,7 @@ class TestHealth(TextAnalyticsTest):
             polling_interval=self._interval()
         ).result()
 
-        self.assertEqual("2021-01-11", response.model_version)
+        assert response.model_version  # commenting out bc of service error, always uses latest https://github.com/Azure/azure-sdk-for-python/issues/17160
         self.assertEqual(response.statistics.documents_count, 5)
         self.assertEqual(response.statistics.transactions_count, 4)
         self.assertEqual(response.statistics.valid_documents_count, 4)
@@ -395,11 +395,12 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     def test_healthcare_assertion(self, client):
         result = list(client.begin_analyze_healthcare_entities(
-            documents=["Baby not likely to have Meningitis."]
+            documents=["Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."],
+            polling_interval=self._interval(),
         ).result())
 
         # currently can only test certainty
         # have an issue to update https://github.com/Azure/azure-sdk-for-python/issues/17088
         meningitis_entity = next(e for e in result[0].entities if e.text == "Meningitis")
-        assert meningitis_entity.assertion.certainty == "negative"
+        assert meningitis_entity.assertion.certainty == "negativePossible"
 

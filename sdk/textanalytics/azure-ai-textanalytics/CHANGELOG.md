@@ -1,6 +1,6 @@
 # Release History
 
-## 5.1.0b6 (Unreleased)
+## 5.1.0b6 (2021-03-09)
 
 **Breaking Changes**
 
@@ -16,6 +16,12 @@
 exists on the `HealthcareEntity`
 - Add property `assertion` onto `HealthcareEntity`. This contains assertions about the entity itself, i.e. if the entity represents a diagnosis,
 is this diagnosis conditional on a symptom?
+
+**Known Issues**
+
+- `begin_analyze_healthcare_entities` is currently in gated preview and can not be used with AAD credentials. For more information, see [the Text Analytics for Health documentation](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview).
+- At time of this SDK release, the service is not respecting the value passed through `model_version` to `begin_analyze_healthcare_entities`, it only uses the latest model. Still exposing this kwarg on the SDK, since
+once the service fixes this, it will automatically work.
 
 ## 5.1.0b5 (2021-02-10)
 
