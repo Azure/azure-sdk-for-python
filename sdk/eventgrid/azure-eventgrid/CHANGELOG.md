@@ -2,8 +2,6 @@
 
 ## 2.0.0 (2021-03-09)
 
-  - This version will be the last version to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+
-
   **Breaking Changes**
   - `~azure.eventgrid.CloudEvent` is now removed in favor of `~azure.core.messaging.CloudEvent`.
   - All the `SystemEventNames` related to Azure Communication Service starting with `ACS****` are renamed to `Acs***` to honor pascal case.
