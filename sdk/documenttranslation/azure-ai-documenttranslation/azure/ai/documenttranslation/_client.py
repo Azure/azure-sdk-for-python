@@ -6,13 +6,14 @@
 
 from typing import Union, Any, TYPE_CHECKING, List
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.polling import LROPoller
 from ._generated import BatchDocumentTranslationClient as _BatchDocumentTranslationClient
 from ._helpers import get_authentication_policy
 from ._user_agent import USER_AGENT
 if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
     from azure.core.credentials import AzureKeyCredential, TokenCredential
-    from ._models import JobStatusDetail, DocumentStatusDetail, BatchDocumentInput, FileFormat
+    from ._models import TranslationStatusDetail, DocumentStatusDetail, BatchDocumentInput, FileFormat
 
 
 class DocumentTranslationClient(object):
@@ -40,19 +41,19 @@ class DocumentTranslationClient(object):
             api_version=self._api_version,
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
-            polling_interval=5,  # TODO what is appropriate polling interval
+            polling_interval=30,  # TODO what is appropriate polling interval
             **kwargs
         )
 
     @distributed_trace
-    def create_translation_job(self, batch, **kwargs):
-        # type: (List[BatchDocumentInput], **Any) -> JobStatusDetail
+    def begin_translation(self, batch, **kwargs):
+        # type: (List[BatchDocumentInput], **Any) -> LROPoller[ItemPaged[DocumentStatusDetail]]
         """
 
         :param batch:
         :type batch: List[~azure.ai.documenttranslation.BatchDocumentInput]
-        :return: JobStatusDetail
-        :rtype: JobStatusDetail
+        :return: An iterable of DocumentStatusDetail
+        :rtype: LROPoller[ItemPaged[DocumentStatusDetail]]
         """
 
         return self._client.document_translation.begin_submit_batch_request(
@@ -62,78 +63,66 @@ class DocumentTranslationClient(object):
         )
 
     @distributed_trace
-    def get_job_status(self, job_id, **kwargs):
-        # type: (str, **Any) -> JobStatusDetail
+    def get_translation_status(self, batch_id, **kwargs):
+        # type: (str, **Any) -> TranslationStatusDetail
         """
 
-        :param job_id: guid id for job
-        :type job_id: str
-        :rtype: ~azure.ai.documenttranslation.JobStatusDetail
+        :param batch_id: guid id for batch
+        :type batch_id: str
+        :rtype: ~azure.ai.documenttranslation.TranslationStatusDetail
         """
 
-        return self._client.document_translation.get_operation_status(job_id, **kwargs)
+        return self._client.document_translation.get_operation_status(batch_id, **kwargs)
 
     @distributed_trace
-    def cancel_job(self, job_id, **kwargs):
+    def cancel_translation(self, batch_id, **kwargs):
         # type: (str, **Any) -> None
         """
 
-        :param job_id: guid id for job
-        :type job_id: str
+        :param batch_id: guid id for batch
+        :type batch_id: str
         :rtype: None
         """
 
-        self._client.document_translation.cancel_operation(job_id, **kwargs)
+        self._client.document_translation.cancel_operation(batch_id, **kwargs)
 
     @distributed_trace
-    def wait_until_done(self, job_id, **kwargs):
-        # type: (str, **Any) -> JobStatusDetail
-        """
-
-        :param job_id: guid id for job
-        :type job_id: str
-        :return: JobStatusDetail
-        :rtype: JobStatusDetail
-        """
-        pass
-
-    @distributed_trace
-    def list_submitted_jobs(self, **kwargs):
-        # type: (**Any) -> ItemPaged[JobStatusDetail]
+    def list_submitted_translations(self, **kwargs):
+        # type: (**Any) -> ItemPaged[TranslationStatusDetail]
         """
 
         :keyword int results_per_page:
         :keyword int skip:
-        :rtype: ~azure.core.polling.ItemPaged[JobStatusDetail]
+        :rtype: ~azure.core.polling.ItemPaged[TranslationStatusDetail]
         """
         return self._client.document_translation.get_operations(**kwargs)
 
     @distributed_trace
-    def list_documents_statuses(self, job_id, **kwargs):
+    def list_documents_statuses(self, batch_id, **kwargs):
         # type: (str, **Any) -> ItemPaged[DocumentStatusDetail]
         """
 
-        :param job_id: guid id for job
-        :type job_id: str
+        :param batch_id: guid id for batch
+        :type batch_id: str
         :keyword int results_per_page:
         :keyword int skip:
         :rtype: ~azure.core.paging.ItemPaged[DocumentStatusDetail]
         """
 
-        return self._client.document_translation.get_operation_documents_status(job_id, **kwargs)
+        return self._client.document_translation.get_operation_documents_status(batch_id, **kwargs)
 
     @distributed_trace
-    def get_document_status(self, job_id, document_id, **kwargs):
+    def get_document_status(self, batch_id, document_id, **kwargs):
         # type: (str, str, **Any) -> DocumentStatusDetail
         """
 
-        :param job_id: guid id for job
-        :type job_id: str
+        :param batch_id: guid id for batch
+        :type batch_id: str
         :param document_id: guid id for document
         :type document_id: str
         :rtype: ~azure.ai.documenttranslation.DocumentStatusDetail
         """
-        return self._client.document_translation.get_document_status(job_id, document_id, **kwargs)
+        return self._client.document_translation.get_document_status(batch_id, document_id, **kwargs)
 
     @distributed_trace
     def get_supported_storage_sources(self, **kwargs):

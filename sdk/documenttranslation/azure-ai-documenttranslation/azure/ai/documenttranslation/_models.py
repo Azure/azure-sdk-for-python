@@ -98,10 +98,10 @@ class BatchDocumentInput(object):
         self.suffix = kwargs.get("suffix", None)
 
 
-class JobStatusDetail(object):
+class TranslationStatusDetail(object):
     """Job status response.
 
-    :ivar id: Required. Id of the job.
+    :ivar id: Required. Id of the batch.
     :vartype id: str
     :ivar created_on: Required. Operation created date time.
     :vartype created_on: ~datetime.datetime
