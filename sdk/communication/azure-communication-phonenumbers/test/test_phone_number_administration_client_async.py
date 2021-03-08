@@ -55,7 +55,6 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
             phone_number = await self.phone_number_client.get_phone_number(self.phone_number)
         assert phone_number.phone_number == self.phone_number
 
-    @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_search_available_phone_numbers(self):
         capabilities = PhoneNumberCapabilities(

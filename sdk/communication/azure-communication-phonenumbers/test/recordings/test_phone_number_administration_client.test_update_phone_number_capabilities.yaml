@@ -13,37 +13,37 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       Date:
-      - Fri, 05 Mar 2021 22:20:43 GMT
+      - Mon, 08 Mar 2021 17:41:48 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
     uri: https://sanitized.communication.azure.com/phoneNumbers/sanitized/capabilities?api-version=2021-03-07
   response:
     body:
-      string: '{"capabilitiesUpdateId": "a8589969-1d09-4ad3-9b5a-39ce067ea535"}'
+      string: '{"capabilitiesUpdateId": "5aa2069a-dd2b-4348-9f16-314acb37d2f6"}'
     headers:
       access-control-expose-headers:
       - Operation-Location,Location,operation-id,capabilities-id
       capabilities-id:
-      - a8589969-1d09-4ad3-9b5a-39ce067ea535
+      - 5aa2069a-dd2b-4348-9f16-314acb37d2f6
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Mar 2021 22:20:44 GMT
+      - Mon, 08 Mar 2021 17:41:49 GMT
       ms-cv:
-      - KjGZkSHB5kCrsxscH9ibgQ.0
+      - pNZwMhI3IUiVz657e2a3DQ.0
       operation-id:
-      - capabilities_a8589969-1d09-4ad3-9b5a-39ce067ea535
+      - capabilities_5aa2069a-dd2b-4348-9f16-314acb37d2f6
       operation-location:
-      - /phoneNumbers/operations/capabilities_a8589969-1d09-4ad3-9b5a-39ce067ea535?api-version=2021-03-07
+      - /phoneNumbers/operations/capabilities_5aa2069a-dd2b-4348-9f16-314acb37d2f6?api-version=2021-03-07
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 987ms
+      - 943ms
     status:
       code: 202
       message: Accepted
@@ -58,17 +58,17 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Fri, 05 Mar 2021 22:21:14 GMT
+      - Mon, 08 Mar 2021 17:42:20 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/phoneNumbers/operations/capabilities_a8589969-1d09-4ad3-9b5a-39ce067ea535?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/phoneNumbers/operations/capabilities_5aa2069a-dd2b-4348-9f16-314acb37d2f6?api-version=2021-03-07
   response:
     body:
       string: '{"status": "Succeeded", "resourceLocation": "/phoneNumbers/+18332143261?api-version=2021-03-07",
-        "createdDateTime": "2021-03-05T22:20:44.5342481+00:00", "id": "sanitized",
+        "createdDateTime": "2021-03-08T17:41:49.3163011+00:00", "id": "sanitized",
         "operationType": "UpdatePhoneNumberCapabilities", "lastActionDateTime": "0001-01-01T00:00:00+00:00"}'
     headers:
       access-control-expose-headers:
@@ -76,15 +76,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Mar 2021 22:21:14 GMT
+      - Mon, 08 Mar 2021 17:42:19 GMT
       ms-cv:
-      - I5gz/NLH7kWVu9cfp44HpQ.0
+      - RSJdlEmKe0O0AkxOkYF91g.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 254ms
+      - 253ms
     status:
       code: 200
       message: OK
@@ -99,9 +99,9 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Fri, 05 Mar 2021 22:21:14 GMT
+      - Mon, 08 Mar 2021 17:42:20 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -116,15 +116,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Mar 2021 22:21:15 GMT
+      - Mon, 08 Mar 2021 17:42:20 GMT
       ms-cv:
-      - VbgvUURuDkyiQ4llLoXMPA.0
+      - R7OdWLUtxE2LScLoCsO/MQ.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 1201ms
+      - 1145ms
     status:
       code: 200
       message: OK

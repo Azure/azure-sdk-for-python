@@ -16,7 +16,7 @@ interactions:
       Date:
       - Fri, 05 Mar 2021 22:37:27 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -58,7 +58,7 @@ interactions:
       Date:
       - Fri, 05 Mar 2021 22:38:00 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -99,7 +99,7 @@ interactions:
       Date:
       - Fri, 05 Mar 2021 22:38:01 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -144,7 +144,7 @@ interactions:
       Date:
       - Fri, 05 Mar 2021 22:38:02 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -186,7 +186,7 @@ interactions:
       Date:
       - Fri, 05 Mar 2021 22:38:34 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -227,7 +227,7 @@ interactions:
       Date:
       - Fri, 05 Mar 2021 22:38:34 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
