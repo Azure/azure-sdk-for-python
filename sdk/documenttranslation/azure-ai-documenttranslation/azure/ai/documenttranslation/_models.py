@@ -42,7 +42,7 @@ class TranslationGlossary(object):
 
     @classmethod
     def _to_generated_list(cls, glossaries):
-        result = list(_Glossary)
+        result = []
         for glossary in glossaries:
             if isinstance(TranslationGlossary):
                 result.append(
