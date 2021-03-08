@@ -5,42 +5,54 @@ interactions:
       Accept:
       - application/json
       Date:
-      - Fri, 05 Mar 2021 22:21:18 GMT
+      - Mon, 08 Mar 2021 17:42:22 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
     uri: https://sanitized.communication.azure.com/phoneNumbers?skip=0&top=100&api-version=2021-03-07
   response:
     body:
-      string: '{"phoneNumbers": [{"id": "16194895581", "phoneNumber": "sanitized",
-        "countryCode": "US", "phoneNumberType": "Geographic", "capabilities": {"calling":
-        "outbound", "sms": "none"}, "assignmentType": "Person", "purchaseDate": "2021-01-13T20:01:52.0795301+00:00",
+      string: '{"phoneNumbers": [{"id": "sanitized", "phoneNumber": "sanitized", "countryCode":
+        "US", "phoneNumberType": "Geographic", "capabilities": {"calling": "outbound",
+        "sms": "none"}, "assignmentType": "Person", "purchaseDate": "2021-01-13T20:01:52.0795301+00:00",
         "cost": {"amount": 1.0, "currencyCode": "USD", "billingFrequency": "Monthly"}},
-        {"id": "16194895593", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
+        {"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
         "Geographic", "capabilities": {"calling": "outbound", "sms": "none"}, "assignmentType":
         "Person", "purchaseDate": "2021-01-13T20:57:24.5482566+00:00", "cost": {"amount":
-        1.0, "currencyCode": "USD", "billingFrequency": "Monthly"}}, {"id": "18332143261",
+        1.0, "currencyCode": "USD", "billingFrequency": "Monthly"}}, {"id": "sanitized",
         "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType": "TollFree",
         "capabilities": {"calling": "inbound", "sms": "inbound+outbound"}, "assignmentType":
         "Application", "purchaseDate": "2020-11-30T17:51:21.2991518+00:00", "cost":
         {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "Monthly"}}, {"id":
-        "18443281555", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
+        "sanitized", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
         "TollFree", "capabilities": {"calling": "inbound", "sms": "inbound+outbound"},
         "assignmentType": "Application", "purchaseDate": "2020-11-12T21:53:12.2088187+00:00",
         "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "Monthly"}},
-        {"id": "18445492606", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
+        {"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
         "TollFree", "capabilities": {"calling": "inbound", "sms": "inbound+outbound"},
         "assignmentType": "Application", "purchaseDate": "2021-03-04T19:24:10.3004481+00:00",
+        "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "Monthly"}},
+        {"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
+        "TollFree", "capabilities": {"calling": "inbound", "sms": "inbound+outbound"},
+        "assignmentType": "Application", "purchaseDate": "2021-03-05T22:24:46.5160739+00:00",
+        "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "Monthly"}},
+        {"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
+        "TollFree", "capabilities": {"calling": "inbound", "sms": "inbound+outbound"},
+        "assignmentType": "Application", "purchaseDate": "2021-03-05T22:30:37.0532427+00:00",
+        "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "Monthly"}},
+        {"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
+        "TollFree", "capabilities": {"calling": "inbound", "sms": "inbound+outbound"},
+        "assignmentType": "Application", "purchaseDate": "2021-03-05T22:27:26.3166637+00:00",
         "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "Monthly"}}]}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Mar 2021 22:21:22 GMT
-      ms-cv: US5P4qB/KEOB9kd4FEf70w.0
+      date: Mon, 08 Mar 2021 17:42:28 GMT
+      ms-cv: FPXwjKPyG0OmBOaX0j7/6Q.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 4347ms
+      x-processing-time: 5851ms
     status:
       code: 200
       message: OK

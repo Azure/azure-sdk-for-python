@@ -25,14 +25,14 @@ class ResponseReplacerProcessor(RecordingProcessor):
                     if isinstance(item, str):
                         body["phoneNumbers"] = [self._replacement]
                         break
-                    elif "phoneNumber" in item:
+                    if "phoneNumber" in item:
                         item['phoneNumber'] = self._replacement
-                    elif "id" in item:
+                    if "id" in item:
                         item['id'] = self._replacement
             response['body']['string'] = json.dumps(body)
             response['url'] = self._replacement
             return response
-        except (KeyError, ValueError):
+        except (KeyError, ValueError, TypeError):
             return response
 
 class BodyReplacerProcessor(RecordingProcessor):
