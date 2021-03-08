@@ -1,6 +1,7 @@
 # Release History
 
-## 1.0.0-beta.5 (Unreleased)
+## 1.0.0b5 (Unreleased)
+- Dropped support for 3.5
 
 ### Breaking
 - CommunicationIdentityClient's (synchronous and asynchronous) `issue_token` function is now renamed to `get_token`.

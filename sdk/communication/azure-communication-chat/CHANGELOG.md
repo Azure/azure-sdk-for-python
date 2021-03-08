@@ -1,5 +1,8 @@
 # Release History
 
+## 1.0.0b5 (unreleased)
+- Dropped support for Python 3.5
+
 ## 1.0.0b4 (2021-02-09)
 ### Breaking Changes
 - Uses `CommunicationUserIdentifier` and `CommunicationIdentifier` in place of `CommunicationUser`, and `CommunicationTokenCredential` instead of `CommunicationUserCredential`.

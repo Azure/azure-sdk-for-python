@@ -1,9 +1,11 @@
 # Release History
 
 ## 1.0.0b4 (Unreleased)
+- Dropped support for Python 3.5
 
 ### Added
 - Added PhoneNumbersAdministrationClient (originally was part of the azure.communication.administration package).
+
 
 
 

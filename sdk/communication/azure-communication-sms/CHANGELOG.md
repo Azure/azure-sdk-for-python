@@ -10,6 +10,7 @@
 ### Breaking
 - Send method takes in strings for phone numbers instead of `PhoneNumberIdentifier`.
 - Send method returns a list of `SmsSendResult`s instead of a `SendSmsResponse`.
+- Dropped support for Python 3.5
 
 ## 1.0.0b5 (2021-02-09)
 ### Added

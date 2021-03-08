@@ -6,7 +6,7 @@ Azure Communication Phone Numbers client package is used to administer Phone Num
 
 # Getting started
 ### Prerequisites
-- Python 2.7, or 3.5 or later is required to use this package.
+- Python 2.7, or 3.6 or later is required to use this package.
 - You must have an [Azure subscription](https://azure.microsoft.com/free/)
 - A deployed Communication Services resource. You can use the [Azure Portal](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp) or the [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice) to set it up.
 ### Install the package
