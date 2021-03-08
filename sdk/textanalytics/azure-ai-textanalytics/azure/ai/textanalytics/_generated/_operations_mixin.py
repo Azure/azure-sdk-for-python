@@ -13,8 +13,7 @@ from typing import TYPE_CHECKING
 import warnings
 
 # FIXME: have to manually reconfigure import path for multiapi operation mixin
-from .._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeHealthcareEntitiesLROPollingMethod
-from .._lro import AnalyzeBatchActionsLROPoller, AnalyzeBatchActionsLROPollingMethod
+from .._lro import AnalyzeBatchActionsLROPoller, AnalyzeBatchActionsLROPollingMethod, AnalyzeHealthcareEntitiesLROPoller, AnalyzeHealthcareEntitiesLROPollingMethod
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
@@ -55,12 +54,12 @@ class TextAnalyticsClientOperationsMixin(object):
         :type skip: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeJobState, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_3.models.AnalyzeJobState
+        :rtype: ~azure.ai.textanalytics.v3_1_preview_4.models.AnalyzeJobState
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('analyze_status')
-        if api_version == 'v3.1-preview.3':
-            from .v3_1_preview_3.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        if api_version == 'v3.1-preview.4':
+            from .v3_1_preview_4.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'analyze_status'".format(api_version))
         mixin_instance = OperationClass()
@@ -82,7 +81,7 @@ class TextAnalyticsClientOperationsMixin(object):
         executed.
 
         :param body: Collection of documents to analyze and tasks to execute.
-        :type body: ~azure.ai.textanalytics.v3_1_preview_3.models.AnalyzeBatchInput
+        :type body: ~azure.ai.textanalytics.v3_1_preview_4.models.AnalyzeBatchInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the AnalyzeBatchActionsLROPollingMethod polling method,
@@ -90,12 +89,12 @@ class TextAnalyticsClientOperationsMixin(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AnalyzeBatchActionsLROPoller that returns either AnalyzeJobState or the result of cls(response)
-        :rtype: ~...._lro.AnalyzeBatchActionsLROPoller[~azure.ai.textanalytics.v3_1_preview_3.models.AnalyzeJobState]
+        :rtype: ~...._lro.AnalyzeBatchActionsLROPoller[~azure.ai.textanalytics.v3_1_preview_4.models.AnalyzeJobState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_analyze')
-        if api_version == 'v3.1-preview.3':
-            from .v3_1_preview_3.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        if api_version == 'v3.1-preview.4':
+            from .v3_1_preview_4.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze'".format(api_version))
         mixin_instance = OperationClass()
@@ -128,8 +127,8 @@ class TextAnalyticsClientOperationsMixin(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_cancel_health_job')
-        if api_version == 'v3.1-preview.3':
-            from .v3_1_preview_3.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        if api_version == 'v3.1-preview.4':
+            from .v3_1_preview_4.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_cancel_health_job'".format(api_version))
         mixin_instance = OperationClass()
@@ -144,7 +143,7 @@ class TextAnalyticsClientOperationsMixin(object):
         self,
         documents,  # type: List["_models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
-        string_index_type="TextElements_v8",  # type: Optional[Union[str, "_models.StringIndexType"]]
+        string_index_type=None,  # type: Optional[Union[str, "_models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         """Submit healthcare analysis job.
@@ -153,14 +152,14 @@ class TextAnalyticsClientOperationsMixin(object):
         symptoms, etc) and their relations.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_3.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
         :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
          see https://aka.ms/text-analytics-offsets.
-        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_3.models.StringIndexType
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_4.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the AnalyzeHealthcareEntitiesLROPollingMethod polling method,
@@ -168,12 +167,12 @@ class TextAnalyticsClientOperationsMixin(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AnalyzeHealthcareEntitiesLROPoller that returns either HealthcareJobState or the result of cls(response)
-        :rtype: ~...._lro.AnalyzeHealthcareEntitiesLROPoller[~azure.ai.textanalytics.v3_1_preview_3.models.HealthcareJobState]
+        :rtype: ~...._lro.AnalyzeHealthcareEntitiesLROPoller[~azure.ai.textanalytics.v3_1_preview_4.models.HealthcareJobState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_health')
-        if api_version == 'v3.1-preview.3':
-            from .v3_1_preview_3.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        if api_version == 'v3.1-preview.4':
+            from .v3_1_preview_4.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_health'".format(api_version))
         mixin_instance = OperationClass()
@@ -213,8 +212,8 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('entities_linking')
         if api_version == 'v3.0':
             from .v3_0.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1-preview.3':
-            from .v3_1_preview_3.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.4':
+            from .v3_1_preview_4.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'entities_linking'".format(api_version))
         mixin_instance = OperationClass()
@@ -255,8 +254,8 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('entities_recognition_general')
         if api_version == 'v3.0':
             from .v3_0.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1-preview.3':
-            from .v3_1_preview_3.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.4':
+            from .v3_1_preview_4.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'entities_recognition_general'".format(api_version))
         mixin_instance = OperationClass()
@@ -274,6 +273,7 @@ class TextAnalyticsClientOperationsMixin(object):
         show_stats=None,  # type: Optional[bool]
         domain=None,  # type: Optional[str]
         string_index_type="TextElements_v8",  # type: Optional[Union[str, "_models.StringIndexType"]]
+        pii_categories=None,  # type: Optional[List[Union[str, "_models.PiiCategory"]]]
         **kwargs  # type: Any
     ):
         """Entities containing personal information.
@@ -285,7 +285,7 @@ class TextAnalyticsClientOperationsMixin(object):
         list of enabled languages.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_3.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
@@ -298,15 +298,17 @@ class TextAnalyticsClientOperationsMixin(object):
         :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
          see https://aka.ms/text-analytics-offsets.
-        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_3.models.StringIndexType
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_4.models.StringIndexType
+        :param pii_categories: (Optional) describes the PII categories to return.
+        :type pii_categories: list[str or ~azure.ai.textanalytics.v3_1_preview_4.models.PiiCategory]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PiiResult, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_3.models.PiiResult
+        :rtype: ~azure.ai.textanalytics.v3_1_preview_4.models.PiiResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('entities_recognition_pii')
-        if api_version == 'v3.1-preview.3':
-            from .v3_1_preview_3.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        if api_version == 'v3.1-preview.4':
+            from .v3_1_preview_4.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'entities_recognition_pii'".format(api_version))
         mixin_instance = OperationClass()
@@ -315,7 +317,7 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.entities_recognition_pii(documents, model_version, show_stats, domain, string_index_type, **kwargs)
+        return mixin_instance.entities_recognition_pii(documents, model_version, show_stats, domain, string_index_type, pii_categories, **kwargs)
 
     def health_status(
         self,
@@ -342,12 +344,12 @@ class TextAnalyticsClientOperationsMixin(object):
         :type show_stats: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: HealthcareJobState, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_3.models.HealthcareJobState
+        :rtype: ~azure.ai.textanalytics.v3_1_preview_4.models.HealthcareJobState
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('health_status')
-        if api_version == 'v3.1-preview.3':
-            from .v3_1_preview_3.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        if api_version == 'v3.1-preview.4':
+            from .v3_1_preview_4.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'health_status'".format(api_version))
         mixin_instance = OperationClass()
@@ -387,8 +389,8 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('key_phrases')
         if api_version == 'v3.0':
             from .v3_0.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1-preview.3':
-            from .v3_1_preview_3.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.4':
+            from .v3_1_preview_4.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'key_phrases'".format(api_version))
         mixin_instance = OperationClass()
@@ -429,8 +431,8 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('languages')
         if api_version == 'v3.0':
             from .v3_0.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1-preview.3':
-            from .v3_1_preview_3.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.4':
+            from .v3_1_preview_4.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'languages'".format(api_version))
         mixin_instance = OperationClass()
@@ -471,8 +473,8 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('sentiment')
         if api_version == 'v3.0':
             from .v3_0.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1-preview.3':
-            from .v3_1_preview_3.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.4':
+            from .v3_1_preview_4.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'sentiment'".format(api_version))
         mixin_instance = OperationClass()

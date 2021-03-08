@@ -136,11 +136,11 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
             topic_description = mgmt_service.create_topic(topic_name)
 
             # handle a null update properly.
-            with pytest.raises(AttributeError):
+            with pytest.raises(TypeError):
                 mgmt_service.update_topic(None)
 
             # handle an invalid type update properly.
-            with pytest.raises(AttributeError):
+            with pytest.raises(TypeError):
                 mgmt_service.update_topic(Exception("test"))
 
             # change the name to a topic that doesn't exist; should fail.
@@ -259,3 +259,64 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
     def test_topic_properties_constructor(self):
         with pytest.raises(TypeError):
             TopicProperties("randomname")
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    def test_mgmt_topic_update_dict_success(self, servicebus_namespace_connection_string, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_topics(mgmt_service)
+        topic_name = "fjruid"
+
+        try:
+            topic_description = mgmt_service.create_topic(topic_name)
+            topic_description_dict = dict(topic_description)
+
+            # Try updating one setting.
+            topic_description_dict["default_message_time_to_live"] = datetime.timedelta(minutes=2)
+            mgmt_service.update_topic(topic_description_dict)
+            topic_description = mgmt_service.get_topic(topic_name)
+            assert topic_description.default_message_time_to_live == datetime.timedelta(minutes=2)
+
+            # Now try updating all settings.
+            topic_description_dict = dict(topic_description)
+            topic_description_dict["auto_delete_on_idle"] = datetime.timedelta(minutes=10)
+            topic_description_dict["default_message_time_to_live"] = datetime.timedelta(minutes=11)
+            topic_description_dict["duplicate_detection_history_time_window"] = datetime.timedelta(minutes=12)
+            topic_description_dict["enable_batched_operations"] = True
+            topic_description_dict["enable_express"] = True
+            # topic_description_dict["enable_partitioning"] = True # Cannot be changed after creation
+            topic_description_dict["max_size_in_megabytes"] = 3072
+            # topic_description_dict["requires_duplicate_detection"] = True # Read only
+            # topic_description_dict["requires_session"] = True # Cannot be changed after creation
+            topic_description_dict["support_ordering"] = True
+
+            mgmt_service.update_topic(topic_description_dict)
+            topic_description = mgmt_service.get_topic(topic_name)
+
+            assert topic_description.auto_delete_on_idle == datetime.timedelta(minutes=10)
+            assert topic_description.default_message_time_to_live == datetime.timedelta(minutes=11)
+            assert topic_description.duplicate_detection_history_time_window == datetime.timedelta(minutes=12)
+            assert topic_description.enable_batched_operations == True
+            assert topic_description.enable_express == True
+            # assert topic_description.enable_partitioning == True
+            assert topic_description.max_size_in_megabytes == 3072
+            # assert topic_description.requires_duplicate_detection == True
+            # assert topic_description.requires_session == True
+            assert topic_description.support_ordering == True
+        finally:
+            mgmt_service.delete_topic(topic_name)
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    def test_mgmt_topic_update_dict_error(self, servicebus_namespace_connection_string, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_topics(mgmt_service)
+        topic_name = "dfjdfj"
+        try:
+            topic_description = mgmt_service.create_topic(topic_name)
+            # send in topic dict without non-name keyword args
+            topic_description_only_name = {"name": topic_name}
+            with pytest.raises(TypeError):
+                mgmt_service.update_topic(topic_description_only_name)
+        finally:
+            mgmt_service.delete_topic(topic_name)

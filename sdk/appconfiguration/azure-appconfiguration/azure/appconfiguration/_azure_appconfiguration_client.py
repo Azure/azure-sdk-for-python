@@ -37,6 +37,7 @@ from ._utils import (
 )
 from ._sync_token import SyncTokenPolicy
 from ._user_agent import USER_AGENT
+
 try:
     from typing import TYPE_CHECKING
 except ImportError:
@@ -47,15 +48,16 @@ if TYPE_CHECKING:
     from typing import Any, Optional, Union
     from azure.core.paging import ItemPaged
 
+
 class AzureAppConfigurationClient:
     """Represents an client that calls restful API of Azure App Configuration service.
 
-        :param str base_url: base url of the service
-        :param credential: An object which can provide secrets for the app configuration service
-        :type credential: azure.AppConfigConnectionStringCredential
-        :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
-        :keyword HttpTransport transport: If omitted, the standard pipeline is used.
-        :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
+    :param str base_url: base url of the service
+    :param credential: An object which can provide secrets for the app configuration service
+    :type credential: azure.AppConfigConnectionStringCredential
+    :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
+    :keyword HttpTransport transport: If omitted, the standard pipeline is used.
+    :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
 
     """
 
@@ -64,7 +66,7 @@ class AzureAppConfigurationClient:
     def __init__(self, base_url, credential, **kwargs):
         # type: (str, Any, dict) -> None
         try:
-            if not base_url.lower().startswith('http'):
+            if not base_url.lower().startswith("http"):
                 base_url = "https://" + base_url
         except AttributeError:
             raise ValueError("Base URL must be a string.")
@@ -72,7 +74,9 @@ class AzureAppConfigurationClient:
         if not credential:
             raise ValueError("Missing credential")
 
-        self._config = AzureAppConfigurationConfiguration(credential, base_url, **kwargs)
+        self._config = AzureAppConfigurationConfiguration(
+            credential, base_url, **kwargs
+        )
         self._config.user_agent_policy = UserAgentPolicy(
             base_user_agent=USER_AGENT, **kwargs
         )
@@ -83,37 +87,31 @@ class AzureAppConfigurationClient:
         if pipeline is None:
             aad_mode = not isinstance(credential, AppConfigConnectionStringCredential)
             pipeline = self._create_appconfig_pipeline(
-                credential=credential,
-                aad_mode=aad_mode,
-                base_url=base_url,
-                **kwargs)
+                credential=credential, aad_mode=aad_mode, base_url=base_url, **kwargs
+            )
 
         self._impl = AzureAppConfiguration(
             credentials=credential, endpoint=base_url, pipeline=pipeline
         )
 
     @classmethod
-    def from_connection_string(
-        cls,
-        connection_string,
-        **kwargs
-    ):
+    def from_connection_string(cls, connection_string, **kwargs):
         # type: (str, dict) -> AzureAppConfigurationClient
         """Create AzureAppConfigurationClient from a Connection String.
 
-                :param connection_string: Connection String
-                    (one of the access keys of the Azure App Configuration resource)
-                    used to access the Azure App Configuration.
-                :type connection_string: str
+            :param connection_string: Connection String
+                (one of the access keys of the Azure App Configuration resource)
+                used to access the Azure App Configuration.
+            :type connection_string: str
 
-            Example
+        Example
 
-            .. code-block:: python
+        .. code-block:: python
 
-                from azure.appconfiguration import AzureAppConfigurationClient
-                connection_str = "<my connection string>"
-                client = AzureAppConfigurationClient.from_connection_string(connection_str)
-            """
+            from azure.appconfiguration import AzureAppConfigurationClient
+            connection_str = "<my connection string>"
+            client = AzureAppConfigurationClient.from_connection_string(connection_str)
+        """
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
         return cls(
             credential=AppConfigConnectionStringCredential(connection_string),
@@ -121,9 +119,11 @@ class AzureAppConfigurationClient:
             **kwargs
         )
 
-    def _create_appconfig_pipeline(self, credential, base_url=None, aad_mode=False, **kwargs):
-        transport = kwargs.get('transport')
-        policies = kwargs.get('policies')
+    def _create_appconfig_pipeline(
+        self, credential, base_url=None, aad_mode=False, **kwargs
+    ):
+        transport = kwargs.get("transport")
+        policies = kwargs.get("policies")
 
         if policies is None:  # [] is a valid policy list
             if aad_mode:
@@ -131,8 +131,10 @@ class AzureAppConfigurationClient:
                 if hasattr(credential, "get_token"):
                     credential_policy = BearerTokenCredentialPolicy(credential, scope)
                 else:
-                    raise TypeError("Please provide an instance from azure-identity "
-                                    "or a class that implement the 'get_token protocol")
+                    raise TypeError(
+                        "Please provide an instance from azure-identity "
+                        "or a class that implement the 'get_token protocol"
+                    )
             else:
                 credential_policy = AppConfigRequestsCredentialsPolicy(credential)
             policies = [
@@ -143,7 +145,7 @@ class AzureAppConfigurationClient:
                 self._sync_token_policy,
                 self._config.logging_policy,  # HTTP request/response log
                 DistributedTracingPolicy(**kwargs),
-                HttpLoggingPolicy(**kwargs)
+                HttpLoggingPolicy(**kwargs),
             ]
 
         if not transport:
@@ -192,17 +194,17 @@ class AzureAppConfigurationClient:
         """
         select = kwargs.pop("fields", None)
         if select:
-            select = ['locked' if x == 'read_only' else x for x in select]
-        error_map = {
-            401: ClientAuthenticationError
-        }
+            select = ["locked" if x == "read_only" else x for x in select]
+        error_map = {401: ClientAuthenticationError}
 
         try:
             return self._impl.get_key_values(
                 label=label_filter,
                 key=key_filter,
                 select=select,
-                cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
+                cls=lambda objs: [
+                    ConfigurationSetting._from_generated(x) for x in objs
+                ],
                 error_map=error_map,
                 **kwargs
             )
@@ -213,7 +215,12 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def get_configuration_setting(
-        self, key, label=None, etag='*', match_condition=MatchConditions.Unconditionally, **kwargs
+        self,
+        key,
+        label=None,
+        etag="*",
+        match_condition=MatchConditions.Unconditionally,
+        **kwargs
     ):  # type: (str, Optional[str], Optional[str], Optional[MatchConditions], dict) -> ConfigurationSetting
 
         """Get the matched ConfigurationSetting from Azure App Configuration service
@@ -240,10 +247,7 @@ class AzureAppConfigurationClient:
                 key="MyKey", label="MyLabel"
             )
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
         if match_condition == MatchConditions.IfNotModified:
             error_map[412] = ResourceModifiedError
         if match_condition == MatchConditions.IfModified:
@@ -273,8 +277,8 @@ class AzureAppConfigurationClient:
     @distributed_trace
     def add_configuration_setting(
         self,
-        configuration_setting, # type: Union[ConfigurationSetting,SecretReferenceConfigurationSetting,FeatureFlagConfigurationSetting] # pylint: disable=line-too-long
-        **kwargs # type: dict
+        configuration_setting,  # type: Union[ConfigurationSetting,SecretReferenceConfigurationSetting,FeatureFlagConfigurationSetting] # pylint: disable=line-too-long
+        **kwargs  # type: dict
     ):
         # type: (...) -> ConfigurationSetting
 
@@ -302,10 +306,7 @@ class AzureAppConfigurationClient:
         """
         key_value = configuration_setting._to_generated()
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
-        error_map = {
-            401: ClientAuthenticationError,
-            412: ResourceExistsError
-        }
+        error_map = {401: ClientAuthenticationError, 412: ResourceExistsError}
         try:
             key_value_added = self._impl.put_key_value(
                 entity=key_value,
@@ -323,7 +324,10 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def set_configuration_setting(
-        self, configuration_setting, match_condition=MatchConditions.Unconditionally, **kwargs
+        self,
+        configuration_setting,
+        match_condition=MatchConditions.Unconditionally,
+        **kwargs
     ):  # type: (ConfigurationSetting, Optional[MatchConditions], dict) -> ConfigurationSetting
 
         """Add or update a ConfigurationSetting.
@@ -356,10 +360,7 @@ class AzureAppConfigurationClient:
         """
         key_value = configuration_setting._to_generated()
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
-        error_map = {
-            401: ClientAuthenticationError,
-            409: ResourceReadOnlyError
-        }
+        error_map = {401: ClientAuthenticationError, 409: ResourceReadOnlyError}
         if match_condition == MatchConditions.IfNotModified:
             error_map[412] = ResourceModifiedError
         if match_condition == MatchConditions.IfModified:
@@ -375,7 +376,9 @@ class AzureAppConfigurationClient:
                 key=key_value.key,
                 label=key_value.label,
                 if_match=prep_if_match(configuration_setting.etag, match_condition),
-                if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
+                if_none_match=prep_if_none_match(
+                    configuration_setting.etag, match_condition
+                ),
                 headers=custom_headers,
                 error_map=error_map,
             )
@@ -416,10 +419,7 @@ class AzureAppConfigurationClient:
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
-        error_map = {
-            401: ClientAuthenticationError,
-            409: ResourceReadOnlyError
-        }
+        error_map = {401: ClientAuthenticationError, 409: ResourceReadOnlyError}
         if match_condition == MatchConditions.IfNotModified:
             error_map[412] = ResourceModifiedError
         if match_condition == MatchConditions.IfModified:
@@ -484,17 +484,17 @@ class AzureAppConfigurationClient:
         """
         select = kwargs.pop("fields", None)
         if select:
-            select = ['locked' if x == 'read_only' else x for x in select]
-        error_map = {
-            401: ClientAuthenticationError
-        }
+            select = ["locked" if x == "read_only" else x for x in select]
+        error_map = {401: ClientAuthenticationError}
 
         try:
             return self._impl.get_revisions(
                 label=label_filter,
                 key=key_filter,
                 select=select,
-                cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
+                cls=lambda objs: [
+                    ConfigurationSetting._from_generated(x) for x in objs
+                ],
                 error_map=error_map,
                 **kwargs
             )
@@ -531,10 +531,7 @@ class AzureAppConfigurationClient:
             read_only_config_setting = client.set_read_only(config_setting)
             read_only_config_setting = client.set_read_only(config_setting, read_only=False)
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
 
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if match_condition == MatchConditions.IfNotModified:
@@ -552,7 +549,9 @@ class AzureAppConfigurationClient:
                     key=configuration_setting.key,
                     label=configuration_setting.label,
                     if_match=prep_if_match(configuration_setting.etag, match_condition),
-                    if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
+                    if_none_match=prep_if_none_match(
+                        configuration_setting.etag, match_condition
+                    ),
                     error_map=error_map,
                     **kwargs
                 )
@@ -561,7 +560,9 @@ class AzureAppConfigurationClient:
                     key=configuration_setting.key,
                     label=configuration_setting.label,
                     if_match=prep_if_match(configuration_setting.etag, match_condition),
-                    if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
+                    if_none_match=prep_if_none_match(
+                        configuration_setting.etag, match_condition
+                    ),
                     error_map=error_map,
                     **kwargs
                 )
@@ -571,9 +572,7 @@ class AzureAppConfigurationClient:
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
-    def add_sync_token(
-        self, token, **kwargs
-    ):  # type: (str) -> None
+    def add_sync_token(self, token, **kwargs):  # type: (str) -> None
 
         """Add a sync token to the internal list of tokens.
         :param token: The sync token to be added to the internal list of tokens

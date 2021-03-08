@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from ._operations import Operations
-from ._get_operations import GetOperations
+from ._operations_status_operations import OperationsStatusOperations
 from ._redis_enterprise_operations import RedisEnterpriseOperations
 from ._databases_operations import DatabasesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
@@ -15,7 +15,7 @@ from ._private_link_resources_operations import PrivateLinkResourcesOperations
 
 __all__ = [
     'Operations',
-    'GetOperations',
+    'OperationsStatusOperations',
     'RedisEnterpriseOperations',
     'DatabasesOperations',
     'PrivateEndpointConnectionsOperations',

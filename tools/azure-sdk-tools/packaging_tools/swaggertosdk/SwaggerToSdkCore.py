@@ -222,7 +222,8 @@ def build_swaggertosdk_conf_from_json_readme(readme_file, sdk_git_id, config, ba
     with tempfile.TemporaryDirectory() as temp_dir:
         readme_as_conf = autorest_swagger_to_sdk_conf(
             readme_full_path,
-            temp_dir
+            temp_dir,
+            config
         )
     generated_config = {
         "markdown": readme_full_path,

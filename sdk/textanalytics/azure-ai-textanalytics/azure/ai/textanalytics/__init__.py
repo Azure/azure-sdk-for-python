@@ -27,8 +27,8 @@ from ._models import (
     SentenceSentiment,
     SentimentConfidenceScores,
     MinedOpinion,
-    AspectSentiment,
-    OpinionSentiment,
+    TargetSentiment,
+    AssessmentSentiment,
     RecognizePiiEntitiesResult,
     PiiEntity,
     PiiEntityDomainType,
@@ -36,14 +36,20 @@ from ._models import (
     HealthcareEntity,
     HealthcareEntityDataSource,
     RecognizeEntitiesAction,
+    RecognizeLinkedEntitiesAction,
     RecognizePiiEntitiesAction,
     ExtractKeyPhrasesAction,
     AnalyzeBatchActionsResult,
     RequestStatistics,
     AnalyzeBatchActionsType,
     AnalyzeBatchActionsError,
+    HealthcareEntityRelationRoleType,
 )
 from ._paging import AnalyzeHealthcareEntitiesResult
+from ._generated.v3_1_preview_4.models import (
+    PiiCategory as PiiEntityCategoryType,
+    RelationType as HealthcareEntityRelationType
+)
 
 __all__ = [
     'TextAnalyticsApiVersion',
@@ -67,8 +73,8 @@ __all__ = [
     'SentenceSentiment',
     'SentimentConfidenceScores',
     'MinedOpinion',
-    'AspectSentiment',
-    'OpinionSentiment',
+    'TargetSentiment',
+    'AssessmentSentiment',
     'RecognizePiiEntitiesResult',
     'PiiEntity',
     'PiiEntityDomainType',
@@ -77,12 +83,16 @@ __all__ = [
     'HealthcareEntity',
     'HealthcareEntityDataSource',
     'RecognizeEntitiesAction',
+    'RecognizeLinkedEntitiesAction',
     'RecognizePiiEntitiesAction',
     'ExtractKeyPhrasesAction',
     'AnalyzeBatchActionsResult',
     'RequestStatistics',
     'AnalyzeBatchActionsType',
     "AnalyzeBatchActionsError",
+    "PiiEntityCategoryType",
+    "HealthcareEntityRelationType",
+    "HealthcareEntityRelationRoleType",
 ]
 
 __version__ = VERSION

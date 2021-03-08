@@ -4,6 +4,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -15,6 +16,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -28,9 +30,9 @@ extends:
   parameters:
     ServiceDirectory: servicebus
     Artifacts:
-    - name: azure_mgmt_servicebus
+    - name: azure-mgmt-servicebus
       safeName: azuremgmtservicebus
-    - name: azure_servicebus
+    - name: azure-servicebus
       safeName: azureservicebus
     SkipPythonVersion: 'pypy3'
 

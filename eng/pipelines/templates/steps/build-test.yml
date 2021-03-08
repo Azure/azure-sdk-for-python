@@ -64,9 +64,11 @@ steps:
   - ${{ parameters.AfterTestSteps }}
 
   - pwsh: |
-      Get-ChildItem .\_coverage\ |
-      Foreach-Object {
-        Get-Content $_
+      if (Test-Path -Path '.\_coverage\') {
+        Get-ChildItem .\_coverage\ -Recurse |
+        Foreach-Object {
+          Get-Content $_
+        }
       }
     displayName: 'Show .coverage files'
     condition: and(succeeded(), ${{ parameters.RunCoverage }})

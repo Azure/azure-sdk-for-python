@@ -16,7 +16,7 @@ from ._models import (
     SecretReferenceConfigurationSetting,
     TargetingFeatureFilter,
     TimeWindowFeatureFilter,
-    CustomFeatureFilter
+    CustomFeatureFilter,
 )
 from ._version import VERSION
 from ._azure_appconfiguration_error import ResourceReadOnlyError
@@ -30,5 +30,5 @@ __all__ = [
     "SecretReferenceConfigurationSetting",
     "TargetingFeatureFilter",
     "TimeWindowFeatureFilter",
-    "CustomFeatureFilter"
+    "CustomFeatureFilter",
 ]

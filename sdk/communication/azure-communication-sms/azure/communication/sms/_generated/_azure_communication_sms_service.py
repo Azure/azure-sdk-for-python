@@ -25,7 +25,7 @@ class AzureCommunicationSMSService(object):
 
     :ivar sms: SmsOperations operations
     :vartype sms: azure.communication.sms.operations.SmsOperations
-    :param endpoint: The endpoint of the Azure Communication resource.
+    :param endpoint: The communication resource, for example https://my-resource.communication.azure.com.
     :type endpoint: str
     """
 
@@ -41,6 +41,7 @@ class AzureCommunicationSMSService(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.sms = SmsOperations(

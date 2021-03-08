@@ -9,7 +9,6 @@ from unittest import mock
 from datetime import datetime
 
 import requests
-from opentelemetry.sdk.metrics.export import MetricsExportResult
 from opentelemetry.sdk.trace.export import SpanExportResult
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError

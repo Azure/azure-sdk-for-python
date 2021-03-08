@@ -1,0 +1,131 @@
+interactions:
+- request:
+    body: '{"phoneNumberType": "tollFree", "assignmentType": "application", "capabilities":
+      {"calling": "inbound", "sms": "inbound+outbound"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '131'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Mar 2021 22:20:06 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/:search?api-version=2021-03-07
+  response:
+    body:
+      string: ''
+    headers:
+      access-control-expose-headers:
+      - Location,Operation-Location,operation-id,search-id
+      content-length:
+      - '0'
+      date:
+      - Fri, 05 Mar 2021 22:20:10 GMT
+      ms-cv:
+      - lzRA3VrAnEC+gMwWY5/d5w.0
+      operation-id:
+      - search_c7deaed5-e41e-4fe5-91a6-a21e7210cbe4
+      operation-location:
+      - /phoneNumbers/operations/search_c7deaed5-e41e-4fe5-91a6-a21e7210cbe4?api-version=2021-03-07
+      request-context:
+      - appId=
+      search-id:
+      - c7deaed5-e41e-4fe5-91a6-a21e7210cbe4
+      x-processing-time:
+      - 4133ms
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Date:
+      - Fri, 05 Mar 2021 22:20:41 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.communication.azure.com/phoneNumbers/operations/search_c7deaed5-e41e-4fe5-91a6-a21e7210cbe4?api-version=2021-03-07
+  response:
+    body:
+      string: '{"status": "Succeeded", "resourceLocation": "/availablePhoneNumbers/searchResults/c7deaed5-e41e-4fe5-91a6-a21e7210cbe4?api-version=2021-03-07",
+        "createdDateTime": "2021-03-05T22:20:11.001373+00:00", "id": "sanitized",
+        "operationType": "Search", "lastActionDateTime": "0001-01-01T00:00:00+00:00"}'
+    headers:
+      access-control-expose-headers:
+      - Location
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 05 Mar 2021 22:20:41 GMT
+      ms-cv:
+      - AbkHLPOGRUirq1KzJ53Qlw.0
+      request-context:
+      - appId=
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 670ms
+    status:
+      code: 200
+      message: OK
+    url: sanitized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Date:
+      - Fri, 05 Mar 2021 22:20:41 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.communication.azure.com/availablePhoneNumbers/searchResults/c7deaed5-e41e-4fe5-91a6-a21e7210cbe4?api-version=2021-03-07
+  response:
+    body:
+      string: '{"searchId": "c7deaed5-e41e-4fe5-91a6-a21e7210cbe4", "phoneNumbers":
+        ["sanitized"], "phoneNumberType": "TollFree", "assignmentType": "Application",
+        "capabilities": {"calling": "inbound", "sms": "inbound+outbound"}, "cost":
+        {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "Monthly"}, "searchExpiresBy":
+        "2021-03-05T22:36:18.4979540+00:00"}'
+    headers:
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 05 Mar 2021 22:20:42 GMT
+      ms-cv:
+      - Rn4DVw7s5UOVfiCFfiXCOQ.0
+      request-context:
+      - appId=
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 997ms
+    status:
+      code: 200
+      message: OK
+    url: sanitized
+version: 1

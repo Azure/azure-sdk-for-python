@@ -1,5 +1,8 @@
 # Release History
 
+## 6.0.0b2 (2021-02-26)
+* Fix version problem.
+
 ## 6.0.0b1 (2021-01-07)
 
 This is beta preview version.

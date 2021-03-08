@@ -18,6 +18,7 @@ from typing import (  # pylint: disable=unused-import
 import logging
 from uuid import uuid4
 
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
@@ -27,6 +28,7 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     UserAgentPolicy,
     ProxyPolicy,
+    AzureSasCredentialPolicy
 )
 from azure.core.pipeline.transport import (
     AsyncHttpTransport,
@@ -86,6 +88,8 @@ class AsyncStorageAccountHostsMixin(object):
             )
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
+        elif isinstance(credential, AzureSasCredential):
+            self._credential_policy = AzureSasCredentialPolicy(credential)
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
