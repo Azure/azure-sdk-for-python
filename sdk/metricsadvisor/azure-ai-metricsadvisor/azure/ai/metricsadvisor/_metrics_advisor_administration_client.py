@@ -61,7 +61,8 @@ from ._helpers import (
     construct_detection_config_dict,
     construct_hook_dict,
     construct_data_feed_dict,
-    convert_datetime
+    convert_datetime,
+    get_authentication_policy,
 )
 from .models._models import (
     DataFeed,
@@ -176,32 +177,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         except AttributeError:
             raise ValueError("Base URL must be a string.")
 
-        if not credential:
-            raise ValueError("Missing credential")
-
         self._endpoint = endpoint
-
-        if isinstance(credential, MetricsAdvisorKeyCredential):
-            self._client = _Client(
-                endpoint=endpoint,
-                sdk_moniker=SDK_MONIKER,
-                authentication_policy=MetricsAdvisorKeyCredentialPolicy(credential),
-                **kwargs
-            )
-        else:
-            if hasattr(credential, "get_token"):
-                credential_scopes = kwargs.pop('credential_scopes',
-                                               ['https://cognitiveservices.azure.com/.default'])
-                credential_policy = BearerTokenCredentialPolicy(credential, *credential_scopes)
-            else:
-                raise TypeError("Please provide an instance from azure-identity "
-                                "or a class that implement the 'get_token protocol")
-            self._client = _Client(
-                endpoint=endpoint,
-                sdk_moniker=SDK_MONIKER,
-                authentication_policy=credential_policy,
-                **kwargs
-            )
+        authentication_policy = get_authentication_policy(credential)
+        self._client = _Client(
+            endpoint=endpoint,
+            credential=credential,  # type: ignore
+            sdk_moniker=SDK_MONIKER,
+            authentication_policy=authentication_policy,
+            **kwargs
+        )
 
     def __repr__(self):
         # type: () -> str
