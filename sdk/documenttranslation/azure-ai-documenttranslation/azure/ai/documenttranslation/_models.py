@@ -41,16 +41,18 @@ class TranslationGlossary(object):
         self.format_version = kwargs.get("format_version", None)
         self.storage_source = kwargs.get("storage_source", None)
 
+    def _to_generated(self):
+        return _Glossary(
+                glossary_url = self.glossary_url,
+                format = self.format,
+                version = self.format_version,
+                storage_source = self.storage_source
+            )
 
     @staticmethod
     def _to_generated(glossary):
         if isinstance(glossary, TranslationGlossary):
-            return _Glossary(
-                    glossary_url = glossary.glossary_url,
-                    format = glossary.format,
-                    version = glossary.version,
-                    storage_source = glossary.storage_source
-                )
+            return glossary._to_generated()
         elif isinstance(glossary, six.string_types):
             return _Glossary(
                     glossary_url = glossary,
