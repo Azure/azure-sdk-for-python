@@ -24,9 +24,9 @@ client = get_client_from_json_dict(KeyVaultManagementClient, json_dict)
 client = get_client_from_auth_file(KeyVaultManagementClient, "credentials.json")
 ```
 
-If it's too difficult to migrate away from file-based authentication despite the security risks, you can still
-use `azure-identity` credentials. With a JSON file containing the credentials, you can use [`json.load`][json] to
-authenticate a service principal with a [`ClientSecretCredential`][client_secret_cred]:
+If it's not possible to immediately migrate from file-based authentication, you can still use `azure-identity`. With a
+JSON file containing your credentials, you can use [`json.load`][json] to authenticate a service principal with a
+[`ClientSecretCredential`][client_secret_cred]:
 ```python
 import json
 from azure.identity import ClientSecretCredential
@@ -52,6 +52,9 @@ client = KeyVaultManagementClient(
 If storing credentials in a file, be sure to protect access to this file. Make certain that it's excluded by version
 control -- for example, by adding the credential file name to your project's `.gitignore` file.
 
+The global documentation for authenticating Python apps on Azure is available [here][authenticate_docs].
+
+[authenticate_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-authenticate?tabs=cmd
 [client_from_json]: https://docs.microsoft.com/python/api/azure-common/azure.common.client_factory?view=azure-python#get-client-from-json-dict-client-class--config-dict----kwargs-
 [client_from_auth_file]: https://docs.microsoft.com/python/api/azure-common/azure.common.client_factory?view=azure-python#get-client-from-auth-file-client-class--auth-path-none----kwargs-
 [client_secret_cred]: https://docs.microsoft.com/python/api/azure-identity/azure.identity.clientsecretcredential?view=azure-python
