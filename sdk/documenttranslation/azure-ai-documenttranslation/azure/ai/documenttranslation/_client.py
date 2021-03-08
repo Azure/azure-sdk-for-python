@@ -188,7 +188,7 @@ class DocumentTranslationClient(object):
         :rtype: List[str]
         """
         result = self._client.document_translation.get_document_storage_source(**kwargs)
-        return result.value
+        return [storage_source for storage_source in result.value]
 
     @distributed_trace
     def get_supported_glossary_formats(self, **kwargs):
