@@ -88,18 +88,18 @@ class StorageTarget(object):
         self.glossaries = kwargs.get("glossaries", None)
         self.storage_source = kwargs.get("storage_source", None)
 
-    @classmethod
-    def _to_generated_list(cls, targets):
-        return [
-            _TargetInput(
-                target_url = target.target_url,
-                category = target.category_id,
-                language = target.language,
-                storage_source = target.storage_source,
-                glossaries = TranslationGlossary._to_generated_list(target.glossaries)
-            ) 
-            for target in targets
-        ]
+    def _to_generated(self):
+        return _TargetInput(
+            target_url = self.target_url,
+            category = self.category_id,
+            language = self.language,
+            storage_source = self.storage_source,
+            glossaries = TranslationGlossary._to_generated_list(self.glossaries)
+        )
+
+    @staticmethod
+    def _to_generated_list(targets):
+        return [ target._to_generated() for target in targets]
 
 
 class BatchDocumentInput(object):
