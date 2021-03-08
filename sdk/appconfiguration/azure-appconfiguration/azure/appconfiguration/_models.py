@@ -108,8 +108,8 @@ class FeatureFlagConfigurationSetting(
     :type key: str
     :param enabled:
     :type enabled: bool
-    :param feature_filters:
-    :type feature_filters: list[FeatureFilterBase]
+    :param filters:
+    :type filters: list[FeatureFilterBase]
     :param label:
     :type label: str
     :param content_type:
@@ -139,7 +139,7 @@ class FeatureFlagConfigurationSetting(
         "application/vnd.microsoft.appconfig.ff+json;charset=utf-8"
     )
 
-    def __init__(self, key, enabled, feature_filters=None, **kwargs):
+    def __init__(self, key, enabled, filters=None, **kwargs):
         # type: (str, bool, Optional[List[FeatureFilterBase]]) -> None
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
         self.key = key
@@ -154,7 +154,7 @@ class FeatureFlagConfigurationSetting(
         self.etag = kwargs.get("etag", None)
         self.description = kwargs.get("description", None)
         self.display_name = kwargs.get("display_name", None)
-        self.feature_filters = feature_filters or []
+        self.filters = filters or []
 
     @classmethod
     def _from_generated(cls, key_value):
@@ -189,7 +189,7 @@ class FeatureFlagConfigurationSetting(
             tags=key_value.tags,
             read_only=key_value.locked,
             etag=key_value.etag,
-            feature_filters=filters,
+            filters=filters,
         )
 
     def _to_generated(self):
@@ -201,7 +201,7 @@ class FeatureFlagConfigurationSetting(
             u"conditions": {
                 u"client_filters": [
                     f._to_generated()  # pylint: disable=protected-access
-                    for f in self.feature_filters  # pylint: disable=protected-access
+                    for f in self.filters  # pylint: disable=protected-access
                 ]
             },
         }
@@ -226,7 +226,7 @@ class FeatureFlagConfigurationSetting(
         :type feature_filter: list[FeatureFilterBase]
         """
 
-        self.feature_filters.append(feature_filter)
+        self.filters.append(feature_filter)
 
 
 class SecretReferenceConfigurationSetting(Model):
