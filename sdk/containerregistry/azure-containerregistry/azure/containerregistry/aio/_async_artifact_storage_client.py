@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 class ArtifactStorageClient(object):
     def __init__(
-        self, endpoint: str, repository_name: str, credential: "AsyncTokenCredential", **kwargs
+        self, endpoint: str, repository: str, credential: "AsyncTokenCredential", **kwargs
     ) -> None:
         pass
 

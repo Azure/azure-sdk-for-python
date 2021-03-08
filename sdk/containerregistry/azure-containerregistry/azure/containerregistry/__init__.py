@@ -11,15 +11,11 @@ from ._container_registry_authentication import ContainerRegistryStsClient
 from ._container_registry_client import ContainerRegistryClient
 from ._container_repository_client import ContainerRepositoryClient
 from ._models import (
-    AzureAdminUserCredential,
+    ContainerRegistryUserCredential,
     ContentPermissions,
     DeletedRepositoryResult,
-    GetManifestOptions,
-    GetTagOptions,
-    ArtifactAttributes,
-    ManifestOrderBy,
-    RepositoryAttributes,
-    TagAttributes,
+    RegistryArtifactOrderBy,
+    RepositoryProperties,
     TagOrderBy
 )
 from ._storage_models import (
@@ -54,15 +50,11 @@ __all__ = [
     "ContainerRegistryStsClient",
     "ContainerRegistryClient",
     "ContainerRepositoryClient",
-    "AzureAdminUserCredential",
+    "ContainerRegistryUserCredential",
     "ContentPermissions",
     "DeletedRepositoryResult",
-    "GetManifestOptions",
-    "GetTagOptions",
-    "ArtifactAttributes",
-    "ManifestOrderBy",
-    "RepositoryAttributes",
-    "TagAttributes",
+    "RegistryArtifactOrderBy",
+    "RepositoryProperties",
     "TagOrderBy",
     "ArtifactManifest",
     "CompleteUploadResult",

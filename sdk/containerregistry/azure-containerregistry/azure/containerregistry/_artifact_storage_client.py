@@ -6,7 +6,7 @@
 
 class ArtifactStorageClient(object):
 
-    def __init__(self, endpoint, repository_name, credential):
+    def __init__(self, endpoint, repository, credential):
         # type: (str, str, TokenCredential) -> None
         pass
 

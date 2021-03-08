@@ -11,7 +11,7 @@ from ._generated.models import (
 )
 
 
-class AzureAdminUserCredential(object):
+class ContainerRegistryUserCredential(object):
     def __init__(self, username, password, **kwargs):
         # type: (str, str) -> None
         self.username = username
@@ -20,6 +20,10 @@ class AzureAdminUserCredential(object):
     def update_password(self, password, **kwargs):
         # type: (str) -> None
         self.password = password
+
+    def update_username(self, username, **kwargs):
+        # type: (str) -> None
+        self.username = username
 
 
 class ContentPermissions(object):
@@ -33,38 +37,41 @@ class ContentPermissions(object):
 class DeletedRepositoryResult(DeletedRepository):
     def __init__(self, **kwargs):
         super(DeletedRepositoryResult, self).__init__(**kwargs)
+        self.deleted_registry_artifact_digests = kwargs.get("deleted_registry_artifact_digests", None)
+        self.deleted_tags = kwargs.get("deleted_tags", None)
         pass
 
 
-class GetManifestOptions(object):
+class RegistryArtifactProperties(object):
     def __init__(self, **kwargs):
-        pass
+        self.cpu_arch = kwargs.get("arch", None)
+        self.created_on = kwargs.get("created_on", None)
+        self.digest = kwargs.get('digest', None)
+        self.last_updated = kwargs.get('last_updated', None)
+        self.manifest_properties = kwargs.get('manifest_properties', None)
+        self.operating_system = kwargs.get('operating_system', None)
+        self.registry = kwargs.get('registry', None)
+        self.registry_artifacts = kwargs.get('registry_artifacts', None)
+        self.repository = kwargs.get('repository', None)
+        self.size = kwargs.get('size', None)
+        self.tags = kwargs.get('tags', None)
 
 
-class GetTagOptions(object):
+class RepositoryProperties(object):
     def __init__(self, **kwargs):
-        pass
+        self.created_on = kwargs.get('created_on', None)
+        self.digest = kwargs.get('digest', None)
+        self.last_updated_on = kwargs.get('last_updated_on', None)
+        self.modifiable_properties = kwargs.get('modifiable_properties', None)
+        self.name = kwargs.get('name', None)
+        self.registry = kwargs.get('registry', None)
+        self.repository = kwargs.get('repository', None)
 
 
-class ArtifactAttributes(object):
-    def __init__(self, **kwargs):
-        pass
-
-
-class ManifestOrderBy(int, Enum):
+class RegistryArtifactOrderBy(int, Enum):
 
     LastUpdateTimeDescending = 0
     LastUpdateTimeAscending = 1
-
-
-class RepositoryAttributes(object):
-    def __init__(self, **kwargs):
-        pass
-
-
-class TagAttributes(object):
-    def __init__(self, **kwargs):
-        pass
 
 
 class TagOrderBy(int, Enum):

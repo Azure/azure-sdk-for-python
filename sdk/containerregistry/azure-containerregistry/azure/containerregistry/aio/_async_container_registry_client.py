@@ -7,7 +7,7 @@
 from typing import TYPE_CHECKING
 
 from azure.core.async_paging import AsyncItemPaged
-from .._container_repository_client import ContainerRepositoryClient
+from .._container_repository_client import ContainerRegistryClient
 from .._models import (
     RepositoryAttributes
 )
@@ -25,7 +25,7 @@ class ContainerRegistryClient(object):
     def list_repositories(self, **kwargs) -> AsyncItemPaged[str]:
         pass
 
-    def get_repository_client(self, name: str, **kwargs) -> ContainerRepositoryClient:
+    def get_repository_client(self, name: str, **kwargs) -> ContainerRegistryClient:
         pass
 
     def get_repository_attributes(self, name: str, **kwargs) -> RepositoryAttributes:
