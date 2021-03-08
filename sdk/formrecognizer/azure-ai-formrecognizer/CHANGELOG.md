@@ -4,6 +4,7 @@
 
 **New features**
 
+- New methods `begin_recognize_id_documents` and `begin_recognize_id_documents_from_url` introduced to the SDK. Use these methods to recognize data from identity documents.
 - Content-type `image/bmp` now supported by custom forms and training methods.
 
 **Dependency Updates**

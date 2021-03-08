@@ -342,8 +342,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
         """Extract field text and semantic values from a given ID document.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
-        Alternatively, use 'application/json' type to specify the location (Uri) of the
-        document to be analyzed.
 
         See fields found on an ID document here:
         https://aka.ms/formrecognizer/TODO
