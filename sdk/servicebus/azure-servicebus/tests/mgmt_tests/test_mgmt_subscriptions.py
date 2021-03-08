@@ -155,11 +155,11 @@ class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
             subscription_description = mgmt_service.create_subscription(topic_name, subscription_name)
 
             # handle a null update properly.
-            with pytest.raises(AttributeError):
+            with pytest.raises(TypeError):
                 mgmt_service.update_subscription(topic_name, None)
 
             # handle an invalid type update properly.
-            with pytest.raises(AttributeError):
+            with pytest.raises(TypeError):
                 mgmt_service.update_subscription(topic_name, Exception("test"))
 
             # change the name to a topic that doesn't exist; should fail.

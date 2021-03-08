@@ -8,10 +8,10 @@ $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=con
 function Get-AllPackageInfoFromRepo ($serviceDirectory)
 {
   $allPackageProps = @()
-  $searchPath = Join-Path sdk * * setup.py
+  $searchPath = "sdk"
   if ($serviceDirectory)
   {
-    $searchPath = Join-Path sdk ${serviceDirectory} * setup.py
+    $searchPath = Join-Path sdk ${serviceDirectory}
   }
 
   $allPkgPropLines = $null

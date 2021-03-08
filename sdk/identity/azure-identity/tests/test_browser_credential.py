@@ -13,7 +13,6 @@ from azure.core.pipeline.transport import RequestsTransport
 from azure.identity import AuthenticationRequiredError, CredentialUnavailableError, InteractiveBrowserCredential
 from azure.identity._internal import AuthCodeRedirectServer
 from azure.identity._internal.user_agent import USER_AGENT
-from msal import TokenCache
 import pytest
 from six.moves import urllib
 
@@ -91,11 +90,8 @@ def test_no_scopes():
 def test_disable_automatic_authentication():
     """When configured for strict silent auth, the credential should raise when silent auth fails"""
 
-    empty_cache = TokenCache()  # empty cache makes silent auth impossible
     transport = Mock(send=Mock(side_effect=Exception("no request should be sent")))
-    credential = InteractiveBrowserCredential(
-        disable_automatic_authentication=True, transport=transport, _cache=empty_cache
-    )
+    credential = InteractiveBrowserCredential(disable_automatic_authentication=True, transport=transport)
 
     with patch(WEBBROWSER_OPEN, Mock(side_effect=Exception("credential shouldn't try interactive authentication"))):
         with pytest.raises(AuthenticationRequiredError):
@@ -133,9 +129,7 @@ def test_timeout():
         )
     )
 
-    credential = InteractiveBrowserCredential(
-        timeout=timeout, transport=transport, _cache=TokenCache(), _server_class=GuaranteedTimeout
-    )
+    credential = InteractiveBrowserCredential(timeout=timeout, transport=transport, _server_class=GuaranteedTimeout)
 
     with patch(WEBBROWSER_OPEN, lambda _: True):
         with pytest.raises(ClientAuthenticationError) as ex:
@@ -175,9 +169,7 @@ def test_redirect_server():
 
 def test_no_browser():
     transport = validating_transport(requests=[Request()] * 2, responses=[get_discovery_response()] * 2)
-    credential = InteractiveBrowserCredential(
-        client_id="client-id", _server_class=Mock(), transport=transport, _cache=TokenCache()
-    )
+    credential = InteractiveBrowserCredential(client_id="client-id", _server_class=Mock(), transport=transport)
     with pytest.raises(ClientAuthenticationError, match=r".*browser.*"):
         with patch(WEBBROWSER_OPEN, lambda _: False):
             credential.get_token("scope")
@@ -229,12 +221,11 @@ def test_cannot_bind_redirect_uri():
 
 
 def test_claims_challenge():
-    """get_token should pass any claims challenge to MSAL token acquisition APIs"""
+    """get_token and authenticate should pass any claims challenge to MSAL token acquisition APIs"""
 
     expected_claims = '{"access_token": {"essential": "true"}'
 
-    oauth_state = "..."
-    auth_code_response = {"code": "authorization-code", "state": [oauth_state]}
+    auth_code_response = {"code": "authorization-code", "state": ["..."]}
     server_class = Mock(return_value=Mock(wait_for_redirect=lambda: auth_code_response))
 
     msal_acquire_token_result = dict(
@@ -250,9 +241,16 @@ def test_claims_challenge():
         msal_app.acquire_token_by_auth_code_flow.return_value = msal_acquire_token_result
 
         with patch(WEBBROWSER_OPEN, lambda _: True):
-            credential.get_token("scope", claims=expected_claims)
+            credential.authenticate(scopes=["scope"], claims=expected_claims)
 
         assert msal_app.acquire_token_by_auth_code_flow.call_count == 1
+        args, kwargs = msal_app.acquire_token_by_auth_code_flow.call_args
+        assert kwargs["claims_challenge"] == expected_claims
+
+        with patch(WEBBROWSER_OPEN, lambda _: True):
+            credential.get_token("scope", claims=expected_claims)
+
+        assert msal_app.acquire_token_by_auth_code_flow.call_count == 2
         args, kwargs = msal_app.acquire_token_by_auth_code_flow.call_args
         assert kwargs["claims_challenge"] == expected_claims
 

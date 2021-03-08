@@ -136,11 +136,11 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtTestCase):
             topic_description = await mgmt_service.create_topic(topic_name)
 
             # handle a null update properly.
-            with pytest.raises(AttributeError):
+            with pytest.raises(TypeError):
                 await mgmt_service.update_topic(None)
 
             # handle an invalid type update properly.
-            with pytest.raises(AttributeError):
+            with pytest.raises(TypeError):
                 await mgmt_service.update_topic(Exception("test"))
 
             # change the name to a topic that doesn't exist; should fail.

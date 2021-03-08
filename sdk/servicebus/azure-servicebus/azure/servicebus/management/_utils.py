@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, cast, Union, Mapping
+from typing import TYPE_CHECKING, cast, Union, Mapping, Type, Any
 from xml.etree.ElementTree import ElementTree, SubElement, QName
 import isodate
 import six
@@ -12,22 +12,17 @@ from . import _constants as constants
 from ._handle_response_error import _handle_response_error
 if TYPE_CHECKING:
     # pylint: disable=unused-import, ungrouped-imports
+    from typing import TypeVar
     from ._models import QueueProperties, TopicProperties, \
         SubscriptionProperties, RuleProperties, InternalQueueDescription, InternalTopicDescription, \
         InternalSubscriptionDescription, InternalRuleDescription
-    DictPropertiesType = Union[
-        QueueProperties,
-        TopicProperties,
-        SubscriptionProperties,
-        RuleProperties,
-        Mapping
-    ]
-    DictPropertiesReturnType = Union[
+    PropertiesType = TypeVar(
+        'PropertiesType',
         QueueProperties,
         TopicProperties,
         SubscriptionProperties,
         RuleProperties
-    ]
+    )
 
 # Refer to the async version of this module under ..\aio\management\_utils.py for detailed explanation.
 
@@ -326,14 +321,24 @@ def _validate_topic_subscription_and_rule_types(
         )
 
 def create_properties_from_dict_if_needed(properties, sb_resource_type):
-    # type: (DictPropertiesType, type) -> DictPropertiesReturnType
+    # type: (Union[PropertiesType, Mapping[str, Any]], Type[PropertiesType]) -> PropertiesType
     """
     This method is used to create a properties object given the
     resource properties type and its corresponding dict representation.
     :param properties: A properties object or its dict representation.
-    :type properties: DictPropertiesType
+    :type properties: Mapping or PropertiesType
     :param type sb_resource_type: The type of properties object.
-    :rtype: DictPropertiesReturnType
+    :rtype: PropertiesType
     """
-    return_properties = sb_resource_type(**properties) if isinstance(properties, dict) else properties
-    return return_properties
+    if isinstance(properties, sb_resource_type):
+        return properties
+    try:
+        return sb_resource_type(**cast(Mapping[str, Any], properties))
+    except TypeError as e:
+        if "required keyword arguments" in str(e):
+            raise e
+        raise TypeError(
+            "Update input must be an instance of {}, or a mapping representing one.".format(
+                sb_resource_type.__name__
+            )
+        )

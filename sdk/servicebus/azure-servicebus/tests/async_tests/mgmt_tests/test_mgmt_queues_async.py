@@ -329,11 +329,11 @@ class ServiceBusAdministrationClientQueueAsyncTests(AzureMgmtTestCase):
         queue_description = await mgmt_service.create_queue(queue_name)
         try:
             # handle a null update properly.
-            with pytest.raises(AttributeError):
+            with pytest.raises(TypeError):
                 await mgmt_service.update_queue(None)
 
             # handle an invalid type update properly.
-            with pytest.raises(AttributeError):
+            with pytest.raises(TypeError):
                 await mgmt_service.update_queue(Exception("test"))
 
             # change a setting we can't change; should fail.
