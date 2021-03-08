@@ -17,7 +17,7 @@ from ..._models import JsonWebKey, KeyVaultKey
 from ..._shared import AsyncKeyVaultClientBase, parse_key_vault_id
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import
+    # pylint:disable=unused-import,ungrouped-imports
     from datetime import datetime
     from typing import Any, Optional, Union
     from azure.core.credentials_async import AsyncTokenCredential
