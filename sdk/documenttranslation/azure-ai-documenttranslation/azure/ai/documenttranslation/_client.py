@@ -138,12 +138,13 @@ class DocumentTranslationClient(object):
         model_conversion_function = kwargs.pop("cls", lambda doc_statuses: [_convert_from_generated_model(doc_status) for doc_status in doc_statuses])
 
         return self._client.document_translation.get_operation_documents_status(
+            id = job_id,
             top = top,
             skip = skip,
             cls = model_conversion_function,
             **kwargs
         )
-        
+
 
     @distributed_trace
     def get_document_status(self, job_id, document_id, **kwargs):
