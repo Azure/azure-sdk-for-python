@@ -2,7 +2,7 @@
 
 This guide is intended to assist in the migration to `azure-eventhub` v5 from v1. It will focus on side-by-side comparisons for similar operations between the two packages.
 
-Familiarity with the `azure-eventhub` v1 package is assumed. For those new to the Event Hubs client library for Python, please refer to the [README for `azure-eventhub`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/README.md) rather than this guide.
+Familiarity with the `azure-eventhub` v1 package is assumed. For those new to the Event Hubs client library for Python, please refer to the [README for `azure-eventhub`](https://github.com/Azure/azure-sdk-for-python/blob/feature/eventhub/idempotent-producer/sdk/eventhub/azure-eventhub/README.md) rather than this guide.
 
 ## Table of contents
 
@@ -39,7 +39,7 @@ We have a variety of new features in version 5 of the Event Hubs library.
 - Ability to configure the retry policy used by operations on the clients.
 - Authentication with AAD credentials using [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md).
 
-Refer to the [changelog](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/CHANGELOG.md) for more new features, changes and bug fixes.
+Refer to the [changelog](https://github.com/Azure/azure-sdk-for-python/blob/feature/eventhub/idempotent-producer/sdk/eventhub/azure-eventhub/CHANGELOG.md) for more new features, changes and bug fixes.
 
 ## Important changes
 
@@ -288,4 +288,4 @@ if __name__ == '__main__':
 
 ## Additional samples
 
-More examples can be found at [Samples for azure-eventhub](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples)
+More examples can be found at [Samples for azure-eventhub](https://github.com/Azure/azure-sdk-for-python/tree/feature/eventhub/idempotent-producer/sdk/eventhub/azure-eventhub/samples)
