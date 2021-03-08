@@ -1,5 +1,8 @@
 # Release History
 
+## 1.12.1 (Unreleased)
+
+
 ## 1.12.0 (2021-03-08)
 
 This version will be the last version to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
