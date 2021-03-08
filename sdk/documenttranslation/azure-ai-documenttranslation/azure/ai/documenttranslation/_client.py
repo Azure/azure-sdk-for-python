@@ -63,7 +63,8 @@ class DocumentTranslationClient(object):
         )
 
         # get job id from response header
-        job_id = response_headers['Operation-Location']
+        operation_location_header = response_headers['Operation-Location']
+        job_id = operation_location_header.split('/')[-1] # extract job id. ex: https://document-translator.cognitiveservices.azure.com/translator/text/batch/v1.0-preview.1/batches/cd0asdd0-2ce6-asd4-abd4-9asd7698c26a
 
         # get job status
         return self.get_job_status(job_id)
