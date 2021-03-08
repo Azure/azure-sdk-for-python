@@ -497,7 +497,7 @@ async def test_initialization_given_key():
 
     with mock.patch(CryptographyClient.__module__ + ".get_local_cryptography_provider") as get_provider:
         await client.verify(SignatureAlgorithm.rs256, b"...", b"...")
-    get_provider.assert_called_once_with(key)
+    get_provider.assert_called_once_with(key.key, _key_id=key.id)
     assert mock_client.get_key.call_count == 0
 
 
@@ -518,8 +518,9 @@ async def test_initialization_get_key_successful():
     with mock.patch(CryptographyClient.__module__ + ".get_local_cryptography_provider") as get_provider:
         await client.verify(SignatureAlgorithm.rs256, b"...", b"...")
 
-    args, _ = get_provider.call_args
-    assert len(args) == 1 and isinstance(args[0], KeyVaultKey) and args[0].id == key_id
+    args, kwargs = get_provider.call_args
+    assert len(args) == 1 and isinstance(args[0], JsonWebKey)
+    assert len(kwargs) == 1 and kwargs["_key_id"] == key_id
 
     for _ in range(3):
         assert mock_client.get_key.call_count == 1
@@ -572,7 +573,9 @@ async def test_calls_service_for_operations_unsupported_locally():
     client._client = mock_client
 
     supports_nothing = mock.Mock(supports=mock.Mock(return_value=False))
-    with mock.patch(CryptographyClient.__module__ + ".get_local_cryptography_provider", lambda *_: supports_nothing):
+    with mock.patch(
+        CryptographyClient.__module__ + ".get_local_cryptography_provider", lambda *args, **kwargs: supports_nothing
+    ):
         await client.decrypt(EncryptionAlgorithm.rsa_oaep, b"...")
     assert mock_client.decrypt.call_count == 1
     assert supports_nothing.decrypt.call_count == 0
@@ -608,7 +611,9 @@ async def test_local_only_mode_no_service_calls():
     client._client = mock_client
 
     supports_nothing = mock.Mock(supports=mock.Mock(return_value=False))
-    with mock.patch(CryptographyClient.__module__ + ".get_local_cryptography_provider", lambda *_: supports_nothing):
+    with mock.patch(
+        CryptographyClient.__module__ + ".get_local_cryptography_provider", lambda *args, **kwargs: supports_nothing
+    ):
         with pytest.raises(NotImplementedError):
             await client.decrypt(EncryptionAlgorithm.rsa_oaep, b"...")
     assert mock_client.decrypt.call_count == 0
@@ -692,7 +697,9 @@ async def test_prefers_local_provider():
     client._client = mock_client
 
     supports_everything = mock.Mock(supports=mock.Mock(return_value=True))
-    with mock.patch(CryptographyClient.__module__ + ".get_local_cryptography_provider", lambda *_: supports_everything):
+    with mock.patch(
+        CryptographyClient.__module__ + ".get_local_cryptography_provider", lambda *args, **kwargs: supports_everything
+    ):
         await client.decrypt(EncryptionAlgorithm.rsa_oaep, b"...")
     assert mock_client.decrypt.call_count == 0
     assert supports_everything.decrypt.call_count == 1

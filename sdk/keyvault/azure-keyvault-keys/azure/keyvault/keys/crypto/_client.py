@@ -18,9 +18,11 @@ from .._shared import KeyVaultClientBase, parse_key_vault_id
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
+    from datetime import datetime
     from typing import Any, Optional, Union
     from azure.core.credentials import TokenCredential
     from . import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
+    from .._shared import KeyVaultResourceId
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -99,17 +101,22 @@ class CryptographyClient(KeyVaultClientBase):
     def __init__(self, key, credential, **kwargs):
         # type: (Union[KeyVaultKey, str], TokenCredential, **Any) -> None
         self._jwk = kwargs.pop("_jwk", False)
+        self._not_before = None  # type: Optional[datetime]
+        self._expires_on = None  # type: Optional[datetime]
+        self._key_id = None  # type: Optional[KeyVaultResourceId]
 
         if isinstance(key, KeyVaultKey):
-            self._key = key
+            self._key = key.key
             self._key_id = parse_key_vault_id(key.id)
+            if key.properties._attributes:  # pylint:disable=protected-access
+                self._not_before = key.properties.not_before
+                self._expires_on = key.properties.expires_on
         elif isinstance(key, six.string_types):
             self._key = None
             self._key_id = parse_key_vault_id(key)
             self._keys_get_forbidden = None  # type: Optional[bool]
         elif self._jwk:
             self._key = key
-            self._key_id = key.kid
         else:
             raise ValueError("'key' must be a KeyVaultKey instance or a key ID string including a version")
 
@@ -124,16 +131,16 @@ class CryptographyClient(KeyVaultClientBase):
 
     @property
     def key_id(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """The full identifier of the client's key.
 
-        This property may be None when a client is constructed with `CryptographyClient.from_jwk`.
+        This property may be None when a client is constructed with :func:`from_jwk`.
 
         :rtype: str
         """
         if not self._jwk:
             return self._key_id.source_id
-        return self._key_id
+        return self._key.kid
 
     @classmethod
     def from_jwk(cls, jwk):
@@ -169,7 +176,7 @@ class CryptographyClient(KeyVaultClientBase):
                 key_bundle = self._client.get_key(
                     self._key_id.vault_url, self._key_id.name, self._key_id.version, **kwargs
                 )
-                self._key = KeyVaultKey._from_key_bundle(key_bundle)  # pylint:disable=protected-access
+                self._key = KeyVaultKey._from_key_bundle(key_bundle).key  # pylint:disable=protected-access
             except HttpResponseError as ex:
                 # if we got a 403, we don't have keys/get permission and won't try to get the key again
                 # (other errors may be transient)
@@ -177,7 +184,7 @@ class CryptographyClient(KeyVaultClientBase):
 
         # if we have the key material, create a local crypto provider with it
         if self._key:
-            self._local_provider = get_local_cryptography_provider(self._key)
+            self._local_provider = get_local_cryptography_provider(self._key, _key_id=self.key_id)
             self._initialized = True
         else:
             # try to get the key again next time unless we know we're forbidden to do so
@@ -212,7 +219,7 @@ class CryptographyClient(KeyVaultClientBase):
         self._initialize(**kwargs)
 
         if self._local_provider.supports(KeyOperation.encrypt, algorithm):
-            raise_if_time_invalid(self._key)
+            raise_if_time_invalid(self._not_before, self._expires_on)
             try:
                 return self._local_provider.encrypt(algorithm, plaintext)
             except Exception as ex:  # pylint:disable=broad-except
@@ -315,7 +322,7 @@ class CryptographyClient(KeyVaultClientBase):
         """
         self._initialize(**kwargs)
         if self._local_provider.supports(KeyOperation.wrap_key, algorithm):
-            raise_if_time_invalid(self._key)
+            raise_if_time_invalid(self._not_before, self._expires_on)
             try:
                 return self._local_provider.wrap_key(algorithm, key)
             except Exception as ex:  # pylint:disable=broad-except
@@ -395,7 +402,7 @@ class CryptographyClient(KeyVaultClientBase):
         """
         self._initialize(**kwargs)
         if self._local_provider.supports(KeyOperation.sign, algorithm):
-            raise_if_time_invalid(self._key)
+            raise_if_time_invalid(self._not_before, self._expires_on)
             try:
                 return self._local_provider.sign(algorithm, digest)
             except Exception as ex:  # pylint:disable=broad-except

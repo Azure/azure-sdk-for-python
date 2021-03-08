@@ -7,8 +7,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Union
-    from .. import JsonWebKey, KeyVaultKey
+    from typing import Optional
 
 
 class _UTC_TZ(tzinfo):
@@ -29,20 +28,12 @@ class _UTC_TZ(tzinfo):
 _UTC = _UTC_TZ()
 
 
-def raise_if_time_invalid(key):
-    # type: (Union[JsonWebKey, KeyVaultKey]) -> None
-    try:
-        nbf = key.properties.not_before
-        exp = key.properties.expires_on
-    except AttributeError:
-        # we consider the key valid because a user must have deliberately created it
-        # (if it came from Key Vault, it would have those attributes)
-        return
-
+def raise_if_time_invalid(not_before, expires_on):
+    # type: (Optional[datetime], Optional[datetime]) -> None
     now = datetime.now(_UTC)
-    if (nbf and exp) and not nbf <= now <= exp:
-        raise ValueError("This client's key is useable only between {} and {} (UTC)".format(nbf, exp))
-    if nbf and nbf > now:
-        raise ValueError("This client's key is not useable until {} (UTC)".format(nbf))
-    if exp and exp <= now:
-        raise ValueError("This client's key expired at {} (UTC)".format(exp))
+    if (not_before and expires_on) and not not_before <= now <= expires_on:
+        raise ValueError("This client's key is useable only between {} and {} (UTC)".format(not_before, expires_on))
+    if not_before and not_before > now:
+        raise ValueError("This client's key is not useable until {} (UTC)".format(not_before))
+    if expires_on and expires_on <= now:
+        raise ValueError("This client's key expires_onired at {} (UTC)".format(expires_on))
