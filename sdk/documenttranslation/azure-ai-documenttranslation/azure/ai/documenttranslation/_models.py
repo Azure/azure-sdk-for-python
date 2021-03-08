@@ -14,6 +14,7 @@ from ._generated.models import (
     Glossary as _Glossary
 )
 
+import six 
 
 class TranslationGlossary(object):
     """Glossary / translation memory for the request.
@@ -40,26 +41,24 @@ class TranslationGlossary(object):
         self.format_version = kwargs.get("format_version", None)
         self.storage_source = kwargs.get("storage_source", None)
 
-    @classmethod
-    def _to_generated_list(cls, glossaries):
-        result = []
-        for glossary in glossaries:
-            if isinstance(TranslationGlossary):
-                result.append(
-                    _Glossary(
-                        glossary_url = glossary.glossary_url,
-                        format = glossary.format,
-                        version = glossary.version,
-                        storage_source = glossary.storage_source
-                    )
+
+    @staticmethod
+    def _to_generated(glossary):
+        if isinstance(glossary, TranslationGlossary):
+            return _Glossary(
+                    glossary_url = glossary.glossary_url,
+                    format = glossary.format,
+                    version = glossary.version,
+                    storage_source = glossary.storage_source
                 )
-            elif isinstance(str):
-                result.append(
-                    _Glossary(
-                        glossary_url = glossary,
-                    )
+        elif isinstance(glossary, six.string_types):
+            return _Glossary(
+                    glossary_url = glossary,
                 )
-        return result
+
+    @staticmethod
+    def _to_generated_list(glossaries):
+        return [TranslationGlossary._to_generated(glossary) for glossary in glossaries]
 
 
 class StorageTarget(object):
