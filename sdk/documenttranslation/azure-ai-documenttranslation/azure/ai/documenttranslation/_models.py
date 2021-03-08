@@ -341,7 +341,7 @@ class FileFormat(object):
     def _from_generated(cls, file_format):
         return cls(
             format=file_format.format,
-            file_extentions=file_format.file_extentions,
+            file_extensions=file_format.file_extensions,
             content_types=file_format.content_types,
             versions=file_format.versions
         )
