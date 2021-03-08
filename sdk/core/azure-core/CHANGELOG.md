@@ -1,5 +1,12 @@
 # Release History
 
+## 1.13.0b1 (2021-03-09)
+
+### Features
+
+- Added `azure.core.pipeline.policies.ChallengeAuthenticationPolicy` and
+  `.AsyncChallengeAuthenticationPolicy`
+
 ## 1.12.0 (2021-03-08)
 
 This version will be the last version to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
