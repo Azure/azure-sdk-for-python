@@ -1,5 +1,21 @@
 # Release History
 
+## 0.5.0 (2021-03-08)
+
+**Features**
+
+  - Model CacheHealth has a new parameter conditions
+  - Model StorageTarget has a new parameter blob_nfs
+  - Model CacheNetworkSettings has a new parameter dns_search_domain
+  - Model CacheNetworkSettings has a new parameter ntp_server
+  - Model CacheNetworkSettings has a new parameter dns_servers
+  - Added operation StorageTargetsOperations.dns_refresh
+
+**Breaking changes**
+
+  - Model StorageTarget has a new required parameter target_type
+  - Model UnknownTarget has a new signature
+
 ## 0.4.0 (2021-02-18)
 
 **Features**
