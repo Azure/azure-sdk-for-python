@@ -23,13 +23,39 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from collections.abc import AsyncIterator
+from ._http_response import _HttpResponseBase, PipelineType
+from typing import (
+    AsyncIterator as AsyncIteratorType,
+)
+from ..pipeline.transport._base_async import _PartGenerator
 
-from ._http_request import HttpRequest
-from ._http_response import HttpResponse
-from ._async_http_response import AsyncHttpResponse
+class AsyncHttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
+    """An AsyncHttpResponse ABC.
 
-__all__ = [
-    "HttpRequest",
-    "HttpResponse",
-    "AsyncHttpResponse",
-]
+    Allows for the asynchronous streaming of data from the response.
+    """
+
+    def stream_download(self, pipeline) -> AsyncIteratorType[bytes]:
+        """Generator for streaming response body data.
+
+        Should be implemented by sub-classes if streaming download
+        is supported. Will return an asynchronous generator.
+
+        :param pipeline: The pipeline object
+        :type pipeline: ~azure.core.pipeline
+        :rtype: AsyncIterator[bytes]
+        """
+
+    def parts(self) -> AsyncIterator:
+        """Assuming the content-type is multipart/mixed, will return the parts as an async iterator.
+
+        :rtype: AsyncIterator
+        :raises ValueError: If the content is not multipart/mixed
+        """
+        if not self.content_type or not self.content_type.startswith("multipart/mixed"):
+            raise ValueError(
+                "You can't get parts if the response is not multipart/mixed"
+            )
+
+        return _PartGenerator(self)
