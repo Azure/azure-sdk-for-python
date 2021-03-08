@@ -115,7 +115,21 @@ class DocumentTranslationClient(object):
         :keyword int skip:
         :rtype: ~azure.core.polling.ItemPaged[JobStatusDetail]
         """
-        return self._client.document_translation.get_operations(**kwargs)
+
+        skip = kwargs.pop('skip', None)
+        top = kwargs.pop('top', None)
+
+        def _convert_from_generated_model(generated_model):
+            return JobStatusDetail._from_generated(generated_model)
+
+        model_conversion_function = kwargs.pop("cls", lambda job_statuses: [_convert_from_generated_model(job_status) for job_status in job_statuses])
+
+        return self._client.document_translation.get_operations(
+            top = top,
+            skip = skip,
+            cls = model_conversion_function,
+            **kwargs
+        )
 
     @distributed_trace
     def list_documents_statuses(self, job_id, **kwargs):
