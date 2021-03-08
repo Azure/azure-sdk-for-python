@@ -10,7 +10,7 @@ This version and all future versions will require Python 2.7 or Python 3.6+, Pyt
   events that are published.
   - `EventHubProducerClient` constructor accepts two new parameters for idempotent publishing:
     - `enable_idempotent_partitions`: A boolean value to tell the `EventHubProducerClient` whether to enable idempotency.
-    - `partition_configs`: The set of configurations that can be specified to influence publishing behavior
+    - `partition_config`: The set of configurations that can be specified to influence publishing behavior
      specific to the configured Event Hub partition.
   - Introduced a new method `get_partition_publishing_properties` on `EventHubProducerClient` to inspect the information
     about the state of publishing for a partition.
