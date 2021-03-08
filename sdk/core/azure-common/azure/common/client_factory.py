@@ -196,7 +196,15 @@ def get_client_from_json_dict(client_class, config_dict, **kwargs):
         )
 
     parameters.update(kwargs)
-    return _instantiate_client(client_class, **parameters)
+    try:
+        return _instantiate_client(client_class, **parameters)
+    except TypeError:
+        docs_url = "aka.ms/{route}"  #TODO: provide real link to migration guide
+        raise TypeError(
+            "{} does not support initialization with azure-common factory methods. See {} for more details.".format(
+                client_class.__name__, docs_url
+            )
+        )
 
 def get_client_from_auth_file(client_class, auth_path=None, **kwargs):
     """Return a SDK client initialized with auth file.
