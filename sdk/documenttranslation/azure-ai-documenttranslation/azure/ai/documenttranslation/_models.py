@@ -138,24 +138,24 @@ class BatchDocumentInput(object):
         self.prefix = kwargs.get("prefix", None)
         self.suffix = kwargs.get("suffix", None)
 
-    @classmethod
-    def _to_generated_list(cls, batch_document_inputs):
-        return [
-            _BatchRequest(
-                source = _SourceInput(
-                    source_url = batch_document_input.source_url,
-                    filter = _DocumentFilter(
-                        prefix = batch_document_input.prefix,
-                        suffix = batch_document_input.suffix
-                    ),
-                    language = batch_document_input.source_language,
-                    storage_source = batch_document_input.storage_source
+    def _to_generated(self):
+        return _BatchRequest(
+            source = _SourceInput(
+                source_url = self.source_url,
+                filter = _DocumentFilter(
+                    prefix = self.prefix,
+                    suffix = self.suffix
                 ),
-                targets = StorageTarget._to_generated_list(batch_document_input.targets),
-                storage_type = batch_document_input.storage_type
-            )
-            for batch_document_input in batch_document_inputs
-        ]
+                language = self.source_language,
+                storage_source = self.storage_source
+            ),
+            targets = StorageTarget._to_generated_list(self.targets),
+            storage_type = self.storage_type
+        )
+
+    @staticmethod
+    def _to_generated_list(batch_document_inputs):
+        return [ batch_document_input._to_generated() for batch_document_input in batch_document_inputs ]
 
 
 
