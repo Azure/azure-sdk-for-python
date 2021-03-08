@@ -109,7 +109,15 @@ class DocumentTranslationClient(object):
         :return: JobStatusDetail
         :rtype: JobStatusDetail
         """
-        pass
+        import time
+        
+        while True:
+            job_result = self.get_job_status(job_id)
+            if job_result.status in ["NotStarted", "Running"]:
+                time.sleep(0.1)
+                continue
+            else:
+                return job_result
 
     @distributed_trace
     def list_submitted_jobs(self, **kwargs):
@@ -177,8 +185,8 @@ class DocumentTranslationClient(object):
         :rtype: ~azure.ai.documenttranslation.DocumentStatusDetail
         """
 
-        result = self._client.document_translation.get_document_status(job_id, document_id, **kwargs)
-        return DocumentStatusDetail._from_generated(result)
+        document_status = self._client.document_translation.get_document_status(job_id, document_id, **kwargs)
+        return DocumentStatusDetail._from_generated(document_status)
 
     @distributed_trace
     def get_supported_storage_sources(self, **kwargs):
@@ -187,8 +195,8 @@ class DocumentTranslationClient(object):
 
         :rtype: List[str]
         """
-        result = self._client.document_translation.get_document_storage_source(**kwargs)
-        return [storage_source for storage_source in result.value]
+        storage_sources_response = self._client.document_translation.get_document_storage_source(**kwargs)
+        return [storage_source for storage_source in storage_sources_response.value]
 
     @distributed_trace
     def get_supported_glossary_formats(self, **kwargs):
