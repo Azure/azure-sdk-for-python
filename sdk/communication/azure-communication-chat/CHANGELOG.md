@@ -2,6 +2,10 @@
 
 ## 1.0.0b5 (2021-03-09)
 - Updated `azure-communication-chat` version.
+- Added identifier serialization in Chat
+- Updated the SDK to use `CommunicationIdentifier` changes everywhere instead of string Id
+- Removal of nullable references
+ 
 
 ## 1.0.0b4 (2021-02-09)
 ### Breaking Changes
