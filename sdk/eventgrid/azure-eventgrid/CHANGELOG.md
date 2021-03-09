@@ -19,6 +19,8 @@
 
 ## 2.0.0 (2021-03-09)
 
+  **Disclaimer:** v2.0.0 is functionally equivalent to v4.0.0. Users are advised to use v4.0.0 instead of this.
+
   **Breaking Changes**
   - `~azure.eventgrid.CloudEvent` is now removed in favor of `~azure.core.messaging.CloudEvent`.
   - All the `SystemEventNames` related to Azure Communication Service starting with `ACS****` are renamed to `Acs***` to honor pascal case.
