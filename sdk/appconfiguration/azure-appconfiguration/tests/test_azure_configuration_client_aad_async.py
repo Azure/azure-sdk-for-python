@@ -508,7 +508,7 @@ class AppConfigurationClientTest(AzureTestCase):
         assert key1.etag != key2.etag
         if isinstance(key1, FeatureFlagConfigurationSetting):
             assert key1.enabled == key2.enabled
-            assert len(key1.feature_filters) == len(key2.feature_filters)
+            assert len(key1.filters) == len(key2.filters)
         elif isinstance(key1, SecretReferenceConfigurationSetting):
             assert key1.uri == key2.uri
         else:
@@ -545,16 +545,16 @@ class AppConfigurationClientTest(AzureTestCase):
         new = FeatureFlagConfigurationSetting(
             "newflag",
             True,
-            feature_filters=[TargetingFeatureFilter(75)]
+            filters=[TargetingFeatureFilter(75)]
         )
 
         sent_config = client.set_configuration_setting(new)
         self._assert_same_keys(sent_config, new)
 
-        assert isinstance(sent_config.feature_filters[0], TargetingFeatureFilter)
-        assert len(sent_config.feature_filters) == 1
+        assert isinstance(sent_config.filters[0], TargetingFeatureFilter)
+        assert len(sent_config.filters) == 1
 
-        sent_config.feature_filters[0].rollout_percentage = 80
+        sent_config.filters[0].rollout_percentage = 80
         updated_sent_config = client.set_configuration_setting(sent_config)
         self._assert_same_keys(sent_config, updated_sent_config)
 
@@ -563,7 +563,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
         sent_config = client.set_configuration_setting(updated_sent_config)
         self._assert_same_keys(sent_config, updated_sent_config)
-        assert len(sent_config.feature_filters) == 3
+        assert len(sent_config.filters) == 3
 
         client.delete_configuration_setting(updated_sent_config.key)
 
@@ -572,7 +572,7 @@ class AppConfigurationClientTest(AzureTestCase):
         new = FeatureFlagConfigurationSetting(
             'time_window',
             True,
-            feature_filters=[
+            filters=[
                 TimeWindowFeatureFilter(
                     start=datetime.datetime(2021, 2, 19, 18, 0),
                     end=datetime.datetime(2021, 2, 26, 5, 0)
@@ -583,7 +583,7 @@ class AppConfigurationClientTest(AzureTestCase):
         sent = client.set_configuration_setting(new)
         self._assert_same_keys(sent, new)
 
-        sent.feature_filters[0].end = datetime.datetime(2021, 2, 26, 8, 0)
+        sent.filters[0].end = datetime.datetime(2021, 2, 26, 8, 0)
         new_sent = client.set_configuration_setting(sent)
         self._assert_same_keys(sent, new_sent)
 
@@ -594,7 +594,7 @@ class AppConfigurationClientTest(AzureTestCase):
         new = FeatureFlagConfigurationSetting(
             'custom',
             True,
-            feature_filters=[
+            filters=[
                 CustomFeatureFilter(value=50)
             ]
         )
@@ -602,7 +602,7 @@ class AppConfigurationClientTest(AzureTestCase):
         sent = client.set_configuration_setting(new)
         self._assert_same_keys(sent, new)
 
-        sent.feature_filters[0].value = 100
+        sent.filters[0].value = 100
         new_sent = client.set_configuration_setting(sent)
         self._assert_same_keys(sent, new_sent)
 
@@ -613,7 +613,7 @@ class AppConfigurationClientTest(AzureTestCase):
         new = FeatureFlagConfigurationSetting(
             'custom',
             True,
-            feature_filters=[
+            filters=[
                 CustomFeatureFilter(value=50),
                 TimeWindowFeatureFilter(
                     start=datetime.datetime(2021, 2, 19, 18, 0),
@@ -626,15 +626,15 @@ class AppConfigurationClientTest(AzureTestCase):
         sent = client.set_configuration_setting(new)
         self._assert_same_keys(sent, new)
 
-        sent.feature_filters[0].value = 100
-        sent.feature_filters[1].end = datetime.datetime(2021, 2, 26, 8, 0)
-        sent.feature_filters[2].rollout_percentage = 80
+        sent.filters[0].value = 100
+        sent.filters[1].end = datetime.datetime(2021, 2, 26, 8, 0)
+        sent.filters[2].rollout_percentage = 80
 
         new_sent = client.set_configuration_setting(sent)
         self._assert_same_keys(sent, new_sent)
 
-        assert new_sent.feature_filters[0].value == 100
-        assert new_sent.feature_filters[1].end == datetime.datetime(2021, 2, 26, 8, 0)
-        assert new_sent.feature_filters[2].rollout_percentage == 80
+        assert new_sent.filters[0].value == 100
+        assert new_sent.filters[1].end == datetime.datetime(2021, 2, 26, 8, 0)
+        assert new_sent.filters[2].rollout_percentage == 80
 
         client.delete_configuration_setting(new_sent.key)

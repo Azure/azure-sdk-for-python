@@ -345,7 +345,7 @@ class TargetingFeatureFilter(FeatureFilterBase):
     :param users:
     :type users: list[str]
     :param groups:
-    :type groups: list[str]
+    :type groups: list[dict[str,int]]
     """
 
     def __init__(
