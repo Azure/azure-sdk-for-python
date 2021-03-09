@@ -68,7 +68,7 @@ class MetricsAdvisorClient(object):
 
     """
     def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, TokenCredential], **Any) -> None
+        # type: (str, Union[MetricsAdvisorKeyCredential, TokenCredential], **Any) -> None
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
