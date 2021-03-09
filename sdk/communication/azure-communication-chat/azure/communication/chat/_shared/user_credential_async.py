@@ -16,8 +16,8 @@ from .user_token_refresh_options import CommunicationTokenRefreshOptions
 
 class CommunicationTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service.
-    :param communication_token_refresh_options: The token used to authenticate to an Azure Communication service
-    :type communication_token_refresh_options: ~azure.communication.chat.aio.CommunicationTokenRefreshOptions
+    :param str token: The token used to authenticate to an Azure Communication service
+    :param token_refresher: The token refresher to provide capacity to fetch fresh token
     :raises: TypeError
     """
 
