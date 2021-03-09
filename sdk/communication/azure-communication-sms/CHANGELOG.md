@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b6 (Unreleased)
+## 1.0.0b6 (2021-03-09)
 ### Added
 - Added support for 1:N SMS messaging.
 - Added support for SMS idempotency.
