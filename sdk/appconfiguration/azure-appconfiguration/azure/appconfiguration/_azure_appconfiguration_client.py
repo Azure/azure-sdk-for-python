@@ -586,4 +586,4 @@ class AzureAppConfigurationClient:
         # type: (...) -> None
 
         """Close all connections made by the client"""
-        self._client._client.close()
+        self._impl._client.close()
