@@ -138,7 +138,7 @@ known_content_issues:
   - ['sdk/tables/azure-data-nspkg/README.md', 'nspkg and common']
   - ['sdk/cosmos/README.md', 'nspkg and common']
   - ['sdk/communication/azure-communication-nspkg/README.md', 'nspkg and common']
-  - ['sdk/iothub/azure-iot-nspkg/README.md', 'nspkg and common']
+  - ['sdk/iot/azure-iot-nspkg/README.md', 'nspkg and common']
   # HISTORY.rst
   - ['sdk/core/azure/HISTORY.rst','nspkg and common']
   - ['sdk/digitaltwins/azure-digitaltwins-nspkg/README.md', 'nspkg and common']
