@@ -1,8 +1,5 @@
 # Release History
 
-## 1.0.0b5 (2021-03-09)
-- Updated `azure-mgmt-communication` version.
-
 ## 1.0.0b4 (2020-11-16)
 - Updated `azure-mgmt-communication` version.
 
