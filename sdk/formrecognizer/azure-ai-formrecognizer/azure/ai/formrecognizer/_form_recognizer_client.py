@@ -238,6 +238,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword bool include_field_elements:
             Whether or not to include all lines per page and field elements such as lines, words,
             and selection marks for each form field.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :keyword content_type: Content-type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -305,6 +308,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword bool include_field_elements:
             Whether or not to include all lines per page and field elements such as lines, words,
             and selection marks for each form field.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -467,6 +473,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword bool include_field_elements:
             Whether or not to include all lines per page and field elements such as lines, words,
             and selection marks for each form field.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :keyword content_type: Content-type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -533,6 +542,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword bool include_field_elements:
             Whether or not to include all lines per page and field elements such as lines, words,
             and selection marks for each form field.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
