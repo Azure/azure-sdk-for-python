@@ -17,7 +17,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search3a191d88.search.windows.net/skillsets?api-version=2020-06-30
+    uri: https://search3a191d88.search.windows.net/skillsets?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search3a191d88.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D84B89B55A0582\"","name":"test-ss","description":"desc","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":null,"description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}'
@@ -37,7 +37,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://search3a191d88.search.windows.net/skillsets('test-ss')?api-version=2020-06-30
+      - https://search3a191d88.search.windows.net/skillsets('test-ss')?api-version=2020-06-30-Preview
       odata-version:
       - '4.0'
       pragma:
@@ -72,7 +72,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://search3a191d88.search.windows.net/skillsets('test-ss')?api-version=2020-06-30
+    uri: https://search3a191d88.search.windows.net/skillsets('test-ss')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search3a191d88.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D84B89B57E8428\"","name":"test-ss","description":"updated","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":null,"description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}'
@@ -122,7 +122,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://search3a191d88.search.windows.net/skillsets('test-ss')?api-version=2020-06-30
+    uri: https://search3a191d88.search.windows.net/skillsets('test-ss')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"error":{"code":"","message":"The precondition given in one of the

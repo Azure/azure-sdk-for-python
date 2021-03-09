@@ -2652,7 +2652,7 @@ class AnomalyFeedback(msrest.serialization.Model):  # pylint:disable=too-many-in
         if not anomaly_feedback:
             return None
         dimension_key = anomaly_feedback.dimension_filter.dimension
-        value = anomaly_feedback.value.anomaly_value
+        value = anomaly_feedback.value.anomaly_value if anomaly_feedback.value else None
         return cls(
             id=anomaly_feedback.feedback_id,
             created_time=anomaly_feedback.created_time,
@@ -2761,7 +2761,7 @@ class ChangePointFeedback(msrest.serialization.Model):
         if not change_point_feedback:
             return None
         dimension_key = change_point_feedback.dimension_filter.dimension
-        value = change_point_feedback.value.change_point_value
+        value = change_point_feedback.value.change_point_value if change_point_feedback.value else None
         return cls(
             id=change_point_feedback.feedback_id,
             created_time=change_point_feedback.created_time,
@@ -2866,7 +2866,7 @@ class CommentFeedback(msrest.serialization.Model):
         if not comment_feedback:
             return None
         dimension_key = comment_feedback.dimension_filter.dimension
-        value = comment_feedback.value.comment_value
+        value = comment_feedback.value.comment_value if comment_feedback.value else None
         return cls(
             id=comment_feedback.feedback_id,
             created_time=comment_feedback.created_time,
@@ -2965,8 +2965,8 @@ class PeriodFeedback(msrest.serialization.Model):
         if not period_feedback:
             return None
         dimension_key = period_feedback.dimension_filter.dimension
-        value = period_feedback.value.period_value
-        period_type = period_feedback.value.period_type
+        value = period_feedback.value.period_value if period_feedback.value else None
+        period_type = period_feedback.value.period_type if period_feedback.value else None
         return cls(
             id=period_feedback.feedback_id,
             created_time=period_feedback.created_time,

@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searche2a413b7.search.windows.net/indexes('drgqefsg')/docs/search.post.autocomplete?api-version=2020-06-30
+    uri: https://searche2a413b7.search.windows.net/indexes('drgqefsg')/docs/search.post.autocomplete?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"value":[{"text":"motel","queryPlusText":"motel"}]}'

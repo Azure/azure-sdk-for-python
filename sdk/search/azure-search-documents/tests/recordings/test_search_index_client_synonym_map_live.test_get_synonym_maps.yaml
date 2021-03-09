@@ -16,7 +16,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search43c51a2c.search.windows.net/synonymmaps?api-version=2020-06-30
+    uri: https://search43c51a2c.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search43c51a2c.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D84B8A39AE83D4\"","name":"test-syn-map-1","format":"solr","synonyms":"USA,
@@ -37,7 +37,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://search43c51a2c.search.windows.net/synonymmaps('test-syn-map-1')?api-version=2020-06-30
+      - https://search43c51a2c.search.windows.net/synonymmaps('test-syn-map-1')?api-version=2020-06-30-Preview
       odata-version:
       - '4.0'
       pragma:
@@ -68,7 +68,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search43c51a2c.search.windows.net/synonymmaps?api-version=2020-06-30
+    uri: https://search43c51a2c.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search43c51a2c.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D84B8A39CC2363\"","name":"test-syn-map-2","format":"solr","synonyms":"Washington,
@@ -89,7 +89,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://search43c51a2c.search.windows.net/synonymmaps('test-syn-map-2')?api-version=2020-06-30
+      - https://search43c51a2c.search.windows.net/synonymmaps('test-syn-map-2')?api-version=2020-06-30-Preview
       odata-version:
       - '4.0'
       pragma:
@@ -115,7 +115,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search43c51a2c.search.windows.net/synonymmaps?api-version=2020-06-30
+    uri: https://search43c51a2c.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search43c51a2c.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D84B8A39AE83D4\"","name":"test-syn-map-1","format":"solr","synonyms":"USA,

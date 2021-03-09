@@ -25,13 +25,12 @@ class SmsClient(object):
 
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.
-    :param str credential:
-        The credentials with which to authenticate. The value is an account
-        shared access key
+    :param TokenCredential credential:
+        The TokenCredential we use to authenticate against the service.
     """
     def __init__(
             self, endpoint, # type: str
-            credential, # type: str
+            credential, # type: TokenCredential
             **kwargs # type: Any
         ):
         # type: (...) -> None

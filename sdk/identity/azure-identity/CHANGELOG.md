@@ -1,6 +1,9 @@
 # Release History
 
-## 1.6.0b2 (Unreleased)
+## 1.6.0b3 (Unreleased)
+
+
+## 1.6.0b2 (2021-03-09)
 ### Breaking Changes
 > These changes do not impact the API of stable versions such as 1.5.0.
 > Only code written against a beta version such as 1.6.0b1 may be affected.

@@ -1,11 +1,12 @@
 # Release History
 
-## 1.0.0b6 (Unreleased)
+## 1.0.0b6 (2021-03-09)
 ### Added
 - Added support for 1:N SMS messaging.
 - Added support for SMS idempotency.
 - Send method series in SmsClient are idempotent under retry policy.
 - Added support for tagging SMS messages.
+- The SmsClient constructor uses type `TokenCredential` and `AsyncTokenCredential` for the credential parameter.
 
 ### Breaking
 - Send method takes in strings for phone numbers instead of `PhoneNumberIdentifier`.

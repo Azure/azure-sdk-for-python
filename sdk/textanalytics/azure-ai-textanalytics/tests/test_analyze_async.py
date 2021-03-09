@@ -177,47 +177,6 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 )).result()
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    async def test_output_same_order_as_input_multiple_tasks(self, client):
-        docs = [
-            TextDocumentInput(id="1", text="one"),
-            TextDocumentInput(id="2", text="two"),
-            TextDocumentInput(id="3", text="three"),
-            TextDocumentInput(id="4", text="four"),
-            TextDocumentInput(id="5", text="five")
-        ]
-
-        async with client:
-            response = await (await client.begin_analyze_batch_actions(
-                docs,
-                actions=[
-                    RecognizePiiEntitiesAction(),
-                    ExtractKeyPhrasesAction(),
-                    RecognizePiiEntitiesAction(model_version="bad"),
-                    RecognizeLinkedEntitiesAction()
-                ],
-                polling_interval=self._interval()
-            )).result()
-
-            action_results = []
-            async for p in response:
-                action_results.append(p)
-
-            assert len(action_results) == 4
-            action_result = action_results[0]
-
-            assert action_results[0].action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
-            assert action_results[1].action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
-            assert action_results[2].is_error
-            assert action_results[3].action_type == AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES
-            assert all([action_result for action_result in action_results if not action_result.is_error and len(action_result.document_results) == len(docs)])
-
-            for action_result in action_results:
-                if not action_result.is_error:
-                    for idx, doc in enumerate(action_result.document_results):
-                        self.assertEqual(str(idx + 1), doc.id)
-
-    @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "text_analytics_account_key": "",
     })
@@ -243,43 +202,6 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             async with client:
                 response = await (await client.begin_analyze_batch_actions(
                     ["This is written in English."],
-                    actions=[
-                        RecognizeEntitiesAction(),
-                        ExtractKeyPhrasesAction(),
-                        RecognizePiiEntitiesAction(),
-                    ],
-                    polling_interval=self._interval()
-                )).result()
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    async def test_bad_document_input(self, client):
-        docs = "This is the wrong type"
-
-        with self.assertRaises(TypeError):
-            async with client:
-                response = await (await client.begin_analyze_batch_actions(
-                    docs,
-                    actions=[
-                        RecognizeEntitiesAction(),
-                        ExtractKeyPhrasesAction(),
-                        RecognizePiiEntitiesAction(),
-                    ],
-                    polling_interval=self._interval()
-                )).result()
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    async def test_mixing_inputs(self, client):
-        docs = [
-            {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
-            TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
-            u"You cannot mix string input with the above inputs"
-        ]
-        with self.assertRaises(TypeError):
-            async with client:
-                response = await (await client.begin_analyze_batch_actions(
-                    docs,
                     actions=[
                         RecognizeEntitiesAction(),
                         ExtractKeyPhrasesAction(),
@@ -481,89 +403,6 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     #                 assert doc.is_error
 
     @GlobalTextAnalyticsAccountPreparer()
-    async def test_rotate_subscription_key(self, resource_group, location, text_analytics_account,
-                                           text_analytics_account_key):
-
-        credential = AzureKeyCredential(text_analytics_account_key)
-        client = TextAnalyticsClient(text_analytics_account, credential)
-
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
-
-        async with client:
-            response = await (await client.begin_analyze_batch_actions(
-                docs,
-                actions=[
-                    RecognizeEntitiesAction(),
-                ],
-                polling_interval=self._interval()
-            )).result()
-
-            self.assertIsNotNone(response)
-
-            credential.update("xxx")  # Make authentication fail
-            with self.assertRaises(ClientAuthenticationError):
-                response = await (await client.begin_analyze_batch_actions(
-                    docs,
-                    actions=[
-                        RecognizeEntitiesAction(),
-                    ],
-                    polling_interval=self._interval()
-                )).result()
-
-            credential.update(text_analytics_account_key)  # Authenticate successfully again
-            response = await (await client.begin_analyze_batch_actions(
-                docs,
-                actions=[
-                    RecognizeEntitiesAction(),
-                ],
-                polling_interval=self._interval()
-            )).result()
-            self.assertIsNotNone(response)
-
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    async def test_user_agent(self, client):
-        def callback(resp):
-            self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
-                VERSION, platform.python_version(), platform.platform()),
-                resp.http_request.headers["User-Agent"]
-            )
-
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
-
-        async with client:
-            poller = await client.begin_analyze_batch_actions(
-                docs,
-                actions=[
-                    RecognizeEntitiesAction(),
-                ],
-                polling_interval=self._interval(),
-                raw_response_hook=callback,
-            )
-            await poller.wait()
-
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    async def test_bad_model_version_error_single_task(self, client):  # TODO: verify behavior of service
-        docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
-
-        with self.assertRaises(HttpResponseError):
-            async with client:
-                result = await (await client.begin_analyze_batch_actions(
-                    docs,
-                    actions=[
-                        RecognizeEntitiesAction(model_version="bad"),
-                    ],
-                    polling_interval=self._interval()
-                )).result()
-
-    @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     async def test_bad_model_version_error_multiple_tasks(self, client):  # TODO: verify behavior of service
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
@@ -613,23 +452,6 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    async def test_not_passing_list_for_docs(self, client):
-        docs = {"id": "1", "text": "hello world"}
-        with pytest.raises(TypeError) as excinfo:
-            async with client:
-                await (await client.begin_analyze_batch_actions(
-                    docs,
-                    actions=[
-                        RecognizeEntitiesAction(),
-                        ExtractKeyPhrasesAction(),
-                        RecognizePiiEntitiesAction()
-                    ],
-                    polling_interval=self._interval()
-                )).result()
-        assert "Input documents cannot be a dict" in str(excinfo.value)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
     async def test_missing_input_records_error(self, client):
         docs = []
         with pytest.raises(ValueError) as excinfo:
@@ -652,25 +474,6 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             async with client:
                 await client.begin_analyze_batch_actions(None, None, polling_interval=self._interval())
         assert "Input documents can not be empty or None" in str(excinfo.value)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    async def test_duplicate_ids_error(self, client):  # TODO: verify behavior of service
-        # Duplicate Ids
-        docs = [{"id": "1", "text": "hello world"},
-                {"id": "1", "text": "I did not like the hotel we stayed at."}]
-
-        with self.assertRaises(HttpResponseError):
-            async with client:
-                result = await (await client.begin_analyze_batch_actions(
-                    docs,
-                    actions=[
-                        RecognizeEntitiesAction(),
-                        ExtractKeyPhrasesAction(),
-                        RecognizePiiEntitiesAction(),
-                    ],
-                    polling_interval=self._interval()
-                )).result()
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
