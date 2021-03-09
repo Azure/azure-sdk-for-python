@@ -503,7 +503,11 @@ Note: The Healthcare Entities Analysis service is currently available only in th
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import (
-    TextAnalyticsClient, RecognizeEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction
+    TextAnalyticsClient,
+    RecognizeEntitiesAction,
+    RecognizePiiEntitiesAction,
+    ExtractKeyPhrasesAction,
+    RecognizeLinkedEntitiesAction
 )
 
 credential = AzureKeyCredential("<api_key>")
@@ -520,6 +524,7 @@ poller = text_analytics_client.begin_analyze_batch_actions(
         RecognizeEntitiesAction(),
         RecognizePiiEntitiesAction(),
         ExtractKeyPhrasesAction(),
+        RecognizeLinkedEntitiesAction()
     ]
 )
 
@@ -558,6 +563,26 @@ docs = [doc for doc in third_action_result.document_results if not doc.is_error]
 for idx, doc in enumerate(docs):
     print("Document text: {}\n".format(documents[idx]))
     print("Key Phrases: {}\n".format(doc.key_phrases))
+    print("------------------------------------------")
+
+fourth_action_result = next(result)
+print("Results of Linked Entities Recognition action:")
+docs = [doc for doc in fourth_action_result.document_results if not doc.is_error]
+
+for idx, doc in enumerate(docs):
+    print("Document text: {}\n".format(documents[idx]))
+    for linked_entity in doc.entities:
+        print("Entity name: {}".format(linked_entity.name))
+        print("...Data source: {}".format(linked_entity.data_source))
+        print("...Data source language: {}".format(linked_entity.language))
+        print("...Data source entity ID: {}".format(linked_entity.data_source_entity_id))
+        print("...Data source URL: {}".format(linked_entity.url))
+        print("...Document matches:")
+        for match in linked_entity.matches:
+            print("......Match text: {}".format(match.text))
+            print(".........Confidence Score: {}".format(match.confidence_score))
+            print(".........Offset: {}".format(match.offset))
+            print(".........Length: {}".format(match.length))
     print("------------------------------------------")
 ```
 
