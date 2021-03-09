@@ -51,7 +51,7 @@ if TYPE_CHECKING:
         PeriodFeedback
     )
     from .._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 class MetricsAdvisorClient(object):
     """Represents an client that calls restful API of Azure Metrics Advisor service.
@@ -68,7 +68,7 @@ class MetricsAdvisorClient(object):
 
     """
     def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[MetricsAdvisorKeyCredential, TokenCredential], **Any) -> None
+        # type: (str, Union[MetricsAdvisorKeyCredential, AsyncTokenCredential], **Any) -> None
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint

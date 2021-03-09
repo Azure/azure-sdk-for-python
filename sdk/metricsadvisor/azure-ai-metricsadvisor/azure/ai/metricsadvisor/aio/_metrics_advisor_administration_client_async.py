@@ -59,7 +59,7 @@ from .._metrics_advisor_administration_client import (
 )
 if TYPE_CHECKING:
     from .._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-public-methods
@@ -82,7 +82,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             :caption: Authenticate MetricsAdvisorAdministrationClient with a MetricsAdvisorKeyCredential
     """
     def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[MetricsAdvisorKeyCredential, TokenCredential], **Any) -> None
+        # type: (str, Union[MetricsAdvisorKeyCredential, AsyncTokenCredential], **Any) -> None
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
