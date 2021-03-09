@@ -83,13 +83,37 @@ steps:
 
   - ${{ parameters.BeforePublishSteps }}
 
-  - publish: $(Build.ArtifactStagingDirectory)
-    artifact: packages 
-    condition: succeededOrFailed()
+  - pwsh: |
+      Write-Host "${{ parameters.BuildDocs }}"
+
+      Write-Host '$(Build.ArtifactStagingDirectory)'
+      Write-Host '$(Build.SourcesDirectory)/_docs'
+
+      $filesInDocs = (Test-Path '$(Build.SourcesDirectory)/_docs')
+      Write-Host $filesInDocs 
+      $docsPublishes = ((Get-ChildItem '$(Build.SourcesDirectory)/_docs') | Measure-Object).Count
+      Write-Host $docsPublishes
+
+      $filesInPackages = (Test-Path '$(Build.ArtifactStagingDirectory)')
+      Write-Host $filesInPackages 
+      $packagePublishes = ((Get-ChildItem '$(Build.ArtifactStagingDirectory)') | Measure-Object).Count
+      Write-Host $packagePublishes
+      
+      # if ($fileCount -eq 0) {
+      #   Write-Host ""
+      #   exit 0
+      # }
+    displayName: 'Verify Presence of Artifacts'
 
   - task: PublishBuildArtifacts@1
-    condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})
-    displayName: 'Publish Artifacts'
+    displayName: 'Publish Package Artifacts'
+    inputs:
+      artifactName: 'packages'
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+
+  - task: PublishBuildArtifacts@1
+    condition: and(succeededOrFailed(), ${{ parameters.BuildDocs }})
+    displayName: 'Publish Documentation Artifacts'
     inputs:
       artifactName: 'documentation'
       pathtoPublish: '$(Build.SourcesDirectory)/_docs'
