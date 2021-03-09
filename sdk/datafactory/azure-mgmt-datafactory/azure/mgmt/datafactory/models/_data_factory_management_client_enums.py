@@ -12,6 +12,13 @@
 from enum import Enum
 
 
+class FactoryIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+    system_assigned_user_assigned = "SystemAssigned,UserAssigned"
+
+
 class GlobalParameterType(str, Enum):
 
     object_enum = "Object"
@@ -245,6 +252,7 @@ class SftpAuthenticationType(str, Enum):
 
     basic = "Basic"
     ssh_public_key = "SshPublicKey"
+    multi_factor = "MultiFactor"
 
 
 class FtpAuthenticationType(str, Enum):
@@ -319,6 +327,18 @@ class DynamicsAuthenticationType(str, Enum):
     office365 = "Office365"
     ifd = "Ifd"
     aad_service_principal = "AADServicePrincipal"
+
+
+class CosmosDbServicePrincipalCredentialType(str, Enum):
+
+    service_principal_key = "ServicePrincipalKey"
+    service_principal_cert = "ServicePrincipalCert"
+
+
+class CosmosDbConnectionMode(str, Enum):
+
+    gateway = "Gateway"
+    direct = "Direct"
 
 
 class OrcCompressionCodec(str, Enum):

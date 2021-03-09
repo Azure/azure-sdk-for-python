@@ -1293,6 +1293,7 @@ from ._paged_models import OperationPaged
 from ._paged_models import PipelineResourcePaged
 from ._paged_models import TriggerResourcePaged
 from ._data_factory_management_client_enums import (
+    FactoryIdentityType,
     GlobalParameterType,
     PublicNetworkAccess,
     IntegrationRuntimeState,
@@ -1334,6 +1335,8 @@ from ._data_factory_management_client_enums import (
     SybaseAuthenticationType,
     DynamicsDeploymentType,
     DynamicsAuthenticationType,
+    CosmosDbServicePrincipalCredentialType,
+    CosmosDbConnectionMode,
     OrcCompressionCodec,
     AvroCompressionCodec,
     TumblingWindowFrequency,
@@ -2023,6 +2026,7 @@ __all__ = [
     'DataFlowDebugSessionInfoPaged',
     'ManagedVirtualNetworkResourcePaged',
     'ManagedPrivateEndpointResourcePaged',
+    'FactoryIdentityType',
     'GlobalParameterType',
     'PublicNetworkAccess',
     'IntegrationRuntimeState',
@@ -2064,6 +2068,8 @@ __all__ = [
     'SybaseAuthenticationType',
     'DynamicsDeploymentType',
     'DynamicsAuthenticationType',
+    'CosmosDbServicePrincipalCredentialType',
+    'CosmosDbConnectionMode',
     'OrcCompressionCodec',
     'AvroCompressionCodec',
     'TumblingWindowFrequency',
