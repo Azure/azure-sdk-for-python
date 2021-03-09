@@ -66,7 +66,7 @@ class LogProfilesOperations:
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'logProfileName': self._serialize.url("log_profile_name", log_profile_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -116,7 +116,7 @@ class LogProfilesOperations:
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'logProfileName': self._serialize.url("log_profile_name", log_profile_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -175,7 +175,7 @@ class LogProfilesOperations:
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'logProfileName': self._serialize.url("log_profile_name", log_profile_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -236,7 +236,7 @@ class LogProfilesOperations:
         # Construct URL
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'logProfileName': self._serialize.url("log_profile_name", log_profile_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -298,7 +298,7 @@ class LogProfilesOperations:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters

@@ -138,7 +138,7 @@ class MetricBaselineOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/baseline/{metricName}'}  # type: ignore
+    get.metadata = {'url': '/{resourceUri}/providers/Microsoft.Insights/baseline/{metricName}'}  # type: ignore
 
     async def calculate_baseline(
         self,
@@ -204,4 +204,4 @@ class MetricBaselineOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    calculate_baseline.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/calculatebaseline'}  # type: ignore
+    calculate_baseline.metadata = {'url': '/{resourceUri}/providers/Microsoft.Insights/calculatebaseline'}  # type: ignore

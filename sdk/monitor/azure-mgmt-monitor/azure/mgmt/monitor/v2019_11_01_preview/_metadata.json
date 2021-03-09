@@ -2,14 +2,14 @@
     "chosen_version": "2019-11-01-preview",
     "total_api_version_list": ["2019-11-01-preview"],
     "client": {
-        "name": "MonitorManagementClient",
-        "filename": "_monitor_management_client",
+        "name": "MonitorClient",
+        "filename": "_monitor_client",
         "description": "Monitor Management Client.",
         "base_url": "\u0027https://management.azure.com\u0027",
         "custom_base_url": null,
         "azure_arm": true,
         "has_lro_operations": false,
-        "client_side_validation": false
+        "client_side_validation": true
     },
     "global_parameters": {
         "sync": {

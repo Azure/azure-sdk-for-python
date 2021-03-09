@@ -20,8 +20,8 @@ if TYPE_CHECKING:
 
 VERSION = "unknown"
 
-class MonitorManagementClientConfiguration(Configuration):
-    """Configuration for MonitorManagementClient.
+class MonitorClientConfiguration(Configuration):
+    """Configuration for MonitorClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -43,7 +43,7 @@ class MonitorManagementClientConfiguration(Configuration):
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        super(MonitorManagementClientConfiguration, self).__init__(**kwargs)
+        super(MonitorClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.subscription_id = subscription_id

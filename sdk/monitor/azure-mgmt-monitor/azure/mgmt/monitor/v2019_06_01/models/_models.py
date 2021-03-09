@@ -57,7 +57,7 @@ class ActionGroupPatchBody(msrest.serialization.Model):
         self.enabled = kwargs.get('enabled', True)
 
 
-class Resource(msrest.serialization.Model):
+class AzureResource(msrest.serialization.Model):
     """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -70,6 +70,10 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
+    :ivar kind: Azure resource kind.
+    :vartype kind: str
+    :ivar identity: Azure resource identity.
+    :vartype identity: str
     :param location: Required. Resource location.
     :type location: str
     :param tags: A set of tags. Resource tags.
@@ -80,6 +84,8 @@ class Resource(msrest.serialization.Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'kind': {'readonly': True},
+        'identity': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -87,6 +93,8 @@ class Resource(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
@@ -95,15 +103,17 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(Resource, self).__init__(**kwargs)
+        super(AzureResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
+        self.kind = None
+        self.identity = None
         self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
 
 
-class ActionGroupResource(Resource):
+class ActionGroupResource(AzureResource):
     """An action group resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -116,6 +126,10 @@ class ActionGroupResource(Resource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
+    :ivar kind: Azure resource kind.
+    :vartype kind: str
+    :ivar identity: Azure resource identity.
+    :vartype identity: str
     :param location: Required. Resource location.
     :type location: str
     :param tags: A set of tags. Resource tags.
@@ -158,6 +172,8 @@ class ActionGroupResource(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'kind': {'readonly': True},
+        'identity': {'readonly': True},
         'location': {'required': True},
         'group_short_name': {'max_length': 12, 'min_length': 0},
     }
@@ -166,6 +182,8 @@ class ActionGroupResource(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'group_short_name': {'key': 'properties.groupShortName', 'type': 'str'},

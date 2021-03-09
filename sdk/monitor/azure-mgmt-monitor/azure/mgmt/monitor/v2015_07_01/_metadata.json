@@ -1,15 +1,15 @@
 {
     "chosen_version": "2015-07-01",
-    "total_api_version_list": ["2015-07-01"],
+    "total_api_version_list": ["2014-04-01", "2015-07-01"],
     "client": {
-        "name": "MonitorManagementClient",
-        "filename": "_monitor_management_client",
+        "name": "MonitorClient",
+        "filename": "_monitor_client",
         "description": "Monitor Management Client.",
         "base_url": "\u0027https://management.azure.com\u0027",
         "custom_base_url": null,
         "azure_arm": true,
         "has_lro_operations": false,
-        "client_side_validation": false
+        "client_side_validation": true
     },
     "global_parameters": {
         "sync": {
@@ -17,6 +17,12 @@
                 "signature": "credential,  # type: \"TokenCredential\"",
                 "description": "Credential needed for the client to connect to Azure.",
                 "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id,  # type: str",
+                "description": "The ID of the target subscription.",
+                "docstring_type": "str",
                 "required": true
             }
         },
@@ -26,11 +32,17 @@
                 "description": "Credential needed for the client to connect to Azure.",
                 "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
                 "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id,  # type: str",
+                "description": "The ID of the target subscription.",
+                "docstring_type": "str",
+                "required": true
             }
         },
         "constant": {
         },
-        "call": "credential"
+        "call": "credential, subscription_id"
     },
     "config": {
         "credential": true,
@@ -40,7 +52,8 @@
         "credential_key_header_name": null
     },
     "operation_groups": {
-        "service_diagnostic_settings": "ServiceDiagnosticSettingsOperations"
+        "service_diagnostic_settings": "ServiceDiagnosticSettingsOperations",
+        "alert_rules": "AlertRulesOperations"
     },
     "operation_mixins": {
     },

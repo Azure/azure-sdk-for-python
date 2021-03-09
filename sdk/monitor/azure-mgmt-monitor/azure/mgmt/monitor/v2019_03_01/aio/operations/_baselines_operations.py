@@ -160,4 +160,4 @@ class BaselinesOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/metricBaselines'}  # type: ignore
+    list.metadata = {'url': '/{resourceUri}/providers/Microsoft.Insights/metricBaselines'}  # type: ignore
