@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0-beta.5 (Unreleased)
+## 1.0.0-beta.5 (2021-03-09)
 
 ### Breaking
 - CommunicationIdentityClient's (synchronous and asynchronous) `issue_token` function is now renamed to `get_token`.
