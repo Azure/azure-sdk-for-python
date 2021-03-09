@@ -13,10 +13,13 @@ from azure.identity import DefaultAzureCredential
 
 class TestContainerRegistryClient(AzureTestCase):
     def _set_up(self):
+        self.endpoint = os.environ["CONTAINERREGISTRY_BASEURL"]
+        if not self.endpoint.startswith("https://"):
+            self.endpoint = "https://" + self.endpoint
         return self.create_client_from_credential(
             ContainerRegistryClient,
             self.get_credential(ContainerRegistryClient),
-            endpoint=os.environ["CONTAINERREGISTRY_BASEURL"],
+            endpoint=self.endpoint,
         )
 
     def test_list_repositories(self):

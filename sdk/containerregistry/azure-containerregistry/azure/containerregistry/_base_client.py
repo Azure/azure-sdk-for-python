@@ -6,6 +6,10 @@
 
 from enum import Enum
 
+from azure.core.pipeline.policies import (
+    BearerTokenCredentialPolicy,
+)
+
 from ._generated import AzureContainerRegistry
 from ._helpers import get_authentication_policy
 from ._user_agent import USER_AGENT
@@ -23,7 +27,7 @@ class ContainerRegistryBaseClient(object):
             credential=credential,
             url=endpoint,
             sdk_moniker=USER_AGENT,
-            authentication_policy=get_authentication_policy(endpoint, credential),
+            authentication_policy=BearerTokenCredentialPolicy,
             **kwargs
         )
 
