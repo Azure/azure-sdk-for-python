@@ -29,11 +29,11 @@ import asyncio
 
 class RecognizeIdDocumentsSampleAsync(object):
 
-    async def recognize_id_document(self):
+    async def recognize_id_documents(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
                                                             "..", "./../sample_forms/id_documents/license.jpg"))
 
-        # [START recognize_id_document]
+        # [START recognize_id_documents]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
 
@@ -83,7 +83,7 @@ class RecognizeIdDocumentsSampleAsync(object):
 
 async def main():
     sample = RecognizeIdDocumentsSampleAsync()
-    await sample.recognize_id_document()
+    await sample.recognize_id_documents()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

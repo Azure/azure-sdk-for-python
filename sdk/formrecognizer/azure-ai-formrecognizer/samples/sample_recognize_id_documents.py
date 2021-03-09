@@ -28,11 +28,11 @@ import os
 
 class RecognizeIdDocumentsSample(object):
 
-    def recognize_id_document(self):
+    def recognize_id_documents(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
                                                             "..", "./sample_forms/id_documents/license.jpg"))
 
-        # [START recognize_id_document]
+        # [START recognize_id_documents]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
 
@@ -80,4 +80,4 @@ class RecognizeIdDocumentsSample(object):
 
 if __name__ == '__main__':
     sample = RecognizeIdDocumentsSample()
-    sample.recognize_id_document()
+    sample.recognize_id_documents()
