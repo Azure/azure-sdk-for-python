@@ -42,7 +42,11 @@ def retrieve_jwt_expiration_timestamp(jwt_value):
         raise ValueError("Invalid JWT structure. Expected a JWS Compact Serialization formatted value.")
 
     try:
-        padded_base64_payload = base64.b64decode(parts[1]).decode('utf-8')
+        # JWT prefers no padding (see https://tools.ietf.org/id/draft-jones-json-web-token-02.html#base64urlnotes).
+        # We pad the value with the max padding of === to keep our logic simple and allow the base64 decoder to handle
+        # the value properly. b64decode will properly trim the padding appropriately, but apparently doesn't want to
+        # handle the addition of padding.
+        padded_base64_payload = base64.b64decode(parts[1] + "===").decode('utf-8')
         payload = json.loads(padded_base64_payload)
     except ValueError:
         raise ValueError("Unable to decode the JWT.")
