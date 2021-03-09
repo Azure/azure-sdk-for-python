@@ -31,7 +31,7 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
         super(SMSClientTestAsync, self).setUp()
 
         if self.is_playback():
-            self.phone_number = "+18005550123"
+            self.phone_number = "+14255550123"
             self.recording_processors.extend([
             BodyReplacerProcessor(keys=["to", "from", "messageId", "repeatabilityRequestId", "repeatabilityFirstSent"])])
         else:
