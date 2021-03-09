@@ -7,7 +7,7 @@ Azure Event Grid is a fully-managed intelligent event routing service that allow
 ## Getting started
 
 ### Prerequisites
-* Python 2.7, or 3.5 or later is required to use this package.
+* Python 2.7, or 3.6 or later is required to use this package.
 * You must have an [Azure subscription][azure_subscription] and an Event Grid Topic resource to use this package. Follow this [step-by-step tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart-portal) to register the Event Grid resource provider and create Event Grid topics using the [Azure portal](https://portal.azure.com/). There is a [similar tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart) using [Azure CLI](https://docs.microsoft.com/cli/azure).
 
 
@@ -101,6 +101,12 @@ Please have a look at the [samples](https://github.com/Azure/azure-sdk-for-pytho
 
 
  **Note:** It is important to know if your topic supports CloudEvents or EventGridEvents before publishing. If you send to a topic that does not support the schema of the event you are sending, send() will throw an exception.
+
+### System Topics
+A **[system topic](https://docs.microsoft.com/azure/event-grid/system-topics)** in Event Grid represents one or more events published by Azure services such as Azure Storage or Azure Event Hubs. For example, a system topic may represent all blob events or only blob creation and blob deletion events published for a specific storage account.
+
+The names of the various event types for the system events published to Azure Event Grid are available in `azure.eventgrid.SystemEventNames`.
+For complete list of recognizable system topics, visit [System Topics](https://docs.microsoft.com/azure/event-grid/system-topics).
 
  For more information about the key concepts on Event Grid, see [Concepts in Azure Event Grid][publisher-service-doc].
 
