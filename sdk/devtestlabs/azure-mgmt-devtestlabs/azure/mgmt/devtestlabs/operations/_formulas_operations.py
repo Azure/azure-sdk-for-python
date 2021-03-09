@@ -367,7 +367,7 @@ class FormulasOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/formulas/{name}'}
 
     def update(
-            self, resource_group_name, lab_name, name, formula, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, lab_name, name, tags=None, custom_headers=None, raw=False, **operation_config):
         """Allows modifying tags of formulas. All other properties will be
         ignored.
 
@@ -377,9 +377,8 @@ class FormulasOperations(object):
         :type lab_name: str
         :param name: The name of the formula.
         :type name: str
-        :param formula: A formula for creating a VM, specifying an image base
-         and other parameters
-        :type formula: ~azure.mgmt.devtestlabs.models.FormulaFragment
+        :param tags: The tags of the resource.
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -390,6 +389,8 @@ class FormulasOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        formula = models.FormulaFragment(tags=tags)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {

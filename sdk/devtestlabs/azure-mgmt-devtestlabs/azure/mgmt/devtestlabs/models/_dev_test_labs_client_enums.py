@@ -22,6 +22,7 @@ class SourceControlType(str, Enum):
 
     vso_git = "VsoGit"
     git_hub = "GitHub"
+    storage_account = "StorageAccount"
 
 
 class StorageType(str, Enum):
@@ -77,17 +78,18 @@ class TransportProtocol(str, Enum):
     udp = "Udp"
 
 
-class VirtualMachineCreationSource(str, Enum):
-
-    from_custom_image = "FromCustomImage"
-    from_gallery_image = "FromGalleryImage"
-    from_shared_gallery_image = "FromSharedGalleryImage"
-
-
 class FileUploadOptions(str, Enum):
 
     upload_files_and_generate_sas_tokens = "UploadFilesAndGenerateSasTokens"
     none = "None"
+
+
+class ManagedIdentityType(str, Enum):
+
+    none = "None"
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+    system_assigned_user_assigned = "SystemAssigned,UserAssigned"
 
 
 class PremiumDataDisk(str, Enum):
@@ -121,6 +123,13 @@ class CostType(str, Enum):
     projected = "Projected"
 
 
+class VirtualMachineCreationSource(str, Enum):
+
+    from_custom_image = "FromCustomImage"
+    from_gallery_image = "FromGalleryImage"
+    from_shared_gallery_image = "FromSharedGalleryImage"
+
+
 class HttpStatusCode(str, Enum):
 
     continue_enum = "Continue"
@@ -133,13 +142,18 @@ class HttpStatusCode(str, Enum):
     reset_content = "ResetContent"
     partial_content = "PartialContent"
     multiple_choices = "MultipleChoices"
+    ambiguous = "Ambiguous"
     moved_permanently = "MovedPermanently"
+    moved = "Moved"
+    found = "Found"
     redirect = "Redirect"
     see_other = "SeeOther"
+    redirect_method = "RedirectMethod"
     not_modified = "NotModified"
     use_proxy = "UseProxy"
     unused = "Unused"
     temporary_redirect = "TemporaryRedirect"
+    redirect_keep_verb = "RedirectKeepVerb"
     bad_request = "BadRequest"
     unauthorized = "Unauthorized"
     payment_required = "PaymentRequired"

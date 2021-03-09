@@ -343,7 +343,7 @@ class VirtualMachineSchedulesOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/virtualmachines/{virtualMachineName}/schedules/{name}'}
 
     def update(
-            self, resource_group_name, lab_name, virtual_machine_name, name, schedule, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, lab_name, virtual_machine_name, name, tags=None, custom_headers=None, raw=False, **operation_config):
         """Allows modifying tags of schedules. All other properties will be
         ignored.
 
@@ -355,8 +355,8 @@ class VirtualMachineSchedulesOperations(object):
         :type virtual_machine_name: str
         :param name: The name of the schedule.
         :type name: str
-        :param schedule: A schedule.
-        :type schedule: ~azure.mgmt.devtestlabs.models.ScheduleFragment
+        :param tags: The tags of the resource.
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -367,6 +367,8 @@ class VirtualMachineSchedulesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        schedule = models.ScheduleFragment(tags=tags)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {

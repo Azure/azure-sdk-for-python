@@ -123,24 +123,14 @@ class ApplicableScheduleFragment(UpdateResource):
 
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
-    :param lab_vms_shutdown: The auto-shutdown schedule, if one has been set
-     at the lab or lab resource level.
-    :type lab_vms_shutdown: ~azure.mgmt.devtestlabs.models.ScheduleFragment
-    :param lab_vms_startup: The auto-startup schedule, if one has been set at
-     the lab or lab resource level.
-    :type lab_vms_startup: ~azure.mgmt.devtestlabs.models.ScheduleFragment
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'lab_vms_shutdown': {'key': 'properties.labVmsShutdown', 'type': 'ScheduleFragment'},
-        'lab_vms_startup': {'key': 'properties.labVmsStartup', 'type': 'ScheduleFragment'},
     }
 
-    def __init__(self, *, tags=None, lab_vms_shutdown=None, lab_vms_startup=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, **kwargs) -> None:
         super(ApplicableScheduleFragment, self).__init__(tags=tags, **kwargs)
-        self.lab_vms_shutdown = lab_vms_shutdown
-        self.lab_vms_startup = lab_vms_startup
 
 
 class ApplyArtifactsRequest(Model):
@@ -278,26 +268,6 @@ class ArmTemplateParameterProperties(Model):
         self.value = value
 
 
-class ArmTemplateParameterPropertiesFragment(Model):
-    """Properties of an Azure Resource Manager template parameter.
-
-    :param name: The name of the template parameter.
-    :type name: str
-    :param value: The value of the template parameter.
-    :type value: str
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-    }
-
-    def __init__(self, *, name: str=None, value: str=None, **kwargs) -> None:
-        super(ArmTemplateParameterPropertiesFragment, self).__init__(**kwargs)
-        self.name = name
-        self.value = value
-
-
 class Artifact(Resource):
     """An artifact.
 
@@ -400,32 +370,6 @@ class ArtifactDeploymentStatusProperties(Model):
         self.total_artifacts = total_artifacts
 
 
-class ArtifactDeploymentStatusPropertiesFragment(Model):
-    """Properties of an artifact deployment.
-
-    :param deployment_status: The deployment status of the artifact.
-    :type deployment_status: str
-    :param artifacts_applied: The total count of the artifacts that were
-     successfully applied.
-    :type artifacts_applied: int
-    :param total_artifacts: The total count of the artifacts that were
-     tentatively applied.
-    :type total_artifacts: int
-    """
-
-    _attribute_map = {
-        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
-        'artifacts_applied': {'key': 'artifactsApplied', 'type': 'int'},
-        'total_artifacts': {'key': 'totalArtifacts', 'type': 'int'},
-    }
-
-    def __init__(self, *, deployment_status: str=None, artifacts_applied: int=None, total_artifacts: int=None, **kwargs) -> None:
-        super(ArtifactDeploymentStatusPropertiesFragment, self).__init__(**kwargs)
-        self.deployment_status = deployment_status
-        self.artifacts_applied = artifacts_applied
-        self.total_artifacts = total_artifacts
-
-
 class ArtifactInstallProperties(Model):
     """Properties of an artifact.
 
@@ -469,49 +413,6 @@ class ArtifactInstallProperties(Model):
         self.install_time = install_time
 
 
-class ArtifactInstallPropertiesFragment(Model):
-    """Properties of an artifact.
-
-    :param artifact_id: The artifact's identifier.
-    :type artifact_id: str
-    :param artifact_title: The artifact's title.
-    :type artifact_title: str
-    :param parameters: The parameters of the artifact.
-    :type parameters:
-     list[~azure.mgmt.devtestlabs.models.ArtifactParameterPropertiesFragment]
-    :param status: The status of the artifact.
-    :type status: str
-    :param deployment_status_message: The status message from the deployment.
-    :type deployment_status_message: str
-    :param vm_extension_status_message: The status message from the virtual
-     machine extension.
-    :type vm_extension_status_message: str
-    :param install_time: The time that the artifact starts to install on the
-     virtual machine.
-    :type install_time: datetime
-    """
-
-    _attribute_map = {
-        'artifact_id': {'key': 'artifactId', 'type': 'str'},
-        'artifact_title': {'key': 'artifactTitle', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': '[ArtifactParameterPropertiesFragment]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'deployment_status_message': {'key': 'deploymentStatusMessage', 'type': 'str'},
-        'vm_extension_status_message': {'key': 'vmExtensionStatusMessage', 'type': 'str'},
-        'install_time': {'key': 'installTime', 'type': 'iso-8601'},
-    }
-
-    def __init__(self, *, artifact_id: str=None, artifact_title: str=None, parameters=None, status: str=None, deployment_status_message: str=None, vm_extension_status_message: str=None, install_time=None, **kwargs) -> None:
-        super(ArtifactInstallPropertiesFragment, self).__init__(**kwargs)
-        self.artifact_id = artifact_id
-        self.artifact_title = artifact_title
-        self.parameters = parameters
-        self.status = status
-        self.deployment_status_message = deployment_status_message
-        self.vm_extension_status_message = vm_extension_status_message
-        self.install_time = install_time
-
-
 class ArtifactParameterProperties(Model):
     """Properties of an artifact parameter.
 
@@ -528,26 +429,6 @@ class ArtifactParameterProperties(Model):
 
     def __init__(self, *, name: str=None, value: str=None, **kwargs) -> None:
         super(ArtifactParameterProperties, self).__init__(**kwargs)
-        self.name = name
-        self.value = value
-
-
-class ArtifactParameterPropertiesFragment(Model):
-    """Properties of an artifact parameter.
-
-    :param name: The name of the artifact parameter.
-    :type name: str
-    :param value: The value of the artifact parameter.
-    :type value: str
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-    }
-
-    def __init__(self, *, name: str=None, value: str=None, **kwargs) -> None:
-        super(ArtifactParameterPropertiesFragment, self).__init__(**kwargs)
         self.name = name
         self.value = value
 
@@ -573,7 +454,7 @@ class ArtifactSource(Resource):
     :param uri: The artifact source's URI.
     :type uri: str
     :param source_type: The artifact source's type. Possible values include:
-     'VsoGit', 'GitHub'
+     'VsoGit', 'GitHub', 'StorageAccount'
     :type source_type: str or ~azure.mgmt.devtestlabs.models.SourceControlType
     :param folder_path: The folder containing artifacts.
     :type folder_path: str
@@ -645,50 +526,14 @@ class ArtifactSourceFragment(UpdateResource):
 
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
-    :param display_name: The artifact source's display name.
-    :type display_name: str
-    :param uri: The artifact source's URI.
-    :type uri: str
-    :param source_type: The artifact source's type. Possible values include:
-     'VsoGit', 'GitHub'
-    :type source_type: str or ~azure.mgmt.devtestlabs.models.SourceControlType
-    :param folder_path: The folder containing artifacts.
-    :type folder_path: str
-    :param arm_template_folder_path: The folder containing Azure Resource
-     Manager templates.
-    :type arm_template_folder_path: str
-    :param branch_ref: The artifact source's branch reference.
-    :type branch_ref: str
-    :param security_token: The security token to authenticate to the artifact
-     source.
-    :type security_token: str
-    :param status: Indicates if the artifact source is enabled (values:
-     Enabled, Disabled). Possible values include: 'Enabled', 'Disabled'
-    :type status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'uri': {'key': 'properties.uri', 'type': 'str'},
-        'source_type': {'key': 'properties.sourceType', 'type': 'str'},
-        'folder_path': {'key': 'properties.folderPath', 'type': 'str'},
-        'arm_template_folder_path': {'key': 'properties.armTemplateFolderPath', 'type': 'str'},
-        'branch_ref': {'key': 'properties.branchRef', 'type': 'str'},
-        'security_token': {'key': 'properties.securityToken', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, display_name: str=None, uri: str=None, source_type=None, folder_path: str=None, arm_template_folder_path: str=None, branch_ref: str=None, security_token: str=None, status=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, **kwargs) -> None:
         super(ArtifactSourceFragment, self).__init__(tags=tags, **kwargs)
-        self.display_name = display_name
-        self.uri = uri
-        self.source_type = source_type
-        self.folder_path = folder_path
-        self.arm_template_folder_path = arm_template_folder_path
-        self.branch_ref = branch_ref
-        self.security_token = security_token
-        self.status = status
 
 
 class AttachDiskProperties(Model):
@@ -711,7 +556,7 @@ class AttachDiskProperties(Model):
 class AttachNewDataDiskOptions(Model):
     """Properties to attach new disk to the Virtual Machine.
 
-    :param disk_size_gi_b: Size of the disk to be attached in GibiBytes.
+    :param disk_size_gi_b: Size of the disk to be attached in Gibibytes.
     :type disk_size_gi_b: int
     :param disk_name: The name of the disk to be attached.
     :type disk_name: str
@@ -733,31 +578,6 @@ class AttachNewDataDiskOptions(Model):
         self.disk_type = disk_type
 
 
-class AttachNewDataDiskOptionsFragment(Model):
-    """Properties to attach new disk to the Virtual Machine.
-
-    :param disk_size_gi_b: Size of the disk to be attached in GibiBytes.
-    :type disk_size_gi_b: int
-    :param disk_name: The name of the disk to be attached.
-    :type disk_name: str
-    :param disk_type: The storage type for the disk (i.e. Standard, Premium).
-     Possible values include: 'Standard', 'Premium', 'StandardSSD'
-    :type disk_type: str or ~azure.mgmt.devtestlabs.models.StorageType
-    """
-
-    _attribute_map = {
-        'disk_size_gi_b': {'key': 'diskSizeGiB', 'type': 'int'},
-        'disk_name': {'key': 'diskName', 'type': 'str'},
-        'disk_type': {'key': 'diskType', 'type': 'str'},
-    }
-
-    def __init__(self, *, disk_size_gi_b: int=None, disk_name: str=None, disk_type=None, **kwargs) -> None:
-        super(AttachNewDataDiskOptionsFragment, self).__init__(**kwargs)
-        self.disk_size_gi_b = disk_size_gi_b
-        self.disk_name = disk_name
-        self.disk_type = disk_type
-
-
 class BulkCreationParameters(Model):
     """Parameters for creating multiple virtual machines as a single action.
 
@@ -771,22 +591,6 @@ class BulkCreationParameters(Model):
 
     def __init__(self, *, instance_count: int=None, **kwargs) -> None:
         super(BulkCreationParameters, self).__init__(**kwargs)
-        self.instance_count = instance_count
-
-
-class BulkCreationParametersFragment(Model):
-    """Parameters for creating multiple virtual machines as a single action.
-
-    :param instance_count: The number of virtual machine instances to create.
-    :type instance_count: int
-    """
-
-    _attribute_map = {
-        'instance_count': {'key': 'instanceCount', 'type': 'int'},
-    }
-
-    def __init__(self, *, instance_count: int=None, **kwargs) -> None:
-        super(BulkCreationParametersFragment, self).__init__(**kwargs)
         self.instance_count = instance_count
 
 
@@ -875,35 +679,6 @@ class ComputeDataDisk(Model):
         self.disk_size_gi_b = disk_size_gi_b
 
 
-class ComputeDataDiskFragment(Model):
-    """A data disks attached to a virtual machine.
-
-    :param name: Gets data disk name.
-    :type name: str
-    :param disk_uri: When backed by a blob, the URI of underlying blob.
-    :type disk_uri: str
-    :param managed_disk_id: When backed by managed disk, this is the ID of the
-     compute disk resource.
-    :type managed_disk_id: str
-    :param disk_size_gi_b: Gets data disk size in GiB.
-    :type disk_size_gi_b: int
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'disk_uri': {'key': 'diskUri', 'type': 'str'},
-        'managed_disk_id': {'key': 'managedDiskId', 'type': 'str'},
-        'disk_size_gi_b': {'key': 'diskSizeGiB', 'type': 'int'},
-    }
-
-    def __init__(self, *, name: str=None, disk_uri: str=None, managed_disk_id: str=None, disk_size_gi_b: int=None, **kwargs) -> None:
-        super(ComputeDataDiskFragment, self).__init__(**kwargs)
-        self.name = name
-        self.disk_uri = disk_uri
-        self.managed_disk_id = managed_disk_id
-        self.disk_size_gi_b = disk_size_gi_b
-
-
 class ComputeVmInstanceViewStatus(Model):
     """Status information about a virtual machine.
 
@@ -923,30 +698,6 @@ class ComputeVmInstanceViewStatus(Model):
 
     def __init__(self, *, code: str=None, display_status: str=None, message: str=None, **kwargs) -> None:
         super(ComputeVmInstanceViewStatus, self).__init__(**kwargs)
-        self.code = code
-        self.display_status = display_status
-        self.message = message
-
-
-class ComputeVmInstanceViewStatusFragment(Model):
-    """Status information about a virtual machine.
-
-    :param code: Gets the status Code.
-    :type code: str
-    :param display_status: Gets the short localizable label for the status.
-    :type display_status: str
-    :param message: Gets the message associated with the status.
-    :type message: str
-    """
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'display_status': {'key': 'displayStatus', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-    }
-
-    def __init__(self, *, code: str=None, display_status: str=None, message: str=None, **kwargs) -> None:
-        super(ComputeVmInstanceViewStatusFragment, self).__init__(**kwargs)
         self.code = code
         self.display_status = display_status
         self.message = message
@@ -985,49 +736,6 @@ class ComputeVmProperties(Model):
 
     def __init__(self, *, statuses=None, os_type: str=None, vm_size: str=None, network_interface_id: str=None, os_disk_id: str=None, data_disk_ids=None, data_disks=None, **kwargs) -> None:
         super(ComputeVmProperties, self).__init__(**kwargs)
-        self.statuses = statuses
-        self.os_type = os_type
-        self.vm_size = vm_size
-        self.network_interface_id = network_interface_id
-        self.os_disk_id = os_disk_id
-        self.data_disk_ids = data_disk_ids
-        self.data_disks = data_disks
-
-
-class ComputeVmPropertiesFragment(Model):
-    """Properties of a virtual machine returned by the Microsoft.Compute API.
-
-    :param statuses: Gets the statuses of the virtual machine.
-    :type statuses:
-     list[~azure.mgmt.devtestlabs.models.ComputeVmInstanceViewStatusFragment]
-    :param os_type: Gets the OS type of the virtual machine.
-    :type os_type: str
-    :param vm_size: Gets the size of the virtual machine.
-    :type vm_size: str
-    :param network_interface_id: Gets the network interface ID of the virtual
-     machine.
-    :type network_interface_id: str
-    :param os_disk_id: Gets OS disk blob uri for the virtual machine.
-    :type os_disk_id: str
-    :param data_disk_ids: Gets data disks blob uri for the virtual machine.
-    :type data_disk_ids: list[str]
-    :param data_disks: Gets all data disks attached to the virtual machine.
-    :type data_disks:
-     list[~azure.mgmt.devtestlabs.models.ComputeDataDiskFragment]
-    """
-
-    _attribute_map = {
-        'statuses': {'key': 'statuses', 'type': '[ComputeVmInstanceViewStatusFragment]'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'network_interface_id': {'key': 'networkInterfaceId', 'type': 'str'},
-        'os_disk_id': {'key': 'osDiskId', 'type': 'str'},
-        'data_disk_ids': {'key': 'dataDiskIds', 'type': '[str]'},
-        'data_disks': {'key': 'dataDisks', 'type': '[ComputeDataDiskFragment]'},
-    }
-
-    def __init__(self, *, statuses=None, os_type: str=None, vm_size: str=None, network_interface_id: str=None, os_disk_id: str=None, data_disk_ids=None, data_disks=None, **kwargs) -> None:
-        super(ComputeVmPropertiesFragment, self).__init__(**kwargs)
         self.statuses = statuses
         self.os_type = os_type
         self.vm_size = vm_size
@@ -1175,58 +883,14 @@ class CustomImageFragment(UpdateResource):
 
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
-    :param vm: The virtual machine from which the image is to be created.
-    :type vm:
-     ~azure.mgmt.devtestlabs.models.CustomImagePropertiesFromVmFragment
-    :param vhd: The VHD from which the image is to be created.
-    :type vhd:
-     ~azure.mgmt.devtestlabs.models.CustomImagePropertiesCustomFragment
-    :param description: The description of the custom image.
-    :type description: str
-    :param author: The author of the custom image.
-    :type author: str
-    :param managed_image_id: The Managed Image Id backing the custom image.
-    :type managed_image_id: str
-    :param managed_snapshot_id: The Managed Snapshot Id backing the custom
-     image.
-    :type managed_snapshot_id: str
-    :param data_disk_storage_info: Storage information about the data disks
-     present in the custom image
-    :type data_disk_storage_info:
-     list[~azure.mgmt.devtestlabs.models.DataDiskStorageTypeInfoFragment]
-    :param custom_image_plan: Storage information about the plan related to
-     this custom image
-    :type custom_image_plan:
-     ~azure.mgmt.devtestlabs.models.CustomImagePropertiesFromPlanFragment
-    :param is_plan_authorized: Whether or not the custom images underlying
-     offer/plan has been enabled for programmatic deployment
-    :type is_plan_authorized: bool
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'vm': {'key': 'properties.vm', 'type': 'CustomImagePropertiesFromVmFragment'},
-        'vhd': {'key': 'properties.vhd', 'type': 'CustomImagePropertiesCustomFragment'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'author': {'key': 'properties.author', 'type': 'str'},
-        'managed_image_id': {'key': 'properties.managedImageId', 'type': 'str'},
-        'managed_snapshot_id': {'key': 'properties.managedSnapshotId', 'type': 'str'},
-        'data_disk_storage_info': {'key': 'properties.dataDiskStorageInfo', 'type': '[DataDiskStorageTypeInfoFragment]'},
-        'custom_image_plan': {'key': 'properties.customImagePlan', 'type': 'CustomImagePropertiesFromPlanFragment'},
-        'is_plan_authorized': {'key': 'properties.isPlanAuthorized', 'type': 'bool'},
     }
 
-    def __init__(self, *, tags=None, vm=None, vhd=None, description: str=None, author: str=None, managed_image_id: str=None, managed_snapshot_id: str=None, data_disk_storage_info=None, custom_image_plan=None, is_plan_authorized: bool=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, **kwargs) -> None:
         super(CustomImageFragment, self).__init__(tags=tags, **kwargs)
-        self.vm = vm
-        self.vhd = vhd
-        self.description = description
-        self.author = author
-        self.managed_image_id = managed_image_id
-        self.managed_snapshot_id = managed_snapshot_id
-        self.data_disk_storage_info = data_disk_storage_info
-        self.custom_image_plan = custom_image_plan
-        self.is_plan_authorized = is_plan_authorized
 
 
 class CustomImagePropertiesCustom(Model):
@@ -1260,31 +924,6 @@ class CustomImagePropertiesCustom(Model):
         self.os_type = os_type
 
 
-class CustomImagePropertiesCustomFragment(Model):
-    """Properties for creating a custom image from a VHD.
-
-    :param image_name: The image name.
-    :type image_name: str
-    :param sys_prep: Indicates whether sysprep has been run on the VHD.
-    :type sys_prep: bool
-    :param os_type: The OS type of the custom image (i.e. Windows, Linux).
-     Possible values include: 'Windows', 'Linux', 'None'
-    :type os_type: str or ~azure.mgmt.devtestlabs.models.CustomImageOsType
-    """
-
-    _attribute_map = {
-        'image_name': {'key': 'imageName', 'type': 'str'},
-        'sys_prep': {'key': 'sysPrep', 'type': 'bool'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-    }
-
-    def __init__(self, *, image_name: str=None, sys_prep: bool=None, os_type=None, **kwargs) -> None:
-        super(CustomImagePropertiesCustomFragment, self).__init__(**kwargs)
-        self.image_name = image_name
-        self.sys_prep = sys_prep
-        self.os_type = os_type
-
-
 class CustomImagePropertiesFromPlan(Model):
     """Properties for plan on a custom image.
 
@@ -1311,32 +950,6 @@ class CustomImagePropertiesFromPlan(Model):
         self.offer = offer
 
 
-class CustomImagePropertiesFromPlanFragment(Model):
-    """Properties for plan on a custom image.
-
-    :param id: The id of the plan, equivalent to name of the plan
-    :type id: str
-    :param publisher: The publisher for the plan from the marketplace image
-     the custom image is derived from
-    :type publisher: str
-    :param offer: The offer for the plan from the marketplace image the custom
-     image is derived from
-    :type offer: str
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'offer': {'key': 'offer', 'type': 'str'},
-    }
-
-    def __init__(self, *, id: str=None, publisher: str=None, offer: str=None, **kwargs) -> None:
-        super(CustomImagePropertiesFromPlanFragment, self).__init__(**kwargs)
-        self.id = id
-        self.publisher = publisher
-        self.offer = offer
-
-
 class CustomImagePropertiesFromVm(Model):
     """Properties for creating a custom image from a virtual machine.
 
@@ -1356,31 +969,6 @@ class CustomImagePropertiesFromVm(Model):
 
     def __init__(self, *, source_vm_id: str=None, windows_os_info=None, linux_os_info=None, **kwargs) -> None:
         super(CustomImagePropertiesFromVm, self).__init__(**kwargs)
-        self.source_vm_id = source_vm_id
-        self.windows_os_info = windows_os_info
-        self.linux_os_info = linux_os_info
-
-
-class CustomImagePropertiesFromVmFragment(Model):
-    """Properties for creating a custom image from a virtual machine.
-
-    :param source_vm_id: The source vm identifier.
-    :type source_vm_id: str
-    :param windows_os_info: The Windows OS information of the VM.
-    :type windows_os_info:
-     ~azure.mgmt.devtestlabs.models.WindowsOsInfoFragment
-    :param linux_os_info: The Linux OS information of the VM.
-    :type linux_os_info: ~azure.mgmt.devtestlabs.models.LinuxOsInfoFragment
-    """
-
-    _attribute_map = {
-        'source_vm_id': {'key': 'sourceVmId', 'type': 'str'},
-        'windows_os_info': {'key': 'windowsOsInfo', 'type': 'WindowsOsInfoFragment'},
-        'linux_os_info': {'key': 'linuxOsInfo', 'type': 'LinuxOsInfoFragment'},
-    }
-
-    def __init__(self, *, source_vm_id: str=None, windows_os_info=None, linux_os_info=None, **kwargs) -> None:
-        super(CustomImagePropertiesFromVmFragment, self).__init__(**kwargs)
         self.source_vm_id = source_vm_id
         self.windows_os_info = windows_os_info
         self.linux_os_info = linux_os_info
@@ -1415,35 +1003,6 @@ class DataDiskProperties(Model):
         self.host_caching = host_caching
 
 
-class DataDiskPropertiesFragment(Model):
-    """Request body for adding a new or existing data disk to a virtual machine.
-
-    :param attach_new_data_disk_options: Specifies options to attach a new
-     disk to the virtual machine.
-    :type attach_new_data_disk_options:
-     ~azure.mgmt.devtestlabs.models.AttachNewDataDiskOptionsFragment
-    :param existing_lab_disk_id: Specifies the existing lab disk id to attach
-     to virtual machine.
-    :type existing_lab_disk_id: str
-    :param host_caching: Caching option for a data disk (i.e. None, ReadOnly,
-     ReadWrite). Possible values include: 'None', 'ReadOnly', 'ReadWrite'
-    :type host_caching: str or
-     ~azure.mgmt.devtestlabs.models.HostCachingOptions
-    """
-
-    _attribute_map = {
-        'attach_new_data_disk_options': {'key': 'attachNewDataDiskOptions', 'type': 'AttachNewDataDiskOptionsFragment'},
-        'existing_lab_disk_id': {'key': 'existingLabDiskId', 'type': 'str'},
-        'host_caching': {'key': 'hostCaching', 'type': 'str'},
-    }
-
-    def __init__(self, *, attach_new_data_disk_options=None, existing_lab_disk_id: str=None, host_caching=None, **kwargs) -> None:
-        super(DataDiskPropertiesFragment, self).__init__(**kwargs)
-        self.attach_new_data_disk_options = attach_new_data_disk_options
-        self.existing_lab_disk_id = existing_lab_disk_id
-        self.host_caching = host_caching
-
-
 class DataDiskStorageTypeInfo(Model):
     """Storage information about the data disks present in the custom image.
 
@@ -1465,27 +1024,6 @@ class DataDiskStorageTypeInfo(Model):
         self.storage_type = storage_type
 
 
-class DataDiskStorageTypeInfoFragment(Model):
-    """Storage information about the data disks present in the custom image.
-
-    :param lun: Disk Lun
-    :type lun: str
-    :param storage_type: Disk Storage Type. Possible values include:
-     'Standard', 'Premium', 'StandardSSD'
-    :type storage_type: str or ~azure.mgmt.devtestlabs.models.StorageType
-    """
-
-    _attribute_map = {
-        'lun': {'key': 'lun', 'type': 'str'},
-        'storage_type': {'key': 'storageType', 'type': 'str'},
-    }
-
-    def __init__(self, *, lun: str=None, storage_type=None, **kwargs) -> None:
-        super(DataDiskStorageTypeInfoFragment, self).__init__(**kwargs)
-        self.lun = lun
-        self.storage_type = storage_type
-
-
 class DayDetails(Model):
     """Properties of a daily schedule.
 
@@ -1499,22 +1037,6 @@ class DayDetails(Model):
 
     def __init__(self, *, time: str=None, **kwargs) -> None:
         super(DayDetails, self).__init__(**kwargs)
-        self.time = time
-
-
-class DayDetailsFragment(Model):
-    """Properties of a daily schedule.
-
-    :param time: The time of day the schedule will occur.
-    :type time: str
-    """
-
-    _attribute_map = {
-        'time': {'key': 'time', 'type': 'str'},
-    }
-
-    def __init__(self, *, time: str=None, **kwargs) -> None:
-        super(DayDetailsFragment, self).__init__(**kwargs)
         self.time = time
 
 
@@ -1571,7 +1093,7 @@ class Disk(Resource):
     :param disk_type: The storage type for the disk (i.e. Standard, Premium).
      Possible values include: 'Standard', 'Premium', 'StandardSSD'
     :type disk_type: str or ~azure.mgmt.devtestlabs.models.StorageType
-    :param disk_size_gi_b: The size of the disk in GibiBytes.
+    :param disk_size_gi_b: The size of the disk in Gibibytes.
     :type disk_size_gi_b: int
     :param leased_by_lab_vm_id: The resource ID of the VM to which this disk
      is leased.
@@ -1581,6 +1103,9 @@ class Disk(Resource):
     :type disk_blob_name: str
     :param disk_uri: When backed by a blob, the URI of underlying blob.
     :type disk_uri: str
+    :param storage_account_id: When backed by a blob, the storage account
+     where the blob is.
+    :type storage_account_id: str
     :ivar created_date: The creation date of the disk.
     :vartype created_date: datetime
     :param host_caching: The host caching policy of the disk (i.e. None,
@@ -1616,6 +1141,7 @@ class Disk(Resource):
         'leased_by_lab_vm_id': {'key': 'properties.leasedByLabVmId', 'type': 'str'},
         'disk_blob_name': {'key': 'properties.diskBlobName', 'type': 'str'},
         'disk_uri': {'key': 'properties.diskUri', 'type': 'str'},
+        'storage_account_id': {'key': 'properties.storageAccountId', 'type': 'str'},
         'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
         'host_caching': {'key': 'properties.hostCaching', 'type': 'str'},
         'managed_disk_id': {'key': 'properties.managedDiskId', 'type': 'str'},
@@ -1623,13 +1149,14 @@ class Disk(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, disk_type=None, disk_size_gi_b: int=None, leased_by_lab_vm_id: str=None, disk_blob_name: str=None, disk_uri: str=None, host_caching: str=None, managed_disk_id: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, disk_type=None, disk_size_gi_b: int=None, leased_by_lab_vm_id: str=None, disk_blob_name: str=None, disk_uri: str=None, storage_account_id: str=None, host_caching: str=None, managed_disk_id: str=None, **kwargs) -> None:
         super(Disk, self).__init__(location=location, tags=tags, **kwargs)
         self.disk_type = disk_type
         self.disk_size_gi_b = disk_size_gi_b
         self.leased_by_lab_vm_id = leased_by_lab_vm_id
         self.disk_blob_name = disk_blob_name
         self.disk_uri = disk_uri
+        self.storage_account_id = storage_account_id
         self.created_date = None
         self.host_caching = host_caching
         self.managed_disk_id = managed_disk_id
@@ -1642,47 +1169,14 @@ class DiskFragment(UpdateResource):
 
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
-    :param disk_type: The storage type for the disk (i.e. Standard, Premium).
-     Possible values include: 'Standard', 'Premium', 'StandardSSD'
-    :type disk_type: str or ~azure.mgmt.devtestlabs.models.StorageType
-    :param disk_size_gi_b: The size of the disk in GibiBytes.
-    :type disk_size_gi_b: int
-    :param leased_by_lab_vm_id: The resource ID of the VM to which this disk
-     is leased.
-    :type leased_by_lab_vm_id: str
-    :param disk_blob_name: When backed by a blob, the name of the VHD blob
-     without extension.
-    :type disk_blob_name: str
-    :param disk_uri: When backed by a blob, the URI of underlying blob.
-    :type disk_uri: str
-    :param host_caching: The host caching policy of the disk (i.e. None,
-     ReadOnly, ReadWrite).
-    :type host_caching: str
-    :param managed_disk_id: When backed by managed disk, this is the ID of the
-     compute disk resource.
-    :type managed_disk_id: str
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'disk_type': {'key': 'properties.diskType', 'type': 'str'},
-        'disk_size_gi_b': {'key': 'properties.diskSizeGiB', 'type': 'int'},
-        'leased_by_lab_vm_id': {'key': 'properties.leasedByLabVmId', 'type': 'str'},
-        'disk_blob_name': {'key': 'properties.diskBlobName', 'type': 'str'},
-        'disk_uri': {'key': 'properties.diskUri', 'type': 'str'},
-        'host_caching': {'key': 'properties.hostCaching', 'type': 'str'},
-        'managed_disk_id': {'key': 'properties.managedDiskId', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, disk_type=None, disk_size_gi_b: int=None, leased_by_lab_vm_id: str=None, disk_blob_name: str=None, disk_uri: str=None, host_caching: str=None, managed_disk_id: str=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, **kwargs) -> None:
         super(DiskFragment, self).__init__(tags=tags, **kwargs)
-        self.disk_type = disk_type
-        self.disk_size_gi_b = disk_size_gi_b
-        self.leased_by_lab_vm_id = leased_by_lab_vm_id
-        self.disk_blob_name = disk_blob_name
-        self.disk_uri = disk_uri
-        self.host_caching = host_caching
-        self.managed_disk_id = managed_disk_id
 
 
 class DtlEnvironment(Resource):
@@ -1759,25 +1253,14 @@ class DtlEnvironmentFragment(UpdateResource):
 
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
-    :param deployment_properties: The deployment properties of the
-     environment.
-    :type deployment_properties:
-     ~azure.mgmt.devtestlabs.models.EnvironmentDeploymentPropertiesFragment
-    :param arm_template_display_name: The display name of the Azure Resource
-     Manager template that produced the environment.
-    :type arm_template_display_name: str
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'deployment_properties': {'key': 'properties.deploymentProperties', 'type': 'EnvironmentDeploymentPropertiesFragment'},
-        'arm_template_display_name': {'key': 'properties.armTemplateDisplayName', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, deployment_properties=None, arm_template_display_name: str=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, **kwargs) -> None:
         super(DtlEnvironmentFragment, self).__init__(tags=tags, **kwargs)
-        self.deployment_properties = deployment_properties
-        self.arm_template_display_name = arm_template_display_name
 
 
 class EnvironmentDeploymentProperties(Model):
@@ -1797,27 +1280,6 @@ class EnvironmentDeploymentProperties(Model):
 
     def __init__(self, *, arm_template_id: str=None, parameters=None, **kwargs) -> None:
         super(EnvironmentDeploymentProperties, self).__init__(**kwargs)
-        self.arm_template_id = arm_template_id
-        self.parameters = parameters
-
-
-class EnvironmentDeploymentPropertiesFragment(Model):
-    """Properties of an environment deployment.
-
-    :param arm_template_id: The Azure Resource Manager template's identifier.
-    :type arm_template_id: str
-    :param parameters: The parameters of the Azure Resource Manager template.
-    :type parameters:
-     list[~azure.mgmt.devtestlabs.models.ArmTemplateParameterPropertiesFragment]
-    """
-
-    _attribute_map = {
-        'arm_template_id': {'key': 'armTemplateId', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': '[ArmTemplateParameterPropertiesFragment]'},
-    }
-
-    def __init__(self, *, arm_template_id: str=None, parameters=None, **kwargs) -> None:
-        super(EnvironmentDeploymentPropertiesFragment, self).__init__(**kwargs)
         self.arm_template_id = arm_template_id
         self.parameters = parameters
 
@@ -1901,24 +1363,6 @@ class Event(Model):
         self.event_name = event_name
 
 
-class EventFragment(Model):
-    """An event to be notified for.
-
-    :param event_name: The event type for which this notification is enabled
-     (i.e. AutoShutdown, Cost). Possible values include: 'AutoShutdown', 'Cost'
-    :type event_name: str or
-     ~azure.mgmt.devtestlabs.models.NotificationChannelEventType
-    """
-
-    _attribute_map = {
-        'event_name': {'key': 'eventName', 'type': 'str'},
-    }
-
-    def __init__(self, *, event_name=None, **kwargs) -> None:
-        super(EventFragment, self).__init__(**kwargs)
-        self.event_name = event_name
-
-
 class ExportResourceUsageParameters(Model):
     """The parameters of the export operation.
 
@@ -1962,26 +1406,6 @@ class ExternalSubnet(Model):
         self.name = name
 
 
-class ExternalSubnetFragment(Model):
-    """Subnet information as returned by the Microsoft.Network API.
-
-    :param id: Gets or sets the identifier.
-    :type id: str
-    :param name: Gets or sets the name.
-    :type name: str
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    def __init__(self, *, id: str=None, name: str=None, **kwargs) -> None:
-        super(ExternalSubnetFragment, self).__init__(**kwargs)
-        self.id = id
-        self.name = name
-
-
 class Formula(Resource):
     """A formula for creating a VM, specifying an image base and other parameters.
 
@@ -2000,8 +1424,8 @@ class Formula(Resource):
     :type tags: dict[str, str]
     :param description: The description of the formula.
     :type description: str
-    :param author: The author of the formula.
-    :type author: str
+    :ivar author: The author of the formula.
+    :vartype author: str
     :param os_type: The OS type of the formula.
     :type os_type: str
     :ivar creation_date: The creation date of the formula.
@@ -2022,6 +1446,7 @@ class Formula(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'author': {'readonly': True},
         'creation_date': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'unique_identifier': {'readonly': True},
@@ -2043,10 +1468,10 @@ class Formula(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, description: str=None, author: str=None, os_type: str=None, formula_content=None, vm=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, description: str=None, os_type: str=None, formula_content=None, vm=None, **kwargs) -> None:
         super(Formula, self).__init__(location=location, tags=tags, **kwargs)
         self.description = description
-        self.author = author
+        self.author = None
         self.os_type = os_type
         self.creation_date = None
         self.formula_content = formula_content
@@ -2060,35 +1485,14 @@ class FormulaFragment(UpdateResource):
 
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
-    :param description: The description of the formula.
-    :type description: str
-    :param author: The author of the formula.
-    :type author: str
-    :param os_type: The OS type of the formula.
-    :type os_type: str
-    :param formula_content: The content of the formula.
-    :type formula_content:
-     ~azure.mgmt.devtestlabs.models.LabVirtualMachineCreationParameterFragment
-    :param vm: Information about a VM from which a formula is to be created.
-    :type vm: ~azure.mgmt.devtestlabs.models.FormulaPropertiesFromVmFragment
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'author': {'key': 'properties.author', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'formula_content': {'key': 'properties.formulaContent', 'type': 'LabVirtualMachineCreationParameterFragment'},
-        'vm': {'key': 'properties.vm', 'type': 'FormulaPropertiesFromVmFragment'},
     }
 
-    def __init__(self, *, tags=None, description: str=None, author: str=None, os_type: str=None, formula_content=None, vm=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, **kwargs) -> None:
         super(FormulaFragment, self).__init__(tags=tags, **kwargs)
-        self.description = description
-        self.author = author
-        self.os_type = os_type
-        self.formula_content = formula_content
-        self.vm = vm
 
 
 class FormulaPropertiesFromVm(Model):
@@ -2105,23 +1509,6 @@ class FormulaPropertiesFromVm(Model):
 
     def __init__(self, *, lab_vm_id: str=None, **kwargs) -> None:
         super(FormulaPropertiesFromVm, self).__init__(**kwargs)
-        self.lab_vm_id = lab_vm_id
-
-
-class FormulaPropertiesFromVmFragment(Model):
-    """Information about a VM from which a formula is to be created.
-
-    :param lab_vm_id: The identifier of the VM from which a formula is to be
-     created.
-    :type lab_vm_id: str
-    """
-
-    _attribute_map = {
-        'lab_vm_id': {'key': 'labVmId', 'type': 'str'},
-    }
-
-    def __init__(self, *, lab_vm_id: str=None, **kwargs) -> None:
-        super(FormulaPropertiesFromVmFragment, self).__init__(**kwargs)
         self.lab_vm_id = lab_vm_id
 
 
@@ -2228,38 +1615,6 @@ class GalleryImageReference(Model):
         self.version = version
 
 
-class GalleryImageReferenceFragment(Model):
-    """The reference information for an Azure Marketplace image.
-
-    :param offer: The offer of the gallery image.
-    :type offer: str
-    :param publisher: The publisher of the gallery image.
-    :type publisher: str
-    :param sku: The SKU of the gallery image.
-    :type sku: str
-    :param os_type: The OS type of the gallery image.
-    :type os_type: str
-    :param version: The version of the gallery image.
-    :type version: str
-    """
-
-    _attribute_map = {
-        'offer': {'key': 'offer', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-    }
-
-    def __init__(self, *, offer: str=None, publisher: str=None, sku: str=None, os_type: str=None, version: str=None, **kwargs) -> None:
-        super(GalleryImageReferenceFragment, self).__init__(**kwargs)
-        self.offer = offer
-        self.publisher = publisher
-        self.sku = sku
-        self.os_type = os_type
-        self.version = version
-
-
 class GenerateArmTemplateRequest(Model):
     """Parameters for generating an ARM template for deploying artifacts.
 
@@ -2339,27 +1694,12 @@ class HourDetails(Model):
         self.minute = minute
 
 
-class HourDetailsFragment(Model):
-    """Properties of an hourly schedule.
-
-    :param minute: Minutes of the hour the schedule will run.
-    :type minute: int
-    """
-
-    _attribute_map = {
-        'minute': {'key': 'minute', 'type': 'int'},
-    }
-
-    def __init__(self, *, minute: int=None, **kwargs) -> None:
-        super(HourDetailsFragment, self).__init__(**kwargs)
-        self.minute = minute
-
-
 class IdentityProperties(Model):
     """Properties of a managed identity.
 
-    :param type: Managed identity.
-    :type type: str
+    :param type: Managed identity. Possible values include: 'None',
+     'SystemAssigned', 'UserAssigned', 'SystemAssigned,UserAssigned'
+    :type type: str or ~azure.mgmt.devtestlabs.models.ManagedIdentityType
     :param principal_id: The principal id of resource identity.
     :type principal_id: str
     :param tenant_id: The tenant identifier of resource.
@@ -2375,7 +1715,7 @@ class IdentityProperties(Model):
         'client_secret_url': {'key': 'clientSecretUrl', 'type': 'str'},
     }
 
-    def __init__(self, *, type: str=None, principal_id: str=None, tenant_id: str=None, client_secret_url: str=None, **kwargs) -> None:
+    def __init__(self, *, type=None, principal_id: str=None, tenant_id: str=None, client_secret_url: str=None, **kwargs) -> None:
         super(IdentityProperties, self).__init__(**kwargs)
         self.type = type
         self.principal_id = principal_id
@@ -2431,36 +1771,6 @@ class InboundNatRule(Model):
 
     def __init__(self, *, transport_protocol=None, frontend_port: int=None, backend_port: int=None, **kwargs) -> None:
         super(InboundNatRule, self).__init__(**kwargs)
-        self.transport_protocol = transport_protocol
-        self.frontend_port = frontend_port
-        self.backend_port = backend_port
-
-
-class InboundNatRuleFragment(Model):
-    """A rule for NAT - exposing a VM's port (backendPort) on the public IP
-    address using a load balancer.
-
-    :param transport_protocol: The transport protocol for the endpoint.
-     Possible values include: 'Tcp', 'Udp'
-    :type transport_protocol: str or
-     ~azure.mgmt.devtestlabs.models.TransportProtocol
-    :param frontend_port: The external endpoint port of the inbound
-     connection. Possible values range between 1 and 65535, inclusive. If
-     unspecified, a value will be allocated automatically.
-    :type frontend_port: int
-    :param backend_port: The port to which the external traffic will be
-     redirected.
-    :type backend_port: int
-    """
-
-    _attribute_map = {
-        'transport_protocol': {'key': 'transportProtocol', 'type': 'str'},
-        'frontend_port': {'key': 'frontendPort', 'type': 'int'},
-        'backend_port': {'key': 'backendPort', 'type': 'int'},
-    }
-
-    def __init__(self, *, transport_protocol=None, frontend_port: int=None, backend_port: int=None, **kwargs) -> None:
-        super(InboundNatRuleFragment, self).__init__(**kwargs)
         self.transport_protocol = transport_protocol
         self.frontend_port = frontend_port
         self.backend_port = backend_port
@@ -2672,41 +1982,6 @@ class LabAnnouncementProperties(Model):
         self.unique_identifier = None
 
 
-class LabAnnouncementPropertiesFragment(Model):
-    """Properties of a lab's announcement banner.
-
-    :param title: The plain text title for the lab announcement
-    :type title: str
-    :param markdown: The markdown text (if any) that this lab displays in the
-     UI. If left empty/null, nothing will be shown.
-    :type markdown: str
-    :param enabled: Is the lab announcement active/enabled at this time?.
-     Possible values include: 'Enabled', 'Disabled'
-    :type enabled: str or ~azure.mgmt.devtestlabs.models.EnableStatus
-    :param expiration_date: The time at which the announcement expires (null
-     for never)
-    :type expiration_date: datetime
-    :param expired: Has this announcement expired?
-    :type expired: bool
-    """
-
-    _attribute_map = {
-        'title': {'key': 'title', 'type': 'str'},
-        'markdown': {'key': 'markdown', 'type': 'str'},
-        'enabled': {'key': 'enabled', 'type': 'str'},
-        'expiration_date': {'key': 'expirationDate', 'type': 'iso-8601'},
-        'expired': {'key': 'expired', 'type': 'bool'},
-    }
-
-    def __init__(self, *, title: str=None, markdown: str=None, enabled=None, expiration_date=None, expired: bool=None, **kwargs) -> None:
-        super(LabAnnouncementPropertiesFragment, self).__init__(**kwargs)
-        self.title = title
-        self.markdown = markdown
-        self.enabled = enabled
-        self.expiration_date = expiration_date
-        self.expired = expired
-
-
 class LabCost(Resource):
     """A cost item.
 
@@ -2838,65 +2113,14 @@ class LabFragment(UpdateResource):
 
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
-    :param lab_storage_type: Type of storage used by the lab. It can be either
-     Premium or Standard. Default is Premium. Possible values include:
-     'Standard', 'Premium', 'StandardSSD'
-    :type lab_storage_type: str or ~azure.mgmt.devtestlabs.models.StorageType
-    :param mandatory_artifacts_resource_ids_linux: The ordered list of
-     artifact resource IDs that should be applied on all Linux VM creations by
-     default, prior to the artifacts specified by the user.
-    :type mandatory_artifacts_resource_ids_linux: list[str]
-    :param mandatory_artifacts_resource_ids_windows: The ordered list of
-     artifact resource IDs that should be applied on all Windows VM creations
-     by default, prior to the artifacts specified by the user.
-    :type mandatory_artifacts_resource_ids_windows: list[str]
-    :param premium_data_disks: The setting to enable usage of premium data
-     disks.
-     When its value is 'Enabled', creation of standard or premium data disks is
-     allowed.
-     When its value is 'Disabled', only creation of standard data disks is
-     allowed. Possible values include: 'Disabled', 'Enabled'
-    :type premium_data_disks: str or
-     ~azure.mgmt.devtestlabs.models.PremiumDataDisk
-    :param environment_permission: The access rights to be granted to the user
-     when provisioning an environment. Possible values include: 'Reader',
-     'Contributor'
-    :type environment_permission: str or
-     ~azure.mgmt.devtestlabs.models.EnvironmentPermission
-    :param announcement: The properties of any lab announcement associated
-     with this lab
-    :type announcement:
-     ~azure.mgmt.devtestlabs.models.LabAnnouncementPropertiesFragment
-    :param support: The properties of any lab support message associated with
-     this lab
-    :type support: ~azure.mgmt.devtestlabs.models.LabSupportPropertiesFragment
-    :param extended_properties: Extended properties of the lab used for
-     experimental features
-    :type extended_properties: dict[str, str]
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'lab_storage_type': {'key': 'properties.labStorageType', 'type': 'str'},
-        'mandatory_artifacts_resource_ids_linux': {'key': 'properties.mandatoryArtifactsResourceIdsLinux', 'type': '[str]'},
-        'mandatory_artifacts_resource_ids_windows': {'key': 'properties.mandatoryArtifactsResourceIdsWindows', 'type': '[str]'},
-        'premium_data_disks': {'key': 'properties.premiumDataDisks', 'type': 'str'},
-        'environment_permission': {'key': 'properties.environmentPermission', 'type': 'str'},
-        'announcement': {'key': 'properties.announcement', 'type': 'LabAnnouncementPropertiesFragment'},
-        'support': {'key': 'properties.support', 'type': 'LabSupportPropertiesFragment'},
-        'extended_properties': {'key': 'properties.extendedProperties', 'type': '{str}'},
     }
 
-    def __init__(self, *, tags=None, lab_storage_type=None, mandatory_artifacts_resource_ids_linux=None, mandatory_artifacts_resource_ids_windows=None, premium_data_disks=None, environment_permission=None, announcement=None, support=None, extended_properties=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, **kwargs) -> None:
         super(LabFragment, self).__init__(tags=tags, **kwargs)
-        self.lab_storage_type = lab_storage_type
-        self.mandatory_artifacts_resource_ids_linux = mandatory_artifacts_resource_ids_linux
-        self.mandatory_artifacts_resource_ids_windows = mandatory_artifacts_resource_ids_windows
-        self.premium_data_disks = premium_data_disks
-        self.environment_permission = environment_permission
-        self.announcement = announcement
-        self.support = support
-        self.extended_properties = extended_properties
 
 
 class LabResourceCostProperties(Model):
@@ -2972,28 +2196,6 @@ class LabSupportProperties(Model):
         self.markdown = markdown
 
 
-class LabSupportPropertiesFragment(Model):
-    """Properties of a lab's support banner.
-
-    :param enabled: Is the lab support banner active/enabled at this time?.
-     Possible values include: 'Enabled', 'Disabled'
-    :type enabled: str or ~azure.mgmt.devtestlabs.models.EnableStatus
-    :param markdown: The markdown text (if any) that this lab displays in the
-     UI. If left empty/null, nothing will be shown.
-    :type markdown: str
-    """
-
-    _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'str'},
-        'markdown': {'key': 'markdown', 'type': 'str'},
-    }
-
-    def __init__(self, *, enabled=None, markdown: str=None, **kwargs) -> None:
-        super(LabSupportPropertiesFragment, self).__init__(**kwargs)
-        self.enabled = enabled
-        self.markdown = markdown
-
-
 class LabVhd(Model):
     """Properties of a VHD in the lab.
 
@@ -3029,27 +2231,27 @@ class LabVirtualMachine(Resource):
     :param notes: The notes of the virtual machine.
     :type notes: str
     :param owner_object_id: The object identifier of the owner of the virtual
-     machine.
+     machine. Default value: "dynamicValue" .
     :type owner_object_id: str
     :param owner_user_principal_name: The user principal name of the virtual
      machine owner.
     :type owner_user_principal_name: str
-    :param created_by_user_id: The object identifier of the creator of the
+    :ivar created_by_user_id: The object identifier of the creator of the
      virtual machine.
-    :type created_by_user_id: str
-    :param created_by_user: The email address of creator of the virtual
+    :vartype created_by_user_id: str
+    :ivar created_by_user: The email address of creator of the virtual
      machine.
-    :type created_by_user: str
+    :vartype created_by_user: str
     :param created_date: The creation date of the virtual machine.
     :type created_date: datetime
-    :param compute_id: The resource identifier (Microsoft.Compute) of the
+    :ivar compute_id: The resource identifier (Microsoft.Compute) of the
      virtual machine.
-    :type compute_id: str
+    :vartype compute_id: str
     :param custom_image_id: The custom image identifier of the virtual
      machine.
     :type custom_image_id: str
-    :param os_type: The OS type of the virtual machine.
-    :type os_type: str
+    :ivar os_type: The OS type of the virtual machine.
+    :vartype os_type: str
     :param size: The size of the virtual machine.
     :type size: str
     :param user_name: The user name of the virtual machine.
@@ -3061,22 +2263,22 @@ class LabVirtualMachine(Resource):
     :param is_authentication_with_ssh_key: Indicates whether this virtual
      machine uses an SSH key for authentication.
     :type is_authentication_with_ssh_key: bool
-    :param fqdn: The fully-qualified domain name of the virtual machine.
-    :type fqdn: str
+    :ivar fqdn: The fully-qualified domain name of the virtual machine.
+    :vartype fqdn: str
     :param lab_subnet_name: The lab subnet name of the virtual machine.
     :type lab_subnet_name: str
     :param lab_virtual_network_id: The lab virtual network identifier of the
      virtual machine.
     :type lab_virtual_network_id: str
     :param disallow_public_ip_address: Indicates whether the virtual machine
-     is to be created without a public IP address.
+     is to be created without a public IP address. Default value: False .
     :type disallow_public_ip_address: bool
     :param artifacts: The artifacts to be installed on the virtual machine.
     :type artifacts:
      list[~azure.mgmt.devtestlabs.models.ArtifactInstallProperties]
-    :param artifact_deployment_status: The artifact deployment status for the
+    :ivar artifact_deployment_status: The artifact deployment status for the
      virtual machine.
-    :type artifact_deployment_status:
+    :vartype artifact_deployment_status:
      ~azure.mgmt.devtestlabs.models.ArtifactDeploymentStatusProperties
     :param gallery_image_reference: The Microsoft Azure Marketplace image
      reference of the virtual machine.
@@ -3097,15 +2299,15 @@ class LabVirtualMachine(Resource):
     :param expiration_date: The expiration date for VM.
     :type expiration_date: datetime
     :param allow_claim: Indicates whether another user can take ownership of
-     the virtual machine
+     the virtual machine. Default value: False .
     :type allow_claim: bool
     :param storage_type: Storage type to use for virtual machine (i.e.
      Standard, Premium).
     :type storage_type: str
-    :param virtual_machine_creation_source: Tells source of creation of lab
+    :ivar virtual_machine_creation_source: Tells source of creation of lab
      virtual machine. Output property only. Possible values include:
      'FromCustomImage', 'FromGalleryImage', 'FromSharedGalleryImage'
-    :type virtual_machine_creation_source: str or
+    :vartype virtual_machine_creation_source: str or
      ~azure.mgmt.devtestlabs.models.VirtualMachineCreationSource
     :param environment_id: The resource ID of the environment that contains
      this virtual machine, if any.
@@ -3117,9 +2319,9 @@ class LabVirtualMachine(Resource):
     :param schedule_parameters: Virtual Machine schedules to be created
     :type schedule_parameters:
      list[~azure.mgmt.devtestlabs.models.ScheduleCreationParameter]
-    :param last_known_power_state: Last known compute power state captured in
+    :ivar last_known_power_state: Last known compute power state captured in
      DTL
-    :type last_known_power_state: str
+    :vartype last_known_power_state: str
     :ivar provisioning_state: The provisioning status of the resource.
     :vartype provisioning_state: str
     :ivar unique_identifier: The unique immutable identifier of a resource
@@ -3131,8 +2333,16 @@ class LabVirtualMachine(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'created_by_user_id': {'readonly': True},
+        'created_by_user': {'readonly': True},
+        'compute_id': {'readonly': True},
+        'os_type': {'readonly': True},
+        'fqdn': {'readonly': True},
+        'artifact_deployment_status': {'readonly': True},
         'compute_vm': {'readonly': True},
         'applicable_schedule': {'readonly': True},
+        'virtual_machine_creation_source': {'readonly': True},
+        'last_known_power_state': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'unique_identifier': {'readonly': True},
     }
@@ -3180,28 +2390,28 @@ class LabVirtualMachine(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, notes: str=None, owner_object_id: str=None, owner_user_principal_name: str=None, created_by_user_id: str=None, created_by_user: str=None, created_date=None, compute_id: str=None, custom_image_id: str=None, os_type: str=None, size: str=None, user_name: str=None, password: str=None, ssh_key: str=None, is_authentication_with_ssh_key: bool=None, fqdn: str=None, lab_subnet_name: str=None, lab_virtual_network_id: str=None, disallow_public_ip_address: bool=None, artifacts=None, artifact_deployment_status=None, gallery_image_reference=None, plan_id: str=None, network_interface=None, expiration_date=None, allow_claim: bool=None, storage_type: str=None, virtual_machine_creation_source=None, environment_id: str=None, data_disk_parameters=None, schedule_parameters=None, last_known_power_state: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, notes: str=None, owner_object_id: str="dynamicValue", owner_user_principal_name: str=None, created_date=None, custom_image_id: str=None, size: str=None, user_name: str=None, password: str=None, ssh_key: str=None, is_authentication_with_ssh_key: bool=None, lab_subnet_name: str=None, lab_virtual_network_id: str=None, disallow_public_ip_address: bool=False, artifacts=None, gallery_image_reference=None, plan_id: str=None, network_interface=None, expiration_date=None, allow_claim: bool=False, storage_type: str=None, environment_id: str=None, data_disk_parameters=None, schedule_parameters=None, **kwargs) -> None:
         super(LabVirtualMachine, self).__init__(location=location, tags=tags, **kwargs)
         self.notes = notes
         self.owner_object_id = owner_object_id
         self.owner_user_principal_name = owner_user_principal_name
-        self.created_by_user_id = created_by_user_id
-        self.created_by_user = created_by_user
+        self.created_by_user_id = None
+        self.created_by_user = None
         self.created_date = created_date
-        self.compute_id = compute_id
+        self.compute_id = None
         self.custom_image_id = custom_image_id
-        self.os_type = os_type
+        self.os_type = None
         self.size = size
         self.user_name = user_name
         self.password = password
         self.ssh_key = ssh_key
         self.is_authentication_with_ssh_key = is_authentication_with_ssh_key
-        self.fqdn = fqdn
+        self.fqdn = None
         self.lab_subnet_name = lab_subnet_name
         self.lab_virtual_network_id = lab_virtual_network_id
         self.disallow_public_ip_address = disallow_public_ip_address
         self.artifacts = artifacts
-        self.artifact_deployment_status = artifact_deployment_status
+        self.artifact_deployment_status = None
         self.gallery_image_reference = gallery_image_reference
         self.plan_id = plan_id
         self.compute_vm = None
@@ -3210,11 +2420,11 @@ class LabVirtualMachine(Resource):
         self.expiration_date = expiration_date
         self.allow_claim = allow_claim
         self.storage_type = storage_type
-        self.virtual_machine_creation_source = virtual_machine_creation_source
+        self.virtual_machine_creation_source = None
         self.environment_id = environment_id
         self.data_disk_parameters = data_disk_parameters
         self.schedule_parameters = schedule_parameters
-        self.last_known_power_state = last_known_power_state
+        self.last_known_power_state = None
         self.provisioning_state = None
         self.unique_identifier = None
 
@@ -3229,27 +2439,16 @@ class LabVirtualMachineCreationParameter(Model):
     :param notes: The notes of the virtual machine.
     :type notes: str
     :param owner_object_id: The object identifier of the owner of the virtual
-     machine.
+     machine. Default value: "dynamicValue" .
     :type owner_object_id: str
     :param owner_user_principal_name: The user principal name of the virtual
      machine owner.
     :type owner_user_principal_name: str
-    :param created_by_user_id: The object identifier of the creator of the
-     virtual machine.
-    :type created_by_user_id: str
-    :param created_by_user: The email address of creator of the virtual
-     machine.
-    :type created_by_user: str
     :param created_date: The creation date of the virtual machine.
     :type created_date: datetime
-    :param compute_id: The resource identifier (Microsoft.Compute) of the
-     virtual machine.
-    :type compute_id: str
     :param custom_image_id: The custom image identifier of the virtual
      machine.
     :type custom_image_id: str
-    :param os_type: The OS type of the virtual machine.
-    :type os_type: str
     :param size: The size of the virtual machine.
     :type size: str
     :param user_name: The user name of the virtual machine.
@@ -3261,23 +2460,17 @@ class LabVirtualMachineCreationParameter(Model):
     :param is_authentication_with_ssh_key: Indicates whether this virtual
      machine uses an SSH key for authentication.
     :type is_authentication_with_ssh_key: bool
-    :param fqdn: The fully-qualified domain name of the virtual machine.
-    :type fqdn: str
     :param lab_subnet_name: The lab subnet name of the virtual machine.
     :type lab_subnet_name: str
     :param lab_virtual_network_id: The lab virtual network identifier of the
      virtual machine.
     :type lab_virtual_network_id: str
     :param disallow_public_ip_address: Indicates whether the virtual machine
-     is to be created without a public IP address.
+     is to be created without a public IP address. Default value: False .
     :type disallow_public_ip_address: bool
     :param artifacts: The artifacts to be installed on the virtual machine.
     :type artifacts:
      list[~azure.mgmt.devtestlabs.models.ArtifactInstallProperties]
-    :param artifact_deployment_status: The artifact deployment status for the
-     virtual machine.
-    :type artifact_deployment_status:
-     ~azure.mgmt.devtestlabs.models.ArtifactDeploymentStatusProperties
     :param gallery_image_reference: The Microsoft Azure Marketplace image
      reference of the virtual machine.
     :type gallery_image_reference:
@@ -3291,16 +2484,11 @@ class LabVirtualMachineCreationParameter(Model):
     :param expiration_date: The expiration date for VM.
     :type expiration_date: datetime
     :param allow_claim: Indicates whether another user can take ownership of
-     the virtual machine
+     the virtual machine. Default value: False .
     :type allow_claim: bool
     :param storage_type: Storage type to use for virtual machine (i.e.
      Standard, Premium).
     :type storage_type: str
-    :param virtual_machine_creation_source: Tells source of creation of lab
-     virtual machine. Output property only. Possible values include:
-     'FromCustomImage', 'FromGalleryImage', 'FromSharedGalleryImage'
-    :type virtual_machine_creation_source: str or
-     ~azure.mgmt.devtestlabs.models.VirtualMachineCreationSource
     :param environment_id: The resource ID of the environment that contains
      this virtual machine, if any.
     :type environment_id: str
@@ -3311,9 +2499,6 @@ class LabVirtualMachineCreationParameter(Model):
     :param schedule_parameters: Virtual Machine schedules to be created
     :type schedule_parameters:
      list[~azure.mgmt.devtestlabs.models.ScheduleCreationParameter]
-    :param last_known_power_state: Last known compute power state captured in
-     DTL
-    :type last_known_power_state: str
     :param name: The name of the virtual machine or environment
     :type name: str
     :param location: The location of the new virtual machine or environment
@@ -3327,253 +2512,57 @@ class LabVirtualMachineCreationParameter(Model):
         'notes': {'key': 'properties.notes', 'type': 'str'},
         'owner_object_id': {'key': 'properties.ownerObjectId', 'type': 'str'},
         'owner_user_principal_name': {'key': 'properties.ownerUserPrincipalName', 'type': 'str'},
-        'created_by_user_id': {'key': 'properties.createdByUserId', 'type': 'str'},
-        'created_by_user': {'key': 'properties.createdByUser', 'type': 'str'},
         'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
-        'compute_id': {'key': 'properties.computeId', 'type': 'str'},
         'custom_image_id': {'key': 'properties.customImageId', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
         'size': {'key': 'properties.size', 'type': 'str'},
         'user_name': {'key': 'properties.userName', 'type': 'str'},
         'password': {'key': 'properties.password', 'type': 'str'},
         'ssh_key': {'key': 'properties.sshKey', 'type': 'str'},
         'is_authentication_with_ssh_key': {'key': 'properties.isAuthenticationWithSshKey', 'type': 'bool'},
-        'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
         'lab_subnet_name': {'key': 'properties.labSubnetName', 'type': 'str'},
         'lab_virtual_network_id': {'key': 'properties.labVirtualNetworkId', 'type': 'str'},
         'disallow_public_ip_address': {'key': 'properties.disallowPublicIpAddress', 'type': 'bool'},
         'artifacts': {'key': 'properties.artifacts', 'type': '[ArtifactInstallProperties]'},
-        'artifact_deployment_status': {'key': 'properties.artifactDeploymentStatus', 'type': 'ArtifactDeploymentStatusProperties'},
         'gallery_image_reference': {'key': 'properties.galleryImageReference', 'type': 'GalleryImageReference'},
         'plan_id': {'key': 'properties.planId', 'type': 'str'},
         'network_interface': {'key': 'properties.networkInterface', 'type': 'NetworkInterfaceProperties'},
         'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},
         'allow_claim': {'key': 'properties.allowClaim', 'type': 'bool'},
         'storage_type': {'key': 'properties.storageType', 'type': 'str'},
-        'virtual_machine_creation_source': {'key': 'properties.virtualMachineCreationSource', 'type': 'str'},
         'environment_id': {'key': 'properties.environmentId', 'type': 'str'},
         'data_disk_parameters': {'key': 'properties.dataDiskParameters', 'type': '[DataDiskProperties]'},
         'schedule_parameters': {'key': 'properties.scheduleParameters', 'type': '[ScheduleCreationParameter]'},
-        'last_known_power_state': {'key': 'properties.lastKnownPowerState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, bulk_creation_parameters=None, notes: str=None, owner_object_id: str=None, owner_user_principal_name: str=None, created_by_user_id: str=None, created_by_user: str=None, created_date=None, compute_id: str=None, custom_image_id: str=None, os_type: str=None, size: str=None, user_name: str=None, password: str=None, ssh_key: str=None, is_authentication_with_ssh_key: bool=None, fqdn: str=None, lab_subnet_name: str=None, lab_virtual_network_id: str=None, disallow_public_ip_address: bool=None, artifacts=None, artifact_deployment_status=None, gallery_image_reference=None, plan_id: str=None, network_interface=None, expiration_date=None, allow_claim: bool=None, storage_type: str=None, virtual_machine_creation_source=None, environment_id: str=None, data_disk_parameters=None, schedule_parameters=None, last_known_power_state: str=None, name: str=None, location: str=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, bulk_creation_parameters=None, notes: str=None, owner_object_id: str="dynamicValue", owner_user_principal_name: str=None, created_date=None, custom_image_id: str=None, size: str=None, user_name: str=None, password: str=None, ssh_key: str=None, is_authentication_with_ssh_key: bool=None, lab_subnet_name: str=None, lab_virtual_network_id: str=None, disallow_public_ip_address: bool=False, artifacts=None, gallery_image_reference=None, plan_id: str=None, network_interface=None, expiration_date=None, allow_claim: bool=False, storage_type: str=None, environment_id: str=None, data_disk_parameters=None, schedule_parameters=None, name: str=None, location: str=None, tags=None, **kwargs) -> None:
         super(LabVirtualMachineCreationParameter, self).__init__(**kwargs)
         self.bulk_creation_parameters = bulk_creation_parameters
         self.notes = notes
         self.owner_object_id = owner_object_id
         self.owner_user_principal_name = owner_user_principal_name
-        self.created_by_user_id = created_by_user_id
-        self.created_by_user = created_by_user
         self.created_date = created_date
-        self.compute_id = compute_id
         self.custom_image_id = custom_image_id
-        self.os_type = os_type
         self.size = size
         self.user_name = user_name
         self.password = password
         self.ssh_key = ssh_key
         self.is_authentication_with_ssh_key = is_authentication_with_ssh_key
-        self.fqdn = fqdn
         self.lab_subnet_name = lab_subnet_name
         self.lab_virtual_network_id = lab_virtual_network_id
         self.disallow_public_ip_address = disallow_public_ip_address
         self.artifacts = artifacts
-        self.artifact_deployment_status = artifact_deployment_status
         self.gallery_image_reference = gallery_image_reference
         self.plan_id = plan_id
         self.network_interface = network_interface
         self.expiration_date = expiration_date
         self.allow_claim = allow_claim
         self.storage_type = storage_type
-        self.virtual_machine_creation_source = virtual_machine_creation_source
         self.environment_id = environment_id
         self.data_disk_parameters = data_disk_parameters
         self.schedule_parameters = schedule_parameters
-        self.last_known_power_state = last_known_power_state
-        self.name = name
-        self.location = location
-        self.tags = tags
-
-
-class LabVirtualMachineCreationParameterFragment(Model):
-    """Properties for creating a virtual machine.
-
-    :param bulk_creation_parameters: The number of virtual machine instances
-     to create.
-    :type bulk_creation_parameters:
-     ~azure.mgmt.devtestlabs.models.BulkCreationParametersFragment
-    :param notes: The notes of the virtual machine.
-    :type notes: str
-    :param owner_object_id: The object identifier of the owner of the virtual
-     machine.
-    :type owner_object_id: str
-    :param owner_user_principal_name: The user principal name of the virtual
-     machine owner.
-    :type owner_user_principal_name: str
-    :param created_by_user_id: The object identifier of the creator of the
-     virtual machine.
-    :type created_by_user_id: str
-    :param created_by_user: The email address of creator of the virtual
-     machine.
-    :type created_by_user: str
-    :param created_date: The creation date of the virtual machine.
-    :type created_date: datetime
-    :param compute_id: The resource identifier (Microsoft.Compute) of the
-     virtual machine.
-    :type compute_id: str
-    :param custom_image_id: The custom image identifier of the virtual
-     machine.
-    :type custom_image_id: str
-    :param os_type: The OS type of the virtual machine.
-    :type os_type: str
-    :param size: The size of the virtual machine.
-    :type size: str
-    :param user_name: The user name of the virtual machine.
-    :type user_name: str
-    :param password: The password of the virtual machine administrator.
-    :type password: str
-    :param ssh_key: The SSH key of the virtual machine administrator.
-    :type ssh_key: str
-    :param is_authentication_with_ssh_key: Indicates whether this virtual
-     machine uses an SSH key for authentication.
-    :type is_authentication_with_ssh_key: bool
-    :param fqdn: The fully-qualified domain name of the virtual machine.
-    :type fqdn: str
-    :param lab_subnet_name: The lab subnet name of the virtual machine.
-    :type lab_subnet_name: str
-    :param lab_virtual_network_id: The lab virtual network identifier of the
-     virtual machine.
-    :type lab_virtual_network_id: str
-    :param disallow_public_ip_address: Indicates whether the virtual machine
-     is to be created without a public IP address.
-    :type disallow_public_ip_address: bool
-    :param artifacts: The artifacts to be installed on the virtual machine.
-    :type artifacts:
-     list[~azure.mgmt.devtestlabs.models.ArtifactInstallPropertiesFragment]
-    :param artifact_deployment_status: The artifact deployment status for the
-     virtual machine.
-    :type artifact_deployment_status:
-     ~azure.mgmt.devtestlabs.models.ArtifactDeploymentStatusPropertiesFragment
-    :param gallery_image_reference: The Microsoft Azure Marketplace image
-     reference of the virtual machine.
-    :type gallery_image_reference:
-     ~azure.mgmt.devtestlabs.models.GalleryImageReferenceFragment
-    :param plan_id: The id of the plan associated with the virtual machine
-     image
-    :type plan_id: str
-    :param network_interface: The network interface properties.
-    :type network_interface:
-     ~azure.mgmt.devtestlabs.models.NetworkInterfacePropertiesFragment
-    :param expiration_date: The expiration date for VM.
-    :type expiration_date: datetime
-    :param allow_claim: Indicates whether another user can take ownership of
-     the virtual machine
-    :type allow_claim: bool
-    :param storage_type: Storage type to use for virtual machine (i.e.
-     Standard, Premium).
-    :type storage_type: str
-    :param virtual_machine_creation_source: Tells source of creation of lab
-     virtual machine. Output property only. Possible values include:
-     'FromCustomImage', 'FromGalleryImage', 'FromSharedGalleryImage'
-    :type virtual_machine_creation_source: str or
-     ~azure.mgmt.devtestlabs.models.VirtualMachineCreationSource
-    :param environment_id: The resource ID of the environment that contains
-     this virtual machine, if any.
-    :type environment_id: str
-    :param data_disk_parameters: New or existing data disks to attach to the
-     virtual machine after creation
-    :type data_disk_parameters:
-     list[~azure.mgmt.devtestlabs.models.DataDiskPropertiesFragment]
-    :param schedule_parameters: Virtual Machine schedules to be created
-    :type schedule_parameters:
-     list[~azure.mgmt.devtestlabs.models.ScheduleCreationParameterFragment]
-    :param last_known_power_state: Last known compute power state captured in
-     DTL
-    :type last_known_power_state: str
-    :param name: The name of the virtual machine or environment
-    :type name: str
-    :param location: The location of the new virtual machine or environment
-    :type location: str
-    :param tags: The tags of the resource.
-    :type tags: dict[str, str]
-    """
-
-    _attribute_map = {
-        'bulk_creation_parameters': {'key': 'properties.bulkCreationParameters', 'type': 'BulkCreationParametersFragment'},
-        'notes': {'key': 'properties.notes', 'type': 'str'},
-        'owner_object_id': {'key': 'properties.ownerObjectId', 'type': 'str'},
-        'owner_user_principal_name': {'key': 'properties.ownerUserPrincipalName', 'type': 'str'},
-        'created_by_user_id': {'key': 'properties.createdByUserId', 'type': 'str'},
-        'created_by_user': {'key': 'properties.createdByUser', 'type': 'str'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
-        'compute_id': {'key': 'properties.computeId', 'type': 'str'},
-        'custom_image_id': {'key': 'properties.customImageId', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'size': {'key': 'properties.size', 'type': 'str'},
-        'user_name': {'key': 'properties.userName', 'type': 'str'},
-        'password': {'key': 'properties.password', 'type': 'str'},
-        'ssh_key': {'key': 'properties.sshKey', 'type': 'str'},
-        'is_authentication_with_ssh_key': {'key': 'properties.isAuthenticationWithSshKey', 'type': 'bool'},
-        'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
-        'lab_subnet_name': {'key': 'properties.labSubnetName', 'type': 'str'},
-        'lab_virtual_network_id': {'key': 'properties.labVirtualNetworkId', 'type': 'str'},
-        'disallow_public_ip_address': {'key': 'properties.disallowPublicIpAddress', 'type': 'bool'},
-        'artifacts': {'key': 'properties.artifacts', 'type': '[ArtifactInstallPropertiesFragment]'},
-        'artifact_deployment_status': {'key': 'properties.artifactDeploymentStatus', 'type': 'ArtifactDeploymentStatusPropertiesFragment'},
-        'gallery_image_reference': {'key': 'properties.galleryImageReference', 'type': 'GalleryImageReferenceFragment'},
-        'plan_id': {'key': 'properties.planId', 'type': 'str'},
-        'network_interface': {'key': 'properties.networkInterface', 'type': 'NetworkInterfacePropertiesFragment'},
-        'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},
-        'allow_claim': {'key': 'properties.allowClaim', 'type': 'bool'},
-        'storage_type': {'key': 'properties.storageType', 'type': 'str'},
-        'virtual_machine_creation_source': {'key': 'properties.virtualMachineCreationSource', 'type': 'str'},
-        'environment_id': {'key': 'properties.environmentId', 'type': 'str'},
-        'data_disk_parameters': {'key': 'properties.dataDiskParameters', 'type': '[DataDiskPropertiesFragment]'},
-        'schedule_parameters': {'key': 'properties.scheduleParameters', 'type': '[ScheduleCreationParameterFragment]'},
-        'last_known_power_state': {'key': 'properties.lastKnownPowerState', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(self, *, bulk_creation_parameters=None, notes: str=None, owner_object_id: str=None, owner_user_principal_name: str=None, created_by_user_id: str=None, created_by_user: str=None, created_date=None, compute_id: str=None, custom_image_id: str=None, os_type: str=None, size: str=None, user_name: str=None, password: str=None, ssh_key: str=None, is_authentication_with_ssh_key: bool=None, fqdn: str=None, lab_subnet_name: str=None, lab_virtual_network_id: str=None, disallow_public_ip_address: bool=None, artifacts=None, artifact_deployment_status=None, gallery_image_reference=None, plan_id: str=None, network_interface=None, expiration_date=None, allow_claim: bool=None, storage_type: str=None, virtual_machine_creation_source=None, environment_id: str=None, data_disk_parameters=None, schedule_parameters=None, last_known_power_state: str=None, name: str=None, location: str=None, tags=None, **kwargs) -> None:
-        super(LabVirtualMachineCreationParameterFragment, self).__init__(**kwargs)
-        self.bulk_creation_parameters = bulk_creation_parameters
-        self.notes = notes
-        self.owner_object_id = owner_object_id
-        self.owner_user_principal_name = owner_user_principal_name
-        self.created_by_user_id = created_by_user_id
-        self.created_by_user = created_by_user
-        self.created_date = created_date
-        self.compute_id = compute_id
-        self.custom_image_id = custom_image_id
-        self.os_type = os_type
-        self.size = size
-        self.user_name = user_name
-        self.password = password
-        self.ssh_key = ssh_key
-        self.is_authentication_with_ssh_key = is_authentication_with_ssh_key
-        self.fqdn = fqdn
-        self.lab_subnet_name = lab_subnet_name
-        self.lab_virtual_network_id = lab_virtual_network_id
-        self.disallow_public_ip_address = disallow_public_ip_address
-        self.artifacts = artifacts
-        self.artifact_deployment_status = artifact_deployment_status
-        self.gallery_image_reference = gallery_image_reference
-        self.plan_id = plan_id
-        self.network_interface = network_interface
-        self.expiration_date = expiration_date
-        self.allow_claim = allow_claim
-        self.storage_type = storage_type
-        self.virtual_machine_creation_source = virtual_machine_creation_source
-        self.environment_id = environment_id
-        self.data_disk_parameters = data_disk_parameters
-        self.schedule_parameters = schedule_parameters
-        self.last_known_power_state = last_known_power_state
         self.name = name
         self.location = location
         self.tags = tags
@@ -3584,164 +2573,14 @@ class LabVirtualMachineFragment(UpdateResource):
 
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
-    :param notes: The notes of the virtual machine.
-    :type notes: str
-    :param owner_object_id: The object identifier of the owner of the virtual
-     machine.
-    :type owner_object_id: str
-    :param owner_user_principal_name: The user principal name of the virtual
-     machine owner.
-    :type owner_user_principal_name: str
-    :param created_by_user_id: The object identifier of the creator of the
-     virtual machine.
-    :type created_by_user_id: str
-    :param created_by_user: The email address of creator of the virtual
-     machine.
-    :type created_by_user: str
-    :param created_date: The creation date of the virtual machine.
-    :type created_date: datetime
-    :param compute_id: The resource identifier (Microsoft.Compute) of the
-     virtual machine.
-    :type compute_id: str
-    :param custom_image_id: The custom image identifier of the virtual
-     machine.
-    :type custom_image_id: str
-    :param os_type: The OS type of the virtual machine.
-    :type os_type: str
-    :param size: The size of the virtual machine.
-    :type size: str
-    :param user_name: The user name of the virtual machine.
-    :type user_name: str
-    :param password: The password of the virtual machine administrator.
-    :type password: str
-    :param ssh_key: The SSH key of the virtual machine administrator.
-    :type ssh_key: str
-    :param is_authentication_with_ssh_key: Indicates whether this virtual
-     machine uses an SSH key for authentication.
-    :type is_authentication_with_ssh_key: bool
-    :param fqdn: The fully-qualified domain name of the virtual machine.
-    :type fqdn: str
-    :param lab_subnet_name: The lab subnet name of the virtual machine.
-    :type lab_subnet_name: str
-    :param lab_virtual_network_id: The lab virtual network identifier of the
-     virtual machine.
-    :type lab_virtual_network_id: str
-    :param disallow_public_ip_address: Indicates whether the virtual machine
-     is to be created without a public IP address.
-    :type disallow_public_ip_address: bool
-    :param artifacts: The artifacts to be installed on the virtual machine.
-    :type artifacts:
-     list[~azure.mgmt.devtestlabs.models.ArtifactInstallPropertiesFragment]
-    :param artifact_deployment_status: The artifact deployment status for the
-     virtual machine.
-    :type artifact_deployment_status:
-     ~azure.mgmt.devtestlabs.models.ArtifactDeploymentStatusPropertiesFragment
-    :param gallery_image_reference: The Microsoft Azure Marketplace image
-     reference of the virtual machine.
-    :type gallery_image_reference:
-     ~azure.mgmt.devtestlabs.models.GalleryImageReferenceFragment
-    :param plan_id: The id of the plan associated with the virtual machine
-     image
-    :type plan_id: str
-    :param network_interface: The network interface properties.
-    :type network_interface:
-     ~azure.mgmt.devtestlabs.models.NetworkInterfacePropertiesFragment
-    :param expiration_date: The expiration date for VM.
-    :type expiration_date: datetime
-    :param allow_claim: Indicates whether another user can take ownership of
-     the virtual machine
-    :type allow_claim: bool
-    :param storage_type: Storage type to use for virtual machine (i.e.
-     Standard, Premium).
-    :type storage_type: str
-    :param virtual_machine_creation_source: Tells source of creation of lab
-     virtual machine. Output property only. Possible values include:
-     'FromCustomImage', 'FromGalleryImage', 'FromSharedGalleryImage'
-    :type virtual_machine_creation_source: str or
-     ~azure.mgmt.devtestlabs.models.VirtualMachineCreationSource
-    :param environment_id: The resource ID of the environment that contains
-     this virtual machine, if any.
-    :type environment_id: str
-    :param data_disk_parameters: New or existing data disks to attach to the
-     virtual machine after creation
-    :type data_disk_parameters:
-     list[~azure.mgmt.devtestlabs.models.DataDiskPropertiesFragment]
-    :param schedule_parameters: Virtual Machine schedules to be created
-    :type schedule_parameters:
-     list[~azure.mgmt.devtestlabs.models.ScheduleCreationParameterFragment]
-    :param last_known_power_state: Last known compute power state captured in
-     DTL
-    :type last_known_power_state: str
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'notes': {'key': 'properties.notes', 'type': 'str'},
-        'owner_object_id': {'key': 'properties.ownerObjectId', 'type': 'str'},
-        'owner_user_principal_name': {'key': 'properties.ownerUserPrincipalName', 'type': 'str'},
-        'created_by_user_id': {'key': 'properties.createdByUserId', 'type': 'str'},
-        'created_by_user': {'key': 'properties.createdByUser', 'type': 'str'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
-        'compute_id': {'key': 'properties.computeId', 'type': 'str'},
-        'custom_image_id': {'key': 'properties.customImageId', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'size': {'key': 'properties.size', 'type': 'str'},
-        'user_name': {'key': 'properties.userName', 'type': 'str'},
-        'password': {'key': 'properties.password', 'type': 'str'},
-        'ssh_key': {'key': 'properties.sshKey', 'type': 'str'},
-        'is_authentication_with_ssh_key': {'key': 'properties.isAuthenticationWithSshKey', 'type': 'bool'},
-        'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
-        'lab_subnet_name': {'key': 'properties.labSubnetName', 'type': 'str'},
-        'lab_virtual_network_id': {'key': 'properties.labVirtualNetworkId', 'type': 'str'},
-        'disallow_public_ip_address': {'key': 'properties.disallowPublicIpAddress', 'type': 'bool'},
-        'artifacts': {'key': 'properties.artifacts', 'type': '[ArtifactInstallPropertiesFragment]'},
-        'artifact_deployment_status': {'key': 'properties.artifactDeploymentStatus', 'type': 'ArtifactDeploymentStatusPropertiesFragment'},
-        'gallery_image_reference': {'key': 'properties.galleryImageReference', 'type': 'GalleryImageReferenceFragment'},
-        'plan_id': {'key': 'properties.planId', 'type': 'str'},
-        'network_interface': {'key': 'properties.networkInterface', 'type': 'NetworkInterfacePropertiesFragment'},
-        'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},
-        'allow_claim': {'key': 'properties.allowClaim', 'type': 'bool'},
-        'storage_type': {'key': 'properties.storageType', 'type': 'str'},
-        'virtual_machine_creation_source': {'key': 'properties.virtualMachineCreationSource', 'type': 'str'},
-        'environment_id': {'key': 'properties.environmentId', 'type': 'str'},
-        'data_disk_parameters': {'key': 'properties.dataDiskParameters', 'type': '[DataDiskPropertiesFragment]'},
-        'schedule_parameters': {'key': 'properties.scheduleParameters', 'type': '[ScheduleCreationParameterFragment]'},
-        'last_known_power_state': {'key': 'properties.lastKnownPowerState', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, notes: str=None, owner_object_id: str=None, owner_user_principal_name: str=None, created_by_user_id: str=None, created_by_user: str=None, created_date=None, compute_id: str=None, custom_image_id: str=None, os_type: str=None, size: str=None, user_name: str=None, password: str=None, ssh_key: str=None, is_authentication_with_ssh_key: bool=None, fqdn: str=None, lab_subnet_name: str=None, lab_virtual_network_id: str=None, disallow_public_ip_address: bool=None, artifacts=None, artifact_deployment_status=None, gallery_image_reference=None, plan_id: str=None, network_interface=None, expiration_date=None, allow_claim: bool=None, storage_type: str=None, virtual_machine_creation_source=None, environment_id: str=None, data_disk_parameters=None, schedule_parameters=None, last_known_power_state: str=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, **kwargs) -> None:
         super(LabVirtualMachineFragment, self).__init__(tags=tags, **kwargs)
-        self.notes = notes
-        self.owner_object_id = owner_object_id
-        self.owner_user_principal_name = owner_user_principal_name
-        self.created_by_user_id = created_by_user_id
-        self.created_by_user = created_by_user
-        self.created_date = created_date
-        self.compute_id = compute_id
-        self.custom_image_id = custom_image_id
-        self.os_type = os_type
-        self.size = size
-        self.user_name = user_name
-        self.password = password
-        self.ssh_key = ssh_key
-        self.is_authentication_with_ssh_key = is_authentication_with_ssh_key
-        self.fqdn = fqdn
-        self.lab_subnet_name = lab_subnet_name
-        self.lab_virtual_network_id = lab_virtual_network_id
-        self.disallow_public_ip_address = disallow_public_ip_address
-        self.artifacts = artifacts
-        self.artifact_deployment_status = artifact_deployment_status
-        self.gallery_image_reference = gallery_image_reference
-        self.plan_id = plan_id
-        self.network_interface = network_interface
-        self.expiration_date = expiration_date
-        self.allow_claim = allow_claim
-        self.storage_type = storage_type
-        self.virtual_machine_creation_source = virtual_machine_creation_source
-        self.environment_id = environment_id
-        self.data_disk_parameters = data_disk_parameters
-        self.schedule_parameters = schedule_parameters
-        self.last_known_power_state = last_known_power_state
 
 
 class LinuxOsInfo(Model):
@@ -3759,24 +2598,6 @@ class LinuxOsInfo(Model):
 
     def __init__(self, *, linux_os_state=None, **kwargs) -> None:
         super(LinuxOsInfo, self).__init__(**kwargs)
-        self.linux_os_state = linux_os_state
-
-
-class LinuxOsInfoFragment(Model):
-    """Information about a Linux OS.
-
-    :param linux_os_state: The state of the Linux OS (i.e. NonDeprovisioned,
-     DeprovisionRequested, DeprovisionApplied). Possible values include:
-     'NonDeprovisioned', 'DeprovisionRequested', 'DeprovisionApplied'
-    :type linux_os_state: str or ~azure.mgmt.devtestlabs.models.LinuxOsState
-    """
-
-    _attribute_map = {
-        'linux_os_state': {'key': 'linuxOsState', 'type': 'str'},
-    }
-
-    def __init__(self, *, linux_os_state=None, **kwargs) -> None:
-        super(LinuxOsInfoFragment, self).__init__(**kwargs)
         self.linux_os_state = linux_os_state
 
 
@@ -3822,59 +2643,6 @@ class NetworkInterfaceProperties(Model):
 
     def __init__(self, *, virtual_network_id: str=None, subnet_id: str=None, public_ip_address_id: str=None, public_ip_address: str=None, private_ip_address: str=None, dns_name: str=None, rdp_authority: str=None, ssh_authority: str=None, shared_public_ip_address_configuration=None, **kwargs) -> None:
         super(NetworkInterfaceProperties, self).__init__(**kwargs)
-        self.virtual_network_id = virtual_network_id
-        self.subnet_id = subnet_id
-        self.public_ip_address_id = public_ip_address_id
-        self.public_ip_address = public_ip_address
-        self.private_ip_address = private_ip_address
-        self.dns_name = dns_name
-        self.rdp_authority = rdp_authority
-        self.ssh_authority = ssh_authority
-        self.shared_public_ip_address_configuration = shared_public_ip_address_configuration
-
-
-class NetworkInterfacePropertiesFragment(Model):
-    """Properties of a network interface.
-
-    :param virtual_network_id: The resource ID of the virtual network.
-    :type virtual_network_id: str
-    :param subnet_id: The resource ID of the sub net.
-    :type subnet_id: str
-    :param public_ip_address_id: The resource ID of the public IP address.
-    :type public_ip_address_id: str
-    :param public_ip_address: The public IP address.
-    :type public_ip_address: str
-    :param private_ip_address: The private IP address.
-    :type private_ip_address: str
-    :param dns_name: The DNS name.
-    :type dns_name: str
-    :param rdp_authority: The RdpAuthority property is a server DNS host name
-     or IP address followed by the service port number for RDP (Remote Desktop
-     Protocol).
-    :type rdp_authority: str
-    :param ssh_authority: The SshAuthority property is a server DNS host name
-     or IP address followed by the service port number for SSH.
-    :type ssh_authority: str
-    :param shared_public_ip_address_configuration: The configuration for
-     sharing a public IP address across multiple virtual machines.
-    :type shared_public_ip_address_configuration:
-     ~azure.mgmt.devtestlabs.models.SharedPublicIpAddressConfigurationFragment
-    """
-
-    _attribute_map = {
-        'virtual_network_id': {'key': 'virtualNetworkId', 'type': 'str'},
-        'subnet_id': {'key': 'subnetId', 'type': 'str'},
-        'public_ip_address_id': {'key': 'publicIpAddressId', 'type': 'str'},
-        'public_ip_address': {'key': 'publicIpAddress', 'type': 'str'},
-        'private_ip_address': {'key': 'privateIpAddress', 'type': 'str'},
-        'dns_name': {'key': 'dnsName', 'type': 'str'},
-        'rdp_authority': {'key': 'rdpAuthority', 'type': 'str'},
-        'ssh_authority': {'key': 'sshAuthority', 'type': 'str'},
-        'shared_public_ip_address_configuration': {'key': 'sharedPublicIpAddressConfiguration', 'type': 'SharedPublicIpAddressConfigurationFragment'},
-    }
-
-    def __init__(self, *, virtual_network_id: str=None, subnet_id: str=None, public_ip_address_id: str=None, public_ip_address: str=None, private_ip_address: str=None, dns_name: str=None, rdp_authority: str=None, ssh_authority: str=None, shared_public_ip_address_configuration=None, **kwargs) -> None:
-        super(NetworkInterfacePropertiesFragment, self).__init__(**kwargs)
         self.virtual_network_id = virtual_network_id
         self.subnet_id = subnet_id
         self.public_ip_address_id = public_ip_address_id
@@ -3965,36 +2733,14 @@ class NotificationChannelFragment(UpdateResource):
 
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
-    :param web_hook_url: The webhook URL to send notifications to.
-    :type web_hook_url: str
-    :param email_recipient: The email recipient to send notifications to (can
-     be a list of semi-colon separated email addresses).
-    :type email_recipient: str
-    :param notification_locale: The locale to use when sending a notification
-     (fallback for unsupported languages is EN).
-    :type notification_locale: str
-    :param description: Description of notification.
-    :type description: str
-    :param events: The list of event for which this notification is enabled.
-    :type events: list[~azure.mgmt.devtestlabs.models.EventFragment]
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'web_hook_url': {'key': 'properties.webHookUrl', 'type': 'str'},
-        'email_recipient': {'key': 'properties.emailRecipient', 'type': 'str'},
-        'notification_locale': {'key': 'properties.notificationLocale', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'events': {'key': 'properties.events', 'type': '[EventFragment]'},
     }
 
-    def __init__(self, *, tags=None, web_hook_url: str=None, email_recipient: str=None, notification_locale: str=None, description: str=None, events=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, **kwargs) -> None:
         super(NotificationChannelFragment, self).__init__(tags=tags, **kwargs)
-        self.web_hook_url = web_hook_url
-        self.email_recipient = email_recipient
-        self.notification_locale = notification_locale
-        self.description = description
-        self.events = events
 
 
 class NotificationSettings(Model):
@@ -4027,43 +2773,6 @@ class NotificationSettings(Model):
 
     def __init__(self, *, status=None, time_in_minutes: int=None, webhook_url: str=None, email_recipient: str=None, notification_locale: str=None, **kwargs) -> None:
         super(NotificationSettings, self).__init__(**kwargs)
-        self.status = status
-        self.time_in_minutes = time_in_minutes
-        self.webhook_url = webhook_url
-        self.email_recipient = email_recipient
-        self.notification_locale = notification_locale
-
-
-class NotificationSettingsFragment(Model):
-    """Notification settings for a schedule.
-
-    :param status: If notifications are enabled for this schedule (i.e.
-     Enabled, Disabled). Possible values include: 'Enabled', 'Disabled'
-    :type status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
-    :param time_in_minutes: Time in minutes before event at which notification
-     will be sent.
-    :type time_in_minutes: int
-    :param webhook_url: The webhook URL to which the notification will be
-     sent.
-    :type webhook_url: str
-    :param email_recipient: The email recipient to send notifications to (can
-     be a list of semi-colon separated email addresses).
-    :type email_recipient: str
-    :param notification_locale: The locale to use when sending a notification
-     (fallback for unsupported languages is EN).
-    :type notification_locale: str
-    """
-
-    _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'time_in_minutes': {'key': 'timeInMinutes', 'type': 'int'},
-        'webhook_url': {'key': 'webhookUrl', 'type': 'str'},
-        'email_recipient': {'key': 'emailRecipient', 'type': 'str'},
-        'notification_locale': {'key': 'notificationLocale', 'type': 'str'},
-    }
-
-    def __init__(self, *, status=None, time_in_minutes: int=None, webhook_url: str=None, email_recipient: str=None, notification_locale: str=None, **kwargs) -> None:
-        super(NotificationSettingsFragment, self).__init__(**kwargs)
         self.status = status
         self.time_in_minutes = time_in_minutes
         self.webhook_url = webhook_url
@@ -4170,8 +2879,9 @@ class OperationResult(Model):
     :param status_code: The status code for the operation. Possible values
      include: 'Continue', 'SwitchingProtocols', 'OK', 'Created', 'Accepted',
      'NonAuthoritativeInformation', 'NoContent', 'ResetContent',
-     'PartialContent', 'MultipleChoices', 'MovedPermanently', 'Redirect',
-     'SeeOther', 'NotModified', 'UseProxy', 'Unused', 'TemporaryRedirect',
+     'PartialContent', 'MultipleChoices', 'Ambiguous', 'MovedPermanently',
+     'Moved', 'Found', 'Redirect', 'SeeOther', 'RedirectMethod', 'NotModified',
+     'UseProxy', 'Unused', 'TemporaryRedirect', 'RedirectKeepVerb',
      'BadRequest', 'Unauthorized', 'PaymentRequired', 'Forbidden', 'NotFound',
      'MethodNotAllowed', 'NotAcceptable', 'ProxyAuthenticationRequired',
      'RequestTimeout', 'Conflict', 'Gone', 'LengthRequired',
@@ -4344,47 +3054,14 @@ class PolicyFragment(UpdateResource):
 
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
-    :param description: The description of the policy.
-    :type description: str
-    :param status: The status of the policy. Possible values include:
-     'Enabled', 'Disabled'
-    :type status: str or ~azure.mgmt.devtestlabs.models.PolicyStatus
-    :param fact_name: The fact name of the policy (e.g. LabVmCount, LabVmSize,
-     MaxVmsAllowedPerLab, etc. Possible values include: 'UserOwnedLabVmCount',
-     'UserOwnedLabPremiumVmCount', 'LabVmCount', 'LabPremiumVmCount',
-     'LabVmSize', 'GalleryImage', 'UserOwnedLabVmCountInSubnet',
-     'LabTargetCost', 'EnvironmentTemplate', 'ScheduleEditPermission'
-    :type fact_name: str or ~azure.mgmt.devtestlabs.models.PolicyFactName
-    :param fact_data: The fact data of the policy.
-    :type fact_data: str
-    :param threshold: The threshold of the policy (i.e. a number for
-     MaxValuePolicy, and a JSON array of values for AllowedValuesPolicy).
-    :type threshold: str
-    :param evaluator_type: The evaluator type of the policy (i.e.
-     AllowedValuesPolicy, MaxValuePolicy). Possible values include:
-     'AllowedValuesPolicy', 'MaxValuePolicy'
-    :type evaluator_type: str or
-     ~azure.mgmt.devtestlabs.models.PolicyEvaluatorType
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'fact_name': {'key': 'properties.factName', 'type': 'str'},
-        'fact_data': {'key': 'properties.factData', 'type': 'str'},
-        'threshold': {'key': 'properties.threshold', 'type': 'str'},
-        'evaluator_type': {'key': 'properties.evaluatorType', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, description: str=None, status=None, fact_name=None, fact_data: str=None, threshold: str=None, evaluator_type=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, **kwargs) -> None:
         super(PolicyFragment, self).__init__(tags=tags, **kwargs)
-        self.description = description
-        self.status = status
-        self.fact_name = fact_name
-        self.fact_data = fact_data
-        self.threshold = threshold
-        self.evaluator_type = evaluator_type
 
 
 class PolicySetResult(Model):
@@ -4447,28 +3124,6 @@ class Port(Model):
 
     def __init__(self, *, transport_protocol=None, backend_port: int=None, **kwargs) -> None:
         super(Port, self).__init__(**kwargs)
-        self.transport_protocol = transport_protocol
-        self.backend_port = backend_port
-
-
-class PortFragment(Model):
-    """Properties of a network port.
-
-    :param transport_protocol: Protocol type of the port. Possible values
-     include: 'Tcp', 'Udp'
-    :type transport_protocol: str or
-     ~azure.mgmt.devtestlabs.models.TransportProtocol
-    :param backend_port: Backend port of the target virtual machine.
-    :type backend_port: int
-    """
-
-    _attribute_map = {
-        'transport_protocol': {'key': 'transportProtocol', 'type': 'str'},
-        'backend_port': {'key': 'backendPort', 'type': 'int'},
-    }
-
-    def __init__(self, *, transport_protocol=None, backend_port: int=None, **kwargs) -> None:
-        super(PortFragment, self).__init__(**kwargs)
         self.transport_protocol = transport_protocol
         self.backend_port = backend_port
 
@@ -4679,123 +3334,19 @@ class ScheduleCreationParameter(Model):
         self.tags = tags
 
 
-class ScheduleCreationParameterFragment(Model):
-    """Properties for creating a schedule.
-
-    :param status: The status of the schedule (i.e. Enabled, Disabled).
-     Possible values include: 'Enabled', 'Disabled'
-    :type status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
-    :param task_type: The task type of the schedule (e.g. LabVmsShutdownTask,
-     LabVmAutoStart).
-    :type task_type: str
-    :param weekly_recurrence: If the schedule will occur only some days of the
-     week, specify the weekly recurrence.
-    :type weekly_recurrence:
-     ~azure.mgmt.devtestlabs.models.WeekDetailsFragment
-    :param daily_recurrence: If the schedule will occur once each day of the
-     week, specify the daily recurrence.
-    :type daily_recurrence: ~azure.mgmt.devtestlabs.models.DayDetailsFragment
-    :param hourly_recurrence: If the schedule will occur multiple times a day,
-     specify the hourly recurrence.
-    :type hourly_recurrence:
-     ~azure.mgmt.devtestlabs.models.HourDetailsFragment
-    :param time_zone_id: The time zone ID (e.g. Pacific Standard time).
-    :type time_zone_id: str
-    :param notification_settings: Notification settings.
-    :type notification_settings:
-     ~azure.mgmt.devtestlabs.models.NotificationSettingsFragment
-    :param target_resource_id: The resource ID to which the schedule belongs
-    :type target_resource_id: str
-    :param name: The name of the virtual machine or environment
-    :type name: str
-    :param location: The location of the new virtual machine or environment
-    :type location: str
-    :param tags: The tags of the resource.
-    :type tags: dict[str, str]
-    """
-
-    _attribute_map = {
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'task_type': {'key': 'properties.taskType', 'type': 'str'},
-        'weekly_recurrence': {'key': 'properties.weeklyRecurrence', 'type': 'WeekDetailsFragment'},
-        'daily_recurrence': {'key': 'properties.dailyRecurrence', 'type': 'DayDetailsFragment'},
-        'hourly_recurrence': {'key': 'properties.hourlyRecurrence', 'type': 'HourDetailsFragment'},
-        'time_zone_id': {'key': 'properties.timeZoneId', 'type': 'str'},
-        'notification_settings': {'key': 'properties.notificationSettings', 'type': 'NotificationSettingsFragment'},
-        'target_resource_id': {'key': 'properties.targetResourceId', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(self, *, status=None, task_type: str=None, weekly_recurrence=None, daily_recurrence=None, hourly_recurrence=None, time_zone_id: str=None, notification_settings=None, target_resource_id: str=None, name: str=None, location: str=None, tags=None, **kwargs) -> None:
-        super(ScheduleCreationParameterFragment, self).__init__(**kwargs)
-        self.status = status
-        self.task_type = task_type
-        self.weekly_recurrence = weekly_recurrence
-        self.daily_recurrence = daily_recurrence
-        self.hourly_recurrence = hourly_recurrence
-        self.time_zone_id = time_zone_id
-        self.notification_settings = notification_settings
-        self.target_resource_id = target_resource_id
-        self.name = name
-        self.location = location
-        self.tags = tags
-
-
 class ScheduleFragment(UpdateResource):
     """A schedule.
 
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
-    :param status: The status of the schedule (i.e. Enabled, Disabled).
-     Possible values include: 'Enabled', 'Disabled'
-    :type status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
-    :param task_type: The task type of the schedule (e.g. LabVmsShutdownTask,
-     LabVmAutoStart).
-    :type task_type: str
-    :param weekly_recurrence: If the schedule will occur only some days of the
-     week, specify the weekly recurrence.
-    :type weekly_recurrence:
-     ~azure.mgmt.devtestlabs.models.WeekDetailsFragment
-    :param daily_recurrence: If the schedule will occur once each day of the
-     week, specify the daily recurrence.
-    :type daily_recurrence: ~azure.mgmt.devtestlabs.models.DayDetailsFragment
-    :param hourly_recurrence: If the schedule will occur multiple times a day,
-     specify the hourly recurrence.
-    :type hourly_recurrence:
-     ~azure.mgmt.devtestlabs.models.HourDetailsFragment
-    :param time_zone_id: The time zone ID (e.g. Pacific Standard time).
-    :type time_zone_id: str
-    :param notification_settings: Notification settings.
-    :type notification_settings:
-     ~azure.mgmt.devtestlabs.models.NotificationSettingsFragment
-    :param target_resource_id: The resource ID to which the schedule belongs
-    :type target_resource_id: str
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'task_type': {'key': 'properties.taskType', 'type': 'str'},
-        'weekly_recurrence': {'key': 'properties.weeklyRecurrence', 'type': 'WeekDetailsFragment'},
-        'daily_recurrence': {'key': 'properties.dailyRecurrence', 'type': 'DayDetailsFragment'},
-        'hourly_recurrence': {'key': 'properties.hourlyRecurrence', 'type': 'HourDetailsFragment'},
-        'time_zone_id': {'key': 'properties.timeZoneId', 'type': 'str'},
-        'notification_settings': {'key': 'properties.notificationSettings', 'type': 'NotificationSettingsFragment'},
-        'target_resource_id': {'key': 'properties.targetResourceId', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, status=None, task_type: str=None, weekly_recurrence=None, daily_recurrence=None, hourly_recurrence=None, time_zone_id: str=None, notification_settings=None, target_resource_id: str=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, **kwargs) -> None:
         super(ScheduleFragment, self).__init__(tags=tags, **kwargs)
-        self.status = status
-        self.task_type = task_type
-        self.weekly_recurrence = weekly_recurrence
-        self.daily_recurrence = daily_recurrence
-        self.hourly_recurrence = hourly_recurrence
-        self.time_zone_id = time_zone_id
-        self.notification_settings = notification_settings
-        self.target_resource_id = target_resource_id
 
 
 class Secret(Resource):
@@ -4854,18 +3405,14 @@ class SecretFragment(UpdateResource):
 
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
-    :param value: The value of the secret for secret creation.
-    :type value: str
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'value': {'key': 'properties.value', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, value: str=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, **kwargs) -> None:
         super(SecretFragment, self).__init__(tags=tags, **kwargs)
-        self.value = value
 
 
 class ServiceFabric(Resource):
@@ -4937,24 +3484,14 @@ class ServiceFabricFragment(UpdateResource):
 
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
-    :param external_service_fabric_id: The backing service fabric resource's
-     id
-    :type external_service_fabric_id: str
-    :param environment_id: The resource id of the environment under which the
-     service fabric resource is present
-    :type environment_id: str
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'external_service_fabric_id': {'key': 'properties.externalServiceFabricId', 'type': 'str'},
-        'environment_id': {'key': 'properties.environmentId', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, external_service_fabric_id: str=None, environment_id: str=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, **kwargs) -> None:
         super(ServiceFabricFragment, self).__init__(tags=tags, **kwargs)
-        self.external_service_fabric_id = external_service_fabric_id
-        self.environment_id = environment_id
 
 
 class ServiceRunner(Resource):
@@ -4997,6 +3534,26 @@ class ServiceRunner(Resource):
         self.identity = identity
 
 
+class ServiceRunnerList(Model):
+    """The response of a list operation.
+
+    :param value: Results of the list operation.
+    :type value: list[~azure.mgmt.devtestlabs.models.ServiceRunner]
+    :param next_link: Link for next set of results.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ServiceRunner]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, *, value=None, next_link: str=None, **kwargs) -> None:
+        super(ServiceRunnerList, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
 class SharedPublicIpAddressConfiguration(Model):
     """Properties of a virtual machine that determine how it is connected to a
     load balancer.
@@ -5012,24 +3569,6 @@ class SharedPublicIpAddressConfiguration(Model):
 
     def __init__(self, *, inbound_nat_rules=None, **kwargs) -> None:
         super(SharedPublicIpAddressConfiguration, self).__init__(**kwargs)
-        self.inbound_nat_rules = inbound_nat_rules
-
-
-class SharedPublicIpAddressConfigurationFragment(Model):
-    """Properties of a virtual machine that determine how it is connected to a
-    load balancer.
-
-    :param inbound_nat_rules: The incoming NAT rules
-    :type inbound_nat_rules:
-     list[~azure.mgmt.devtestlabs.models.InboundNatRuleFragment]
-    """
-
-    _attribute_map = {
-        'inbound_nat_rules': {'key': 'inboundNatRules', 'type': '[InboundNatRuleFragment]'},
-    }
-
-    def __init__(self, *, inbound_nat_rules=None, **kwargs) -> None:
-        super(SharedPublicIpAddressConfigurationFragment, self).__init__(**kwargs)
         self.inbound_nat_rules = inbound_nat_rules
 
 
@@ -5126,33 +3665,6 @@ class Subnet(Model):
         self.allow_public_ip = allow_public_ip
 
 
-class SubnetFragment(Model):
-    """Subnet information.
-
-    :param resource_id: The resource ID of the subnet.
-    :type resource_id: str
-    :param lab_subnet_name: The name of the subnet as seen in the lab.
-    :type lab_subnet_name: str
-    :param allow_public_ip: The permission policy of the subnet for allowing
-     public IP addresses (i.e. Allow, Deny)). Possible values include:
-     'Default', 'Deny', 'Allow'
-    :type allow_public_ip: str or
-     ~azure.mgmt.devtestlabs.models.UsagePermissionType
-    """
-
-    _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'lab_subnet_name': {'key': 'labSubnetName', 'type': 'str'},
-        'allow_public_ip': {'key': 'allowPublicIp', 'type': 'str'},
-    }
-
-    def __init__(self, *, resource_id: str=None, lab_subnet_name: str=None, allow_public_ip=None, **kwargs) -> None:
-        super(SubnetFragment, self).__init__(**kwargs)
-        self.resource_id = resource_id
-        self.lab_subnet_name = lab_subnet_name
-        self.allow_public_ip = allow_public_ip
-
-
 class SubnetOverride(Model):
     """Property overrides on a subnet of a virtual network.
 
@@ -5198,51 +3710,6 @@ class SubnetOverride(Model):
         self.virtual_network_pool_name = virtual_network_pool_name
 
 
-class SubnetOverrideFragment(Model):
-    """Property overrides on a subnet of a virtual network.
-
-    :param resource_id: The resource ID of the subnet.
-    :type resource_id: str
-    :param lab_subnet_name: The name given to the subnet within the lab.
-    :type lab_subnet_name: str
-    :param use_in_vm_creation_permission: Indicates whether this subnet can be
-     used during virtual machine creation (i.e. Allow, Deny). Possible values
-     include: 'Default', 'Deny', 'Allow'
-    :type use_in_vm_creation_permission: str or
-     ~azure.mgmt.devtestlabs.models.UsagePermissionType
-    :param use_public_ip_address_permission: Indicates whether public IP
-     addresses can be assigned to virtual machines on this subnet (i.e. Allow,
-     Deny). Possible values include: 'Default', 'Deny', 'Allow'
-    :type use_public_ip_address_permission: str or
-     ~azure.mgmt.devtestlabs.models.UsagePermissionType
-    :param shared_public_ip_address_configuration: Properties that virtual
-     machines on this subnet will share.
-    :type shared_public_ip_address_configuration:
-     ~azure.mgmt.devtestlabs.models.SubnetSharedPublicIpAddressConfigurationFragment
-    :param virtual_network_pool_name: The virtual network pool associated with
-     this subnet.
-    :type virtual_network_pool_name: str
-    """
-
-    _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'lab_subnet_name': {'key': 'labSubnetName', 'type': 'str'},
-        'use_in_vm_creation_permission': {'key': 'useInVmCreationPermission', 'type': 'str'},
-        'use_public_ip_address_permission': {'key': 'usePublicIpAddressPermission', 'type': 'str'},
-        'shared_public_ip_address_configuration': {'key': 'sharedPublicIpAddressConfiguration', 'type': 'SubnetSharedPublicIpAddressConfigurationFragment'},
-        'virtual_network_pool_name': {'key': 'virtualNetworkPoolName', 'type': 'str'},
-    }
-
-    def __init__(self, *, resource_id: str=None, lab_subnet_name: str=None, use_in_vm_creation_permission=None, use_public_ip_address_permission=None, shared_public_ip_address_configuration=None, virtual_network_pool_name: str=None, **kwargs) -> None:
-        super(SubnetOverrideFragment, self).__init__(**kwargs)
-        self.resource_id = resource_id
-        self.lab_subnet_name = lab_subnet_name
-        self.use_in_vm_creation_permission = use_in_vm_creation_permission
-        self.use_public_ip_address_permission = use_public_ip_address_permission
-        self.shared_public_ip_address_configuration = shared_public_ip_address_configuration
-        self.virtual_network_pool_name = virtual_network_pool_name
-
-
 class SubnetSharedPublicIpAddressConfiguration(Model):
     """Configuration for public IP address sharing.
 
@@ -5257,23 +3724,6 @@ class SubnetSharedPublicIpAddressConfiguration(Model):
 
     def __init__(self, *, allowed_ports=None, **kwargs) -> None:
         super(SubnetSharedPublicIpAddressConfiguration, self).__init__(**kwargs)
-        self.allowed_ports = allowed_ports
-
-
-class SubnetSharedPublicIpAddressConfigurationFragment(Model):
-    """Configuration for public IP address sharing.
-
-    :param allowed_ports: Backend ports that virtual machines on this subnet
-     are allowed to expose
-    :type allowed_ports: list[~azure.mgmt.devtestlabs.models.PortFragment]
-    """
-
-    _attribute_map = {
-        'allowed_ports': {'key': 'allowedPorts', 'type': '[PortFragment]'},
-    }
-
-    def __init__(self, *, allowed_ports=None, **kwargs) -> None:
-        super(SubnetSharedPublicIpAddressConfigurationFragment, self).__init__(**kwargs)
         self.allowed_ports = allowed_ports
 
 
@@ -5381,22 +3831,14 @@ class UserFragment(UpdateResource):
 
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
-    :param identity: The identity of the user.
-    :type identity: ~azure.mgmt.devtestlabs.models.UserIdentityFragment
-    :param secret_store: The secret store of the user.
-    :type secret_store: ~azure.mgmt.devtestlabs.models.UserSecretStoreFragment
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'properties.identity', 'type': 'UserIdentityFragment'},
-        'secret_store': {'key': 'properties.secretStore', 'type': 'UserSecretStoreFragment'},
     }
 
-    def __init__(self, *, tags=None, identity=None, secret_store=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, **kwargs) -> None:
         super(UserFragment, self).__init__(tags=tags, **kwargs)
-        self.identity = identity
-        self.secret_store = secret_store
 
 
 class UserIdentity(Model):
@@ -5436,43 +3878,6 @@ class UserIdentity(Model):
         self.app_id = app_id
 
 
-class UserIdentityFragment(Model):
-    """Identity attributes of a lab user.
-
-    :param principal_name: Set to the principal name / UPN of the client JWT
-     making the request.
-    :type principal_name: str
-    :param principal_id: Set to the principal Id of the client JWT making the
-     request. Service principal will not have the principal Id.
-    :type principal_id: str
-    :param tenant_id: Set to the tenant ID of the client JWT making the
-     request.
-    :type tenant_id: str
-    :param object_id: Set to the object Id of the client JWT making the
-     request. Not all users have object Id. For CSP (reseller) scenarios for
-     example, object Id is not available.
-    :type object_id: str
-    :param app_id: Set to the app Id of the client JWT making the request.
-    :type app_id: str
-    """
-
-    _attribute_map = {
-        'principal_name': {'key': 'principalName', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'object_id': {'key': 'objectId', 'type': 'str'},
-        'app_id': {'key': 'appId', 'type': 'str'},
-    }
-
-    def __init__(self, *, principal_name: str=None, principal_id: str=None, tenant_id: str=None, object_id: str=None, app_id: str=None, **kwargs) -> None:
-        super(UserIdentityFragment, self).__init__(**kwargs)
-        self.principal_name = principal_name
-        self.principal_id = principal_id
-        self.tenant_id = tenant_id
-        self.object_id = object_id
-        self.app_id = app_id
-
-
 class UserSecretStore(Model):
     """Properties of a user's secret store.
 
@@ -5489,26 +3894,6 @@ class UserSecretStore(Model):
 
     def __init__(self, *, key_vault_uri: str=None, key_vault_id: str=None, **kwargs) -> None:
         super(UserSecretStore, self).__init__(**kwargs)
-        self.key_vault_uri = key_vault_uri
-        self.key_vault_id = key_vault_id
-
-
-class UserSecretStoreFragment(Model):
-    """Properties of a user's secret store.
-
-    :param key_vault_uri: The URI of the user's Key vault.
-    :type key_vault_uri: str
-    :param key_vault_id: The ID of the user's Key vault.
-    :type key_vault_id: str
-    """
-
-    _attribute_map = {
-        'key_vault_uri': {'key': 'keyVaultUri', 'type': 'str'},
-        'key_vault_id': {'key': 'keyVaultId', 'type': 'str'},
-    }
-
-    def __init__(self, *, key_vault_uri: str=None, key_vault_id: str=None, **kwargs) -> None:
-        super(UserSecretStoreFragment, self).__init__(**kwargs)
         self.key_vault_uri = key_vault_uri
         self.key_vault_id = key_vault_id
 
@@ -5594,32 +3979,14 @@ class VirtualNetworkFragment(UpdateResource):
 
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
-    :param allowed_subnets: The allowed subnets of the virtual network.
-    :type allowed_subnets: list[~azure.mgmt.devtestlabs.models.SubnetFragment]
-    :param description: The description of the virtual network.
-    :type description: str
-    :param external_provider_resource_id: The Microsoft.Network resource
-     identifier of the virtual network.
-    :type external_provider_resource_id: str
-    :param subnet_overrides: The subnet overrides of the virtual network.
-    :type subnet_overrides:
-     list[~azure.mgmt.devtestlabs.models.SubnetOverrideFragment]
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'allowed_subnets': {'key': 'properties.allowedSubnets', 'type': '[SubnetFragment]'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'external_provider_resource_id': {'key': 'properties.externalProviderResourceId', 'type': 'str'},
-        'subnet_overrides': {'key': 'properties.subnetOverrides', 'type': '[SubnetOverrideFragment]'},
     }
 
-    def __init__(self, *, tags=None, allowed_subnets=None, description: str=None, external_provider_resource_id: str=None, subnet_overrides=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, **kwargs) -> None:
         super(VirtualNetworkFragment, self).__init__(tags=tags, **kwargs)
-        self.allowed_subnets = allowed_subnets
-        self.description = description
-        self.external_provider_resource_id = external_provider_resource_id
-        self.subnet_overrides = subnet_overrides
 
 
 class WeekDetails(Model):
@@ -5643,27 +4010,6 @@ class WeekDetails(Model):
         self.time = time
 
 
-class WeekDetailsFragment(Model):
-    """Properties of a weekly schedule.
-
-    :param weekdays: The days of the week for which the schedule is set (e.g.
-     Sunday, Monday, Tuesday, etc.).
-    :type weekdays: list[str]
-    :param time: The time of the day the schedule will occur.
-    :type time: str
-    """
-
-    _attribute_map = {
-        'weekdays': {'key': 'weekdays', 'type': '[str]'},
-        'time': {'key': 'time', 'type': 'str'},
-    }
-
-    def __init__(self, *, weekdays=None, time: str=None, **kwargs) -> None:
-        super(WeekDetailsFragment, self).__init__(**kwargs)
-        self.weekdays = weekdays
-        self.time = time
-
-
 class WindowsOsInfo(Model):
     """Information about a Windows OS.
 
@@ -5680,23 +4026,4 @@ class WindowsOsInfo(Model):
 
     def __init__(self, *, windows_os_state=None, **kwargs) -> None:
         super(WindowsOsInfo, self).__init__(**kwargs)
-        self.windows_os_state = windows_os_state
-
-
-class WindowsOsInfoFragment(Model):
-    """Information about a Windows OS.
-
-    :param windows_os_state: The state of the Windows OS (i.e. NonSysprepped,
-     SysprepRequested, SysprepApplied). Possible values include:
-     'NonSysprepped', 'SysprepRequested', 'SysprepApplied'
-    :type windows_os_state: str or
-     ~azure.mgmt.devtestlabs.models.WindowsOsState
-    """
-
-    _attribute_map = {
-        'windows_os_state': {'key': 'windowsOsState', 'type': 'str'},
-    }
-
-    def __init__(self, *, windows_os_state=None, **kwargs) -> None:
-        super(WindowsOsInfoFragment, self).__init__(**kwargs)
         self.windows_os_state = windows_os_state

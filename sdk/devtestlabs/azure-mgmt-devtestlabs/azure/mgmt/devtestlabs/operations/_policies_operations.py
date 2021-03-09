@@ -341,7 +341,7 @@ class PoliciesOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/policysets/{policySetName}/policies/{name}'}
 
     def update(
-            self, resource_group_name, lab_name, policy_set_name, name, policy, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, lab_name, policy_set_name, name, tags=None, custom_headers=None, raw=False, **operation_config):
         """Allows modifying tags of policies. All other properties will be
         ignored.
 
@@ -353,8 +353,8 @@ class PoliciesOperations(object):
         :type policy_set_name: str
         :param name: The name of the policy.
         :type name: str
-        :param policy: A Policy.
-        :type policy: ~azure.mgmt.devtestlabs.models.PolicyFragment
+        :param tags: The tags of the resource.
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -365,6 +365,8 @@ class PoliciesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        policy = models.PolicyFragment(tags=tags)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {

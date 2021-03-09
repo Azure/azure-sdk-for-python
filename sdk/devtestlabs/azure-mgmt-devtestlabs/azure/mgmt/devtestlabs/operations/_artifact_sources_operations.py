@@ -329,7 +329,7 @@ class ArtifactSourcesOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/artifactsources/{name}'}
 
     def update(
-            self, resource_group_name, lab_name, name, artifact_source, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, lab_name, name, tags=None, custom_headers=None, raw=False, **operation_config):
         """Allows modifying tags of artifact sources. All other properties will be
         ignored.
 
@@ -339,9 +339,8 @@ class ArtifactSourcesOperations(object):
         :type lab_name: str
         :param name: The name of the artifact source.
         :type name: str
-        :param artifact_source: Properties of an artifact source.
-        :type artifact_source:
-         ~azure.mgmt.devtestlabs.models.ArtifactSourceFragment
+        :param tags: The tags of the resource.
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -352,6 +351,8 @@ class ArtifactSourcesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        artifact_source = models.ArtifactSourceFragment(tags=tags)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {

@@ -330,7 +330,7 @@ class NotificationChannelsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/notificationchannels/{name}'}
 
     def update(
-            self, resource_group_name, lab_name, name, notification_channel, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, lab_name, name, tags=None, custom_headers=None, raw=False, **operation_config):
         """Allows modifying tags of notification channels. All other properties
         will be ignored.
 
@@ -340,9 +340,8 @@ class NotificationChannelsOperations(object):
         :type lab_name: str
         :param name: The name of the notification channel.
         :type name: str
-        :param notification_channel: A notification.
-        :type notification_channel:
-         ~azure.mgmt.devtestlabs.models.NotificationChannelFragment
+        :param tags: The tags of the resource.
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -353,6 +352,8 @@ class NotificationChannelsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        notification_channel = models.NotificationChannelFragment(tags=tags)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {

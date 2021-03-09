@@ -407,7 +407,7 @@ class DisksOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/users/{userName}/disks/{name}'}
 
     def update(
-            self, resource_group_name, lab_name, user_name, name, disk, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, lab_name, user_name, name, tags=None, custom_headers=None, raw=False, **operation_config):
         """Allows modifying tags of disks. All other properties will be ignored.
 
         :param resource_group_name: The name of the resource group.
@@ -418,8 +418,8 @@ class DisksOperations(object):
         :type user_name: str
         :param name: The name of the disk.
         :type name: str
-        :param disk: A Disk.
-        :type disk: ~azure.mgmt.devtestlabs.models.DiskFragment
+        :param tags: The tags of the resource.
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -430,6 +430,8 @@ class DisksOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        disk = models.DiskFragment(tags=tags)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {

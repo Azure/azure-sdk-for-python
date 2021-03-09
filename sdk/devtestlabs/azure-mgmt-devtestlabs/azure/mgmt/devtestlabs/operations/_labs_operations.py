@@ -465,15 +465,15 @@ class LabsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{name}'}
 
     def update(
-            self, resource_group_name, name, lab, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, tags=None, custom_headers=None, raw=False, **operation_config):
         """Allows modifying tags of labs. All other properties will be ignored.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param name: The name of the lab.
         :type name: str
-        :param lab: A lab.
-        :type lab: ~azure.mgmt.devtestlabs.models.LabFragment
+        :param tags: The tags of the resource.
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -484,6 +484,8 @@ class LabsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        lab = models.LabFragment(tags=tags)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {

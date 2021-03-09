@@ -379,7 +379,7 @@ class SecretsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/users/{userName}/secrets/{name}'}
 
     def update(
-            self, resource_group_name, lab_name, user_name, name, tags=None, value=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, lab_name, user_name, name, tags=None, custom_headers=None, raw=False, **operation_config):
         """Allows modifying tags of secrets. All other properties will be ignored.
 
         :param resource_group_name: The name of the resource group.
@@ -392,8 +392,6 @@ class SecretsOperations(object):
         :type name: str
         :param tags: The tags of the resource.
         :type tags: dict[str, str]
-        :param value: The value of the secret for secret creation.
-        :type value: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -404,7 +402,7 @@ class SecretsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        secret = models.SecretFragment(tags=tags, value=value)
+        secret = models.SecretFragment(tags=tags)
 
         # Construct URL
         url = self.update.metadata['url']

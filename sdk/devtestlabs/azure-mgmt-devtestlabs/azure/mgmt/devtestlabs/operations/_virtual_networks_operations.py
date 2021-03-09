@@ -393,7 +393,7 @@ class VirtualNetworksOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/virtualnetworks/{name}'}
 
     def update(
-            self, resource_group_name, lab_name, name, virtual_network, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, lab_name, name, tags=None, custom_headers=None, raw=False, **operation_config):
         """Allows modifying tags of virtual networks. All other properties will be
         ignored.
 
@@ -403,9 +403,8 @@ class VirtualNetworksOperations(object):
         :type lab_name: str
         :param name: The name of the virtual network.
         :type name: str
-        :param virtual_network: A virtual network.
-        :type virtual_network:
-         ~azure.mgmt.devtestlabs.models.VirtualNetworkFragment
+        :param tags: The tags of the resource.
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -416,6 +415,8 @@ class VirtualNetworksOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        virtual_network = models.VirtualNetworkFragment(tags=tags)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {

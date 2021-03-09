@@ -394,7 +394,7 @@ class VirtualMachinesOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/virtualmachines/{name}'}
 
     def update(
-            self, resource_group_name, lab_name, name, lab_virtual_machine, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, lab_name, name, tags=None, custom_headers=None, raw=False, **operation_config):
         """Allows modifying tags of virtual machines. All other properties will be
         ignored.
 
@@ -404,9 +404,8 @@ class VirtualMachinesOperations(object):
         :type lab_name: str
         :param name: The name of the virtual machine.
         :type name: str
-        :param lab_virtual_machine: A virtual machine.
-        :type lab_virtual_machine:
-         ~azure.mgmt.devtestlabs.models.LabVirtualMachineFragment
+        :param tags: The tags of the resource.
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -417,6 +416,8 @@ class VirtualMachinesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        lab_virtual_machine = models.LabVirtualMachineFragment(tags=tags)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {

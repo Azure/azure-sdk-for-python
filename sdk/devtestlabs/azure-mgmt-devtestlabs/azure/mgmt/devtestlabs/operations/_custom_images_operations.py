@@ -393,7 +393,7 @@ class CustomImagesOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/customimages/{name}'}
 
     def update(
-            self, resource_group_name, lab_name, name, custom_image, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, lab_name, name, tags=None, custom_headers=None, raw=False, **operation_config):
         """Allows modifying tags of custom images. All other properties will be
         ignored.
 
@@ -403,8 +403,8 @@ class CustomImagesOperations(object):
         :type lab_name: str
         :param name: The name of the custom image.
         :type name: str
-        :param custom_image: A custom image.
-        :type custom_image: ~azure.mgmt.devtestlabs.models.CustomImageFragment
+        :param tags: The tags of the resource.
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -415,6 +415,8 @@ class CustomImagesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        custom_image = models.CustomImageFragment(tags=tags)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {

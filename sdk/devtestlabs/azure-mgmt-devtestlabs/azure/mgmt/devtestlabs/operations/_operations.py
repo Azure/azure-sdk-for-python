@@ -84,13 +84,15 @@ class Operations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
         if response.status_code == 200:
+            deserialized = self._deserialize('OperationResult', response)
+        if response.status_code == 202:
             deserialized = self._deserialize('OperationResult', response)
 
         if raw:

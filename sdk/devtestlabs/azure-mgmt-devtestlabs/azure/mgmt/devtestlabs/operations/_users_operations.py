@@ -393,7 +393,7 @@ class UsersOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/users/{name}'}
 
     def update(
-            self, resource_group_name, lab_name, name, user, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, lab_name, name, tags=None, custom_headers=None, raw=False, **operation_config):
         """Allows modifying tags of user profiles. All other properties will be
         ignored.
 
@@ -403,8 +403,8 @@ class UsersOperations(object):
         :type lab_name: str
         :param name: The name of the user profile.
         :type name: str
-        :param user: Profile of a lab user.
-        :type user: ~azure.mgmt.devtestlabs.models.UserFragment
+        :param tags: The tags of the resource.
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -415,6 +415,8 @@ class UsersOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        user = models.UserFragment(tags=tags)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {

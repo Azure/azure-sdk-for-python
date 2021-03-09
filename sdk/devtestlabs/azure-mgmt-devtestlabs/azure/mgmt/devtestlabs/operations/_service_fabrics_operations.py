@@ -407,7 +407,7 @@ class ServiceFabricsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/users/{userName}/servicefabrics/{name}'}
 
     def update(
-            self, resource_group_name, lab_name, user_name, name, service_fabric, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, lab_name, user_name, name, tags=None, custom_headers=None, raw=False, **operation_config):
         """Allows modifying tags of service fabrics. All other properties will be
         ignored.
 
@@ -419,9 +419,8 @@ class ServiceFabricsOperations(object):
         :type user_name: str
         :param name: The name of the service fabric.
         :type name: str
-        :param service_fabric: A Service Fabric.
-        :type service_fabric:
-         ~azure.mgmt.devtestlabs.models.ServiceFabricFragment
+        :param tags: The tags of the resource.
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -432,6 +431,8 @@ class ServiceFabricsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        service_fabric = models.ServiceFabricFragment(tags=tags)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {

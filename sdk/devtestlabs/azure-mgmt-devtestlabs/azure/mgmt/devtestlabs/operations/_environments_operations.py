@@ -408,7 +408,7 @@ class EnvironmentsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/users/{userName}/environments/{name}'}
 
     def update(
-            self, resource_group_name, lab_name, user_name, name, dtl_environment, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, lab_name, user_name, name, tags=None, custom_headers=None, raw=False, **operation_config):
         """Allows modifying tags of environments. All other properties will be
         ignored.
 
@@ -420,10 +420,8 @@ class EnvironmentsOperations(object):
         :type user_name: str
         :param name: The name of the environment.
         :type name: str
-        :param dtl_environment: An environment, which is essentially an ARM
-         template deployment.
-        :type dtl_environment:
-         ~azure.mgmt.devtestlabs.models.DtlEnvironmentFragment
+        :param tags: The tags of the resource.
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -434,6 +432,8 @@ class EnvironmentsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        dtl_environment = models.DtlEnvironmentFragment(tags=tags)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
