@@ -3,7 +3,7 @@
 ## 5.1.0b6 (2021-03-09)
 
 **Breaking Changes**
-
+- By default, we now target the service's `v3.1-preview.4` endpoint through enum value `TextAnalyticsApiVersion.V3_1_PREVIEW`
 - Removed property `related_entities` on `HealthcareEntity` and added `entity_relations` onto the document response level for healthcare
 - Renamed properties `aspect` and `opinions` to `target` and `assessments` respectively in class `MinedOpinion`.
 - Renamed classes `AspectSentiment` and `OpinionSentiment` to `TargetSentiment` and `AssessmentSentiment` respectively.
