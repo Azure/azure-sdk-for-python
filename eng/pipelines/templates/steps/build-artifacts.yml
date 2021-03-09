@@ -112,7 +112,7 @@ steps:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
 
   - task: PublishBuildArtifacts@1
-    condition: and(succeededOrFailed(), ${{ parameters.BuildDocs }})
+    condition: and(succeeded(), ${{ parameters.BuildDocs }})
     displayName: 'Publish Documentation Artifacts'
     inputs:
       artifactName: 'documentation'
