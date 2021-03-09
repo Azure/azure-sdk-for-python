@@ -1059,17 +1059,13 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     data_feed.id,
                     name="update",
                     data_feed_description=None,
-                    timestamp_column=None,
                     ingestion_start_offset=None,
                     data_source_request_concurrency=None,
                     ingestion_retry_delay=None,
                     stop_retry_after=None,
                     rollup_type=None,
                     rollup_method=None,
-                    rollup_identification_value=None,
-                    auto_rollup_group_by_column_names=None,
                     fill_type=None,
-                    custom_fill_value=None,
                     access_mode=None,
                     viewer_emails=None,
                     status=None,
@@ -1077,24 +1073,20 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 )
                 updated = await self.admin_client.get_data_feed(data_feed.id)
                 self.assertEqual(updated.name, "update")
-                # self.assertEqual(updated.options.data_feed_description, "")  # doesn't currently clear
-                # self.assertEqual(updated.schema.timestamp_column, "")  # doesn't currently clear
+                self.assertEqual(updated.options.data_feed_description, "")
                 self.assertEqual(updated.ingestion_settings.ingestion_begin_time,
                                  datetime.datetime(2019, 10, 1, tzinfo=tzutc()))
-                self.assertEqual(updated.ingestion_settings.ingestion_start_offset, -1)
-                self.assertEqual(updated.ingestion_settings.data_source_request_concurrency, 0)
+                self.assertEqual(updated.ingestion_settings.ingestion_start_offset, 0)
+                self.assertEqual(updated.ingestion_settings.data_source_request_concurrency, -1)
                 self.assertEqual(updated.ingestion_settings.ingestion_retry_delay, -1)
                 self.assertEqual(updated.ingestion_settings.stop_retry_after, -1)
                 self.assertEqual(updated.options.rollup_settings.rollup_type, "NoRollup")
                 self.assertEqual(updated.options.rollup_settings.rollup_method, "None")
-                self.assertEqual(updated.options.rollup_settings.rollup_identification_value, None)
-                self.assertEqual(updated.options.rollup_settings.auto_rollup_group_by_column_names, [])
                 self.assertEqual(updated.options.missing_data_point_fill_settings.fill_type, "SmartFilling")
-                self.assertEqual(updated.options.missing_data_point_fill_settings.custom_fill_value, 0)
                 self.assertEqual(updated.options.access_mode, "Private")
-                # self.assertEqual(updated.options.viewer_emails, ["viewers"]) # doesn't currently clear
+                self.assertEqual(updated.options.viewer_emails, ["viewers"])
                 self.assertEqual(updated.status, "Active")
-                # self.assertEqual(updated.options.action_link_template, "updated")  # doesn't currently clear
+                self.assertEqual(updated.options.action_link_template, "")
 
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
