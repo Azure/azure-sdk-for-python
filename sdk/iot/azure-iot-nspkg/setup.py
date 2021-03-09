@@ -10,7 +10,7 @@ from setuptools import setup
 
 setup(
     name='azure-iot-nspkg',
-    version='1.0.0',
+    version='2.0.0',
     description='Microsoft Azure IoT Namespace Package [Internal]',
     long_description=open('README.md', 'r').read(),
     license='MIT License',
