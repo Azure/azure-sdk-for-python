@@ -1,5 +1,8 @@
 # Release History
 
+## 5.1.0b7 (Unreleased)
+
+
 ## 5.1.0b6 (2021-03-09)
 
 **Breaking Changes**
@@ -102,7 +105,7 @@ used in conjunction with the Bing Entity Search API to fetch additional relevant
 - Removed `grapheme_offset` and `grapheme_length` from `CategorizedEntity`, `SentenceSentiment`, and `LinkedEntityMatch`
 - `TextDocumentStatistics` attribute `grapheme_count` has been renamed to `character_count`
 
-## 1.0.0b5
+## 1.0.0b5 
 
 - This was a broken release
 
