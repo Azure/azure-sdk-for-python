@@ -140,7 +140,7 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
             async with sms_client:
             # calling send() with sms values
                 await sms_client.send(
-                    from_="+18007342577",
+                    from_="+14255550123",
                     to=[self.phone_number],
                     message="Hello World via SMS")
         

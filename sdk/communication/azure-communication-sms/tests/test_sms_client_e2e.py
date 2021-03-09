@@ -129,7 +129,7 @@ class SMSClientTest(CommunicationTestCase):
         with pytest.raises(HttpResponseError) as ex:
             # calling send() with sms values
             sms_client.send(
-                from_="+18007342577",
+                from_="+14255550123",
                 to=[self.phone_number],
                 message="Hello World via SMS")
         
