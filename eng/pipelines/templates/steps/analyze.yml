@@ -85,7 +85,7 @@ steps:
       BuildTargetingString: ${{ parameters.BuildTargetingString }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
 
-  - task: DownloadPipelineArtifact@0
+  - task: DownloadPipelineArtifact@2
     condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
     inputs:
       artifactName: 'packages'
