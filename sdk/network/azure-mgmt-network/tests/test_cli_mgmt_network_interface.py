@@ -128,7 +128,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
             ]
           }
         }
-        result = compute_client.virtual_machines.create_or_update(group_name, vm_name, BODY)
+        result = compute_client.virtual_machines.begin_create_or_update(group_name, vm_name, BODY)
         result = result.result()
 
     def delete_vm(self, group_name, vm_name):
@@ -136,7 +136,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         compute_client = self.create_mgmt_client(
             azure.mgmt.compute.ComputeManagementClient
         )
-        result = compute_client.virtual_machines.delete(group_name, vm_name)
+        result = compute_client.virtual_machines.begin_delete(group_name, vm_name)
         result = result.result()
     
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
