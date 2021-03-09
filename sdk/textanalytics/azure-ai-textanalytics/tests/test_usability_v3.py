@@ -73,7 +73,7 @@ def test_entities_recognition_pii_preparer(client, documents):
             },
         )
 
-    assert "API version v3.0 does not have operation 'prepare_entities_recognition_pii'" in str(ex.value)
+    assert "API version v3.0 does not have operation 'prepare_entities_recognition_pii'. Valid api version is: 'v3.1-preview.1" in str(ex.value)
 
 def test_languages_preparer(client, documents):
     request = prepare_languages(

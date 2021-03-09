@@ -65,7 +65,10 @@ def prepare_entities_recognition_general(
             string_index_type=string_index_type,
             **kwargs
         )
-    raise ValueError(f"API version {api_version} does not have operation 'prepare_entities_recognition_general'")
+    raise ValueError(
+        f"API version {api_version} does not have operation 'prepare_entities_recognition_general'. "
+        f"Valid api versions are: 'v3.0', 'v3.1-preview.1'"
+    )
 
 def prepare_entities_recognition_pii(
     api_version: PiiTextAnalyticsApiVersions,
@@ -112,7 +115,10 @@ def prepare_entities_recognition_pii(
             string_index_type=string_index_type,
             **kwargs
         )
-    raise ValueError(f"API version {api_version} does not have operation 'prepare_entities_recognition_pii'")
+    raise ValueError(
+        f"API version {api_version} does not have operation 'prepare_entities_recognition_pii'. "
+        f"Valid api version is: 'v3.1-preview.1'"
+    )
 
 def prepare_entities_linking(
     api_version: TextAnalyticsApiVersions,
@@ -165,7 +171,10 @@ def prepare_entities_linking(
             string_index_type=string_index_type,
             **kwargs
         )
-    raise ValueError(f"API version {api_version} does not have operation 'prepare_entities_linking'")
+    raise ValueError(
+        f"API version {api_version} does not have operation 'prepare_entities_linking'. "
+        f"Valid api versions are: 'v3.0', 'v3.1-preview.1'"
+    )
 
 def prepare_key_phrases(
     api_version: TextAnalyticsApiVersions,
@@ -209,7 +218,10 @@ def prepare_key_phrases(
             show_stats=show_stats,
             **kwargs
         )
-    raise ValueError(f"API version {api_version} does not have operation 'prepare_key_phrases'")
+    raise ValueError(
+        f"API version {api_version} does not have operation 'prepare_key_phrases'. "
+        f"Valid api versions are: 'v3.0', 'v3.1-preview.1'"
+    )
 
 def prepare_languages(
     api_version: TextAnalyticsApiVersions,
@@ -254,7 +266,10 @@ def prepare_languages(
             show_stats=show_stats,
             **kwargs
         )
-    raise ValueError(f"API version {api_version} does not have operation 'prepare_languages'")
+    raise ValueError(
+        f"API version {api_version} does not have operation 'prepare_languages'. "
+        f"Valid api versions are: 'v3.0', 'v3.1-preview.1'"
+    )
 
 def prepare_sentiment(
     api_version: TextAnalyticsApiVersions,
@@ -309,4 +324,7 @@ def prepare_sentiment(
             string_index_type=string_index_type,
             **kwargs
         )
-    raise ValueError(f"API version {api_version} does not have operation 'prepare_sentiment'")
+    raise ValueError(
+        f"API version {api_version} does not have operation 'prepare_sentiment'. "
+        f"Valid api versions are: 'v3.0', 'v3.1-preview.1'"
+    )
