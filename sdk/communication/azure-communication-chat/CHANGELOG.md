@@ -1,9 +1,8 @@
 # Release History
 
 ## 1.0.0b5 (2021-03-09)
-- Added identifier serialization in Chat
-- Updated the SDK to use `CommunicationIdentifier` changes everywhere instead of string Id
-- Removal of nullable references
+- Added support for communication identifiers instead of raw strings.
+- Removed nullable references from method signatures.
  
 
 ## 1.0.0b4 (2021-02-09)
