@@ -42,5 +42,5 @@ pip install azure-eventhub-checkpointstoreblob
 
 ## Next steps
 
-Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/latest/azure.eventhub.html) to learn more about
+Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.3.1/azure.eventhub.html) to learn more about
 what you can do with the Azure Event Hubs client library.
