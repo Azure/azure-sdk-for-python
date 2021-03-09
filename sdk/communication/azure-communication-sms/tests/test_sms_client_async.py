@@ -23,14 +23,14 @@ class FakeTokenCredential(object):
 
 class TestSMSClientAsync(aiounittest.AsyncTestCase):
     async def test_send_message_async(self):
-        to_phone_number = "+18000005555"
+        phone_number = "+14255550123"
         raised = False
 
         async def mock_send(*_, **__):
             return mock_response(status_code=202, json_payload={
                 "value": [
                     {
-                        "to": to_phone_number,
+                        "to": phone_number,
                         "messageId": "id",
                         "httpStatusCode": "202",
                         "errorMessage": "null",
@@ -45,8 +45,8 @@ class TestSMSClientAsync(aiounittest.AsyncTestCase):
         sms_response = None
         try:
             sms_responses = await sms_client.send(
-                from_="+18000005554",
-                to=[to_phone_number],
+                from_=phone_number,
+                to=[phone_number],
                 message="Hello World via SMS",
                 enable_delivery_report=True,
                 tag="custom-tag")
@@ -56,7 +56,7 @@ class TestSMSClientAsync(aiounittest.AsyncTestCase):
             raise
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertEqual(to_phone_number, sms_response.to)
+        self.assertEqual(phone_number, sms_response.to)
         self.assertIsNotNone(sms_response.message_id)
         self.assertEqual(202, sms_response.http_status_code)
         self.assertIsNotNone(sms_response.error_message)
