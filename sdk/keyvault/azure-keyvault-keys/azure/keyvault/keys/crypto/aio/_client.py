@@ -78,11 +78,18 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         if not (self._jwk or self._key_id.version):
             raise ValueError("'key' must include a version")
 
-        self._local_provider = NoLocalCryptography()
-        self._initialized = False
+        if self._jwk:
+            try:
+                self._local_provider = get_local_cryptography_provider(self._key)
+                self._initialized = True
+            except Exception as ex:  # pylint:disable=broad-except
+                raise ValueError("The provided jwk is not valid for local cryptography: {}".format(ex))
+        else:
+            self._local_provider = NoLocalCryptography()
+            self._initialized = False
 
-        vault_url = "vault_url" if self._jwk else self._key_id.vault_url
-        super().__init__(vault_url=vault_url, credential=credential, **kwargs)
+        self._vault_url = None if self._jwk else self._key_id.vault_url
+        super().__init__(vault_url=self._vault_url or "vault_url", credential=credential, **kwargs)
 
     @property
     def key_id(self) -> "Optional[str]":
@@ -95,6 +102,16 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         if not self._jwk:
             return self._key_id.source_id
         return self._key.kid
+
+    @property
+    def vault_url(self) -> "Optional[str]":
+        """The base vault URL of the client's key.
+
+        This property may be None when a client is constructed with :func:`from_jwk`.
+
+        :rtype: str
+        """
+        return self._vault_url
 
     @classmethod
     def from_jwk(cls, jwk: "Union[JsonWebKey, dict]") -> "CryptographyClient":
@@ -111,11 +128,9 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             :language: python
             :dedent: 8
         """
-        if isinstance(jwk, JsonWebKey):
-            key = jwk
-        else:
-            key = JsonWebKey(**jwk)
-        return cls(key, object(), _jwk=True)
+        if not isinstance(jwk, JsonWebKey):
+            jwk = JsonWebKey(**jwk)
+        return cls(jwk, object(), _jwk=True)
 
     @distributed_trace_async
     async def _initialize(self, **kwargs):

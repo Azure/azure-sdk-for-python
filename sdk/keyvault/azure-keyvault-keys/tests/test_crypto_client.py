@@ -581,20 +581,16 @@ def test_local_only_mode_no_service_calls():
     """A local-only CryptographyClient shouldn't call the service if an operation can't be performed locally"""
 
     mock_client = mock.Mock()
-    jwk = JsonWebKey()
+    jwk = JsonWebKey(kty="RSA", key_ops=[], n=b"10011", e=b"10001")
     client = CryptographyClient.from_jwk(jwk=jwk)
     client._client = mock_client
 
-    supports_nothing = mock.Mock(supports=mock.Mock(return_value=False))
-    with mock.patch(
-        CryptographyClient.__module__ + ".get_local_cryptography_provider", lambda *args, **kwargs: supports_nothing
-    ):
-        with pytest.raises(NotImplementedError):
-            client.decrypt(EncryptionAlgorithm.rsa_oaep, b"...")
+    with pytest.raises(NotImplementedError):
+        client.decrypt(EncryptionAlgorithm.rsa_oaep, b"...")
     assert mock_client.decrypt.call_count == 0
 
     with pytest.raises(NotImplementedError):
-        client.encrypt(EncryptionAlgorithm.rsa_oaep, b"...")
+        client.encrypt(EncryptionAlgorithm.a256_gcm, b"...")
     assert mock_client.encrypt.call_count == 0
 
     with pytest.raises(NotImplementedError):
@@ -602,7 +598,7 @@ def test_local_only_mode_no_service_calls():
     assert mock_client.sign.call_count == 0
 
     with pytest.raises(NotImplementedError):
-        client.verify(SignatureAlgorithm.rs256, b"...", b"...")
+        client.verify(SignatureAlgorithm.es256, b"...", b"...")
     assert mock_client.verify.call_count == 0
 
     with pytest.raises(NotImplementedError):
@@ -610,7 +606,7 @@ def test_local_only_mode_no_service_calls():
     assert mock_client.unwrap_key.call_count == 0
 
     with pytest.raises(NotImplementedError):
-        client.wrap_key(KeyWrapAlgorithm.rsa_oaep, b"...")
+        client.wrap_key(KeyWrapAlgorithm.aes_256, b"...")
     assert mock_client.wrap_key.call_count == 0
 
 

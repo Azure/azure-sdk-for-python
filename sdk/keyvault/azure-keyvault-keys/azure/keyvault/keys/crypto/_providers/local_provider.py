@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 class LocalCryptographyProvider(ABC):
     def __init__(self, key, **kwargs):
         # type: (JsonWebKey, **Any) -> None
-        self._allowed_ops = frozenset(key.key_ops)
+        self._allowed_ops = frozenset(key.key_ops or [])
         self._internal_key = self._get_internal_key(key)
         self._key = key
         self._key_id = kwargs.pop("_key_id", None) or key.kid

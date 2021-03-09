@@ -4,7 +4,7 @@
 # ------------------------------------
 import functools
 
-from azure.keyvault.keys import JsonWebKey, KeyClient
+from azure.keyvault.keys import JsonWebKey, KeyClient, KeyOperation
 from azure.keyvault.keys.crypto import CryptographyClient
 from azure.keyvault.keys._shared import HttpChallengeCache
 from devtools_testutils import PowerShellPreparer
@@ -21,11 +21,11 @@ KeyVaultPreparer = functools.partial(
 def test_create_client_from_jwk():
     # [START from_jwk]
     # create a CryptographyClient using a JsonWebKey instance
-    key = JsonWebKey(kty="RSA")
+    key = JsonWebKey(kty="RSA", key_ops=[KeyOperation.encrypt], n=b"10011", e=b"10001")
     crypto_client = CryptographyClient.from_jwk(jwk=key)
 
     # or a dictionary with JsonWebKey properties
-    key_dict = {"kty":"RSA"}
+    key_dict = {"kty":"RSA", "key_ops":[KeyOperation.encrypt], "n":b"10011", "e":b"10001"}
     crypto_client = CryptographyClient.from_jwk(jwk=key_dict)
     # [END from_jwk]
 
