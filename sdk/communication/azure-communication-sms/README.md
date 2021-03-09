@@ -28,14 +28,16 @@ pip install azure-communication-sms
 ## Key concepts
 
 Azure Communication SMS package is used to do following:
-- Send SMS Messages
+- Send a 1:1 SMS Message
+- Send a 1:N SMS Message
 
 ## Examples
 
 The following section provides several code snippets covering some of the most common Azure Communication Services tasks, including:
 
 - [Client Initialization](#client-initialization)
-- [Sending SMS Messages](#sending--zsms)
+- [Send a 1:1 SMS Message](#send-a-1:1-sms-message)
+- [Send a 1:N SMS Message](#send-a-1:N-sms-message)
 
 ### Client Initialization
 
@@ -62,7 +64,7 @@ Once the client is initialized, the `send` method can be invoked:
 from azure.communication.sms import SendSmsOptions
 
 sms_responses = sms_client.send(
-    from_="<leased-phone-number>",
+    from_="<from-phone-number>",
     to="<to-phone-number-1>",
     message="Hello World via SMS",
     enable_delivery_report=True, # optional property
@@ -70,7 +72,7 @@ sms_responses = sms_client.send(
 ```
 
 - `from_`: An SMS enabled phone number associated with your communication service.
-- `to`: The phone number you wish to send a message to.
+- `to`: The phone number or list of phone numbers you wish to send a message to.
 - `message`: The message that you want to send.
 - `enable_delivery_report`: An optional parameter that you can use to configure delivery reporting. This is useful for scenarios where you want to emit events when SMS messages are delivered.
 - `tag`: An optional parameter that you can use to configure custom tagging.
@@ -83,7 +85,7 @@ Once the client is initialized, the `send` method can be invoked:
 from azure.communication.sms import SendSmsOptions
 
 sms_responses = sms_client.send(
-    from_="<leased-phone-number>",
+    from_="<from-phone-number>",
     to=["<to-phone-number-1>", "<to-phone-number-2>", "<to-phone-number-3>"],
     message="Hello World via SMS",
     enable_delivery_report=True, # optional property
@@ -91,14 +93,14 @@ sms_responses = sms_client.send(
 ```
 
 - `from_`: An SMS enabled phone number associated with your communication service.
-- `to`: The phone numbers you wish to send a message to.
+- `to`: The phone number or list of phone numbers you wish to send a message to.
 - `message`: The message that you want to send.
 - `enable_delivery_report`: An optional parameter that you can use to configure delivery reporting. This is useful for scenarios where you want to emit events when SMS messages are delivered.
 - `tag`: An optional parameter that you can use to configure custom tagging.
 
 
 ## Troubleshooting
-The Azure Communication Service Identity client will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md).
+The Azure Communication Service SMS client will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md).
 
 ## Next steps
 ### More sample code
