@@ -1,5 +1,19 @@
 # Release History
 
+## 0.17.0 (2021-03-09)
+
+**Features**
+
+  - Model HttpLinkedService has a new parameter auth_headers
+  - Model CosmosDbLinkedService has a new parameter service_principal_credential_type
+  - Model CosmosDbLinkedService has a new parameter service_principal_credential
+  - Model CosmosDbLinkedService has a new parameter azure_cloud_type
+  - Model CosmosDbLinkedService has a new parameter service_principal_id
+  - Model CosmosDbLinkedService has a new parameter tenant
+  - Model CosmosDbLinkedService has a new parameter connection_mode
+  - Model RestServiceLinkedService has a new parameter auth_headers
+  - Model ODataLinkedService has a new parameter auth_headers
+
 ## 0.16.0 (2021-02-24)
 
 **Features**
