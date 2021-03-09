@@ -11,14 +11,14 @@ from typing import (
     Any,
     List,
     Union,
-    cast
+    cast,
+    TYPE_CHECKING,
 )
 import datetime
 import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from .._generated.aio import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2 as _ClientAsync
 from .._generated.models import (
     AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
@@ -28,15 +28,14 @@ from .._generated.models import (
     IngestionStatusQueryOptions as _IngestionStatusQueryOptions,
 )
 from .._version import SDK_MONIKER
-from .._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
-from .._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
 from .._helpers import (
     convert_to_generated_data_feed_type,
     construct_alert_config_dict,
     construct_detection_config_dict,
     construct_hook_dict,
     construct_data_feed_dict,
-    convert_datetime
+    convert_datetime,
+    get_authentication_policy,
 )
 from ..models import (
     DataFeed,
@@ -58,6 +57,9 @@ from .._metrics_advisor_administration_client import (
     DATA_FEED_PATCH,
     DataFeedSourceUnion
 )
+if TYPE_CHECKING:
+    from .._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
+    from azure.core.credentials import TokenCredential
 
 
 class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-public-methods
@@ -79,39 +81,23 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             :dedent: 4
             :caption: Authenticate MetricsAdvisorAdministrationClient with a MetricsAdvisorKeyCredential
     """
-    def __init__(self, endpoint: str, credential: MetricsAdvisorKeyCredential, **kwargs: Any) -> None:
+    def __init__(self, endpoint, credential, **kwargs):
+        # type: (str, Union[MetricsAdvisorKeyCredential, TokenCredential], **Any) -> None
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
         except AttributeError:
             raise ValueError("Base URL must be a string.")
 
-        if not credential:
-            raise ValueError("Missing credential")
-
         self._endpoint = endpoint
-
-        if isinstance(credential, MetricsAdvisorKeyCredential):
-            self._client = _ClientAsync(
-                endpoint=endpoint,
-                sdk_moniker=SDK_MONIKER,
-                authentication_policy=MetricsAdvisorKeyCredentialPolicy(credential),
-                **kwargs
-            )
-        else:
-            if hasattr(credential, "get_token"):
-                credential_scopes = kwargs.pop('credential_scopes',
-                                               ['https://cognitiveservices.azure.com/.default'])
-                credential_policy = AsyncBearerTokenCredentialPolicy(credential, *credential_scopes)
-            else:
-                raise TypeError("Please provide an instance from azure-identity "
-                                "or a class that implement the 'get_token protocol")
-            self._client = _ClientAsync(
-                endpoint=endpoint,
-                sdk_moniker=SDK_MONIKER,
-                authentication_policy=credential_policy,
-                **kwargs
-            )
+        authentication_policy = get_authentication_policy(credential)
+        self._client = _ClientAsync(
+            endpoint=endpoint,
+            credential=credential,  # type: ignore
+            sdk_moniker=SDK_MONIKER,
+            authentication_policy=authentication_policy,
+            **kwargs
+        )
 
     def __repr__(self):
         # type: () -> str
