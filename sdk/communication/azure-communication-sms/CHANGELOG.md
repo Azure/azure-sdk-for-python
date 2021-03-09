@@ -6,6 +6,7 @@
 - Added support for SMS idempotency.
 - Send method series in SmsClient are idempotent under retry policy.
 - Added support for tagging SMS messages.
+- The SmsClient constructor uses type `TokenCredential` and `AsyncTokenCredential` for the credential parameter.
 
 ### Breaking
 - Send method takes in strings for phone numbers instead of `PhoneNumberIdentifier`.
