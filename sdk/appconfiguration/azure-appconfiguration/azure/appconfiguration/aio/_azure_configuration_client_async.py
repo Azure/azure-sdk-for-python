@@ -103,10 +103,10 @@ class AzureAppConfigurationClient:
         # type: (str, dict) -> AzureAppConfigurationClient
         """Create AzureAppConfigurationClient from a Connection String.
 
-            :param connection_string: Connection String
-                (one of the access keys of the Azure App Configuration resource)
-                used to access the Azure App Configuration.
-            :type connection_string: str
+        :param connection_string: Connection String
+            (one of the access keys of the Azure App Configuration resource)
+            used to access the Azure App Configuration.
+        :type connection_string: str
 
         This is the async version of :class:`azure.appconfiguration.AzureAppConfigurationClient`
 

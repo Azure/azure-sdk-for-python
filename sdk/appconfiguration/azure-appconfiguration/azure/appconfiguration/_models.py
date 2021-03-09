@@ -317,7 +317,14 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
 
 
 class FeatureFilter(object):
-    """Feature filters for FeatureFlagConfigurationSetting"""
+    """Feature filters for FeatureFlagConfigurationSetting
+
+    :param name: Name of the filter
+    :type name: str
+    :param parameters: Values of the filter
+    :type parameters: dict[str, Any]
+
+    """
 
     def __init__(self, name, parameters):
         # type: (str, dict[str, Any]) -> None
