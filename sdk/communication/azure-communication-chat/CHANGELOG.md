@@ -1,8 +1,5 @@
 # Release History
 
-## 1.0.0b5 (2021-03-09)
-- Updated `azure-communication-chat` version.
-
 ## 1.0.0b4 (2021-02-09)
 ### Breaking Changes
 - Uses `CommunicationUserIdentifier` and `CommunicationIdentifier` in place of `CommunicationUser`, and `CommunicationTokenCredential` instead of `CommunicationUserCredential`.
