@@ -67,7 +67,8 @@ def test_rsa_sign_verify(key, algorithm, hash_function):
 @pytest.mark.parametrize("algorithm", (a for a in KeyWrapAlgorithm if a.startswith("RSA")))
 def test_rsa_wrap_unwrap(key, algorithm):
     plaintext = b"arbitrary bytes"
-    provider = get_local_cryptography_provider(key.key, _key_id=key.id)
+    key.key.kid = key.id
+    provider = get_local_cryptography_provider(key.key)
 
     wrap_result = provider.wrap_key(algorithm, plaintext)
     assert wrap_result.key_id == key.id

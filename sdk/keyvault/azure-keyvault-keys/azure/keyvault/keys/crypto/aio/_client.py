@@ -5,6 +5,7 @@
 import logging
 from typing import TYPE_CHECKING
 
+import six
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -83,7 +84,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                 self._local_provider = get_local_cryptography_provider(self._key)
                 self._initialized = True
             except Exception as ex:  # pylint:disable=broad-except
-                raise ValueError("The provided jwk is not valid for local cryptography: {}".format(ex))
+                raise ValueError("The provided jwk is not valid for local cryptography") from ex
         else:
             self._local_provider = NoLocalCryptography()
             self._initialized = False
@@ -97,7 +98,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
         This property may be None when a client is constructed with :func:`from_jwk`.
 
-        :rtype: str
+        :rtype: str or None
         """
         if not self._jwk:
             return self._key_id.source_id
@@ -109,7 +110,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
         This property may be None when a client is constructed with :func:`from_jwk`.
 
-        :rtype: str
+        :rtype: str or None
         """
         return self._vault_url
 
@@ -120,13 +121,6 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         :param jwk: the key's cryptographic material, as a JsonWebKey or dictionary.
         :type jwk: JsonWebKey or dict
         :rtype: CryptographyClient
-
-        .. literalinclude:: ../tests/test_examples_crypto.py
-            :start-after: [START from_jwk]
-            :end-before: [END from_jwk]
-            :caption: Create a CryptographyClient from a JsonWebKey
-            :language: python
-            :dedent: 8
         """
         if not isinstance(jwk, JsonWebKey):
             jwk = JsonWebKey(**jwk)
@@ -152,7 +146,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
         # if we have the key material, create a local crypto provider with it
         if self._key:
-            self._local_provider = get_local_cryptography_provider(self._key, _key_id=self.key_id)
+            self._local_provider = get_local_cryptography_provider(self._key)
             self._initialized = True
         else:
             # try to get the key again next time unless we know we're forbidden to do so
