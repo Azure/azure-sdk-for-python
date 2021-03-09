@@ -103,6 +103,8 @@ class AzureAppConfigurationClient:
             (one of the access keys of the Azure App Configuration resource)
             used to access the Azure App Configuration.
         :type connection_string: str
+        :return: An AzureAppConfigurationClient authenticated with the connection string
+        :rtype: AzureAppConfigurationClient
 
         Example
 

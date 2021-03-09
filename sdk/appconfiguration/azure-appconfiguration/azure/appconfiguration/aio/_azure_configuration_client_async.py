@@ -102,13 +102,14 @@ class AzureAppConfigurationClient:
     def from_connection_string(cls, connection_string, **kwargs):
         # type: (str, dict) -> AzureAppConfigurationClient
         """Create AzureAppConfigurationClient from a Connection String.
+        This is the async version of :class:`azure.appconfiguration.AzureAppConfigurationClient`
 
         :param connection_string: Connection String
             (one of the access keys of the Azure App Configuration resource)
             used to access the Azure App Configuration.
         :type connection_string: str
-
-        This is the async version of :class:`azure.appconfiguration.AzureAppConfigurationClient`
+        :return: An AzureAppConfigurationClient authenticated with the connection string
+        :rtype: ~azure.appconfiguration.AzureAppConfigurationClient
 
         Example
 
