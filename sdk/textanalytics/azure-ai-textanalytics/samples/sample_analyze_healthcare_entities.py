@@ -116,8 +116,8 @@ class AnalyzeHealthcareEntitiesSample(object):
         for relation in dosage_of_medication_relations:
             # The DosageOfMedication relation should only contain the dosage and medication roles
 
-            dosage_role = next(filter(lambda x: x.name == HealthcareEntityRelationRoleType.DOSAGE, relation.roles))
-            medication_role = next(filter(lambda x: x.name == HealthcareEntityRelationRoleType.MEDICATION, relation.roles))
+            dosage_role = next(iter(filter(lambda x: x.name == HealthcareEntityRelationRoleType.DOSAGE, relation.roles)))
+            medication_role = next(iter(filter(lambda x: x.name == HealthcareEntityRelationRoleType.MEDICATION, relation.roles)))
 
             try:
                 dosage_value = int(re.findall(r"\d+", dosage_role.entity.text)[0]) # we find the numbers in the dosage
@@ -126,12 +126,10 @@ class AnalyzeHealthcareEntitiesSample(object):
                 # Error handling for if there's no dosage in numbers.
                 pass
 
-        [
+        for medication, dosage in medication_to_dosage.items():
             print("We have fulfilled '{}' total mg of '{}'".format(
                 dosage, medication
             ))
-            for medication, dosage in medication_to_dosage.items()
-        ]
 
 
 if __name__ == "__main__":
