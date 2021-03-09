@@ -81,7 +81,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             :dedent: 4
             :caption: Authenticate MetricsAdvisorAdministrationClient with a MetricsAdvisorKeyCredential
     """
-    def __init__(self, endpoint, credential, **kwargs) -> None:
+    def __init__(self, endpoint, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, TokenCredential], **Any) -> None
         try:
             if not endpoint.lower().startswith('http'):
