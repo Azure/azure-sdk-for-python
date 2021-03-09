@@ -27,7 +27,8 @@ class ContainerRegistryBaseClient(object):
             credential=credential,
             url=endpoint,
             sdk_moniker=USER_AGENT,
-            authentication_policy=BearerTokenCredentialPolicy,
+            # authentication_policy=BearerTokenCredentialPolicy,
+            credential_scopes=kwargs.pop("credential_scopes", "https://dev.azurecr.io/.default"),
             **kwargs
         )
 
