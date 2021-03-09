@@ -4,6 +4,4 @@ pytest-testdox
 flake8
 
 azure-core
-urllib3>1.21.1,<1.26
-requests>=2.22.0
 six

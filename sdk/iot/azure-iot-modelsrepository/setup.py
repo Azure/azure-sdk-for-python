@@ -52,13 +52,6 @@ setup(
     ],
     install_requires=[
         "azure-core"
-        # Define sub-dependencies due to pip dependency resolution bug
-        # https://github.com/pypa/pip/issues/988
-        # ---requests dependencies---
-        # requests 2.22+ does not support urllib3 1.25.0 or 1.25.1 (https://github.com/psf/requests/pull/5092)
-        "urllib3>1.21.1,<1.26,!=1.25.0,!=1.25.1;python_version!='3.4'",
-        # Actual project dependencies
-        "requests>=2.22.0",
         "six",
     ],
     extras_require={":python_version<'3.0'": ["azure-iot-nspkg>=1.0.1"]},

@@ -12,6 +12,5 @@ python -m pip install -e <path to azure-iot-modelsrepository>
 
 ## Features
 
-* ### Resolver
+* ### ModelsRepositoryClient
     * Allows retrieval of model DTDLs from remote URLs or local filesystems
-    * This feature is provisionally included in this package pending review
