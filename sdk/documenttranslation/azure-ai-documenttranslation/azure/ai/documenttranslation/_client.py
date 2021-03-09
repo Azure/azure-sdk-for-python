@@ -6,9 +6,13 @@
 
 from typing import Union, Any, TYPE_CHECKING, List
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.polling import LROPoller
+from azure.core.polling.base_polling import LROBasePolling
 from ._generated import BatchDocumentTranslationClient as _BatchDocumentTranslationClient
+from ._generated.models import BatchStatusDetail
 from ._helpers import get_authentication_policy
 from ._user_agent import USER_AGENT
+from ._polling import TranslationPolling
 if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
     from azure.core.credentials import AzureKeyCredential, TokenCredential
@@ -55,11 +59,13 @@ class DocumentTranslationClient(object):
         :rtype: JobStatusDetail
         """
 
-        return self._client.document_translation.begin_submit_batch_request(
+        response_headers = self._client.document_translation._submit_batch_request_initial(
             inputs=batch,
-            polling=True,
+            cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
+        job_id = response_headers["Operation-Location"].split("/batches/")[1]
+        return self.get_job_status(job_id)
 
     @distributed_trace
     def get_job_status(self, job_id, **kwargs):
@@ -95,7 +101,28 @@ class DocumentTranslationClient(object):
         :return: JobStatusDetail
         :rtype: JobStatusDetail
         """
-        pass
+
+        pipeline_response = self.get_job_status(
+            job_id,
+            cls=lambda pipeline_response, _, response_headers: pipeline_response
+        )
+
+        def callback(raw_response):
+            detail = self._client._deserialize(BatchStatusDetail, raw_response)
+            # return JobStatusDetail._from_generated(detail)
+            return detail
+
+        poller = LROPoller(
+            client=self._client._client,
+            initial_response=pipeline_response,
+            deserialization_callback=callback,
+            polling_method=LROBasePolling(
+                timeout=30,
+                lro_algorithms=[TranslationPolling()],
+                **kwargs
+            ),
+        )
+        return poller.result()
 
     @distributed_trace
     def list_submitted_jobs(self, **kwargs):
