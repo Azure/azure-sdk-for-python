@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0b6 (Unreleased)
+## 2.0.0 (2021-03-09)
 
   **Breaking Changes**
   - `~azure.eventgrid.CloudEvent` is now removed in favor of `~azure.core.messaging.CloudEvent`.
