@@ -23,9 +23,11 @@ class CommunicationTokenCredential(object):
     ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
 
     def __init__(self,
-            token # type: str
+            token, # type: str
+            token_refresher=None
         ):
-        communication_token_refresh_options = CommunicationTokenRefreshOptions(token=token)
+        communication_token_refresh_options = CommunicationTokenRefreshOptions(token=token,
+                                                                               token_refresher=token_refresher)
         self._token = communication_token_refresh_options.get_token()
         self._token_refresher = communication_token_refresh_options.get_token_refresher()
         self._lock = Condition(Lock())
