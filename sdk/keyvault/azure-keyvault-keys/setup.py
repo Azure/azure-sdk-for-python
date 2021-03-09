@@ -85,7 +85,7 @@ setup(
         "cryptography>=2.1.4",
         "msrest>=0.6.21",
         "azure-common~=1.1",
-        "six>=1.9.0"
+        "six>=1.11.0"
     ],
     extras_require={
         ":python_version<'3.0'": ["azure-keyvault-nspkg"],
