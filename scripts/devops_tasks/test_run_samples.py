@@ -31,7 +31,43 @@ TIMEOUT_SAMPLES = {
 """
 TIMEOUT_SAMPLES = {
     "azure-eventhub": {
-        "receive_batch_with_checkpoint.py": (3, True)
+        "authenticate_with_sas_token.py": (5, True),
+        "receive_batch_with_checkpoint.py": (5, True),
+        "recv.py": (5, True),
+        "recv_track_last_enqueued_event_prop.py": (5, True),
+        "recv_with_checkpoint_by_event_count.py": (5, True),
+        "recv_with_checkpoint_by_time_interval.py": (5, True),
+        "recv_with_checkpoint_store.py": (5, True),
+        "recv_with_custom_starting_position.py": (5, True),
+        "sample_code_eventhub.py": (10, True),
+        "authenticate_with_sas_token_async.py": (5, True),
+        "receive_batch_with_checkpoint_async.py": (5, True),
+        "recv_async.py": (5, True),
+        "recv_track_last_enqueued_event_prop_async.py": (5, True),
+        "recv_with_checkpoint_by_event_count_async.py": (5, True),
+        "recv_with_checkpoint_by_time_interval_async.py": (5, True),
+        "recv_with_checkpoint_store_async.py": (5, True),
+        "recv_with_custom_starting_position_async.py": (5, True),
+        "sample_code_eventhub_async.py": (10, True)
+    },
+    "azure-eventhub-checkpointstoreblob": {
+        "receive_events_using_checkpoint_store.py": (5, True),
+        "receive_events_using_checkpoint_store_storage_api_version.py": (5, True)
+    },
+    "azure-eventhub-checkpointstoreblob-aio": {
+        "receive_events_using_checkpoint_store_async.py": (5, True),
+        "receive_events_using_checkpoint_store_storage_api_version_async.py": (5, True)
+    },
+    "azure-servicebus": {
+        "auto_lock_renew.py": (120, True),
+        "failure_and_recovery.py": (5, True),
+        "receive_iterator_queue.py": (5, True),
+        "sample_code_servicebus.py": (30, True),
+        "session_pool_receive.py": (20, True),
+        "auto_lock_renew_async.py": (120, True),
+        "receive_iterator_queue_async.py": (5, True),
+        "sample_code_servicebus_async.py": (30, True),
+        "session_pool_receive_async.py": (20, True)
     }
 }
 
@@ -46,66 +82,25 @@ IGNORED_SAMPLES = {
         "sample_publish_events_to_a_topic_using_sas_credential.py",
         "sample_publish_events_to_a_topic_using_sas_credential_async.py"],
     "azure-eventhub": [
-        "send.py",
-        "send_async.py",
-        "send_stream.py",
-        "send_stream_async.py",
-        "recv_for_period_async.py",
-        "client_creation_async.py",
-        "connection_string_authentication.py",
-        "connection_string_authentication_async.py",
-        "client_identity_authentication_async.py",
-        "client_creation.py",
-        "client_identity_authentication.py",
-        "authenticate_with_sas_token.py",
         "connection_to_custom_endpoint_address.py",
         "proxy.py",
-        "recv.py",
-        "recv_track_last_enqueued_event_prop.py",
-        "recv_with_checkpoint_by_event_count.py",
-        "recv_with_checkpoint_by_time_interval.py",
-        "recv_with_checkpoint_store.py",
-        "recv_with_custom_starting_position.py",
-        "sample_code_eventhub.py",
-        "authenticate_with_sas_token_async.py",
         "connection_to_custom_endpoint_address_async.py",
         "iot_hub_connection_string_receive_async.py",
-        "proxy_async.py",
-        "receive_batch_with_checkpoint_async.py",
-        "recv_async.py",
-        "recv_track_last_enqueued_event_prop_async.py",
-        "recv_with_checkpoint_by_event_count_async.py",
-        "recv_with_checkpoint_by_time_interval_async.py",
-        "recv_with_checkpoint_store_async.py",
-        "recv_with_custom_starting_position_async.py",
-        "sample_code_eventhub_async.py"
-    ],
-    "azure-eventhub-checkpointstoreblob": [
-        "receive_events_using_checkpoint_store.py",
-        "receive_events_using_checkpoint_store_storage_api_version.py"
-    ],
-    "azure-eventhub-checkpointstoreblob-aio": [
-        "receive_events_using_checkpoint_store_async.py",
-        "receive_events_using_checkpoint_store_storage_api_version_async.py"
+        "proxy_async.py"
     ],
     "azure-servicebus": [
-        "failure_and_recovery.py",
         "mgmt_queue.py",
         "mgmt_rule.py",
         "mgmt_subscription.py",
         "mgmt_topic.py",
         "proxy.py",
         "receive_deferred_message_queue.py",
-        "receive_iterator_queue.py",
-        "session_pool_receive.py",
         "mgmt_queue_async.py",
         "mgmt_rule_async.py",
         "mgmt_subscription_async.py",
         "mgmt_topic_async.py",
         "proxy_async.py",
-        "receive_deferred_message_queue_async.py",
-        "receive_iterator_queue_async.py",
-        "session_pool_receive_async.py"
+        "receive_deferred_message_queue_async.py"
     ],
     "azure-ai-formrecognizer": [
         "sample_recognize_receipts_from_url.py",
@@ -192,6 +187,14 @@ def run_samples(targeted_package):
     samples_dir_path = os.path.abspath(os.path.join(targeted_package, "samples"))
     package_name = os.path.basename(targeted_package)
     samples_need_timeout = TIMEOUT_SAMPLES.get(package_name, {})
+
+    # install extra dependencies for samples if needed
+    try:
+        with open(samples_dir_path + "/sample_dev_requirements.txt") as sample_dev_reqs:
+            for dep in sample_dev_reqs.readlines():
+                check_call([sys.executable, '-m', 'pip', 'install', dep])
+    except:
+        pass
 
     for path, subdirs, files in os.walk(samples_dir_path):
         for name in files:
