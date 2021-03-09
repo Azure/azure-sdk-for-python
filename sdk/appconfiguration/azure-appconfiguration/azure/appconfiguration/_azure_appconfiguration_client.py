@@ -581,3 +581,9 @@ class AzureAppConfigurationClient:
         """
 
         self._sync_token_policy.add_token(token)
+
+    def close(self):
+        # type: (...) -> None
+
+        """Close all connections made by the client"""
+        self._client._client.close()
