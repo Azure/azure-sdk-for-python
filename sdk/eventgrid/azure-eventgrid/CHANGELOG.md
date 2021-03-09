@@ -1,5 +1,18 @@
 # Release History
 
+## 4.0.0 (2021-03-09)
+
+  **Note:** This is the first stable release of our efforts to create a user-friendly and Pythonic client library for Azure EventGrid. Users migrating from `v1.x` are advised to view the [migration guide](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/migration_guide.md).
+
+  **New Features**
+  - `azure-eventgrid` pacakge now supports `~azure.core.messaging.CloudEvent` which honors the CNCF CloudEvent spec.
+  - `azure.eventgrid.SystemEventNames` can be used to get the event model type mapping for system events.
+  - Implements the `EventGridPublisherClient` for the publish flow for EventGrid Events, CloudEvents and Custom schema events.
+
+  **Breaking Changes**
+  - `azure.eventgrid.models` namespace along with all the models in it are now removed. `azure.eventgrid.SystemEventNames` can be used to get the event model type mapping.
+
+
 ## 2.0.0 (2021-03-09)
 
   **Breaking Changes**
