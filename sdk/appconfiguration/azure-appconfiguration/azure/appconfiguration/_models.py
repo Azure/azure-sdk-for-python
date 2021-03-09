@@ -63,13 +63,13 @@ class ConfigurationSetting(Model):
             ):
                 return FeatureFlagConfigurationSetting._from_generated(  # pylint: disable=protected-access
                     key_value
-                )  # pylint: disable=protected-access
+                )
             if key_value.content_type.startswith(
                 SecretReferenceConfigurationSetting.secret_reference_content_type
             ):
                 return SecretReferenceConfigurationSetting._from_generated(  # pylint: disable=protected-access
                     key_value
-                )  # pylint: disable=protected-access
+                )
 
         return cls(
             key=key_value.key,
@@ -109,7 +109,7 @@ class FeatureFlagConfigurationSetting(
     :param enabled:
     :type enabled: bool
     :param filters:
-    :type filters: list[FeatureFilterBase]
+    :type filters: list[FeatureFilter]
     :param label:
     :type label: str
     :param content_type:
@@ -140,7 +140,7 @@ class FeatureFlagConfigurationSetting(
     )
 
     def __init__(self, key, enabled, filters=None, **kwargs):
-        # type: (str, bool, Optional[List[FeatureFilterBase]]) -> None
+        # type: (str, bool, Optional[List[FeatureFilter]]) -> None
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
         self.key = key
         if not key.startswith(self.key_prefix):
@@ -174,8 +174,9 @@ class FeatureFlagConfigurationSetting(
                 key_value.value["conditions"]["client_filters"] = []
             if len(filters) > 0 and filters != [None]:
                 filters = [
-                    FeatureFilterBase._from_generated(f) for f in filters  # pylint: disable=protected-access
-                ]  # pylint: disable=protected-access
+                    FeatureFilter._from_generated(f)
+                    for f in filters  # pylint: disable=protected-access
+                ]
                 key_value.value["conditions"]["client_filters"] = filters
         except KeyError:
             pass
@@ -219,17 +220,17 @@ class FeatureFlagConfigurationSetting(
         )
 
     def add_feature_filter(self, feature_filter):
-        # type: (FeatureFilterBase) -> None
+        # type: (FeatureFilter) -> None
 
         """Add a feature filter to the ConfigurationSetting
         :param feature_filter:
-        :type feature_filter: list[FeatureFilterBase]
+        :type feature_filter: list[FeatureFilter]
         """
 
         self.filters.append(feature_filter)
 
 
-class SecretReferenceConfigurationSetting(Model):
+class SecretReferenceConfigurationSetting(ConfigurationSetting):
     """A configuration value that references a KeyVault Secret
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -316,141 +317,18 @@ class SecretReferenceConfigurationSetting(Model):
         )
 
 
-class FeatureFilterBase(object):
-    """Base class for the feature filters of FeatureFlagConfigurationSetting"""
+class FeatureFilter(object):
+    """Feature filters for FeatureFlagConfigurationSetting"""
 
-    def __init__(self):
-        pass
+    def __init__(self, name, parameters):
+        # type: (str, dict[str, Any]) -> None
+        self.name = name
+        self.parameters = parameters
 
     @classmethod
     def _from_generated(cls, feature_filter):
-        if feature_filter["name"] == "Microsoft.Targeting":
-            return TargetingFeatureFilter.from_service(feature_filter["parameters"])
-        if feature_filter["name"] == "Microsoft.TimeWindow":
-            return TimeWindowFeatureFilter.from_service(feature_filter["parameters"])
-        if feature_filter["name"] == "Microsoft.Percentage":
-            return CustomFeatureFilter.from_service(feature_filter["parameters"])
-        raise ValueError(
-            "{} not recognized as a feature filter.".format(feature_filter["name"])
-        )
+        return cls(feature_filter["name"], feature_filter["parameters"])
 
     def _to_generated(self):
-        pass
-
-
-class TargetingFeatureFilter(FeatureFilterBase):
-    """A configuration setting that controls a feature flag
-    :param rollout_percentage:
-    :type rollout_percentage: int
-    :param users:
-    :type users: list[str]
-    :param groups:
-    :type groups: list[dict[str,int]]
-    """
-
-    def __init__(
-        self, rollout_percentage, users=None, groups=None
-    ):  # pylint:disable=super-init-not-called
-        # type: (str, dict) -> None
-        self._name = "Microsoft.Targeting"
-        self.rollout_percentage = rollout_percentage
-        self.users = users or []
-        self.groups = groups or []
-
-    @classmethod
-    def from_service(cls, dict_repr):
-        # type: (dict[str, str]) -> TargetingFeatureFilter
-
-        """Creates a TargetingFeatureFilter from the generated code call
-
-        :param dict_repr:
-        :type dict_repr: dict[str, str]
-        """
-
-        return cls(
-            dict_repr["Audience"]["DefaultRolloutPercentage"],
-            users=dict_repr["Audience"]["Users"],
-            groups=dict_repr["Audience"]["Groups"],
-        )
-
-    def _to_generated(self):
-        # type: (...) -> dict
-        return {
-            "name": self._name,
-            "parameters": {
-                "Audience": {
-                    "Users": self.users,
-                    "Groups": self.groups,
-                    "DefaultRolloutPercentage": self.rollout_percentage,
-                }
-            },
-        }
-
-
-class TimeWindowFeatureFilter(FeatureFilterBase):
-    """A configuration setting that controls a feature flag
-    :param start:
-    :type start: datetime.datetime
-    :param end:
-    :type end: datetime.datetime
-    """
-
-    def __init__(self, start, end=None):  # pylint:disable=super-init-not-called
-        self._name = "Microsoft.TimeWindow"
-        self.start = start
-        self.end = end
-        self._to_datetime_object()
-
-    def _to_datetime_object(self):
-        # Example: "Fri, 19 Feb 2021 18:00:00 GMT"
-        if not isinstance(self.start, datetime):
-            self.start = datetime.strptime(self.start, "%a, %d %b %Y %H:%M:%S %Z")
-
-        if not isinstance(self.end, datetime) and self.end is not None:
-            self.end = datetime.strptime(self.end, "%a, %d %b %Y %H:%M:%S %Z")
-
-    @classmethod
-    def from_service(cls, dict_repr):
-        # type: (dict[str, str]) -> TimeWindowFeatureFilter
-
-        """Creates a TimeWindowFeatureFilter from the generated code call
-
-        :param dict_repr:
-        :type dict_repr: dict[str, str]
-        """
-        return cls(dict_repr["Start"], end=dict_repr.get("End", None))
-
-    def _to_generated(self):
-        # type: (...) -> dict
-        start = self.start.strftime("%a, %d %b %Y %H:%M:%S %Z") + "GMT"
-        end = self.end
-        if self.end and isinstance(self.end, datetime):
-            end = self.end.strftime("%a, %d %b %Y %H:%M:%S %Z") + "GMT"
-        return {"name": self._name, "parameters": {"Start": start, "End": end}}
-
-
-class CustomFeatureFilter(FeatureFilterBase):
-    """A configuration setting that controls a feature flag
-    :param value: The value of the feature filter, this must range from 0-100
-    :type value: int
-    """
-
-    def __init__(self, value):  # pylint:disable=super-init-not-called
-        # type: (int) -> None
-        self._name = "Microsoft.Percentage"
-        self.value = value
-
-    @classmethod
-    def from_service(cls, dict_repr):
-        # type: (dict[str, str]) -> CustomFeatureFilter
-
-        """Creates a CustomFeatureFilter from the generated code call
-
-        :param dict_repr:
-        :type dict_repr: dict[str, str]
-        """
-        return cls(dict_repr["Value"])
-
-    def _to_generated(self):
-        # type: (...) -> dict
-        return {"name": self._name, "parameters": {"Value": self.value}}
+        # type: (...) -> Dict[str, Any]
+        return {"name": self.name, "parameters": self.parameters}

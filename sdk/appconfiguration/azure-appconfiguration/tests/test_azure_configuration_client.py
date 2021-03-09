@@ -17,9 +17,7 @@ from azure.appconfiguration import (
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
-    TargetingFeatureFilter,
-    TimeWindowFeatureFilter,
-    CustomFeatureFilter
+    FeatureFilter,
 )
 
 from consts import (
@@ -517,23 +515,54 @@ class AppConfigurationClientTest(AzureTestCase):
         new = FeatureFlagConfigurationSetting(
             "newflag",
             True,
-            filters=[TargetingFeatureFilter(75)]
+            filters=[
+                FeatureFilter(
+                    name=u"Microsoft.Targeting",
+                    parameters={
+                        u"Audience": {
+                            u"Users": [u"abc", u"def"],
+                            u"Groups": [u"ghi", u"jkl"],
+                            u"DefaultRolloutPercentage": 75
+                        }
+                    }
+                )
+            ]
         )
-
-        print(new._to_generated())
 
         sent_config = client.set_configuration_setting(new)
         self._assert_same_keys(sent_config, new)
 
-        assert isinstance(sent_config.filters[0], TargetingFeatureFilter)
+        assert isinstance(sent_config.filters[0], FeatureFilter)
         assert len(sent_config.filters) == 1
 
-        sent_config.filters[0].rollout_percentage = 80
+        sent_config.filters[0].parameters["Audience"]["DefaultRolloutPercentage"] = 80
         updated_sent_config = client.set_configuration_setting(sent_config)
         self._assert_same_keys(sent_config, updated_sent_config)
 
-        updated_sent_config.add_feature_filter(TargetingFeatureFilter(50))
-        updated_sent_config.add_feature_filter(TargetingFeatureFilter(100))
+        updated_sent_config.add_feature_filter(
+            FeatureFilter(
+                name=u"Microsoft.Targeting",
+                parameters={
+                    u"Audience": {
+                        u"Users": [u"abcd", u"defg"],
+                        u"Groups": [u"ghij", u"jklm"],
+                        u"DefaultRolloutPercentage": 50
+                    }
+                }
+            )
+        )
+        updated_sent_config.add_feature_filter(
+            FeatureFilter(
+                name=u"Microsoft.Targeting",
+                parameters={
+                    u"Audience": {
+                        u"Users": [u"abcde", u"defgh"],
+                        u"Groups": [u"ghijk", u"jklmn"],
+                        u"DefaultRolloutPercentage": 100
+                    }
+                }
+            )
+        )
 
         sent_config = client.set_configuration_setting(updated_sent_config)
         self._assert_same_keys(sent_config, updated_sent_config)
@@ -547,17 +576,20 @@ class AppConfigurationClientTest(AzureTestCase):
             'time_window',
             True,
             filters=[
-                TimeWindowFeatureFilter(
-                    start=datetime.datetime(2021, 2, 19, 18, 0),
-                    end=datetime.datetime(2021, 2, 26, 5, 0)
-                ),
+                FeatureFilter(
+                    name=u"Microsoft.TimeWindow",
+                    parameters={
+                        "Start": "Wed, 10 Mar 2021 05:00:00 GMT",
+                        "End": "Fri, 02 Apr 2021 04:00:00 GMT"
+                    }
+                )
             ]
         )
 
         sent = client.set_configuration_setting(new)
         self._assert_same_keys(sent, new)
 
-        sent.filters[0].end = datetime.datetime(2021, 2, 26, 8, 0)
+        sent.filters[0].parameters["Start"] = "Thurs, 11 Mar 2021 05:00:00 GMT"
         new_sent = client.set_configuration_setting(sent)
         self._assert_same_keys(sent, new_sent)
 
@@ -569,14 +601,20 @@ class AppConfigurationClientTest(AzureTestCase):
             'custom',
             True,
             filters=[
-                CustomFeatureFilter(value=50)
+                FeatureFilter(
+                    name=u"Microsoft.Percentage",
+                    parameters={
+                        "Value": 10,
+                        "User": "user1"
+                    }
+                )
             ]
         )
 
         sent = client.set_configuration_setting(new)
         self._assert_same_keys(sent, new)
 
-        sent.filters[0].value = 100
+        sent.filters[0].parameters["Value"] = 100
         new_sent = client.set_configuration_setting(sent)
         self._assert_same_keys(sent, new_sent)
 
@@ -588,27 +626,44 @@ class AppConfigurationClientTest(AzureTestCase):
             'custom',
             True,
             filters=[
-                CustomFeatureFilter(value=50),
-                TimeWindowFeatureFilter(
-                    start=datetime.datetime(2021, 2, 19, 18, 0), #'Fri, 19 Feb 2021 18:00:00 GMT',
-                    end=datetime.datetime(2021, 2, 26, 5, 0) #'Fri, 26 Feb 2021 05:00:00 GMT'
+                FeatureFilter(
+                    name=u"Microsoft.Percentage",
+                    parameters={
+                        "Value": 10
+                    }
                 ),
-                TargetingFeatureFilter(75)
+                FeatureFilter(
+                    name=u"Microsoft.TimeWindow",
+                    parameters={
+                        "Start": "Wed, 10 Mar 2021 05:00:00 GMT",
+                        "End": "Fri, 02 Apr 2021 04:00:00 GMT"
+                    }
+                ),
+                FeatureFilter(
+                    name=u"Microsoft.Targeting",
+                    parameters={
+                        u"Audience": {
+                            u"Users": [u"abcde", u"defgh"],
+                            u"Groups": [u"ghijk", u"jklmn"],
+                            u"DefaultRolloutPercentage": 100
+                        }
+                    }
+                )
             ]
         )
 
         sent = client.set_configuration_setting(new)
         self._assert_same_keys(sent, new)
 
-        sent.filters[0].value = 100
-        sent.filters[1].end = datetime.datetime(2021, 2, 26, 8, 0)
-        sent.filters[2].rollout_percentage = 80
+        sent.filters[0].parameters["Value"] = 100
+        sent.filters[1].parameters["Start"] = "Wed, 10 Mar 2021 08:00:00 GMT"
+        sent.filters[2].parameters["Audience"]["DefaultRolloutPercentage"] = 100
 
         new_sent = client.set_configuration_setting(sent)
         self._assert_same_keys(sent, new_sent)
 
-        assert new_sent.filters[0].value == 100
-        assert new_sent.filters[1].end == datetime.datetime(2021, 2, 26, 8, 0)
-        assert new_sent.filters[2].rollout_percentage == 80
+        assert new_sent.filters[0].parameters["Value"] == 100
+        assert new_sent.filters[1].parameters["Start"] == "Wed, 10 Mar 2021 08:00:00 GMT"
+        assert new_sent.filters[2].parameters["Audience"]["DefaultRolloutPercentage"] == 100
 
         client.delete_configuration_setting(new_sent.key)
