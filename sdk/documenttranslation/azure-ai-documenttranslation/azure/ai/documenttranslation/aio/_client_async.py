@@ -9,6 +9,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.polling import AsyncLROPoller
+from ._poller_async import AsyncDocumentTranslationPoller
 from .._generated.aio import BatchDocumentTranslationClient as _BatchDocumentTranslationClient
 from .._user_agent import USER_AGENT
 from .._models import TranslationStatusDetail, DocumentStatusDetail, BatchDocumentInput, FileFormat
@@ -51,13 +52,13 @@ class DocumentTranslationClient(object):
 
     @distributed_trace_async
     async def begin_translation(self, batch, **kwargs):
-        # type: (List[BatchDocumentInput], **Any) -> AsyncLROPoller[AsyncItemPaged[DocumentStatusDetail]]
+        # type: (List[BatchDocumentInput], **Any) -> AsyncDocumentTranslationPoller[AsyncItemPaged[DocumentStatusDetail]]
         """
 
         :param batch:
         :type batch: List[~azure.ai.documenttranslation.BatchDocumentInput]
         :return: An iterable of DocumentStatusDetail
-        :rtype: AsyncLROPoller[~azure.core.paging.AsyncItemPaged[~azure.ai.documenttranslation.DocumentStatusDetail]]
+        :rtype: AsyncDocumentTranslationPoller[~azure.core.paging.AsyncItemPaged[~azure.ai.documenttranslation.DocumentStatusDetail]]
         """
 
         return await self._client.document_translation.begin_submit_batch_request(

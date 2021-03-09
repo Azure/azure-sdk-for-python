@@ -10,6 +10,7 @@ from azure.core.polling import LROPoller
 from ._generated import BatchDocumentTranslationClient as _BatchDocumentTranslationClient
 from ._helpers import get_authentication_policy
 from ._user_agent import USER_AGENT
+from ._poller import DocumentTranslationPoller
 if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
     from azure.core.credentials import AzureKeyCredential, TokenCredential
@@ -47,13 +48,13 @@ class DocumentTranslationClient(object):
 
     @distributed_trace
     def begin_translation(self, batch, **kwargs):
-        # type: (List[BatchDocumentInput], **Any) -> LROPoller[ItemPaged[DocumentStatusDetail]]
+        # type: (List[BatchDocumentInput], **Any) -> DocumentTranslationPoller[ItemPaged[DocumentStatusDetail]]
         """
 
         :param batch:
         :type batch: List[~azure.ai.documenttranslation.BatchDocumentInput]
         :return: An iterable of DocumentStatusDetail
-        :rtype: LROPoller[ItemPaged[DocumentStatusDetail]]
+        :rtype: DocumentTranslationPoller[ItemPaged[DocumentStatusDetail]]
         """
 
         return self._client.document_translation.begin_submit_batch_request(
