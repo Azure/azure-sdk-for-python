@@ -1,0 +1,51 @@
+
+# coding: utf-8
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
+import os
+import functools
+from devtools_testutils import PowerShellPreparer, AzureMgmtPreparer
+from azure.core.credentials import AzureKeyCredential
+
+
+DocumentTranslationPreparer = functools.partial(
+    PowerShellPreparer,
+    'documenttranslation',
+    documenttranslation_test_endpoint="https://region.api.cognitive.microsoft.com/",
+    documenttranslation_test_api_key="fakeZmFrZV9hY29jdW50X2tleQ==",
+    documenttranslation_source_container_sas_url="container_sas_url",
+    documenttranslation_target_container_sas_url="container_sas_url"
+)
+
+
+class DocumentTranslationClientPreparer(AzureMgmtPreparer):
+    def __init__(self, client_cls, client_kwargs={}, **kwargs):
+        super(DocumentTranslationClientPreparer, self).__init__(
+            name_prefix='',
+            random_name_length=42
+        )
+        self.client_kwargs = client_kwargs
+        self.client_cls = client_cls
+
+    def create_resource(self, name, **kwargs):
+        if self.is_live:
+            doctranslation_test_endpoint = os.environ["DOCUMENTTRANSLATION_TEST_ENDPOINT"]
+            doctranslation_test_api_key = os.environ["DOCUMENTTRANSLATION_TEST_API_KEY"]
+            polling_interval = 30
+        else:
+            doctranslation_test_endpoint = "https://name.cognitiveservices.azure.com/"
+            doctranslation_test_api_key = "fakeZmFrZV9hY29jdW50X2tleQ=="
+            polling_interval = 0
+
+        client = self.client_cls(
+            doctranslation_test_endpoint,
+            AzureKeyCredential(doctranslation_test_api_key),
+            polling_interval=polling_interval,
+            **self.client_kwargs
+        )
+        kwargs.update({"client": client})
+        return kwargs
