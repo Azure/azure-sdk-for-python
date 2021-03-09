@@ -74,8 +74,8 @@ class ChatMessage(object):
     :ivar created_on: The timestamp when the chat message arrived at the server. The timestamp is
      in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :type created_on: ~datetime.datetime
-    :ivar sender_communication_identifier: The chat message sender.
-    :type sender_communication_identifier: CommunicationUserIdentifier
+    :ivar sender: The chat message sender.
+    :type sender: CommunicationUserIdentifier
     :ivar deleted_on: The timestamp when the chat message was deleted. The timestamp is in RFC3339
      format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :type deleted_on: ~datetime.datetime
@@ -97,7 +97,7 @@ class ChatMessage(object):
         self.content = kwargs['content']
         self.sender_display_name = kwargs['sender_display_name']
         self.created_on = kwargs['created_on']
-        self.sender_communication_identifier = kwargs['sender_communication_identifier']
+        self.sender = kwargs['sender']
         self.deleted_on = kwargs['deleted_on']
         self.edited_on = kwargs['edited_on']
 
@@ -125,7 +125,7 @@ class ChatMessage(object):
             content=ChatMessageContent._from_generated(chat_message.content), # pylint:disable=protected-access
             sender_display_name=chat_message.sender_display_name,
             created_on=chat_message.created_on,
-            sender_communication_identifier=sender_communication_identifier,
+            sender=sender_communication_identifier,
             deleted_on=chat_message.deleted_on,
             edited_on=chat_message.edited_on
         )
@@ -141,9 +141,9 @@ class ChatMessageContent(object):
     :ivar participants: Chat message content for messages of types participantAdded or
      participantRemoved.
     :type participants: list[~azure.communication.chat.models.ChatParticipant]
-    :ivar initiator_communication_identifier: Chat message content for messages of types participantAdded or
+    :ivar initiator: Chat message content for messages of types participantAdded or
      participantRemoved.
-    :type initiator_communication_identifier: CommunicationUserIdentifier
+    :type initiator: Union[CommunicationUserIdentifier, MicrosoftTeamsUserIdentifier]
     """
 
     def __init__(

@@ -44,14 +44,11 @@ it with this token. It is because the initiator of the create request must be in
 This will allow you to create, get, list or delete chat threads.
 
 ```python
-from azure.communication.chat import ChatClient
-from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
-from azure.communication.identity._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
+from azure.communication.chat import ChatClient, CommunicationTokenCredential
 
 # Your unique Azure Communication service endpoint
 endpoint = "https://<RESOURCE_NAME>.communcationservices.azure.com"
-refresh_options = CommunicationTokenRefreshOptions(token)
-chat_client = ChatClient(endpoint, CommunicationTokenCredential(refresh_options))
+chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
 ```
 
 ## Create Chat Thread Client
