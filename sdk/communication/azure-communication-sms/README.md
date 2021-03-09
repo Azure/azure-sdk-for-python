@@ -37,7 +37,7 @@ The following section provides several code snippets covering some of the most c
 
 - [Client Initialization](#client-initialization)
 - [Send a 1:1 SMS Message](#send-a-1:1-sms-message)
-- [Send a 1:N SMS Message](#send-a-1:N-sms-message)
+- [Send a 1:N SMS Message](#send-a-1:n-sms-message)
 
 ### Client Initialization
 
