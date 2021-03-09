@@ -57,7 +57,7 @@ HeaderTypes = Union[
 
 ByteStream = Union[Iterable[bytes], AsyncIterable[bytes]]
 CookieTypes = Union[CookieJar, Dict[str, str], List[Tuple[str, str]]]
-RequestContent = Union[str, bytes, ByteStream]
+Content = Union[str, bytes, ByteStream]
 
 FileContent = Union[IO[str], IO[bytes], str, bytes]
 RequestFiles = Union[Mapping[str, FileContent], Sequence[Tuple[str, FileContent]]]

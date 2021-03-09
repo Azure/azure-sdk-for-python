@@ -23,34 +23,15 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from ..pipeline.transport._base import (
-    _deserialize_response,
-    HttpClientTransportResponse,
-    PipelineType,
-)
-from ..pipeline.policies import SansIOHTTPPolicy
-from ..exceptions import HttpResponseError
-from typing import (
-    Any,
-    Optional,
-    MutableMapping,
-    List,
-    Type,
-    Iterator,
-)
-from email.message import Message
+from datetime import timedelta
 from ._http_request import HttpRequest
-from azure.core.pipeline import (
-    PipelineRequest,
-    PipelineResponse,
-    PipelineContext,
+from typing import Any, Callable, Iterator, List, Optional
+from ._types import (
+    HeaderTypes,
+    ByteStream,
+    Content,
 )
-from ..pipeline._tools import await_result as _await_result
-
-try:
-    from email import message_from_bytes as message_parser
-except ImportError:  # 2.7
-    from email import message_from_string as message_parser  # type: ignore
+from ..exceptions import HttpResponseError
 
 class _HttpResponseBase(object):
     """Represent a HTTP response.
@@ -58,88 +39,114 @@ class _HttpResponseBase(object):
     No body is defined here on purpose, since async pipeline
     will provide async ways to access the body
     Full in-memory using "body" as bytes.
-
-    :param request: The request.
-    :type request: ~azure.core.protocol.HttpRequest
-    :param internal_response: The object returned from the HTTP library.
-    :type internal_response: any
-    :param block_size: Defaults to 4096 bytes.
-    :type block_size: optional[int]
     """
 
-    def __init__(self, request, internal_response, block_size=None):
-        # type: (HttpRequest, Any, Optional[int]) -> None
-        self.request = request
-        self.internal_response = internal_response
-        self.status_code = None  # type: Optional[int]
-        self.headers = {}  # type: MutableMapping[str, str]
-        self.reason = None  # type: Optional[str]
-        self.content_type = None  # type: Optional[str]
-        self.block_size = block_size or 4096  # Default to same as Requests
+    def __init__(
+        self,
+        status_code: int,
+        *,
+        headers: HeaderTypes,
+        content: Content,
+        text: str = None,
+        html: str = None,
+        json: Any = None,
+        stream: ByteStream = None,
+        request: HttpRequest = None,
+        http_version: str = None,
+        reason: str = None,
+        on_close: Callable = None,
+        history: List["_HttpResponseBase"] = None,
+    ):
+        self.status_code = status_code
+        self.headers = headers
+        self.is_closed = False
+        self.is_stream_consumed = False
+        self.stream = stream
+        self.http_version = http_version
+        self.reason = reason
+        self._content = content
+        self._enconding = None
+        self._on_close = on_close
+        self.history = history
 
-    def body(self):
-        # type: () -> bytes
-        """Return the whole body as bytes in memory.
+    @property
+    def elapsed(self) -> timedelta:
         """
-        raise NotImplementedError()
+        Returns the time taken for the complete request/response
+        cycle to complete.
+        """
+        if not hasattr(self, "_elapsed"):
+            raise RuntimeError(
+                "'.elapsed' may only be accessed after the response "
+                "has been read or closed."
+            )
+        return self._elapsed
 
-    def text(self, encoding=None):
-        # type: (str) -> str
+    @elapsed.setter
+    def elapsed(self, elapsed: timedelta) -> None:
+        self._elapsed = elapsed
+
+    @property
+    def request(self) -> HttpRequest:
+        """
+        Returns the request instance associated to the current response.
+        """
+        if self._request is None:
+            raise RuntimeError(
+                "The request instance has not been set on this response."
+            )
+        return self._request
+
+    @request.setter
+    def request(self, value: HttpRequest) -> None:
+        self._request = value
+
+    @property
+    def url(self) -> str:
+        return self.request.url
+
+    @property
+    def content(self) -> Content:
+        return self._content
+
+    @property
+    def text(self) -> str:
         """Return the whole body as a string.
-
-        :param str encoding: The encoding to apply. If None, use "utf-8" with BOM parsing (utf-8-sig).
-         Implementation can be smarter if they want (using headers or chardet).
         """
-        if encoding == "utf-8" or encoding is None:
+        if self.encoding == "utf-8" or self.encoding is None:
             encoding = "utf-8-sig"
-        return self.body().decode(encoding)
+        return "self.body().decode(encoding)"
 
-    def _decode_parts(self, message, http_response_type, requests):
-        # type: (Message, Type[_HttpResponseBase], List[HttpRequest]) -> List[HttpResponse]
-        """Rebuild an HTTP response from pure string."""
-        responses = []
-        for index, raw_reponse in enumerate(message.get_payload()):
-            content_type = raw_reponse.get_content_type()
-            if content_type == "application/http":
-                responses.append(
-                    _deserialize_response(
-                        raw_reponse.get_payload(decode=True),
-                        requests[index],
-                        http_response_type=http_response_type,
-                    )
-                )
-            elif content_type == "multipart/mixed" and requests[index].multipart_mixed_info:
-                # The message batch contains one or more change sets
-                changeset_requests = requests[index].multipart_mixed_info[0]  # type: ignore
-                changeset_responses = self._decode_parts(raw_reponse, http_response_type, changeset_requests)
-                responses.extend(changeset_responses)
-            else:
-                raise ValueError(
-                    "Multipart doesn't support part other than application/http for now"
-                )
-        return responses
-
-    def _get_raw_parts(self, http_response_type=None):
-        # type (Optional[Type[_HttpResponseBase]]) -> Iterator[HttpResponse]
-        """Assuming this body is multipart, return the iterator or parts.
-
-        If parts are application/http use http_response_type or HttpClientTransportResponse
-        as enveloppe.
+    @property
+    def encoding(self) -> Optional[str]:
         """
-        if http_response_type is None:
-            http_response_type = HttpClientTransportResponse
+        Return the encoding, which may have been set explicitly, or may have
+        been specified by the Content-Type header.
+        """
+        return self._encoding
 
-        body_as_bytes = self.body()
-        # In order to use email.message parser, I need full HTTP bytes. Faking something to make the parser happy
-        http_body = (
-            b"Content-Type: "
-            + self.content_type.encode("ascii")
-            + b"\r\n\r\n"
-            + body_as_bytes
-        )
-        message = message_parser(http_body)  # type: Message
-        requests = self.request.multipart_mixed_info[0]  # type: List[HttpRequest]
-        return self._decode_parts(message, http_response_type, requests)
+    @encoding.setter
+    def encoding(self, value: str) -> None:
+        self._encoding = value
+
+    @property
+    def charset_encoding(self) -> Optional[str]:
+        return self.encoding
+
+    @property
+    def is_error(self) -> bool:
+        return False
+
+    def json(self, **kwargs: Any) -> Any:
+        return ""
+
+    @property
+    def is_redirect(self) -> bool:
+        return False
+
+    @property
+    def cookies(self) -> "Cookies":
+        return ""
 
     def raise_for_status(self):
         # type () -> None
@@ -151,59 +158,37 @@ class _HttpResponseBase(object):
 
     def __repr__(self):
         # there doesn't have to be a content type
-        content_type_str = (
-            ", Content-Type: {}".format(self.content_type) if self.content_type else ""
-        )
+        content_type_str = "hello"
         return "<{}: {} {}{}>".format(
             type(self).__name__, self.status_code, self.reason, content_type_str
         )
 
+    @property
+    def num_bytes_downloaded(self) -> int:
+        return 2
+
 class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
-    def stream_download(self, pipeline):
-        # type: (PipelineType) -> Iterator[bytes]
-        """Generator for streaming request body data.
+    def read(self) -> bytes:
+        return b''
 
-        Should be implemented by sub-classes if streaming download
-        is supported.
+    def iter_bytes(self, chunk_size: int = None) -> Iterator[bytes]:
+        return None
 
-        :param PipelineType pipeline: The type of pipeline
-        :rtype: Iterator[bytes]
-        """
+    def iter_text(self, chunk_size: int = None) -> Iterator[str]:
+        return None
 
-    def parts(self):
-        # type: () -> Iterator[HttpResponse]
+    def iter_lines(self) -> Iterator[str]:
+        return ""
+
+    def iter_raw(self, chunk_size: int = None) -> Iterator[bytes]:
+        return None
+
+    def close(self) -> None:
+        return None
+
+    def parts(self) -> Iterator["HttpResponse"]:
         """Assuming the content-type is multipart/mixed, will return the parts as an iterator.
 
-        :rtype: Iterator[~azure.core.protocol.HttpResponse]
         :raises ValueError: If the content is not multipart/mixed
         """
-        if not self.content_type or not self.content_type.startswith("multipart/mixed"):
-            raise ValueError(
-                "You can't get parts if the response is not multipart/mixed"
-            )
-
-        responses = self._get_raw_parts()
-        if self.request.multipart_mixed_info:
-            policies = self.request.multipart_mixed_info[1]  # type: List[SansIOHTTPPolicy]
-
-            # Apply on_response concurrently to all requests
-            import concurrent.futures
-
-            def parse_responses(response):
-                http_request = response.request
-                context = PipelineContext(None)
-                pipeline_request = PipelineRequest(http_request, context)
-                pipeline_response = PipelineResponse(
-                    http_request, response, context=context
-                )
-
-                for policy in policies:
-                    _await_result(policy.on_response, pipeline_request, pipeline_response)
-
-            with concurrent.futures.ThreadPoolExecutor() as executor:
-                # List comprehension to raise exceptions if happened
-                [  # pylint: disable=expression-not-assigned, unnecessary-comprehension
-                    _ for _ in executor.map(parse_responses, responses)
-                ]
-
-        return responses
+        return []

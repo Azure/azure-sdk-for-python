@@ -24,12 +24,12 @@
 #
 # --------------------------------------------------------------------------
 import copy
-from typing import Any, Union
+from typing import Any
 from ._types import (
     QueryParamTypes,
     HeaderTypes,
     CookieTypes,
-    RequestContent,
+    Content,
     RequestFiles,
     ByteStream,
 )
@@ -42,23 +42,23 @@ class HttpRequest(object):
 
     def __init__(
         self,
-        method: Union[str, bytes],
+        method: str,
         url: str,
         *,
         params: QueryParamTypes = None,
         headers: HeaderTypes = None,
         cookies: CookieTypes = None,
-        content: RequestContent = None,
+        content: Content = None,
         data: dict = None,
         files: RequestFiles = None,
         json: Any = None,
-        stream: ByteStream = None,
+        stream_response: bool = True,
     ) -> None:
         self.method = method
         self.url = url
         # doesn't expose params, automatically formats URL with it
         self.headers = headers
-        self.stream = stream
+        self.stream_response = stream_response
 
 
     def __repr__(self):
@@ -75,7 +75,5 @@ class HttpRequest(object):
     @property
     def content(self) -> bytes:
         """The query parameters of the request as a dict.
-
-        :rtype: dict[str, str]
         """
         return b''

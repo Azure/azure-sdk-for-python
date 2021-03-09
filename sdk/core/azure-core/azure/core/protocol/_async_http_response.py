@@ -23,12 +23,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from collections.abc import AsyncIterator
-from ._http_response import _HttpResponseBase, PipelineType
-from typing import (
-    AsyncIterator as AsyncIteratorType,
-)
-from ..pipeline.transport._base_async import _PartGenerator
+from ._http_response import _HttpResponseBase
+from typing import AsyncIterator
 
 class AsyncHttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
     """An AsyncHttpResponse ABC.
@@ -36,26 +32,27 @@ class AsyncHttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
     Allows for the asynchronous streaming of data from the response.
     """
 
-    def stream_download(self, pipeline) -> AsyncIteratorType[bytes]:
-        """Generator for streaming response body data.
+    async def read(self) -> bytes:
+        return b''
 
-        Should be implemented by sub-classes if streaming download
-        is supported. Will return an asynchronous generator.
+    async def iter_bytes(self, chunk_size: int = None) -> AsyncIterator[bytes]:
+        return None
 
-        :param pipeline: The pipeline object
-        :type pipeline: ~azure.core.pipeline
-        :rtype: AsyncIterator[bytes]
-        """
+    async def iter_text(self, chunk_size: int = None) -> AsyncIterator[str]:
+        return None
 
-    def parts(self) -> AsyncIterator:
-        """Assuming the content-type is multipart/mixed, will return the parts as an async iterator.
+    async def iter_lines(self) -> AsyncIterator[str]:
+        return ""
 
-        :rtype: AsyncIterator
+    async def iter_raw(self, chunk_size: int = None) -> AsyncIterator[bytes]:
+        return None
+
+    async def close(self) -> None:
+        return None
+
+    def parts(self) -> AsyncIterator["HttpResponse"]:
+        """Assuming the content-type is multipart/mixed, will return the parts as an iterator.
+
         :raises ValueError: If the content is not multipart/mixed
         """
-        if not self.content_type or not self.content_type.startswith("multipart/mixed"):
-            raise ValueError(
-                "You can't get parts if the response is not multipart/mixed"
-            )
-
-        return _PartGenerator(self)
+        return []
