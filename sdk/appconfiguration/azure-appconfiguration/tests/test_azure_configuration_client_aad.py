@@ -452,41 +452,60 @@ class AppConfigurationClientTest(AzureTestCase):
 
     @app_config_decorator
     def test_sync_tokens(self, client):
-        new = FeatureFlagConfigurationSetting('custom', True, feature_filter={
-            'name': 'Microsoft.Percentage',
-            'parameters': {
-                'Value': 50
-            }
-        })
+        new = FeatureFlagConfigurationSetting(
+            'custom',
+            True,
+            feature_filter=[
+                FeatureFilter(
+                    name=u"Microsoft.Percentage",
+                    parameters={
+                        "Value": 10,
+                        "User": "user1"
+                    }
+                )
+            ]
+        )
 
         sync_tokens = copy.deepcopy(client._sync_token_policy._sync_tokens)
         keys = list(sync_tokens.keys())
         seq_num = sync_tokens[keys[0]].sequence_number
         sent = client.set_configuration_setting(new)
 
-        new = FeatureFlagConfigurationSetting('time_window', True, feature_filter={
-            'name': 'Microsoft.TimeWindow',
-            'parameters': {
-                'Start': 'Fri, 19 Feb 2021 18:00:00 GMT', # TODO: convert these to datetime objects
-                'End': 'Fri, 26 Feb 2021 05:00:00 GMT'
-            }
-        })
+        new = FeatureFlagConfigurationSetting(
+            'time_window',
+            True,
+            feature_filter=[
+                FeatureFilter(
+                    name=u"Microsoft.TimeWindow",
+                    parameters={
+                        "Start": "Wed, 10 Mar 2021 05:00:00 GMT",
+                        "End": "Fri, 02 Apr 2021 04:00:00 GMT"
+                    }
+                )
+            ]
+        )
 
         sent = client.set_configuration_setting(new)
         sync_tokens2 = copy.deepcopy(client._sync_token_policy._sync_tokens)
         keys = list(sync_tokens2.keys())
         seq_num2 = sync_tokens2[keys[0]].sequence_number
 
-        new = FeatureFlagConfigurationSetting("newflag", True, feature_filter={
-            'name': 'Microsoft.Targeting',
-            'parameters': {
-                'Audience': {
-                    'Users': [],
-                    'Groups': [],
-                    'DefaultRolloutPercentage': 75,
-                }
-            }
-        })
+        new = FeatureFlagConfigurationSetting(
+            "newflag",
+            True,
+            feature_filter=[
+                FeatureFilter(
+                    name=u"Microsoft.Targeting",
+                    parameters={
+                        u"Audience": {
+                            u"Users": [u"abc", u"def"],
+                            u"Groups": [u"ghi", u"jkl"],
+                            u"DefaultRolloutPercentage": 75
+                        }
+                    }
+                ),
+            ]
+        )
 
         sent = client.set_configuration_setting(new)
         sync_tokens3 = copy.deepcopy(client._sync_token_policy._sync_tokens)

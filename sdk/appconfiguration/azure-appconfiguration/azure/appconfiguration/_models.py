@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
-from datetime import datetime
 from msrest.serialization import Model
 from ._generated.models import KeyValue
 
@@ -174,8 +173,8 @@ class FeatureFlagConfigurationSetting(
                 key_value.value["conditions"]["client_filters"] = []
             if len(filters) > 0 and filters != [None]:
                 filters = [
-                    FeatureFilter._from_generated(f)
-                    for f in filters  # pylint: disable=protected-access
+                    FeatureFilter._from_generated(f)  # pylint: disable=protected-access
+                    for f in filters
                 ]
                 key_value.value["conditions"]["client_filters"] = filters
         except KeyError:
@@ -202,7 +201,7 @@ class FeatureFlagConfigurationSetting(
             u"conditions": {
                 u"client_filters": [
                     f._to_generated()  # pylint: disable=protected-access
-                    for f in self.filters  # pylint: disable=protected-access
+                    for f in self.filters
                 ]
             },
         }

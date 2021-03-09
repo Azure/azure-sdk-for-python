@@ -428,7 +428,13 @@ class AppConfigurationClientTest(AzureTestCase):
             'custom',
             True,
             feature_filter=[
-                CustomFeatureFilter(50)
+                FeatureFilter(
+                    name=u"Microsoft.Percentage",
+                    parameters={
+                        "Value": 10,
+                        "User": "user1"
+                    }
+                )
             ]
         )
 
@@ -441,9 +447,12 @@ class AppConfigurationClientTest(AzureTestCase):
             'time_window',
             True,
             feature_filter=[
-                TimeWindowFeatureFilter(
-                    start=datetime.datetime(2021, 2, 19, 18, 0),
-                    end=datetime.datetime(2021, 2, 26, 5, 0)
+                FeatureFilter(
+                    name=u"Microsoft.TimeWindow",
+                    parameters={
+                        "Start": "Wed, 10 Mar 2021 05:00:00 GMT",
+                        "End": "Fri, 02 Apr 2021 04:00:00 GMT"
+                    }
                 )
             ]
         )
@@ -457,7 +466,16 @@ class AppConfigurationClientTest(AzureTestCase):
             "newflag",
             True,
             feature_filter=[
-                TargetingFeatureFilter(75),
+                FeatureFilter(
+                    name=u"Microsoft.Targeting",
+                    parameters={
+                        u"Audience": {
+                            u"Users": [u"abc", u"def"],
+                            u"Groups": [u"ghi", u"jkl"],
+                            u"DefaultRolloutPercentage": 75
+                        }
+                    }
+                ),
             ]
         )
 
