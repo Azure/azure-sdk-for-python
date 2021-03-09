@@ -86,23 +86,27 @@ steps:
   - pwsh: |
       Write-Host "${{ parameters.BuildDocs }}"
 
-      Write-Host '$(Build.ArtifactStagingDirectory)'
-      Write-Host '$(Build.SourcesDirectory)/_docs'
+      # handle where the parameter is undefined
+      $shouldPublishDocs = $true
+      $docParam = "${{ parameters.BuildDocs }}"
+      if ($docParam) {
+        # if we set it to false handle it here
+        $shouldPublishDocs = 	[System.Convert]::ToBoolean($docParam)
+      }
 
       $filesInDocs = (Test-Path '$(Build.SourcesDirectory)/_docs')
-      Write-Host $filesInDocs 
-      $docsPublishes = ((Get-ChildItem '$(Build.SourcesDirectory)/_docs') | Measure-Object).Count
-      Write-Host $docsPublishes
+      # error if no packages to publish
+      if ($filesInDocs -gt 0)
 
-      $filesInPackages = (Test-Path '$(Build.ArtifactStagingDirectory)')
-      Write-Host $filesInPackages 
+      $docsPublishes = ((Get-ChildItem '$(Build.SourcesDirectory)/_docs') | Measure-Object).Count
       $packagePublishes = ((Get-ChildItem '$(Build.ArtifactStagingDirectory)') | Measure-Object).Count
-      Write-Host $packagePublishes
+
       
-      # if ($fileCount -eq 0) {
-      #   Write-Host ""
-      #   exit 0
-      # }
+      if ($shouldPublishDocs -and $docsPublishes -eq 0) {
+        Write-Host "We are expecting to publish documentation artifacts, but no documentation artifacts were found."
+        Write-Host (Get-ChildItem '$(Build.SourcesDirectory)/_docs')
+        exit 0
+      }
     displayName: 'Verify Presence of Artifacts'
 
   - task: PublishBuildArtifacts@1
