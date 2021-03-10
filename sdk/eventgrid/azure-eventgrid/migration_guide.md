@@ -60,6 +60,7 @@ cloud_event = {
 ### Client constructors
 
 * The `EventGridClient` in the v1.3 has been replaced with `EventGridPublisherClient`.
+* `EventGridPublisherClient` requires the full endpoint, which is typically in the format of `https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events`
 
 | In v1.3 | Equivalent in v4.0 | Sample |
 |---|---|---|

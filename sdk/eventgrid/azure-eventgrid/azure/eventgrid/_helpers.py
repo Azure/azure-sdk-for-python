@@ -47,7 +47,7 @@ def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
             :caption: Generate a shared access signature.
     """
 
-    full_endpoint = _get_full_endpoint(endpoint)
+    full_endpoint = endpoint
 
     full_endpoint = "{}?apiVersion={}".format(
         full_endpoint, kwargs.get("api_version", None) or constants.DEFAULT_API_VERSION
@@ -61,17 +61,6 @@ def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
     )
     signed_sas = "{}&s={}".format(unsigned_sas, signature)
     return signed_sas
-
-def _get_full_endpoint(endpoint):
-    if endpoint.startswith("http://"):
-        raise ValueError("HTTP is not supported. Only HTTPS is supported.")
-    if not endpoint.startswith("https://"):
-        endpoint = "https://{}".format(endpoint)
-    if not endpoint.endswith("/api/events"):
-        endpoint = "{}/api/events".format(endpoint)
-
-    return endpoint
-
 
 def _generate_hmac(key, message):
     decoded_key = base64.b64decode(key)
