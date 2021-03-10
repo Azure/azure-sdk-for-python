@@ -10,8 +10,7 @@ from typing import Any, TYPE_CHECKING, Union
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
-from azure.core.protocol import HttpRequest
-from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.protocol import HttpRequest, AsyncHttpResponse
 from msrest import Serializer
 
 if TYPE_CHECKING:
@@ -46,17 +45,17 @@ class TextAnalyticsClient:
 
         :param http_request: The network request you want to make. Required.
         :type http_request: ~azure.core.protocol.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :keyword bool stream_response: Whether the response payload will be streamed. Defaults to True.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        :rtype: ~azure.core.protocol.AsyncHttpResponse
         """
         path_format_arguments = {
             'Endpoint': Serializer().url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+        stream_response = kwargs.pop("stream_response", True)
+        pipeline_response = await self._client._pipeline.run(http_request, stream=stream_response, **kwargs)
+        return AsyncHttpResponse._from_pipeline_transport(pipeline_response.http_response)
 
     async def close(self) -> None:
         await self._client.close()

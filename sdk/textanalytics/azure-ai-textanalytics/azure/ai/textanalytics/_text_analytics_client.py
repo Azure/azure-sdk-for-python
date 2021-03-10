@@ -12,8 +12,7 @@ from azure.core import PipelineClient
 from msrest import Serializer
 
 from azure.core.credentials import AzureKeyCredential
-from azure.core.protocol import HttpRequest
-from azure.core.pipeline.transport import HttpResponse
+from azure.core.protocol import HttpRequest, HttpResponse
 
 from ._configuration import TextAnalyticsClientConfiguration
 
@@ -46,17 +45,17 @@ class TextAnalyticsClient:
 
         :param http_request: The network request you want to make. Required.
         :type http_request: ~azure.core.protocol.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :keyword bool stream_response: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :rtype: ~azure.core.protocol.HttpResponse
         """
         path_format_arguments = {
             'Endpoint': Serializer().url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request._http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+        stream_response = kwargs.pop("stream_response", False)
+        pipeline_response = self._client._pipeline.run(http_request._http_request, stream=stream_response, **kwargs)
+        return HttpResponse._from_pipeline_transport(pipeline_response.http_response)
 
     def close(self) -> None:
         self._client.close()
