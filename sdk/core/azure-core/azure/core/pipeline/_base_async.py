@@ -207,7 +207,10 @@ class AsyncPipeline(
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        await self._prepare_multipart(request)
+        try:
+            await self._prepare_multipart(request)
+        except AttributeError:
+            pass
         context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(request, context)
         first_node = (
