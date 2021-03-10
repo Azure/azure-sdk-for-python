@@ -47,7 +47,7 @@ def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
             :caption: Generate a shared access signature.
     """
     full_endpoint = "{}?apiVersion={}".format(
-        endpoint, kwargs.get("api_version", constants.DEFAULT_API_VERSION) 
+        endpoint, kwargs.get("api_version", constants.DEFAULT_API_VERSION)
     )
     encoded_resource = quote(full_endpoint, safe=constants.SAFE_ENCODE)
     encoded_expiration_utc = quote(str(expiration_date_utc), safe=constants.SAFE_ENCODE)
