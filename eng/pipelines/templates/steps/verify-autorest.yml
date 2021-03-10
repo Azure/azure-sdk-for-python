@@ -39,6 +39,7 @@ steps:
       git clone ${{ parameters.auto_rest_clone_url }}
       cd autorest.python
       npm install
+      cd ..
     displayName: 'Prepare Environment'
 
   - task: PythonScript@0
@@ -47,3 +48,8 @@ steps:
       scriptPath: 'scripts/devops_tasks/verify_autorest.py'
       arguments: >-
         --service_directory="${{ parameters.ServiceDirectory }}"
+
+  - pwsh: |
+      Remove-Item ${{ parameters.auto_rest_clone_url }}
+    displayName: 'Remove autorest.python'
+    condition: and(succeeded(), ${{ parameters.RunCoverage }})
