@@ -14,6 +14,9 @@ parameters:
   - name: BuildDocs
     type: boolean
     default: true
+  - name: Artifacts
+    type: object
+    default: []
 
 steps:
   - ${{if eq(parameters.TestPipeline, 'true')}}:
@@ -71,6 +74,10 @@ steps:
       twine check $(Build.ArtifactStagingDirectory)/**/*.zip
     displayName: 'Verify Readme'
 
+  - template: /eng/common/pipelines/templates/steps/create-apireview.yml
+    parameters:
+      Artifacts: ${{ parameters.Artifacts }}
+
   - task: PythonScript@0
     displayName: 'Generate Docs'
     condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})
@@ -83,13 +90,42 @@ steps:
 
   - ${{ parameters.BeforePublishSteps }}
 
-  - publish: $(Build.ArtifactStagingDirectory)
-    artifact: packages 
-    condition: succeededOrFailed()
+  - pwsh: |
+      # handle where the parameter is undefined
+      $shouldPublishDocs = $true
+      $docParam = "${{ parameters.BuildDocs }}"
+      if ($docParam) {
+        # if we set it to false handle it here
+        $shouldPublishDocs = 	[System.Convert]::ToBoolean($docParam)
+      }
+      
+      $packagePublishes = ((Get-ChildItem '$(Build.ArtifactStagingDirectory)') | Measure-Object).Count
+      
+      if ($packagePublishes -eq 0) {
+          Write-Host "We are expecting to publish package artifacts, but no artifacts were found."
+          Write-Host (Get-ChildItem '$(Build.ArtifactStagingDirectory)')
+          exit 1
+      }
+
+      if ($shouldPublishDocs) {
+        $docsPublishes = ((Get-ChildItem '$(Build.SourcesDirectory)/_docs') | Measure-Object).Count
+        if ($docsPublishes -eq 0) {
+          Write-Host "We are expecting to publish documentation artifacts, but no documentation artifacts were found."
+          Write-Host (Get-ChildItem '$(Build.SourcesDirectory)/_docs')
+          exit 1
+        }
+      }
+    displayName: 'Verify Presence of Artifacts'
 
   - task: PublishBuildArtifacts@1
-    condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})
-    displayName: 'Publish Artifacts'
+    displayName: 'Publish Package Artifacts'
+    inputs:
+      artifactName: 'packages'
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+
+  - task: PublishBuildArtifacts@1
+    condition: and(succeeded(), ${{ parameters.BuildDocs }})
+    displayName: 'Publish Documentation Artifacts'
     inputs:
       artifactName: 'documentation'
       pathtoPublish: '$(Build.SourcesDirectory)/_docs'

@@ -102,9 +102,6 @@ jobs:
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         BuildDocs: ${{ parameters.BuildDocs }}
         TestPipeline: ${{ parameters.TestPipeline }}
-
-    - template: /eng/common/pipelines/templates/steps/create-apireview.yml
-      parameters:
         Artifacts: ${{ parameters.Artifacts }}
 
   - job: 'Analyze'
@@ -209,7 +206,7 @@ jobs:
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: $(InjectedPackages)
         BeforeTestSteps:
-          - task: DownloadPipelineArtifact@0
+          - task: DownloadBuildArtifacts@0
             inputs:
               artifactName: 'packages' 
               targetPath: $(Build.ArtifactStagingDirectory)
