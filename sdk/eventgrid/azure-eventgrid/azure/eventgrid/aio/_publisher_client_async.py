@@ -26,7 +26,6 @@ from azure.core.pipeline.policies import (
 from .._policies import CloudEventDistributedTracingPolicy
 from .._models import EventGridEvent
 from .._helpers import (
-    _get_endpoint_only_fqdn,
     _get_authentication_policy,
     _is_cloud_event,
     _is_eventgrid_event,
@@ -79,7 +78,6 @@ class EventGridPublisherClient:
         self._client = EventGridPublisherClientAsync(
             policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs
         )
-        endpoint = _get_endpoint_only_fqdn(endpoint)
         self._endpoint = endpoint
 
     @staticmethod

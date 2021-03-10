@@ -62,18 +62,6 @@ def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
     signed_sas = "{}&s={}".format(unsigned_sas, signature)
     return signed_sas
 
-
-def _get_endpoint_only_fqdn(endpoint):
-    if endpoint.startswith("http://"):
-        raise ValueError("HTTP is not supported. Only HTTPS is supported.")
-    if endpoint.startswith("https://"):
-        endpoint = endpoint.replace("https://", "")
-    if endpoint.endswith("/api/events"):
-        endpoint = endpoint.replace("/api/events", "")
-
-    return endpoint
-
-
 def _get_full_endpoint(endpoint):
     if endpoint.startswith("http://"):
         raise ValueError("HTTP is not supported. Only HTTPS is supported.")
