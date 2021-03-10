@@ -7,11 +7,15 @@ parameters:
     default: 'client'
   - name: ServiceDirectory
     type: string
-
-variables:
-  NodeVersion: '12.x'
-  PythonVersion: '3.9'
-  auto_rest_clone_url: 'https://github.com/Azure/autorest.python.git'
+  - name: NodeVersion
+    type: string
+    default: '12.x'
+  - name: PythonVersion
+    type: string
+    default: '3.9'
+  - name: auto_rest_clone_url
+    type: string
+    default: 'https://github.com/Azure/autorest.python.git'
 
 steps:
   - task: UsePythonVersion@0
@@ -36,5 +40,9 @@ steps:
       npm install
     displayName: 'Prepare Environment'
 
-  - script: |
-      python scripts/devops_tasks/verify_autorest.py service_directory ${{ parameters.ServiceDirectory }}
+  - task: PythonScript@0
+    displayName: 'Run autorest Python'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/verify_autorest.py'
+      arguments: >-
+        --service_directory"${{ parameters.ServiceDirectory }}"
