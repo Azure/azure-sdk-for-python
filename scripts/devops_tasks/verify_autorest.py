@@ -68,10 +68,11 @@ def check_diff():
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Run autorest to verify generated code.')
+    parser = argparse.ArgumentParser(
+        description="Run autorest to verify generated code."
+    )
     parser.add_argument(
-        '--service_directory',
-        help="Directory of the package being tested"
+        "--service_directory", help="Directory of the package being tested"
     )
 
     args = parser.parse_args()
