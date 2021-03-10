@@ -123,6 +123,10 @@ jobs:
       name: ${{ parameters.LinuxPool }}
 
     steps:
+    - template: ../steps/verify-autorest.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+
     - template: /eng/common/pipelines/templates/steps/verify-links.yml
       parameters:
         ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
@@ -139,12 +143,6 @@ jobs:
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         Artifacts: ${{ parameters.Artifacts }}
-
-    - template: ../steps/verify-autorest.yml
-      parameters:
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        # ServiceToTest: ''
-        # SDKType: ''
 
   - job: 'Test'
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
