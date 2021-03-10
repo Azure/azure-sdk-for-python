@@ -169,11 +169,11 @@ Notes:
 
 ## mgmt_settings_real file
 
-Instead of using a `.env` file, you can use the `mgmt_settings_real.py` file by copying `sdk/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py` to `sdk/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_real.py` and providing real credentials to it. To
+A `mgmt_settings_real.py` can be used in place of a `.env` file by copying `sdk/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py` to `sdk/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_real.py` and providing real credentials to it.
 
-1. Change the value of the `SUBSCRIPTION_ID` variable to your organizations subscription ID. If you don't have it, you can find it in the "Overview" section of the "Subscriptions" blade in the [Azure portal](https://portal.azure.com/).
-2. Defining `TENANT_ID`, `CLIENT_ID`, and `CLIENT_SECRET` which are available after creating a Service Principal or can be retrieved from the Azure Portal if you have already created a Service Principal. If you do not have a Service Principal, check out the [Azure docs](https://docs.microsoft.com/cli/azure/ad/sp?view=azure-cli-latest#az_ad_sp_create_for_rbac) on a simple one line command to create one. The recommended practice is to include your alias or name in the Service Principal name.
-3. Change the `get_azure_core_credentials(**kwargs):` function to construct and return a `ClientSecretCredential` object. The `client_id`, `client_secret`, `tenant_id` are provided when you create a service principal. These values can be found in the Azure Portal. This method should look like this:
+1. Change the value of the `SUBSCRIPTION_ID` variable to your organizations subscription ID, which can be found in the "Overview" section of the "Subscriptions" blade in the [Azure portal](https://portal.azure.com/).
+2. Defining `TENANT_ID`, `CLIENT_ID`, and `CLIENT_SECRET` which are available after creating a Service Principal or can be retrieved from the Azure Portal after creating a Service Principal. Check out the [Azure docs](https://docs.microsoft.com/cli/azure/ad/sp?view=azure-cli-latest#az_ad_sp_create_for_rbac) to create  a Service Principal with a simple one line command to create one. The recommended practice is to include your alias or name in the Service Principal name.
+3. Change the `get_azure_core_credentials(**kwargs):` function to construct and return a `ClientSecretCredential` object. The `client_id`, `client_secret`, `tenant_id` are provided when you create a service principal. This method should look like this:
 ```python
 def get_azure_core_credentials(**kwargs):
     from azure.identity import ClientSecretCredential
