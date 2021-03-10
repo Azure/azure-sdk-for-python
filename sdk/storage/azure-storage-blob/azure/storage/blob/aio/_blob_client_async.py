@@ -463,7 +463,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         return downloader
 
     @distributed_trace_async
-    async def delete_blob(self, delete_snapshots=False, **kwargs):
+    async def delete_blob(self, delete_snapshots=None, **kwargs):
         # type: (str, Any) -> None
         """Marks the specified blob for deletion.
 

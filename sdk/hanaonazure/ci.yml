@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: hanaonazure
     Artifacts:
-    - name: azure_mgmt_hanaonazure
+    - name: azure-mgmt-hanaonazure
       safeName: azuremgmthanaonazure

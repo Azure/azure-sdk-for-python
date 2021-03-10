@@ -18,9 +18,8 @@ class CommunicationIdentityClient(object):
 
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.
-    :param credential:
-        The credentials with which to authenticate. The value is an account
-        shared access key
+    :param TokenCredential credential:
+        The TokenCredential we use to authenticate against the service.
 
     .. admonition:: Example:
 
@@ -31,7 +30,7 @@ class CommunicationIdentityClient(object):
     def __init__(
             self,
             endpoint, # type: str
-            credential, # type: str
+            credential, # type: TokenCredential
             **kwargs # type: Any
         ):
         # type: (...) -> None
@@ -90,7 +89,7 @@ class CommunicationIdentityClient(object):
             **kwargs)
 
     @distributed_trace
-    def create_user_with_token(
+    def create_user_and_token(
             self,
             scopes, # type: List[Union[str, "_model.CommunicationTokenScope"]]
             **kwargs # type: Any

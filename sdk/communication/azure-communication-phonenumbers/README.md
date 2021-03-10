@@ -16,153 +16,129 @@ Install the Azure Communication Phone Numbers client library for Python with [pi
 pip install azure-communication-phonenumbers
 ```
 
-# Key concepts
+## Key concepts
 
-## CommunicationPhoneNumberClient
 ### Initializing Phone Numbers Client
 ```python
-# You can find your endpoint and access token from your resource in the Azure Portal
+# You can find your connection string from your resource in the Azure Portal
 import os
-from azure.communication.phonenumbers import PhoneNumbersAdministrationClient
+from azure.communication.phonenumbers import PhoneNumbersClient
 from azure.identity import DefaultAzureCredential
 
-endpoint = os.getenv('AZURE_COMMUNICATION_SERVICE_ENDPOINT')
+endpoint = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
 
 # To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have your
 # AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
 phone_number_administration_client = PhoneNumbersAdministrationClient(endpoint, DefaultAzureCredential())
 
 ```
-### Initializing Phone Numbers Client Using Connection String
+### Initializing the Client Using Your Connection String
 Connection string authentication is also available for Phone Numbers Client.
 
 ```python
-# You can find your endpoint and access token from your resource in the Azure Portal
+# You can find your connection string from your resource in the Azure Portal
 import os
-from azure.communication.phonenumbers import PhoneNumbersAdministrationClient
+from azure.communication.phonenumbers import PhoneNumbersClient
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
 phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
 ```
 
-### Phone plans overview
+### Phone Number Types overview
 
-Phone plans come in two types; Geographic and Toll-Free. Geographic phone plans are phone plans associated with a location, whose phone numbers' area codes are associated with the area code of a geographic location. Toll-Free phone plans are phone plans not associated location. For example, in the US, toll-free numbers can come with area codes such as 800 or 888.
+Phone numbers come in two types; Geographic and Toll-Free. Geographic phone numbers are phone numbers associated with a location, whose area codes are associated with the area code of a geographic location. Toll-Free phone numbers are phone numbers with no associated location. For example, in the US, toll-free numbers can come with area codes such as 800 or 888.
 
-All geographic phone plans within the same country are grouped into a phone plan group with a Geographic phone number type. All Toll-Free phone plans within the same country are grouped into a phone plan group.
+### Searching and Purchasing and Releasing numbers
 
-### Reserving and Acquiring numbers
+Phone numbers can be searched through the search creation API by providing an area code, quantity of phone numbers, application type, phone number type, and capabilities. The provided quantity of phone numbers will be reserved for ten minutes and can be purchased within this time. If the search is not purchased, the phone numbers will become available to others after ten minutes. If the search is purchased, then the phone numbers are acquired for the Azure resources.
 
-Phone numbers can be reserved through the begin_reserve_phone_numbers API by providing a phone plan id, an area code and quantity of phone numbers. The provided quantity of phone numbers will be reserved for ten minutes. This reservation of phone numbers can either be cancelled or purchased. If the reservation is cancelled, then the phone numbers will become available to others. If the reservation is purchased, then the phone numbers are acquired for the Azure resources.
+Phone numbers can also be released using the release API.
 
-### Configuring / Assigning numbers
+## Examples
 
-Phone numbers can be assigned to a callback URL via the configure number API. As part of the configuration, you will need an acquired phone number, callback URL and application id.
+### Get All Phone Numbers
 
-# Examples
-The following section provides several code snippets covering some of the most common Azure Communication Services tasks, including:
-
-## Communication Phone number
-### Get Countries
+Lists all of your acquired phone numbers
 
 ```python
-phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
-
-supported_countries = phone_number_administration_client.list_all_supported_countries()
-for supported_country in supported_countries:
-    print(supported_country)
+acquired_phone_numbers = phone_numbers_client.list_acquired_phone_numbers()
+acquired_phone_number = acquired_phone_numbers.next()
+print(acquired_phone_number.phone_number)
 ```
 
-### Get Phone Plan Groups
+### Get Phone Number
 
-Phone plan groups come in two types, Geographic and Toll-Free.
+Gets the information from the specified phone number
 
 ```python
-phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
+result = phone_numbers_client.get_phone_number("<phone number>")
+print(result.country_code)
+print(result.phone_number)
+```
 
-phone_plan_groups_response = phone_number_administration_client.list_phone_plan_groups(
-    country_code='<country code>'
+## Long Running Operations
+
+The Phone Number Client supports a variety of long running operations that allow indefinite polling time to the functions listed down below.
+
+### Search for Available Phone Number
+
+You can search for available phone numbers by providing the capabilities of the phone you want to acquire, the phone number type, the assignment type, and the country code. It's worth mentioning that for the toll-free phone number type, proving the area code is optional.
+The result of the search can then be used to purchase the number in the corresponding API.
+
+```python
+capabilities = PhoneNumberCapabilities(
+        calling = PhoneNumberCapabilityType.INBOUND,
+        sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
+    )
+poller = phone_numbers_client.begin_search_available_phone_numbers(
+    "US",
+    PhoneNumberType.TOLL_FREE,
+    PhoneNumberAssignmentType.APPLICATION,
+    capabilities,
+    area_code ="833", # Area code is optional for toll-free numbers
+    quantity = 2, # Quantity is optional. If not set, default is 1
+    polling = True
 )
-for phone_plan_group in phone_plan_groups_response:
-    print(phone_plan_group)
+search_result = poller.result()
 ```
 
-### Get Phone Plans
+### Purchase Phone Numbers
 
-Unlike Toll-Free phone plans, area codes for Geographic Phone Plans are empty. Area codes are found in the Area Codes API.
-
-```python
-phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
-
-phone_plans_response = phone_number_administration_client.list_phone_plans(
-    country_code='<country code>',
-    phone_plan_group_id='<phone plan group id>'
-)
-for phone_plan in phone_plans_response:
-    print(phone_plan)
-```
-
-### Get Location Options
-
-For Geographic phone plans, you can query the available geographic locations. The locations options are structured like the geographic hierarchy of a country. For example, the US has states and within each state are cities.
+The result of your search can be used to purchase the specificied phone numbers. This can be done by passing the `search_id` from the search response to the purchase phone number API.
 
 ```python
-phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
-
-location_options_response = phone_number_administration_client.get_phone_plan_location_options(
-    country_code='<country code>',
-    phone_plan_group_id='<phone plan group id>',
-    phone_plan_id='<phone plan id>'
-)
-print(location_options_response)
-```
-
-### Get Area Codes
-
-Fetching area codes for geographic phone plans will require the the location options queries set. You must include the chain of geographic locations traversing down the location options object returned by the GetLocationOptions API.
-
-```python
-phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
-
-all_area_codes = phone_number_administration_client.get_all_area_codes(
-    location_type="NotRequired",
-    country_code='<country code>',
-    phone_plan_id='<phone plan id>'
-)
-print(all_area_codes)
-```
-
-### Create Reservation
-
-```python
-phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
-
-poller = phone_number_administration_client.begin_reserve_phone_numbers(
-    area_code='<area code>',
-    description="testreservation20200014",
-    display_name="testreservation20200014",
-    phone_plan_ids=['<phone plan id>'],
-    quantity=1
+purchase_poller = phone_numbers_client.begin_purchase_phone_numbers(
+    search_result.search_id, 
+    polling=True
 )
 ```
 
-### Get Reservation By Id
-```python
-phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
+### Release Phone Number
 
-phone_number_reservation_response = phone_number_administration_client.get_reservation_by_id(
-    reservation_id='<reservation id>'
+Releases an acquired phone number.
+
+```python
+poller = self.phone_number_client.begin_release_phone_number(
+    "<phone number>", 
+    polling = True
 )
-print(reservation_id)
 ```
 
-### Purchase Reservation
+### Updating Phone Number Capabilities
+
+Updates the specified phone number capabilities for Calling and SMS to one of: 
+
+- `PhoneNumberCapabilityType.NONE`
+- `PhoneNumberCapabilityType.INBOUND`
+- `PhoneNumberCapabilityType.OUTBOUND`
+- `PhoneNumberCapabilityType.INBOUND_OUTBOUND`
 
 ```python
-phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
-
-poller = phone_number_administration_client.begin_purchase_reservation(
-    reservation_id='<reservation id to purchase>'
+poller = self.phone_number_client.begin_update_phone_number_capabilities(
+    "<phone number>",
+    PhoneNumberCapabilityType.OUTBOUND,
+    PhoneNumberCapabilityType.INBOUND_OUTBOUND,
+    polling = True
 )
 ```
 

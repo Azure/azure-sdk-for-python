@@ -29,5 +29,5 @@ extends:
   parameters:
     ServiceDirectory: databricks
     Artifacts:
-    - name: azure_mgmt_databricks
+    - name: azure-mgmt-databricks
       safeName: azuremgmtdatabricks

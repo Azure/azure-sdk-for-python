@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: kubernetesconfiguration
     Artifacts:
-    - name: azure_mgmt_kubernetesconfiguration
+    - name: azure-mgmt-kubernetesconfiguration
       safeName: azuremgmtkubernetesconfiguration

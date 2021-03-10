@@ -14,7 +14,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searchc1c41bc0.search.windows.net/indexes?api-version=2020-06-30
+    uri: https://searchc1c41bc0.search.windows.net/indexes?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://searchc1c41bc0.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D84B9C3FF9E670\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[{"name":"MyProfile","functionAggregation":null,"text":null,"functions":[]}],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":{"@odata.type":"#Microsoft.Azure.Search.BM25Similarity","k1":null,"b":null}}'
@@ -26,7 +26,7 @@ interactions:
       elapsed-time: '997'
       etag: W/"0x8D84B9C3FF9E670"
       expires: '-1'
-      location: https://searchc1c41bc0.search.windows.net/indexes('hotels')?api-version=2020-06-30
+      location: https://searchc1c41bc0.search.windows.net/indexes('hotels')?api-version=2020-06-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -35,7 +35,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://searchc1c41bc0.search.windows.net/indexes?api-version=2020-06-30
+    url: https://searchc1c41bc0.search.windows.net/indexes?api-version=2020-06-30-Preview
 - request:
     body: '{"name": "hotels", "fields": [{"name": "hotelId", "type": "Edm.String",
       "key": true, "retrievable": true, "searchable": false}, {"name": "baseRate",
@@ -53,7 +53,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://searchc1c41bc0.search.windows.net/indexes('hotels')?api-version=2020-06-30
+    uri: https://searchc1c41bc0.search.windows.net/indexes('hotels')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://searchc1c41bc0.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D84B9C401F76B6\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":{"@odata.type":"#Microsoft.Azure.Search.BM25Similarity","k1":null,"b":null}}'
@@ -75,7 +75,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://searchc1c41bc0.search.windows.net/indexes('hotels')?api-version=2020-06-30
+    url: https://searchc1c41bc0.search.windows.net/indexes('hotels')?api-version=2020-06-30-Preview
 - request:
     body: null
     headers:
@@ -86,7 +86,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://searchc1c41bc0.search.windows.net/indexes('hotels')?api-version=2020-06-30
+    uri: https://searchc1c41bc0.search.windows.net/indexes('hotels')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"error":{"code":"","message":"The precondition given in one of the
@@ -108,5 +108,5 @@ interactions:
     status:
       code: 412
       message: Precondition Failed
-    url: https://searchc1c41bc0.search.windows.net/indexes('hotels')?api-version=2020-06-30
+    url: https://searchc1c41bc0.search.windows.net/indexes('hotels')?api-version=2020-06-30-Preview
 version: 1

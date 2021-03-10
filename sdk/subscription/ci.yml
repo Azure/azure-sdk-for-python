@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: subscription
     Artifacts:
-    - name: azure_mgmt_subscription
+    - name: azure-mgmt-subscription
       safeName: azuremgmtsubscription

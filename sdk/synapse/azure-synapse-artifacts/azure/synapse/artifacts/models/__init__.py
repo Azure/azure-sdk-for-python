@@ -203,6 +203,7 @@ try:
     from ._models_py3 import DrillLinkedService
     from ._models_py3 import DrillSource
     from ._models_py3 import DrillTableDataset
+    from ._models_py3 import DynamicExecutorAllocation
     from ._models_py3 import DynamicsAXLinkedService
     from ._models_py3 import DynamicsAXResourceDataset
     from ._models_py3 import DynamicsAXSource
@@ -311,7 +312,12 @@ try:
     from ._models_py3 import JsonSink
     from ._models_py3 import JsonSource
     from ._models_py3 import JsonWriteSettings
+    from ._models_py3 import LibraryInfo
+    from ._models_py3 import LibraryListResponse
     from ._models_py3 import LibraryRequirements
+    from ._models_py3 import LibraryResource
+    from ._models_py3 import LibraryResourceInfo
+    from ._models_py3 import LibraryResourceProperties
     from ._models_py3 import LinkedIntegrationRuntimeKeyAuthorization
     from ._models_py3 import LinkedIntegrationRuntimeRbacAuthorization
     from ._models_py3 import LinkedIntegrationRuntimeType
@@ -373,6 +379,7 @@ try:
     from ._models_py3 import Office365Dataset
     from ._models_py3 import Office365LinkedService
     from ._models_py3 import Office365Source
+    from ._models_py3 import OperationResult
     from ._models_py3 import OracleLinkedService
     from ._models_py3 import OraclePartitionSettings
     from ._models_py3 import OracleServiceCloudLinkedService
@@ -801,6 +808,7 @@ except (SyntaxError, ImportError):
     from ._models import DrillLinkedService  # type: ignore
     from ._models import DrillSource  # type: ignore
     from ._models import DrillTableDataset  # type: ignore
+    from ._models import DynamicExecutorAllocation  # type: ignore
     from ._models import DynamicsAXLinkedService  # type: ignore
     from ._models import DynamicsAXResourceDataset  # type: ignore
     from ._models import DynamicsAXSource  # type: ignore
@@ -909,7 +917,12 @@ except (SyntaxError, ImportError):
     from ._models import JsonSink  # type: ignore
     from ._models import JsonSource  # type: ignore
     from ._models import JsonWriteSettings  # type: ignore
+    from ._models import LibraryInfo  # type: ignore
+    from ._models import LibraryListResponse  # type: ignore
     from ._models import LibraryRequirements  # type: ignore
+    from ._models import LibraryResource  # type: ignore
+    from ._models import LibraryResourceInfo  # type: ignore
+    from ._models import LibraryResourceProperties  # type: ignore
     from ._models import LinkedIntegrationRuntimeKeyAuthorization  # type: ignore
     from ._models import LinkedIntegrationRuntimeRbacAuthorization  # type: ignore
     from ._models import LinkedIntegrationRuntimeType  # type: ignore
@@ -971,6 +984,7 @@ except (SyntaxError, ImportError):
     from ._models import Office365Dataset  # type: ignore
     from ._models import Office365LinkedService  # type: ignore
     from ._models import Office365Source  # type: ignore
+    from ._models import OperationResult  # type: ignore
     from ._models import OracleLinkedService  # type: ignore
     from ._models import OraclePartitionSettings  # type: ignore
     from ._models import OracleServiceCloudLinkedService  # type: ignore
@@ -1502,6 +1516,7 @@ __all__ = [
     'DrillLinkedService',
     'DrillSource',
     'DrillTableDataset',
+    'DynamicExecutorAllocation',
     'DynamicsAXLinkedService',
     'DynamicsAXResourceDataset',
     'DynamicsAXSource',
@@ -1610,7 +1625,12 @@ __all__ = [
     'JsonSink',
     'JsonSource',
     'JsonWriteSettings',
+    'LibraryInfo',
+    'LibraryListResponse',
     'LibraryRequirements',
+    'LibraryResource',
+    'LibraryResourceInfo',
+    'LibraryResourceProperties',
     'LinkedIntegrationRuntimeKeyAuthorization',
     'LinkedIntegrationRuntimeRbacAuthorization',
     'LinkedIntegrationRuntimeType',
@@ -1672,6 +1692,7 @@ __all__ = [
     'Office365Dataset',
     'Office365LinkedService',
     'Office365Source',
+    'OperationResult',
     'OracleLinkedService',
     'OraclePartitionSettings',
     'OracleServiceCloudLinkedService',

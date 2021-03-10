@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: operationsmanagement
     Artifacts:
-    - name: azure_mgmt_operationsmanagement
+    - name: azure-mgmt-operationsmanagement
       safeName: azuremgmtoperationsmanagement

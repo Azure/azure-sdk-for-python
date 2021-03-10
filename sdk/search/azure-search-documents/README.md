@@ -106,40 +106,6 @@ client = SearchClient(endpoint=endpoint,
                       credential=credential)
 ```
 
-
-### Send your first search request
-
-To get running immediately, we're going to connect to a well known sandbox
-Search service provided by Microsoft.  This means you do not need an Azure
-subscription or Azure Cognitive Search service to try out this query.
-
-
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchClient
-
-# We'll connect to the Azure Cognitive Search public sandbox and send a
-# query to its "nycjobs" index built from a public dataset of available jobs
-# in New York.
-service_name = "azs-playground"
-index_name = "nycjobs"
-api_key = "252044BE3886FE4A8E3BAA4F595114BB"
-
-# Create a SearchClient to send queries
-endpoint = "https://{}.search.windows.net/".format(service_name)
-credential = AzureKeyCredential(api_key)
-client = SearchClient(endpoint=endpoint,
-                      index_name=index_name,
-                      credential=credential)
-
-# Let's get the top 5 jobs related to Microsoft
-results = client.search(search_text="Microsoft", top=5)
-
-for result in results:
-    # Print out the title and job description
-    print("{}\n{}\n)".format(result["business_title"], result["job_description"]))
-```
-
 ## Key concepts
 
 An Azure Cognitive Search service contains one or more indexes that provide

@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: managementpartner
     Artifacts:
-    - name: azure_mgmt_managementpartner
+    - name: azure-mgmt-managementpartner
       safeName: azuremgmtmanagementpartner

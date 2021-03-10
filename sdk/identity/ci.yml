@@ -42,5 +42,5 @@ extends:
 
 
     Artifacts:
-    - name: azure_identity
+    - name: azure-identity
       safeName: azureidentity

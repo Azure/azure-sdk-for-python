@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: consumption
     Artifacts:
-    - name: azure_mgmt_consumption
+    - name: azure-mgmt-consumption
       safeName: azuremgmtconsumption

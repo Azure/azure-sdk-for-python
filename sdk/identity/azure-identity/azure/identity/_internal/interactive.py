@@ -160,6 +160,8 @@ class InteractiveCredential(MsalCredential):
         :keyword Iterable[str] scopes: scopes to request during authentication, such as those provided by
           :func:`AuthenticationRequiredError.scopes`. If provided, successful authentication will cache an access token
           for these scopes.
+        :keyword str claims: additional claims required in the token, such as those provided by
+          :func:`AuthenticationRequiredError.claims`
         :rtype: ~azure.identity.AuthenticationRecord
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
           attribute gives a reason.
@@ -182,6 +184,7 @@ class InteractiveCredential(MsalCredential):
     def _acquire_token_silent(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         result = None
+        claims = kwargs.get("claims")
         if self._auth_record:
             app = self._get_app()
             for account in app.get_accounts(username=self._auth_record.username):
@@ -189,17 +192,15 @@ class InteractiveCredential(MsalCredential):
                     continue
 
                 now = int(time.time())
-                result = app.acquire_token_silent_with_error(
-                    list(scopes), account=account, claims_challenge=kwargs.get("claims")
-                )
+                result = app.acquire_token_silent_with_error(list(scopes), account=account, claims_challenge=claims)
                 if result and "access_token" in result and "expires_in" in result:
                     return AccessToken(result["access_token"], now + int(result["expires_in"]))
 
         # if we get this far, result is either None or the content of an AAD error response
         if result:
             details = result.get("error_description") or result.get("error")
-            raise AuthenticationRequiredError(scopes, error_details=details)
-        raise AuthenticationRequiredError(scopes)
+            raise AuthenticationRequiredError(scopes, error_details=details, claims=claims)
+        raise AuthenticationRequiredError(scopes, claims=claims)
 
     def _get_app(self):
         # type: () -> msal.PublicClientApplication

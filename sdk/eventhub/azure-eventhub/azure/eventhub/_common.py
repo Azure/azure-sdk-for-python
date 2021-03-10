@@ -350,6 +350,15 @@ class EventDataBatch(object):
 
     def __init__(self, max_size_in_bytes=None, partition_id=None, partition_key=None):
         # type: (Optional[int], Optional[str], Optional[Union[str, bytes]]) -> None
+
+        if partition_key and not isinstance(partition_key, (six.text_type, six.binary_type)):
+            _LOGGER.info(
+                "WARNING: Setting partition_key of non-string value on the events to be sent is discouraged "
+                "as the partition_key will be ignored by the Event Hub service and events will be assigned "
+                "to all partitions using round-robin. Furthermore, there are SDKs for consuming events which expect "
+                "partition_key to only be string type, they might fail to parse the non-string value."
+            )
+
         self.max_size_in_bytes = max_size_in_bytes or constants.MAX_MESSAGE_LENGTH_BYTES
         self.message = BatchMessage(data=[], multi_messages=False, properties=None)
         self._partition_id = partition_id

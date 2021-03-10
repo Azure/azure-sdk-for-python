@@ -1,4 +1,5 @@
 azure-ai-nspkg
+azure-iot-nspkg
 azure-applicationinsights~=0.1.0
 azure-batch~=4.1
 azure-cognitiveservices-nspkg
@@ -124,7 +125,7 @@ avro<2.0.0,>=1.10.0
 #override azure-core-tracing-opencensus azure-core<2.0.0,>=1.0.0
 #override azure-core-tracing-opentelemetry azure-core<2.0.0,>=1.0.0
 #override azure-cosmos azure-core<2.0.0,>=1.0.0
-#override azure-data-tables azure-core<2.0.0,>=1.6.0
+#override azure-data-tables azure-core<2.0.0,>=1.10.0
 #override azure-eventhub azure-core<2.0.0,>=1.5.0
 #override azure-identity azure-core<2.0.0,>=1.0.0
 #override azure-keyvault-administration msrest>=0.6.21
@@ -169,7 +170,6 @@ opentelemetry-sdk==0.17b0
 #override azure-servicebus msrest>=0.6.17,<2.0.0
 #override azure-servicebus azure-core<2.0.0,>=1.6.0
 #override azure-search-documents msrest>=0.6.10
-#override azure-eventgrid azure-core<2.0.0,>=1.7.0
 #override azure-synapse-accesscontrol azure-core>=1.6.0,<2.0.0
 #override azure-synapse-spark azure-core>=1.6.0,<2.0.0
 #override azure-synapse-artifacts azure-core>=1.6.0,<2.0.0
@@ -178,7 +178,7 @@ opentelemetry-sdk==0.17b0
 #override azure-data-tables msrest>=0.6.10
 #override azure-ai-anomalydetector azure-core>=1.6.0,<2.0.0
 #override azure-eventgrid msrest>=0.6.19
-#override azure-eventgrid azure-core<2.0.0,>=1.10.0
+#override azure-eventgrid azure-core<2.0.0,>=1.12.0
 #override azure-communication-chat msrest>=0.6.0
 #override azure-communication-sms msrest>=0.6.0
 #override azure-communication-phonenumbers msrest>=0.6.0
@@ -189,6 +189,8 @@ opentelemetry-sdk==0.17b0
 #override azure-mgmt-communication azure-core<2.0.0,>=1.9.0
 #override azure-ai-metricsadvisor azure-core<2.0.0,>=1.6.0
 #override azure-ai-metricsadvisor msrest>=0.6.12
+#override azure-ai-documenttranslation azure-core<2.0.0,>=1.8.2
+#override azure-ai-documenttranslation msrest>=0.6.21
 #override azure-monitor-opentelemetry-exporter azure-core<2.0.0,>=1.6.0
 #override azure-monitor-opentelemetry-exporter msrest>=0.6.10
 #override azure-monitor-opentelemetry-exporter opentelemetry-api==1.0.0rc1
@@ -196,3 +198,4 @@ opentelemetry-sdk==0.17b0
 #override azure-core-tracing-opentelemetry opentelemetry-api==0.17b0
 #override azure-identity six>=1.12.0
 #override azure-mixedreality-authentication azure-core<2.0.0,>=1.4.0
+#override azure-iot-deviceupdate azure-core<2.0.0,>=1.6.0

@@ -1,7 +1,9 @@
 # Release History
 
-## 12.0.0b5 (Unreleased)
-
+## 12.0.0b5 (2020-03-09)
+* This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported.
+* Adds SAS credential as an authentication option
+* Bumps minimum requirement of `azure-core` to 1.10.0
 * Bumped minimum requirement of msrest from `0.6.10` to `0.6.19`.
 * Adds support for datetime entities with milliseconds
 * Adds support for Shared Access Signature authentication

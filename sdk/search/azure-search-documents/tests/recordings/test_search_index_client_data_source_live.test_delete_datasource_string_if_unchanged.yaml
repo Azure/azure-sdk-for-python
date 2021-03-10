@@ -17,7 +17,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searchb71c225d.search.windows.net/datasources?api-version=2020-06-30
+    uri: https://searchb71c225d.search.windows.net/datasources?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://searchb71c225d.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D84B88AC866C9F\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
@@ -37,7 +37,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://searchb71c225d.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
+      - https://searchb71c225d.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30-Preview
       odata-version:
       - '4.0'
       pragma:
@@ -71,7 +71,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://searchb71c225d.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
+    uri: https://searchb71c225d.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://searchb71c225d.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D84B88ACA12572\"","name":"sample-datasource","description":"updated","type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'

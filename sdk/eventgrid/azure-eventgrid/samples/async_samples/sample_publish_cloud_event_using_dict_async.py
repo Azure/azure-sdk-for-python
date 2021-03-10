@@ -17,7 +17,7 @@ USAGE:
 """
 import os
 import asyncio
-from azure.eventgrid import CloudEvent
+from azure.core.messaging import CloudEvent
 from azure.eventgrid.aio import EventGridPublisherClient
 from azure.core.credentials import AzureKeyCredential
 
@@ -30,7 +30,7 @@ async def publish():
 
     # [START publish_cloud_event_dict_async]
     async with client:
-        client.send([
+        await client.send([
             {
                 "type": "Contoso.Items.ItemReceived",
                 "source": "/contoso/items",	

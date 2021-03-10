@@ -20,7 +20,8 @@ from random import randint, sample
 import time
 
 from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid import EventGridPublisherClient, CloudEvent
+from azure.core.messaging import CloudEvent
+from azure.eventgrid import EventGridPublisherClient
 
 key = os.environ.get("CLOUD_ACCESS_KEY")
 endpoint = os.environ["CLOUD_TOPIC_HOSTNAME"]

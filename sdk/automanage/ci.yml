@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: automanage
     Artifacts:
-    - name: azure_mgmt_automanage
+    - name: azure-mgmt-automanage
       safeName: azuremgmtautomanage

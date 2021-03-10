@@ -5,6 +5,58 @@ $packagePattern = "*.zip"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/master/_data/releases/latest/python-packages.csv"
 $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=python%2F&delimiter=%2F"
 
+function Get-AllPackageInfoFromRepo ($serviceDirectory)
+{
+  $allPackageProps = @()
+  $searchPath = "sdk"
+  if ($serviceDirectory)
+  {
+    $searchPath = Join-Path sdk ${serviceDirectory}
+  }
+
+  $allPkgPropLines = $null
+  try
+  {
+    Push-Location $RepoRoot
+    pip install packaging==20.4 -q -I
+    $allPkgPropLines = python (Join-path eng scripts get_package_properties.py) -s $searchPath
+  }
+  catch
+  {
+    # This is soft error and failure is expected for python metapackages
+    LogError "Failed to get all package properties"
+  }
+  finally
+  {
+    Pop-Location
+  }
+
+  foreach ($line in $allPkgPropLines)
+  {
+    $pkgInfo = ($line -Split ",").Trim("()' ")
+    $packageName = $pkgInfo[0]
+    $packageVersion = $pkgInfo[1]
+    $isNewSdk = ($pkgInfo[2] -eq "True")
+    $setupPyDir = $pkgInfo[3]
+    $pkgDirectoryPath = Resolve-Path (Join-Path -Path $RepoRoot $setupPyDir)
+    $serviceDirectoryName = Split-Path (Split-Path -Path $pkgDirectoryPath -Parent) -Leaf
+    if ($packageName -match "mgmt")
+    {
+      $sdkType = "mgmt"
+    }
+    else
+    {
+      $sdkType = "client"
+    }
+    $pkgProp = [PackageProps]::new($packageName, $packageVersion, $pkgDirectoryPath, $serviceDirectoryName)
+    $pkgProp.IsNewSdk = $isNewSdk
+    $pkgProp.SdkType = $sdkType
+    $pkgProp.ArtifactName = $packageName
+    $allPackageProps += $pkgProp
+  }
+  return $allPackageProps
+}
+
 function Get-python-PackageInfoFromRepo  ($pkgPath, $serviceDirectory, $pkgName)
 {  
   $packageName = $pkgName.Replace('_', '-')
@@ -41,7 +93,7 @@ function Get-python-PackageInfoFromRepo  ($pkgPath, $serviceDirectory, $pkgName)
       {
         $pkgProp.SdkType = "client"
       }
-      $pkgProp.IsNewSdk = $setupProps[2]
+      $pkgProp.IsNewSdk = ($setupProps[2] -eq "True")
       $pkgProp.ArtifactName = $pkgName
       return $pkgProp
     }
@@ -190,20 +242,25 @@ function Update-python-CIConfig($pkgs, $ciRepo, $locationInDocRepo, $monikerId=$
         $existingPackageDef.package_info.version = ">=$($releasingPkg.PackageVersion)"
       }
       else {
-        if ($def.version) {
-          $def.PSObject.Properties.Remove('version')  
+        if ($existingPackageDef.package_info.version) {
+          $existingPackageDef.package_info.PSObject.Properties.Remove('version')
         }
       }
     }
     else {
       $newItem = New-Object PSObject -Property @{ 
-          package_info = New-Object PSObject -Property @{ 
-            prefer_source_distribution = "true"
-            install_type = "pypi"
-            name=$releasingPkg.PackageId
-          }
-          exclude_path = @("test*","example*","sample*","doc*")
+        package_info = New-Object PSObject -Property @{
+          prefer_source_distribution = "true"
+          install_type = "pypi"
+          name=$releasingPkg.PackageId
         }
+        exclude_path = @("test*","example*","sample*","doc*")
+      }
+
+      if ($releasingPkg.IsPrerelease) {
+        $newItem.package_info | Add-Member -NotePropertyName version -NotePropertyValue ">=$($releasingPkg.PackageVersion)"
+      }
+
       $allJson.packages += $newItem
     }
   }
