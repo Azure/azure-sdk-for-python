@@ -15,87 +15,13 @@ import msrest.serialization
 from ._phone_numbers_client_enums import *
 
 
-class AcquiredPhoneNumber(msrest.serialization.Model):
-    """Represents an acquired phone number.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. The id of the phone number, e.g. 11234567890.
-    :type id: str
-    :param phone_number: Required. String of the E.164 format of the phone number, e.g.
-     +11234567890.
-    :type phone_number: str
-    :param country_code: Required. The ISO 3166-2 code of the phone number's country, e.g. US.
-    :type country_code: str
-    :param phone_number_type: Required. The phone number's type, e.g. Geographic, TollFree.
-     Possible values include: "geographic", "tollFree".
-    :type phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
-    :param capabilities: Required. Capabilities of a phone number.
-    :type capabilities: ~azure.communication.phonenumbers.models.PhoneNumberCapabilities
-    :param assignment_type: Required. The assignment type of the phone number. A phone number can
-     be assigned to a person, or to an application. Possible values include: "person",
-     "application".
-    :type assignment_type: str or
-     ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
-    :param purchase_date: Required. The date and time that the phone number was purchased.
-    :type purchase_date: ~datetime.datetime
-    :param cost: Required. The incurred cost for a single phone number.
-    :type cost: ~azure.communication.phonenumbers.models.PhoneNumberCost
-    """
-
-    _validation = {
-        'id': {'required': True},
-        'phone_number': {'required': True},
-        'country_code': {'required': True},
-        'phone_number_type': {'required': True},
-        'capabilities': {'required': True},
-        'assignment_type': {'required': True},
-        'purchase_date': {'required': True},
-        'cost': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'phone_number': {'key': 'phoneNumber', 'type': 'str'},
-        'country_code': {'key': 'countryCode', 'type': 'str'},
-        'phone_number_type': {'key': 'phoneNumberType', 'type': 'str'},
-        'capabilities': {'key': 'capabilities', 'type': 'PhoneNumberCapabilities'},
-        'assignment_type': {'key': 'assignmentType', 'type': 'str'},
-        'purchase_date': {'key': 'purchaseDate', 'type': 'iso-8601'},
-        'cost': {'key': 'cost', 'type': 'PhoneNumberCost'},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: str,
-        phone_number: str,
-        country_code: str,
-        phone_number_type: Union[str, "PhoneNumberType"],
-        capabilities: "PhoneNumberCapabilities",
-        assignment_type: Union[str, "PhoneNumberAssignmentType"],
-        purchase_date: datetime.datetime,
-        cost: "PhoneNumberCost",
-        **kwargs
-    ):
-        super(AcquiredPhoneNumber, self).__init__(**kwargs)
-        self.id = id
-        self.phone_number = phone_number
-        self.country_code = country_code
-        self.phone_number_type = phone_number_type
-        self.capabilities = capabilities
-        self.assignment_type = assignment_type
-        self.purchase_date = purchase_date
-        self.cost = cost
-
-
 class AcquiredPhoneNumbers(msrest.serialization.Model):
     """The list of acquired phone numbers.
 
     All required parameters must be populated in order to send to Azure.
 
     :param phone_numbers: Required. Represents a list of phone numbers.
-    :type phone_numbers: list[~azure.communication.phonenumbers.models.AcquiredPhoneNumber]
+    :type phone_numbers: list[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
     :param next_link: Represents the URL link to the next page of phone number results.
     :type next_link: str
     """
@@ -105,14 +31,14 @@ class AcquiredPhoneNumbers(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'phone_numbers': {'key': 'phoneNumbers', 'type': '[AcquiredPhoneNumber]'},
+        'phone_numbers': {'key': 'phoneNumbers', 'type': '[PurchasedPhoneNumber]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        phone_numbers: List["AcquiredPhoneNumber"],
+        phone_numbers: List["PurchasedPhoneNumber"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -507,3 +433,77 @@ class PhoneNumberSearchResult(msrest.serialization.Model):
         self.capabilities = capabilities
         self.cost = cost
         self.search_expires_by = search_expires_by
+
+
+class PurchasedPhoneNumber(msrest.serialization.Model):
+    """Represents an acquired phone number.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. The id of the phone number, e.g. 11234567890.
+    :type id: str
+    :param phone_number: Required. String of the E.164 format of the phone number, e.g.
+     +11234567890.
+    :type phone_number: str
+    :param country_code: Required. The ISO 3166-2 code of the phone number's country, e.g. US.
+    :type country_code: str
+    :param phone_number_type: Required. The phone number's type, e.g. Geographic, TollFree.
+     Possible values include: "geographic", "tollFree".
+    :type phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
+    :param capabilities: Required. Capabilities of a phone number.
+    :type capabilities: ~azure.communication.phonenumbers.models.PhoneNumberCapabilities
+    :param assignment_type: Required. The assignment type of the phone number. A phone number can
+     be assigned to a person, or to an application. Possible values include: "person",
+     "application".
+    :type assignment_type: str or
+     ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
+    :param purchase_date: Required. The date and time that the phone number was purchased.
+    :type purchase_date: ~datetime.datetime
+    :param cost: Required. The incurred cost for a single phone number.
+    :type cost: ~azure.communication.phonenumbers.models.PhoneNumberCost
+    """
+
+    _validation = {
+        'id': {'required': True},
+        'phone_number': {'required': True},
+        'country_code': {'required': True},
+        'phone_number_type': {'required': True},
+        'capabilities': {'required': True},
+        'assignment_type': {'required': True},
+        'purchase_date': {'required': True},
+        'cost': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'phone_number': {'key': 'phoneNumber', 'type': 'str'},
+        'country_code': {'key': 'countryCode', 'type': 'str'},
+        'phone_number_type': {'key': 'phoneNumberType', 'type': 'str'},
+        'capabilities': {'key': 'capabilities', 'type': 'PhoneNumberCapabilities'},
+        'assignment_type': {'key': 'assignmentType', 'type': 'str'},
+        'purchase_date': {'key': 'purchaseDate', 'type': 'iso-8601'},
+        'cost': {'key': 'cost', 'type': 'PhoneNumberCost'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: str,
+        phone_number: str,
+        country_code: str,
+        phone_number_type: Union[str, "PhoneNumberType"],
+        capabilities: "PhoneNumberCapabilities",
+        assignment_type: Union[str, "PhoneNumberAssignmentType"],
+        purchase_date: datetime.datetime,
+        cost: "PhoneNumberCost",
+        **kwargs
+    ):
+        super(PurchasedPhoneNumber, self).__init__(**kwargs)
+        self.id = id
+        self.phone_number = phone_number
+        self.country_code = country_code
+        self.phone_number_type = phone_number_type
+        self.capabilities = capabilities
+        self.assignment_type = assignment_type
+        self.purchase_date = purchase_date
+        self.cost = cost
