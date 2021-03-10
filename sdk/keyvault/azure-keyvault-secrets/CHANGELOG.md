@@ -1,6 +1,6 @@
 # Release History
 
-## 4.2.1b1 (Unreleased)
+## 4.3.0b1 (Unreleased)
 ### Fixed
 - Correct typing for async paging methods
 
