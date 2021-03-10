@@ -52,4 +52,3 @@ steps:
   - pwsh: |
       Remove-Item ${{ parameters.auto_rest_clone_url }}
     displayName: 'Remove autorest.python'
-    condition: and(succeeded(), ${{ parameters.RunCoverage }})
