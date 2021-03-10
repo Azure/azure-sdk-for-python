@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import AcquiredPhoneNumber
     from ._models_py3 import AcquiredPhoneNumbers
     from ._models_py3 import CommunicationError
     from ._models_py3 import CommunicationErrorResponse
@@ -18,8 +17,8 @@ try:
     from ._models_py3 import PhoneNumberPurchaseRequest
     from ._models_py3 import PhoneNumberSearchRequest
     from ._models_py3 import PhoneNumberSearchResult
+    from ._models_py3 import PurchasedPhoneNumber
 except (SyntaxError, ImportError):
-    from ._models import AcquiredPhoneNumber  # type: ignore
     from ._models import AcquiredPhoneNumbers  # type: ignore
     from ._models import CommunicationError  # type: ignore
     from ._models import CommunicationErrorResponse  # type: ignore
@@ -30,6 +29,7 @@ except (SyntaxError, ImportError):
     from ._models import PhoneNumberPurchaseRequest  # type: ignore
     from ._models import PhoneNumberSearchRequest  # type: ignore
     from ._models import PhoneNumberSearchResult  # type: ignore
+    from ._models import PurchasedPhoneNumber  # type: ignore
 
 from ._phone_numbers_client_enums import (
     BillingFrequency,
@@ -41,7 +41,6 @@ from ._phone_numbers_client_enums import (
 )
 
 __all__ = [
-    'AcquiredPhoneNumber',
     'AcquiredPhoneNumbers',
     'CommunicationError',
     'CommunicationErrorResponse',
@@ -52,6 +51,7 @@ __all__ = [
     'PhoneNumberPurchaseRequest',
     'PhoneNumberSearchRequest',
     'PhoneNumberSearchResult',
+    'PurchasedPhoneNumber',
     'BillingFrequency',
     'PhoneNumberAssignmentType',
     'PhoneNumberCapabilityType',

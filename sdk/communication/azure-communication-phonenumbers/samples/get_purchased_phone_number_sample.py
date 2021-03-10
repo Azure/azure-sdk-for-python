@@ -7,11 +7,11 @@
 # --------------------------------------------------------------------------
 
 """
-FILE:get_phone_number_sample.py
+FILE:get_purchased_phone_number_sample.py
 DESCRIPTION:
     This sample demonstrates how to get the information from an acquired phone number using your connection string
 USAGE:
-    python get_phone_number_sample.py
+    python get_purchased_phone_number_sample.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The connection string including your endpoint and 
         access key of your Azure Communication Service
@@ -27,9 +27,9 @@ connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
 phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER") # e.g. "+18001234567"
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
-def get_phone_number_information():
-    phone_number_information = phone_numbers_client.get_phone_number(phone_number)
-    print('Phone number information: ' + phone_number_information)
+def get_purchased_phone_number_information():
+    purchased_phone_number_information = phone_numbers_client.get_purchased_phone_number(phone_number)
+    print('Phone number information: ' + purchased_phone_number_information)
 
 if __name__ == '__main__':
-    get_phone_number_information()
+    get_purchased_phone_number_information()

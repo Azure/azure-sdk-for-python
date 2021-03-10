@@ -461,7 +461,7 @@ class PhoneNumbersOperations:
         self,
         phone_number: str,
         **kwargs
-    ) -> "_models.AcquiredPhoneNumber":
+    ) -> "_models.PurchasedPhoneNumber":
         """Gets the details of the given acquired phone number.
 
         Gets the details of the given acquired phone number.
@@ -470,11 +470,11 @@ class PhoneNumbersOperations:
          e.g. +11234567890.
         :type phone_number: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AcquiredPhoneNumber, or the result of cls(response)
-        :rtype: ~azure.communication.phonenumbers.models.AcquiredPhoneNumber
+        :return: PurchasedPhoneNumber, or the result of cls(response)
+        :rtype: ~azure.communication.phonenumbers.models.PurchasedPhoneNumber
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AcquiredPhoneNumber"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PurchasedPhoneNumber"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -507,7 +507,7 @@ class PhoneNumbersOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('AcquiredPhoneNumber', pipeline_response)
+        deserialized = self._deserialize('PurchasedPhoneNumber', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -715,8 +715,8 @@ class PhoneNumbersOperations:
         calling: Optional[Union[str, "_models.PhoneNumberCapabilityType"]] = None,
         sms: Optional[Union[str, "_models.PhoneNumberCapabilityType"]] = None,
         **kwargs
-    ) -> "_models.AcquiredPhoneNumber":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AcquiredPhoneNumber"]
+    ) -> "_models.PurchasedPhoneNumber":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PurchasedPhoneNumber"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -764,7 +764,7 @@ class PhoneNumbersOperations:
         response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
         response_headers['operation-id']=self._deserialize('str', response.headers.get('operation-id'))
         response_headers['capabilities-id']=self._deserialize('str', response.headers.get('capabilities-id'))
-        deserialized = self._deserialize('AcquiredPhoneNumber', pipeline_response)
+        deserialized = self._deserialize('PurchasedPhoneNumber', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -778,7 +778,7 @@ class PhoneNumbersOperations:
         calling: Optional[Union[str, "_models.PhoneNumberCapabilityType"]] = None,
         sms: Optional[Union[str, "_models.PhoneNumberCapabilityType"]] = None,
         **kwargs
-    ) -> AsyncLROPoller["_models.AcquiredPhoneNumber"]:
+    ) -> AsyncLROPoller["_models.PurchasedPhoneNumber"]:
         """Updates the capabilities of a phone number.
 
         Updates the capabilities of a phone number.
@@ -796,12 +796,12 @@ class PhoneNumbersOperations:
          False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either AcquiredPhoneNumber or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.phonenumbers.models.AcquiredPhoneNumber]
+        :return: An instance of AsyncLROPoller that returns either PurchasedPhoneNumber or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AcquiredPhoneNumber"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PurchasedPhoneNumber"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -826,7 +826,7 @@ class PhoneNumbersOperations:
             response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
             response_headers['operation-id']=self._deserialize('str', response.headers.get('operation-id'))
             response_headers['capabilities-id']=self._deserialize('str', response.headers.get('capabilities-id'))
-            deserialized = self._deserialize('AcquiredPhoneNumber', pipeline_response)
+            deserialized = self._deserialize('PurchasedPhoneNumber', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)
