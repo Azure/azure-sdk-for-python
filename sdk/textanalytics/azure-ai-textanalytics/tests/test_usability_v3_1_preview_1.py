@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pytest
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.protocol import HttpRequest
 from azure.ai.textanalytics.protocol import *
 
 def test_entities_recognition_general(client, documents):
@@ -137,7 +137,7 @@ def test_query_parameters_raw(client, documents):
         json={
             "documents": documents
         },
-        query={"showStats": True}
+        params={"showStats": True}
     )
     response = client.send_request(request)
     response.raise_for_status()

@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from typing import Any, Literal, Optional
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.protocol import HttpRequest
 
 StringIndexTypes = Literal["TextElements_v8", "UnicodeCodePoint", "Utf16CodeUnit"]
 TextAnalyticsApiVersions = Literal["v3.0", "v3.1-preview.1"]
@@ -43,7 +43,7 @@ def prepare_entities_recognition_general(
         see https://aka.ms/text-analytics-offsets.
     :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_1.models.StringIndexType
     :return: HTTPRequest that can be passed to the client's `send_request` caller.
-    :rtype: ~azure.core.pipeline.transport.HttpRequest
+    :rtype: ~azure.core.protocol.HttpRequest
 
     **New in API version v3.1-preview.1**
         The parameter *string_index_type*
@@ -104,7 +104,7 @@ def prepare_entities_recognition_pii(
         see https://aka.ms/text-analytics-offsets.
     :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_1.models.StringIndexType
     :return: HTTPRequest that can be passed to the client's `send_request` caller.
-    :rtype: ~azure.core.pipeline.transport.HttpRequest
+    :rtype: ~azure.core.protocol.HttpRequest
     """
     if api_version == "v3.1-preview.1":
         from .v3_1_preview_1 import prepare_entities_recognition_pii
@@ -149,7 +149,7 @@ def prepare_entities_linking(
         see https://aka.ms/text-analytics-offsets.
     :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_1.models.StringIndexType
     :return: HTTPRequest that can be passed to the client's `send_request` caller.
-    :rtype: ~azure.core.pipeline.transport.HttpRequest
+    :rtype: ~azure.core.protocol.HttpRequest
 
     **New in API version v3.1-preview.1**
         The parameter *string_index_type*
@@ -200,7 +200,7 @@ def prepare_key_phrases(
         statistics.
     :type show_stats: bool
     :return: HTTPRequest that can be passed to the client's `send_request` caller.
-    :rtype: ~azure.core.pipeline.transport.HttpRequest
+    :rtype: ~azure.core.protocol.HttpRequest
     """
     if api_version == "v3.0":
         from .v3_0 import prepare_key_phrases
@@ -248,7 +248,7 @@ def prepare_languages(
         statistics.
     :type show_stats: bool
     :return: HTTPRequest that can be passed to the client's `send_request` caller.
-    :rtype: ~azure.core.pipeline.transport.HttpRequest
+    :rtype: ~azure.core.protocol.HttpRequest
     """
     if api_version == "v3.0":
         from .v3_0 import prepare_languages
@@ -301,7 +301,7 @@ def prepare_sentiment(
         see https://aka.ms/text-analytics-offsets.
     :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_1.models.StringIndexType
     :return: HTTPRequest that can be passed to the client's `send_request` caller.
-    :rtype: ~azure.core.pipeline.transport.HttpRequest
+    :rtype: ~azure.core.protocol.HttpRequest
 
     **New in API version v3.1-preview.1**
         The parameters *string_index_type* and *opinion_mining*

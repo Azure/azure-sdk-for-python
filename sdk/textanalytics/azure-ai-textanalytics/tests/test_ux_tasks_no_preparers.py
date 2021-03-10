@@ -14,7 +14,7 @@ def test_task_one():
     """
     import json
     import os
-    from azure.core.pipeline.transport import HttpRequest
+    from azure.core.protocol import HttpRequest
     from azure.identity import DefaultAzureCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -60,7 +60,7 @@ def test_task_two():
     """
     import json
     import os
-    from azure.core.pipeline.transport import HttpRequest
+    from azure.core.protocol import HttpRequest
     from azure.identity import DefaultAzureCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -106,7 +106,7 @@ def test_task_3():
     """
     import json
     import os
-    from azure.core.pipeline.transport import HttpRequest
+    from azure.core.protocol import HttpRequest
     from azure.identity import DefaultAzureCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -171,7 +171,7 @@ def test_task_4():
     """
     import json
     import os
-    from azure.core.pipeline.transport import HttpRequest
+    from azure.core.protocol import HttpRequest
     from azure.identity import DefaultAzureCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 

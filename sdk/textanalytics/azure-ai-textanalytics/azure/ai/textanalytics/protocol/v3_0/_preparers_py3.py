@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from msrest import Serializer
 from typing import Any, Dict, Optional
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.protocol import HttpRequest
 
 def prepare_entities_recognition_general(
     *,
@@ -31,7 +31,7 @@ def prepare_entities_recognition_general(
         statistics.
     :type show_stats: bool
     :return: HTTPRequest that can be passed to the client's `send_request` caller.
-    :rtype: ~azure.core.pipeline.transport.HttpRequest
+    :rtype: ~azure.core.protocol.HttpRequest
     """
     content_type = kwargs.pop("content_type", "application/json")
     accept = "application/json, text/json"
@@ -58,7 +58,7 @@ def prepare_entities_recognition_general(
         url=url,
         headers=header_parameters,
         json=body,
-        query=query_parameters,
+        params=query_parameters,
     )
     return request
 
@@ -83,7 +83,7 @@ def prepare_entities_linking(
         statistics.
     :type show_stats: bool
     :return: HTTPRequest that can be passed to the client's `send_request` caller.
-    :rtype: ~azure.core.pipeline.transport.HttpRequest
+    :rtype: ~azure.core.protocol.HttpRequest
     """
     content_type = kwargs.pop("content_type", "application/json")
     accept = "application/json, text/json"
@@ -110,7 +110,7 @@ def prepare_entities_linking(
         url=url,
         headers=header_parameters,
         json=body,
-        query=query_parameters,
+        params=query_parameters,
     )
     return request
 
@@ -135,7 +135,7 @@ def prepare_key_phrases(
         statistics.
     :type show_stats: bool
     :return: HTTPRequest that can be passed to the client's `send_request` caller.
-    :rtype: ~azure.core.pipeline.transport.HttpRequest
+    :rtype: ~azure.core.protocol.HttpRequest
     """
     content_type = kwargs.pop("content_type", "application/json")
     accept = "application/json, text/json"
@@ -162,7 +162,7 @@ def prepare_key_phrases(
         url=url,
         headers=header_parameters,
         json=body,
-        query=query_parameters,
+        params=query_parameters,
     )
     return request
 
@@ -188,7 +188,7 @@ def prepare_languages(
         statistics.
     :type show_stats: bool
     :return: HTTPRequest that can be passed to the client's `send_request` caller.
-    :rtype: ~azure.core.pipeline.transport.HttpRequest
+    :rtype: ~azure.core.protocol.HttpRequest
     """
     content_type = kwargs.pop("content_type", "application/json")
     accept = "application/json, text/json"
@@ -215,7 +215,7 @@ def prepare_languages(
         url=url,
         headers=header_parameters,
         json=body,
-        query=query_parameters,
+        params=query_parameters,
     )
     return request
 
@@ -241,7 +241,7 @@ def prepare_sentiment(
         statistics.
     :type show_stats: bool
     :return: HTTPRequest that can be passed to the client's `send_request` caller.
-    :rtype: ~azure.core.pipeline.transport.HttpRequest
+    :rtype: ~azure.core.protocol.HttpRequest
     """
     content_type = kwargs.pop("content_type", "application/json")
     accept = "application/json, text/json"
@@ -268,6 +268,6 @@ def prepare_sentiment(
         url=url,
         headers=header_parameters,
         json=body,
-        query=query_parameters,
+        params=query_parameters,
     )
     return request

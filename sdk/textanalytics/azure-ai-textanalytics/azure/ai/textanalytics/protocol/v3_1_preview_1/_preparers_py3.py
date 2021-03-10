@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from msrest import Serializer
 from typing import Any, Dict, Literal, Optional
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.protocol import HttpRequest
 
 StringIndexTypes = Literal["TextElements_v8", "UnicodeCodePoint", "Utf16CodeUnit"]
 
@@ -38,7 +38,7 @@ def prepare_entities_recognition_general(
         see https://aka.ms/text-analytics-offsets.
     :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_1.models.StringIndexType
     :return: HTTPRequest that can be passed to the client's `send_request` caller.
-    :rtype: ~azure.core.pipeline.transport.HttpRequest
+    :rtype: ~azure.core.protocol.HttpRequest
     """
     content_type = kwargs.pop("content_type", "application/json")
     accept = "application/json, text/json"
@@ -67,7 +67,7 @@ def prepare_entities_recognition_general(
         url=url,
         headers=header_parameters,
         json=body,
-        query=query_parameters,
+        params=query_parameters,
     )
     return request
 
@@ -102,7 +102,7 @@ def prepare_entities_recognition_pii(
         see https://aka.ms/text-analytics-offsets.
     :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_1.models.StringIndexType
     :return: HTTPRequest that can be passed to the client's `send_request` caller.
-    :rtype: ~azure.core.pipeline.transport.HttpRequest
+    :rtype: ~azure.core.protocol.HttpRequest
     """
     content_type = kwargs.pop("content_type", "application/json")
     accept = "application/json, text/json"
@@ -133,7 +133,7 @@ def prepare_entities_recognition_pii(
         url=url,
         headers=header_parameters,
         json=body,
-        query=query_parameters,
+        params=query_parameters,
     )
     return request
 
@@ -163,7 +163,7 @@ def prepare_entities_linking(
         see https://aka.ms/text-analytics-offsets.
     :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_1.models.StringIndexType
     :return: HTTPRequest that can be passed to the client's `send_request` caller.
-    :rtype: ~azure.core.pipeline.transport.HttpRequest
+    :rtype: ~azure.core.protocol.HttpRequest
     """
     content_type = kwargs.pop("content_type", "application/json")
     accept = "application/json, text/json"
@@ -192,7 +192,7 @@ def prepare_entities_linking(
         url=url,
         headers=header_parameters,
         json=body,
-        query=query_parameters,
+        params=query_parameters,
     )
     return request
 
@@ -217,7 +217,7 @@ def prepare_key_phrases(
         statistics.
     :type show_stats: bool
     :return: HTTPRequest that can be passed to the client's `send_request` caller.
-    :rtype: ~azure.core.pipeline.transport.HttpRequest
+    :rtype: ~azure.core.protocol.HttpRequest
     """
     content_type = kwargs.pop("content_type", "application/json")
     accept = "application/json, text/json"
@@ -244,7 +244,7 @@ def prepare_key_phrases(
         url=url,
         headers=header_parameters,
         json=body,
-        query=query_parameters,
+        params=query_parameters,
     )
     return request
 
@@ -270,7 +270,7 @@ def prepare_languages(
         statistics.
     :type show_stats: bool
     :return: HTTPRequest that can be passed to the client's `send_request` caller.
-    :rtype: ~azure.core.pipeline.transport.HttpRequest
+    :rtype: ~azure.core.protocol.HttpRequest
     """
     content_type = kwargs.pop("content_type", "application/json")
     accept = "application/json, text/json"
@@ -297,7 +297,7 @@ def prepare_languages(
         url=url,
         headers=header_parameters,
         json=body,
-        query=query_parameters,
+        params=query_parameters,
     )
     return request
 
@@ -331,7 +331,7 @@ def prepare_sentiment(
         see https://aka.ms/text-analytics-offsets.
     :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_1.models.StringIndexType
     :return: HTTPRequest that can be passed to the client's `send_request` caller.
-    :rtype: ~azure.core.pipeline.transport.HttpRequest
+    :rtype: ~azure.core.protocol.HttpRequest
     """
     content_type = kwargs.pop("content_type", "application/json")
     accept = "application/json, text/json"
@@ -362,6 +362,6 @@ def prepare_sentiment(
         url=url,
         headers=header_parameters,
         json=body,
-        query=query_parameters,
+        params=query_parameters,
     )
     return request
