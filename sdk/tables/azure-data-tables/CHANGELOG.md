@@ -1,5 +1,8 @@
 # Release History
 
+## 12.0.0b6 (Unreleased)
+
+
 ## 12.0.0b5 (2020-03-09)
 * This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported.
 * Adds SAS credential as an authentication option
