@@ -115,13 +115,13 @@ steps:
       }
     displayName: 'Verify Presence of Artifacts'
 
-  - task: PublishBuildArtifacts@1
+  - task: PublishPipelineArtifact@1
     displayName: 'Publish Package Artifacts'
     inputs:
       artifactName: 'packages'
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
 
-  - task: PublishBuildArtifacts@1
+  - task: PublishPipelineArtifact@1
     condition: and(succeeded(), ${{ parameters.BuildDocs }})
     displayName: 'Publish Documentation Artifacts'
     inputs:

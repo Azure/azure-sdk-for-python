@@ -206,7 +206,7 @@ jobs:
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: $(InjectedPackages)
         BeforeTestSteps:
-          - task: DownloadBuildArtifacts@0
+          - task: DownloadPipelineArtifact@2
             inputs:
               artifactName: 'packages' 
               targetPath: $(Build.ArtifactStagingDirectory)
