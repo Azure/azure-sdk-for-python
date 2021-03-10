@@ -138,7 +138,7 @@ class HttpRequest(object):
         return cls(
             method=pipeline_transport.method,
             url=pipeline_transport.url,
-            params=pipeline_transport.query
+            params=pipeline_transport.query,
             headers=pipeline_transport.headers,
             files=pipeline_transport.files,
             content=pipeline_transport.data,
