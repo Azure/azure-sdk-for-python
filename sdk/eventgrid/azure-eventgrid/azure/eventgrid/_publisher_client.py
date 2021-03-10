@@ -25,7 +25,6 @@ from azure.core.messaging import CloudEvent
 
 from ._models import EventGridEvent
 from ._helpers import (
-    _get_endpoint_only_fqdn,
     _get_authentication_policy,
     _is_cloud_event,
     _is_eventgrid_event,
@@ -83,8 +82,6 @@ class EventGridPublisherClient(object):
 
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, AzureSasCredential], Any) -> None
-        endpoint = _get_endpoint_only_fqdn(endpoint)
-
         self._endpoint = endpoint
         self._client = EventGridPublisherClientImpl(
             policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs
