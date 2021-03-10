@@ -18,12 +18,12 @@ parameters:
     default: 'https://github.com/Azure/autorest.python.git'
 
 steps:
-  - task: UsePythonVersion@0
-    inputs:
-      versionSpec: '$(PythonVersion)'
+  # - task: UsePythonVersion@0
+  #   displayName: Use
+  #   inputs:
+  #     versionSpec: '$(PythonVersion)'
 
   - task: NodeTool@0
-    displayName: 'Install Node.js'
     inputs:
       versionSpec: '$(NodeVersion)'
 
