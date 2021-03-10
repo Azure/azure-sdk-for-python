@@ -1,7 +1,9 @@
 # Release History
 
 ## 1.6.0b3 (Unreleased)
-
+### Fixed
+- Credentials consistently retry token requests after connection failures, or
+  when instructed to by a Retry-After header
 
 ## 1.6.0b2 (2021-03-09)
 ### Breaking Changes
