@@ -41,8 +41,6 @@ An **endpoint** and **credential** are necessary to instantiate the client objec
 #### Looking up the endpoint
 You can find the topic endpoint within the Event Grid Topic resource on the Azure portal. This will look like:
 `"https://<event-grid-topic-name>.<topic-location>.eventgrid.azure.net/api/events"`
-The topic hostname is the URL host component of this endpoint, which will be in the format:
-`"https://<event-grid-topic-name>.<topic-location>.eventgrid.azure.net"`
 
 #### Create the client with AzureKeyCredential
 
@@ -55,7 +53,7 @@ pass the key as a string into an instance of [AzureKeyCredential][azure-key-cred
 from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridPublisherClient
 
-endpoint = "https://<name>.<region>.eventgrid.azure.net"
+endpoint = "https://<name>.<region>.eventgrid.azure.net/api/events"
 credential = AzureKeyCredential("<access_key>")
 eg_publisher_client = EventGridPublisherClient(endpoint, credential)
 ```
