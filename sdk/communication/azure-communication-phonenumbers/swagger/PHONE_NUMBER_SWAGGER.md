@@ -21,6 +21,6 @@ v3: true
 python: true
 directive:
     - rename-model:
-        from: PurchasedPhoneNumber
+        from: AcquiredPhoneNumber
         to: PurchasedPhoneNumber
 ```
