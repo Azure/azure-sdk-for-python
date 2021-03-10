@@ -163,6 +163,15 @@ class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
         """Generator for streaming request body data."""
         return StreamDownloadGenerator(pipeline, self)
 
+    def _to_protocol(self):
+        from azure.core.protocol._requests_transport_response import RequestsTransportResponse
+        return RequestsTransportResponse(
+            status_code=self.status_code,
+            request=self.request,
+            _internal_response=self.internal_response,
+            _block_size=self.block_size
+        )
+
 
 class RequestsTransport(HttpTransport):
     """Implements a basic requests HTTP sender.

@@ -56,8 +56,8 @@ class _HttpResponseBase(object):
         self,
         status_code: int,
         *,
-        headers: HeaderTypes,
-        content: Content,
+        headers: HeaderTypes = None,
+        content: Content = None,
         request: HttpRequest = None,
         http_version: str = None,
         reason: str = None,
@@ -74,7 +74,7 @@ class _HttpResponseBase(object):
             internal_response=_internal_response,
             block_size=_block_size,
         )
-        self.status_code = self._http_response.status_code
+        self.status_code = status_code
         self.headers = self._http_response.headers
         self.is_closed = False
         self.is_stream_consumed = False
@@ -112,7 +112,7 @@ class _HttpResponseBase(object):
     def content(self) -> Content:
         """Returns the actual content of the response body.
         """
-        return self._content
+        raise NotImplementedError()
 
     @property
     def text(self) -> str:
@@ -166,17 +166,6 @@ class _HttpResponseBase(object):
 
     def __repr__(self):
         return self._http_response.__repr__
-
-    @classmethod
-    def _from_pipeline_transport(cls, pipeline_transport: _PipelineTransportHttpResponseBase):
-        return cls(
-            status_code=pipeline_transport.status_code,
-            headers=pipeline_transport.headers,
-            content=pipeline_transport.body(),
-            request=pipeline_transport.request,
-            _internal_response=pipeline_transport.internal_response,
-            _block_size=pipeline_transport.block_size
-        )
 
 class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
     def read(self) -> bytes:
