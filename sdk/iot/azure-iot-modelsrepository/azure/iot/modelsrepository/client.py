@@ -18,7 +18,7 @@ from azure.core.pipeline.policies import (
     NetworkTraceLoggingPolicy,
     ProxyPolicy,
 )
-from . import resolver as resolver
+from . import resolver
 from . import pseudo_parser
 from .chainable_exception import ChainableException
 
@@ -38,6 +38,7 @@ _REMOTE_PROTOCOLS = ["http", "https"]
 class ModelsRepositoryClient(object):
     """Client providing APIs for Models Repository operations"""
 
+    # TODO: Should api_version be a kwarg?
     def __init__(self, repository_location=None, api_version=None, **kwargs):
         """
         :param str repository_location: Location of the Models Repository you wish to access.
@@ -73,12 +74,13 @@ class ModelsRepositoryClient(object):
                     manually resolving dependencies in the repository
 
         :raises: ValueError if given an invalid dependency resolution mode
-        :raises: ResolverError if there is an error retreiving a model
+        :raises: ResolverError if there is an error retrieving a model
 
         :returns: Dictionary mapping DTMIs to models
         :rtype: dict
         """
         if dependency_resolution == DEPENDENCY_MODE_DISABLED:
+            # Simply retrieve the model(s)
             model_map = self.resolver.resolve(dtmis)
         elif dependency_resolution == DEPENDENCY_MODE_ENABLED:
             # Manually resolve dependencies using pseudo-parser

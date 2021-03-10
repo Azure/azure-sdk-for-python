@@ -9,6 +9,7 @@ import json
 import abc
 import re
 import os
+from . import dtmi_utils
 from .chainable_exception import ChainableException
 
 logger = logging.getLogger(__name__)
@@ -40,7 +41,7 @@ class DtmiResolver(object):
         """
         model_map = {}
         for dtmi in dtmis:
-            dtdl_path = _convert_dtmi_to_path(dtmi)
+            dtdl_path = dtmi_utils._convert_dtmi_to_path(dtmi)
             if expanded_model:
                 dtdl_path = dtdl_path.replace(".json", ".expanded.json")
 
@@ -131,18 +132,3 @@ class FilesystemFetcher(Fetcher):
         except Exception as e:
             raise FetcherError("Failed to fetch from Filesystem", e)
         return json.loads(file_str)
-
-
-def _convert_dtmi_to_path(dtmi):
-    """Converts a DTMI into a DTMI path
-
-    E.g:
-    dtmi:com:example:Thermostat;1 -> dtmi/com/example/thermostat-1.json
-    """
-    pattern = re.compile(
-        "^dtmi:[A-Za-z](?:[A-Za-z0-9_]*[A-Za-z0-9])?(?::[A-Za-z](?:[A-Za-z0-9_]*[A-Za-z0-9])?)*;[1-9][0-9]{0,8}$"
-    )
-    if not pattern.match(dtmi):
-        raise ValueError("Invalid DTMI")
-    else:
-        return dtmi.lower().replace(":", "/").replace(";", "-") + ".json"
