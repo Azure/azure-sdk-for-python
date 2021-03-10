@@ -53,9 +53,9 @@ class TextAnalyticsClient:
             'Endpoint': Serializer().url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream_response = kwargs.pop("stream_response", True)
-        pipeline_response = await self._client._pipeline.run(http_request, stream=stream_response, **kwargs)
-        return AsyncHttpResponse._from_pipeline_transport(pipeline_response.http_response)
+        stream_response = kwargs.pop("stream_response", False)
+        pipeline_response = await self._client._pipeline.run(http_request._http_request, stream=stream_response, **kwargs)
+        return pipeline_response.http_response._to_protocol()
 
     async def close(self) -> None:
         await self._client.close()

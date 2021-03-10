@@ -55,7 +55,7 @@ class TextAnalyticsClient:
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
         stream_response = kwargs.pop("stream_response", False)
         pipeline_response = self._client._pipeline.run(http_request._http_request, stream=stream_response, **kwargs)
-        return HttpResponse._from_pipeline_transport(pipeline_response.http_response)
+        return pipeline_response.http_response._to_protocol()
 
     def close(self) -> None:
         self._client.close()
