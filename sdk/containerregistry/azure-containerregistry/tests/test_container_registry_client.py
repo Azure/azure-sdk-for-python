@@ -28,6 +28,7 @@ class TestContainerRegistryClient(AzureTestCase):
         #     self.get_credential(ContainerRegistryClient),
         #     endpoint=endpoint,
         # )
+        print(os.environ["CONTAINERREGISTRY_PASSWORD"])
         return ContainerRegistryClient(
             endpoint = endpoint,
             credential=ContainerRegistryUserCredential(

@@ -15,9 +15,10 @@ class ContainerRegistryUserCredential(object):
         self._password = password
 
     def get_token(self):
-        token = "{}:{}".format(self._user, self._password)
-        token = bytes(token, "utf-8")
-        return str(b64encode(token))
+        token_str = "{}:{}".format(self._user, self._password)
+        token_bytes = token_str.encode("ascii")
+        b64_bytes = b64encode(token_bytes)
+        return b64_bytes.decode("ascii")
 
 
 class ContainerRegistryUserCredentialPolicy(SansIOHTTPPolicy):

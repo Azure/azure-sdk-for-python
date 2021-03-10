@@ -15,8 +15,7 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
-      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"registry","Name":"catalog","Action":"*"}]}]}
+      string: '{"repositories":["debian","hello-world"]}
 
         '
     headers:
@@ -28,11 +27,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '196'
+      - '42'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 10 Mar 2021 12:59:24 GMT
+      - Wed, 10 Mar 2021 13:14:29 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -40,11 +39,9 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate:
-      - Basic realm="Azure Container Registry"
       x-content-type-options:
       - nosniff
     status:
-      code: 401
-      message: Unauthorized
+      code: 200
+      message: OK
 version: 1
