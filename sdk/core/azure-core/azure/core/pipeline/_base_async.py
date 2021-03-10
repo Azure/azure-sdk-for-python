@@ -165,7 +165,10 @@ class AsyncPipeline(
 
         Does nothing if "set_multipart_mixed" was never called.
         """
-        multipart_mixed_info = request.multipart_mixed_info # type: ignore
+        try:
+            multipart_mixed_info = request.multipart_mixed_info # type: ignore
+        except AttributeError:
+            return
         if not multipart_mixed_info:
             return
 
