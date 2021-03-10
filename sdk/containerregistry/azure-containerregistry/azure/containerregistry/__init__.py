@@ -41,6 +41,10 @@ from ._storage_models import (
     RuntimePlatform,
     UploadStatus,
 )
+from ._authentication_policy import (
+    ContainerRegistryUserCredential,
+    ContainerRegistryUserCredentialPolicy,
+)
 from ._version import VERSION
 
 __version__ = VERSION
@@ -77,4 +81,6 @@ __all__ = [
     "OCIManifestAnnotations",
     "RuntimePlatform",
     "UploadStatus",
+    "ContainerRegistryUserCredential",
+    "ContainerRegistryUserCredentialPolicy",
 ]

@@ -3,6 +3,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import functools
+
+from azure.core.paging import ItemPaged
 
 from ._base_client import ContainerRegistryBaseClient
 
@@ -47,8 +50,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: ~azure.core.paging.ItemPaged[str]
         :raises: None
         """
+        command = functools.partial(self._client.repository.get_list, **kwargs)
         repos = self._client.repository.get_list(
             last=kwargs.get("last", None), n=kwargs.get("max", None)
+        )
+        return ItemPaged(
+            command
+            # page_iterator_class=s
         )
         pass
 

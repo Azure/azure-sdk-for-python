@@ -3,27 +3,42 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import functools
 import os
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureTestCase, PowerShellPreparer
 
-from azure.containerregistry import ContainerRegistryClient
+from azure.containerregistry import ContainerRegistryClient, ContainerRegistryUserCredential
 from azure.identity import DefaultAzureCredential
 
 
+acr_preparer = functools.partial(
+    PowerShellPreparer,
+    "containerregistry",
+    containerregistry_baseurl="fake_url.azurecr.io",
+)
+
+
 class TestContainerRegistryClient(AzureTestCase):
-    def _set_up(self):
-        self.endpoint = os.environ["CONTAINERREGISTRY_BASEURL"]
-        if not self.endpoint.startswith("https://"):
-            self.endpoint = "https://" + self.endpoint
-        return self.create_client_from_credential(
-            ContainerRegistryClient,
-            self.get_credential(ContainerRegistryClient),
-            endpoint=self.endpoint,
+    def set_up(self, endpoint):
+        if not endpoint.startswith("https://"):
+            endpoint = "https://" + endpoint
+        # return self.create_client_from_credential(
+        #     ContainerRegistryClient,
+        #     self.get_credential(ContainerRegistryClient),
+        #     endpoint=endpoint,
+        # )
+        return ContainerRegistryClient(
+            endpoint = endpoint,
+            credential=ContainerRegistryUserCredential(
+                username=os.environ["CONTAINERREGISTRY_USERNAME"],
+                password=os.environ["CONTAINERREGISTRY_PASSWORD"]
+            )
         )
 
-    def test_list_repositories(self):
-        client = self._set_up()
+    @acr_preparer()
+    def test_list_repositories(self, containerregistry_baseurl):
+        client = self.set_up(containerregistry_baseurl)
 
         repos = 0
         for repo in client.list_repositories():
