@@ -11,3 +11,5 @@ jobs:
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
         AZURE_TEST_RUN_LIVE: 'true'
+        TEST_MODE: 'RunLiveNoRecord'
+        AZURE_SKIP_LIVE_RECORDING: 'True'
