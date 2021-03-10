@@ -22,6 +22,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: None
         """
+        if not endpoint.startswith("https://"):
+            endpoint = "https://" + endpoint
         super(ContainerRegistryClient, self).__init__(
             endpoint=endpoint, credential=credential, **kwargs
         )

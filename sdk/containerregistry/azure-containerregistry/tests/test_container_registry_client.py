@@ -21,14 +21,6 @@ acr_preparer = functools.partial(
 
 class TestContainerRegistryClient(AzureTestCase):
     def set_up(self, endpoint):
-        if not endpoint.startswith("https://"):
-            endpoint = "https://" + endpoint
-        # return self.create_client_from_credential(
-        #     ContainerRegistryClient,
-        #     self.get_credential(ContainerRegistryClient),
-        #     endpoint=endpoint,
-        # )
-        print(os.environ["CONTAINERREGISTRY_PASSWORD"])
         return ContainerRegistryClient(
             endpoint = endpoint,
             credential=ContainerRegistryUserCredential(
