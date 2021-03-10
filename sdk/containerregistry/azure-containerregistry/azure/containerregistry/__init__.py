@@ -11,7 +11,6 @@ from ._container_registry_authentication import ContainerRegistryStsClient
 from ._container_registry_client import ContainerRegistryClient
 from ._container_repository_client import ContainerRepositoryClient
 from ._models import (
-    ContainerRegistryUserCredential,
     ContentPermissions,
     DeletedRepositoryResult,
     RegistryArtifactOrderBy,
@@ -54,7 +53,6 @@ __all__ = [
     "ContainerRegistryStsClient",
     "ContainerRegistryClient",
     "ContainerRepositoryClient",
-    "ContainerRegistryUserCredential",
     "ContentPermissions",
     "DeletedRepositoryResult",
     "RegistryArtifactOrderBy",

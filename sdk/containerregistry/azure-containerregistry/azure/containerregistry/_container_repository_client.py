@@ -4,8 +4,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from ._base_client import ContainerRegistryBaseClient
 
-class ContainerRepositoryClient(object):
+class ContainerRepositoryClient(ContainerRegistryBaseClient):
     def __init__(self, endpoint, repository, credential, **kwargs):
         # type: (str, str, TokenCredential) -> None
         """Create a ContainerRepositoryClient from an endpoint, repository name, and credential
@@ -19,7 +20,14 @@ class ContainerRepositoryClient(object):
         :returns: None
         :raises: None
         """
-        pass
+        if not endpoint.startswith("https://"):
+            endpoint = "https://" + endpoint
+        self.endpoint = endpoint
+        self.repository = repository
+        super(ContainerRepositoryClient, self).__init__(
+            endpoint=self.endpoint, credential=credential, **kwargs
+        )
+
 
     def delete(self):
         # type: (...) -> None
@@ -99,7 +107,10 @@ class ContainerRepositoryClient(object):
         :returns: ~azure.core.paging.ItemPaged[TagProperties]
         :raises: None
         """
-        pass
+        tags = self._client.repository.get_attributes(
+            self.repository, **kwargs
+        )
+        return tags
 
     def set_manifest_properties(self, digest, value):
         # type: (str, ContentPermissions) -> None

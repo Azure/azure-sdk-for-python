@@ -8,6 +8,7 @@ import functools
 from azure.core.paging import ItemPaged
 
 from ._base_client import ContainerRegistryBaseClient
+from ._models import RepositoryProperties
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
@@ -24,6 +25,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         if not endpoint.startswith("https://"):
             endpoint = "https://" + endpoint
+        self.credential = credential
         super(ContainerRegistryClient, self).__init__(
             endpoint=endpoint, credential=credential, **kwargs
         )
@@ -52,15 +54,16 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: ~azure.core.paging.ItemPaged[str]
         :raises: None
         """
-        command = functools.partial(self._client.repository.get_list, **kwargs)
+        # command = functools.partial(self._client.repository.get_list, **kwargs)
         repos = self._client.repository.get_list(
             last=kwargs.get("last", None), n=kwargs.get("max", None)
         )
-        return ItemPaged(
-            command
-            # page_iterator_class=s
-        )
-        pass
+        return RepositoryProperties.from_generated(repos)
+        # return ItemPaged(
+        #     command,
+        #     page_iterator_class=RepositoryPropertiesPaged
+        # )
+        # pass
 
     def get_repository_client(self, repository, **kwargs):
         # type: (str) -> ContainerRepositoryClient
@@ -70,4 +73,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :type repository: str
         :returns: :class:~azure.containerregistry.ContainerRepositoryClient
         """
+        return ContainerRepositoryClient(
+            repository,
+            credential = self.credential,
+        )
         pass

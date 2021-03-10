@@ -8,7 +8,7 @@ import os
 
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 
-from azure.containerregistry import ContainerRegistryClient, ContainerRegistryUserCredential
+from azure.containerregistry import ContainerRepositoryClient, ContainerRegistryUserCredential
 from azure.identity import DefaultAzureCredential
 
 
@@ -19,10 +19,11 @@ acr_preparer = functools.partial(
 )
 
 
-class TestContainerRegistryClient(AzureTestCase):
+class TestContainerRepositoryClient(AzureTestCase):
     def set_up(self, endpoint):
-        return ContainerRegistryClient(
-            endpoint = endpoint,
+        return ContainerRepositoryClient(
+            endpoint=endpoint,
+            repository="hello-world",
             credential=ContainerRegistryUserCredential(
                 username=os.environ["CONTAINERREGISTRY_USERNAME"],
                 password=os.environ["CONTAINERREGISTRY_PASSWORD"]
@@ -30,12 +31,13 @@ class TestContainerRegistryClient(AzureTestCase):
         )
 
     @acr_preparer()
-    def test_list_repositories(self, containerregistry_baseurl):
+    def test_list_tags(self, containerregistry_baseurl):
         client = self.set_up(containerregistry_baseurl)
 
-        repos = client.list_repositories()
+        repos = client.list_tags()
         count = 0
-        for repo in repos._repositories:
-            count += 1
+        # for repo in repos._repositories:
+        #     count += 1
+        print(repos)
 
-        assert count > 0
+        # assert count > 0

@@ -6,25 +6,11 @@
 
 from enum import Enum
 
+from azure.core.paging import PageIterator
+
 from ._generated.models import (
     DeletedRepository,
 )
-
-
-class ContainerRegistryUserCredential(object):
-    def __init__(self, username, password, **kwargs):
-        # type: (str, str) -> None
-        self.username = username
-        self.password = password
-
-    def update_password(self, password, **kwargs):
-        # type: (str) -> None
-        self.password = password
-
-    def update_username(self, username, **kwargs):
-        # type: (str) -> None
-        self.username = username
-
 
 class ContentPermissions(object):
     def __init__(self, **kwargs):
@@ -60,7 +46,8 @@ class RegistryArtifactProperties(object):
 
 
 class RepositoryProperties(object):
-    def __init__(self, **kwargs):
+    def __init__(self, repositories, **kwargs):
+        self._repositories = repositories
         self.created_on = kwargs.get("created_on", None)
         self.digest = kwargs.get("digest", None)
         self.last_updated_on = kwargs.get("last_updated_on", None)
@@ -68,6 +55,10 @@ class RepositoryProperties(object):
         self.name = kwargs.get("name", None)
         self.registry = kwargs.get("registry", None)
         self.repository = kwargs.get("repository", None)
+
+    @classmethod
+    def from_generated(cls, generated):
+        return cls(generated.names)
 
 
 class RegistryArtifactOrderBy(int, Enum):
