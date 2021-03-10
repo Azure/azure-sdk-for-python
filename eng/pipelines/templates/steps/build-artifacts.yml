@@ -14,6 +14,9 @@ parameters:
   - name: BuildDocs
     type: boolean
     default: true
+  - name: Artifacts
+    type: object
+    default: []
 
 steps:
   - ${{if eq(parameters.TestPipeline, 'true')}}:
@@ -70,6 +73,10 @@ steps:
       twine check $(Build.ArtifactStagingDirectory)/**/*.whl
       twine check $(Build.ArtifactStagingDirectory)/**/*.zip
     displayName: 'Verify Readme'
+
+  - template: /eng/common/pipelines/templates/steps/create-apireview.yml
+    parameters:
+      Artifacts: ${{ parameters.Artifacts }}
 
   - task: PythonScript@0
     displayName: 'Generate Docs'
