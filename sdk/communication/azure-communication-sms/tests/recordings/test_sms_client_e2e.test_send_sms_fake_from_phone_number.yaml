@@ -1,8 +1,8 @@
 interactions:
 - request:
-    body: '{"from": "sanitized", "smsRecipients": [{"to": "sanitized"}], "message":
-      "Hello World via SMS", "smsSendOptions": {"enableDeliveryReport": true, "tag":
-      "custom-tag"}}'
+    body: '{"from": "sanitized", "smsRecipients": [{"to": "sanitized", "repeatabilityRequestId":
+      "sanitized", "repeatabilityFirstSent": "sanitized"}], "message": "Hello World
+      via SMS", "smsSendOptions": {"enableDeliveryReport": false}}'
     headers:
       Accept:
       - application/json
@@ -11,11 +11,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '174'
+      - '274'
       Content-Type:
       - application/json
       Date:
-      - Fri, 19 Feb 2021 23:46:23 GMT
+      - Fri, 05 Mar 2021 19:37:41 GMT
       User-Agent:
       - azsdk-python-communication-sms/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -23,25 +23,22 @@ interactions:
     method: POST
     uri: https://sanitized.communication.azure.com/sms?api-version=2021-03-07
   response:
-    body: '{"value": [{"to": "sanitized", "messageId": "sanitized", "httpStatusCode":
-      400, "errorMessage": "Invalid To phone number format.", "repeatabilityResult":
-      "notavailable", "successful": false}]}'
+    body:
+      string: '{"From": ["Invalid From phone number format"]}'
     headers:
-      api-supported-versions:
-      - 2020-07-20-preview1, 2020-08-20-preview, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 19 Feb 2021 23:46:22 GMT
+      - Fri, 05 Mar 2021 19:37:40 GMT
       ms-cv:
-      - KrZPD8ayDkeofuM5VxUYRA.0
+      - B1peb4SWBkGyyLodTehCIQ.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 442ms
+      - 66ms
     status:
-      code: 202
-      message: Accepted
+      code: 400
+      message: Bad Request
 version: 1

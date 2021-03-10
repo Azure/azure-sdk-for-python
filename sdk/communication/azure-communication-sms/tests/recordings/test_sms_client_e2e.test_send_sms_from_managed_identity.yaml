@@ -1,8 +1,8 @@
 interactions:
 - request:
-    body: '{"from": "sanitized", "smsRecipients": [{"to": "sanitized"}, {"to": "sanitized"}],
-      "message": "Hello World via SMS", "smsSendOptions": {"enableDeliveryReport":
-      true, "tag": "custom-tag"}}'
+    body: '{"from": "sanitized", "smsRecipients": [{"to": "sanitized", "repeatabilityRequestId":
+      "sanitized", "repeatabilityFirstSent": "sanitized"}], "message": "Hello World
+      via SMS", "smsSendOptions": {"enableDeliveryReport": false}}'
     headers:
       Accept:
       - application/json
@@ -11,37 +11,32 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '196'
+      - '274'
       Content-Type:
       - application/json
-      Date:
-      - Fri, 19 Feb 2021 23:46:25 GMT
       User-Agent:
       - azsdk-python-communication-sms/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-      x-ms-return-client-request-id:
-      - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/sms?api-version=2021-03-07
   response:
-    body: '{"value": [{"to": "sanitized", "messageId": "sanitized", "httpStatusCode":
-      202, "errorMessage": null, "repeatabilityResult": "accepted", "successful":
-      true}, {"to": "sanitized", "messageId": "sanitized", "httpStatusCode": 202,
-      "errorMessage": null, "repeatabilityResult": "accepted", "successful": true}]}'
+    body:
+      string: '{"value": [{"to": "sanitized", "messageId": "sanitized", "httpStatusCode":
+        202, "repeatabilityResult": "accepted", "successful": true}]}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview1, 2020-08-20-preview, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 19 Feb 2021 23:46:24 GMT
+      - Fri, 05 Mar 2021 19:37:42 GMT
       ms-cv:
-      - QRn5iC0ChkehszEjsw0lPA.0
+      - pQOMLyptt0COSfJpL6UUHA.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 966ms
+      - 761ms
     status:
       code: 202
       message: Accepted
