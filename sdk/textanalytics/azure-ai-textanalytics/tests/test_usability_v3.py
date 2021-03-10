@@ -150,3 +150,35 @@ def test_azure_key_credential(documents):
     json_response = response.json()
     assert json_response['documents'][0]['sentiment'] == 'positive'
     assert json_response['documents'][1]['sentiment'] == 'positive'
+
+def test_context_manager_no_stream(client, documents):
+    request = HttpRequest(
+        "POST",
+        url='/text/analytics/v3.0/entities/recognition/general',
+        json={
+            "documents": documents
+        },
+
+    )
+    with client.send_request(request) as response:
+        response.raise_for_status()
+
+        json_response = response.json()
+
+        assert len(json_response['documents'][0]['entities']) == 4
+
+def test_context_manager_stream(client, documents):
+    request = HttpRequest(
+        "POST",
+        url='/text/analytics/v3.0/entities/recognition/general',
+        json={
+            "documents": documents
+        },
+
+    )
+    with client.send_request(request, stream_response=True) as response:
+        response.raise_for_status()
+
+        json_response = response.json()
+
+        assert len(json_response['documents'][0]['entities']) == 4

@@ -43,6 +43,9 @@ class TextAnalyticsClient:
     async def send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
         """Runs the network request through the client's chained policies.
 
+        If you want to stream your response, pass in `stream_response=True`. If you are streaming your response,
+        make sure you use the response as a context manager.
+
         :param http_request: The network request you want to make. Required.
         :type http_request: ~azure.core.protocol.HttpRequest
         :keyword bool stream_response: Whether the response payload will be streamed. Defaults to True.
@@ -55,7 +58,7 @@ class TextAnalyticsClient:
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
         stream_response = kwargs.pop("stream_response", False)
         pipeline_response = await self._client._pipeline.run(http_request._http_request, stream=stream_response, **kwargs)
-        return pipeline_response.http_response._to_protocol()
+        return pipeline_response.http_response._to_protocol(is_stream=stream_response)
 
     async def close(self) -> None:
         await self._client.close()
