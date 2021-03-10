@@ -109,6 +109,15 @@ class HttpRequest(object):
                 self._http_request.data = content
         if json:
             self._http_request.set_json_body(json)
+            if not self._http_request.headers.get("Content-Type"):
+                self._http_request.headers["Content-Type"] = "application/json"
+
+        if not self._http_request.headers.get("Content-Length"):
+            try:
+                # set content length header if possible
+                self._http_request.headers["Content-Length"] = str(len(self._http_request.data))
+            except TypeError:
+                pass
 
         self._url = self._http_request.url
         self.method = self._http_request.method
