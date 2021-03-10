@@ -306,9 +306,13 @@ class RetryPolicyBase(object):
     def _configure_positions(self, request, retry_settings):
         body_position = None
         file_positions = None
-        if request.http_request.body and hasattr(request.http_request.body, 'read'):
+        try:
+            body_to_check = request.http_request.body
+        except AttributeError:
+            body_to_check = request.http_request.content
+        if body_to_check and hasattr(body_to_check, 'read'):
             try:
-                body_position = request.http_request.body.tell()
+                body_position = body_to_check.tell()
             except (AttributeError, UnsupportedOperation):
                 # if body position cannot be obtained, then retries will not work
                 pass

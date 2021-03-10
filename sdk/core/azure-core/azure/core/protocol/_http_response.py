@@ -66,6 +66,7 @@ class _HttpResponseBase(object):
         stream: ByteStream = None,
         on_close: Callable = None,
         history: List["_HttpResponseBase"] = None,
+        is_stream: bool = False,
         _internal_response = None,
         _block_size = None
     ):
@@ -87,6 +88,7 @@ class _HttpResponseBase(object):
         self._request = HttpRequest._from_pipeline_transport(
             self._http_response.request
         )
+        self._is_stream = is_stream
 
     @property
     def request(self) -> HttpRequest:
@@ -120,7 +122,7 @@ class _HttpResponseBase(object):
         """
         if self.encoding == "utf-8" or self.encoding is None:
             encoding = "utf-8-sig"
-        return self._http_response.body().decode(encoding)
+        return self._http_response.body().decode(self.encoding)
 
     @property
     def encoding(self) -> Optional[str]:
@@ -183,12 +185,23 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
     def iter_raw(self, chunk_size: int = None) -> Iterator[bytes]:
         return None
 
-    def close(self) -> None:
-        return None
-
     def parts(self) -> Iterator["HttpResponse"]:
         """Assuming the content-type is multipart/mixed, will return the parts as an iterator.
 
         :raises ValueError: If the content is not multipart/mixed
         """
         return []
+
+    def close(self) -> None:
+        if self._is_stream:
+            self._http_response.internal_response.close()
+        return None
+
+    def __enter__(self) -> "HttpResponse":
+        self._http_response.internal_response.__enter__()
+        return self
+
+    def __exit__(self, *exc_details: Any) -> None:
+        if self._is_stream:
+            self._http_response.internal_response.__exit__(*exc_details)
+        return None

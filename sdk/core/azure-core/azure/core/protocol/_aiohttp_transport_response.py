@@ -23,38 +23,32 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from ._http_response import HttpResponse
+from ._async_http_response import AsyncHttpResponse
 from ._types import Content
-class RequestsTransportResponse(HttpResponse):
+
+class AioHttpTransportResponse(AsyncHttpResponse):
 
     @property
     def content(self) -> Content:
-        """Returns the actual content of the response body.
+        """Return the whole body as bytes in memory.
         """
-        return self._http_response.internal_response.content
+        if self._content is None:
+            raise ValueError("Body is not available. Call async method load_body, or do your call with stream=False.")
+        return self._content
+
+    async def load_body(self) -> None:
+        """Load in memory the body, so it could be accessible from sync methods."""
+        self._content = await self._http_response.internal_response.read()
 
     @property
     def text(self) -> str:
         """Return the whole body as a string.
 
-        If encoding is not provided, mostly rely on requests auto-detection, except
-        for BOM, that requests ignores. If we see a UTF8 BOM, we assumes UTF8 unlike requests.
+        If encoding is not provided, rely on aiohttp auto-detection.
 
         :param str encoding: The encoding to apply.
         """
         if not self.encoding:
-            # There is a few situation where "requests" magic doesn't fit us:
-            # - https://github.com/psf/requests/issues/654
-            # - https://github.com/psf/requests/issues/1737
-            # - https://github.com/psf/requests/issues/2086
-            from codecs import BOM_UTF8
-            if self._http_response.internal_response.content[:3] == BOM_UTF8:
-                encoding = "utf-8-sig"
+            self.encoding = self._http_response.internal_response.get_encoding()
 
-        if self.encoding:
-            if self.encoding == "utf-8":
-                encoding = "utf-8-sig"
-
-            self._http_response.internal_response.encoding = encoding
-
-        return self._http_response.internal_response.text
+        return self._content.decode(self.encoding)

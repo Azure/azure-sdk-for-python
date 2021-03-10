@@ -163,7 +163,7 @@ class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
         """Generator for streaming request body data."""
         return StreamDownloadGenerator(pipeline, self)
 
-    def _to_protocol(self):
+    def _to_protocol(self, *, is_stream: bool = False):
         from azure.core.protocol._requests_transport_response import RequestsTransportResponse
         return RequestsTransportResponse(
             status_code=self.status_code,

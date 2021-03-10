@@ -310,3 +310,13 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         state['internal_response'] = None  # aiohttp response are not pickable (see headers comments)
         state['headers'] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
         return state
+
+    def _to_protocol(self, *, is_stream: bool = False):
+        from azure.core.protocol._aiohttp_transport_response import AioHttpTransportResponse
+        return AioHttpTransportResponse(
+            status_code=self.status_code,
+            request=self.request,
+            is_stream=is_stream,
+            _internal_response=self.internal_response,
+            _block_size=self.block_size
+        )

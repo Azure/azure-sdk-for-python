@@ -603,6 +603,9 @@ class _HttpResponseBase(object):
             type(self).__name__, self.status_code, self.reason, content_type_str
         )
 
+    def _to_protocol(self, *, is_stream: bool = False):
+        raise NotImplementedError()
+
 
 class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
     def stream_download(self, pipeline):
