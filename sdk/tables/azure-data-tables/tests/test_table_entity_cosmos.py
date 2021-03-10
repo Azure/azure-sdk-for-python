@@ -1903,7 +1903,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
-            
+
     @CosmosPreparer()
     def test_datetime_milliseconds(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
