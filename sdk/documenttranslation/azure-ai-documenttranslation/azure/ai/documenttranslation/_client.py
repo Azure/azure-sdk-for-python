@@ -57,9 +57,36 @@ class DocumentTranslationClient(object):
         :rtype: DocumentTranslationPoller[ItemPaged[DocumentStatusDetail]]
         """
 
-        return self._client.document_translation.begin_submit_batch_request(
+        def callback(raw_response):
+            detail = self._client._deserialize(BatchStatusDetail, raw_response)
+            # return JobStatusDetail._from_generated(detail)
+            return detail
+
+        cont_token = kwargs.pop("continuation_token", None)
+        if cont_token:
+            pipeline_response = self.get_translation_status(
+                cont_token,
+                cls=lambda pipeline_response, _, response_headers: pipeline_response
+            )
+
+            return DocumentTranslationPoller(
+                client=self._client._client,
+                initial_response=pipeline_response,
+                deserialization_callback=callback,
+                polling_method=DocumentTranslationLROPolling(
+                    timeout=30,
+                    lro_algorithms=[TranslationPolling()],
+                    **kwargs
+                ),
+            )
+
+        return self._client.document_translation.begin_submit_batch_request(  # will need to generate with custom poller
             inputs=batch,
-            polling=True,
+            deserialization_callback=callback,
+            polling_method=DocumentTranslationLROPolling(
+                timeout=30,
+                **kwargs
+            ),
             **kwargs
         )
 

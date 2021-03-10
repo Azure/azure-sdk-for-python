@@ -29,7 +29,6 @@ PollingReturnType = TypeVar("PollingReturnType")
 _LOGGER = logging.getLogger(__name__)
 
 
-
 class DocumentTranslationPoller(LROPoller):
 
     @property
@@ -48,16 +47,29 @@ class DocumentTranslationPoller(LROPoller):
         """
         return getattr(self._polling_method, '_client').get_operation_status(self.batch_id)
 
+    def continuation_token(self):
+        # type: () -> str
+        """
+
+        :returns: the batch id
+        :rtype: str
+        """
+        pass  # returns the batch ID
+
     @classmethod
     def from_continuation_token(cls, polling_method, continuation_token, **kwargs):
         # type: (PollingMethod[PollingReturnType], str, **Any) -> DocumentTranslationPoller[PollingReturnType]
-        """
 
-        :param PollingMethod polling_method:
-        :param str continuation_token: batch ID
-        :return: DocumentTranslationPoller
-        """
-        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
-            continuation_token, **kwargs
-        )
-        return cls(client, initial_response, deserialization_callback, polling_method)
+        pass  # returns the batch ID
+
+
+class DocTranslationLROPolling(PollingMethod):  # pylint: disable=too-many-instance-attributes
+
+    def get_continuation_token(self):
+
+        return self._initial_response  # need to parse out ID from here
+
+    @classmethod
+    def from_continuation_token(cls, continuation_token, **kwargs):
+        # type(str, Any) -> Tuple
+        pass  # returns the batch ID
