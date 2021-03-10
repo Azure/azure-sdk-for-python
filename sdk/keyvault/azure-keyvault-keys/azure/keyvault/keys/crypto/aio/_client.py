@@ -5,7 +5,6 @@
 import logging
 from typing import TYPE_CHECKING
 
-import six
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 
