@@ -6,7 +6,10 @@
 
 from typing import Union, Any, TYPE_CHECKING, List
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.polling import LROPoller
+from azure.core.polling.base_polling import LROBasePolling
 from ._generated import BatchDocumentTranslationClient as _BatchDocumentTranslationClient
+from ._generated.models import BatchStatusDetail as _BatchStatusDetail
 from ._helpers import get_authentication_policy
 from ._user_agent import USER_AGENT
 if TYPE_CHECKING:
@@ -58,7 +61,7 @@ class DocumentTranslationClient(object):
         # submit translation job
         response_headers = self._client.document_translation._submit_batch_request_initial(
             inputs = BatchDocumentInput._to_generated_list(batch),
-            cls = lambda x,y,z: z,
+            cls = lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
 
@@ -109,15 +112,27 @@ class DocumentTranslationClient(object):
         :return: JobStatusDetail
         :rtype: JobStatusDetail
         """
-        import time
-        
-        while True:
-            job_result = self.get_job_status(job_id)
-            if job_result.status in ["NotStarted", "Running"]:
-                time.sleep(0.1)
-                continue
-            else:
-                return job_result
+        pipeline_response = self.get_job_status(
+            job_id,
+            cls=lambda pipeline_response, _, response_headers: pipeline_response
+        )
+
+        def callback(raw_response):
+            detail = self._client._deserialize(_BatchStatusDetail, raw_response)
+            # return JobStatusDetail._from_generated(detail)
+            return detail
+
+        poller = LROPoller(
+            client=self._client._client,
+            initial_response=pipeline_response,
+            deserialization_callback=callback,
+            polling_method=LROBasePolling(
+                timeout=30,
+                lro_algorithms=None, # LROBasePolling already has 3 different algorithms (which our OperationLocationHeader is supported)
+                **kwargs
+            ),
+        )
+        return poller.result()
 
     @distributed_trace
     def list_submitted_jobs(self, **kwargs):
