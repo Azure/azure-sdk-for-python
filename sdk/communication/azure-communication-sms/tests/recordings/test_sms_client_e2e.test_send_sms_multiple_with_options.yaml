@@ -1,8 +1,9 @@
 interactions:
 - request:
-    body: '{"from": "sanitized", "smsRecipients": [{"to": "sanitized"}], "message":
-      "Hello World via SMS", "smsSendOptions": {"enableDeliveryReport": true, "tag":
-      "custom-tag"}}'
+    body: '{"from": "sanitized", "smsRecipients": [{"to": "sanitized", "repeatabilityRequestId":
+      "sanitized", "repeatabilityFirstSent": "sanitized"}, {"to": "sanitized", "repeatabilityRequestId":
+      "sanitized", "repeatabilityFirstSent": "sanitized"}], "message": "Hello World
+      via SMS", "smsSendOptions": {"enableDeliveryReport": true, "tag": "custom-tag"}}'
     headers:
       Accept:
       - application/json
@@ -11,11 +12,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '174'
+      - '440'
       Content-Type:
       - application/json
       Date:
-      - Fri, 19 Feb 2021 23:53:30 GMT
+      - Fri, 05 Mar 2021 19:37:44 GMT
       User-Agent:
       - azsdk-python-communication-sms/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -23,24 +24,26 @@ interactions:
     method: POST
     uri: https://sanitized.communication.azure.com/sms?api-version=2021-03-07
   response:
-    body: '{"value": [{"to": "sanitized", "messageId": "sanitized", "httpStatusCode":
-      400, "errorMessage": "Invalid To phone number format.", "repeatabilityResult":
-      "notavailable", "successful": false}]}'
+    body:
+      string: '{"value": [{"to": "sanitized", "messageId": "sanitized", "httpStatusCode":
+        202, "repeatabilityResult": "accepted", "successful": true}, {"to": "sanitized",
+        "messageId": "sanitized", "httpStatusCode": 202, "repeatabilityResult": "accepted",
+        "successful": true}]}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview1, 2020-08-20-preview, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 19 Feb 2021 23:53:29 GMT
+      - Fri, 05 Mar 2021 19:37:43 GMT
       ms-cv:
-      - ZSmIhRXZ/ku095wAm8oL0Q.0
+      - cp34G5Z9HUiBs73cc6I02A.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 449ms
+      - 856ms
     status:
       code: 202
       message: Accepted
