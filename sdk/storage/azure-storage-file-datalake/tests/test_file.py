@@ -283,6 +283,7 @@ class FileTest(StorageTestCase):
             file_client.create_snapshot(lease=bad_lease)
         self.assertEqual('LeaseIdMismatchWithBlobOperation', e.exception.error_code)
 
+    @record
     def test_file_exists(self):
         # Arrange
         directory_name = self._get_directory_reference()
