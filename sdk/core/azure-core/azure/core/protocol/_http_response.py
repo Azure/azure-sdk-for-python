@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import json
 from datetime import timedelta
 from ._http_request import HttpRequest
 from typing import Any, Callable, Iterator, List, Optional
@@ -32,13 +33,23 @@ from ._types import (
     Content,
 )
 from ..exceptions import HttpResponseError
+from ..pipeline.transport._base import _HttpResponseBase as _PipelineTransportHttpResponseBase
 
 class _HttpResponseBase(object):
-    """Represent a HTTP response.
+    """Base class for HttpResponse and AsyncHttpResponse.
 
-    No body is defined here on purpose, since async pipeline
-    will provide async ways to access the body
-    Full in-memory using "body" as bytes.
+    :param int status_code: Status code of the response.
+    :keyword headers: Response headers
+    :paramtype headers: dict[str, any]
+    :keyword str text: The response content as a string
+    :keyword any json: JSON content
+    :keyword stream: Streamed response
+    :paramtype stream: bytes or iterator of bytes
+    :keyword callable on_close: Any callable you want to cal
+     when closing your HttpResponse
+    :keyword history: If redirection, history of all redirection
+     that resulted in this response.
+    :paramtype history: list[~azure.core.protocol.HttpResponse]
     """
 
     def __init__(
@@ -47,49 +58,39 @@ class _HttpResponseBase(object):
         *,
         headers: HeaderTypes,
         content: Content,
-        text: str = None,
-        html: str = None,
-        json: Any = None,
-        stream: ByteStream = None,
         request: HttpRequest = None,
         http_version: str = None,
         reason: str = None,
+        text: str = None,
+        json: Any = None,
+        stream: ByteStream = None,
         on_close: Callable = None,
         history: List["_HttpResponseBase"] = None,
+        _internal_response = None,
+        _block_size = None
     ):
-        self.status_code = status_code
-        self.headers = headers
+        self._http_response = _PipelineTransportHttpResponseBase(
+            request=request,
+            internal_response=_internal_response,
+            block_size=_block_size,
+        )
+        self.status_code = self._http_response.status_code
+        self.headers = self._http_response.headers
         self.is_closed = False
         self.is_stream_consumed = False
-        self.stream = stream
         self.http_version = http_version
-        self.reason = reason
-        self._content = content
-        self._enconding = None
+        self.reason = self._http_response.reason
+        self._content = self._http_response.body
+        self._encoding = None
         self._on_close = on_close
         self.history = history
-
-    @property
-    def elapsed(self) -> timedelta:
-        """
-        Returns the time taken for the complete request/response
-        cycle to complete.
-        """
-        if not hasattr(self, "_elapsed"):
-            raise RuntimeError(
-                "'.elapsed' may only be accessed after the response "
-                "has been read or closed."
-            )
-        return self._elapsed
-
-    @elapsed.setter
-    def elapsed(self, elapsed: timedelta) -> None:
-        self._elapsed = elapsed
+        self._request = HttpRequest._from_pipeline_transport(
+            self._http_response.request
+        )
 
     @property
     def request(self) -> HttpRequest:
-        """
-        Returns the request instance associated to the current response.
+        """Returns the request instance associated to the current response.
         """
         if self._request is None:
             raise RuntimeError(
@@ -103,25 +104,28 @@ class _HttpResponseBase(object):
 
     @property
     def url(self) -> str:
+        """Returns the URL that resulted in this response.
+        """
         return self.request.url
 
     @property
     def content(self) -> Content:
+        """Returns the actual content of the response body.
+        """
         return self._content
 
     @property
     def text(self) -> str:
-        """Return the whole body as a string.
+        """Returns the response body as a string.
         """
         if self.encoding == "utf-8" or self.encoding is None:
             encoding = "utf-8-sig"
-        return "self.body().decode(encoding)"
+        return self._http_response.body().decode(encoding)
 
     @property
     def encoding(self) -> Optional[str]:
-        """
-        Return the encoding, which may have been set explicitly, or may have
-        been specified by the Content-Type header.
+        """Returns the response encoding. By default, is specified
+        by the response Content-Type header.
         """
         return self._encoding
 
@@ -135,21 +139,25 @@ class _HttpResponseBase(object):
 
     @property
     def is_error(self) -> bool:
-        return False
+        """Returns whether this response is an error response.
+        """
+        return self.status_code < 400
 
-    def json(self, **kwargs: Any) -> Any:
-        return ""
+    def json(self, **kwargs) -> Any:
+        """Return the whole body as a json object.
+
+        :return: The JSON deserialized response body
+        :rtype: any
+        :raises json.decoder.JSONDecodeError or ValueError (in python 2.7) if object is not JSON decodable:
+        """
+        return json.loads(self.text)
 
     @property
     def is_redirect(self) -> bool:
+        """Returns whether this response is a redirected response"""
         return False
 
-    @property
-    def cookies(self) -> "Cookies":
-        return ""
-
-    def raise_for_status(self):
-        # type () -> None
+    def raise_for_status(self) -> None:
         """Raises an HttpResponseError if the response has an error status code.
         If response is good, does nothing.
         """
@@ -157,15 +165,18 @@ class _HttpResponseBase(object):
             raise HttpResponseError(response=self)
 
     def __repr__(self):
-        # there doesn't have to be a content type
-        content_type_str = "hello"
-        return "<{}: {} {}{}>".format(
-            type(self).__name__, self.status_code, self.reason, content_type_str
-        )
+        return self._http_response.__repr__
 
-    @property
-    def num_bytes_downloaded(self) -> int:
-        return 2
+    @classmethod
+    def _from_pipeline_transport(cls, pipeline_transport: _PipelineTransportHttpResponseBase):
+        return cls(
+            status_code=pipeline_transport.status_code,
+            headers=pipeline_transport.headers,
+            content=pipeline_transport.body(),
+            request=pipeline_transport.request,
+            _internal_response=pipeline_transport.internal_response,
+            _block_size=pipeline_transport.block_size
+        )
 
 class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
     def read(self) -> bytes:

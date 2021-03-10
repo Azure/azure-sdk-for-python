@@ -28,13 +28,12 @@ from typing import Any
 from ._types import (
     QueryParamTypes,
     HeaderTypes,
-    CookieTypes,
     Content,
     RequestFiles,
     ByteStream,
 )
 import xml.etree.ElementTree as ET
-from ..pipeline.transport import HttpRequest as PipelineTransportHttpRequest
+from ..pipeline.transport import HttpRequest as _PipelineTransportHttpRequest
 
 try:
     binary_type = str
@@ -51,25 +50,23 @@ def _is_stream(content):
 class HttpRequest(object):
     """Represents a HTTP request.
 
-    :param str method: HTTP method for your call, i.e. "GET", "HEAD"
+    :param str method: HTTP method (GET, HEAD, etc.)
     :param str url: URL for your request
-    :keyword params: Query parameters to include in the URL, as a dictionary
+    :keyword params: A dictionary of query parameters.
     :paramtype params: dict[str, any]
-    :keyword headers: Dictionary of HTTP headers to include in the
-     request.
+    :keyword headers: A dictionary of header parameters
     :paramtype headers: dict[str, any]
-    :keyword cookies: Dictionary of Cookie items to include in the request.
-    :paramtype cookies: dict[str, str] or ~http.cookiejar.CookieJar
-    :keyword content: Binary content to include in the body of the
-     request, as bytes or a byte iterator.
+    :keyword content: Bytes or a byte iterator of binary
+     content for the request body.
     :paramtype content: bytes or iterator of bytes
-    :keyword dict data: Form data to include in the body of the request,
-     as a dictionary.
-    :keyword files: A dictionary of upload files to include in the
-     body of the request.
-    :paramtype files: Dictionary of str to IO of string or bytes
-    :keyword any json: A JSON serializable object to include in the body
-     of the request.
+    :keyword dict data: A dictionary of form data for the
+     request body
+    :keyword files: A dictionary of upload files for the
+     request body.
+    :paramtype files: A dictionary of str to IO of files for the
+     request body.
+    :keyword any json: A JSON serializable object for the request
+     body.
     """
 
     def __init__(
@@ -79,14 +76,13 @@ class HttpRequest(object):
         *,
         params: QueryParamTypes = None,
         headers: HeaderTypes = None,
-        cookies: CookieTypes = None,
         content: Content = None,
         data: dict = None,
         files: RequestFiles = None,
         json: Any = None,
     ) -> None:
         # hacking by utilizing pipeline transport HttpRequest
-        self._http_request = PipelineTransportHttpRequest(
+        self._http_request = _PipelineTransportHttpRequest(
             method=method,
             url=url,
             headers=headers,
@@ -137,6 +133,16 @@ class HttpRequest(object):
         self._url = val
         self._http_request.url = val
 
+    @classmethod
+    def _from_pipeline_transport(cls, pipeline_transport: _PipelineTransportHttpRequest):
+        return cls(
+            method=pipeline_transport.method,
+            url=pipeline_transport.url,
+            params=pipeline_transport.query
+            headers=pipeline_transport.headers,
+            files=pipeline_transport.files,
+            content=pipeline_transport.data,
+        )
 
     def __repr__(self):
         return "<HttpRequest [{}], url: '{}'>".format(
