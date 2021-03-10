@@ -34,7 +34,6 @@ steps:
       cd autorest.python
       git checkout $(repo_branch)
       npm install
-      autorest --python --version
     displayName: 'Prepare Environment'
 
   - script: |

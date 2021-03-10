@@ -143,8 +143,8 @@ jobs:
     - template: ../steps/verify-autorest.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        ServiceToTest: ''
-        SDKType: ''
+        # ServiceToTest: ''
+        # SDKType: ''
 
   - job: 'Test'
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
