@@ -110,7 +110,7 @@ class HttpRequest(object):
         if json:
             self._http_request.set_json_body(json)
 
-        self.url = self._http_request.url
+        self._url = self._http_request.url
         self.method = self._http_request.method
         self.headers = self._http_request.headers
         # pipeline transport HttpRequest hacks data. It can either
@@ -118,6 +118,15 @@ class HttpRequest(object):
         self.content = self._http_request.data
         self.data = self._http_request.data
         self.files = self._http_request.files
+
+    @property
+    def url(self) -> str:
+        return self._url
+
+    @url.setter
+    def url(self, val: str) -> None:
+        self._url = val
+        self._http_request.url = val
 
 
     def __repr__(self):
