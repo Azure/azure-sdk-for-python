@@ -34,14 +34,19 @@ class DocumentTranslationPoller(LROPoller):
 
     @property
     def batch_id(self):
+        # type: () -> str
+        """
+        :return: str
+        """
         return self.polling_method._operation._async_url.split("/batches/")[1]
 
-    def details(self, **kwargs):
-        # type: (**Any) -> TranslationStatusDetail
+    @property
+    def details(self):
+        # type: () -> TranslationStatusDetail
         """
         :return: ~azure.ai.documenttranslation.TranslationStatusDetail
         """
-        return getattr(self._polling_method, '_client').get_operation_status(self.batch_id, **kwargs)
+        return getattr(self._polling_method, '_client').get_operation_status(self.batch_id)
 
     @classmethod
     def from_continuation_token(cls, polling_method, continuation_token, **kwargs):
