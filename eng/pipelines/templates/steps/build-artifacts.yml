@@ -103,7 +103,6 @@ steps:
       
       if ($packagePublishes -eq 0) {
           Write-Host "We are expecting to publish package artifacts, but no artifacts were found."
-          Write-Host (Get-ChildItem '$(Build.ArtifactStagingDirectory)')
           exit 1
       }
 
@@ -111,7 +110,6 @@ steps:
         $docsPublishes = ((Get-ChildItem '$(Build.SourcesDirectory)/_docs') | Measure-Object).Count
         if ($docsPublishes -eq 0) {
           Write-Host "We are expecting to publish documentation artifacts, but no documentation artifacts were found."
-          Write-Host (Get-ChildItem '$(Build.SourcesDirectory)/_docs')
           exit 1
         }
       }
