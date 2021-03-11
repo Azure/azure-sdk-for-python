@@ -50,6 +50,6 @@ steps:
         --service_directory="${{ parameters.ServiceDirectory }}"
 
   - pwsh: |
-      Remove-Item ${{ parameters.auto_rest_clone_url }}
+      Remove-Item autorest.python
     displayName: 'Remove autorest.python'
     condition: always()
