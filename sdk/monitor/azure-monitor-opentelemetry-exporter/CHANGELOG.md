@@ -6,6 +6,9 @@
   - Add `from_connection_string` method to instantiate exporters
       ([#16818](https://github.com/Azure/azure-sdk-for-python/pull/16818))
 
+  **Dependency Updates**
+  - Updated dependency `azure-core` from  azure-core<2.0.0,>=1.6.0 to azure-core<2.0.0,>=1.12.1
+
 ## 1.0.0b3 (2021-02-11)
 
   **Breaking Changes**
