@@ -269,18 +269,18 @@ class ChatThreadClient(object):
         self,
         content: str,
         **kwargs
-    ) -> str:
+    ) -> SendChatMessageResult:
         """Sends a message to a thread.
 
         :param content: Required. Chat message content.
         :type content: str
-        :param chat_message_type: The chat message type. Possible values include: "text", "html".
+        :keyword chat_message_type: The chat message type. Possible values include: "text", "html".
         Default: ChatMessageType.TEXT
-        :type chat_message_type: str or ~azure.communication.chat.models.ChatMessageType
+        :paramtype chat_message_type: Union[str, ~azure.communication.chat.ChatMessageType]
         :keyword str sender_display_name: The display name of the message sender. This property is used to
           populate sender name for push notifications.
-        :return: str
-        :rtype: str
+        :return: SendChatMessageResult
+        :rtype: ~azure.communication.chat.SendChatMessageResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -321,7 +321,7 @@ class ChatThreadClient(object):
             send_chat_message_request=create_message_request,
             **kwargs)
 
-        return send_chat_message_result.id
+        return send_chat_message_result
 
     @distributed_trace_async
     async def get_message(

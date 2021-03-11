@@ -60,9 +60,10 @@ class TestChatThreadClient(unittest.TestCase):
         try:
             content='hello world'
             sender_display_name='sender name'
-            create_message_result_id = chat_thread_client.send_message(
+            create_message_result = chat_thread_client.send_message(
                 content=content,
                 sender_display_name=sender_display_name)
+            create_message_result_id = create_message_result.id
         except:
             raised = True
 
@@ -108,10 +109,11 @@ class TestChatThreadClient(unittest.TestCase):
             try:
                 content='hello world'
                 sender_display_name='sender name'
-                create_message_result_id = chat_thread_client.send_message(
+                create_message_result = chat_thread_client.send_message(
                     content=content,
                     chat_message_type=chat_message_type,
                     sender_display_name=sender_display_name)
+                create_message_result_id = create_message_result.id
             except:
                 raised = True
 
@@ -142,7 +144,7 @@ class TestChatThreadClient(unittest.TestCase):
             try:
                 content='hello world'
                 sender_display_name='sender name'
-                create_message_result_id = chat_thread_client.send_message(
+                create_message_result = chat_thread_client.send_message(
                     content=content,
                     chat_message_type=chat_message_type,
                     sender_display_name=sender_display_name)

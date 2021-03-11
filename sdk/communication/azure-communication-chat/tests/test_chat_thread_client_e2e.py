@@ -110,10 +110,10 @@ class ChatThreadClientTest(CommunicationTestCase):
         # send a message
         content = 'hello world'
         sender_display_name = 'sender name'
-        create_message_result_id = self.chat_thread_client.send_message(
+        create_message_result = self.chat_thread_client.send_message(
             content,
             sender_display_name=sender_display_name)
-        message_id = create_message_result_id
+        message_id = create_message_result.id
         return message_id
 
     @pytest.mark.live_test_only
@@ -129,9 +129,10 @@ class ChatThreadClientTest(CommunicationTestCase):
         content = 'hello world'
         sender_display_name = 'sender name'
 
-        create_message_result_id = self.chat_thread_client.send_message(
+        create_message_result = self.chat_thread_client.send_message(
             content,
             sender_display_name=sender_display_name)
+        create_message_result_id = create_message_result.id
 
         assert create_message_result_id is not None
 
@@ -281,9 +282,10 @@ class ChatThreadClientTest(CommunicationTestCase):
         # get chat thread client for second user
         chat_thread_client_new_user = self.chat_client_new_user.get_chat_thread_client(self.thread_id)
         # second user sends 1 message
-        message_id_new_user = chat_thread_client_new_user.send_message(
+        message_result_new_user = chat_thread_client_new_user.send_message(
             "content",
             sender_display_name="sender_display_name")
+        message_id_new_user = message_result_new_user.id
         # send read receipt
         chat_thread_client_new_user.send_read_receipt(message_id_new_user)
 

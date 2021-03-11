@@ -59,9 +59,10 @@ async def test_send_message():
         content='hello world'
         sender_display_name='sender name'
 
-        create_message_result_id = await chat_thread_client.send_message(
+        create_message_result = await chat_thread_client.send_message(
             content,
             sender_display_name=sender_display_name)
+        create_message_result_id = create_message_result.id
     except:
         raised = True
 
@@ -110,10 +111,11 @@ async def test_send_message_w_type():
             content='hello world'
             sender_display_name='sender name'
 
-            create_message_result_id = await chat_thread_client.send_message(
+            create_message_result = await chat_thread_client.send_message(
                 content,
                 chat_message_type=chat_message_type,
                 sender_display_name=sender_display_name)
+            create_message_result_id = create_message_result.id
         except:
             raised = True
 
@@ -144,7 +146,7 @@ async def test_send_message_w_invalid_type_throws_error():
             content='hello world'
             sender_display_name='sender name'
 
-            create_message_result_id = await chat_thread_client.send_message(
+            create_message_result = await chat_thread_client.send_message(
                 content,
                 chat_message_type=chat_message_type,
                 sender_display_name=sender_display_name)

@@ -129,15 +129,17 @@ class ChatThreadClientSamplesAsync(object):
             chat_thread_client = chat_client.get_chat_thread_client(thread_id=thread_id)
             async with chat_thread_client:
                 # Scenario 1: Send message without specifying chat_message_type
-                send_message_result_id = await chat_thread_client.send_message(
+                send_message_result = await chat_thread_client.send_message(
                     "Hello! My name is Fred Flinstone",
                     sender_display_name="Fred Flinstone")
+                send_message_result_id = send_message_result.id
 
                 # Scenario 2: Send message specifying chat_message_type
-                send_message_result_w_type_id = await chat_thread_client.send_message(
+                send_message_result_w_type = await chat_thread_client.send_message(
                     "Hello! My name is Wilma Flinstone",
                     sender_display_name="Wilma Flinstone",
                     chat_message_type=ChatMessageType.TEXT)  # equivalent to setting chat_message_type='text'
+                send_message_result_w_type_id = send_message_result_w_type.id
 
                 # Verify message content
                 print("First Message:", (await chat_thread_client.get_message(send_message_result_id)).content.message)

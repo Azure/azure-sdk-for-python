@@ -322,15 +322,17 @@ sender_display_name='sender name'
 chat_message_type = ChatMessageType.TEXT
 
 # without specifying sender_display_name and chat_message_type
-send_message_result_id = chat_thread_client.send_message(content)
+send_message_result = chat_thread_client.send_message(content)
+send_message_result_id = send_message_result.id
 print("Message sent: id: ", send_message_result_id)
 
 # specifying sender_display_name and chat_message_type
-send_message_result_w_type_id = chat_thread_client.send_message(
+send_message_result_w_type = chat_thread_client.send_message(
             content,
             sender_display_name=sender_display_name,
             chat_message_type=chat_message_type # equivalent to chat_message_type = 'text'
 )
+send_message_result_w_type_id = send_message_result_w_type.id
 print("Message sent: id: ", send_message_result_w_type_id)
 ```
 
@@ -498,7 +500,8 @@ Use `send_read_receipt` method to post a read receipt event to a thread, on beha
 - Use `message_id` to specify the id of the message whose read receipt is to be sent
 ```python
 content='hello world'
-send_message_result_id = chat_thread_client.send_message(content)
+send_message_result = chat_thread_client.send_message(content)
+send_message_result_id = send_message_result.id
 chat_thread_client.send_read_receipt(message_id=send_message_result_id)
 ```
 
