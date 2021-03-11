@@ -1,0 +1,34 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.7.2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - d9a664ee-6a7e-11eb-9fa2-001a7dda7113
+      x-ms-date:
+      - Tue, 09 Feb 2021 02:31:01 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/?restype=account&comp=properties
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Tue, 09 Feb 2021 02:31:01 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary: Origin
+      x-ms-account-kind: StorageV2
+      x-ms-is-hns-enabled: 'true'
+      x-ms-request-id: 716f81c4-c01e-0000-658b-fe4d94000000
+      x-ms-sku-name: Standard_RAGRS
+      x-ms-version: '2020-04-08'
+    status:
+      code: 200
+      message: OK
+    url: https://xiafuhns.blob.core.windows.net/?restype=account&comp=properties
+version: 1

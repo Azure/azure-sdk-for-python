@@ -284,6 +284,8 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword int max_concurrency:
+            The number of parallel connections with which to upload.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword int chunk_size:

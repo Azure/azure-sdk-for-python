@@ -110,7 +110,17 @@ class DataLakeServiceSamples(object):
         # [END delete_file_system_from_service_client]
         file_system_client.delete_file_system()
 
+    def get_storage_account_information(self):
+        # [START get_account_info]
+        # Instantiate a DataLakeServiceClient using a connection string
+        from azure.storage.filedatalake import DataLakeServiceClient
+        datalake_service_client = DataLakeServiceClient.from_connection_string(self.connection_string)
+        account_info = datalake_service_client.get_account_information()
+        print('Using Storage SKU: {}'.format(account_info['sku_name']))
+        print('Is HNS enabled: {}'.format(account_info['is_hns_enabled']))
+        # [END get_account_info]
 
 if __name__ == '__main__':
     sample = DataLakeServiceSamples()
     sample.data_lake_service_sample()
+    sample.get_storage_account_information()

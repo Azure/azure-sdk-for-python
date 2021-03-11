@@ -569,6 +569,15 @@ class FileSystemTest(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_file_system_sessions_closes_properly_async())
 
+    async def _test_get_account_information_async(self):
+        account_info = await self.dsc.get_account_information()
+        self.assertTrue(account_info['is_hns_enabled'])
+        self.assertIsNotNone(account_info['sku_name'])
+
+    @record
+    def test_get_account_information_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_get_account_information_async())
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
