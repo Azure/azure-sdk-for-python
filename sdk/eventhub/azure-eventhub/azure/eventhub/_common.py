@@ -153,6 +153,42 @@ class EventData(object):
         event_str += " }"
         return event_str
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        message_state = state['message'].__dict__.copy()
+        body_data = list(message_state['_body'].data)
+        del message_state['_message']
+        message_state['_body'] = body_data
+        state['message'] = message_state
+        return state
+
+    def _create_message_from_properties(self, body, message_state):
+        # remove properties in state that are not args
+        del message_state['_body']
+        self.message = Message(body)
+        for prop, value in message_state.items():
+            setattr(self.message, prop, value)
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+
+        # get list of bytes data from state message and decode
+        data = state['message']['_body']
+        try:
+            body = "".join(b.decode("UTF-8") for b in cast(Iterable[bytes], data))
+        except TypeError:
+            body = six.text_type(data)
+
+        if body and isinstance(body, list):
+            # create message from body
+            self._create_message_from_properties(body[0], state['message'])
+            for more in body[1:]:
+                self.message._body.append(more)  # pylint: disable=protected-access
+        elif body is None:
+            raise ValueError("EventData cannot be None.")
+        else:
+            self._create_message_from_properties(body, state['message'])
+
     @classmethod
     def _from_message(cls, message):
         # type: (Message) -> EventData
