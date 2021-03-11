@@ -1,7 +1,8 @@
 # Release History
 
-## 1.12.1 (Unreleased)
+## 1.13.0 (Unreleased)
 
+- Add support for multiapi base client.
 
 ## 1.12.0 (2021-03-08)
 

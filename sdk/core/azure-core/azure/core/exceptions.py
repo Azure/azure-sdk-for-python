@@ -221,6 +221,11 @@ class AzureError(Exception):
             raise self
 
 
+class InvalidMultiApiClientError(AzureError):
+    """If the mixin is not used with a compatible class.
+    """
+
+
 class ServiceRequestError(AzureError):
     """An error occurred while attempt to make a request to the service.
     No request was sent.
@@ -232,11 +237,14 @@ class ServiceResponseError(AzureError):
     The connection may have timed out. These errors can be retried for idempotent or
     safe operations"""
 
+
 class ServiceRequestTimeoutError(ServiceRequestError):
     """Error raised when timeout happens"""
 
+
 class ServiceResponseTimeoutError(ServiceResponseError):
     """Error raised when timeout happens"""
+
 
 class HttpResponseError(AzureError):
     """A request was made, and a non-success status code was received from the service.
