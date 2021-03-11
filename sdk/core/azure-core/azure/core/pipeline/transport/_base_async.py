@@ -124,7 +124,7 @@ class AsyncHttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
     Allows for the asynchronous streaming of data from the response.
     """
 
-    def stream_download(self, pipeline) -> AsyncIteratorType[bytes]:
+    def stream_download(self, pipeline, raw=False) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
 
         Should be implemented by sub-classes if streaming download

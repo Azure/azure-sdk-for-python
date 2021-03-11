@@ -98,14 +98,16 @@ class StreamDownloadGenerator(object):
 
     :param pipeline: The pipeline object
     :param response: The response object.
+    :param raw: If returns the raw stream.
     """
-    def __init__(self, pipeline, response):
+    def __init__(self, pipeline, response, raw=False):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
         self.block_size = response.block_size
         self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
         self.content_length = int(response.headers.get('Content-Length', 0))
+        self._raw = raw
 
     def __len__(self):
         return self.content_length
@@ -115,7 +117,10 @@ class StreamDownloadGenerator(object):
 
     def __next__(self):
         try:
-            chunk = next(self.iter_content_func)
+            if self._raw:
+                chunk = self.response.internal_response.raw.read(self.block_size, decode_content=False)
+            else:
+                chunk = next(self.iter_content_func)
             if not chunk:
                 raise StopIteration()
             return chunk
@@ -134,10 +139,10 @@ class StreamDownloadGenerator(object):
 class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
     """Streaming of data from the response.
     """
-    def stream_download(self, pipeline):
-        # type: (PipelineType) -> Iterator[bytes]
+    def stream_download(self, pipeline, raw=True):
+        # type: (PipelineType, bool) -> Iterator[bytes]
         """Generator for streaming request body data."""
-        return StreamDownloadGenerator(pipeline, self)
+        return StreamDownloadGenerator(pipeline, self, raw=raw)
 
 
 class RequestsTransport(HttpTransport):

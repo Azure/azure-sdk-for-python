@@ -80,6 +80,16 @@ def test_response_streaming_error_behavior():
                 left -= len(data)
                 yield data
 
+        def read(self, chunk_size, decode_content=False):
+            assert chunk_size == block_size
+            left = total_response_size
+            while left > 0:
+                if left <= block_size:
+                    raise requests.exceptions.ConnectionError()
+                data = b"X" * min(chunk_size, left)
+                left -= len(data)
+                yield data
+
         def close(self):
             pass
 

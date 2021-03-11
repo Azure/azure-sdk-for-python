@@ -138,10 +138,9 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
 
     :param pipeline: The pipeline object
     :param response: The response object.
-    :param generator iter_content_func: Iterator for response data.
-    :param int content_length: size of body in bytes.
+    :param raw: If returns the raw stream.
     """
-    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse) -> None:
+    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, raw: bool=False) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
@@ -149,6 +148,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
         self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
         self.content_length = int(response.headers.get('Content-Length', 0))
         self.downloaded = 0
+        self._raw = raw
 
     def __len__(self):
         return self.content_length
@@ -178,6 +178,6 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
 class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse): # type: ignore
     """Asynchronous streaming of data from the response.
     """
-    def stream_download(self, pipeline) -> AsyncIteratorType[bytes]: # type: ignore
+    def stream_download(self, pipeline, raw=False) -> AsyncIteratorType[bytes]: # type: ignore
         """Generator for streaming request body data."""
-        return AsyncioStreamDownloadGenerator(pipeline, self) # type: ignore
+        return AsyncioStreamDownloadGenerator(pipeline, self, raw=raw) # type: ignore
