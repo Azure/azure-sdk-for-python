@@ -29,30 +29,30 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
             ResponseReplacerProcessor()])
             
     @AsyncCommunicationTestCase.await_prepared_test
-    async def test_list_acquired_phone_numbers_from_managed_identity(self):
+    async def test_list_purchased_phone_numbers_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
         credential = create_token_credential()
         phone_number_client = PhoneNumbersClient(endpoint, credential)
         async with self.phone_number_client:
-            phone_numbers = phone_number_client.list_acquired_phone_numbers()
+            phone_numbers = phone_number_client.list_purchased_phone_numbers()
             items = []
             async for item in phone_numbers:
                 items.append(item)
         assert len(items) > 0
 
     @AsyncCommunicationTestCase.await_prepared_test
-    async def test_list_acquired_phone_numbers(self):
+    async def test_list_purchased_phone_numbers(self):
         async with self.phone_number_client:
-            phone_numbers = self.phone_number_client.list_acquired_phone_numbers()
+            phone_numbers = self.phone_number_client.list_purchased_phone_numbers()
             items = []
             async for item in phone_numbers:
                 items.append(item)
         assert len(items) > 0
     
     @AsyncCommunicationTestCase.await_prepared_test
-    async def test_get_phone_number(self):
+    async def test_get_purchased_phone_number(self):
         async with self.phone_number_client:
-            phone_number = await self.phone_number_client.get_phone_number(self.phone_number)
+            phone_number = await self.phone_number_client.get_purchased_phone_number(self.phone_number)
         assert phone_number.phone_number == self.phone_number
 
     @AsyncCommunicationTestCase.await_prepared_test

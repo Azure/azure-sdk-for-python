@@ -188,7 +188,7 @@ opentelemetry-sdk==0.17b0
 #override azure-communication-identity azure-core<2.0.0,>=1.9.0
 #override azure-mgmt-communication azure-core<2.0.0,>=1.9.0
 #override azure-ai-metricsadvisor azure-core<2.0.0,>=1.6.0
-#override azure-ai-metricsadvisor msrest>=0.6.12
+#override azure-ai-metricsadvisor msrest>=0.6.21
 #override azure-ai-documenttranslation azure-core<2.0.0,>=1.8.2
 #override azure-ai-documenttranslation msrest>=0.6.21
 #override azure-monitor-opentelemetry-exporter azure-core<2.0.0,>=1.6.0
@@ -197,5 +197,6 @@ opentelemetry-sdk==0.17b0
 #override azure-monitor-opentelemetry-exporter opentelemetry-sdk==1.0.0rc1
 #override azure-core-tracing-opentelemetry opentelemetry-api==0.17b0
 #override azure-identity six>=1.12.0
+#override azure-keyvault-keys six>=1.12.0
 #override azure-mixedreality-authentication azure-core<2.0.0,>=1.4.0
 #override azure-iot-deviceupdate azure-core<2.0.0,>=1.6.0

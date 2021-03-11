@@ -19,4 +19,8 @@ no-namespace-folders: true
 clear-output-folder: true
 v3: true
 python: true
+directive:
+    - rename-model:
+        from: AcquiredPhoneNumber
+        to: PurchasedPhoneNumber
 ```
