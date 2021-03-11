@@ -18,11 +18,10 @@ USAGE:
     2) AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_TO_UPDATE - The phone number you want to update
 """
 
+import asyncio
 import os
-from azure.communication.phonenumbers import (
-    PhoneNumbersClient,
-    PhoneNumberCapabilityType
-)
+from azure.communication.phonenumbers.aio import PhoneNumbersClient
+from azure.communication.phonenumbers import PhoneNumberCapabilityType
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
 phone_number_to_update = os.getenv(
@@ -30,15 +29,17 @@ phone_number_to_update = os.getenv(
 ) 
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
-def update_phone_number_capabilities():
-    poller = phone_numbers_client.begin_update_phone_number_capabilities(
-        "+18332408820",
-        PhoneNumberCapabilityType.INBOUND_OUTBOUND,
-        PhoneNumberCapabilityType.INBOUND,
-        polling = True
-    )
-    poller.result()
+async def update_phone_number_capabilities():
+    async with phone_numbers_client:
+        poller = await phone_numbers_client.begin_update_phone_number_capabilities(
+            phone_number_to_update,
+            PhoneNumberCapabilityType.OUTBOUND,
+            PhoneNumberCapabilityType.INBOUND_OUTBOUND,
+            polling = True
+        )
+        await poller.result()
     print('Status of the operation: ' + poller.status())
 
 if __name__ == '__main__':
-    update_phone_number_capabilities()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(update_phone_number_capabilities())
