@@ -89,6 +89,9 @@ parameters:
   - name: LinuxPool
     type: string
     default: azsdk-pool-mms-ubuntu-1804-general
+  - name: VerifyAutorest
+    type: boolean
+    default: true
 
 jobs:
   - job: 'Build'
@@ -139,6 +142,7 @@ jobs:
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         Artifacts: ${{ parameters.Artifacts }}
+        VerifyAutorest: ${{ parameters.VerifyAutorest }}
 
   - job: 'Test'
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))

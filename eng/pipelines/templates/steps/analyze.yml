@@ -1,9 +1,22 @@
 parameters:
-  BuildTargetingString: 'azure-*'
-  ServiceDirectory: ''
-  TestMarkArgument: ''
-  AdditionalTestArgs: ''
-  Artifacts: []
+  - name: BuildTargetingString
+    type: string
+    default: 'azure-*'
+  - name: ServiceDirectory
+    type: string
+    default: ''
+  - name: TestMarkArgument
+    type: string
+    default: ''
+  - name: AdditionalTestArgs
+    type: string
+    default: ''
+  - name: Artifacts
+    type: object
+    default: []
+  - name: VerifyAutorest
+    type: boolean
+    default: true
 
 steps:
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
@@ -112,6 +125,7 @@ steps:
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
 
-  - template: ../steps/verify-autorest.yml
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+  - ${{if eq(parameters.VerifyAutorest, 'true')}}:
+    - template: ../steps/verify-autorest.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
