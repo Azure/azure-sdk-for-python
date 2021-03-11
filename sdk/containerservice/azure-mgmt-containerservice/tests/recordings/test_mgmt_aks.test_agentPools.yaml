@@ -4,7 +4,7 @@ interactions:
       1, "vmSize": "Standard_DS2_v2", "maxPods": 110, "osType": "Linux", "maxCount":
       100, "minCount": 1, "enableAutoScaling": true, "type": "VirtualMachineScaleSets",
       "mode": "System", "name": "aksagent"}], "servicePrincipalProfile": {"clientId":
-      "8a95323f-4a83-4a69-903f-7d2c69349c3c", "secret": "coMr6UcO..OvfiJX@B5]pXr6rsgw28X6"}},
+      "22922db6-2c37-4027-b39c-e994c47c5dc8", "secret": "9.JEMsq~6_v.8g.4rGEMF5Gnz8L4_pJy_Y"}},
       "location": "eastus"}'
     headers:
       Accept:
@@ -14,50 +14,51 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '427'
+      - '429'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-containerservice/14.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-containerservice/0.0.0 Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4?api-version=2020-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4?api-version=2021-02-01
   response:
     body:
-      string: "{\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4\"\
-        ,\n  \"location\": \"eastus\",\n  \"name\": \"4\",\n  \"type\": \"Microsoft.ContainerService/ManagedClusters\"\
-        ,\n  \"properties\": {\n   \"provisioningState\": \"Creating\",\n   \"powerState\"\
-        : {\n    \"code\": \"Running\"\n   },\n   \"kubernetesVersion\": \"1.17.13\"\
-        ,\n   \"dnsPrefix\": \"akspythonsdk\",\n   \"fqdn\": \"akspythonsdk-86de37b6.hcp.eastus.azmk8s.io\"\
-        ,\n   \"agentPoolProfiles\": [\n    {\n     \"name\": \"aksagent\",\n    \
-        \ \"count\": 1,\n     \"vmSize\": \"Standard_DS2_v2\",\n     \"osDiskSizeGB\"\
-        : 128,\n     \"osDiskType\": \"Managed\",\n     \"maxPods\": 110,\n     \"\
-        type\": \"VirtualMachineScaleSets\",\n     \"maxCount\": 100,\n     \"minCount\"\
-        : 1,\n     \"enableAutoScaling\": true,\n     \"provisioningState\": \"Creating\"\
-        ,\n     \"powerState\": {\n      \"code\": \"Running\"\n     },\n     \"orchestratorVersion\"\
-        : \"1.17.13\",\n     \"nodeLabels\": {},\n     \"mode\": \"System\",\n   \
-        \  \"osType\": \"Linux\",\n     \"nodeImageVersion\": \"AKSUbuntu-1604-2020.10.28\"\
-        \n    }\n   ],\n   \"servicePrincipalProfile\": {\n    \"clientId\": \"8a95323f-4a83-4a69-903f-7d2c69349c3c\"\
-        \n   },\n   \"addonProfiles\": {\n    \"KubeDashboard\": {\n     \"enabled\"\
-        : true,\n     \"config\": null\n    }\n   },\n   \"nodeResourceGroup\": \"\
-        MC_test_mgmt_aks_test_agentPoolsb25d0bdc_4_eastus\",\n   \"enableRBAC\": true,\n\
-        \   \"networkProfile\": {\n    \"networkPlugin\": \"kubenet\",\n    \"loadBalancerSku\"\
-        : \"standard\",\n    \"loadBalancerProfile\": {\n     \"managedOutboundIPs\"\
-        : {\n      \"count\": 1\n     }\n    },\n    \"podCidr\": \"10.244.0.0/16\"\
-        ,\n    \"serviceCidr\": \"10.0.0.0/16\",\n    \"dnsServiceIP\": \"10.0.0.10\"\
-        ,\n    \"dockerBridgeCidr\": \"172.17.0.1/16\",\n    \"outboundType\": \"\
-        loadBalancer\"\n   },\n   \"maxAgentPools\": 10\n  },\n  \"sku\": {\n   \"\
-        name\": \"Basic\",\n   \"tier\": \"Free\"\n  }\n }"
+      string: "{\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4\",\n
+        \ \"location\": \"eastus\",\n  \"name\": \"4\",\n  \"type\": \"Microsoft.ContainerService/ManagedClusters\",\n
+        \ \"properties\": {\n   \"provisioningState\": \"Creating\",\n   \"powerState\":
+        {\n    \"code\": \"Running\"\n   },\n   \"kubernetesVersion\": \"1.18.14\",\n
+        \  \"dnsPrefix\": \"akspythonsdk\",\n   \"fqdn\": \"akspythonsdk-0105d38b.hcp.eastus.azmk8s.io\",\n
+        \  \"azurePortalFQDN\": \"akspythonsdk-0105d38b.portal.hcp.eastus.azmk8s.io\",\n
+        \  \"agentPoolProfiles\": [\n    {\n     \"name\": \"aksagent\",\n     \"count\":
+        1,\n     \"vmSize\": \"Standard_DS2_v2\",\n     \"osDiskSizeGB\": 128,\n     \"osDiskType\":
+        \"Managed\",\n     \"kubeletDiskType\": \"OS\",\n     \"maxPods\": 110,\n
+        \    \"type\": \"VirtualMachineScaleSets\",\n     \"maxCount\": 100,\n     \"minCount\":
+        1,\n     \"enableAutoScaling\": true,\n     \"provisioningState\": \"Creating\",\n
+        \    \"powerState\": {\n      \"code\": \"Running\"\n     },\n     \"orchestratorVersion\":
+        \"1.18.14\",\n     \"nodeLabels\": {},\n     \"mode\": \"System\",\n     \"osType\":
+        \"Linux\",\n     \"nodeImageVersion\": \"AKSUbuntu-1804gen2-2021.02.17\"\n
+        \   }\n   ],\n   \"servicePrincipalProfile\": {\n    \"clientId\": \"22922db6-2c37-4027-b39c-e994c47c5dc8\"\n
+        \  },\n   \"addonProfiles\": {\n    \"KubeDashboard\": {\n     \"enabled\":
+        false,\n     \"config\": null\n    }\n   },\n   \"nodeResourceGroup\": \"MC_test_mgmt_aks_test_agentPoolsb25d0bdc_4_eastus\",\n
+        \  \"enableRBAC\": true,\n   \"networkProfile\": {\n    \"networkPlugin\":
+        \"kubenet\",\n    \"loadBalancerSku\": \"standard\",\n    \"loadBalancerProfile\":
+        {\n     \"managedOutboundIPs\": {\n      \"count\": 1\n     }\n    },\n    \"podCidr\":
+        \"10.244.0.0/16\",\n    \"serviceCidr\": \"10.0.0.0/16\",\n    \"dnsServiceIP\":
+        \"10.0.0.10\",\n    \"dockerBridgeCidr\": \"172.17.0.1/16\",\n    \"outboundType\":
+        \"loadBalancer\"\n   },\n   \"maxAgentPools\": 10\n  },\n  \"sku\": {\n   \"name\":
+        \"Basic\",\n   \"tier\": \"Free\"\n  }\n }"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/f493efe4-034e-4cfe-8360-74963f33c9e2?api-version=2017-08-31
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/00f1b548-01ba-41b1-9e9e-21b81874f616?api-version=2017-08-31
       cache-control:
       - no-cache
       content-length:
-      - '1792'
+      - '1902'
       content-type:
       - application/json
       date:
-      - Mon, 23 Nov 2020 04:35:12 GMT
+      - Thu, 11 Mar 2021 08:09:51 GMT
       expires:
       - '-1'
       pragma:
@@ -83,22 +84,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-containerservice/14.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-containerservice/0.0.0 Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/f493efe4-034e-4cfe-8360-74963f33c9e2?api-version=2017-08-31
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/00f1b548-01ba-41b1-9e9e-21b81874f616?api-version=2017-08-31
   response:
     body:
-      string: "{\n  \"name\": \"e4ef93f4-4e03-fe4c-8360-74963f33c9e2\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-11-23T04:35:11.594569Z\"\n }"
+      string: "{\n  \"name\": \"48b5f100-ba01-b141-9e9e-21b81874f616\",\n  \"status\":
+        \"InProgress\",\n  \"startTime\": \"2021-03-11T08:09:51.48Z\"\n }"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '125'
+      - '121'
       content-type:
       - application/json
       date:
-      - Mon, 23 Nov 2020 04:35:44 GMT
+      - Thu, 11 Mar 2021 08:10:21 GMT
       expires:
       - '-1'
       pragma:
@@ -126,22 +128,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-containerservice/14.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-containerservice/0.0.0 Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/f493efe4-034e-4cfe-8360-74963f33c9e2?api-version=2017-08-31
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/00f1b548-01ba-41b1-9e9e-21b81874f616?api-version=2017-08-31
   response:
     body:
-      string: "{\n  \"name\": \"e4ef93f4-4e03-fe4c-8360-74963f33c9e2\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-11-23T04:35:11.594569Z\"\n }"
+      string: "{\n  \"name\": \"48b5f100-ba01-b141-9e9e-21b81874f616\",\n  \"status\":
+        \"InProgress\",\n  \"startTime\": \"2021-03-11T08:09:51.48Z\"\n }"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '125'
+      - '121'
       content-type:
       - application/json
       date:
-      - Mon, 23 Nov 2020 04:36:14 GMT
+      - Thu, 11 Mar 2021 08:10:51 GMT
       expires:
       - '-1'
       pragma:
@@ -169,22 +172,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-containerservice/14.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-containerservice/0.0.0 Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/f493efe4-034e-4cfe-8360-74963f33c9e2?api-version=2017-08-31
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/00f1b548-01ba-41b1-9e9e-21b81874f616?api-version=2017-08-31
   response:
     body:
-      string: "{\n  \"name\": \"e4ef93f4-4e03-fe4c-8360-74963f33c9e2\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-11-23T04:35:11.594569Z\"\n }"
+      string: "{\n  \"name\": \"48b5f100-ba01-b141-9e9e-21b81874f616\",\n  \"status\":
+        \"InProgress\",\n  \"startTime\": \"2021-03-11T08:09:51.48Z\"\n }"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '125'
+      - '121'
       content-type:
       - application/json
       date:
-      - Mon, 23 Nov 2020 04:36:44 GMT
+      - Thu, 11 Mar 2021 08:11:22 GMT
       expires:
       - '-1'
       pragma:
@@ -212,22 +216,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-containerservice/14.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-containerservice/0.0.0 Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/f493efe4-034e-4cfe-8360-74963f33c9e2?api-version=2017-08-31
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/00f1b548-01ba-41b1-9e9e-21b81874f616?api-version=2017-08-31
   response:
     body:
-      string: "{\n  \"name\": \"e4ef93f4-4e03-fe4c-8360-74963f33c9e2\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-11-23T04:35:11.594569Z\"\n }"
+      string: "{\n  \"name\": \"48b5f100-ba01-b141-9e9e-21b81874f616\",\n  \"status\":
+        \"InProgress\",\n  \"startTime\": \"2021-03-11T08:09:51.48Z\"\n }"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '125'
+      - '121'
       content-type:
       - application/json
       date:
-      - Mon, 23 Nov 2020 04:37:14 GMT
+      - Thu, 11 Mar 2021 08:11:52 GMT
       expires:
       - '-1'
       pragma:
@@ -255,22 +260,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-containerservice/14.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-containerservice/0.0.0 Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/f493efe4-034e-4cfe-8360-74963f33c9e2?api-version=2017-08-31
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/00f1b548-01ba-41b1-9e9e-21b81874f616?api-version=2017-08-31
   response:
     body:
-      string: "{\n  \"name\": \"e4ef93f4-4e03-fe4c-8360-74963f33c9e2\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-11-23T04:35:11.594569Z\"\n }"
+      string: "{\n  \"name\": \"48b5f100-ba01-b141-9e9e-21b81874f616\",\n  \"status\":
+        \"Succeeded\",\n  \"startTime\": \"2021-03-11T08:09:51.48Z\",\n  \"endTime\":
+        \"2021-03-11T08:12:18.0997855Z\"\n }"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '125'
+      - '165'
       content-type:
       - application/json
       date:
-      - Mon, 23 Nov 2020 04:37:45 GMT
+      - Thu, 11 Mar 2021 08:12:22 GMT
       expires:
       - '-1'
       pragma:
@@ -298,98 +305,55 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-containerservice/14.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-containerservice/0.0.0 Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/f493efe4-034e-4cfe-8360-74963f33c9e2?api-version=2017-08-31
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4?api-version=2021-02-01
   response:
     body:
-      string: "{\n  \"name\": \"e4ef93f4-4e03-fe4c-8360-74963f33c9e2\",\n  \"status\"\
-        : \"Succeeded\",\n  \"startTime\": \"2020-11-23T04:35:11.594569Z\",\n  \"\
-        endTime\": \"2020-11-23T04:38:15.9146866Z\"\n }"
+      string: "{\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4\",\n
+        \ \"location\": \"eastus\",\n  \"name\": \"4\",\n  \"type\": \"Microsoft.ContainerService/ManagedClusters\",\n
+        \ \"properties\": {\n   \"provisioningState\": \"Succeeded\",\n   \"powerState\":
+        {\n    \"code\": \"Running\"\n   },\n   \"kubernetesVersion\": \"1.18.14\",\n
+        \  \"dnsPrefix\": \"akspythonsdk\",\n   \"fqdn\": \"akspythonsdk-0105d38b.hcp.eastus.azmk8s.io\",\n
+        \  \"azurePortalFQDN\": \"akspythonsdk-0105d38b.portal.hcp.eastus.azmk8s.io\",\n
+        \  \"agentPoolProfiles\": [\n    {\n     \"name\": \"aksagent\",\n     \"count\":
+        1,\n     \"vmSize\": \"Standard_DS2_v2\",\n     \"osDiskSizeGB\": 128,\n     \"osDiskType\":
+        \"Managed\",\n     \"kubeletDiskType\": \"OS\",\n     \"maxPods\": 110,\n
+        \    \"type\": \"VirtualMachineScaleSets\",\n     \"maxCount\": 100,\n     \"minCount\":
+        1,\n     \"enableAutoScaling\": true,\n     \"provisioningState\": \"Succeeded\",\n
+        \    \"powerState\": {\n      \"code\": \"Running\"\n     },\n     \"orchestratorVersion\":
+        \"1.18.14\",\n     \"nodeLabels\": {},\n     \"mode\": \"System\",\n     \"osType\":
+        \"Linux\",\n     \"nodeImageVersion\": \"AKSUbuntu-1804gen2-2021.02.17\"\n
+        \   }\n   ],\n   \"servicePrincipalProfile\": {\n    \"clientId\": \"22922db6-2c37-4027-b39c-e994c47c5dc8\"\n
+        \  },\n   \"addonProfiles\": {\n    \"KubeDashboard\": {\n     \"enabled\":
+        false,\n     \"config\": null\n    }\n   },\n   \"nodeResourceGroup\": \"MC_test_mgmt_aks_test_agentPoolsb25d0bdc_4_eastus\",\n
+        \  \"enableRBAC\": true,\n   \"networkProfile\": {\n    \"networkPlugin\":
+        \"kubenet\",\n    \"loadBalancerSku\": \"Standard\",\n    \"loadBalancerProfile\":
+        {\n     \"managedOutboundIPs\": {\n      \"count\": 1\n     },\n     \"effectiveOutboundIPs\":
+        [\n      {\n       \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_test_mgmt_aks_test_agentPoolsb25d0bdc_4_eastus/providers/Microsoft.Network/publicIPAddresses/798d28d0-f4c0-4922-aa48-f30c0008f8b6\"\n
+        \     }\n     ]\n    },\n    \"podCidr\": \"10.244.0.0/16\",\n    \"serviceCidr\":
+        \"10.0.0.0/16\",\n    \"dnsServiceIP\": \"10.0.0.10\",\n    \"dockerBridgeCidr\":
+        \"172.17.0.1/16\",\n    \"outboundType\": \"loadBalancer\"\n   },\n   \"maxAgentPools\":
+        10,\n   \"autoScalerProfile\": {\n    \"balance-similar-node-groups\": \"false\",\n
+        \   \"expander\": \"random\",\n    \"max-empty-bulk-delete\": \"10\",\n    \"max-graceful-termination-sec\":
+        \"600\",\n    \"max-node-provision-time\": \"15m\",\n    \"max-total-unready-percentage\":
+        \"45\",\n    \"new-pod-scale-up-delay\": \"0s\",\n    \"ok-total-unready-count\":
+        \"3\",\n    \"scale-down-delay-after-add\": \"10m\",\n    \"scale-down-delay-after-delete\":
+        \"10s\",\n    \"scale-down-delay-after-failure\": \"3m\",\n    \"scale-down-unneeded-time\":
+        \"10m\",\n    \"scale-down-unready-time\": \"20m\",\n    \"scale-down-utilization-threshold\":
+        \"0.5\",\n    \"scan-interval\": \"10s\",\n    \"skip-nodes-with-local-storage\":
+        \"false\",\n    \"skip-nodes-with-system-pods\": \"true\"\n   }\n  },\n  \"sku\":
+        {\n   \"name\": \"Basic\",\n   \"tier\": \"Free\"\n  }\n }"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '169'
+      - '2874'
       content-type:
       - application/json
       date:
-      - Mon, 23 Nov 2020 04:38:16 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - nginx
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-containerservice/14.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4?api-version=2020-11-01
-  response:
-    body:
-      string: "{\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4\"\
-        ,\n  \"location\": \"eastus\",\n  \"name\": \"4\",\n  \"type\": \"Microsoft.ContainerService/ManagedClusters\"\
-        ,\n  \"properties\": {\n   \"provisioningState\": \"Succeeded\",\n   \"powerState\"\
-        : {\n    \"code\": \"Running\"\n   },\n   \"kubernetesVersion\": \"1.17.13\"\
-        ,\n   \"dnsPrefix\": \"akspythonsdk\",\n   \"fqdn\": \"akspythonsdk-86de37b6.hcp.eastus.azmk8s.io\"\
-        ,\n   \"agentPoolProfiles\": [\n    {\n     \"name\": \"aksagent\",\n    \
-        \ \"count\": 1,\n     \"vmSize\": \"Standard_DS2_v2\",\n     \"osDiskSizeGB\"\
-        : 128,\n     \"osDiskType\": \"Managed\",\n     \"maxPods\": 110,\n     \"\
-        type\": \"VirtualMachineScaleSets\",\n     \"maxCount\": 100,\n     \"minCount\"\
-        : 1,\n     \"enableAutoScaling\": true,\n     \"provisioningState\": \"Succeeded\"\
-        ,\n     \"powerState\": {\n      \"code\": \"Running\"\n     },\n     \"orchestratorVersion\"\
-        : \"1.17.13\",\n     \"nodeLabels\": {},\n     \"mode\": \"System\",\n   \
-        \  \"osType\": \"Linux\",\n     \"nodeImageVersion\": \"AKSUbuntu-1604-2020.10.28\"\
-        \n    }\n   ],\n   \"servicePrincipalProfile\": {\n    \"clientId\": \"8a95323f-4a83-4a69-903f-7d2c69349c3c\"\
-        \n   },\n   \"addonProfiles\": {\n    \"KubeDashboard\": {\n     \"enabled\"\
-        : true,\n     \"config\": null\n    }\n   },\n   \"nodeResourceGroup\": \"\
-        MC_test_mgmt_aks_test_agentPoolsb25d0bdc_4_eastus\",\n   \"enableRBAC\": true,\n\
-        \   \"networkProfile\": {\n    \"networkPlugin\": \"kubenet\",\n    \"loadBalancerSku\"\
-        : \"Standard\",\n    \"loadBalancerProfile\": {\n     \"managedOutboundIPs\"\
-        : {\n      \"count\": 1\n     },\n     \"effectiveOutboundIPs\": [\n     \
-        \ {\n       \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_test_mgmt_aks_test_agentPoolsb25d0bdc_4_eastus/providers/Microsoft.Network/publicIPAddresses/34b659c7-e73a-45c3-82c6-bea77141540c\"\
-        \n      }\n     ]\n    },\n    \"podCidr\": \"10.244.0.0/16\",\n    \"serviceCidr\"\
-        : \"10.0.0.0/16\",\n    \"dnsServiceIP\": \"10.0.0.10\",\n    \"dockerBridgeCidr\"\
-        : \"172.17.0.1/16\",\n    \"outboundType\": \"loadBalancer\"\n   },\n   \"\
-        maxAgentPools\": 10,\n   \"autoScalerProfile\": {\n    \"balance-similar-node-groups\"\
-        : \"false\",\n    \"expander\": \"random\",\n    \"max-empty-bulk-delete\"\
-        : \"10\",\n    \"max-graceful-termination-sec\": \"600\",\n    \"max-total-unready-percentage\"\
-        : \"45\",\n    \"new-pod-scale-up-delay\": \"0s\",\n    \"ok-total-unready-count\"\
-        : \"3\",\n    \"scale-down-delay-after-add\": \"10m\",\n    \"scale-down-delay-after-delete\"\
-        : \"10s\",\n    \"scale-down-delay-after-failure\": \"3m\",\n    \"scale-down-unneeded-time\"\
-        : \"10m\",\n    \"scale-down-unready-time\": \"20m\",\n    \"scale-down-utilization-threshold\"\
-        : \"0.5\",\n    \"scan-interval\": \"10s\",\n    \"skip-nodes-with-local-storage\"\
-        : \"false\",\n    \"skip-nodes-with-system-pods\": \"true\"\n   }\n  },\n\
-        \  \"sku\": {\n   \"name\": \"Basic\",\n   \"tier\": \"Free\"\n  }\n }"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '2726'
-      content-type:
-      - application/json
-      date:
-      - Mon, 23 Nov 2020 04:38:16 GMT
+      - Thu, 11 Mar 2021 08:12:22 GMT
       expires:
       - '-1'
       pragma:
@@ -423,31 +387,32 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-containerservice/14.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-containerservice/0.0.0 Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4/agentPools/aksagent?api-version=2020-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4/agentPools/aksagent?api-version=2021-02-01
   response:
     body:
-      string: "{\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4/agentPools/aksagent\"\
-        ,\n  \"name\": \"aksagent\",\n  \"type\": \"Microsoft.ContainerService/managedClusters/agentPools\"\
-        ,\n  \"properties\": {\n   \"count\": 1,\n   \"vmSize\": \"Standard_DS2_v2\"\
-        ,\n   \"osDiskSizeGB\": 128,\n   \"osDiskType\": \"Managed\",\n   \"maxPods\"\
-        : 110,\n   \"type\": \"VirtualMachineScaleSets\",\n   \"provisioningState\"\
-        : \"Updating\",\n   \"powerState\": {\n    \"code\": \"Running\"\n   },\n\
-        \   \"orchestratorVersion\": \"1.17.13\",\n   \"nodeLabels\": {},\n   \"mode\"\
-        : \"System\",\n   \"osType\": \"Linux\",\n   \"nodeImageVersion\": \"AKSUbuntu-1604-2020.10.28\"\
-        \n  }\n }"
+      string: "{\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4/agentPools/aksagent\",\n
+        \ \"name\": \"aksagent\",\n  \"type\": \"Microsoft.ContainerService/managedClusters/agentPools\",\n
+        \ \"properties\": {\n   \"count\": 1,\n   \"vmSize\": \"Standard_DS2_v2\",\n
+        \  \"osDiskSizeGB\": 128,\n   \"osDiskType\": \"Managed\",\n   \"kubeletDiskType\":
+        \"OS\",\n   \"maxPods\": 110,\n   \"type\": \"VirtualMachineScaleSets\",\n
+        \  \"provisioningState\": \"Updating\",\n   \"powerState\": {\n    \"code\":
+        \"Running\"\n   },\n   \"orchestratorVersion\": \"1.18.14\",\n   \"nodeLabels\":
+        {},\n   \"mode\": \"System\",\n   \"osType\": \"Linux\",\n   \"nodeImageVersion\":
+        \"AKSUbuntu-1804gen2-2021.02.17\"\n  }\n }"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/740b583d-42df-48c9-997e-b231cc29165e?api-version=2017-08-31
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/7a329cb6-55fc-4a3a-b6f7-867e4f16fe8e?api-version=2017-08-31
       cache-control:
       - no-cache
       content-length:
-      - '697'
+      - '729'
       content-type:
       - application/json
       date:
-      - Mon, 23 Nov 2020 04:38:18 GMT
+      - Thu, 11 Mar 2021 08:12:26 GMT
       expires:
       - '-1'
       pragma:
@@ -477,23 +442,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-containerservice/14.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-containerservice/0.0.0 Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/740b583d-42df-48c9-997e-b231cc29165e?api-version=2017-08-31
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/7a329cb6-55fc-4a3a-b6f7-867e4f16fe8e?api-version=2017-08-31
   response:
     body:
-      string: "{\n  \"name\": \"3d580b74-df42-c948-997e-b231cc29165e\",\n  \"status\"\
-        : \"Succeeded\",\n  \"startTime\": \"2020-11-23T04:38:18.5224059Z\",\n  \"\
-        endTime\": \"2020-11-23T04:38:45.6248551Z\"\n }"
+      string: "{\n  \"name\": \"b69c327a-fc55-3a4a-b6f7-867e4f16fe8e\",\n  \"status\":
+        \"Succeeded\",\n  \"startTime\": \"2021-03-11T08:12:27.14Z\",\n  \"endTime\":
+        \"2021-03-11T08:12:53.1514763Z\"\n }"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '170'
+      - '165'
       content-type:
       - application/json
       date:
-      - Mon, 23 Nov 2020 04:38:48 GMT
+      - Thu, 11 Mar 2021 08:12:56 GMT
       expires:
       - '-1'
       pragma:
@@ -521,29 +487,30 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-containerservice/14.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-containerservice/0.0.0 Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4/agentPools/aksagent?api-version=2020-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4/agentPools/aksagent?api-version=2021-02-01
   response:
     body:
-      string: "{\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4/agentPools/aksagent\"\
-        ,\n  \"name\": \"aksagent\",\n  \"type\": \"Microsoft.ContainerService/managedClusters/agentPools\"\
-        ,\n  \"properties\": {\n   \"count\": 1,\n   \"vmSize\": \"Standard_DS2_v2\"\
-        ,\n   \"osDiskSizeGB\": 128,\n   \"osDiskType\": \"Managed\",\n   \"maxPods\"\
-        : 110,\n   \"type\": \"VirtualMachineScaleSets\",\n   \"provisioningState\"\
-        : \"Succeeded\",\n   \"powerState\": {\n    \"code\": \"Running\"\n   },\n\
-        \   \"orchestratorVersion\": \"1.17.13\",\n   \"nodeLabels\": {},\n   \"mode\"\
-        : \"System\",\n   \"osType\": \"Linux\",\n   \"nodeImageVersion\": \"AKSUbuntu-1604-2020.10.28\"\
-        \n  }\n }"
+      string: "{\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4/agentPools/aksagent\",\n
+        \ \"name\": \"aksagent\",\n  \"type\": \"Microsoft.ContainerService/managedClusters/agentPools\",\n
+        \ \"properties\": {\n   \"count\": 1,\n   \"vmSize\": \"Standard_DS2_v2\",\n
+        \  \"osDiskSizeGB\": 128,\n   \"osDiskType\": \"Managed\",\n   \"kubeletDiskType\":
+        \"OS\",\n   \"maxPods\": 110,\n   \"type\": \"VirtualMachineScaleSets\",\n
+        \  \"provisioningState\": \"Succeeded\",\n   \"powerState\": {\n    \"code\":
+        \"Running\"\n   },\n   \"orchestratorVersion\": \"1.18.14\",\n   \"nodeLabels\":
+        {},\n   \"mode\": \"System\",\n   \"osType\": \"Linux\",\n   \"nodeImageVersion\":
+        \"AKSUbuntu-1804gen2-2021.02.17\"\n  }\n }"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '698'
+      - '730'
       content-type:
       - application/json
       date:
-      - Mon, 23 Nov 2020 04:38:49 GMT
+      - Thu, 11 Mar 2021 08:12:57 GMT
       expires:
       - '-1'
       pragma:
@@ -571,29 +538,30 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-containerservice/14.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-containerservice/0.0.0 Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4/agentPools/aksagent?api-version=2020-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4/agentPools/aksagent?api-version=2021-02-01
   response:
     body:
-      string: "{\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4/agentPools/aksagent\"\
-        ,\n  \"name\": \"aksagent\",\n  \"type\": \"Microsoft.ContainerService/managedClusters/agentPools\"\
-        ,\n  \"properties\": {\n   \"count\": 1,\n   \"vmSize\": \"Standard_DS2_v2\"\
-        ,\n   \"osDiskSizeGB\": 128,\n   \"osDiskType\": \"Managed\",\n   \"maxPods\"\
-        : 110,\n   \"type\": \"VirtualMachineScaleSets\",\n   \"provisioningState\"\
-        : \"Succeeded\",\n   \"powerState\": {\n    \"code\": \"Running\"\n   },\n\
-        \   \"orchestratorVersion\": \"1.17.13\",\n   \"nodeLabels\": {},\n   \"mode\"\
-        : \"System\",\n   \"osType\": \"Linux\",\n   \"nodeImageVersion\": \"AKSUbuntu-1604-2020.10.28\"\
-        \n  }\n }"
+      string: "{\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4/agentPools/aksagent\",\n
+        \ \"name\": \"aksagent\",\n  \"type\": \"Microsoft.ContainerService/managedClusters/agentPools\",\n
+        \ \"properties\": {\n   \"count\": 1,\n   \"vmSize\": \"Standard_DS2_v2\",\n
+        \  \"osDiskSizeGB\": 128,\n   \"osDiskType\": \"Managed\",\n   \"kubeletDiskType\":
+        \"OS\",\n   \"maxPods\": 110,\n   \"type\": \"VirtualMachineScaleSets\",\n
+        \  \"provisioningState\": \"Succeeded\",\n   \"powerState\": {\n    \"code\":
+        \"Running\"\n   },\n   \"orchestratorVersion\": \"1.18.14\",\n   \"nodeLabels\":
+        {},\n   \"mode\": \"System\",\n   \"osType\": \"Linux\",\n   \"nodeImageVersion\":
+        \"AKSUbuntu-1804gen2-2021.02.17\"\n  }\n }"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '698'
+      - '730'
       content-type:
       - application/json
       date:
-      - Mon, 23 Nov 2020 04:38:49 GMT
+      - Thu, 11 Mar 2021 08:12:57 GMT
       expires:
       - '-1'
       pragma:
@@ -621,18 +589,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-containerservice/14.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-containerservice/0.0.0 Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4/availableAgentPoolVersions?api-version=2020-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4/availableAgentPoolVersions?api-version=2021-02-01
   response:
     body:
-      string: "{\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4/availableagentpoolversions\"\
-        ,\n  \"name\": \"default\",\n  \"type\": \"Microsoft.ContainerService/managedClusters/availableAgentpoolVersions\"\
-        ,\n  \"properties\": {\n   \"agentPoolVersions\": [\n    {\n     \"kubernetesVersion\"\
-        : \"1.17.11\"\n    },\n    {\n     \"kubernetesVersion\": \"1.16.13\"\n  \
-        \  },\n    {\n     \"kubernetesVersion\": \"1.16.15\"\n    },\n    {\n   \
-        \  \"default\": true,\n     \"kubernetesVersion\": \"1.17.13\"\n    }\n  \
-        \ ]\n  }\n }"
+      string: "{\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4/availableagentpoolversions\",\n
+        \ \"name\": \"default\",\n  \"type\": \"Microsoft.ContainerService/managedClusters/availableAgentpoolVersions\",\n
+        \ \"properties\": {\n   \"agentPoolVersions\": [\n    {\n     \"kubernetesVersion\":
+        \"1.17.16\"\n    },\n    {\n     \"kubernetesVersion\": \"1.17.13\"\n    },\n
+        \   {\n     \"default\": true,\n     \"kubernetesVersion\": \"1.18.14\"\n
+        \   },\n    {\n     \"kubernetesVersion\": \"1.18.10\"\n    }\n   ]\n  }\n
+        }"
     headers:
       cache-control:
       - no-cache
@@ -641,7 +610,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 23 Nov 2020 04:38:50 GMT
+      - Thu, 11 Mar 2021 08:12:57 GMT
       expires:
       - '-1'
       pragma:
