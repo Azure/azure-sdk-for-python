@@ -221,7 +221,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         for i in range(blocks):
             index = i * self.chunk_size
             length = last_block_size if i == blocks - 1 else self.chunk_size
-            yield ('BlockId{}'.format("%05d" % i), SubStream(self.stream, index, length, lock))
+            yield (index, SubStream(self.stream, index, length, lock))
 
     def process_substream_block(self, block_data):
         return self._upload_substream_block_with_progress(block_data[0], block_data[1])
@@ -229,10 +229,10 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
     def _upload_substream_block(self, block_id, block_stream):
         raise NotImplementedError("Must be implemented by child class.")
 
-    def _upload_substream_block_with_progress(self, block_id, block_stream):
-        range_id = self._upload_substream_block(block_id, block_stream)
+    def _upload_substream_block_with_progress(self, index, block_stream):
+        index = self._upload_substream_block(index, block_stream)
         self._update_progress(len(block_stream))
-        return range_id
+        return index
 
     def set_response_properties(self, resp):
         self.etag = resp.etag
@@ -349,6 +349,21 @@ class DataLakeFileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-met
 
         if not self.parallel and self.request_options.get('modified_access_conditions'):
             self.request_options['modified_access_conditions'].if_match = self.response_headers['etag']
+
+    def _upload_substream_block(self, offset, block_stream):
+        try:
+            self.service.append_data(
+                body=block_stream,
+                position=offset,
+                content_length=len(block_stream),
+                cls=return_response_headers,
+                data_stream_total=self.total_size,
+                upload_stream_current=self.progress_total,
+                **self.request_options
+            )
+        finally:
+            block_stream.close()
+        return offset
 
 
 class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
