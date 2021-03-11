@@ -1,5 +1,9 @@
 # Release History
 
+## 12.3.1 (Unreleased)
+**Dependency Updates**
+- Updated dependency `azure-core` from  azure-core<2.0.0,>=1.10.0 to azure-core<2.0.0,>=1.12.1
+
 ## 12.3.0 (2021-03-01)
 **Stable release of preview features**
 - Added support for `DatalakeServiceClient.undelete_filesystem()`

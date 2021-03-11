@@ -1,7 +1,8 @@
 # Release History
 
 ## 12.4.2 (Unreleased)
-
+**Dependency Updates**
+- Updated dependency `azure-core` from  azure-core<2.0.0,>=1.10.0 to azure-core<2.0.0,>=1.12.1
 
 ## 12.4.1 (2021-01-20)
 **Fixes**
