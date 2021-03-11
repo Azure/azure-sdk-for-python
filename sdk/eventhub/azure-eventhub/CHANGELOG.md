@@ -2,6 +2,9 @@
 
 ## 5.3.2 (Unreleased)
 
+**Notes**
+- Updated dependency `azure-core` from  azure-core<2.0.0,>=1.5.0 to azure-core<2.0.0,>=1.12.1
+
 
 ## 5.3.1 (2021-03-09)
 
