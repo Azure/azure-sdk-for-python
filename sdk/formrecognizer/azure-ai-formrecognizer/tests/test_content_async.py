@@ -401,7 +401,8 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         async with client:
             poller = await client.begin_recognize_content(myfile, language="de")
             assert 'de' == poller._polling_method._initial_response.http_response.request.query['language']
-            await poller.wait()
+            result = await poller.result()
+            assert result
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

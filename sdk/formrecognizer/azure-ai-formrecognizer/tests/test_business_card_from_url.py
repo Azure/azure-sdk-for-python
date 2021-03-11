@@ -364,7 +364,8 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
     def test_business_card_locale_specified(self, client):
         poller = client.begin_recognize_business_cards_from_url(self.business_card_url_jpg, locale="en-IN")
         assert 'en-IN' == poller._polling_method._initial_response.http_response.request.query['locale']
-        poller.wait()
+        result = poller.result()
+        assert result
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

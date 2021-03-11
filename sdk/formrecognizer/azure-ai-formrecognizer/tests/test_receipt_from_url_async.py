@@ -347,7 +347,8 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         async with client:
             poller = await client.begin_recognize_receipts_from_url(self.receipt_url_jpg, locale="en-IN")
             assert 'en-IN' == poller._polling_method._initial_response.http_response.request.query['locale']
-            await poller.wait()
+            result = await poller.result()
+            assert result
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
