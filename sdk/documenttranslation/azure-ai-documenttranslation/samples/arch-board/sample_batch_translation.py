@@ -43,9 +43,9 @@ def sample_batch_translation():
     translation_details = operation.details # type: TranslationStatusDetail
 
     # print status
-    print("Operation status: {}".format(translation_details.status))
-    print("Operation created on: {}".format(translation_details.created_on))
-    print("Operation last updated on: {}".format(translation_details.last_updated_on))
+    print("Translation status: {}".format(translation_details.status))
+    print("Translation created on: {}".format(translation_details.created_on))
+    print("Translation last updated on: {}".format(translation_details.last_updated_on))
     print("Total number of translations on documents: {}".format(translation_details.documents_total_count))
 
     print("Of total documents...")
