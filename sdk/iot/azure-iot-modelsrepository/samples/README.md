@@ -8,3 +8,5 @@ The pre-configured endpoints and DTMIs within the sampmles refer to example DTDL
 * [get_models_sample.py](get_models_sample.py) - Retrieve a model/models (and possibly dependencies) from a Model Repository, given a DTMI or DTMIs
 
 * [client_configuration_sample.py](client_configuration_sample.py) - Configure the client to work with local or remote repositories, as well as custom policies and transports
+
+* [dtmi_utils_sample.py](dtmi_utils_sample.py) - Use the dtmi_utils module to manipulate and check DTMIs

@@ -39,12 +39,10 @@ def get_model_uri(dtmi, repository_uri, expanded=False):
     if not repository_uri.endswith("/"):
         repository_uri += "/"
     model_uri = repository_uri + _convert_dtmi_to_path(dtmi)
-    if expanded:
-        model_uri.replace(".json", ".expanded.json")
     return model_uri
 
 
-def _convert_dtmi_to_path(dtmi):
+def _convert_dtmi_to_path(dtmi, expanded=False):
     """Returns the DTMI path for a DTMI
     E.g:
     dtmi:com:example:Thermostat;1 -> dtmi/com/example/thermostat-1.json
@@ -60,5 +58,7 @@ def _convert_dtmi_to_path(dtmi):
     )
     if not pattern.match(dtmi):
         raise ValueError("Invalid DTMI")
-    else:
-        return dtmi.lower().replace(":", "/").replace(";", "-") + ".json"
+    dtmi_path = dtmi.lower().replace(":", "/").replace(";", "-") + ".json"
+    if expanded:
+        dtmi_path = dtmi.replace(".json", ".expanded.json")
+    return dtmi_path
