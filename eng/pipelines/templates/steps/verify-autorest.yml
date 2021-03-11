@@ -57,8 +57,9 @@ steps:
   - pwsh: |
       If (Test-Path autorest.python) {
         Remove-Item -Path autorest.python -Force -Recurse
+        Get-ChildItem
       } Else {
-        Get-ChildItem ./
+        Get-ChildItem
         Write-Output "No autorest.python folder could be found"
       }
     displayName: 'Remove autorest.python'

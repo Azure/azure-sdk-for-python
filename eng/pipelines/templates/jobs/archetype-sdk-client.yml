@@ -123,10 +123,6 @@ jobs:
       name: ${{ parameters.LinuxPool }}
 
     steps:
-    - template: ../steps/verify-autorest.yml
-      parameters:
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-
     - template: /eng/common/pipelines/templates/steps/verify-links.yml
       parameters:
         ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
@@ -202,6 +198,10 @@ jobs:
 
         echo "##vso[task.setvariable variable=toxenv]$toxenvvar"
       displayName: "Set Tox Environment"
+
+    - template: ../steps/verify-autorest.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
     - template: ../steps/build-test.yml
       parameters:
