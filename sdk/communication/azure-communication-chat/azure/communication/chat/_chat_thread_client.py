@@ -498,57 +498,6 @@ class ChatThreadClient(object):
             cls=lambda objs: [ChatThreadParticipant._from_generated(x) for x in objs],  # pylint:disable=protected-access
             **kwargs)
 
-    @distributed_trace
-    def add_participant(
-            self,
-            thread_participant,  # type: ChatThreadParticipant
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Adds single thread participant to a thread. If participant already exist, no change occurs.
-
-        If participant is added successfully, a tuple of (None, None) is expected.
-        Failure to add participant to thread returns tuple of (chat_thread_participant, communication_error).
-
-        :param thread_participant: Required. Single thread participant to be added to the thread.
-        :type thread_participant: ~azure.communication.chat.ChatThreadParticipant
-        :return: None
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError, RuntimeError
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/chat_thread_client_sample.py
-                :start-after: [START add_participant]
-                :end-before: [END add_participant]
-                :language: python
-                :dedent: 8
-                :caption: Adding single participant to chat thread.
-        """
-        if not thread_participant:
-            raise ValueError("thread_participant cannot be None.")
-
-        participants = [thread_participant._to_generated()]  # pylint:disable=protected-access
-        add_thread_participants_request = AddChatParticipantsRequest(participants=participants)
-
-        add_chat_participants_result = self._client.chat_thread.add_chat_participants(
-            chat_thread_id=self._thread_id,
-            add_chat_participants_request=add_thread_participants_request,
-            **kwargs)
-
-        response = []
-        if hasattr(add_chat_participants_result, 'errors') and \
-                add_chat_participants_result.errors is not None:
-            response = CommunicationErrorResponseConverter._convert(  # pylint:disable=protected-access
-                participants=[thread_participant],
-                communication_errors=add_chat_participants_result.errors.invalid_participants
-            )
-
-        if len(response) != 0:
-            failed_participant = response[0][0]
-            communication_error = response[0][1]
-            raise RuntimeError('Participant: ', failed_participant, ' failed to join thread due to: ',
-                               communication_error.message)
 
     @distributed_trace
     def add_participants(

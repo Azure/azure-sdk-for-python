@@ -182,7 +182,7 @@ class ChatThreadClientTest(CommunicationTestCase):
             display_name='name',
             share_history_time=share_history_time)
 
-        self.chat_thread_client.add_participant(new_participant)
+        self.chat_thread_client.add_participants([new_participant])
 
         # fetch list of participants
         chat_thread_participants = self.chat_thread_client.list_participants(results_per_page=1, skip=1)
@@ -196,24 +196,6 @@ class ChatThreadClientTest(CommunicationTestCase):
             li[0].user.id = self.user.identifier
         assert participant_count == 1
 
-    @pytest.mark.live_test_only
-    def test_add_participant(self):
-        self._create_thread()
-
-        share_history_time = datetime.utcnow()
-        share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
-        new_participant = ChatThreadParticipant(
-            user=self.new_user,
-            display_name='name',
-            share_history_time=share_history_time)
-        raised = False
-
-        try:
-            self.chat_thread_client.add_participant(new_participant)
-        except RuntimeError as e:
-            raised = True
-
-        assert raised is False
 
     @pytest.mark.live_test_only
     def test_add_participants(self):

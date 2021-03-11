@@ -268,34 +268,6 @@ class ChatThreadClientSamplesAsync(object):
         # [END list_participants]
         print("list_participants_async succeeded")
 
-    async def add_participant_w_check_async(self):
-        thread_id = self._thread_id
-        chat_client = self._chat_client
-        user = self.new_user
-        # [START add_participant]
-        def decide_to_retry(error):
-            """
-            Custom logic to decide whether to retry to add or not
-            """
-            return True
-
-        async with chat_client:
-            # set `thread_id` to an existing thread id
-            chat_thread_client = chat_client.get_chat_thread_client(thread_id=thread_id)
-            async with chat_thread_client:
-                from azure.communication.chat import ChatThreadParticipant
-                from datetime import datetime
-                new_chat_thread_participant = ChatThreadParticipant(
-                        user=user,
-                        display_name='name',
-                        share_history_time=datetime.utcnow())
-                try:
-                    await chat_thread_client.add_participant(new_chat_thread_participant)
-                except RuntimeError as e:
-                    if e is not None and decide_to_retry(error=e):
-                        await chat_thread_client.add_participant(new_chat_thread_participant)
-        # [END add_participant]
-        print("add_participant_w_check_async succeeded")
 
     async def add_participants_w_check_async(self):
         thread_id = self._thread_id

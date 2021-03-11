@@ -262,43 +262,6 @@ class ChatThreadClientSamples(object):
         # [END list_participants]
         print("list_participants succeeded")
 
-    def add_participant_w_check(self):
-        # initially remove already added user
-        thread_id = self._thread_id
-        chat_client = self._chat_client
-        user = self.new_user
-        chat_thread_client = chat_client.get_chat_thread_client(thread_id=thread_id)
-
-        chat_thread_client.remove_participant(user)
-
-        # [START add_participant]
-        from azure.communication.chat import ChatThreadParticipant
-        from datetime import datetime
-
-        def decide_to_retry(error):
-            """
-            Custom logic to decide whether to retry to add or not
-            """
-            return True
-
-        # set `thread_id` to an existing thread id
-        chat_thread_client = chat_client.get_chat_thread_client(thread_id=thread_id)
-
-        # create `user` using CommunicationIdentityClient.create_user method for new users;
-        # else for existing users set `user` = CommunicationUserIdentifier(some_user_id)
-        new_chat_thread_participant = ChatThreadParticipant(
-            user=user,
-            display_name='name',
-            share_history_time=datetime.utcnow())
-
-        # check if participant has been added successfully
-        try:
-            chat_thread_client.add_participant(new_chat_thread_participant)
-        except RuntimeError as e:
-            if e is not None and decide_to_retry(error=e):
-                chat_thread_client.add_participant(new_chat_thread_participant)
-        # [END add_participant]
-        print("add_participant_w_check succeeded")
 
     def add_participants_w_check(self):
         # initially remove already added user

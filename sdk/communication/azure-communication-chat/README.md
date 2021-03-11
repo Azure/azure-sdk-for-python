@@ -134,7 +134,6 @@ Perform CRD(Create-Read-Delete) operations on thread participants
 
 ```Python
 list_participants(**kwargs)
-add_participant(thread_participant, **kwargs)
 add_participants(thread_participants, **kwargs)
 remove_participant(participant_id, **kwargs)
 ```
@@ -408,55 +407,6 @@ for chat_thread_participant_page in chat_thread_participants.by_page():
         print("ChatThreadParticipant: ", chat_thread_participant)
 ```
 
-### Add single thread participant
-Use `add_participant` method to add a single thread participants to the thread.
-
-- Use `thread_participant`, required, to specify the `ChatThreadParticipant` to be added to the thread;
-  - `user`, required, it is the `CommunicationUserIdentifier` you created by CommunicationIdentityClient.create_user() from User Access Tokens
-  <!-- [User Access Tokens](#user-access-tokens) -->
-  - `display_name`, optional, is the display name for the thread participant.
-  - `share_history_time`, optional, time from which the chat history is shared with the participant.
-
-When participant is successfully added, no error is thrown. In case of an error encountered while adding participant, 
-a `RuntimeError` is thrown
-```python
-from azure.communication.identity import CommunicationIdentityClient
-from azure.communication.chat import ChatThreadParticipant
-from datetime import datetime
-
-# create an user
-identity_client = CommunicationIdentityClient.from_connection_string('<connection_string>')
-new_user = identity_client.create_user()
-
-# # conversely, you can also add an existing user to a chat thread; provided the user_id is known
-# from azure.communication.identity import CommunicationUserIdentifier
-#
-# user_id = 'some user id'
-# user_display_name = "Wilma Flinstone"
-# new_user = CommunicationUserIdentifier(user_id)
-# participant = ChatThreadParticipant(
-#     user=new_user,
-#     display_name=user_display_name,
-#     share_history_time=datetime.utcnow())
-
-def decide_to_retry(error, **kwargs):
-    """
-    Insert some custom logic to decide if retry is applicable based on error
-    """
-    return True
-
-participant = ChatThreadParticipant(
-    user=new_user,
-    display_name='Fred Flinstone',
-    share_history_time=datetime.utcnow())
-
-try:
-    chat_thread_client.add_participant(thread_participant=participant)
-except RuntimeError as e:
-    if e is not None and decide_to_retry(error=e):
-        chat_thread_client.add_participant(thread_participant=participant)
-
-```
 ### Add thread participants
 
 Use `add_participants` method to add thread participants to the thread.

@@ -231,7 +231,7 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
                     display_name='name',
                     share_history_time=share_history_time)
 
-                await self.chat_thread_client.add_participant(new_participant)
+                await self.chat_thread_client.add_participants([new_participant])
 
                 chat_thread_participants = self.chat_thread_client.list_participants(results_per_page=1, skip=1)
 
@@ -242,30 +242,6 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
                 assert len(items) == 1
 
             # delete chat threads
-            if not self.is_playback():
-                await self.chat_client.delete_chat_thread(self.thread_id)
-
-    @pytest.mark.live_test_only
-    @AsyncCommunicationTestCase.await_prepared_test
-    async def test_add_participant(self):
-        async with self.chat_client:
-            await self._create_thread()
-
-            async with self.chat_thread_client:
-                share_history_time = datetime.utcnow()
-                share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
-                new_participant = ChatThreadParticipant(
-                    user=self.new_user,
-                    display_name='name',
-                    share_history_time=share_history_time)
-                raised = False
-                try:
-                    await self.chat_thread_client.add_participant(new_participant)
-                except RuntimeError as e:
-                    raised = True
-
-                assert raised is False
-
             if not self.is_playback():
                 await self.chat_client.delete_chat_thread(self.thread_id)
 

@@ -433,59 +433,6 @@ class TestChatThreadClient(unittest.TestCase):
             l = list(chat_thread_participant_page)
             assert len(l) == 2
 
-    def test_add_participant(self):
-        thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
-        new_participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
-        raised = False
-
-        def mock_send(*_, **__):
-            return mock_response(status_code=201)
-        chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
-
-        new_participant = ChatThreadParticipant(
-                user=CommunicationUserIdentifier(new_participant_id),
-                display_name='name',
-                share_history_time=datetime.utcnow())
-
-        try:
-            chat_thread_client.add_participant(new_participant)
-        except:
-            raised = True
-
-        self.assertFalse(raised, 'Expected is no excpetion raised')
-
-    def test_add_participant_w_failed_participants(self):
-        thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
-        new_participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
-        raised = False
-        error_message = "some error message"
-
-        def mock_send(*_, **__):
-            return mock_response(status_code=201, json_payload={
-                "errors": {
-                    "invalidParticipants": [
-                        {
-                            "code": "string",
-                            "message": error_message,
-                            "target": new_participant_id,
-                            "details": []
-                        }
-                    ]
-                }
-            })
-        chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
-
-        new_participant = ChatThreadParticipant(
-                user=CommunicationUserIdentifier(new_participant_id),
-                display_name='name',
-                share_history_time=datetime.utcnow())
-
-        try:
-            chat_thread_client.add_participant(new_participant)
-        except:
-            raised = True
-
-        self.assertTrue(raised, 'Expected is no excpetion raised')
 
     def test_add_participants(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
