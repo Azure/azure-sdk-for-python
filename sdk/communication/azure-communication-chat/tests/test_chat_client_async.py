@@ -56,7 +56,7 @@ async def test_create_chat_thread():
 @pytest.mark.asyncio
 async def test_create_chat_thread_w_repeatability_request_id():
     thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
-    repeatability_request_id = "b66d6031-fdcc-41df-8306-e524c9f226b8"
+    idempotency_token = "b66d6031-fdcc-41df-8306-e524c9f226b8"
     async def mock_send(*_, **__):
         return mock_response(status_code=201, json_payload={
             "chatThread": {
@@ -78,7 +78,7 @@ async def test_create_chat_thread_w_repeatability_request_id():
     )]
     create_chat_thread_result = await chat_client.create_chat_thread(topic=topic,
                                                               thread_participants=participants,
-                                                              repeatability_request_id=repeatability_request_id)
+                                                              idempotency_token=idempotency_token)
     assert create_chat_thread_result.chat_thread.id == thread_id
 
 @pytest.mark.asyncio

@@ -64,15 +64,15 @@ chat_thread_client = chat_client.get_chat_thread_client(create_chat_thread_resul
 ```
 
 Additionally, the client can also direct so that the request is repeatable; that is, if the client makes the 
-request multiple times with the same Repeatability-Request-ID and it will get back an appropriate response without 
-the server executing the request multiple times. The value of the Repeatability-Request-ID is an opaque string 
+request multiple times with the same Idempotency-Token and it will get back an appropriate response without 
+the server executing the request multiple times. The value of the Idempotency-Token is an opaque string 
 representing a client-generated, globally unique for all time, identifier for the request.
 
 ```python
 create_chat_thread_result = chat_client.create_chat_thread(
     topic, 
     thread_participants=thread_participants, 
-    repeatability_request_id=repeatability_request_id
+    idempotency_token=idempotency_token
 )
 chat_thread_client = chat_client.get_chat_thread_client(create_chat_thread_result.chat_thread.id)
 ```
@@ -177,7 +177,7 @@ Use the `create_chat_thread` method to create a chat thread.
     <!-- [User Access Tokens](#user-access-tokens) -->
     - `display_name`, optional, is the display name for the thread participant.
     - `share_history_time`, optional, time from which the chat history is shared with the participant.
-- Use `repeatability_request_id`, optional, to specify the unique identifier for the request.
+- Use `idempotency_token`, optional, to specify the unique identifier for the request.
 
 
 `CreateChatThreadResult` is the result returned from creating a thread, you can use it to fetch the `id` of 
@@ -185,14 +185,14 @@ the chat thread that got created. This `id` can then be used to fetch a `ChatThr
 the `get_chat_thread_client` method. `ChatThreadClient` can be used to perform other chat operations to this chat thread.
 
 ```Python
-# Without repeatability_request_id and thread_participants
+# Without idempotency_token and thread_participants
 topic = "test topic"
 create_chat_thread_result = chat_client.create_chat_thread(topic)
 chat_thread_client = chat_client.get_chat_thread_client(create_chat_thread_result.chat_thread.id)
 ```
 
 ```Python
-# With repeatability_request_id and thread_participants
+# With idempotency_token and thread_participants
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.chat import ChatThreadParticipant
 import uuid
@@ -219,13 +219,13 @@ thread_participants = [ChatThreadParticipant(
     share_history_time=datetime.utcnow()
 )]
 
-# obtains repeatability_request_id using some customer logic
-repeatability_request_id = get_unique_identifier_for_request()
+# obtains idempotency_token using some customer logic
+idempotency_token = get_unique_identifier_for_request()
 
 create_chat_thread_result = chat_client.create_chat_thread(
     topic, 
     thread_participants=thread_participants, 
-    repeatability_request_id=repeatability_request_id)
+    idempotency_token=idempotency_token)
 thread_id = create_chat_thread_result.chat_thread.id
 
 # fetch ChatThreadClient

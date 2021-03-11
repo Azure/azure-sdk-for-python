@@ -56,7 +56,7 @@ class ChatClientTestAsync(AsyncCommunicationTestCase):
         if not self.is_playback():
             self.identity_client.delete_user(self.user)
 
-    async def _create_thread(self, repeatability_request_id=None):
+    async def _create_thread(self, idempotency_token=None):
         # create chat thread
         topic = "test topic"
         share_history_time = datetime.utcnow()
@@ -68,7 +68,7 @@ class ChatClientTestAsync(AsyncCommunicationTestCase):
         )]
         create_chat_thread_result = await self.chat_client.create_chat_thread(topic,
                                                                               thread_participants=participants,
-                                                                              repeatability_request_id=repeatability_request_id)
+                                                                              idempotency_token=idempotency_token)
         self.thread_id = create_chat_thread_result.chat_thread.id
 
     @pytest.mark.live_test_only
@@ -101,15 +101,15 @@ class ChatClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_chat_thread_w_repeatability_request_id_async(self):
         async with self.chat_client:
-            repeatability_request_id = str(uuid4())
+            idempotency_token = str(uuid4())
 
             # create thread
-            await self._create_thread(repeatability_request_id=repeatability_request_id)
+            await self._create_thread(idempotency_token=idempotency_token)
             assert self.thread_id is not None
             thread_id = self.thread_id
 
             # re-create thread
-            await self._create_thread(repeatability_request_id=repeatability_request_id)
+            await self._create_thread(idempotency_token=idempotency_token)
             assert thread_id == self.thread_id
 
 

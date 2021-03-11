@@ -70,7 +70,7 @@ class TestChatClient(unittest.TestCase):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
         chat_thread_client = None
         raised = False
-        repeatability_request_id="b66d6031-fdcc-41df-8306-e524c9f226b8"
+        idempotency_token="b66d6031-fdcc-41df-8306-e524c9f226b8"
 
         def mock_send(*_, **__):
             return mock_response(status_code=201, json_payload={
@@ -94,7 +94,7 @@ class TestChatClient(unittest.TestCase):
         try:
             create_chat_thread_result = chat_client.create_chat_thread(topic=topic,
                                                                 thread_participants=participants,
-                                                                repeatability_request_id=repeatability_request_id)
+                                                                idempotency_token=idempotency_token)
         except:
             raised = True
             raise

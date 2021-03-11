@@ -59,7 +59,7 @@ class ChatClientTest(CommunicationTestCase):
             self.identity_client.delete_user(self.user)
             self.chat_client.delete_chat_thread(self.thread_id)
 
-    def _create_thread(self, repeatability_request_id=None):
+    def _create_thread(self, idempotency_token=None):
         # create chat thread
         topic = "test topic"
         share_history_time = datetime.utcnow()
@@ -71,7 +71,7 @@ class ChatClientTest(CommunicationTestCase):
         )]
         create_chat_thread_result = self.chat_client.create_chat_thread(topic,
                                                                         thread_participants=participants,
-                                                                        repeatability_request_id=repeatability_request_id)
+                                                                        idempotency_token=idempotency_token)
         self.thread_id = create_chat_thread_result.chat_thread.id
 
     @pytest.mark.live_test_only
@@ -119,13 +119,13 @@ class ChatClientTest(CommunicationTestCase):
 
     @pytest.mark.live_test_only
     def test_create_chat_thread_w_repeatability_request_id(self):
-        repeatability_request_id = str(uuid4())
+        idempotency_token = str(uuid4())
         # create thread
-        self._create_thread(repeatability_request_id=repeatability_request_id)
+        self._create_thread(idempotency_token=idempotency_token)
         thread_id = self.thread_id
 
-        # re-create thread with same repeatability_request_id
-        self._create_thread(repeatability_request_id=repeatability_request_id)
+        # re-create thread with same idempotency_token
+        self._create_thread(idempotency_token=idempotency_token)
 
         # test idempotency
         assert thread_id == self.thread_id

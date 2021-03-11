@@ -78,12 +78,12 @@ class ChatClientSamplesAsync(object):
             create_chat_thread_result = await chat_client.create_chat_thread(topic, thread_participants=participants)
 
             # creates a new chat_thread if not exists
-            repeatability_request_id = 'b66d6031-fdcc-41df-8306-e524c9f226b8'  # unique identifier
+            idempotency_token = 'b66d6031-fdcc-41df-8306-e524c9f226b8'  # unique identifier
             create_chat_thread_result_w_repeatability_id = await chat_client.create_chat_thread(
                 topic,
                 thread_participants=participants,
-                repeatability_request_id=repeatability_request_id)
-        # [END create_thread]
+                idempotency_token=idempotency_token)
+            # [END create_thread]
 
             self._thread_id = create_chat_thread_result.chat_thread.id
             print("thread created, id: " + self._thread_id)
