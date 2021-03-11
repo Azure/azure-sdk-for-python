@@ -25,49 +25,47 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "
 Some samples may "run forever" or need to be timed out after a period of time. Add them here in the following format:
 TIMEOUT_SAMPLES = {
     "<package-name>": {
-        "<sample_file_name.py>": (<timeout (seconds)>, <pass if timeout? (bool)>)
+        "<sample_file_name.py>": (<timeout (seconds)>, <pass if timeout? (bool, default: True)>)
     }
 }
 """
 TIMEOUT_SAMPLES = {
     "azure-eventhub": {
-        "authenticate_with_sas_token.py": (5, True),
-        "receive_batch_with_checkpoint.py": (5, True),
-        "recv.py": (5, True),
-        "recv_track_last_enqueued_event_prop.py": (5, True),
-        "recv_with_checkpoint_by_event_count.py": (5, True),
-        "recv_with_checkpoint_by_time_interval.py": (5, True),
-        "recv_with_checkpoint_store.py": (5, True),
-        "recv_with_custom_starting_position.py": (5, True),
-        "sample_code_eventhub.py": (10, True),
-        "authenticate_with_sas_token_async.py": (5, True),
-        "receive_batch_with_checkpoint_async.py": (5, True),
-        "recv_async.py": (5, True),
-        "recv_track_last_enqueued_event_prop_async.py": (5, True),
-        "recv_with_checkpoint_by_event_count_async.py": (5, True),
-        "recv_with_checkpoint_by_time_interval_async.py": (5, True),
-        "recv_with_checkpoint_store_async.py": (5, True),
-        "recv_with_custom_starting_position_async.py": (5, True),
-        "sample_code_eventhub_async.py": (10, True)
+        "authenticate_with_sas_token.py": (5),
+        "receive_batch_with_checkpoint.py": (5),
+        "recv.py": (5),
+        "recv_track_last_enqueued_event_prop.py": (5),
+        "recv_with_checkpoint_by_event_count.py": (5),
+        "recv_with_checkpoint_by_time_interval.py": (5),
+        "recv_with_checkpoint_store.py": (5),
+        "recv_with_custom_starting_position.py": (5),
+        "sample_code_eventhub.py": (10),
+        "authenticate_with_sas_token_async.py": (5),
+        "receive_batch_with_checkpoint_async.py": (5),
+        "recv_async.py": (5),
+        "recv_track_last_enqueued_event_prop_async.py": (5),
+        "recv_with_checkpoint_by_event_count_async.py": (5),
+        "recv_with_checkpoint_by_time_interval_async.py": (5),
+        "recv_with_checkpoint_store_async.py": (5),
+        "recv_with_custom_starting_position_async.py": (5),
+        "sample_code_eventhub_async.py": (10)
     },
     "azure-eventhub-checkpointstoreblob": {
-        "receive_events_using_checkpoint_store.py": (5, True),
-        "receive_events_using_checkpoint_store_storage_api_version.py": (5, True)
+        "receive_events_using_checkpoint_store.py": (5),
+        "receive_events_using_checkpoint_store_storage_api_version.py": (5)
     },
     "azure-eventhub-checkpointstoreblob-aio": {
-        "receive_events_using_checkpoint_store_async.py": (5, True),
-        "receive_events_using_checkpoint_store_storage_api_version_async.py": (5, True)
+        "receive_events_using_checkpoint_store_async.py": (5),
+        "receive_events_using_checkpoint_store_storage_api_version_async.py": (5)
     },
     "azure-servicebus": {
-        "auto_lock_renew.py": (120, True),
-        "failure_and_recovery.py": (5, True),
-        "receive_iterator_queue.py": (5, True),
-        "sample_code_servicebus.py": (30, True),
-        "session_pool_receive.py": (20, True),
-        "auto_lock_renew_async.py": (120, True),
-        "receive_iterator_queue_async.py": (5, True),
-        "sample_code_servicebus_async.py": (30, True),
-        "session_pool_receive_async.py": (20, True)
+        "failure_and_recovery.py": (5),
+        "receive_iterator_queue.py": (5),
+        "sample_code_servicebus.py": (30),
+        "session_pool_receive.py": (20),
+        "receive_iterator_queue_async.py": (5),
+        "sample_code_servicebus_async.py": (30),
+        "session_pool_receive_async.py": (20)
     }
 }
 
@@ -112,10 +110,10 @@ IGNORED_SAMPLES = {
 def run_check_call_with_timeout(
     command_array,
     working_directory,
+    timeout,
+    pass_if_timeout,
     acceptable_return_codes=[],
-    always_exit=False,
-    timeout=None,
-    pass_if_timeout=False
+    always_exit=False
 ):
     """This is copied from common_tasks.py with some additions.
     Don't want to break anyone that's using the original code.
@@ -162,7 +160,7 @@ def execute_sample(sample, samples_errors, timed):
         errors = run_check_call(command_array, root_dir)
     else:
         errors = run_check_call_with_timeout(
-            command_array, root_dir, timeout=timeout, pass_if_timeout=pass_if_timeout
+            command_array, root_dir, timeout, pass_if_timeout
         )
 
     sample_name = os.path.basename(sample)
@@ -199,7 +197,12 @@ def run_samples(targeted_package):
     for path, subdirs, files in os.walk(samples_dir_path):
         for name in files:
             if fnmatch(name, "*.py") and name in samples_need_timeout:
-                timeout, pass_if_timeout = samples_need_timeout[name]
+                timeout = samples_need_timeout[name]
+                # timeout, pass_if_timeout is True by default if nothing passed in
+                if isinstance(timeout, tuple):
+                    timeout, pass_if_timeout = timeout
+                else:
+                    pass_if_timeout = True
                 timed_sample_paths.append((os.path.abspath(os.path.join(path, name)), timeout, pass_if_timeout))
             elif fnmatch(name, "*.py") and name not in IGNORED_SAMPLES.get(package_name, []):
                 sample_paths.append(os.path.abspath(os.path.join(path, name)))
