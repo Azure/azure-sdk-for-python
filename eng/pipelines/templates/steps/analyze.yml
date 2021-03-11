@@ -101,7 +101,7 @@ steps:
   - task: DownloadPipelineArtifact@0
     condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
     inputs:
-      artifactName: 'artifacts'
+      artifactName: 'packages'
       targetPath: $(Build.ArtifactStagingDirectory)
 
   - template: ../steps/run_apistub.yml
@@ -129,3 +129,5 @@ steps:
     - template: ../steps/verify-autorest.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
+
+  - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml

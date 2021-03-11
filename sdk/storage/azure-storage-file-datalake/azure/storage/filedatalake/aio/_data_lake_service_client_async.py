@@ -229,7 +229,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         renamed_file_system = self.get_file_system_client(new_name)
         return renamed_file_system
 
-    async def undelete_file_system(self, name, version, **kwargs):
+    async def undelete_file_system(self, name, deleted_version, **kwargs):
         # type: (str, str, **Any) -> FileSystemClient
         """Restores soft-deleted filesystem.
 
@@ -241,7 +241,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
 
         :param str name:
             Specifies the name of the deleted filesystem to restore.
-        :param str version:
+        :param str deleted_version:
             Specifies the version of the deleted filesystem to restore.
         :keyword str new_name:
             The new name for the deleted filesystem to be restored to.
@@ -251,7 +251,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         :rtype: ~azure.storage.filedatalake.FileSystemClient
         """
         new_name = kwargs.pop('new_name', None)
-        await self._blob_service_client.undelete_container(name, version, new_name=new_name, **kwargs)  # pylint: disable=protected-access
+        await self._blob_service_client.undelete_container(name, deleted_version, new_name=new_name, **kwargs)  # pylint: disable=protected-access
         file_system = self.get_file_system_client(new_name or name)
         return file_system
 

@@ -32,9 +32,16 @@ Please find the samples linked below for demonstration as to how to authenticate
 
 ```Python
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
-exporter = AzureMonitorTraceExporter(
-    connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING "]
+exporter = AzureMonitorTraceExporter.from_connection_string(
+    connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
+```
+
+You can also instantiate the exporter directly via the constructor. In this case, the connection string will be automatically populated from the `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable.
+
+```python
+from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
+exporter = AzureMonitorTraceExporter()
 ```
 
 ## Key concepts
@@ -55,8 +62,6 @@ Some of the key concepts for the Azure monitor exporter include:
 
 * [AzureMonitorTraceExporter][client_reference]: This is the class that is initialized to send tracing related telemetry to Azure Monitor.
 
-* [Exporter Options][exporter_options]: Options to configure Azure exporters. Currently only includes connection_string.
-
 For more information about these resources, see [What is Azure Monitor?][product_docs].
 
 ## Examples
@@ -75,7 +80,7 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
-exporter = AzureMonitorTraceExporter(
+exporter = AzureMonitorTraceExporter.from_connection_string(
     connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING "]
 )
 
@@ -112,8 +117,8 @@ tracer = trace.get_tracer(__name__)
 # This line causes your calls made with the requests library to be tracked.
 RequestsInstrumentor().instrument()
 span_processor = BatchExportSpanProcessor(
-    AzureMonitorTraceExporter(
-        connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING "]
+    AzureMonitorTraceExporter.from_connection_string(
+        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING "]
     )
 )
 trace.get_tracer_provider().add_span_processor(span_processor)
@@ -169,7 +174,6 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [virtualenv]: https://virtualenv.pypa.io
 [ot_sdk_python]: https://github.com/open-telemetry/opentelemetry-python
 [application_insights_namespace]: https://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview#how-do-i-use-application-insights
-[exporter_options]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-monitor-opentelemetry-exporter/azure/monitor/opentelemetry/exporter/_options.py#L21
 [trace_concept]: https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/overview.md#trace
 [client_reference]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-monitor-opentelemetry-exporter/azure/monitor/opentelemetry/exporter/export/trace/_exporter.py#L30
 [opentelemtry_spec]: https://opentelemetry.io/

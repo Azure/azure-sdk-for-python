@@ -71,6 +71,19 @@ class FileSystemTest(StorageTestCase):
         self.assertTrue(created)
 
     @record
+    def test_file_system_exists(self):
+        # Arrange
+        file_system_name = self._get_file_system_reference()
+
+        # Act
+        file_system_client1 = self.dsc.get_file_system_client(file_system_name)
+        file_system_client2 = self.dsc.get_file_system_client("nonexistentfs")
+        file_system_client1.create_file_system()
+
+        self.assertTrue(file_system_client1.exists())
+        self.assertFalse(file_system_client2.exists())
+
+    @record
     def test_create_file_system_with_metadata(self):
         # Arrange
         metadata = {'hello': 'world', 'number': '42'}
@@ -200,7 +213,7 @@ class FileSystemTest(StorageTestCase):
         for filesystem in filesystem_list:
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
-                restored_fs_client = self.dsc.undelete_file_system(filesystem.name, filesystem.version,
+                restored_fs_client = self.dsc.undelete_file_system(filesystem.name, filesystem.deleted_version,
                                                                    new_name="restored" + name + str(restored_version))
                 restored_version += 1
 
@@ -232,7 +245,7 @@ class FileSystemTest(StorageTestCase):
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
                 with self.assertRaises(HttpResponseError):
-                    self.dsc.undelete_file_system(filesystem.name, filesystem.version,
+                    self.dsc.undelete_file_system(filesystem.name, filesystem.deleted_version,
                                                   new_name=existing_filesystem_client.file_system_name)
 
     @record
@@ -261,7 +274,7 @@ class FileSystemTest(StorageTestCase):
         for filesystem in filesystem_list:
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
-                restored_fs_client = dsc.undelete_file_system(filesystem.name, filesystem.version,
+                restored_fs_client = dsc.undelete_file_system(filesystem.name, filesystem.deleted_version,
                                                               new_name="restored" + name + str(restored_version))
                 restored_version += 1
 

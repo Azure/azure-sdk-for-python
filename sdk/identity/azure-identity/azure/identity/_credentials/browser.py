@@ -45,10 +45,9 @@ class InteractiveBrowserCredential(InteractiveCredential):
     :keyword AuthenticationRecord authentication_record: :class:`AuthenticationRecord` returned by :func:`authenticate`
     :keyword bool disable_automatic_authentication: if True, :func:`get_token` will raise
           :class:`AuthenticationRequiredError` when user interaction is required to acquire a token. Defaults to False.
-    :keyword bool enable_persistent_cache: if True, the credential will store tokens in a persistent cache shared by
-         other user credentials. Defaults to False.
-    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache on platforms
-          where encryption is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
+    :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
+          will cache tokens in memory.
+    :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
     :raises ValueError: invalid `redirect_uri`
     """

@@ -12,8 +12,9 @@ try:
 except ImportError:
     import mock
 
-from azure.core.exceptions import HttpResponseError
-from azure.keyvault.keys import JsonWebKey, KeyClient, KeyCurveName, KeyType, KeyVaultKey
+from azure.core.exceptions import AzureError, HttpResponseError
+from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.keyvault.keys import JsonWebKey, KeyClient, KeyCurveName, KeyOperation, KeyVaultKey
 from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 from azure.keyvault.keys.crypto._key_validity import _UTC
 from azure.keyvault.keys._shared import HttpChallengeCache
@@ -276,6 +277,23 @@ class CryptoClientTests(KeyVaultTestCase):
             self.assertEqual(result.plaintext, self.plaintext)
 
     @KeyVaultPreparer()
+    def test_encrypt_local_from_jwk(self, azure_keyvault_url, **kwargs):
+        """Encrypt locally, decrypt with Key Vault"""
+        key_client = self.create_key_client(azure_keyvault_url)
+        key_name = self.get_resource_name("encrypt-local")
+        key = key_client.create_rsa_key(key_name, size=4096)
+        crypto_client = self.create_crypto_client(key)
+        local_client = CryptographyClient.from_jwk(key.key)
+
+        rsa_encrypt_algorithms = [algo for algo in EncryptionAlgorithm if algo.startswith("RSA")]
+        for encrypt_algorithm in rsa_encrypt_algorithms:
+            result = local_client.encrypt(encrypt_algorithm, self.plaintext)
+            self.assertEqual(result.key_id, key.id)
+
+            result = crypto_client.decrypt(result.algorithm, result.ciphertext)
+            self.assertEqual(result.plaintext, self.plaintext)
+
+    @KeyVaultPreparer()
     def test_wrap_local(self, azure_keyvault_url, **kwargs):
         """Wrap locally, unwrap with Key Vault"""
         key_client = self.create_key_client(azure_keyvault_url)
@@ -285,6 +303,22 @@ class CryptoClientTests(KeyVaultTestCase):
 
         for wrap_algorithm in (algo for algo in KeyWrapAlgorithm if algo.startswith("RSA")):
             result = crypto_client.wrap_key(wrap_algorithm, self.plaintext)
+            self.assertEqual(result.key_id, key.id)
+
+            result = crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
+            self.assertEqual(result.key, self.plaintext)
+
+    @KeyVaultPreparer()
+    def test_wrap_local_from_jwk(self, azure_keyvault_url, **kwargs):
+        """Wrap locally, unwrap with Key Vault"""
+        key_client = self.create_key_client(azure_keyvault_url)
+        key_name = self.get_resource_name("wrap-local")
+        key = key_client.create_rsa_key(key_name, size=4096)
+        crypto_client = self.create_crypto_client(key)
+        local_client = CryptographyClient.from_jwk(key.key)
+
+        for wrap_algorithm in (algo for algo in KeyWrapAlgorithm if algo.startswith("RSA")):
+            result = local_client.wrap_key(wrap_algorithm, self.plaintext)
             self.assertEqual(result.key_id, key.id)
 
             result = crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
@@ -315,6 +349,31 @@ class CryptoClientTests(KeyVaultTestCase):
                 self.assertTrue(result.is_valid)
 
     @KeyVaultPreparer()
+    def test_rsa_verify_local_from_jwk(self, azure_keyvault_url, **kwargs):
+        """Sign with Key Vault, verify locally"""
+        key_client = self.create_key_client(azure_keyvault_url)
+        for size in (2048, 3072, 4096):
+            key_name = self.get_resource_name("rsa-verify-{}".format(size))
+            key = key_client.create_rsa_key(key_name, size=size)
+            crypto_client = self.create_crypto_client(key)
+            local_client = CryptographyClient.from_jwk(key.key)
+            for signature_algorithm, hash_function in (
+                    (SignatureAlgorithm.ps256, hashlib.sha256),
+                    (SignatureAlgorithm.ps384, hashlib.sha384),
+                    (SignatureAlgorithm.ps512, hashlib.sha512),
+                    (SignatureAlgorithm.rs256, hashlib.sha256),
+                    (SignatureAlgorithm.rs384, hashlib.sha384),
+                    (SignatureAlgorithm.rs512, hashlib.sha512),
+            ):
+                digest = hash_function(self.plaintext).digest()
+
+                result = crypto_client.sign(signature_algorithm, digest)
+                self.assertEqual(result.key_id, key.id)
+
+                result = local_client.verify(result.algorithm, digest, result.signature)
+                self.assertTrue(result.is_valid)
+
+    @KeyVaultPreparer()
     def test_ec_verify_local(self, azure_keyvault_url, **kwargs):
         """Sign with Key Vault, verify locally"""
         key_client = self.create_key_client(azure_keyvault_url)
@@ -336,6 +395,31 @@ class CryptoClientTests(KeyVaultTestCase):
             self.assertEqual(result.key_id, key.id)
 
             result = crypto_client.verify(result.algorithm, digest, result.signature)
+            self.assertTrue(result.is_valid)
+
+    @KeyVaultPreparer()
+    def test_ec_verify_local_from_jwk(self, azure_keyvault_url, **kwargs):
+        """Sign with Key Vault, verify locally"""
+        key_client = self.create_key_client(azure_keyvault_url)
+        matrix = {
+            KeyCurveName.p_256: (SignatureAlgorithm.es256, hashlib.sha256),
+            KeyCurveName.p_256_k: (SignatureAlgorithm.es256_k, hashlib.sha256),
+            KeyCurveName.p_384: (SignatureAlgorithm.es384, hashlib.sha384),
+            KeyCurveName.p_521: (SignatureAlgorithm.es512, hashlib.sha512),
+        }
+
+        for curve, (signature_algorithm, hash_function) in sorted(matrix.items()):
+            key_name = self.get_resource_name("ec-verify-{}".format(curve.value))
+            key = key_client.create_ec_key(key_name, curve=curve)
+            crypto_client = self.create_crypto_client(key)
+            local_client = CryptographyClient.from_jwk(key.key)
+
+            digest = hash_function(self.plaintext).digest()
+
+            result = crypto_client.sign(signature_algorithm, digest)
+            self.assertEqual(result.key_id, key.id)
+
+            result = local_client.verify(result.algorithm, digest, result.signature)
             self.assertTrue(result.is_valid)
 
     @KeyVaultPreparer()
@@ -382,7 +466,7 @@ class CryptoClientTests(KeyVaultTestCase):
 
 
 def test_custom_hook_policy():
-    class CustomHookPolicy(object):
+    class CustomHookPolicy(SansIOHTTPPolicy):
         pass
 
     client = CryptographyClient("https://localhost/fake/key/version", object(), custom_hook_policy=CustomHookPolicy())
@@ -399,7 +483,7 @@ def test_initialization_given_key():
 
     with mock.patch(CryptographyClient.__module__ + ".get_local_cryptography_provider") as get_provider:
         client.verify(SignatureAlgorithm.rs256, b"...", b"...")
-    get_provider.assert_called_once_with(key)
+    get_provider.assert_called_once_with(key.key)
     assert mock_client.get_key.call_count == 0
 
 
@@ -420,7 +504,7 @@ def test_initialization_get_key_successful():
         client.verify(SignatureAlgorithm.rs256, b"...", b"...")
 
     args, _ = get_provider.call_args
-    assert len(args) == 1 and isinstance(args[0], KeyVaultKey) and args[0].id == key_id
+    assert len(args) == 1 and isinstance(args[0], JsonWebKey) and args[0].kid == key_id
 
     for _ in range(3):
         assert mock_client.get_key.call_count == 1
@@ -488,6 +572,80 @@ def test_calls_service_for_operations_unsupported_locally():
     client.wrap_key(KeyWrapAlgorithm.rsa_oaep, b"...")
     assert mock_client.wrap_key.call_count == 1
     assert supports_nothing.wrap_key.call_count == 0
+
+
+def test_local_only_mode_no_service_calls():
+    """A local-only CryptographyClient shouldn't call the service if an operation can't be performed locally"""
+
+    mock_client = mock.Mock()
+    jwk = JsonWebKey(kty="RSA", key_ops=[], n=b"10011", e=b"10001")
+    client = CryptographyClient.from_jwk(jwk=jwk)
+    client._client = mock_client
+
+    with pytest.raises(NotImplementedError):
+        client.decrypt(EncryptionAlgorithm.rsa_oaep, b"...")
+    assert mock_client.decrypt.call_count == 0
+
+    with pytest.raises(NotImplementedError):
+        client.encrypt(EncryptionAlgorithm.a256_gcm, b"...")
+    assert mock_client.encrypt.call_count == 0
+
+    with pytest.raises(NotImplementedError):
+        client.sign(SignatureAlgorithm.rs256, b"...")
+    assert mock_client.sign.call_count == 0
+
+    with pytest.raises(NotImplementedError):
+        client.verify(SignatureAlgorithm.es256, b"...", b"...")
+    assert mock_client.verify.call_count == 0
+
+    with pytest.raises(NotImplementedError):
+        client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, b"...")
+    assert mock_client.unwrap_key.call_count == 0
+
+    with pytest.raises(NotImplementedError):
+        client.wrap_key(KeyWrapAlgorithm.aes_256, b"...")
+    assert mock_client.wrap_key.call_count == 0
+
+
+def test_local_only_mode_raise():
+    """A local-only CryptographyClient should raise an exception if an operation can't be performed locally"""
+
+    jwk = {"kty":"RSA", "key_ops":["decrypt", "verify", "unwrapKey"], "n":b"10011", "e":b"10001"}
+    client = CryptographyClient.from_jwk(jwk=jwk)
+
+    # Algorithm not supported locally
+    with pytest.raises(NotImplementedError) as ex:
+        client.decrypt(EncryptionAlgorithm.a256_gcm, b"...")
+    assert EncryptionAlgorithm.a256_gcm in str(ex.value)
+    assert KeyOperation.decrypt in str(ex.value)
+
+    # Operation not included in JWK permissions
+    with pytest.raises(AzureError) as ex:
+        client.encrypt(EncryptionAlgorithm.rsa_oaep, b"...")
+    assert KeyOperation.encrypt in str(ex.value)
+
+    # Algorithm not supported locally
+    with pytest.raises(NotImplementedError) as ex:
+        client.verify(SignatureAlgorithm.es256, b"...", b"...")
+    assert SignatureAlgorithm.es256 in str(ex.value)
+    assert KeyOperation.verify in str(ex.value)
+
+    # Algorithm not supported locally, and operation not included in JWK permissions
+    with pytest.raises(NotImplementedError) as ex:
+        client.sign(SignatureAlgorithm.rs256, b"...")
+    assert SignatureAlgorithm.rs256 in str(ex.value)
+    assert KeyOperation.sign in str(ex.value)
+
+    # Algorithm not supported locally
+    with pytest.raises(NotImplementedError) as ex:
+        client.unwrap_key(KeyWrapAlgorithm.aes_256, b"...")
+    assert KeyWrapAlgorithm.aes_256 in str(ex.value)
+    assert KeyOperation.unwrap_key in str(ex.value)
+
+    # Operation not included in JWK permissions
+    with pytest.raises(AzureError) as ex:
+        client.wrap_key(KeyWrapAlgorithm.rsa_oaep, b"...")
+    assert KeyOperation.wrap_key in str(ex.value)
 
 
 def test_prefers_local_provider():

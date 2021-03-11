@@ -24,8 +24,8 @@ from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
 
-exporter = AzureMonitorTraceExporter(
-    connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+exporter = AzureMonitorTraceExporter.from_connection_string(
+    os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
 
 # SpanExporter receives the spans and send them to the target location.

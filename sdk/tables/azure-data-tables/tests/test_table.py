@@ -26,8 +26,10 @@ from azure.data.tables import (
     Metrics,
     TableServiceClient,
     TableItem,
-    generate_account_sas
+    generate_account_sas,
+    ResourceTypes
 )
+from azure.core.credentials import AzureSasCredential
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     HeadersPolicy,

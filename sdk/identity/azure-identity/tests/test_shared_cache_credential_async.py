@@ -88,7 +88,7 @@ async def test_context_manager_no_cache():
 
     transport = AsyncMockTransport()
 
-    with patch("azure.identity._internal.shared_token_cache.load_user_cache", Mock(side_effect=NotImplementedError)):
+    with patch("azure.identity._persistent_cache._load_persistent_cache", Mock(side_effect=NotImplementedError)):
         credential = SharedTokenCacheCredential(transport=transport)
 
     async with credential:
@@ -590,52 +590,16 @@ async def test_authority_environment_variable():
 
 
 @pytest.mark.asyncio
-async def test_allow_unencrypted_cache():
-    """The credential should use an unencrypted cache when encryption is unavailable and the user explicitly allows it.
-
-    This test was written when Linux was the only platform on which encryption may not be available.
-    """
-
-    platform_patch = patch("azure.identity._internal.persistent_cache.sys.platform", "linux2")
-    platform_patch.start()
-
-    msal_extensions_patch = patch("azure.identity._internal.persistent_cache.msal_extensions")
-    mock_extensions = msal_extensions_patch.start()
-
-    # the credential should prefer an encrypted cache even when the user allows an unencrypted one
-    SharedTokenCacheCredential(allow_unencrypted_cache=True)
-    assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.LibsecretPersistence)
-    mock_extensions.PersistedTokenCache.reset_mock()
-
-    # (when LibsecretPersistence's dependencies aren't available, constructing it raises ImportError)
-    mock_extensions.LibsecretPersistence = Mock(side_effect=ImportError)
-
-    # encryption unavailable, no opt in to unencrypted cache -> credential should be unavailable
-    credential = SharedTokenCacheCredential()
-    assert mock_extensions.PersistedTokenCache.call_count == 0
-    with pytest.raises(CredentialUnavailableError):
-        await credential.get_token("scope")
-
-    # still no encryption, but now we allow the unencrypted fallback
-    SharedTokenCacheCredential(allow_unencrypted_cache=True)
-    assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.FilePersistence)
-
-    msal_extensions_patch.stop()
-    platform_patch.stop()
-
-
-@pytest.mark.asyncio
 async def test_initialization():
     """the credential should attempt to load the cache only once, when it's first needed"""
 
-    with patch("azure.identity._internal.persistent_cache._load_persistent_cache") as mock_cache_loader:
+    with patch("azure.identity._persistent_cache._get_persistence") as mock_cache_loader:
         mock_cache_loader.side_effect = Exception("it didn't work")
 
         credential = SharedTokenCacheCredential()
         assert mock_cache_loader.call_count == 0
 
         for _ in range(2):
-            with pytest.raises(CredentialUnavailableError):
+            with pytest.raises(CredentialUnavailableError, match="Shared token cache unavailable"):
                 await credential.get_token("scope")
             assert mock_cache_loader.call_count == 1
-

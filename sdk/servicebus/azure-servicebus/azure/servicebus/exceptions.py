@@ -101,6 +101,8 @@ def _handle_amqp_exception_with_condition(
     elif condition == AMQPErrorCodes.ClientError and "timed out" in str(exception):
         # handle send timeout
         error_cls = OperationTimeoutError
+    elif condition == AMQPErrorCodes.UnknownError and isinstance(exception, AMQPErrors.AMQPConnectionError):
+        error_cls = ServiceBusConnectionError
     else:
         # handle other error codes
         error_cls = _ERROR_CODE_TO_ERROR_MAPPING.get(condition, ServiceBusError)
@@ -491,6 +493,7 @@ _ERROR_CODE_TO_ERROR_MAPPING = {
     AMQPErrorCodes.UnauthorizedAccess: ServiceBusAuthorizationError,
     AMQPErrorCodes.NotImplemented: ServiceBusError,
     AMQPErrorCodes.NotAllowed: ServiceBusError,
+    AMQPErrorCodes.LinkDetachForced: ServiceBusConnectionError,
     ERROR_CODE_MESSAGE_LOCK_LOST: MessageLockLostError,
     ERROR_CODE_MESSAGE_NOT_FOUND: MessageNotFoundError,
     ERROR_CODE_AUTH_FAILED: ServiceBusAuthorizationError,

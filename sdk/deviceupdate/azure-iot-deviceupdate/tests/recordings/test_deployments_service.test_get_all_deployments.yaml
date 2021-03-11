@@ -1,0 +1,1521 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments
+  response:
+    body:
+      string: "{\r\n  \"value\": [\r\n    {\r\n      \"deploymentId\": \"fakeDeviceId-2021-209-1525-54\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"startDateTime\": \"2021-02-09T23:28:38.8516717+00:00\",\r\n
+        \     \"deviceGroupType\": \"DeviceGroupDefinitions\",\r\n      \"deviceGroupDefinition\":
+        [\r\n        \"fakeDeviceId\"\r\n      ],\r\n      \"updateId\": {\r\n        \"provider\":
+        \"Contoso\",\r\n        \"name\": \"Virtual-Machine\",\r\n        \"version\":
+        \"2021.209.1525.54\"\r\n      },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\":
+        false,\r\n      \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\":
+        \"chejiang-test\",\r\n      \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\":
+        \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n      \"startDateTime\":
+        \"2019-09-01T16:29:56.5770502+00:00\",\r\n      \"deviceGroupType\": \"Devices\",\r\n
+        \     \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]6423c0f6-f8c8-4068-8dd4-37b9b310c7f4\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T20:37:18.2609177+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]544c8499-3c34-4989-bf61-2f3972befd51\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T20:38:20.5709775+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]0bee76a1-c076-4c3a-94a4-9411a22b4396\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T20:37:24.1153814+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]3fc90e6c-cfa4-4962-adb5-00aeef5fe68e\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T20:39:37.5481626+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"16002.19052\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]146c7339-5dfa-4d28-8c38-367b7648c30c\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T20:41:30.4768881+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"64378.62049\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]c2a9c9e6-4d42-4c68-8b31-a8a4873c5b0c\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T20:56:37.2998162+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]48b5a4bb-4229-45a8-a4f0-86e8d1cbcd74\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T20:57:39.1019833+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]96afe1aa-a64e-4035-ba75-e261be6755c1\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T20:56:41.1254855+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]86df43fe-c9eb-491d-988b-96462c234c57\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T20:58:53.4913754+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"61320.13334.25405\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]467e6bd0-1de2-4701-91d9-f7d9b6dcf690\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T20:59:07.7707431+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]bad84ab8-b002-4dbe-9706-db92b5347f1f\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:00:09.1437771+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]7ce4881a-de65-41d4-9fd5-4e5b386a9ad4\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T20:59:11.4618396+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]00dc0379-c175-4301-8448-956a08c98e85\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T20:59:57.7338974+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]fe66ecba-a5bc-4e11-9f5f-ffe81256b1b6\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:00:59.6301739+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]1b23f416-30ab-452f-8bcd-c5d7a18478c8\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:00:01.7732765+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]1675bf12-6eda-4b1f-813e-c67fad0b3288\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:01:17.4628021+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"48502.47058.6499\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]d62ed371-3e03-49ab-8d8c-4c73bf7f2e91\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:00:39.1036809+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]8265293c-3d95-40f2-aaae-b9fa45cefb08\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:01:40.1897727+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]60689197-15af-4a15-be24-148b6cb6987e\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:00:41.915384+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]c8d76dbf-1efc-4485-9aa8-19e1276441f6\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:01:23.0687599+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"14184.49846.38219\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]602c37f3-cbc4-4b5f-a551-78f7b70b5cb6\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:02:13.3328086+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"14868.25096.1559\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]b8928036-6451-4e5c-8a66-3db33258e974\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:03:17.6420362+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"2973.53652\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]9ee5d586-f8bb-4930-b2ce-3e7fb30f801a\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:02:53.3526249+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"62839.55095\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]1feac02c-bea7-4c73-9a6c-aebb31b8a496\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:04:07.6963661+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"55660.17297\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]7d9e9cda-9205-4d9e-a17f-6bf33f1cd394\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:04:47.4804059+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"18328.9748\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]1192804e-fd42-4456-88ea-e65cb3e4f1e6\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:04:47.1384575+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]af132b25-897d-4b89-b938-a14b2b4c3cf1\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:05:48.5821959+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]0d8a6d4c-9d93-4dc7-b61f-0bd8e06a1cff\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:04:50.6470031+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]62248076-3eb1-4a9a-81f8-d0613c9d2c73\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:07:01.425036+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"35240.23044.5913\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]344059af-1ba5-46c2-b734-ce27f039752d\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:08:56.6381858+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"51211.2096\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]49d41a17-272f-4628-8abe-8c61331cc83c\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:13:22.5201073+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]2e13d159-1cee-4862-92a3-880383088204\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:14:24.5707977+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]d9856a43-35bf-448b-bd3a-e78c022955cd\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:13:26.4273707+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]2da21a3e-16cd-4f9b-9751-11da93a5e285\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:14:52.0256992+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]84c418c6-89bf-4fc0-ab5c-0bf3d0c2769c\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:15:53.6829765+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]68571953-0b81-423e-aa0a-397cf89d732b\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:14:56.6682684+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]cb03e500-44d4-4b09-8031-88e5eab76ad2\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:15:34.9068529+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"28528.25507\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]89841632-9f6b-4b34-a0d8-9012d17f5e05\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:17:32.7008635+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"44486.48093\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]36cd9fea-4305-40b9-8347-60c582ed6cb5\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:17:04.9801419+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"9448.5551\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]daf54f98-f549-484f-9de1-cb5a2c535950\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:19:02.2956694+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"14856.34633.61171\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]300de3a7-4c3a-4ee4-89b0-a61cec28aa51\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:23:15.8746239+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]b34c9f9f-4038-44b5-84e6-b03f7958a69c\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:24:17.5676129+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]07537a92-2ce9-4a5f-85aa-5d5eed1c9204\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:23:19.3335727+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]7eb4e288-6b5e-4611-8e84-6024f304ea61\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:24:27.3600589+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]f6b94f91-7911-4758-b27d-b142f5619cd1\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:25:29.0500763+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]447ec0eb-ef49-43a5-93d2-d7e3075e6d8c\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:24:29.6131133+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]292c852c-fa30-4138-a87b-e789fd7bad23\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:25:29.7175112+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"38304.28076\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]9040ac92-d480-42da-9449-f87fe3134e0d\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:27:25.1124239+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"40006.5636.14753\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]9d29e5c7-9029-49a3-a4bd-c23380dd8447\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:26:39.8158178+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"3191.34183\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]60b8b56e-b70f-4783-a805-a59447bba66e\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-10T21:28:38.8598423+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"40377.45349.61758\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        77b07fba-7fea-4e90-bade-567f17113749\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"86705631a06a6d4745a516778f7e2e261a72c5b8\",\r\n
+        \     \"startDateTime\": \"2021-02-11T01:11:46.1315134+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [],\r\n      \"updateId\":
+        {\r\n        \"provider\": \"ADUTeam\",\r\n        \"name\": \"RefDevice\",\r\n
+        \       \"version\": \"1.0.3750.1\"\r\n      },\r\n      \"isCanceled\": true,\r\n
+        \     \"isCompleted\": false,\r\n      \"isRetry\": false\r\n    },\r\n    {\r\n
+        \     \"deploymentId\": \"[ManagementE2ETest] 2ab1336a-7b8b-4b9f-803c-90cc2afe1c3a\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"86705631a06a6d4745a516778f7e2e261a72c5b8\",\r\n
+        \     \"startDateTime\": \"2021-02-11T01:37:20.7524364+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [],\r\n      \"updateId\":
+        {\r\n        \"provider\": \"ADUTeam\",\r\n        \"name\": \"RefDevice\",\r\n
+        \       \"version\": \"1.0.3779.1\"\r\n      },\r\n      \"isCanceled\": true,\r\n
+        \     \"isCompleted\": false,\r\n      \"isRetry\": false\r\n    },\r\n    {\r\n
+        \     \"deploymentId\": \"[ManagementE2ETest] 79394211-4d45-4a51-82fb-179a84988975\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"86705631a06a6d4745a516778f7e2e261a72c5b8\",\r\n
+        \     \"startDateTime\": \"2021-02-11T02:02:20.5902878+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [],\r\n      \"updateId\":
+        {\r\n        \"provider\": \"ADUTeam\",\r\n        \"name\": \"RefDevice\",\r\n
+        \       \"version\": \"1.0.3779.1\"\r\n      },\r\n      \"isCanceled\": true,\r\n
+        \     \"isCompleted\": false,\r\n      \"isRetry\": false\r\n    },\r\n    {\r\n
+        \     \"deploymentId\": \"[ManagementE2ETest] 52c1e7d4-c09e-4f17-8ff1-9363dbc1871b\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"86705631a06a6d4745a516778f7e2e261a72c5b8\",\r\n
+        \     \"startDateTime\": \"2021-02-11T02:30:30.2612669+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"adu-raspi-e2etest-raps-prod-wus2\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"RefDevice\",\r\n        \"version\": \"1.0.3750.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        c0fc4757-761e-440e-8e14-89e7bf820316\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"86705631a06a6d4745a516778f7e2e261a72c5b8\",\r\n
+        \     \"startDateTime\": \"2021-02-11T19:17:27.9859392+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"adu-raspi-e2etest-raps-prod-wus2\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"RefDevice\",\r\n        \"version\": \"1.0.3779.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"fakeDeviceId-3-2021-214-1709-51\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"startDateTime\": \"2021-02-15T01:11:55.2804612+00:00\",\r\n
+        \     \"deviceGroupType\": \"DeviceGroupDefinitions\",\r\n      \"deviceGroupDefinition\":
+        [\r\n        \"my-test\"\r\n      ],\r\n      \"updateId\": {\r\n        \"provider\":
+        \"Contoso\",\r\n        \"name\": \"Virtual-Machine\",\r\n        \"version\":
+        \"2021.214.1709.51\"\r\n      },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\":
+        false,\r\n      \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\":
+        \"[CreateDeploymentAndWaitAndCheckInfoTest]092151e4-e8f2-4fbf-a402-3a97723c86b5\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:14:15.222053+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]f4dac7ea-5827-499e-a000-b990ed95be4b\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:15:19.2493261+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]c773a5a6-5782-4f33-a713-b892af3bb59e\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:14:20.5236017+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]d5d5fe31-9199-4e0a-a817-8a01ebc27e41\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:15:21.6048437+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]4e5d65fd-5756-4d86-be4c-a637b845bb6d\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:14:22.0945934+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]932651aa-8e5a-4e5e-8827-1082fe1dcf37\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:14:23.9056672+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]a69e2ab1-5af6-4795-af42-3032d4610777\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:15:41.1145206+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]954fccfa-2c5a-4527-8630-985269d7eb83\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:16:42.8652225+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]f5d82d53-fafe-4f07-a9f9-85c7f5301a3f\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:15:44.2792902+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]b3a961e7-53a5-4703-8cfa-8706d47fb770\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:15:43.5958267+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]8cbe4ce1-c3af-44b8-b289-a45c118f14a1\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:16:45.2833101+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]7c79861d-b9ac-4121-bc14-c9f75b9060ea\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:15:47.0348662+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]11a69913-03bd-4a13-941a-4ac29352c944\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:16:33.2010311+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"58619.29858.8352\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]ce960397-18fa-45f4-b34b-b523c80c3535\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:16:33.6672612+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"21497.49416.52515\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]cc27c159-11d5-417b-8a94-f6c12f844087\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:18:28.1276813+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"52318.39562.52572\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]88a72696-54e8-4cff-a49b-8bbc62ee9333\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:18:29.0779299+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"9439.9695\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]d2550a49-3a44-4bc8-b06d-062e4a0da8c3\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:17:52.773332+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"9263.27053.51908\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]a155f315-59ad-4675-9366-29f75ab04fa7\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:17:56.8171819+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"32735.19434\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]843b6584-bf87-4ddf-8666-80615a6396fc\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:19:50.0173453+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"64639.32094.8729\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]fbf26ea5-4642-40af-92f8-8dd3bf538c70\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:19:52.7234079+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"34440.15569.32036\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        60f0168b-af1c-453d-9c12-597966a78255\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"86705631a06a6d4745a516778f7e2e261a72c5b8\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:25:09.4387427+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"adu-raspi-e2etest-raps-prod-wus2\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"RefDevice\",\r\n        \"version\": \"1.0.3779.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]9ded2c84-41c4-448d-b22d-8cc9240d799a\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:25:43.3143859+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]044036d9-7647-4217-b7dd-39db8d223f4e\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:26:44.7721183+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]c282eb19-98f6-4e08-8ef7-bf1397671ad1\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:25:46.7151459+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]2ad2b873-80d2-47d5-b8f6-ee6b498b5a78\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:27:57.4243367+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"39612.60528\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]2dee1361-b04a-4e96-bcb1-5908b5f2c95e\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:28:07.6098146+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]665b365e-339d-4696-aada-6eddf56f6e5f\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:29:08.9911925+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]4e74add0-ace3-486f-b52a-e3f912b51802\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:28:12.3329545+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]a461fbfb-b9bf-4068-b4cc-dfdd8db3ff93\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:29:53.2162907+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"4432.16466\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]4fd7c530-3d1a-4c05-a870-0ccb7ae66415\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:29:16.8272005+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]9166950f-d8fc-4853-8c23-f2fede268350\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:30:17.8739557+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]47f57615-92a6-4130-87d0-a4e8c6aad705\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:29:22.4859155+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]94c6f429-b197-42ee-bc8e-579eb6f059ab\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:30:22.9762193+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"18279.54271\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]7e3f1fe8-9565-4a52-aa6b-ea4da28799cb\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:32:18.3591562+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"34558.29386\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]e23dfac2-458d-411d-b984-352c1f2c3fd2\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:31:32.8515396+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"12351.27050\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]99b112fd-7e4a-4bf0-9d49-40a783353737\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:33:28.1411908+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"2891.41513\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        01163507-5c0d-45a9-99c0-a8245390e6e4\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"86705631a06a6d4745a516778f7e2e261a72c5b8\",\r\n
+        \     \"startDateTime\": \"2021-02-18T04:53:01.7398587+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"adu-raspi-e2etest-raps-prod-wus2\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"RefDevice\",\r\n        \"version\": \"1.0.3779.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]c6dbe0e6-6816-447b-a3cf-b6bb8918351b\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T17:55:04.49501+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]2a9f6098-f325-4963-9745-bf4e6446e37c\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T17:56:06.1732755+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]63b38384-eccc-48b9-8f32-56184faa80ba\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T17:55:08.3547885+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]753fe67f-b0b0-4452-a4b2-64b80131c595\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T17:57:18.2654138+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"36581.10619.48107\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]6f019a40-3a6d-4338-899f-9cb52c4dbd5a\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T17:59:14.6899507+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"12508.46001\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    }\r\n  ],\r\n  \"nextLink\": \"/deviceupdate/blue/v2/management/deployments?$top=100&$skipToken=%5B%7B%22token%22%3A%22%2BRID%3A%7EBYwRANEj9L55AAAAAAAAAA%3D%3D%23RT%3A1%23TRC%3A100%23ISV%3A2%23IEO%3A65567%23QCF%3A3%23FPC%3AAgEAAAAUAHkAAO73fff37v%2F%2Ff3f%2FvXf%2FHwkA%22%2C%22range%22%3A%7B%22min%22%3A%22%22%2C%22max%22%3A%22FF%22%7D%7D%5D\"\r\n}"
+    headers:
+      content-length:
+      - '62575'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Mar 2021 18:10:04 GMT
+      traceparent:
+      - 00-78a50aceb13ac94db2ced378adb58c73-890b23325503bb41-00
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments?$top=100&$skipToken=%5B%7B%22token%22%3A%22%2BRID%3A~BYwRANEj9L55AAAAAAAAAA%3D%3D%23RT%3A1%23TRC%3A100%23ISV%3A2%23IEO%3A65567%23QCF%3A3%23FPC%3AAgEAAAAUAHkAAO73fff37v%2F%2Ff3f%2FvXf%2FHwkA%22%2C%22range%22%3A%7B%22min%22%3A%22%22%2C%22max%22%3A%22FF%22%7D%7D%5D
+  response:
+    body:
+      string: "{\r\n  \"value\": [\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        8468856f-889b-4d6b-83d5-928075e9fedb\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"86705631a06a6d4745a516778f7e2e261a72c5b8\",\r\n
+        \     \"startDateTime\": \"2021-02-18T19:01:29.1567236+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"adu-raspi-e2etest-raps-prod-wus2\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"RefDevice\",\r\n        \"version\": \"1.0.3750.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]fb6343ca-1d75-490c-ba68-3f04dfa54caa\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T21:00:23.5255493+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]2e824739-12df-436e-851d-ab26c51f9594\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T21:01:25.6926112+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]ea83f2ba-9c3a-4649-9be0-ddfacb9cfc03\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T21:00:29.0453385+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]95172d83-94e0-4ca6-a5f3-39cbe08889d9\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T21:02:37.811033+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"46324.35236\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]5611e532-9e55-40eb-a682-e8aead6753cd\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-18T21:04:34.918156+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"18551.26060\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        49ca3e34-0f18-499a-bbfd-ec978a29b953\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"86705631a06a6d4745a516778f7e2e261a72c5b8\",\r\n
+        \     \"startDateTime\": \"2021-02-18T23:31:17.2173117+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"adu-raspi-e2etest-raps-prod-wus2\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"RefDevice\",\r\n        \"version\": \"1.0.3750.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]a2998755-d5c3-42df-ade1-a9be1ab3c5b2\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T17:50:18.0774055+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]ad0047df-0d07-444d-8493-ad9d4e2e046d\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T17:51:20.4997412+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]1f6fa4a7-f5a6-470a-9dfd-b5646946f8ca\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T17:50:22.8181423+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]0bf3a640-2e43-4c6e-b6e4-8334e2462914\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T17:52:33.5391649+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"18302.17634\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]d63796b8-ee64-4f1a-825d-34b8976aebdb\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T17:54:29.6773908+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"32892.26839.41198\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]ca1e438e-2c03-4445-a68b-49c242137617\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:14:36.9208839+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]f6ba2c69-f4dc-44c7-8d30-026d19110c0c\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:14:44.177023+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]fc6709fa-a6d5-4571-baa6-94a60313fdad\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:15:42.9317595+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]e6cfe17c-0ac7-4901-ae33-8b683d9f2071\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:16:56.2717868+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"65490.30247.12061\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]69f77faf-81d6-4e0e-bd5b-af7bee1270e1\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:18:58.9221908+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"17134.46108\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]671819a8-df68-4035-816c-26e5e2b7f025\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:41:06.9074026+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]7a381b5d-ba52-49fc-988b-c19960f3f04c\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:42:09.1229613+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]1de3f070-c4f3-487f-842f-dd68ee86346e\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:41:11.6750784+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]c8bfa3b2-9c25-4df7-947d-5ea63f63500e\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:43:17.9386413+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]4dc942ab-b8f8-4ae8-b416-c82b341a19e0\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:44:20.0648374+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]a990019f-aa0e-45ca-a78a-77929b57ab00\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:43:20.917731+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"42495.57085.35297\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]52ba359f-a1fc-49f8-b3b3-4104d0677c86\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:43:21.8413063+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]32e858d4-1171-490f-a660-8245086446c6\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:45:19.8503403+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"41434.28948\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]c19f5180-90d3-45c3-8935-d798366bb0ef\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:45:30.0413929+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"11388.40109\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]ffee8e11-5e0a-441d-b86a-52e21d0e4e32\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:47:30.1358071+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"9614.36373.59831\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]1b53dfba-2d43-4a7c-8ceb-9042e8b3f5ae\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:46:40.7850775+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]2785511c-d0eb-4577-b63e-77dfac7946d2\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:47:42.4019461+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]6ca34cef-610c-40e0-a934-7e87ead73f9f\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:46:45.1967155+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]dd4feee2-1a63-4fa1-9d58-7ef896d49c9d\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:48:55.8289585+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"11998.10735\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]328d2a88-c276-488b-8d40-62cdde5d9419\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:49:47.4782376+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]27d0c8dc-b1e7-4983-a046-e1de19ca55ac\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:50:49.4526546+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]7c8f50ba-b17b-4d78-8eaf-86bc0107da0c\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:49:50.7211169+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]4c7d4916-bdd8-4a4d-ad4a-28579219a26e\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:50:04.9141711+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]b47beeb3-5e39-4f21-987a-ff2ed4b4f7b7\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:51:06.1358621+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]bac00410-2b58-4002-8456-e5dabbe9b266\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:50:08.9898527+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]925afa1c-cd08-4193-9b98-eb41f8cb8adf\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:52:51.4312795+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"48148.9669.8061\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]c512236e-84e1-41fe-992f-0bd765d774c3\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:51:59.3177571+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"51478.2537.20262\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]7bbe161b-3d02-4431-b9c6-b331b8ac1a3b\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:53:58.8080515+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"43894.765\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]84d43f3e-5933-4bf3-bdcb-0f7a16f66f60\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:54:14.6590366+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"31239.28795\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]3d942afe-85a9-49fc-9788-92302a5762cf\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:54:19.137201+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"9519.17419.61336\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        037cbc82-4275-4596-acc1-e7305a326e50\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"86705631a06a6d4745a516778f7e2e261a72c5b8\",\r\n
+        \     \"startDateTime\": \"2021-02-24T18:57:43.3765392+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"adu-raspi-e2etest-raps-prod-wus2\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"RefDevice\",\r\n        \"version\": \"1.0.3779.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        8bd8e2a6-085e-4e39-8416-d014b219bad6\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"86705631a06a6d4745a516778f7e2e261a72c5b8\",\r\n
+        \     \"startDateTime\": \"2021-02-24T19:26:51.2374989+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"adu-raspi-e2etest-raps-prod-wus2\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"RefDevice\",\r\n        \"version\": \"1.0.3779.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        53b6fd41-9b22-4cc8-acf2-532c8974b43c\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"86705631a06a6d4745a516778f7e2e261a72c5b8\",\r\n
+        \     \"startDateTime\": \"2021-02-24T22:18:41.1552691+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"adu-raspi-e2etest-raps-prod-wus2\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"RefDevice\",\r\n        \"version\": \"1.0.3779.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        924eeb30-c2d4-4fff-8747-33e095adbd6a\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"634a0b52a6e1fb54fe6b98e5b55534bb4800b77b\",\r\n
+        \     \"startDateTime\": \"2021-02-24T23:19:50.3020901+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"Pi13279821\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"E2ETestDevice\",\r\n        \"version\": \"1.0.3750.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        550f6729-14a8-4b25-b2ee-ceee2510f411\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"634a0b52a6e1fb54fe6b98e5b55534bb4800b77b\",\r\n
+        \     \"startDateTime\": \"2021-02-24T23:32:04.7652633+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"Pi13279821\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"E2ETestDevice\",\r\n        \"version\": \"1.0.3779.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        d0058055-b4bd-449a-a91d-a03a43bcbba5\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"634a0b52a6e1fb54fe6b98e5b55534bb4800b77b\",\r\n
+        \     \"startDateTime\": \"2021-02-24T23:56:25.1535896+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"Pi13279821\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"E2ETestDevice\",\r\n        \"version\": \"1.0.3750.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        41508c83-021f-403c-b4c9-9a15e9fc3d18\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"634a0b52a6e1fb54fe6b98e5b55534bb4800b77b\",\r\n
+        \     \"startDateTime\": \"2021-02-25T02:22:04.2233813+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"Pi13279821\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"E2ETestDevice\",\r\n        \"version\": \"1.0.3779.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        ae08f8a1-f51a-40b5-8acf-517d8928b21e\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"86705631a06a6d4745a516778f7e2e261a72c5b8\",\r\n
+        \     \"startDateTime\": \"2021-02-25T18:22:23.1573696+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"adu-raspi-e2etest-raps-prod-wus2\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"RefDevice\",\r\n        \"version\": \"1.0.3750.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        d5741c14-17fa-49dd-9932-6e04a611390d\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"86705631a06a6d4745a516778f7e2e261a72c5b8\",\r\n
+        \     \"startDateTime\": \"2021-02-25T18:59:34.1204921+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"adu-raspi-e2etest-raps-prod-wus2\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"RefDevice\",\r\n        \"version\": \"1.0.3750.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        757f18e3-dd67-48fa-88fe-e232d2ecea0e\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"634a0b52a6e1fb54fe6b98e5b55534bb4800b77b\",\r\n
+        \     \"startDateTime\": \"2021-02-25T19:21:33.140483+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"Pi13279821\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"E2ETestDevice\",\r\n        \"version\": \"1.0.3750.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        97fe08a2-22fe-4ad5-ab05-3e8e239b2419\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"634a0b52a6e1fb54fe6b98e5b55534bb4800b77b\",\r\n
+        \     \"startDateTime\": \"2021-02-25T20:28:13.5279766+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"Pi13279821\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"E2ETestDevice\",\r\n        \"version\": \"1.0.3779.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        9134a970-df08-4fe7-8cb6-10d32a0a61f7\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"86705631a06a6d4745a516778f7e2e261a72c5b8\",\r\n
+        \     \"startDateTime\": \"2021-02-25T20:51:27.6928511+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"adu-raspi-e2etest-raps-prod-wus2\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"RefDevice\",\r\n        \"version\": \"1.0.3750.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        b052e00f-7087-45b9-9cd9-1d96834b82a3\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"634a0b52a6e1fb54fe6b98e5b55534bb4800b77b\",\r\n
+        \     \"startDateTime\": \"2021-02-25T21:05:21.6376778+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"Pi13279821\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"E2ETestDevice\",\r\n        \"version\": \"1.0.3750.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        ff9e6e43-4838-4a1d-9789-e4b0b13f004a\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"634a0b52a6e1fb54fe6b98e5b55534bb4800b77b\",\r\n
+        \     \"startDateTime\": \"2021-02-26T21:15:44.7606025+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"Pi13279821
+        \"\r\n      ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"E2ETestDevice\",\r\n        \"version\": \"1.0.3779.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        d10be80f-e032-4661-b170-03f3216e5404\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"634a0b52a6e1fb54fe6b98e5b55534bb4800b77b\",\r\n
+        \     \"startDateTime\": \"2021-02-26T21:58:23.6772544+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"Pi13279821\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"E2ETestDevice\",\r\n        \"version\": \"1.0.3779.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        194fe05d-e08f-4414-8e79-573fccdd2e79\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"634a0b52a6e1fb54fe6b98e5b55534bb4800b77b\",\r\n
+        \     \"startDateTime\": \"2021-02-26T23:05:17.2618357+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"Pi13279821\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"E2ETestDevice\",\r\n        \"version\": \"1.0.3750.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        6fcde10b-154c-42f7-b5f1-12ffa7b743e6\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"634a0b52a6e1fb54fe6b98e5b55534bb4800b77b\",\r\n
+        \     \"startDateTime\": \"2021-03-01T21:07:00.9418695+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"Pi13279821\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"E2ETestDevice\",\r\n        \"version\": \"1.0.3779.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"fakeDeviceId-2021-301-1926-8\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"startDateTime\": \"2021-03-02T03:28:49.3990566+00:00\",\r\n
+        \     \"deviceGroupType\": \"DeviceGroupDefinitions\",\r\n      \"deviceGroupDefinition\":
+        [\r\n        \"fakeDeviceId\"\r\n      ],\r\n      \"updateId\": {\r\n        \"provider\":
+        \"Contoso\",\r\n        \"name\": \"Virtual-Machine\",\r\n        \"version\":
+        \"2021.301.1926.8\"\r\n      },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\":
+        false,\r\n      \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\":
+        \"[CreateDeploymentAndWaitAndCheckInfoTest]e8a1db15-a055-442a-afb1-78d2e4223717\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T16:48:02.6258156+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]f6df34cc-9b33-4c7f-9695-ead5d1a84b67\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T16:49:07.5909501+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]3e67f4cd-4d99-497c-a3cd-cb4ecf56f6d3\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T16:48:11.8092271+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]a0dd8476-2d0c-43ef-8371-7a72b936bade\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T16:49:03.0910711+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]eb93ebcc-b420-4326-89cc-2b04575ddf26\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T16:49:09.1502449+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]05f4d055-8fcd-4086-99cb-d878f6b18c09\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T16:50:07.7352547+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]3141b244-d7fc-4100-bcf8-84ae1b4978fe\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T16:49:13.6087164+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]657a46d3-0c27-4d9e-9960-ae52ff1c5818\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T16:50:15.2964796+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]ed6fe353-d461-403b-ad4e-010c7d03e60b\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T16:49:17.0450498+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]f0e1b288-a9d9-4efe-a5e8-03390e3ce267\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T16:50:27.1806759+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"40904.57411\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]6a28b50a-e916-4ea1-8808-ce4796e02d3d\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T16:51:16.469512+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"10998.61769.7472\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]a6512b0e-5a47-4878-a7bf-ce25745b669b\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T16:52:18.0938849+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"46262.16236\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]87fb21f2-ef78-40de-ad90-22c953728104\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T16:51:27.8522711+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"5971.10509.15901\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]549d56a8-a718-4d70-a73e-b822c1bc2479\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T16:53:19.5158671+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"33328.34654.17389\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]5df4bdb3-497a-41c3-9875-112a129a7f3f\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T16:53:24.6854092+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"30723.40594\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]a85e6570-33d0-48ee-917a-df263ea20f58\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T17:02:36.9280652+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]eeb90d76-ee90-4527-933d-f0eac77ecb65\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T17:03:39.100941+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]dc0ea097-33cb-4355-982c-b7dc0087fd56\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T17:02:42.3412279+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]2345bbd4-c288-4f7d-ac93-cf3a72dbccb8\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T17:04:50.0453459+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"41329.18008\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]3e1653f3-39de-4af9-8a08-50e87625dd7a\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T17:05:01.3766008+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]5d16fe9e-92e4-48c0-ad04-53055d2739a5\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T17:06:02.8465317+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]a63f4f18-8ace-4e17-bdf4-405accea06f8\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T17:05:05.2410054+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]206b7e11-facf-423e-b988-b33b7cb4edca\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T17:06:49.5404696+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"1561.8510\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]bde9549b-cab6-4473-9dce-2fbbac649b01\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T17:06:04.2328487+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]4ca85c18-95c8-4b18-bc7c-b302685cfdf5\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T17:07:05.8264496+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]e2dcba71-8575-4bfb-9399-c4572b822a5a\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T17:06:08.7995055+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndWaitAndCheckInfoTest]31f565b3-daa4-42e4-99ca-bc57bad4c2b1\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T17:06:25.8325453+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]ed47c825-5308-4bdf-b483-0637246df136\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T17:07:26.9151902+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentAndCancelTest]ad07230e-5863-4e37-82ab-63ac11110cde\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T17:06:28.7572809+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]252b1dad-42da-47de-aa95-f4e4c53291b5\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T17:07:13.6860295+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"52650.5497\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]b701222b-42a6-4eab-ae7b-7b16109b6de5\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T17:09:11.2440578+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"16427.1376\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]5d2a3871-af51-4b7e-b3c1-375608d6f4ca\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T17:08:15.8706014+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"27991.20092\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDevicesDeploymentAndWaitAndCheckInfoTest]7e706f11-3876-4b38-9f1d-15ecd5ae2edb\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T17:08:36.4496284+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"23025.30280\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]1719c00e-49ff-4a99-820e-01e0185a1533\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T17:10:14.5636526+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"35247.45001.33097\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[CreateDeploymentInTheFutureAndWaitAndCheckInfoTest]ff858f54-5ede-43a2-89d2-d373e0cc86a1\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"startDateTime\": \"2021-03-02T17:10:34.8316201+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"functionaltests-device1\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"14724.12006\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
+        043b16d7-35c4-4556-bdea-766c39686f25\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"deviceClassId\": \"634a0b52a6e1fb54fe6b98e5b55534bb4800b77b\",\r\n
+        \     \"startDateTime\": \"2021-03-02T17:10:49.7308845+00:00\",\r\n      \"deviceGroupType\":
+        \"Devices\",\r\n      \"deviceGroupDefinition\": [\r\n        \"Pi13279821\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
+        \       \"name\": \"E2ETestDevice\",\r\n        \"version\": \"1.0.3750.1\"\r\n
+        \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"fakeDeviceId-2021-302-914-51\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"startDateTime\": \"2021-03-02T17:17:30.1735411+00:00\",\r\n
+        \     \"deviceGroupType\": \"DeviceGroupDefinitions\",\r\n      \"deviceGroupDefinition\":
+        [\r\n        \"my-test\"\r\n      ],\r\n      \"updateId\": {\r\n        \"provider\":
+        \"Contoso\",\r\n        \"name\": \"Virtual-Machine\",\r\n        \"version\":
+        \"2021.302.914.51\"\r\n      },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\":
+        false,\r\n      \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\":
+        \"fakeDeviceId2-2021-302-1045-44\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"startDateTime\": \"2021-03-02T18:48:23.2921109+00:00\",\r\n      \"deviceGroupType\":
+        \"DeviceGroupDefinitions\",\r\n      \"deviceGroupDefinition\": [\r\n        \"my-test\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Contoso\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"2021.302.1045.44\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"fakeDeviceId2-2021-302-1048-57\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"startDateTime\": \"2021-03-02T18:51:35.4129264+00:00\",\r\n
+        \     \"deviceGroupType\": \"DeviceGroupDefinitions\",\r\n      \"deviceGroupDefinition\":
+        [\r\n        \"my-test\"\r\n      ],\r\n      \"updateId\": {\r\n        \"provider\":
+        \"Contoso\",\r\n        \"name\": \"Virtual-Machine\",\r\n        \"version\":
+        \"2021.302.1048.57\"\r\n      },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\":
+        false,\r\n      \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\":
+        \"fakeDeploymentId\",\r\n      \"deploymentType\": \"Complete\",\r\n      \"startDateTime\":
+        \"2021-03-02T20:04:52.8525661+00:00\",\r\n      \"deviceGroupType\": \"DeviceGroupDefinitions\",\r\n
+        \     \"deviceGroupDefinition\": [\r\n        \"fakeDeviceId\"\r\n      ],\r\n
+        \     \"updateId\": {\r\n        \"provider\": \"Contoso\",\r\n        \"name\":
+        \"Virtual-Machine\",\r\n        \"version\": \"fakeVersion\"\r\n      },\r\n
+        \     \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n      \"isRetry\":
+        false\r\n    }\r\n  ],\r\n  \"nextLink\": \"/deviceupdate/blue/v2/management/deployments?$top=100&$skipToken=%5B%7B%22token%22%3A%22%2BRID%3A%7EBYwRANEj9L7sAAAAAAAAAA%3D%3D%23RT%3A2%23TRC%3A200%23ISV%3A2%23IEO%3A65567%23QCF%3A3%23FPC%3AAgEAAAAGAOyAAcAJAA%3D%3D%22%2C%22range%22%3A%7B%22min%22%3A%22%22%2C%22max%22%3A%22FF%22%7D%7D%5D\"\r\n}"
+    headers:
+      content-length:
+      - '61735'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Mar 2021 18:10:05 GMT
+      traceparent:
+      - 00-b6f961bf8f51e94fa7d778f1851d28d3-329afa4cc821f743-00
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments?$top=100&$skipToken=%5B%7B%22token%22%3A%22%2BRID%3A~BYwRANEj9L7sAAAAAAAAAA%3D%3D%23RT%3A2%23TRC%3A200%23ISV%3A2%23IEO%3A65567%23QCF%3A3%23FPC%3AAgEAAAAGAOyAAcAJAA%3D%3D%22%2C%22range%22%3A%7B%22min%22%3A%22%22%2C%22max%22%3A%22FF%22%7D%7D%5D
+  response:
+    body:
+      string: "{\r\n  \"value\": [\r\n    {\r\n      \"deploymentId\": \"fakeDeviceId.2021-302-1304-12\",\r\n
+        \     \"deploymentType\": \"Complete\",\r\n      \"startDateTime\": \"2021-03-02T21:06:15.224255+00:00\",\r\n
+        \     \"deviceGroupType\": \"DeviceGroupDefinitions\",\r\n      \"deviceGroupDefinition\":
+        [\r\n        \"fakeDeviceId\"\r\n      ],\r\n      \"updateId\": {\r\n        \"provider\":
+        \"Contoso\",\r\n        \"name\": \"Virtual-Machine\",\r\n        \"version\":
+        \"2021.302.1304.12\"\r\n      },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\":
+        false,\r\n      \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\":
+        \"fakeDeviceId-2021-302-1323-55\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"startDateTime\": \"2021-03-02T21:25:58.9268903+00:00\",\r\n      \"deviceGroupType\":
+        \"DeviceGroupDefinitions\",\r\n      \"deviceGroupDefinition\": [\r\n        \"fakeDeviceId\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Contoso\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"2021.302.1323.55\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    }\r\n  ]\r\n}"
+    headers:
+      content-length:
+      - '1041'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Mar 2021 18:10:05 GMT
+      traceparent:
+      - 00-013216d349700a4daf561681506bcbc4-488d9ce64ca0624e-00
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -263,8 +263,8 @@ See
 [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport)
 for more information.
 
-Async clients should be closed when they're no longer needed. Each async
-client is an async context manager and defines an async `close` method. For
+Async clients and credentials should be closed when they're no longer needed. These
+objects are async context managers and define async `close` methods. For
 example:
 
 ```py
@@ -273,15 +273,17 @@ from azure.keyvault.secrets.aio import SecretClient
 
 credential = DefaultAzureCredential()
 
-# call close when the client is no longer needed
+# call close when the client and credential are no longer needed
 client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 ...
 await client.close()
+await credential.close()
 
-# alternatively, use the client as an async context manager
+# alternatively, use them as async context managers (contextlib.AsyncExitStack can help)
 client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 async with client:
-  ...
+  async with credential:
+    ...
 ```
 
 ### Asynchronously create a secret

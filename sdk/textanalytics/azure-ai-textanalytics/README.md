@@ -81,7 +81,7 @@ This table shows the relationship between SDK versions and supported API version
 | SDK version                                                               | Supported API version of service  |
 | ------------------------------------------------------------------------- | --------------------------------- |
 | 5.0.0 - Latest GA release (can be installed by removing the `--pre` flag) | 3.0                               |
-| 5.1.0b4 - Latest release (beta)                                           | 3.0, 3.1-preview.2, 3.1-preview.3 |
+| 5.1.0b6 - Latest release (beta)                                           | 3.0, 3.1-preview.4 |
 
 ### Authenticate the client
 
@@ -445,7 +445,7 @@ and [language and regional support][language_and_regional_support].
 
 ### Healthcare Entities Analysis
 
-The example below extracts entities recognized within the healthcare domain, and identifies relationships between entities within the input document and links to known sources of information in various well known databases, such as UMLS, CHV, MSH, etc.  This sample demonstrates the usage for [long-running operations](#long-running-operations).
+[Long-running operation](#long-running-operations) [`begin_analyze_healthcare_entities`][analyze_healthcare_entities] extracts entities recognized within the healthcare domain, and identifies relationships between entities within the input document and links to known sources of information in various well known databases, such as UMLS, CHV, MSH, etc.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -458,7 +458,7 @@ text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = ["Subject is taking 100mg of ibuprofen twice daily"]
 
-poller = text_analytics_client.begin_analyze_healthcare_entities(documents, show_stats=True)
+poller = text_analytics_client.begin_analyze_healthcare_entities(documents)
 result = poller.result()
 
 docs = [doc for doc in result if not doc.is_error]
@@ -467,6 +467,7 @@ print("Results of Healthcare Entities Analysis:")
 for idx, doc in enumerate(docs):
     for entity in doc.entities:
         print("Entity: {}".format(entity.text))
+        print("...Normalized Text: {}".format(entity.normalized_text))
         print("...Category: {}".format(entity.category))
         print("...Subcategory: {}".format(entity.subcategory))
         print("...Offset: {}".format(entity.offset))
@@ -476,31 +477,37 @@ for idx, doc in enumerate(docs):
             for data_source in entity.data_sources:
                 print("......Entity ID: {}".format(data_source.entity_id))
                 print("......Name: {}".format(data_source.name))
-    for relation in doc.relations:
-        print("Relation:")
-        print("...Source: {}".format(relation.source.text))
-        print("...Target: {}".format(relation.target.text))
-        print("...Type: {}".format(relation.relation_type))
-        print("...Bidirectional: {}".format(relation.is_bidirectional))
+        if entity.assertion is not None:
+            print("...Assertion:")
+            print("......Conditionality: {}".format(entity.assertion.conditionality))
+            print("......Certainty: {}".format(entity.assertion.certainty))
+            print("......Association: {}".format(entity.assertion.association))
+    for relation in doc.entity_relations:
+        print("Relation of type: {} has the following roles".format(relation.relation_type))
+        for role in relation.roles:
+            print("...Role '{}' with entity '{}'".format(role.name, role.entity.text))
     print("------------------------------------------")
 ```
 
-Note: The Healthcare Entities Analysis service is currently available only in API version v3.1-preview.3 in gated preview. Since this is a gated preview, AAD is not supported. More information [here](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview).
+Note: The Healthcare Entities Analysis service is currently available only in the API v3.1 preview versions and is in gated preview. Since this is a gated preview, AAD is not supported. More information [here](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview).
 
 ### Batch Analysis
 
-The example below demonstrates how to perform multiple analyses over one set of documents in a single request. Currently batching is supported using any combination of the following Text Analytics APIs in a single request:
+[Long-running operation](#long-running-operations) [`begin_analyze_batch_actions`][analyze_batch_actions] performs multiple analyses over one set of documents in a single request. Currently batching is supported using any combination of the following Text Analytics APIs in a single request:
 
 - Entities Recognition
 - PII Entities Recognition
+- Linked Entity Recognition
 - Key Phrase Extraction
-
-This sample demonstrates the usage for [long-running operations](#long-running-operations)
 
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import (
-    TextAnalyticsClient, RecognizeEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction
+    TextAnalyticsClient,
+    RecognizeEntitiesAction,
+    RecognizePiiEntitiesAction,
+    ExtractKeyPhrasesAction,
+    RecognizeLinkedEntitiesAction
 )
 
 credential = AzureKeyCredential("<api_key>")
@@ -517,6 +524,7 @@ poller = text_analytics_client.begin_analyze_batch_actions(
         RecognizeEntitiesAction(),
         RecognizePiiEntitiesAction(),
         ExtractKeyPhrasesAction(),
+        RecognizeLinkedEntitiesAction()
     ]
 )
 
@@ -556,17 +564,42 @@ for idx, doc in enumerate(docs):
     print("Document text: {}\n".format(documents[idx]))
     print("Key Phrases: {}\n".format(doc.key_phrases))
     print("------------------------------------------")
+
+fourth_action_result = next(result)
+print("Results of Linked Entities Recognition action:")
+docs = [doc for doc in fourth_action_result.document_results if not doc.is_error]
+
+for idx, doc in enumerate(docs):
+    print("Document text: {}\n".format(documents[idx]))
+    for linked_entity in doc.entities:
+        print("Entity name: {}".format(linked_entity.name))
+        print("...Data source: {}".format(linked_entity.data_source))
+        print("...Data source language: {}".format(linked_entity.language))
+        print("...Data source entity ID: {}".format(linked_entity.data_source_entity_id))
+        print("...Data source URL: {}".format(linked_entity.url))
+        print("...Document matches:")
+        for match in linked_entity.matches:
+            print("......Match text: {}".format(match.text))
+            print(".........Confidence Score: {}".format(match.confidence_score))
+            print(".........Offset: {}".format(match.offset))
+            print(".........Length: {}".format(match.length))
+    print("------------------------------------------")
 ```
 
 The returned response is an object encapsulating multiple iterables, each representing results of individual analyses.
 
-Note: Batch analysis is currently available only in API version v3.1-preview.3.
+Note: Batch analysis is currently available only in the v3.1-preview API version.
 
 ## Optional Configuration
 
 Optional keyword arguments can be passed in at the client and per-operation level.
 The azure-core [reference documentation][azure_core_ref_docs]
 describes available configurations for retries, logging, transport protocols, and more.
+
+## Known Issues
+
+- `begin_analyze_healthcare_entities` is currently in gated preview and can not be used with AAD credentials. For more information, see [the Text Analytics for Health documentation](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview).
+- At time of this SDK release, the service is not respecting the value passed through `model_version` to `begin_analyze_healthcare_entities`, it only uses the latest model.
 
 ## Troubleshooting
 
@@ -690,6 +723,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [detect_language_input]: https://aka.ms/azsdk-python-textanalytics-detectlanguageinput
 [text_analytics_client]: https://aka.ms/azsdk-python-textanalytics-textanalyticsclient
 [analyze_sentiment]: https://aka.ms/azsdk-python-textanalytics-analyzesentiment
+[analyze_batch_actions]: https://aka.ms/azsdk/python/docs/ref/textanalytics#azure.ai.textanalytics.TextAnalyticsClient.begin_analyze_batch_actions
+[analyze_healthcare_entities]: https://aka.ms/azsdk/python/docs/ref/textanalytics#azure.ai.textanalytics.TextAnalyticsClient.begin_analyze_healthcare_entities
 [recognize_entities]: https://aka.ms/azsdk-python-textanalytics-recognizeentities
 [recognize_pii_entities]: https://aka.ms/azsdk-python-textanalytics-recognizepiientities
 [recognize_linked_entities]: https://aka.ms/azsdk-python-textanalytics-recognizelinkedentities

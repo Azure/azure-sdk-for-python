@@ -12,7 +12,7 @@ from devtools_testutils import PowerShellPreparer, AzureMgmtPreparer
 from azure.core.credentials import AzureKeyCredential
 
 ENABLE_LOGGER = os.getenv('ENABLE_LOGGER', "False")
-REGION = os.getenv('REGION', None)
+REGION = os.getenv('FORMRECOGNIZER_LOCATION', None)
 
 
 FormRecognizerPreparer = functools.partial(

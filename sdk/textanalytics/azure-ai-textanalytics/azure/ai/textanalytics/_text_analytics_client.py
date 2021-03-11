@@ -18,7 +18,11 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._base_client import TextAnalyticsClientBase
-from ._request_handlers import _validate_input, _determine_action_type, _check_string_index_type_arg
+from ._request_handlers import (
+    _validate_input,
+    _determine_action_type,
+    _check_string_index_type_arg
+)
 from ._response_handlers import (
     process_http_response_error,
     entities_result,
@@ -38,7 +42,6 @@ from ._lro import (
     TextAnalyticsOperationResourcePolling,
     AnalyzeBatchActionsLROPollingMethod,
     AnalyzeHealthcareEntitiesLROPollingMethod,
-    AnalyzeHealthcareEntitiesLROPoller
 )
 
 if TYPE_CHECKING:
@@ -55,6 +58,7 @@ if TYPE_CHECKING:
         RecognizePiiEntitiesResult,
         RecognizeEntitiesAction,
         RecognizePiiEntitiesAction,
+        RecognizeLinkedEntitiesAction,
         ExtractKeyPhrasesAction,
         AnalyzeHealthcareEntitiesResultItem,
         AnalyzeBatchActionsResult,
@@ -149,6 +153,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword str model_version: Version of the model used on the service side for scoring,
             e.g. "latest", "2019-10-01". If a model version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :return: The combined list of :class:`~azure.ai.textanalytics.DetectLanguageResult` and
@@ -215,6 +220,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
@@ -293,12 +299,18 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword domain_filter: Filters the response entities to ones only included in the specified domain.
             I.e., if set to 'phi', will only return entities in the Protected Healthcare Information domain.
             See https://aka.ms/tanerpii for more information.
         :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomainType
+        :keyword categories_filter: Instead of filtering over all PII entity categories, you can pass in a list of
+            the specific PII entity categories you want to filter out. For example, if you only want to filter out
+            U.S. social security numbers in a document, you can pass in
+            `[PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
+        :paramtype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategoryType]
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
             you can also pass in `Utf16CodePoint` or `TextElements_v8`. For additional information
@@ -325,6 +337,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         domain_filter = kwargs.pop("domain_filter", None)
+        categories_filter = kwargs.pop("categories_filter", None)
 
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
@@ -340,13 +353,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 model_version=model_version,
                 show_stats=show_stats,
                 domain=domain_filter,
+                pii_categories=categories_filter,
                 cls=kwargs.pop("cls", pii_entities_result),
                 **kwargs
             )
         except ValueError as error:
             if "API version v3.0 does not have operation 'entities_recognition_pii'" in str(error):
                 raise ValueError(
-                    "'recognize_pii_entities' endpoint is only available for API version v3.1-preview and up"
+                    "'recognize_pii_entities' endpoint is only available for API version V3_1_PREVIEW and up"
                 )
             raise error
         except HttpResponseError as error:
@@ -385,6 +399,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
@@ -434,7 +449,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
     def _healthcare_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
         healthcare_result = self._deserialize(
-            self._client.models(api_version="v3.1-preview.3").HealthcareJobState,
+            self._client.models(api_version="v3.1-preview.4").HealthcareJobState,
             raw_response
         )
         return healthcare_paged_result(
@@ -451,13 +466,18 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
-    ):  # type: (...) -> AnalyzeHealthcareEntitiesLROPoller
+    ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeHealthcareEntitiesResultItem]]
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases,
         such as UMLS, CHV, MSH, etc.
 
-        Relations are comprised of a pair of entities and a directional relationship.
+        We also extract the relations found between entities, for example in "The subject took 100 mg of ibuprofen",
+        we would extract the relationship between the "100 mg" dosage and the "ibuprofen" medication.
+
+        NOTE: this endpoint is currently in gated preview, meaning your subscription needs to be allow-listed
+        for you to use this endpoint. More information about that here:
+        https://aka.ms/text-analytics-health-request-access
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -470,6 +490,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            Currently not working on the service side at time of release, as service will
+            only use the latest model. Service is aware, and once it's been fixed on the service
+            side, the SDK should work automatically.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
@@ -479,14 +503,17 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an AnalyzeHealthcareEntitiesLROPoller. Call `result()` on the this
-            object to return a list[:class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResultItem`].
+            object to return a pageable of :class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResultItem`.
+        :rtype:
+            ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[
+            ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResultItem]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_analyze_healthcare.py
-                :start-after: [START analyze_healthcare]
-                :end-before: [END analyze_healthcare]
+            .. literalinclude:: ../samples/sample_analyze_healthcare_entities.py
+                :start-after: [START analyze_healthcare_entities]
+                :end-before: [END analyze_healthcare_entities]
                 :language: python
                 :dedent: 8
                 :caption: Recognize healthcare entities in a batch of documents.
@@ -523,7 +550,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             if "API version v3.0 does not have operation 'begin_health'" in str(error):
                 raise ValueError(
                     "'begin_analyze_healthcare_entities' method is only available for API version \
-                    v3.1-preview.3 and up."
+                    V3_1_PREVIEW and up."
                 )
             raise error
 
@@ -564,6 +591,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :return: The combined list of :class:`~azure.ai.textanalytics.ExtractKeyPhrasesResult` and
@@ -639,6 +667,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
@@ -681,6 +710,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         if show_opinion_mining is not None:
             kwargs.update({"opinion_mining": show_opinion_mining})
+
         try:
             return self._client.sentiment(
                 documents=docs,
@@ -700,7 +730,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
     def _analyze_result_callback(self, doc_id_order, task_order, raw_response, _, headers, show_stats=False):
         analyze_result = self._deserialize(
-            self._client.models(api_version="v3.1-preview.3").AnalyzeJobState, # pylint: disable=protected-access
+            self._client.models(api_version="v3.1-preview.4").AnalyzeJobState, # pylint: disable=protected-access
             raw_response
         )
         return analyze_paged_result(
@@ -717,7 +747,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def begin_analyze_batch_actions(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        actions,  # type: List[Union[RecognizeEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction]]
+        actions,  # type: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction]] # pylint: disable=line-too-long
         **kwargs  # type: Any
     ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeBatchActionsResult]]
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
@@ -735,7 +765,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             The outputted action results will be in the same order you inputted your actions.
             Duplicate actions in list not supported.
         :type actions:
-            list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction]
+            list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
+            RecognizeLinkedEntitiesAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -767,7 +798,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         display_name = kwargs.pop("display_name", None)
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = self._client.models(api_version="v3.1-preview.3").MultiLanguageBatchInput(
+        docs = self._client.models(api_version="v3.1-preview.4").MultiLanguageBatchInput(
             documents=_validate_input(documents, "language", language)
         )
         show_stats = kwargs.pop("show_stats", False)
@@ -778,7 +809,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         task_order = [_determine_action_type(action) for action in actions]
 
         try:
-            analyze_tasks = self._client.models(api_version='v3.1-preview.3').JobManifestTasks(
+            analyze_tasks = self._client.models(api_version='v3.1-preview.4').JobManifestTasks(
                 entity_recognition_tasks=[
                     t.to_generated() for t in
                     [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES]
@@ -790,9 +821,16 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 key_phrase_extraction_tasks=[
                     t.to_generated() for t in
                     [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES]
+                ],
+                entity_linking_tasks=[
+                    t.to_generated() for t in
+                    [
+                        a for a in actions
+                        if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES
+                    ]
                 ]
             )
-            analyze_body = self._client.models(api_version='v3.1-preview.3').AnalyzeBatchInput(
+            analyze_body = self._client.models(api_version='v3.1-preview.4').AnalyzeBatchInput(
                 display_name=display_name,
                 tasks=analyze_tasks,
                 analysis_input=docs
@@ -815,7 +853,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
                 raise ValueError(
-                    "'begin_analyze_batch_actions' endpoint is only available for API version v3.1-preview.3"
+                    "'begin_analyze_batch_actions' endpoint is only available for API version V3_1_PREVIEW and up"
                 )
             raise error
 

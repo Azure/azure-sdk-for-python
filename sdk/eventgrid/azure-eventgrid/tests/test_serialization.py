@@ -14,9 +14,10 @@ import datetime as dt
 
 from devtools_testutils import AzureMgmtTestCase
 from msrest.serialization import UTC
-from azure.eventgrid import CloudEvent, EventGridEvent
+from azure.core.messaging import CloudEvent
 from azure.eventgrid._generated import models as internal_models
-from azure.eventgrid import SystemEventNames
+from azure.eventgrid._helpers import _cloud_event_to_generated
+from azure.eventgrid import SystemEventNames, EventGridEvent
 from _mocks import (
     cloud_storage_dict,
     cloud_storage_string,
@@ -39,16 +40,14 @@ class EventGridSerializationTests(AzureMgmtTestCase):
                 source="http://samplesource.dev",
                 data=data,
                 type="Sample.Cloud.Event",
-                foo="bar",
                 extensions={'e1':1, 'e2':2}
                 )
         
         cloud_event.subject = "subject" # to test explicit setting of prop
         encoded = base64.b64encode(data).decode('utf-8')
-        internal = cloud_event._to_generated()
+        internal = _cloud_event_to_generated(cloud_event)
 
         assert internal.additional_properties is not None
-        assert 'foo' not in internal.additional_properties
         assert 'e1' in internal.additional_properties
 
         json  = internal.serialize()
@@ -72,15 +71,13 @@ class EventGridSerializationTests(AzureMgmtTestCase):
                 source="http://samplesource.dev",
                 data=data,
                 type="Sample.Cloud.Event",
-                foo="bar",
                 extensions={'e1':1, 'e2':2}
                 )
         
         cloud_event.subject = "subject" # to test explicit setting of prop
-        internal = cloud_event._to_generated()
+        internal = _cloud_event_to_generated(cloud_event)
 
         assert internal.additional_properties is not None
-        assert 'foo' not in internal.additional_properties
         assert 'e1' in internal.additional_properties
 
         json  = internal.serialize()
@@ -112,7 +109,7 @@ class EventGridSerializationTests(AzureMgmtTestCase):
                     )
 
     def test_import_from_sytem_events(self):
-        var = SystemEventNames.ACSChatMemberAddedToThreadWithUserEventName 
+        var = SystemEventNames.AcsChatMemberAddedToThreadWithUserEventName 
         assert var == "Microsoft.Communication.ChatMemberAddedToThreadWithUser"
         assert SystemEventNames.KeyVaultKeyNearExpiryEventName == "Microsoft.KeyVault.KeyNearExpiry"
         var = SystemEventNames.ServiceBusActiveMessagesAvailableWithNoListenersEventName

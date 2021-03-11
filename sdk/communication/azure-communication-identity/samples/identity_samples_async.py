@@ -31,7 +31,7 @@ class CommunicationIdentityClientSamples(object):
         self.client_secret = os.getenv('AZURE_CLIENT_SECRET')
         self.tenant_id = os.getenv('AZURE_TENANT_ID')
 
-    async def issue_token(self):
+    async def get_token(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
         from azure.communication.identity import CommunicationTokenScope
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
@@ -43,7 +43,7 @@ class CommunicationIdentityClientSamples(object):
         async with identity_client:
             user = await identity_client.create_user()
             print("Issuing token for: " + user.identifier)
-            tokenresponse = await identity_client.issue_token(user, scopes=[CommunicationTokenScope.CHAT])
+            tokenresponse = await identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
             print("Token issued with value: " + tokenresponse.token)
 
     async def revoke_tokens(self):
@@ -57,7 +57,7 @@ class CommunicationIdentityClientSamples(object):
 
         async with identity_client:
             user = await identity_client.create_user()
-            tokenresponse = await identity_client.issue_token(user, scopes=[CommunicationTokenScope.CHAT])
+            tokenresponse = await identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
             print("Revoking token: " + tokenresponse.token)
             await identity_client.revoke_tokens(user)
             print(tokenresponse.token + " revoked successfully")
@@ -75,7 +75,7 @@ class CommunicationIdentityClientSamples(object):
             user = await identity_client.create_user()
             print("User created with id:" + user.identifier)
 
-    async def create_user_with_token(self):
+    async def create_user_and_token(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
         from azure.communication.identity import CommunicationTokenScope
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
@@ -86,7 +86,7 @@ class CommunicationIdentityClientSamples(object):
 
         async with identity_client:
             print("Creating new user with token")
-            user, tokenresponse = await identity_client.create_user_with_token(scopes=[CommunicationTokenScope.CHAT])
+            user, tokenresponse = await identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
             print("User created with id:" + user.identifier)
             print("Token issued with value: " + tokenresponse.token)
 
@@ -107,8 +107,8 @@ class CommunicationIdentityClientSamples(object):
 async def main():
     sample = CommunicationIdentityClientSamples()
     await sample.create_user()
-    await sample.create_user_with_token()
-    await sample.issue_token()
+    await sample.create_user_and_token()
+    await sample.get_token()
     await sample.revoke_tokens()
     await sample.delete_user()
 

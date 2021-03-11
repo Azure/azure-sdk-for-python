@@ -6,7 +6,7 @@
 # pylint:disable=specify-parameter-names-in-call
 # pylint:disable=too-many-lines
 import functools
-from typing import TYPE_CHECKING, Any, Union, cast
+from typing import TYPE_CHECKING, Any, Union, cast, Mapping
 from xml.etree.ElementTree import ElementTree
 
 from azure.core.async_paging import AsyncItemPaged
@@ -77,6 +77,7 @@ from ._utils import extract_data_template, extract_rule_data_template, get_next_
 from ...management._utils import (
     deserialize_rule_key_values,
     serialize_rule_key_values,
+    create_properties_from_dict_if_needed,
     _validate_entity_name_type,
     _validate_topic_and_subscription_types,
     _validate_topic_subscription_and_rule_types,
@@ -398,7 +399,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return result
 
-    async def update_queue(self, queue: QueueProperties, **kwargs) -> None:
+    async def update_queue(self, queue: Union[QueueProperties, Mapping[str, Any]], **kwargs) -> None:
         """Update a queue.
 
         Before calling this method, you should use `get_queue`, `create_queue` or `list_queues` to get a
@@ -411,7 +412,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
 
+        queue = create_properties_from_dict_if_needed(queue, QueueProperties)
         to_update = queue._to_internal_entity()
+
         to_update.default_message_time_to_live = avoid_timedelta_overflow(
             to_update.default_message_time_to_live
         )
@@ -623,7 +626,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return result
 
-    async def update_topic(self, topic: TopicProperties, **kwargs) -> None:
+    async def update_topic(self, topic: Union[TopicProperties, Mapping[str, Any]], **kwargs) -> None:
         """Update a topic.
 
         Before calling this method, you should use `get_topic`, `create_topic` or `list_topics` to get a
@@ -636,6 +639,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
 
+        topic = create_properties_from_dict_if_needed(topic, TopicProperties)
         to_update = topic._to_internal_entity()
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(
@@ -868,7 +872,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return result
 
     async def update_subscription(
-        self, topic_name: str, subscription: SubscriptionProperties, **kwargs
+        self, topic_name: str, subscription: Union[SubscriptionProperties, Mapping[str, Any]], **kwargs
     ) -> None:
         """Update a subscription.
 
@@ -880,8 +884,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          from `get_subscription`, `update_subscription` or `list_subscription` and has the updated properties.
         :rtype: None
         """
+
         _validate_entity_name_type(topic_name, display_name="topic_name")
 
+        subscription = create_properties_from_dict_if_needed(subscription, SubscriptionProperties)
         to_update = subscription._to_internal_entity()
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(
@@ -1062,7 +1068,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return result
 
     async def update_rule(
-        self, topic_name: str, subscription_name: str, rule: RuleProperties, **kwargs
+        self, topic_name: str, subscription_name: str, rule: Union[RuleProperties, Mapping[str, Any]], **kwargs
     ) -> None:
         """Update a rule.
 
@@ -1079,6 +1085,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)
 
+        rule = create_properties_from_dict_if_needed(rule, RuleProperties)
         to_update = rule._to_internal_entity()
 
         create_entity_body = CreateRuleBody(
