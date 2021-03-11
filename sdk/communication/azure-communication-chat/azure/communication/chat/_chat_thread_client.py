@@ -506,18 +506,18 @@ class ChatThreadClient(object):
         thread_participants,  # type: list[ChatThreadParticipant]
         **kwargs  # type: Any
     ):
-        # type: (...) -> list[(ChatThreadParticipant, CommunicationError)]
+        # type: (...) -> list[(ChatThreadParticipant, ChatError)]
         """Adds thread participants to a thread. If participants already exist, no change occurs.
 
         If all participants are added successfully, then an empty list is returned;
-        otherwise, a list of tuple(chat_thread_participant, communincation_error) is returned,
+        otherwise, a list of tuple(chat_thread_participant, chat_error) is returned,
         of failed participants and its respective error
 
         :param thread_participants: Required. Thread participants to be added to the thread.
         :type thread_participants: list[~azure.communication.chat.ChatThreadParticipant]
-        :return: List[Tuple(ChatThreadParticipant, CommunicationError)]
-        :rtype: list[(~azure.communication.chat.ChatThreadParticipant, ~azure.communication.chat.CommunicationError)]
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError, RuntimeError
+        :return: List[Tuple(ChatThreadParticipant, ChatError)]
+        :rtype: list[(~azure.communication.chat.ChatThreadParticipant, ~azure.communication.chat.ChatError)]
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
 
@@ -544,7 +544,7 @@ class ChatThreadClient(object):
                 add_chat_participants_result.errors is not None:
             response = CommunicationErrorResponseConverter._convert( # pylint:disable=protected-access
                 participants=thread_participants,
-                communication_errors=add_chat_participants_result.errors.invalid_participants
+                chat_errors=add_chat_participants_result.invalid_participants
             )
 
         return response

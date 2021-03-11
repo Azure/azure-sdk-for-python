@@ -270,7 +270,7 @@ class CreateChatThreadResult(object):
     :ivar chat_thread: Chat thread.
     :type chat_thread: ~azure.communication.chat.ChatThreadProperties
     :ivar errors: Errors encountered during the creation of the chat thread.
-    :type errors: list((~azure.communication.chat.ChatThreadParticipant, ~azure.communication.chat.CommunicationError))
+    :type errors: list((~azure.communication.chat.ChatThreadParticipant, ~azure.communication.chat.ChatError))
     """
 
     def __init__(

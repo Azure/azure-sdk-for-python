@@ -5,7 +5,7 @@ from ._generated.models import (
     SendChatMessageResult,
     ChatThreadItem,
     ChatMessageType,
-    CommunicationError
+    ChatError
 )
 
 from ._models import (
@@ -31,7 +31,7 @@ __all__ = [
     'ChatThreadParticipant',
     'ChatMessageType',
     'CreateChatThreadResult',
-    'CommunicationError',
+    'ChatError'
     'CommunicationTokenCredential'
 ]
 __version__ = VERSION

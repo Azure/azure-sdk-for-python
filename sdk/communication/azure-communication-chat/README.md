@@ -240,7 +240,8 @@ def decide_to_retry(error, **kwargs):
     return True
 
 retry = [thread_participant for thread_participant, error in create_chat_thread_result.errors if decide_to_retry(error)]
-chat_thread_client.add_participants(retry)
+if len(retry) > 0:
+    chat_thread_client.add_participants(retry)
 ```
 
 
@@ -419,7 +420,7 @@ Use `add_participants` method to add thread participants to the thread.
   - `display_name`, optional, is the display name for the thread participant.
   - `share_history_time`, optional, time from which the chat history is shared with the participant.
 
-A `list(tuple(ChatThreadParticipant, CommunicationError))` is returned. When participant is successfully added,
+A `list(tuple(ChatThreadParticipant, ChatError))` is returned. When participant is successfully added,
 an empty list is expected. In case of an error encountered while adding participant, the list is populated
 with the failed participants along with the error that was encountered.
 

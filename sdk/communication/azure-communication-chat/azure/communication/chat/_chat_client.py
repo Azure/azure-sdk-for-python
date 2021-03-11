@@ -176,7 +176,7 @@ class ChatClient(object):
                 create_chat_thread_result.errors is not None:
             errors = CommunicationErrorResponseConverter._convert(  # pylint:disable=protected-access
                 participants=[thread_participants],
-                communication_errors=create_chat_thread_result.errors.invalid_participants
+                chat_errors=create_chat_thread_result.invalid_participants
             )
 
         chat_thread_properties = ChatThreadProperties._from_generated( # pylint:disable=protected-access
