@@ -1,5 +1,8 @@
 # Release History
 
+## 4.0.1 (Unreleased)
+
+
 ## 4.0.0 (2021-03-09)
 
   **Note:** This is the first stable release of our efforts to create a user-friendly and Pythonic client library for Azure EventGrid. Users migrating from `v1.x` are advised to view the [migration guide](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/migration_guide.md).
