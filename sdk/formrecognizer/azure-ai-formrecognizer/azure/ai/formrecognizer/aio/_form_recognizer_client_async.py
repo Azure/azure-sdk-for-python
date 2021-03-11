@@ -783,8 +783,15 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             raise TypeError(
                 "Call begin_recognize_custom_forms_from_url() to analyze a document from a URL."
             )
+        if content_type is None and continuation_token is None:
+            content_type = get_content_type(form)
 
         pages = kwargs.pop("pages", None)
+        include_field_elements = kwargs.pop("include_field_elements", False)
+
+        polling=AsyncLROBasePolling(
+                timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
+            )
 
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
@@ -795,10 +802,6 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
                 raise ValueError(
                     "'pages' is only available for API version V2_1_PREVIEW and up"
                 )
-
-        include_field_elements = kwargs.pop("include_field_elements", False)
-        if content_type is None and continuation_token is None:
-            content_type = get_content_type(form)
 
         def analyze_callback(
             raw_response, _, headers
@@ -814,9 +817,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             include_text_details=include_field_elements,
             content_type=content_type,
             cls=kwargs.pop("cls", analyze_callback),
-            polling=AsyncLROBasePolling(
-                timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
-            ),
+            polling=polling,
             continuation_token=continuation_token,
             **kwargs
         )
@@ -854,6 +855,12 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         )
 
         pages = kwargs.pop("pages", None)
+        continuation_token = kwargs.pop("continuation_token", None)
+        include_field_elements = kwargs.pop("include_field_elements", False)
+
+        polling=AsyncLROBasePolling(
+                timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
+            )
 
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
@@ -864,9 +871,6 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
                 raise ValueError(
                     "'pages' is only available for API version V2_1_PREVIEW and up"
                 )
-
-        continuation_token = kwargs.pop("continuation_token", None)
-        include_field_elements = kwargs.pop("include_field_elements", False)
 
         def analyze_callback(
             raw_response, _, headers
@@ -881,9 +885,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             model_id=model_id,
             include_text_details=include_field_elements,
             cls=kwargs.pop("cls", analyze_callback),
-            polling=AsyncLROBasePolling(
-                timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
-            ),
+            polling=polling,
             continuation_token=continuation_token,
             **kwargs
         )
