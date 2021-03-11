@@ -42,7 +42,7 @@ and consistent onboarding story for those learning Azure or exploring a specific
 To try and improve the development experience across Azure services,
 a set of uniform [design guidelines](https://azure.github.io/azure-sdk/general_introduction.html) was created
 for all languages to drive a consistent experience with established API patterns for all services.
-A set of [Python-specific guidelines](https://azure.github.io/azure-sdk/python_introduction.html) was also introduced to ensure
+A set of [Python-specific guidelines](https://azure.github.io/azure-sdk/python_design.html) was also introduced to ensure
 that Python clients have a natural and idiomatic feel with respect to the Python ecosystem.
 Further details are available in the guidelines for those interested.
 
@@ -144,7 +144,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 ### Sending messages
 
 - The `send` method is renamed to `send_messages` following the pattern of using the `messages` suffix in methods that deal with messages.
-- You can now pass an array of messages directly in method used to send messages rather than first creating a `BatchMessage` 
+- You can now pass an array of messages directly in method used to send messages rather than first creating a `BatchMessage`
 - Sending multiple messages in a single go always had the potential to fail if batch size exceeded the size limit. To help with this, we have a new class `ServiceBusMessageBatch` which helps in creating a batch that will never increase the size limit.
 
 In V0.50:
@@ -247,7 +247,7 @@ with sender:
 While in the new version, `session_id` is property on the `ServiceBusMessage`.
 - Previously `SessionReceiver` class is used for receiving messages from sessionful entities and performing session-related operations.
 In the new version, `SessionReceiver` has been collapsed into `ServiceBusReceiver` to improve modularity and reduce public API surface.
-- `ServiceBusSession` class is introduced to perform session-related operations and it can be approached by property `ServiceBusReceiver.session`. For non-sessionful receivers, `ServiceBusReceiver.session` is `None`. 
+- `ServiceBusSession` class is introduced to perform session-related operations and it can be approached by property `ServiceBusReceiver.session`. For non-sessionful receivers, `ServiceBusReceiver.session` is `None`.
 
 In V0.50:
 ```python
@@ -394,7 +394,7 @@ queues = service_bus_administration_client.list_queues()
 #### Migrating code from `QueueClient` and `Receiver` to `ServiceBusReceiver` for receiving messages
 
 In v0.50, `QueueClient` would be created directly or from the `ServiceBusClient.get_queue` method,
-after which user would call `get_receiver` to obtain a receiver, calling `fetch_next` to receive a single 
+after which user would call `get_receiver` to obtain a receiver, calling `fetch_next` to receive a single
 batch of messages, or iterate over the receiver to receive continuously.
 
 In v7, users should initialize the client via `ServiceBusClient.get_queue_receiver`.  Single-batch-receive

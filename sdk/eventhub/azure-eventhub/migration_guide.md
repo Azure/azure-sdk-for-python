@@ -23,7 +23,7 @@ A natural question to ask when considering whether or not to adopt a new version
 
 There were several areas of consistent feedback expressed across the Azure client library ecosystem. One of the most important is that the client libraries for different Azure services have not had a consistent approach to organization, naming, and API structure. Additionally, many developers have felt that the learning curve was difficult, and the APIs did not offer a good, approachable, and consistent onboarding story for those learning Azure or exploring a specific Azure service.
 
-To try and improve the development experience across Azure services, a set of uniform [design guidelines](https://azure.github.io/azure-sdk/general_introduction.html) was created for all languages to drive a consistent experience with established API patterns for all services. A set of [Python-specific guidelines](https://azure.github.io/azure-sdk/python_introduction.html) was also introduced to ensure that Python clients have a natural and idiomatic feel with respect to the Python ecosystem. Further details are available in the guidelines for those interested.
+To try and improve the development experience across Azure services, a set of uniform [design guidelines](https://azure.github.io/azure-sdk/general_introduction.html) was created for all languages to drive a consistent experience with established API patterns for all services. A set of [Python-specific guidelines](https://azure.github.io/azure-sdk/python_design.html) was also introduced to ensure that Python clients have a natural and idiomatic feel with respect to the Python ecosystem. Further details are available in the guidelines for those interested.
 
 ### Cross Service SDK improvements
 
@@ -46,7 +46,7 @@ Refer to the [changelog](https://github.com/Azure/azure-sdk-for-python/blob/mast
 ### Client hierarchy
 
 In the interest of simplifying the API surface, we've made two distinct clients: the `EventHubProducerClient` for sending events and the `EventHubConsumerClient` for receiving events. This is in contrast to the single `EventHubClient` that was used to create senders and receivers.
-We've also merged the functionality from `EventProcessorHost` into `EventHubConsumerClient`. 
+We've also merged the functionality from `EventProcessorHost` into `EventHubConsumerClient`.
 
 #### Approachability
 By having a single entry point for sending, the `EventHubProducerClient` helps with the discoverability of the API
@@ -63,8 +63,8 @@ This provides consistency and predictability on the various features of the libr
 ### Client constructors
 
 While we continue to support connection strings when constructing a client, below are the differences in the two versions:
-- In v5, we now support the use of Azure Active Directory for authentication. 
-The new [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) library allows us 
+- In v5, we now support the use of Azure Active Directory for authentication.
+The new [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) library allows us
 to share a single authentication solution between clients of different Azure services.
 - The option to construct a client using an address of the form `amqps://<SAS-policy-name>:<SAS-key>@<fully-qualified-namespace>/<eventhub-name>` is no longer supported in v5. This address is not readily available in the Azure portal or in any tooling and so was subject to human error. We instead recommend using the connection string if you want to use a SAS policy.
 
@@ -74,7 +74,7 @@ In v1:
 eventhub_client = EventHubClient(address)
 
 # Authenticate with connection string
-eventhub_client = EventHubClient.from_connection_string(conn_str) 
+eventhub_client = EventHubClient.from_connection_string(conn_str)
 
 # Authenticate the EventProcessorHost and StorageCheckpointLeaseManager
 eh_config = EventHubConfig(eh_namespace, eventhub_name, user, key, consumer_group="$default")
@@ -86,8 +86,8 @@ In v5:
 # Address is no longer used for authentication.
 
 # Authenticate with connection string
-producer_client = EventHubProducerClient.from_connection_string(conn_str) 
-consumer_client = EventHubConsumerClient.from_connection_string(conn_str) 
+producer_client = EventHubProducerClient.from_connection_string(conn_str)
+consumer_client = EventHubConsumerClient.from_connection_string(conn_str)
 checkpoint_store = BlobCheckpointStore.from_connection_string(storage_conn_str, container_name)
 consumer_client_with_checkpoint_store = EventHubConsumerClient.from_connection_string(conn_str, consumer_group='$Default', checkpoint_store=checkpoint_store)
 
@@ -130,12 +130,12 @@ event_data_batch.add(EventData('Single message'))
 producer.send_batch(event_data_batch)
 ```
 
-### Receiving events 
+### Receiving events
 
 - The `run` and `stop` methods were previously used since the single `EventHubClient` controlled the lifecycle for all senders and receivers. In v5, the `run` and `stop` methods are deprecated since the `EventHubConsumerClient` controls its own lifecycle.
 - The `add_receiver` method is no longer used to create receiver clients. Instead, the `EventHubConsumerClient` is used for receiving events.
 - In v1, the `receive` method returned a list of `EventData`. You would call this method repeatedly every time you want receive a set of events. In v5, the new `receive` method takes user callback to process events and any resulting errors. This way, you call the method once and it continues to process incoming events until you stop it.
-- Additionally, we have a method `receive_batch` which behaves the same as `receive`, but calls the user callback with a batch of events instead of single events. 
+- Additionally, we have a method `receive_batch` which behaves the same as `receive`, but calls the user callback with a batch of events instead of single events.
 - The same methods can be used whether you want to receive from a single partition or from all partitions.
 
 In v1:
@@ -160,14 +160,14 @@ with consumer_client:
 # Receive batch
 def on_event_batch(partition_context, event_batch):
     print("Partition {}, Received count: {}".format(partition_context.partition_id, len(event_batch)))
-    
+
 consumer_client = EventHubConsumerClient.from_connection_string(conn_str, consumer_group, eventhub_name=eh_name)
 with consumer_client:
     consumer_client.receive_batch(on_event_batch=on_event_batch, partition_id=partition_id)
 ```
 ### Migrating code from `EventProcessorHost` to `EventHubConsumerClient` for receiving events
 
-In V1, `EventProcessorHost` allowed you to balance the load between multiple instances of 
+In V1, `EventProcessorHost` allowed you to balance the load between multiple instances of
 your program when receiving events.
 
 In V5, `EventHubConsumerClient` allows you to do the same with the `receive()` method if you
