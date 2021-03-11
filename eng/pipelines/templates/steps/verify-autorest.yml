@@ -42,6 +42,11 @@ steps:
       cd ..
     displayName: 'Prepare Environment'
 
+  - pwsh: |
+      Get-ChildItem ./
+    displayName: 'List contents'
+    condition: always()
+
   - task: PythonScript@0
     displayName: 'Run autorest Python'
     inputs:
@@ -50,6 +55,10 @@ steps:
         --service_directory="${{ parameters.ServiceDirectory }}"
 
   - pwsh: |
-      Remove-Item autorest.python
+      If (Test-Path autorest.python) {
+        Remove-Item -Path autorest.python -Force -Recurse
+      } Else {
+        Write-Output "No autorest.python folder could be found"
+      }
     displayName: 'Remove autorest.python'
     condition: always()
