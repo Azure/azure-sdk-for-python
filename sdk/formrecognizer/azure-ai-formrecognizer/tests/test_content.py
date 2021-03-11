@@ -383,13 +383,3 @@ class TestContentFromStream(FormRecognizerTest):
         with pytest.raises(ValueError) as e:
             client.begin_recognize_content(myfile, language="en")
         assert "'language' is only available for API version V2_1_PREVIEW and up" in str(e.value)
-
-    @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    def test_pages_kwarg_specified(self, client):
-        with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
-        poller = client.begin_recognize_content(myfile, pages=["1"])
-        assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
-        result = poller.result()
-        assert result
