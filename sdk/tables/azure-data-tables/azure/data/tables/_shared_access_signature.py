@@ -11,9 +11,13 @@ from ._deserialize import url_quote
 from ._common_conversion import (
     _sign_string,
     _to_str,
-    _to_utc_datetime,
 )
 from ._constants import DEFAULT_X_MS_VERSION
+
+
+def _to_utc_datetime(value):
+    # This is for SAS where milliseconds are not supported
+    return value.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 class SharedAccessSignature(object):
@@ -176,7 +180,7 @@ class _SharedAccessHelper(object):
     def add_resource(self, resource):
         self._add_query(QueryStringConstants.SIGNED_RESOURCE, resource)
 
-    def add_id(self, id):  # pylint:disable=W0622
+    def add_id(self, id):  # pylint: disable=redefined-builtin
         self._add_query(QueryStringConstants.SIGNED_IDENTIFIER, id)
 
     def add_account(self, services, resource_types):
@@ -222,7 +226,7 @@ class _SharedAccessHelper(object):
             + get_value_to_append(QueryStringConstants.SIGNED_VERSION)
         )
 
-        if service == "blob" or service == "file":  # pylint:disable=R1714
+        if service in ["blob", "file"]:
             string_to_sign += (
                 get_value_to_append(QueryStringConstants.SIGNED_CACHE_CONTROL)
                 + get_value_to_append(QueryStringConstants.SIGNED_CONTENT_DISPOSITION)

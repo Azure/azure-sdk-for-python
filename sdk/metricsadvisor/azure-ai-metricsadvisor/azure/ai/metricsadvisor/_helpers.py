@@ -26,6 +26,8 @@ from .models import (
     PeriodFeedback,
     DataFeedRollupType
 )
+from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
+from ._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
 if TYPE_CHECKING:
     from ._generated.models import MetricFeedback
 
@@ -201,3 +203,17 @@ def convert_datetime(date_time):
             except ValueError:
                 return datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
     raise TypeError("Bad datetime type")
+
+def get_authentication_policy(credential):
+    authentication_policy = None
+    if credential is None:
+        raise ValueError("Parameter 'credential' must not be None.")
+    if isinstance(credential, MetricsAdvisorKeyCredential):
+        return MetricsAdvisorKeyCredentialPolicy(credential)
+    if credential is not None and not hasattr(credential, "get_token"):
+        raise TypeError(
+            "Unsupported credential: {}. Use an instance of MetricsAdvisorKeyCredential "
+            "or a token credential from azure.identity".format(type(credential))
+        )
+
+    return authentication_policy

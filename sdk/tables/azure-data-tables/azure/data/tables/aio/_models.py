@@ -60,7 +60,7 @@ class TablePropertiesPaged(AsyncPageIterator):
     async def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
         props_list = [
-            TableItem._from_generated(t, **self._headers) for t in self._response.value  # pylint:disable=protected-access
+            TableItem._from_generated(t, **self._headers) for t in self._response.value  # pylint: disable=protected-access
         ]
         return self._headers[NEXT_TABLE_NAME] or None, props_list
 

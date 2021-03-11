@@ -8,12 +8,15 @@
 
 import pytest
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil.tz import tzutc
 import sys
 import uuid
 
+from devtools_testutils import AzureTestCase
+
 from azure.core import MatchConditions
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
@@ -30,6 +33,9 @@ from azure.data.tables import (
     TableServiceClient,
     TableEntity,
     UpdateMode,
+    generate_table_sas,
+    TableSasPermissions,
+    TableClient
 )
 
 from _shared.testcase import TableTestCase
@@ -39,7 +45,7 @@ from preparers import TablesPreparer
 TEST_TABLE_PREFIX = 'table'
 #------------------------------------------------------------------------------
 
-class StorageTableBatchTest(TableTestCase):
+class StorageTableBatchTest(AzureTestCase, TableTestCase):
 
     def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key):
         self.ts = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)
@@ -169,31 +175,6 @@ class StorageTableBatchTest(TableTestCase):
         assert length ==  len(transaction.results)
         assert length ==  len(transaction.requests)
 
-    #--Test cases for batch ---------------------------------------------
-    def test_inferred_types(self):
-        # Arrange
-        # Act
-        entity = TableEntity()
-        entity.PartitionKey = '003'
-        entity.RowKey = 'batch_all_operations_together-1'
-        entity.test = EntityProperty(True)
-        entity.test2 = EntityProperty(b'abcdef')
-        entity.test3 = EntityProperty(u'c9da6455-213d-42c9-9a79-3e9149a57833')
-        entity.test4 = EntityProperty(datetime(1973, 10, 4, tzinfo=tzutc()))
-        entity.test5 = EntityProperty(u"stringystring")
-        entity.test6 = EntityProperty(3.14159)
-        entity.test7 = EntityProperty(100)
-        entity.test8 = EntityProperty(2 ** 33, EdmType.INT64)
-
-        # Assert
-        assert entity.test.type ==  EdmType.BOOLEAN
-        assert entity.test2.type ==  EdmType.BINARY
-        assert entity.test3.type ==  EdmType.GUID
-        assert entity.test4.type ==  EdmType.DATETIME
-        assert entity.test5.type ==  EdmType.STRING
-        assert entity.test6.type ==  EdmType.DOUBLE
-        assert entity.test7.type ==  EdmType.INT32
-        assert entity.test8.type ==  EdmType.INT64
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @TablesPreparer()
@@ -873,3 +854,83 @@ class StorageTableBatchTest(TableTestCase):
 
         finally:
             self._tear_down()
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @pytest.mark.live_test_only
+    @TablesPreparer()
+    def test_batch_sas_auth(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+
+            token = generate_table_sas(
+                tables_storage_account_name,
+                tables_primary_storage_account_key,
+                self.table_name,
+                permission=TableSasPermissions(add=True, read=True, update=True, delete=True),
+                expiry=datetime.utcnow() + timedelta(hours=1),
+                start=datetime.utcnow() - timedelta(minutes=1),
+            )
+            token = AzureSasCredential(token)
+
+            # Act
+            service = TableServiceClient(
+                self.account_url(tables_storage_account_name, "table"),
+                credential=token,
+            )
+            table = service.get_table_client(self.table_name)
+
+            entity = TableEntity()
+            entity.PartitionKey = 'batch_inserts'
+            entity.test = EntityProperty(True)
+            entity.test2 = 'value'
+            entity.test3 = 3
+            entity.test4 = EntityProperty(1234567890)
+
+            batch = table.create_batch()
+            transaction_count = 0
+            for i in range(10):
+                entity.RowKey = str(i)
+                batch.create_entity(entity)
+                transaction_count += 1
+            transaction_result = table.send_batch(batch)
+
+            assert transaction_result is not None
+
+            total_entities = 0
+            for e in table.list_entities():
+                total_entities += 1
+
+            assert total_entities == transaction_count
+        finally:
+            self._tear_down()
+
+
+
+class TestTableUnitTest(TableTestCase):
+
+    #--Test cases for batch ---------------------------------------------
+    def test_inferred_types(self):
+        # Arrange
+        # Act
+        entity = TableEntity()
+        entity.PartitionKey = '003'
+        entity.RowKey = 'batch_all_operations_together-1'
+        entity.test = EntityProperty(True)
+        entity.test2 = EntityProperty(b'abcdef')
+        entity.test3 = EntityProperty(u'c9da6455-213d-42c9-9a79-3e9149a57833')
+        entity.test4 = EntityProperty(datetime(1973, 10, 4, tzinfo=tzutc()))
+        entity.test5 = EntityProperty(u"stringystring")
+        entity.test6 = EntityProperty(3.14159)
+        entity.test7 = EntityProperty(100)
+        entity.test8 = EntityProperty(2 ** 33, EdmType.INT64)
+
+        # Assert
+        assert entity.test.type ==  EdmType.BOOLEAN
+        assert entity.test2.type ==  EdmType.BINARY
+        assert entity.test3.type ==  EdmType.GUID
+        assert entity.test4.type ==  EdmType.DATETIME
+        assert entity.test5.type ==  EdmType.STRING
+        assert entity.test6.type ==  EdmType.DOUBLE
+        assert entity.test7.type ==  EdmType.INT32
+        assert entity.test8.type ==  EdmType.INT64

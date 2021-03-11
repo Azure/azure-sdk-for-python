@@ -1,0 +1,3 @@
+../../../tools/azure-sdk-tools
+../../../tools/azure-devtools
+aiohttp>=3.0; python_version >= '3.5'

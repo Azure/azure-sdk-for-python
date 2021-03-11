@@ -13,18 +13,18 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
 from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormRecognizerApiVersion
-from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
-from testcase import GlobalClientPreparer as _GlobalClientPreparer
-
+from testcase import FormRecognizerTest
+from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from preparers import FormRecognizerPreparer
 
 GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
-
+@pytest.mark.skip
 class TestInvoiceFromUrl(FormRecognizerTest):
 
-    @GlobalFormRecognizerAccountPreparer()
-    def test_polling_interval(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key), polling_interval=7)
+    @FormRecognizerPreparer()
+    def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), polling_interval=7)
         self.assertEqual(client._client._config.polling_interval, 7)
 
         poller = client.begin_recognize_invoices_from_url(self.invoice_url_pdf, polling_interval=6)
@@ -34,7 +34,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
         poller2.wait()
         self.assertEqual(poller2._polling_method._timeout, 7)  # goes back to client default
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_invoice_encoded_url(self, client):
         try:
@@ -42,38 +42,32 @@ class TestInvoiceFromUrl(FormRecognizerTest):
         except HttpResponseError as e:
             self.assertIn("https://fakeuri.com/blank%20space", e.response.request.body)
 
-    @GlobalFormRecognizerAccountPreparer()
-    def test_invoice_url_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+    @FormRecognizerPreparer()
+    def test_invoice_url_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         with self.assertRaises(ServiceRequestError):
-            client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
+            client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             poller = client.begin_recognize_invoices_from_url(self.invoice_url_pdf)
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer()
-    def test_authentication_successful_key(self, client):
-        poller = client.begin_recognize_invoices_from_url(self.invoice_url_pdf)
-        result = poller.result()
-
-    @GlobalFormRecognizerAccountPreparer()
-    def test_authentication_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
+    @FormRecognizerPreparer()
+    def test_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
             poller = client.begin_recognize_invoices_from_url(self.invoice_url_tiff)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_invoice_bad_url(self, client):
         with self.assertRaises(HttpResponseError):
             poller = client.begin_recognize_invoices_from_url("https://badurl.jpg")
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_invoice_url_pass_stream(self, client):
         with open(self.invoice_tiff, "rb") as invoice:
             with self.assertRaises(HttpResponseError):
                 poller = client.begin_recognize_invoices_from_url(invoice)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_invoice_url_transform_pdf(self, client):
         responses = []
@@ -108,7 +102,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
         # Check page metadata
         self.assertFormPagesTransformCorrect(invoice.pages, read_results, page_results)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_invoice_url_transform_tiff(self, client):
         responses = []
@@ -143,7 +137,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
         # Check page metadata
         self.assertFormPagesTransformCorrect(invoice.pages, read_results, page_results)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_invoice_url_multipage_transform_pdf(self, client):
         responses = []
@@ -183,27 +177,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
 
         self.assertFormPagesTransformCorrect(returned_model.pages, read_results, page_results)
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer()
-    def test_invoice_pdf(self, client):
-        poller = client.begin_recognize_invoices_from_url(self.invoice_url_pdf)
-
-        result = poller.result()
-        self.assertEqual(len(result), 1)
-        invoice = result[0]
-
-        # check dict values
-        self.assertEqual(invoice.fields.get("VendorName").value, "Contoso")
-        self.assertEqual(invoice.fields.get("VendorAddress").value, '1 Redmond way Suite 6000 Redmond, WA 99243')
-        self.assertEqual(invoice.fields.get("CustomerAddressRecipient").value, "Microsoft")
-        self.assertEqual(invoice.fields.get("CustomerAddress").value, '1020 Enterprise Way Sunnayvale, CA 87659')
-        self.assertEqual(invoice.fields.get("CustomerName").value, "Microsoft")
-        self.assertEqual(invoice.fields.get("InvoiceId").value, '34278587')
-        self.assertEqual(invoice.fields.get("InvoiceDate").value, date(2017, 6, 18))
-        self.assertEqual(invoice.fields.get("InvoiceTotal").value, 56651.49)
-        self.assertEqual(invoice.fields.get("DueDate").value, date(2017, 6, 24))
-
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_invoice_tiff(self, client):
         poller = client.begin_recognize_invoices_from_url(self.invoice_url_tiff)
@@ -223,7 +197,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
         self.assertEqual(invoice.fields.get("InvoiceTotal").value, 56651.49)
         self.assertEqual(invoice.fields.get("DueDate").value, date(2017, 6, 24))
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_invoice_multipage_pdf(self, client):
 
@@ -248,7 +222,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
         self.assertEqual(remittance_address.value, '2345 Dogwood Lane Birch, Kansas 98123')
         self.assertEqual(remittance_address.value_data.page_number, 1)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_invoice_pdf_include_field_elements(self, client):
         poller = client.begin_recognize_invoices_from_url(self.invoice_url_pdf, include_field_elements=True)
@@ -261,8 +235,19 @@ class TestInvoiceFromUrl(FormRecognizerTest):
 
         for field in invoice.fields.values():
             self.assertFieldElementsHasValues(field.value_data.field_elements, invoice.page_range.first_page_number)
+        
+        # check dict values
+        self.assertEqual(invoice.fields.get("VendorName").value, "Contoso")
+        self.assertEqual(invoice.fields.get("VendorAddress").value, '1 Redmond way Suite 6000 Redmond, WA 99243')
+        self.assertEqual(invoice.fields.get("CustomerAddressRecipient").value, "Microsoft")
+        self.assertEqual(invoice.fields.get("CustomerAddress").value, '1020 Enterprise Way Sunnayvale, CA 87659')
+        self.assertEqual(invoice.fields.get("CustomerName").value, "Microsoft")
+        self.assertEqual(invoice.fields.get("InvoiceId").value, '34278587')
+        self.assertEqual(invoice.fields.get("InvoiceDate").value, date(2017, 6, 18))
+        self.assertEqual(invoice.fields.get("InvoiceTotal").value, 56651.49)
+        self.assertEqual(invoice.fields.get("DueDate").value, date(2017, 6, 24))
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     @pytest.mark.live_test_only
     def test_invoice_continuation_token(self, client):
@@ -274,21 +259,21 @@ class TestInvoiceFromUrl(FormRecognizerTest):
         self.assertIsNotNone(result)
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     def test_invoice_v2(self, client):
         with pytest.raises(ValueError) as e:
             client.begin_recognize_invoices_from_url(self.invoice_url_tiff)
         assert "Method 'begin_recognize_invoices_from_url' is only available for API version V2_1_PREVIEW and up" in str(e.value)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_invoice_locale_specified(self, client):
         poller = client.begin_recognize_invoices_from_url(self.invoice_url_pdf, locale="en-US")
         assert 'en-US' == poller._polling_method._initial_response.http_response.request.query['locale']
         poller.wait()
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_invoice_locale_error(self, client):
         with pytest.raises(HttpResponseError) as e:

@@ -10,7 +10,7 @@ import msrest.serialization
 
 
 class MethodRequest(msrest.serialization.Model):
-    """MethodRequest.
+    """Base Class for Method Requests.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: MediaGraphInstanceListRequest, MediaGraphInstanceSetRequest, MediaGraphTopologyListRequest, MediaGraphTopologySetRequest, ItemNonSetRequestBase, MediaGraphInstanceSetRequestBody, MediaGraphTopologySetRequestBody.
@@ -842,21 +842,14 @@ class MediaGraphImageFormatRaw(MediaGraphImageFormat):
 class MediaGraphImageScale(msrest.serialization.Model):
     """The scaling mode for the image.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param mode: Required. Describes the modes for scaling an input video frame into an image,
-     before it is sent to an inference engine. Possible values include: "PreserveAspectRatio",
-     "Pad", "Stretch".
+    :param mode: Describes the modes for scaling an input video frame into an image, before it is
+     sent to an inference engine. Possible values include: "PreserveAspectRatio", "Pad", "Stretch".
     :type mode: str or ~azure.media.analyticsedge.models.MediaGraphImageScaleMode
     :param width: The desired output width of the image.
     :type width: str
     :param height: The desired output height of the image.
     :type height: str
     """
-
-    _validation = {
-        'mode': {'required': True},
-    }
 
     _attribute_map = {
         'mode': {'key': 'mode', 'type': 'str'},
@@ -869,7 +862,7 @@ class MediaGraphImageScale(msrest.serialization.Model):
         **kwargs
     ):
         super(MediaGraphImageScale, self).__init__(**kwargs)
-        self.mode = kwargs['mode']
+        self.mode = kwargs.get('mode', None)
         self.width = kwargs.get('width', None)
         self.height = kwargs.get('height', None)
 
@@ -909,7 +902,7 @@ class MediaGraphInstance(msrest.serialization.Model):
 
 
 class MediaGraphInstanceActivateRequest(ItemNonSetRequestBase):
-    """MediaGraphInstanceActivateRequest.
+    """Represents the MediaGraphInstanceActivateRequest.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -971,7 +964,7 @@ class MediaGraphInstanceCollection(msrest.serialization.Model):
 
 
 class MediaGraphInstanceDeActivateRequest(ItemNonSetRequestBase):
-    """MediaGraphInstanceDeActivateRequest.
+    """Represents the MediaGraphInstanceDeactivateRequest.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1008,7 +1001,7 @@ class MediaGraphInstanceDeActivateRequest(ItemNonSetRequestBase):
 
 
 class MediaGraphInstanceDeleteRequest(ItemNonSetRequestBase):
-    """MediaGraphInstanceDeleteRequest.
+    """Represents the MediaGraphInstanceDeleteRequest.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1045,7 +1038,7 @@ class MediaGraphInstanceDeleteRequest(ItemNonSetRequestBase):
 
 
 class MediaGraphInstanceGetRequest(ItemNonSetRequestBase):
-    """MediaGraphInstanceGetRequest.
+    """Represents the MediaGraphInstanceGetRequest.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1082,7 +1075,7 @@ class MediaGraphInstanceGetRequest(ItemNonSetRequestBase):
 
 
 class MediaGraphInstanceListRequest(MethodRequest):
-    """MediaGraphInstanceListRequest.
+    """Represents the MediaGraphInstanceListRequest.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1148,7 +1141,7 @@ class MediaGraphInstanceProperties(msrest.serialization.Model):
 
 
 class MediaGraphInstanceSetRequest(MethodRequest):
-    """MediaGraphInstanceSetRequest.
+    """Represents the MediaGraphInstanceSetRequest.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1186,7 +1179,7 @@ class MediaGraphInstanceSetRequest(MethodRequest):
 
 
 class MediaGraphInstanceSetRequestBody(MediaGraphInstance, MethodRequest):
-    """MediaGraphInstanceSetRequestBody.
+    """Represents the MediaGraphInstanceSetRequest body.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1399,12 +1392,18 @@ class MediaGraphMotionDetectionProcessor(MediaGraphProcessor):
 class MediaGraphNodeInput(msrest.serialization.Model):
     """Represents the input to any node in a media graph.
 
-    :param node_name: The name of another node in the media graph, the output of which is used as
-     input to this node.
+    All required parameters must be populated in order to send to Azure.
+
+    :param node_name: Required. The name of another node in the media graph, the output of which is
+     used as input to this node.
     :type node_name: str
     :param output_selectors: Allows for the selection of particular streams from another node.
     :type output_selectors: list[~azure.media.analyticsedge.models.MediaGraphOutputSelector]
     """
+
+    _validation = {
+        'node_name': {'required': True},
+    }
 
     _attribute_map = {
         'node_name': {'key': 'nodeName', 'type': 'str'},
@@ -1416,26 +1415,20 @@ class MediaGraphNodeInput(msrest.serialization.Model):
         **kwargs
     ):
         super(MediaGraphNodeInput, self).__init__(**kwargs)
-        self.node_name = kwargs.get('node_name', None)
+        self.node_name = kwargs['node_name']
         self.output_selectors = kwargs.get('output_selectors', None)
 
 
 class MediaGraphOutputSelector(msrest.serialization.Model):
     """Allows for the selection of particular streams from another node.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar property: The stream property to compare with. Default value: "mediaType".
-    :vartype property: str
+    :param property: The stream property to compare with. Possible values include: "mediaType".
+    :type property: str or ~azure.media.analyticsedge.models.MediaGraphOutputSelectorProperty
     :param operator: The operator to compare streams by. Possible values include: "is", "isNot".
     :type operator: str or ~azure.media.analyticsedge.models.MediaGraphOutputSelectorOperator
     :param value: Value to compare against.
     :type value: str
     """
-
-    _validation = {
-        'property': {'constant': True},
-    }
 
     _attribute_map = {
         'property': {'key': 'property', 'type': 'str'},
@@ -1443,13 +1436,12 @@ class MediaGraphOutputSelector(msrest.serialization.Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    property = "mediaType"
-
     def __init__(
         self,
         **kwargs
     ):
         super(MediaGraphOutputSelector, self).__init__(**kwargs)
+        self.property = kwargs.get('property', None)
         self.operator = kwargs.get('operator', None)
         self.value = kwargs.get('value', None)
 
@@ -1634,15 +1626,15 @@ class MediaGraphSignalGateProcessor(MediaGraphProcessor):
     :param activation_evaluation_window: The period of time over which the gate gathers input
      events before evaluating them.
     :type activation_evaluation_window: str
-    :param activation_signal_offset: Required. Signal offset once the gate is activated (can be
-     negative). It is an offset between the time the event is received, and the timestamp of the
-     first media sample (eg. video frame) that is allowed through by the gate.
+    :param activation_signal_offset: Signal offset once the gate is activated (can be negative). It
+     is an offset between the time the event is received, and the timestamp of the first media
+     sample (eg. video frame) that is allowed through by the gate.
     :type activation_signal_offset: str
-    :param minimum_activation_time: Required. The minimum period for which the gate remains open in
-     the absence of subsequent triggers (events).
+    :param minimum_activation_time: The minimum period for which the gate remains open in the
+     absence of subsequent triggers (events).
     :type minimum_activation_time: str
-    :param maximum_activation_time: Required. The maximum period for which the gate remains open in
-     the presence of subsequent events.
+    :param maximum_activation_time: The maximum period for which the gate remains open in the
+     presence of subsequent events.
     :type maximum_activation_time: str
     """
 
@@ -1650,9 +1642,6 @@ class MediaGraphSignalGateProcessor(MediaGraphProcessor):
         'type': {'required': True},
         'name': {'required': True},
         'inputs': {'required': True},
-        'activation_signal_offset': {'required': True},
-        'minimum_activation_time': {'required': True},
-        'maximum_activation_time': {'required': True},
     }
 
     _attribute_map = {
@@ -1672,9 +1661,9 @@ class MediaGraphSignalGateProcessor(MediaGraphProcessor):
         super(MediaGraphSignalGateProcessor, self).__init__(**kwargs)
         self.type = '#Microsoft.Media.MediaGraphSignalGateProcessor'  # type: str
         self.activation_evaluation_window = kwargs.get('activation_evaluation_window', None)
-        self.activation_signal_offset = kwargs['activation_signal_offset']
-        self.minimum_activation_time = kwargs['minimum_activation_time']
-        self.maximum_activation_time = kwargs['maximum_activation_time']
+        self.activation_signal_offset = kwargs.get('activation_signal_offset', None)
+        self.minimum_activation_time = kwargs.get('minimum_activation_time', None)
+        self.maximum_activation_time = kwargs.get('maximum_activation_time', None)
 
 
 class MediaGraphSystemData(msrest.serialization.Model):
@@ -1826,7 +1815,7 @@ class MediaGraphTopologyCollection(msrest.serialization.Model):
 
 
 class MediaGraphTopologyDeleteRequest(ItemNonSetRequestBase):
-    """MediaGraphTopologyDeleteRequest.
+    """Represents the MediaGraphTopologyDeleteRequest.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1863,7 +1852,7 @@ class MediaGraphTopologyDeleteRequest(ItemNonSetRequestBase):
 
 
 class MediaGraphTopologyGetRequest(ItemNonSetRequestBase):
-    """MediaGraphTopologyGetRequest.
+    """Represents the MediaGraphTopologyGetRequest.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1900,7 +1889,7 @@ class MediaGraphTopologyGetRequest(ItemNonSetRequestBase):
 
 
 class MediaGraphTopologyListRequest(MethodRequest):
-    """MediaGraphTopologyListRequest.
+    """Represents the MediaGraphTopologyListRequest.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1970,7 +1959,7 @@ class MediaGraphTopologyProperties(msrest.serialization.Model):
 
 
 class MediaGraphTopologySetRequest(MethodRequest):
-    """MediaGraphTopologySetRequest.
+    """Represents the MediaGraphTopologySetRequest.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2008,7 +1997,7 @@ class MediaGraphTopologySetRequest(MethodRequest):
 
 
 class MediaGraphTopologySetRequestBody(MediaGraphTopology, MethodRequest):
-    """MediaGraphTopologySetRequestBody.
+    """Represents the MediaGraphTopologySetRequest body.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2096,14 +2085,15 @@ class MediaGraphUsernamePasswordCredentials(MediaGraphCredentials):
     :type type: str
     :param username: Required. Username for a username/password pair.
     :type username: str
-    :param password: Password for a username/password pair. Please use a parameter so that the
-     actual value is not returned on PUT or GET requests.
+    :param password: Required. Password for a username/password pair. Please use a parameter so
+     that the actual value is not returned on PUT or GET requests.
     :type password: str
     """
 
     _validation = {
         'type': {'required': True},
         'username': {'required': True},
+        'password': {'required': True},
     }
 
     _attribute_map = {
@@ -2119,4 +2109,4 @@ class MediaGraphUsernamePasswordCredentials(MediaGraphCredentials):
         super(MediaGraphUsernamePasswordCredentials, self).__init__(**kwargs)
         self.type = '#Microsoft.Media.MediaGraphUsernamePasswordCredentials'  # type: str
         self.username = kwargs['username']
-        self.password = kwargs.get('password', None)
+        self.password = kwargs['password']

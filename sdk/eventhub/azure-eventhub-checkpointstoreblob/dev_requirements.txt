@@ -1,3 +1,4 @@
 -e ../../../tools/azure-sdk-tools
 ../../core/azure-core
 ../azure-eventhub
+-e ../../../tools/azure-devtools

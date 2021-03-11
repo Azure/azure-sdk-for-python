@@ -40,7 +40,7 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/master/sd
 - [recv_with_checkpoint_store.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/recv_with_checkpoint_store.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/recv_with_checkpoint_store_async.py)) - Examples to receive events and do checkpoint using blob checkpoint store:
     - Receive events and do checkpoint using blob checkpoint store
 
-- [recv_with_checkpoint_by_batch.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/recv_with_checkpoint_by_batch.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/recv_with_checkpoint_by_batch_async.py)) - Examples to receive events and do checkpoint by batch using blob checkpoint store:
+- [recv_with_checkpoint_by_event_count.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/recv_with_checkpoint_by_event_count.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/recv_with_checkpoint_by_event_count_async.py)) - Examples to receive events and do checkpoint by event count using blob checkpoint store:
     - Receive events and do checkpoint every fixed amount of events (e.g. checkpoint every 20 events) using blob checkpoint store
 
 - [receive_batch_with_checkpoint.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/receive_batch_with_checkpoint.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/receive_batch_with_checkpoint_async.py)) - Examples to receive events in batches and do checkpoint by the batch:
@@ -66,6 +66,9 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/master/sd
 
 - [authenticate_with_sas_token.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/authenticate_with_sas_token.py)
     - Utilize a SAS token to authenticate when creating an Event Hub client.
+
+- [connection_to_custom_endpoint_address.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/samples/sync_samples/connection_to_custom_endpoint_address.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/samples/async_samples/connection_to_custom_endpoint_address_async.py)) - Examples
+  to create EventHubProducerClient and EventHubConsumerClient that connect to a custom endpoint with a custom certificate.
 
 ## Prerequisites
 - Python 2.7, 3.5 or later.
@@ -107,5 +110,5 @@ pip install azure-eventhub-checkpointstoreblob-aio  # async version
 
 ## Next steps
 
-Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/latest/azure.eventhub.html) to learn more about
+Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.3.1/azure.eventhub.html) to learn more about
 what you can do with the Azure Event Hubs client library.

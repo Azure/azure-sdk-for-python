@@ -12,7 +12,7 @@ steps:
 
   - task: DownloadPipelineArtifact@0
     inputs:
-      artifactName: 'artifacts' 
+      artifactName: 'packages'
       targetPath: $(Build.ArtifactStagingDirectory)
 
   - script: |

@@ -1,5 +1,15 @@
 # Release History
 
+## 1.0.0 (2021-02-04)
+
+**Features**
+
+  - Model ExportExecution has a new parameter e_tag
+
+**Breaking changes**
+
+  - Model ExportExecution no longer has parameter tags
+
 ## 1.0.0b1 (2020-12-09)
 
 This is beta preview version.

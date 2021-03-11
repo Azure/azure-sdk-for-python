@@ -7,8 +7,7 @@ import os
 from typing import TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError
-from azure.core.pipeline import PipelineRequest, PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
@@ -28,6 +27,7 @@ if TYPE_CHECKING:
     from typing import Any, List, Optional, Union
     from azure.core.configuration import Configuration
     from azure.core.credentials import AccessToken
+    from azure.core.pipeline import PipelineRequest, PipelineResponse
     from azure.core.pipeline.policies import SansIOHTTPPolicy
 
     PolicyType = Union[HTTPPolicy, SansIOHTTPPolicy]
@@ -40,24 +40,21 @@ class AzureArcCredential(GetTokenMixin):
 
         url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
         imds = os.environ.get(EnvironmentVariables.IMDS_ENDPOINT)
-        if not (url and imds):
-            # Azure Arc managed identity isn't available in this environment
-            self._client = None
-            return
+        self._available = url and imds
+        if self._available:
+            identity_config = kwargs.pop("_identity_config", None) or {}
+            config = _get_configuration()
 
-        identity_config = kwargs.pop("_identity_config", None) or {}
-        config = _get_configuration()
-
-        self._client = ManagedIdentityClient(
-            _identity_config=identity_config,
-            policies=_get_policies(config),
-            request_factory=functools.partial(_get_request, url),
-            **kwargs
-        )
+            self._client = ManagedIdentityClient(
+                _identity_config=identity_config,
+                policies=_get_policies(config),
+                request_factory=functools.partial(_get_request, url),
+                **kwargs
+            )
 
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
-        if not self._client:
+        if not self._available:
             raise CredentialUnavailableError(
                 message="Azure Arc managed identity configuration not found in environment"
             )
@@ -125,7 +122,7 @@ class ArcChallengeAuthPolicy(HTTPPolicy):
     """Policy for handling Azure Arc's challenge authentication"""
 
     def send(self, request):
-        # type: (PipelineRequest) -> HttpResponse
+        # type: (PipelineRequest) -> PipelineResponse
         request.http_request.headers["Metadata"] = "true"
         response = self.next.send(request)
 

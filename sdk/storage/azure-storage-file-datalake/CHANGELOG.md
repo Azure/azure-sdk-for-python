@@ -1,6 +1,36 @@
 # Release History
-## 12.2.1 (Unreleased)
 
+## 12.3.0 (2021-03-01)
+**Stable release of preview features**
+- Added support for `DatalakeServiceClient.undelete_filesystem()`
+- Added support for `DirectoryClient.exists()`, `FileClient.exists()` and `FileSystemClient.exists()`
+
+**Fixes**
+- Fixed `DatalakeServiceClient` context manager/session closure issue (#15358)
+- `PurePosixPath` is now handled correctly if passed as a path (#16159)
+
+## 12.3.0b1 (2021-02-10)
+**New Features**
+- Added support for `DatalakeServiceClient.undelete_filesystem()`
+
+**Fixes**
+- Fixed `DatalakeServiceClient` context manager/session closure issue (#15358)
+- `PurePosixPath` is now handled correctly if passed as a path (#16159)
+
+## 12.2.3 (2021-02-08)
+**Fixes**
+- Fixed paging issue (#16531)
+
+## 12.2.2 (2021-01-20)
+**Fixes**
+- Fixed msrest dependency issue (#16250)
+
+## 12.2.1 (2021-01-13)
+**New features**
+- Added support for `AzureSasCredential` to allow SAS rotation in long living clients.
+
+**Fixes**
+- Converted PathProperties.last_modified to datetime format (#16019)
 
 ## 12.2.0 (2020-11-10)
 **Stable release of preview features**
@@ -34,7 +64,7 @@
 **New Feature**
 - Block size is increased to 4GB at maximum, max single put size is increased to 5GB.
 
-## 12.0.2 (2020-6-12)
+## 12.0.2 
 **Fixes**
 - Improve the performance of upload when using max_concurrency
 

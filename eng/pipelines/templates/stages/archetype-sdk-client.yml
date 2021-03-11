@@ -35,7 +35,6 @@ parameters:
 - name: BuildTargetingString
   type: string
   default: azure-*
-  
 
 stages:
   - stage: Build
@@ -44,7 +43,8 @@ stages:
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         Artifacts: ${{ parameters.Artifacts }}
-        TestPipeline: ${{ parameters.TestPipeline }}
+        ${{ if eq(parameters.ServiceDirectory, 'template') }}:
+          TestPipeline: true
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         BuildDocs: ${{ parameters.BuildDocs }}
         InjectedPackages: ${{ parameters.InjectedPackages }}
@@ -60,7 +60,8 @@ stages:
         DependsOn: Build
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         Artifacts: ${{ parameters.Artifacts }}
-        TestPipeline: ${{ parameters.TestPipeline }}
+        ${{ if eq(parameters.ServiceDirectory, 'template') }}:
+          TestPipeline: true
         ArtifactName: packages
         DocArtifact: documentation
         TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}

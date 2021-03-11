@@ -2,30 +2,33 @@ from ._version import VERSION
 from ._chat_client import ChatClient
 from ._chat_thread_client import ChatThreadClient
 from ._generated.models import (
-    ChatMessagePriority,
     SendChatMessageResult,
     ChatThreadInfo,
+    ChatMessageType,
+    CommunicationError
 )
-from ._shared.user_credential import CommunicationUserCredential
+
 from ._models import (
-    ChatThreadMember,
+    ChatThreadParticipant,
     ChatMessage,
     ChatThread,
-    ReadReceipt,
+    ChatMessageReadReceipt,
+    ChatMessageContent,
+    CreateChatThreadResult
 )
-from ._shared.models import CommunicationUser
 
 __all__ = [
     'ChatClient',
     'ChatThreadClient',
     'ChatMessage',
-    'ChatMessagePriority',
-    'ReadReceipt',
+    'ChatMessageContent',
+    'ChatMessageReadReceipt',
     'SendChatMessageResult',
     'ChatThread',
     'ChatThreadInfo',
-    'CommunicationUserCredential',
-    'ChatThreadMember',
-    'CommunicationUser',
+    'ChatThreadParticipant',
+    'ChatMessageType',
+    'CreateChatThreadResult',
+    'CommunicationError'
 ]
 __version__ = VERSION

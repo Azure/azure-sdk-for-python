@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class TemplateSpecsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,10 +49,10 @@ class TemplateSpecsOperations(object):
         self,
         resource_group_name,  # type: str
         template_spec_name,  # type: str
-        template_spec,  # type: "models.TemplateSpec"
+        template_spec,  # type: "_models.TemplateSpec"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TemplateSpec"
+        # type: (...) -> "_models.TemplateSpec"
         """Creates or updates a Template Spec.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -66,7 +66,7 @@ class TemplateSpecsOperations(object):
         :rtype: ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpec
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TemplateSpec"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TemplateSpec"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -102,7 +102,7 @@ class TemplateSpecsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TemplateSpecsError, response)
+            error = self._deserialize(_models.TemplateSpecsError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -121,10 +121,10 @@ class TemplateSpecsOperations(object):
         self,
         resource_group_name,  # type: str
         template_spec_name,  # type: str
-        template_spec=None,  # type: Optional["models.TemplateSpecUpdateModel"]
+        template_spec=None,  # type: Optional["_models.TemplateSpecUpdateModel"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TemplateSpec"
+        # type: (...) -> "_models.TemplateSpec"
         """Updates Template Spec tags with specified values.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -138,7 +138,7 @@ class TemplateSpecsOperations(object):
         :rtype: ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpec
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TemplateSpec"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TemplateSpec"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -177,7 +177,7 @@ class TemplateSpecsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TemplateSpecsError, response)
+            error = self._deserialize(_models.TemplateSpecsError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('TemplateSpec', pipeline_response)
@@ -192,21 +192,25 @@ class TemplateSpecsOperations(object):
         self,
         resource_group_name,  # type: str
         template_spec_name,  # type: str
+        expand=None,  # type: Optional[Union[str, "_models.TemplateSpecExpandKind"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TemplateSpec"
+        # type: (...) -> "_models.TemplateSpec"
         """Gets a Template Spec with a given name.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param template_spec_name: Name of the Template Spec.
         :type template_spec_name: str
+        :param expand: Allows for expansion of additional Template Spec details in the response.
+         Optional.
+        :type expand: str or ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecExpandKind
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TemplateSpec, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpec
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TemplateSpec"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TemplateSpec"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -225,6 +229,8 @@ class TemplateSpecsOperations(object):
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
+        if expand is not None:
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
@@ -237,7 +243,7 @@ class TemplateSpecsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TemplateSpecsError, response)
+            error = self._deserialize(_models.TemplateSpecsError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('TemplateSpec', pipeline_response)
@@ -298,7 +304,7 @@ class TemplateSpecsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TemplateSpecsError, response)
+            error = self._deserialize(_models.TemplateSpecsError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -308,17 +314,21 @@ class TemplateSpecsOperations(object):
 
     def list_by_subscription(
         self,
+        expand=None,  # type: Optional[Union[str, "_models.TemplateSpecExpandKind"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.TemplateSpecsListResult"]
+        # type: (...) -> Iterable["_models.TemplateSpecsListResult"]
         """Lists all the Template Specs within the specified subscriptions.
 
+        :param expand: Allows for expansion of additional Template Spec details in the response.
+         Optional.
+        :type expand: str or ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecExpandKind
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either TemplateSpecsListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TemplateSpecsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TemplateSpecsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -340,6 +350,8 @@ class TemplateSpecsOperations(object):
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
                 request = self._client.get(url, query_parameters, header_parameters)
@@ -363,7 +375,7 @@ class TemplateSpecsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.TemplateSpecsError, response)
+                error = self._deserialize(_models.TemplateSpecsError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -377,19 +389,23 @@ class TemplateSpecsOperations(object):
     def list_by_resource_group(
         self,
         resource_group_name,  # type: str
+        expand=None,  # type: Optional[Union[str, "_models.TemplateSpecExpandKind"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.TemplateSpecsListResult"]
+        # type: (...) -> Iterable["_models.TemplateSpecsListResult"]
         """Lists all the Template Specs within the specified resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
+        :param expand: Allows for expansion of additional Template Spec details in the response.
+         Optional.
+        :type expand: str or ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecExpandKind
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either TemplateSpecsListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TemplateSpecsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TemplateSpecsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -412,6 +428,8 @@ class TemplateSpecsOperations(object):
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
                 request = self._client.get(url, query_parameters, header_parameters)
@@ -435,7 +453,7 @@ class TemplateSpecsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.TemplateSpecsError, response)
+                error = self._deserialize(_models.TemplateSpecsError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

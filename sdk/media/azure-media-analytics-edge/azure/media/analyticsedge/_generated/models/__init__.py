@@ -130,6 +130,7 @@ from ._direct_methodsfor_live_video_analyticson_io_tedge_enums import (
     MediaGraphInstanceState,
     MediaGraphMotionDetectionSensitivity,
     MediaGraphOutputSelectorOperator,
+    MediaGraphOutputSelectorProperty,
     MediaGraphParameterType,
     MediaGraphRtspTransport,
 )
@@ -198,6 +199,7 @@ __all__ = [
     'MediaGraphInstanceState',
     'MediaGraphMotionDetectionSensitivity',
     'MediaGraphOutputSelectorOperator',
+    'MediaGraphOutputSelectorProperty',
     'MediaGraphParameterType',
     'MediaGraphRtspTransport',
 ]

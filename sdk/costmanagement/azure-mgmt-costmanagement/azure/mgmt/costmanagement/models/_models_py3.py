@@ -879,7 +879,7 @@ class ExportDeliveryInfo(msrest.serialization.Model):
         self.destination = destination
 
 
-class ExportExecution(Resource):
+class ExportExecution(ProxyResource):
     """An export execution.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -890,8 +890,9 @@ class ExportExecution(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
-    :vartype tags: dict[str, str]
+    :param e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
+     used to determine whether the user is updating the latest version or not.
+    :type e_tag: str
     :param execution_type: The type of the export execution. Possible values include: "OnDemand",
      "Scheduled".
     :type execution_type: str or ~azure.mgmt.costmanagement.models.ExecutionType
@@ -920,14 +921,13 @@ class ExportExecution(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'tags': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
         'execution_type': {'key': 'properties.executionType', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'submitted_by': {'key': 'properties.submittedBy', 'type': 'str'},
@@ -942,6 +942,7 @@ class ExportExecution(Resource):
     def __init__(
         self,
         *,
+        e_tag: Optional[str] = None,
         execution_type: Optional[Union[str, "ExecutionType"]] = None,
         status: Optional[Union[str, "ExecutionStatus"]] = None,
         submitted_by: Optional[str] = None,
@@ -953,7 +954,7 @@ class ExportExecution(Resource):
         error: Optional["ErrorDetails"] = None,
         **kwargs
     ):
-        super(ExportExecution, self).__init__(**kwargs)
+        super(ExportExecution, self).__init__(e_tag=e_tag, **kwargs)
         self.execution_type = execution_type
         self.status = status
         self.submitted_by = submitted_by
@@ -1102,22 +1103,16 @@ class ExportRecurrencePeriod(msrest.serialization.Model):
 class ExportSchedule(msrest.serialization.Model):
     """The schedule associated with the export.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param status: The status of the export's schedule. If 'Inactive', the export's schedule is
      paused. Possible values include: "Active", "Inactive".
     :type status: str or ~azure.mgmt.costmanagement.models.StatusType
-    :param recurrence: Required. The schedule recurrence. Possible values include: "Daily",
-     "Weekly", "Monthly", "Annually".
+    :param recurrence: The schedule recurrence. Possible values include: "Daily", "Weekly",
+     "Monthly", "Annually".
     :type recurrence: str or ~azure.mgmt.costmanagement.models.RecurrenceType
     :param recurrence_period: Has start and end date of the recurrence. The start date must be in
      future. If present, the end date must be greater than start date.
     :type recurrence_period: ~azure.mgmt.costmanagement.models.ExportRecurrencePeriod
     """
-
-    _validation = {
-        'recurrence': {'required': True},
-    }
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'str'},
@@ -1128,8 +1123,8 @@ class ExportSchedule(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        recurrence: Union[str, "RecurrenceType"],
         status: Optional[Union[str, "StatusType"]] = None,
+        recurrence: Optional[Union[str, "RecurrenceType"]] = None,
         recurrence_period: Optional["ExportRecurrencePeriod"] = None,
         **kwargs
     ):
@@ -1488,9 +1483,8 @@ class QueryComparisonExpression(msrest.serialization.Model):
 
     :param name: Required. The name of the column to use in comparison.
     :type name: str
-    :param operator: Required. The operator to use for comparison. Possible values include: "In",
-     "Contains".
-    :type operator: str or ~azure.mgmt.costmanagement.models.OperatorType
+    :param operator: Required. The operator to use for comparison. Possible values include: "In".
+    :type operator: str or ~azure.mgmt.costmanagement.models.QueryOperatorType
     :param values: Required. Array of values to use for comparison.
     :type values: list[str]
     """
@@ -1511,7 +1505,7 @@ class QueryComparisonExpression(msrest.serialization.Model):
         self,
         *,
         name: str,
-        operator: Union[str, "OperatorType"],
+        operator: Union[str, "QueryOperatorType"],
         values: List[str],
         **kwargs
     ):

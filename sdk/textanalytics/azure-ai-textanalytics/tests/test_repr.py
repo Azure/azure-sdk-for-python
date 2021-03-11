@@ -6,8 +6,9 @@
 # --------------------------------------------------------------------------
 
 import pytest
+import datetime
 from azure.ai.textanalytics import _models
-from azure.ai.textanalytics._generated.v3_1_preview_2 import models as _generated_models
+from azure.ai.textanalytics._generated.v3_1_preview_4 import models as _generated_models
 
 # All features return a tuple of the object and the repr of the obejct
 
@@ -21,6 +22,20 @@ def text_document_statistics():
         transaction_count=18
     )
     model_repr = "TextDocumentStatistics(character_count=14, transaction_count=18)"
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def request_statistics():
+    model = _models.RequestStatistics(
+        documents_count=1,
+        valid_documents_count=1,
+        erroneous_documents_count=0,
+        transactions_count=1
+    )
+
+    model_repr = "RequestStatistics(documents_count=1, valid_documents_count=1, erroneous_documents_count=0, transactions_count=1)"
+
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -69,12 +84,13 @@ def categorized_entity():
         text="Bill Gates",
         category="Person",
         subcategory="Age",
+        length=10,
         offset=0,
         confidence_score=0.899
     )
     model_repr = (
         "CategorizedEntity(text=Bill Gates, category=Person, subcategory=Age, "
-        "offset=0, confidence_score=0.899)"
+        "length=10, offset=0, confidence_score=0.899)"
     )
     assert repr(model) == model_repr
     return model, model_repr
@@ -86,10 +102,11 @@ def pii_entity():
         text="859-98-0987",
         category="SSN",
         subcategory=None,
+        length=11,
         offset=0,
         confidence_score=0.899
     )
-    model_repr = "PiiEntity(text=859-98-0987, category=SSN, subcategory=None, offset=0, confidence_score=0.899)"
+    model_repr = "PiiEntity(text=859-98-0987, category=SSN, subcategory=None, length=11, offset=0, confidence_score=0.899)"
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -100,8 +117,9 @@ def linked_entity_match():
         confidence_score=0.999,
         text="Bill Gates",
         offset=0,
+        length=10
     )
-    model_repr = "LinkedEntityMatch(confidence_score=0.999, text=Bill Gates, offset=0)"
+    model_repr = "LinkedEntityMatch(confidence_score=0.999, text=Bill Gates, length=10, offset=0)"
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -140,7 +158,7 @@ def sentiment_confidence_scores():
     return model, model_repr
 
 @pytest.fixture
-def aspect_opinion_confidence_score():
+def target_assessment_confidence_score():
     model = _models.SentimentConfidenceScores(
         positive=0.5,
         negative=0.5
@@ -150,41 +168,43 @@ def aspect_opinion_confidence_score():
     return model, model_repr
 
 @pytest.fixture
-def aspect_sentiment(aspect_opinion_confidence_score):
-    model = _models.AspectSentiment(
+def target_sentiment(target_assessment_confidence_score):
+    model = _models.TargetSentiment(
         text="aspect",
         sentiment="positive",
-        confidence_scores=aspect_opinion_confidence_score[0],
+        confidence_scores=target_assessment_confidence_score[0],
+        length=6,
         offset=10,
     )
-    model_repr = "AspectSentiment(text=aspect, sentiment=positive, confidence_scores={}, offset=10)".format(
-        aspect_opinion_confidence_score[1]
+    model_repr = "TargetSentiment(text=aspect, sentiment=positive, confidence_scores={}, length=6, offset=10)".format(
+        target_assessment_confidence_score[1]
     )
     assert repr(model) == model_repr
     return model, model_repr
 
 @pytest.fixture
-def opinion_sentiment(aspect_opinion_confidence_score):
-    model = _models.OpinionSentiment(
+def assessment_sentiment(target_assessment_confidence_score):
+    model = _models.AssessmentSentiment(
         text="opinion",
         sentiment="positive",
-        confidence_scores=aspect_opinion_confidence_score[0],
+        confidence_scores=target_assessment_confidence_score[0],
+        length=7,
         offset=3,
         is_negated=False
     )
-    model_repr = "OpinionSentiment(text=opinion, sentiment=positive, confidence_scores={}, offset=3, is_negated=False)".format(
-        aspect_opinion_confidence_score[1]
+    model_repr = "AssessmentSentiment(text=opinion, sentiment=positive, confidence_scores={}, length=7, offset=3, is_negated=False)".format(
+        target_assessment_confidence_score[1]
     )
     assert repr(model) == model_repr
     return model, model_repr
 
 @pytest.fixture
-def mined_opinion(aspect_sentiment, opinion_sentiment):
+def mined_opinion(target_sentiment, assessment_sentiment):
     model = _models.MinedOpinion(
-        aspect=aspect_sentiment[0],
-        opinions=[opinion_sentiment[0]]
+        target=target_sentiment[0],
+        assessments=[assessment_sentiment[0]]
     )
-    model_repr = "MinedOpinion(aspect={}, opinions=[{}])".format(aspect_sentiment[1], opinion_sentiment[1])
+    model_repr = "MinedOpinion(target={}, assessments=[{}])".format(target_sentiment[1], assessment_sentiment[1])
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -194,18 +214,136 @@ def sentence_sentiment(sentiment_confidence_scores, mined_opinion):
         text="This is a sentence.",
         sentiment="neutral",
         confidence_scores=sentiment_confidence_scores[0],
+        length=19,
         offset=0,
         mined_opinions=[mined_opinion[0]]
     )
     model_repr = (
         "SentenceSentiment(text=This is a sentence., sentiment=neutral, confidence_scores={}, "\
-        "offset=0, mined_opinions=[{}])".format(
+        "length=19, offset=0, mined_opinions=[{}])".format(
             sentiment_confidence_scores[1], mined_opinion[1]
         )
     )
     assert repr(model) == model_repr
     return model, model_repr
 
+@pytest.fixture
+def recognize_pii_entities_result(pii_entity, text_analytics_warning, text_document_statistics):
+    model = _models.RecognizePiiEntitiesResult(
+        id="1",
+        entities=[pii_entity[0]],
+        redacted_text="***********",
+        warnings=[text_analytics_warning[0]],
+        statistics=text_document_statistics[0],
+        is_error=False
+    )
+    model_repr = "RecognizePiiEntitiesResult(id=1, entities=[{}], redacted_text=***********, warnings=[{}], " \
+    "statistics={}, is_error=False)".format(
+        pii_entity[1], text_analytics_warning[1], text_document_statistics[1]
+    )
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def recognize_entities_result(categorized_entity, text_analytics_warning, text_document_statistics):
+    model = _models.RecognizeEntitiesResult(
+        id="1",
+        entities=[categorized_entity[0]],
+        warnings=[text_analytics_warning[0]],
+        statistics=text_document_statistics[0],
+        is_error=False
+    )
+    model_repr = "RecognizeEntitiesResult(id=1, entities=[{}], warnings=[{}], statistics={}, is_error=False)".format(
+        categorized_entity[1], text_analytics_warning[1], text_document_statistics[1]
+    )
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def extract_key_phrases_result(text_analytics_warning, text_document_statistics):
+    model = _models.ExtractKeyPhrasesResult(
+        id="1",
+        key_phrases=["dog", "cat", "bird"],
+        warnings=[text_analytics_warning[0]],
+        statistics=text_document_statistics[0],
+        is_error=False
+    )
+    model_repr = "ExtractKeyPhrasesResult(id=1, key_phrases=['dog', 'cat', 'bird'], warnings=[{}], statistics={}, is_error=False)".format(
+        text_analytics_warning[1], text_document_statistics[1]
+    )
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def data_source():
+    model = _models.HealthcareEntityDataSource(
+        entity_id="BONJOUR",
+        name="UMLS",
+    )
+    model_repr = "HealthcareEntityDataSource(entity_id=BONJOUR, name=UMLS)"
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def healthcare_entity_assertion():
+    model = _models.HealthcareEntityAssertion(
+        conditionality="conditionality",
+        certainty="certainty",
+        association="association",
+    )
+    model_repr = "HealthcareEntityAssertion(conditionality=conditionality, certainty=certainty, association=association)"
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def healthcare_entity(data_source, healthcare_entity_assertion):
+    model = _models.HealthcareEntity(
+        text="Bonjour",
+        normalized_text="Bonjour",
+        category="MyCategory",
+        subcategory="MySubcategory",
+        assertion=healthcare_entity_assertion[0],
+        length=7,
+        offset=12,
+        confidence_score=0.95,
+        data_sources=[data_source[0]],
+    )
+    model_repr = (
+        "HealthcareEntity(text=Bonjour, normalized_text=Bonjour, category=MyCategory, subcategory=MySubcategory, assertion={}, length=7, offset=12, "\
+        "confidence_score=0.95, data_sources=[{}])".format(healthcare_entity_assertion[1], data_source[1])
+    )
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def healthcare_relation_role(healthcare_entity):
+    model = _models.HealthcareRelationRole(
+        name="ROLE",
+        entity=healthcare_entity[0]
+    )
+
+    model_repr = "HealthcareRelationRole(name=ROLE, entity={})".format(healthcare_entity[1])
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def healthcare_relation(healthcare_relation_role):
+    model = _models.HealthcareRelation(
+        relation_type="DOSAGE",
+        roles=[healthcare_relation_role[0]]
+    )
+
+    model_repr = "HealthcareRelation(relation_type=DOSAGE, roles=[{}])".format(healthcare_relation_role[1])
+
+    assert repr(model) == model_repr
+    return model, model_repr
 
 class TestRepr():
     def test_text_document_input(self):
@@ -266,36 +404,6 @@ class TestRepr():
 
         assert repr(model) == model_repr
 
-    def test_recognize_entities_result(self, categorized_entity, text_analytics_warning, text_document_statistics):
-        model = _models.RecognizeEntitiesResult(
-            id="1",
-            entities=[categorized_entity[0]],
-            warnings=[text_analytics_warning[0]],
-            statistics=text_document_statistics[0],
-            is_error=False
-        )
-        model_repr = "RecognizeEntitiesResult(id=1, entities=[{}], warnings=[{}], statistics={}, is_error=False)".format(
-            categorized_entity[1], text_analytics_warning[1], text_document_statistics[1]
-        )
-
-        assert repr(model) == model_repr
-
-    def test_recognize_pii_entities_result(self, pii_entity, text_analytics_warning, text_document_statistics):
-        model = _models.RecognizePiiEntitiesResult(
-            id="1",
-            entities=[pii_entity[0]],
-            redacted_text="***********",
-            warnings=[text_analytics_warning[0]],
-            statistics=text_document_statistics[0],
-            is_error=False
-        )
-        model_repr = "RecognizePiiEntitiesResult(id=1, entities=[{}], redacted_text=***********, warnings=[{}], " \
-        "statistics={}, is_error=False)".format(
-            pii_entity[1], text_analytics_warning[1], text_document_statistics[1]
-        )
-
-        assert repr(model) == model_repr
-
     def test_recognized_linked_entites_result(self, linked_entity, text_analytics_warning, text_document_statistics):
         model = _models.RecognizeLinkedEntitiesResult(
             id="1",
@@ -306,20 +414,6 @@ class TestRepr():
         )
         model_repr = "RecognizeLinkedEntitiesResult(id=1, entities=[{}], warnings=[{}], statistics={}, is_error=False)".format(
             linked_entity[1], text_analytics_warning[1], text_document_statistics[1]
-        )
-
-        assert repr(model) == model_repr
-
-    def test_extract_key_phrases_result(self, text_analytics_warning, text_document_statistics):
-        model = _models.ExtractKeyPhrasesResult(
-            id="1",
-            key_phrases=["dog", "cat", "bird"],
-            warnings=[text_analytics_warning[0]],
-            statistics=text_document_statistics[0],
-            is_error=False
-        )
-        model_repr = "ExtractKeyPhrasesResult(id=1, key_phrases=['dog', 'cat', 'bird'], warnings=[{}], statistics={}, is_error=False)".format(
-            text_analytics_warning[1], text_document_statistics[1]
         )
 
         assert repr(model) == model_repr
@@ -360,3 +454,74 @@ class TestRepr():
         error = _models.TextAnalyticsError._from_generated(generated_error)
         assert error.code == "UnsupportedLanguageCode"
         assert error.message == "Supplied language not supported. Pass in one of: de,en,es,fr,it,ja,ko,nl,pt-PT,zh-Hans,zh-Hant"
+
+    def test_analyze_batch_actions_result_recognize_entities(self, recognize_entities_result, request_statistics):
+        model = _models.AnalyzeBatchActionsResult(
+            document_results=[recognize_entities_result[0]],
+            statistics=request_statistics[0],
+            is_error=False,
+            action_type=_models.AnalyzeBatchActionsType.RECOGNIZE_ENTITIES,
+            completed_on=datetime.datetime(1, 1, 1)
+        )
+
+        model_repr = (
+            "AnalyzeBatchActionsResult(document_results=[{}], is_error={}, action_type={}, completed_on={}, statistics={})".format(
+                recognize_entities_result[1], False, "recognize_entities", datetime.datetime(1, 1, 1), request_statistics[1]
+            )
+        )
+
+        assert repr(model) == model_repr
+
+    def test_analyze_batch_actions_result_recognize_pii_entities(self, recognize_pii_entities_result, request_statistics):
+        model = _models.AnalyzeBatchActionsResult(
+            document_results=[recognize_pii_entities_result[0]],
+            statistics=request_statistics[0],
+            is_error=False,
+            action_type=_models.AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES,
+            completed_on=datetime.datetime(1, 1, 1)
+        )
+
+        model_repr = (
+            "AnalyzeBatchActionsResult(document_results=[{}], is_error={}, action_type={}, completed_on={}, statistics={})".format(
+                recognize_pii_entities_result[1], False, "recognize_pii_entities", datetime.datetime(1, 1, 1), request_statistics[1]
+            )
+        )
+
+        assert repr(model) == model_repr
+
+    def test_analyze_batch_actions_result_extract_key_phrases(self, extract_key_phrases_result, request_statistics):
+        model = _models.AnalyzeBatchActionsResult(
+            document_results=[extract_key_phrases_result[0]],
+            statistics=request_statistics[0],
+            is_error=False,
+            action_type=_models.AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES,
+            completed_on=datetime.datetime(1, 1, 1)
+        )
+
+        model_repr = (
+            "AnalyzeBatchActionsResult(document_results=[{}], is_error={}, action_type={}, completed_on={}, statistics={})".format(
+                extract_key_phrases_result[1], False, "extract_key_phrases", datetime.datetime(1, 1, 1), request_statistics[1]
+            )
+        )
+
+        assert repr(model) == model_repr
+
+    def test_analyze_healthcare_entities_result_item(
+        self, healthcare_entity, healthcare_relation, text_analytics_warning, text_document_statistics
+    ):
+        model = _models.AnalyzeHealthcareEntitiesResultItem(
+            id=1,
+            entities=[healthcare_entity[0]],
+            entity_relations=[healthcare_relation[0]],
+            warnings=[text_analytics_warning[0]],
+            statistics=text_document_statistics[0],
+            is_error=False
+        )
+
+        model_repr = (
+            "AnalyzeHealthcareEntitiesResultItem(id=1, entities=[{}], entity_relations=[{}], warnings=[{}], statistics={}, is_error=False)".format(
+                healthcare_entity[1], healthcare_relation[1], text_analytics_warning[1], text_document_statistics[1]
+            )
+        )
+
+        assert repr(model) == model_repr[:1024]

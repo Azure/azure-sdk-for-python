@@ -1,32 +1,52 @@
 trigger: none
 
-jobs:
-  - template: ./tests_invoke.yml
-    parameters:
-      InjectedPackages: $(InjectedPackages)
-      EnvVars:
-        STORAGE_ACCOUNT_NAME: $(python-storage-storage-account-name)
-        STORAGE_ACCOUNT_KEY: $(python-storage-storage-account-key)
-        STORAGE_DATA_LAKE_ACCOUNT_NAME: $(python-storage-data-lake-account-name)
-        STORAGE_DATA_LAKE_ACCOUNT_KEY: $(python-storage-data-lake-account-key)
-        BLOB_STORAGE_ACCOUNT_NAME: $(python-storage-blob-storage-account-name)
-        BLOB_STORAGE_ACCOUNT_KEY: $(python-storage-blob-storage-account-key)
-        REMOTE_STORAGE_ACCOUNT_NAME: $(python-storage-remote-storage-account-name)
-        REMOTE_STORAGE_ACCOUNT_KEY: $(python-storage-remote-storage-account-key)
-        PREMIUM_STORAGE_ACCOUNT_NAME: $(python-storage-premium-storage-account-name)
-        PREMIUM_STORAGE_ACCOUNT_KEY: $(python-storage-premium-storage-account-key)
-        OAUTH_STORAGE_ACCOUNT_NAME: $(python-storage-oauth-storage-account-name)
-        OAUTH_STORAGE_ACCOUNT_KEY: $(python-storage-oauth-storage-account-key)
-        ACTIVE_DIRECTORY_APPLICATION_ID: $(aad-azure-sdk-test-client-id)
-        ACTIVE_DIRECTORY_APPLICATION_SECRET: $(aad-azure-sdk-test-client-secret)
-        ACTIVE_DIRECTORY_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        CONNECTION_STRING: $(python-storage-blob-connection-string)
-        BLOB_CONNECTION_STRING: $(python-storage-blob-connection-string)
-        PREMIUM_CONNECTION_STRING: $(python-storage-premium-connection-string)
-        TEST_MODE: 'RunLiveNoRecord'
-        AZURE_SKIP_LIVE_RECORDING: 'True'
-        AZURE_TEST_RUN_LIVE: 'true'
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
-        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
-        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
+parameters:
+  - name: Services
+    type: object
+    default:
+      - azure-storage-blob
+      - azure-storage-blob-changefeed
+      - azure-storage-queue
+      - azure-storage-file-datalake
+      - azure-storage-file-share
+
+stages:
+  - ${{ each service in parameters.Services }}:
+    - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+      parameters:
+        JobName: ${{ replace(service, '-', '_') }}
+        AllocateResourceGroup: 'false'
+        BuildTargetingString: ${{ service }}
+        ${{ if eq(service, 'azure-storage-file-datalake') }}:
+          MaxParallel: 1
+        ${{ if ne(service, 'azure-storage-file-datalake') }}:
+          # All 5 service stages run in parallel, and with no parallel limits the tests may get throttled.
+          MaxParallel: 2
+        ServiceDirectory: storage
+        InjectedPackages: $(InjectedPackages)
+        EnvVars:
+          STORAGE_ACCOUNT_NAME: $(python-storage-storage-account-name)
+          STORAGE_ACCOUNT_KEY: $(python-storage-storage-account-key)
+          STORAGE_DATA_LAKE_ACCOUNT_NAME: $(python-storage-data-lake-account-name)
+          STORAGE_DATA_LAKE_ACCOUNT_KEY: $(python-storage-data-lake-account-key)
+          BLOB_STORAGE_ACCOUNT_NAME: $(python-storage-blob-storage-account-name)
+          BLOB_STORAGE_ACCOUNT_KEY: $(python-storage-blob-storage-account-key)
+          REMOTE_STORAGE_ACCOUNT_NAME: $(python-storage-remote-storage-account-name)
+          REMOTE_STORAGE_ACCOUNT_KEY: $(python-storage-remote-storage-account-key)
+          PREMIUM_STORAGE_ACCOUNT_NAME: $(python-storage-premium-storage-account-name)
+          PREMIUM_STORAGE_ACCOUNT_KEY: $(python-storage-premium-storage-account-key)
+          OAUTH_STORAGE_ACCOUNT_NAME: $(python-storage-oauth-storage-account-name)
+          OAUTH_STORAGE_ACCOUNT_KEY: $(python-storage-oauth-storage-account-key)
+          ACTIVE_DIRECTORY_APPLICATION_ID: $(aad-azure-sdk-test-client-id)
+          ACTIVE_DIRECTORY_APPLICATION_SECRET: $(aad-azure-sdk-test-client-secret)
+          ACTIVE_DIRECTORY_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+          CONNECTION_STRING: $(python-storage-blob-connection-string)
+          BLOB_CONNECTION_STRING: $(python-storage-blob-connection-string)
+          PREMIUM_CONNECTION_STRING: $(python-storage-premium-connection-string)
+          TEST_MODE: 'RunLiveNoRecord'
+          AZURE_SKIP_LIVE_RECORDING: 'True'
+          AZURE_TEST_RUN_LIVE: 'true'
+          AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+          AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
+          AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
+          AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)

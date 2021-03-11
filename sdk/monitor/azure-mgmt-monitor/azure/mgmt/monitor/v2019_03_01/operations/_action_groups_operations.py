@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class ActionGroupsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,10 +49,10 @@ class ActionGroupsOperations(object):
         self,
         resource_group_name,  # type: str
         action_group_name,  # type: str
-        action_group,  # type: "models.ActionGroupResource"
+        action_group,  # type: "_models.ActionGroupResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ActionGroupResource"
+        # type: (...) -> "_models.ActionGroupResource"
         """Create a new action group or update an existing one.
 
         :param resource_group_name: The name of the resource group.
@@ -66,7 +66,7 @@ class ActionGroupsOperations(object):
         :rtype: ~$(python-base-namespace).v2019_03_01.models.ActionGroupResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ActionGroupResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ActionGroupResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -102,7 +102,7 @@ class ActionGroupsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -123,7 +123,7 @@ class ActionGroupsOperations(object):
         action_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ActionGroupResource"
+        # type: (...) -> "_models.ActionGroupResource"
         """Get an action group.
 
         :param resource_group_name: The name of the resource group.
@@ -135,7 +135,7 @@ class ActionGroupsOperations(object):
         :rtype: ~$(python-base-namespace).v2019_03_01.models.ActionGroupResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ActionGroupResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ActionGroupResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -166,7 +166,7 @@ class ActionGroupsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ActionGroupResource', pipeline_response)
@@ -226,7 +226,7 @@ class ActionGroupsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -238,10 +238,10 @@ class ActionGroupsOperations(object):
         self,
         resource_group_name,  # type: str
         action_group_name,  # type: str
-        action_group_patch,  # type: "models.ActionGroupPatchBody"
+        action_group_patch,  # type: "_models.ActionGroupPatchBody"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ActionGroupResource"
+        # type: (...) -> "_models.ActionGroupResource"
         """Updates an existing action group's tags. To update other fields use the CreateOrUpdate method.
 
         :param resource_group_name: The name of the resource group.
@@ -255,7 +255,7 @@ class ActionGroupsOperations(object):
         :rtype: ~$(python-base-namespace).v2019_03_01.models.ActionGroupResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ActionGroupResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ActionGroupResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -291,7 +291,7 @@ class ActionGroupsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ActionGroupResource', pipeline_response)
@@ -306,7 +306,7 @@ class ActionGroupsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ActionGroupList"]
+        # type: (...) -> Iterable["_models.ActionGroupList"]
         """Get a list of all action groups in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -314,7 +314,7 @@ class ActionGroupsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~$(python-base-namespace).v2019_03_01.models.ActionGroupList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ActionGroupList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ActionGroupList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -359,7 +359,7 @@ class ActionGroupsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -375,7 +375,7 @@ class ActionGroupsOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ActionGroupList"]
+        # type: (...) -> Iterable["_models.ActionGroupList"]
         """Get a list of all action groups in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -385,7 +385,7 @@ class ActionGroupsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~$(python-base-namespace).v2019_03_01.models.ActionGroupList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ActionGroupList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ActionGroupList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -431,7 +431,7 @@ class ActionGroupsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -446,7 +446,7 @@ class ActionGroupsOperations(object):
         self,
         resource_group_name,  # type: str
         action_group_name,  # type: str
-        enable_request,  # type: "models.EnableRequest"
+        enable_request,  # type: "_models.EnableRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -500,7 +500,7 @@ class ActionGroupsOperations(object):
 
         if response.status_code not in [200, 409]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

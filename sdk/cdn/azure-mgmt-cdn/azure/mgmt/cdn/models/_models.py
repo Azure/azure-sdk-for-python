@@ -10,6 +10,1278 @@ from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
+class Resource(msrest.serialization.Model):
+    """The core properties of ARM resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+        self.system_data = None
+
+
+class AFDDomain(ProxyResource):
+    """Friendly domain name mapping to the endpoint hostname that the customer provides for branding purposes, e.g. www.contoso.com.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
+    :param tls_settings: The configuration specifying how to enable HTTPS for the domain - using
+     AzureFrontDoor managed certificate or user's own certificate. If not specified, enabling ssl
+     uses AzureFrontDoor managed certificate by default.
+    :type tls_settings: ~azure.mgmt.cdn.models.AFDDomainHttpsParameters
+    :param azure_dns_zone: Resource reference to the Azure DNS zone.
+    :type azure_dns_zone: ~azure.mgmt.cdn.models.ResourceReference
+    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
+     "Updating", "Deleting", "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status:  Possible values include: "NotStarted", "InProgress", "Succeeded",
+     "Failed".
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
+    :ivar domain_validation_state: Provisioning substate shows the progress of custom HTTPS
+     enabling/disabling process step by step. DCV stands for DomainControlValidation. Possible
+     values include: "Unknown", "Submitting", "Pending", "TimedOut", "PendingRevalidation",
+     "Approved".
+    :vartype domain_validation_state: str or ~azure.mgmt.cdn.models.DomainValidationState
+    :param host_name: The host name of the domain. Must be a domain name.
+    :type host_name: str
+    :ivar validation_properties: Values the customer needs to validate domain ownership.
+    :vartype validation_properties: ~azure.mgmt.cdn.models.DomainValidationProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'deployment_status': {'readonly': True},
+        'domain_validation_state': {'readonly': True},
+        'validation_properties': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'tls_settings': {'key': 'properties.tlsSettings', 'type': 'AFDDomainHttpsParameters'},
+        'azure_dns_zone': {'key': 'properties.azureDnsZone', 'type': 'ResourceReference'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'str'},
+        'domain_validation_state': {'key': 'properties.domainValidationState', 'type': 'str'},
+        'host_name': {'key': 'properties.hostName', 'type': 'str'},
+        'validation_properties': {'key': 'properties.validationProperties', 'type': 'DomainValidationProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AFDDomain, self).__init__(**kwargs)
+        self.tls_settings = kwargs.get('tls_settings', None)
+        self.azure_dns_zone = kwargs.get('azure_dns_zone', None)
+        self.provisioning_state = None
+        self.deployment_status = None
+        self.domain_validation_state = None
+        self.host_name = kwargs.get('host_name', None)
+        self.validation_properties = None
+
+
+class AFDDomainHttpsParameters(msrest.serialization.Model):
+    """The JSON object that contains the properties to secure a domain.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param certificate_type: Required. Defines the source of the SSL certificate. Possible values
+     include: "CustomerCertificate", "ManagedCertificate".
+    :type certificate_type: str or ~azure.mgmt.cdn.models.AfdCertificateType
+    :param minimum_tls_version: TLS protocol version that will be used for Https. Possible values
+     include: "TLS10", "TLS12".
+    :type minimum_tls_version: str or ~azure.mgmt.cdn.models.AfdMinimumTlsVersion
+    :param secret: Resource reference to the secret. ie. subs/rg/profile/secret.
+    :type secret: ~azure.mgmt.cdn.models.ResourceReference
+    """
+
+    _validation = {
+        'certificate_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'certificate_type': {'key': 'certificateType', 'type': 'str'},
+        'minimum_tls_version': {'key': 'minimumTlsVersion', 'type': 'str'},
+        'secret': {'key': 'secret', 'type': 'ResourceReference'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AFDDomainHttpsParameters, self).__init__(**kwargs)
+        self.certificate_type = kwargs['certificate_type']
+        self.minimum_tls_version = kwargs.get('minimum_tls_version', None)
+        self.secret = kwargs.get('secret', None)
+
+
+class AFDDomainListResult(msrest.serialization.Model):
+    """Result of the request to list domains. It contains a list of domain objects and a URL link to get the next set of results.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of AzureFrontDoor domains within a profile.
+    :vartype value: list[~azure.mgmt.cdn.models.AFDDomain]
+    :param next_link: URL to get the next set of domain objects if there are any.
+    :type next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[AFDDomain]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AFDDomainListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = kwargs.get('next_link', None)
+
+
+class AFDStateProperties(msrest.serialization.Model):
+    """The tracking states for afd resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
+     "Updating", "Deleting", "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status:  Possible values include: "NotStarted", "InProgress", "Succeeded",
+     "Failed".
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'deployment_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AFDStateProperties, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.deployment_status = None
+
+
+class AFDDomainUpdatePropertiesParameters(msrest.serialization.Model):
+    """The JSON object that contains the properties of the domain to create.
+
+    :param tls_settings: The configuration specifying how to enable HTTPS for the domain - using
+     AzureFrontDoor managed certificate or user's own certificate. If not specified, enabling ssl
+     uses AzureFrontDoor managed certificate by default.
+    :type tls_settings: ~azure.mgmt.cdn.models.AFDDomainHttpsParameters
+    :param azure_dns_zone: Resource reference to the Azure DNS zone.
+    :type azure_dns_zone: ~azure.mgmt.cdn.models.ResourceReference
+    """
+
+    _attribute_map = {
+        'tls_settings': {'key': 'tlsSettings', 'type': 'AFDDomainHttpsParameters'},
+        'azure_dns_zone': {'key': 'azureDnsZone', 'type': 'ResourceReference'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AFDDomainUpdatePropertiesParameters, self).__init__(**kwargs)
+        self.tls_settings = kwargs.get('tls_settings', None)
+        self.azure_dns_zone = kwargs.get('azure_dns_zone', None)
+
+
+class AFDDomainProperties(AFDDomainUpdatePropertiesParameters, AFDStateProperties):
+    """The JSON object that contains the properties of the domain to create.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
+     "Updating", "Deleting", "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status:  Possible values include: "NotStarted", "InProgress", "Succeeded",
+     "Failed".
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
+    :param tls_settings: The configuration specifying how to enable HTTPS for the domain - using
+     AzureFrontDoor managed certificate or user's own certificate. If not specified, enabling ssl
+     uses AzureFrontDoor managed certificate by default.
+    :type tls_settings: ~azure.mgmt.cdn.models.AFDDomainHttpsParameters
+    :param azure_dns_zone: Resource reference to the Azure DNS zone.
+    :type azure_dns_zone: ~azure.mgmt.cdn.models.ResourceReference
+    :ivar domain_validation_state: Provisioning substate shows the progress of custom HTTPS
+     enabling/disabling process step by step. DCV stands for DomainControlValidation. Possible
+     values include: "Unknown", "Submitting", "Pending", "TimedOut", "PendingRevalidation",
+     "Approved".
+    :vartype domain_validation_state: str or ~azure.mgmt.cdn.models.DomainValidationState
+    :param host_name: Required. The host name of the domain. Must be a domain name.
+    :type host_name: str
+    :ivar validation_properties: Values the customer needs to validate domain ownership.
+    :vartype validation_properties: ~azure.mgmt.cdn.models.DomainValidationProperties
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'deployment_status': {'readonly': True},
+        'domain_validation_state': {'readonly': True},
+        'host_name': {'required': True},
+        'validation_properties': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
+        'tls_settings': {'key': 'tlsSettings', 'type': 'AFDDomainHttpsParameters'},
+        'azure_dns_zone': {'key': 'azureDnsZone', 'type': 'ResourceReference'},
+        'domain_validation_state': {'key': 'domainValidationState', 'type': 'str'},
+        'host_name': {'key': 'hostName', 'type': 'str'},
+        'validation_properties': {'key': 'validationProperties', 'type': 'DomainValidationProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AFDDomainProperties, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.deployment_status = None
+        self.domain_validation_state = None
+        self.host_name = kwargs['host_name']
+        self.validation_properties = None
+        self.tls_settings = kwargs.get('tls_settings', None)
+        self.azure_dns_zone = kwargs.get('azure_dns_zone', None)
+        self.domain_validation_state = None
+        self.host_name = kwargs['host_name']
+        self.validation_properties = None
+
+
+class AFDDomainUpdateParameters(msrest.serialization.Model):
+    """The domain JSON object required for domain creation or update.
+
+    :param tls_settings: The configuration specifying how to enable HTTPS for the domain - using
+     AzureFrontDoor managed certificate or user's own certificate. If not specified, enabling ssl
+     uses AzureFrontDoor managed certificate by default.
+    :type tls_settings: ~azure.mgmt.cdn.models.AFDDomainHttpsParameters
+    :param azure_dns_zone: Resource reference to the Azure DNS zone.
+    :type azure_dns_zone: ~azure.mgmt.cdn.models.ResourceReference
+    """
+
+    _attribute_map = {
+        'tls_settings': {'key': 'properties.tlsSettings', 'type': 'AFDDomainHttpsParameters'},
+        'azure_dns_zone': {'key': 'properties.azureDnsZone', 'type': 'ResourceReference'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AFDDomainUpdateParameters, self).__init__(**kwargs)
+        self.tls_settings = kwargs.get('tls_settings', None)
+        self.azure_dns_zone = kwargs.get('azure_dns_zone', None)
+
+
+class TrackedResource(Resource):
+    """The resource model definition for a ARM tracked top level resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param location: Required. Resource location.
+    :type location: str
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TrackedResource, self).__init__(**kwargs)
+        self.location = kwargs['location']
+        self.tags = kwargs.get('tags', None)
+        self.system_data = None
+
+
+class AFDEndpoint(TrackedResource):
+    """CDN endpoint is the entity within a CDN profile containing configuration information such as origin, protocol, content caching and delivery behavior. The AzureFrontDoor endpoint uses the URL format :code:`<endpointname>`.azureedge.net.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param location: Required. Resource location.
+    :type location: str
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
+    :param origin_response_timeout_seconds: Send and receive timeout on forwarding request to the
+     origin. When timeout is reached, the request fails and returns.
+    :type origin_response_timeout_seconds: int
+    :param enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
+     'Disabled'. Possible values include: "Enabled", "Disabled".
+    :type enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
+    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
+     "Updating", "Deleting", "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status:  Possible values include: "NotStarted", "InProgress", "Succeeded",
+     "Failed".
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
+    :ivar host_name: The host name of the endpoint structured as {endpointName}.{DNSZone}, e.g.
+     contoso.azureedge.net.
+    :vartype host_name: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'system_data': {'readonly': True},
+        'origin_response_timeout_seconds': {'minimum': 16},
+        'provisioning_state': {'readonly': True},
+        'deployment_status': {'readonly': True},
+        'host_name': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'origin_response_timeout_seconds': {'key': 'properties.originResponseTimeoutSeconds', 'type': 'int'},
+        'enabled_state': {'key': 'properties.enabledState', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'str'},
+        'host_name': {'key': 'properties.hostName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AFDEndpoint, self).__init__(**kwargs)
+        self.origin_response_timeout_seconds = kwargs.get('origin_response_timeout_seconds', None)
+        self.enabled_state = kwargs.get('enabled_state', None)
+        self.provisioning_state = None
+        self.deployment_status = None
+        self.host_name = None
+
+
+class AFDEndpointListResult(msrest.serialization.Model):
+    """Result of the request to list endpoints. It contains a list of endpoint objects and a URL link to get the next set of results.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of AzureFrontDoor endpoints within a profile.
+    :vartype value: list[~azure.mgmt.cdn.models.AFDEndpoint]
+    :param next_link: URL to get the next set of endpoint objects if there is any.
+    :type next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[AFDEndpoint]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AFDEndpointListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = kwargs.get('next_link', None)
+
+
+class AFDEndpointPropertiesUpdateParameters(msrest.serialization.Model):
+    """The JSON object containing endpoint update parameters.
+
+    :param origin_response_timeout_seconds: Send and receive timeout on forwarding request to the
+     origin. When timeout is reached, the request fails and returns.
+    :type origin_response_timeout_seconds: int
+    :param enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
+     'Disabled'. Possible values include: "Enabled", "Disabled".
+    :type enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
+    """
+
+    _validation = {
+        'origin_response_timeout_seconds': {'minimum': 16},
+    }
+
+    _attribute_map = {
+        'origin_response_timeout_seconds': {'key': 'originResponseTimeoutSeconds', 'type': 'int'},
+        'enabled_state': {'key': 'enabledState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AFDEndpointPropertiesUpdateParameters, self).__init__(**kwargs)
+        self.origin_response_timeout_seconds = kwargs.get('origin_response_timeout_seconds', None)
+        self.enabled_state = kwargs.get('enabled_state', None)
+
+
+class AFDEndpointProperties(AFDStateProperties, AFDEndpointPropertiesUpdateParameters):
+    """The JSON object that contains the properties required to create an endpoint.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param origin_response_timeout_seconds: Send and receive timeout on forwarding request to the
+     origin. When timeout is reached, the request fails and returns.
+    :type origin_response_timeout_seconds: int
+    :param enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
+     'Disabled'. Possible values include: "Enabled", "Disabled".
+    :type enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
+    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
+     "Updating", "Deleting", "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status:  Possible values include: "NotStarted", "InProgress", "Succeeded",
+     "Failed".
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
+    :ivar host_name: The host name of the endpoint structured as {endpointName}.{DNSZone}, e.g.
+     contoso.azureedge.net.
+    :vartype host_name: str
+    """
+
+    _validation = {
+        'origin_response_timeout_seconds': {'minimum': 16},
+        'provisioning_state': {'readonly': True},
+        'deployment_status': {'readonly': True},
+        'host_name': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'origin_response_timeout_seconds': {'key': 'originResponseTimeoutSeconds', 'type': 'int'},
+        'enabled_state': {'key': 'enabledState', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
+        'host_name': {'key': 'hostName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AFDEndpointProperties, self).__init__(**kwargs)
+        self.origin_response_timeout_seconds = kwargs.get('origin_response_timeout_seconds', None)
+        self.enabled_state = kwargs.get('enabled_state', None)
+        self.host_name = None
+        self.provisioning_state = None
+        self.deployment_status = None
+        self.host_name = None
+
+
+class AFDEndpointUpdateParameters(msrest.serialization.Model):
+    """Properties required to create or update an endpoint.
+
+    :param tags: A set of tags. Endpoint tags.
+    :type tags: dict[str, str]
+    :param origin_response_timeout_seconds: Send and receive timeout on forwarding request to the
+     origin. When timeout is reached, the request fails and returns.
+    :type origin_response_timeout_seconds: int
+    :param enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
+     'Disabled'. Possible values include: "Enabled", "Disabled".
+    :type enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
+    """
+
+    _validation = {
+        'origin_response_timeout_seconds': {'minimum': 16},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'origin_response_timeout_seconds': {'key': 'properties.originResponseTimeoutSeconds', 'type': 'int'},
+        'enabled_state': {'key': 'properties.enabledState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AFDEndpointUpdateParameters, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.origin_response_timeout_seconds = kwargs.get('origin_response_timeout_seconds', None)
+        self.enabled_state = kwargs.get('enabled_state', None)
+
+
+class AfdErrorResponse(msrest.serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+
+    :param error: The error object.
+    :type error: ~azure.mgmt.cdn.models.ErrorResponse
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AfdErrorResponse, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+
+
+class AFDOrigin(ProxyResource):
+    """CDN origin is the source of the content being delivered via CDN. When the edge nodes represented by an endpoint do not have the requested content cached, they attempt to fetch it from one or more of the configured origins.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
+    :param azure_origin: Resource reference to the Azure origin resource.
+    :type azure_origin: ~azure.mgmt.cdn.models.ResourceReference
+    :param host_name: The address of the origin. Domain names, IPv4 addresses, and IPv6 addresses
+     are supported.This should be unique across all origins in an endpoint.
+    :type host_name: str
+    :param http_port: The value of the HTTP port. Must be between 1 and 65535.
+    :type http_port: int
+    :param https_port: The value of the HTTPS port. Must be between 1 and 65535.
+    :type https_port: int
+    :param origin_host_header: The host header value sent to the origin with each request. If you
+     leave this blank, the request hostname determines this value. Azure CDN origins, such as Web
+     Apps, Blob Storage, and Cloud Services require this host header value to match the origin
+     hostname by default. This overrides the host header defined at Endpoint.
+    :type origin_host_header: str
+    :param priority: Priority of origin in given origin group for load balancing. Higher priorities
+     will not be used for load balancing if any lower priority origin is healthy.Must be between 1
+     and 5.
+    :type priority: int
+    :param weight: Weight of the origin in given origin group for load balancing. Must be between 1
+     and 1000.
+    :type weight: int
+    :param shared_private_link_resource: The properties of the private link resource for private
+     origin.
+    :type shared_private_link_resource: object
+    :param enabled_state: Whether to enable health probes to be made against backends defined under
+     backendPools. Health probes can only be disabled if there is a single enabled backend in single
+     enabled backend pool. Possible values include: "Enabled", "Disabled".
+    :type enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
+    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
+     "Updating", "Deleting", "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status:  Possible values include: "NotStarted", "InProgress", "Succeeded",
+     "Failed".
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'http_port': {'maximum': 65535, 'minimum': 1},
+        'https_port': {'maximum': 65535, 'minimum': 1},
+        'priority': {'maximum': 5, 'minimum': 1},
+        'weight': {'maximum': 1000, 'minimum': 1},
+        'provisioning_state': {'readonly': True},
+        'deployment_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'azure_origin': {'key': 'properties.azureOrigin', 'type': 'ResourceReference'},
+        'host_name': {'key': 'properties.hostName', 'type': 'str'},
+        'http_port': {'key': 'properties.httpPort', 'type': 'int'},
+        'https_port': {'key': 'properties.httpsPort', 'type': 'int'},
+        'origin_host_header': {'key': 'properties.originHostHeader', 'type': 'str'},
+        'priority': {'key': 'properties.priority', 'type': 'int'},
+        'weight': {'key': 'properties.weight', 'type': 'int'},
+        'shared_private_link_resource': {'key': 'properties.sharedPrivateLinkResource', 'type': 'object'},
+        'enabled_state': {'key': 'properties.enabledState', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AFDOrigin, self).__init__(**kwargs)
+        self.azure_origin = kwargs.get('azure_origin', None)
+        self.host_name = kwargs.get('host_name', None)
+        self.http_port = kwargs.get('http_port', None)
+        self.https_port = kwargs.get('https_port', None)
+        self.origin_host_header = kwargs.get('origin_host_header', None)
+        self.priority = kwargs.get('priority', None)
+        self.weight = kwargs.get('weight', None)
+        self.shared_private_link_resource = kwargs.get('shared_private_link_resource', None)
+        self.enabled_state = kwargs.get('enabled_state', None)
+        self.provisioning_state = None
+        self.deployment_status = None
+
+
+class AFDOriginGroup(ProxyResource):
+    """AFDOrigin group comprising of origins is used for load balancing to origins when the content cannot be served from CDN.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
+    :param load_balancing_settings: Load balancing settings for a backend pool.
+    :type load_balancing_settings: ~azure.mgmt.cdn.models.LoadBalancingSettingsParameters
+    :param health_probe_settings: Health probe settings to the origin that is used to determine the
+     health of the origin.
+    :type health_probe_settings: ~azure.mgmt.cdn.models.HealthProbeParameters
+    :param traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: Time in minutes to shift
+     the traffic to the endpoint gradually when an unhealthy endpoint comes healthy or a new
+     endpoint is added. Default is 10 mins. This property is currently not supported.
+    :type traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: int
+    :param response_based_afd_origin_error_detection_settings: The JSON object that contains the
+     properties to determine origin health using real requests/responses. This property is currently
+     not supported.
+    :type response_based_afd_origin_error_detection_settings:
+     ~azure.mgmt.cdn.models.ResponseBasedOriginErrorDetectionParameters
+    :param session_affinity_state: Whether to allow session affinity on this host. Valid options
+     are 'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
+    :type session_affinity_state: str or ~azure.mgmt.cdn.models.EnabledState
+    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
+     "Updating", "Deleting", "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status:  Possible values include: "NotStarted", "InProgress", "Succeeded",
+     "Failed".
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'maximum': 50, 'minimum': 0},
+        'provisioning_state': {'readonly': True},
+        'deployment_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'load_balancing_settings': {'key': 'properties.loadBalancingSettings', 'type': 'LoadBalancingSettingsParameters'},
+        'health_probe_settings': {'key': 'properties.healthProbeSettings', 'type': 'HealthProbeParameters'},
+        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'key': 'properties.trafficRestorationTimeToHealedOrNewEndpointsInMinutes', 'type': 'int'},
+        'response_based_afd_origin_error_detection_settings': {'key': 'properties.responseBasedAfdOriginErrorDetectionSettings', 'type': 'ResponseBasedOriginErrorDetectionParameters'},
+        'session_affinity_state': {'key': 'properties.sessionAffinityState', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AFDOriginGroup, self).__init__(**kwargs)
+        self.load_balancing_settings = kwargs.get('load_balancing_settings', None)
+        self.health_probe_settings = kwargs.get('health_probe_settings', None)
+        self.traffic_restoration_time_to_healed_or_new_endpoints_in_minutes = kwargs.get('traffic_restoration_time_to_healed_or_new_endpoints_in_minutes', None)
+        self.response_based_afd_origin_error_detection_settings = kwargs.get('response_based_afd_origin_error_detection_settings', None)
+        self.session_affinity_state = kwargs.get('session_affinity_state', None)
+        self.provisioning_state = None
+        self.deployment_status = None
+
+
+class AFDOriginGroupListResult(msrest.serialization.Model):
+    """Result of the request to list origin groups. It contains a list of origin groups objects and a URL link to get the next set of results.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of CDN origin groups within an endpoint.
+    :vartype value: list[~azure.mgmt.cdn.models.AFDOriginGroup]
+    :param next_link: URL to get the next set of origin objects if there are any.
+    :type next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[AFDOriginGroup]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AFDOriginGroupListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = kwargs.get('next_link', None)
+
+
+class AFDOriginGroupUpdatePropertiesParameters(msrest.serialization.Model):
+    """The JSON object that contains the properties of the origin group.
+
+    :param load_balancing_settings: Load balancing settings for a backend pool.
+    :type load_balancing_settings: ~azure.mgmt.cdn.models.LoadBalancingSettingsParameters
+    :param health_probe_settings: Health probe settings to the origin that is used to determine the
+     health of the origin.
+    :type health_probe_settings: ~azure.mgmt.cdn.models.HealthProbeParameters
+    :param traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: Time in minutes to shift
+     the traffic to the endpoint gradually when an unhealthy endpoint comes healthy or a new
+     endpoint is added. Default is 10 mins. This property is currently not supported.
+    :type traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: int
+    :param response_based_afd_origin_error_detection_settings: The JSON object that contains the
+     properties to determine origin health using real requests/responses. This property is currently
+     not supported.
+    :type response_based_afd_origin_error_detection_settings:
+     ~azure.mgmt.cdn.models.ResponseBasedOriginErrorDetectionParameters
+    :param session_affinity_state: Whether to allow session affinity on this host. Valid options
+     are 'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
+    :type session_affinity_state: str or ~azure.mgmt.cdn.models.EnabledState
+    """
+
+    _validation = {
+        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'maximum': 50, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'load_balancing_settings': {'key': 'loadBalancingSettings', 'type': 'LoadBalancingSettingsParameters'},
+        'health_probe_settings': {'key': 'healthProbeSettings', 'type': 'HealthProbeParameters'},
+        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'key': 'trafficRestorationTimeToHealedOrNewEndpointsInMinutes', 'type': 'int'},
+        'response_based_afd_origin_error_detection_settings': {'key': 'responseBasedAfdOriginErrorDetectionSettings', 'type': 'ResponseBasedOriginErrorDetectionParameters'},
+        'session_affinity_state': {'key': 'sessionAffinityState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AFDOriginGroupUpdatePropertiesParameters, self).__init__(**kwargs)
+        self.load_balancing_settings = kwargs.get('load_balancing_settings', None)
+        self.health_probe_settings = kwargs.get('health_probe_settings', None)
+        self.traffic_restoration_time_to_healed_or_new_endpoints_in_minutes = kwargs.get('traffic_restoration_time_to_healed_or_new_endpoints_in_minutes', None)
+        self.response_based_afd_origin_error_detection_settings = kwargs.get('response_based_afd_origin_error_detection_settings', None)
+        self.session_affinity_state = kwargs.get('session_affinity_state', None)
+
+
+class AFDOriginGroupProperties(AFDStateProperties, AFDOriginGroupUpdatePropertiesParameters):
+    """The JSON object that contains the properties of the origin group.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param load_balancing_settings: Load balancing settings for a backend pool.
+    :type load_balancing_settings: ~azure.mgmt.cdn.models.LoadBalancingSettingsParameters
+    :param health_probe_settings: Health probe settings to the origin that is used to determine the
+     health of the origin.
+    :type health_probe_settings: ~azure.mgmt.cdn.models.HealthProbeParameters
+    :param traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: Time in minutes to shift
+     the traffic to the endpoint gradually when an unhealthy endpoint comes healthy or a new
+     endpoint is added. Default is 10 mins. This property is currently not supported.
+    :type traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: int
+    :param response_based_afd_origin_error_detection_settings: The JSON object that contains the
+     properties to determine origin health using real requests/responses. This property is currently
+     not supported.
+    :type response_based_afd_origin_error_detection_settings:
+     ~azure.mgmt.cdn.models.ResponseBasedOriginErrorDetectionParameters
+    :param session_affinity_state: Whether to allow session affinity on this host. Valid options
+     are 'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
+    :type session_affinity_state: str or ~azure.mgmt.cdn.models.EnabledState
+    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
+     "Updating", "Deleting", "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status:  Possible values include: "NotStarted", "InProgress", "Succeeded",
+     "Failed".
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
+    """
+
+    _validation = {
+        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'maximum': 50, 'minimum': 0},
+        'provisioning_state': {'readonly': True},
+        'deployment_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'load_balancing_settings': {'key': 'loadBalancingSettings', 'type': 'LoadBalancingSettingsParameters'},
+        'health_probe_settings': {'key': 'healthProbeSettings', 'type': 'HealthProbeParameters'},
+        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'key': 'trafficRestorationTimeToHealedOrNewEndpointsInMinutes', 'type': 'int'},
+        'response_based_afd_origin_error_detection_settings': {'key': 'responseBasedAfdOriginErrorDetectionSettings', 'type': 'ResponseBasedOriginErrorDetectionParameters'},
+        'session_affinity_state': {'key': 'sessionAffinityState', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AFDOriginGroupProperties, self).__init__(**kwargs)
+        self.load_balancing_settings = kwargs.get('load_balancing_settings', None)
+        self.health_probe_settings = kwargs.get('health_probe_settings', None)
+        self.traffic_restoration_time_to_healed_or_new_endpoints_in_minutes = kwargs.get('traffic_restoration_time_to_healed_or_new_endpoints_in_minutes', None)
+        self.response_based_afd_origin_error_detection_settings = kwargs.get('response_based_afd_origin_error_detection_settings', None)
+        self.session_affinity_state = kwargs.get('session_affinity_state', None)
+        self.provisioning_state = None
+        self.deployment_status = None
+
+
+class AFDOriginGroupUpdateParameters(msrest.serialization.Model):
+    """AFDOrigin group properties needed for origin group creation or update.
+
+    :param load_balancing_settings: Load balancing settings for a backend pool.
+    :type load_balancing_settings: ~azure.mgmt.cdn.models.LoadBalancingSettingsParameters
+    :param health_probe_settings: Health probe settings to the origin that is used to determine the
+     health of the origin.
+    :type health_probe_settings: ~azure.mgmt.cdn.models.HealthProbeParameters
+    :param traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: Time in minutes to shift
+     the traffic to the endpoint gradually when an unhealthy endpoint comes healthy or a new
+     endpoint is added. Default is 10 mins. This property is currently not supported.
+    :type traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: int
+    :param response_based_afd_origin_error_detection_settings: The JSON object that contains the
+     properties to determine origin health using real requests/responses. This property is currently
+     not supported.
+    :type response_based_afd_origin_error_detection_settings:
+     ~azure.mgmt.cdn.models.ResponseBasedOriginErrorDetectionParameters
+    :param session_affinity_state: Whether to allow session affinity on this host. Valid options
+     are 'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
+    :type session_affinity_state: str or ~azure.mgmt.cdn.models.EnabledState
+    """
+
+    _validation = {
+        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'maximum': 50, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'load_balancing_settings': {'key': 'properties.loadBalancingSettings', 'type': 'LoadBalancingSettingsParameters'},
+        'health_probe_settings': {'key': 'properties.healthProbeSettings', 'type': 'HealthProbeParameters'},
+        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'key': 'properties.trafficRestorationTimeToHealedOrNewEndpointsInMinutes', 'type': 'int'},
+        'response_based_afd_origin_error_detection_settings': {'key': 'properties.responseBasedAfdOriginErrorDetectionSettings', 'type': 'ResponseBasedOriginErrorDetectionParameters'},
+        'session_affinity_state': {'key': 'properties.sessionAffinityState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AFDOriginGroupUpdateParameters, self).__init__(**kwargs)
+        self.load_balancing_settings = kwargs.get('load_balancing_settings', None)
+        self.health_probe_settings = kwargs.get('health_probe_settings', None)
+        self.traffic_restoration_time_to_healed_or_new_endpoints_in_minutes = kwargs.get('traffic_restoration_time_to_healed_or_new_endpoints_in_minutes', None)
+        self.response_based_afd_origin_error_detection_settings = kwargs.get('response_based_afd_origin_error_detection_settings', None)
+        self.session_affinity_state = kwargs.get('session_affinity_state', None)
+
+
+class AFDOriginListResult(msrest.serialization.Model):
+    """Result of the request to list origins. It contains a list of origin objects and a URL link to get the next set of results.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of CDN origins within an endpoint.
+    :vartype value: list[~azure.mgmt.cdn.models.AFDOrigin]
+    :param next_link: URL to get the next set of origin objects if there are any.
+    :type next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[AFDOrigin]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AFDOriginListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = kwargs.get('next_link', None)
+
+
+class AFDOriginUpdatePropertiesParameters(msrest.serialization.Model):
+    """The JSON object that contains the properties of the origin.
+
+    :param azure_origin: Resource reference to the Azure origin resource.
+    :type azure_origin: ~azure.mgmt.cdn.models.ResourceReference
+    :param host_name: The address of the origin. Domain names, IPv4 addresses, and IPv6 addresses
+     are supported.This should be unique across all origins in an endpoint.
+    :type host_name: str
+    :param http_port: The value of the HTTP port. Must be between 1 and 65535.
+    :type http_port: int
+    :param https_port: The value of the HTTPS port. Must be between 1 and 65535.
+    :type https_port: int
+    :param origin_host_header: The host header value sent to the origin with each request. If you
+     leave this blank, the request hostname determines this value. Azure CDN origins, such as Web
+     Apps, Blob Storage, and Cloud Services require this host header value to match the origin
+     hostname by default. This overrides the host header defined at Endpoint.
+    :type origin_host_header: str
+    :param priority: Priority of origin in given origin group for load balancing. Higher priorities
+     will not be used for load balancing if any lower priority origin is healthy.Must be between 1
+     and 5.
+    :type priority: int
+    :param weight: Weight of the origin in given origin group for load balancing. Must be between 1
+     and 1000.
+    :type weight: int
+    :param shared_private_link_resource: The properties of the private link resource for private
+     origin.
+    :type shared_private_link_resource: object
+    :param enabled_state: Whether to enable health probes to be made against backends defined under
+     backendPools. Health probes can only be disabled if there is a single enabled backend in single
+     enabled backend pool. Possible values include: "Enabled", "Disabled".
+    :type enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
+    """
+
+    _validation = {
+        'http_port': {'maximum': 65535, 'minimum': 1},
+        'https_port': {'maximum': 65535, 'minimum': 1},
+        'priority': {'maximum': 5, 'minimum': 1},
+        'weight': {'maximum': 1000, 'minimum': 1},
+    }
+
+    _attribute_map = {
+        'azure_origin': {'key': 'azureOrigin', 'type': 'ResourceReference'},
+        'host_name': {'key': 'hostName', 'type': 'str'},
+        'http_port': {'key': 'httpPort', 'type': 'int'},
+        'https_port': {'key': 'httpsPort', 'type': 'int'},
+        'origin_host_header': {'key': 'originHostHeader', 'type': 'str'},
+        'priority': {'key': 'priority', 'type': 'int'},
+        'weight': {'key': 'weight', 'type': 'int'},
+        'shared_private_link_resource': {'key': 'sharedPrivateLinkResource', 'type': 'object'},
+        'enabled_state': {'key': 'enabledState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AFDOriginUpdatePropertiesParameters, self).__init__(**kwargs)
+        self.azure_origin = kwargs.get('azure_origin', None)
+        self.host_name = kwargs.get('host_name', None)
+        self.http_port = kwargs.get('http_port', None)
+        self.https_port = kwargs.get('https_port', None)
+        self.origin_host_header = kwargs.get('origin_host_header', None)
+        self.priority = kwargs.get('priority', None)
+        self.weight = kwargs.get('weight', None)
+        self.shared_private_link_resource = kwargs.get('shared_private_link_resource', None)
+        self.enabled_state = kwargs.get('enabled_state', None)
+
+
+class AFDOriginProperties(AFDStateProperties, AFDOriginUpdatePropertiesParameters):
+    """The JSON object that contains the properties of the origin.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param azure_origin: Resource reference to the Azure origin resource.
+    :type azure_origin: ~azure.mgmt.cdn.models.ResourceReference
+    :param host_name: The address of the origin. Domain names, IPv4 addresses, and IPv6 addresses
+     are supported.This should be unique across all origins in an endpoint.
+    :type host_name: str
+    :param http_port: The value of the HTTP port. Must be between 1 and 65535.
+    :type http_port: int
+    :param https_port: The value of the HTTPS port. Must be between 1 and 65535.
+    :type https_port: int
+    :param origin_host_header: The host header value sent to the origin with each request. If you
+     leave this blank, the request hostname determines this value. Azure CDN origins, such as Web
+     Apps, Blob Storage, and Cloud Services require this host header value to match the origin
+     hostname by default. This overrides the host header defined at Endpoint.
+    :type origin_host_header: str
+    :param priority: Priority of origin in given origin group for load balancing. Higher priorities
+     will not be used for load balancing if any lower priority origin is healthy.Must be between 1
+     and 5.
+    :type priority: int
+    :param weight: Weight of the origin in given origin group for load balancing. Must be between 1
+     and 1000.
+    :type weight: int
+    :param shared_private_link_resource: The properties of the private link resource for private
+     origin.
+    :type shared_private_link_resource: object
+    :param enabled_state: Whether to enable health probes to be made against backends defined under
+     backendPools. Health probes can only be disabled if there is a single enabled backend in single
+     enabled backend pool. Possible values include: "Enabled", "Disabled".
+    :type enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
+    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
+     "Updating", "Deleting", "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status:  Possible values include: "NotStarted", "InProgress", "Succeeded",
+     "Failed".
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
+    """
+
+    _validation = {
+        'http_port': {'maximum': 65535, 'minimum': 1},
+        'https_port': {'maximum': 65535, 'minimum': 1},
+        'priority': {'maximum': 5, 'minimum': 1},
+        'weight': {'maximum': 1000, 'minimum': 1},
+        'provisioning_state': {'readonly': True},
+        'deployment_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'azure_origin': {'key': 'azureOrigin', 'type': 'ResourceReference'},
+        'host_name': {'key': 'hostName', 'type': 'str'},
+        'http_port': {'key': 'httpPort', 'type': 'int'},
+        'https_port': {'key': 'httpsPort', 'type': 'int'},
+        'origin_host_header': {'key': 'originHostHeader', 'type': 'str'},
+        'priority': {'key': 'priority', 'type': 'int'},
+        'weight': {'key': 'weight', 'type': 'int'},
+        'shared_private_link_resource': {'key': 'sharedPrivateLinkResource', 'type': 'object'},
+        'enabled_state': {'key': 'enabledState', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AFDOriginProperties, self).__init__(**kwargs)
+        self.azure_origin = kwargs.get('azure_origin', None)
+        self.host_name = kwargs.get('host_name', None)
+        self.http_port = kwargs.get('http_port', None)
+        self.https_port = kwargs.get('https_port', None)
+        self.origin_host_header = kwargs.get('origin_host_header', None)
+        self.priority = kwargs.get('priority', None)
+        self.weight = kwargs.get('weight', None)
+        self.shared_private_link_resource = kwargs.get('shared_private_link_resource', None)
+        self.enabled_state = kwargs.get('enabled_state', None)
+        self.provisioning_state = None
+        self.deployment_status = None
+
+
+class AFDOriginUpdateParameters(msrest.serialization.Model):
+    """AFDOrigin properties needed for origin update.
+
+    :param azure_origin: Resource reference to the Azure origin resource.
+    :type azure_origin: ~azure.mgmt.cdn.models.ResourceReference
+    :param host_name: The address of the origin. Domain names, IPv4 addresses, and IPv6 addresses
+     are supported.This should be unique across all origins in an endpoint.
+    :type host_name: str
+    :param http_port: The value of the HTTP port. Must be between 1 and 65535.
+    :type http_port: int
+    :param https_port: The value of the HTTPS port. Must be between 1 and 65535.
+    :type https_port: int
+    :param origin_host_header: The host header value sent to the origin with each request. If you
+     leave this blank, the request hostname determines this value. Azure CDN origins, such as Web
+     Apps, Blob Storage, and Cloud Services require this host header value to match the origin
+     hostname by default. This overrides the host header defined at Endpoint.
+    :type origin_host_header: str
+    :param priority: Priority of origin in given origin group for load balancing. Higher priorities
+     will not be used for load balancing if any lower priority origin is healthy.Must be between 1
+     and 5.
+    :type priority: int
+    :param weight: Weight of the origin in given origin group for load balancing. Must be between 1
+     and 1000.
+    :type weight: int
+    :param shared_private_link_resource: The properties of the private link resource for private
+     origin.
+    :type shared_private_link_resource: object
+    :param enabled_state: Whether to enable health probes to be made against backends defined under
+     backendPools. Health probes can only be disabled if there is a single enabled backend in single
+     enabled backend pool. Possible values include: "Enabled", "Disabled".
+    :type enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
+    """
+
+    _validation = {
+        'http_port': {'maximum': 65535, 'minimum': 1},
+        'https_port': {'maximum': 65535, 'minimum': 1},
+        'priority': {'maximum': 5, 'minimum': 1},
+        'weight': {'maximum': 1000, 'minimum': 1},
+    }
+
+    _attribute_map = {
+        'azure_origin': {'key': 'properties.azureOrigin', 'type': 'ResourceReference'},
+        'host_name': {'key': 'properties.hostName', 'type': 'str'},
+        'http_port': {'key': 'properties.httpPort', 'type': 'int'},
+        'https_port': {'key': 'properties.httpsPort', 'type': 'int'},
+        'origin_host_header': {'key': 'properties.originHostHeader', 'type': 'str'},
+        'priority': {'key': 'properties.priority', 'type': 'int'},
+        'weight': {'key': 'properties.weight', 'type': 'int'},
+        'shared_private_link_resource': {'key': 'properties.sharedPrivateLinkResource', 'type': 'object'},
+        'enabled_state': {'key': 'properties.enabledState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AFDOriginUpdateParameters, self).__init__(**kwargs)
+        self.azure_origin = kwargs.get('azure_origin', None)
+        self.host_name = kwargs.get('host_name', None)
+        self.http_port = kwargs.get('http_port', None)
+        self.https_port = kwargs.get('https_port', None)
+        self.origin_host_header = kwargs.get('origin_host_header', None)
+        self.priority = kwargs.get('priority', None)
+        self.weight = kwargs.get('weight', None)
+        self.shared_private_link_resource = kwargs.get('shared_private_link_resource', None)
+        self.enabled_state = kwargs.get('enabled_state', None)
+
+
+class AfdPurgeParameters(msrest.serialization.Model):
+    """Parameters required for content purge.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param content_paths: Required. The path to the content to be purged. Can describe a file path
+     or a wild card directory.
+    :type content_paths: list[str]
+    :param domains: List of domains.
+    :type domains: list[str]
+    """
+
+    _validation = {
+        'content_paths': {'required': True},
+    }
+
+    _attribute_map = {
+        'content_paths': {'key': 'contentPaths', 'type': '[str]'},
+        'domains': {'key': 'domains', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AfdPurgeParameters, self).__init__(**kwargs)
+        self.content_paths = kwargs['content_paths']
+        self.domains = kwargs.get('domains', None)
+
+
 class CacheExpirationActionParameters(msrest.serialization.Model):
     """Defines the parameters for the cache expiration action.
 
@@ -234,84 +1506,6 @@ class CdnManagedHttpsParameters(CustomDomainHttpsParameters):
         self.certificate_source_parameters = kwargs['certificate_source_parameters']
 
 
-class Resource(msrest.serialization.Model):
-    """The core properties of ARM resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-
-
-class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TrackedResource, self).__init__(**kwargs)
-        self.location = kwargs['location']
-        self.tags = kwargs.get('tags', None)
-
-
 class CdnWebApplicationFirewallPolicy(TrackedResource):
     """Defines web application firewall policy for Azure CDN.
 
@@ -329,6 +1523,8 @@ class CdnWebApplicationFirewallPolicy(TrackedResource):
     :type location: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
     :param etag: Gets a unique read-only string that changes whenever the resource is updated.
     :type etag: str
     :param sku: Required. The pricing tier (defines a CDN provider, feature list and rate) of the
@@ -358,6 +1554,7 @@ class CdnWebApplicationFirewallPolicy(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'system_data': {'readonly': True},
         'sku': {'required': True},
         'endpoint_links': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -370,6 +1567,7 @@ class CdnWebApplicationFirewallPolicy(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'etag': {'key': 'etag', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'policy_settings': {'key': 'properties.policySettings', 'type': 'PolicySettings'},
@@ -444,6 +1642,33 @@ class CdnWebApplicationFirewallPolicyPatchParameters(msrest.serialization.Model)
     ):
         super(CdnWebApplicationFirewallPolicyPatchParameters, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
+
+
+class Certificate(msrest.serialization.Model):
+    """Certificate used for https.
+
+    :param subject: Subject name in the certificate.
+    :type subject: str
+    :param expiration_date: Certificate expiration date.
+    :type expiration_date: str
+    :param thumbprint: Certificate thumbprint.
+    :type thumbprint: str
+    """
+
+    _attribute_map = {
+        'subject': {'key': 'subject', 'type': 'str'},
+        'expiration_date': {'key': 'expirationDate', 'type': 'str'},
+        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Certificate, self).__init__(**kwargs)
+        self.subject = kwargs.get('subject', None)
+        self.expiration_date = kwargs.get('expiration_date', None)
+        self.thumbprint = kwargs.get('thumbprint', None)
 
 
 class CheckNameAvailabilityInput(msrest.serialization.Model):
@@ -538,6 +1763,171 @@ class CidrIpAddress(msrest.serialization.Model):
         self.prefix_length = kwargs.get('prefix_length', None)
 
 
+class Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems(msrest.serialization.Model):
+    """Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems.
+
+    :param date_time:
+    :type date_time: ~datetime.datetime
+    :param value:
+    :type value: float
+    """
+
+    _attribute_map = {
+        'date_time': {'key': 'dateTime', 'type': 'iso-8601'},
+        'value': {'key': 'value', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems, self).__init__(**kwargs)
+        self.date_time = kwargs.get('date_time', None)
+        self.value = kwargs.get('value', None)
+
+
+class Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesDataItems(msrest.serialization.Model):
+    """Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesDataItems.
+
+    :param date_time:
+    :type date_time: ~datetime.datetime
+    :param value:
+    :type value: float
+    """
+
+    _attribute_map = {
+        'date_time': {'key': 'dateTime', 'type': 'iso-8601'},
+        'value': {'key': 'value', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesDataItems, self).__init__(**kwargs)
+        self.date_time = kwargs.get('date_time', None)
+        self.value = kwargs.get('value', None)
+
+
+class ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems(msrest.serialization.Model):
+    """ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems.
+
+    :param metric:
+    :type metric: str
+    :param value:
+    :type value: long
+    :param percentage:
+    :type percentage: float
+    """
+
+    _attribute_map = {
+        'metric': {'key': 'metric', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'long'},
+        'percentage': {'key': 'percentage', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems, self).__init__(**kwargs)
+        self.metric = kwargs.get('metric', None)
+        self.value = kwargs.get('value', None)
+        self.percentage = kwargs.get('percentage', None)
+
+
+class CompressionSettings(msrest.serialization.Model):
+    """settings for compression.
+
+    :param content_types_to_compress: List of content types on which compression applies. The value
+     should be a valid MIME type.
+    :type content_types_to_compress: list[str]
+    :param is_compression_enabled: Indicates whether content compression is enabled on
+     AzureFrontDoor. Default value is false. If compression is enabled, content will be served as
+     compressed if user requests for a compressed version. Content won't be compressed on
+     AzureFrontDoor when requested content is smaller than 1 byte or larger than 1 MB.
+    :type is_compression_enabled: bool
+    """
+
+    _attribute_map = {
+        'content_types_to_compress': {'key': 'contentTypesToCompress', 'type': '[str]'},
+        'is_compression_enabled': {'key': 'isCompressionEnabled', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CompressionSettings, self).__init__(**kwargs)
+        self.content_types_to_compress = kwargs.get('content_types_to_compress', None)
+        self.is_compression_enabled = kwargs.get('is_compression_enabled', None)
+
+
+class ContinentsResponse(msrest.serialization.Model):
+    """Continents Response.
+
+    :param continents:
+    :type continents: list[~azure.mgmt.cdn.models.ContinentsResponseContinentsItem]
+    :param country_or_regions:
+    :type country_or_regions: list[~azure.mgmt.cdn.models.ContinentsResponseCountryOrRegionsItem]
+    """
+
+    _attribute_map = {
+        'continents': {'key': 'continents', 'type': '[ContinentsResponseContinentsItem]'},
+        'country_or_regions': {'key': 'countryOrRegions', 'type': '[ContinentsResponseCountryOrRegionsItem]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ContinentsResponse, self).__init__(**kwargs)
+        self.continents = kwargs.get('continents', None)
+        self.country_or_regions = kwargs.get('country_or_regions', None)
+
+
+class ContinentsResponseContinentsItem(msrest.serialization.Model):
+    """ContinentsResponseContinentsItem.
+
+    :param id:
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ContinentsResponseContinentsItem, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+
+
+class ContinentsResponseCountryOrRegionsItem(msrest.serialization.Model):
+    """ContinentsResponseCountryOrRegionsItem.
+
+    :param id:
+    :type id: str
+    :param continent_id:
+    :type continent_id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'continent_id': {'key': 'continentId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ContinentsResponseCountryOrRegionsItem, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.continent_id = kwargs.get('continent_id', None)
+
+
 class CookiesMatchConditionParameters(msrest.serialization.Model):
     """Defines the parameters for Cookies match conditions.
 
@@ -552,7 +1942,7 @@ class CookiesMatchConditionParameters(msrest.serialization.Model):
     :type selector: str
     :param operator: Required. Describes operator to be matched. Possible values include: "Any",
      "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-     "GreaterThanOrEqual".
+     "GreaterThanOrEqual", "RegEx".
     :type operator: str or ~azure.mgmt.cdn.models.CookiesOperator
     :param negate_condition: Describes if this is negate condition or not.
     :type negate_condition: bool
@@ -590,7 +1980,7 @@ class CookiesMatchConditionParameters(msrest.serialization.Model):
         self.transforms = kwargs.get('transforms', None)
 
 
-class CustomDomain(Resource):
+class CustomDomain(ProxyResource):
     """Friendly domain name mapping to the endpoint hostname that the customer provides for branding purposes, e.g. www.contoso.com.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -601,6 +1991,8 @@ class CustomDomain(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
     :param host_name: The host name of the custom domain. Must be a domain name.
     :type host_name: str
     :ivar resource_state: Resource status of the custom domain. Possible values include:
@@ -630,6 +2022,7 @@ class CustomDomain(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'resource_state': {'readonly': True},
         'custom_https_provisioning_state': {'readonly': True},
         'custom_https_provisioning_substate': {'readonly': True},
@@ -640,6 +2033,7 @@ class CustomDomain(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'custom_https_provisioning_state': {'key': 'properties.customHttpsProvisioningState', 'type': 'str'},
@@ -707,6 +2101,154 @@ class CustomDomainParameters(msrest.serialization.Model):
     ):
         super(CustomDomainParameters, self).__init__(**kwargs)
         self.host_name = kwargs.get('host_name', None)
+
+
+class CustomerCertificate(Certificate):
+    """Customer Certificate used for https.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param subject: Subject name in the certificate.
+    :type subject: str
+    :param expiration_date: Certificate expiration date.
+    :type expiration_date: str
+    :param thumbprint: Certificate thumbprint.
+    :type thumbprint: str
+    :param version: Certificate version.
+    :type version: str
+    :param certificate_authority: Certificate issuing authority.
+    :type certificate_authority: str
+    :param certificate_url: Required. Complete Url to the certificate.
+    :type certificate_url: str
+    :param use_latest_version: Whether to use the latest version for the certificate.
+    :type use_latest_version: bool
+    :param subject_alternative_names: The list of SANs.
+    :type subject_alternative_names: list[str]
+    """
+
+    _validation = {
+        'certificate_url': {'required': True},
+    }
+
+    _attribute_map = {
+        'subject': {'key': 'subject', 'type': 'str'},
+        'expiration_date': {'key': 'expirationDate', 'type': 'str'},
+        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+        'certificate_authority': {'key': 'certificateAuthority', 'type': 'str'},
+        'certificate_url': {'key': 'certificateUrl', 'type': 'str'},
+        'use_latest_version': {'key': 'useLatestVersion', 'type': 'bool'},
+        'subject_alternative_names': {'key': 'subjectAlternativeNames', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CustomerCertificate, self).__init__(**kwargs)
+        self.version = kwargs.get('version', None)
+        self.certificate_authority = kwargs.get('certificate_authority', None)
+        self.certificate_url = kwargs['certificate_url']
+        self.use_latest_version = kwargs.get('use_latest_version', None)
+        self.subject_alternative_names = kwargs.get('subject_alternative_names', None)
+
+
+class SecretParameters(msrest.serialization.Model):
+    """The json object containing secret parameters.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: CustomerCertificateParameters, ManagedCertificateParameters, UrlSigningKeyParameters.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. The type of the Secret to create.Constant filled by server.  Possible
+     values include: "UrlSigningKey", "CustomerCertificate", "ManagedCertificate".
+    :type type: str or ~azure.mgmt.cdn.models.SecretType
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'CustomerCertificate': 'CustomerCertificateParameters', 'ManagedCertificate': 'ManagedCertificateParameters', 'UrlSigningKey': 'UrlSigningKeyParameters'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SecretParameters, self).__init__(**kwargs)
+        self.type = None  # type: Optional[str]
+
+
+class CustomerCertificateParameters(SecretParameters, Certificate):
+    """Customer Certificate used for https.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param subject: Subject name in the certificate.
+    :type subject: str
+    :param expiration_date: Certificate expiration date.
+    :type expiration_date: str
+    :param thumbprint: Certificate thumbprint.
+    :type thumbprint: str
+    :param type: Required. The type of the Secret to create.Constant filled by server.  Possible
+     values include: "UrlSigningKey", "CustomerCertificate", "ManagedCertificate".
+    :type type: str or ~azure.mgmt.cdn.models.SecretType
+    :param secret_source: Required. Resource reference to the KV secret.
+    :type secret_source: ~azure.mgmt.cdn.models.ResourceReference
+    :param secret_version: Version of the secret to be used.
+    :type secret_version: str
+    :param certificate_authority: Certificate issuing authority.
+    :type certificate_authority: str
+    :param use_latest_version: Whether to use the latest version for the certificate.
+    :type use_latest_version: bool
+    :param subject_alternative_names: The list of SANs.
+    :type subject_alternative_names: list[str]
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'secret_source': {'required': True},
+    }
+
+    _attribute_map = {
+        'subject': {'key': 'subject', 'type': 'str'},
+        'expiration_date': {'key': 'expirationDate', 'type': 'str'},
+        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'secret_source': {'key': 'secretSource', 'type': 'ResourceReference'},
+        'secret_version': {'key': 'secretVersion', 'type': 'str'},
+        'certificate_authority': {'key': 'certificateAuthority', 'type': 'str'},
+        'use_latest_version': {'key': 'useLatestVersion', 'type': 'bool'},
+        'subject_alternative_names': {'key': 'subjectAlternativeNames', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CustomerCertificateParameters, self).__init__(**kwargs)
+        self.subject = kwargs.get('subject', None)
+        self.expiration_date = kwargs.get('expiration_date', None)
+        self.thumbprint = kwargs.get('thumbprint', None)
+        self.type = 'CustomerCertificate'  # type: str
+        self.secret_source = kwargs['secret_source']
+        self.secret_version = kwargs.get('secret_version', None)
+        self.certificate_authority = kwargs.get('certificate_authority', None)
+        self.use_latest_version = kwargs.get('use_latest_version', None)
+        self.subject_alternative_names = kwargs.get('subject_alternative_names', None)
+        self.type = 'CustomerCertificate'  # type: str
+        self.secret_source = kwargs['secret_source']
+        self.secret_version = kwargs.get('secret_version', None)
+        self.certificate_authority = kwargs.get('certificate_authority', None)
+        self.use_latest_version = kwargs.get('use_latest_version', None)
+        self.subject_alternative_names = kwargs.get('subject_alternative_names', None)
 
 
 class CustomRule(msrest.serialization.Model):
@@ -954,14 +2496,14 @@ class DeliveryRuleAction(msrest.serialization.Model):
     """An action for the delivery rule.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DeliveryRuleCacheExpirationAction, DeliveryRuleCacheKeyQueryStringAction, DeliveryRuleRequestHeaderAction, DeliveryRuleResponseHeaderAction, UrlRedirectAction, UrlRewriteAction, UrlSigningAction.
+    sub-classes are: DeliveryRuleCacheExpirationAction, DeliveryRuleCacheKeyQueryStringAction, DeliveryRuleRequestHeaderAction, DeliveryRuleResponseHeaderAction, OriginGroupOverrideAction, UrlRedirectAction, UrlRewriteAction, UrlSigningAction.
 
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required. The name of the action for the delivery rule.Constant filled by server.
      Possible values include: "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader",
-     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning".
-    :type name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionName
+     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride".
+    :type name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
     """
 
     _validation = {
@@ -973,7 +2515,7 @@ class DeliveryRuleAction(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'name': {'CacheExpiration': 'DeliveryRuleCacheExpirationAction', 'CacheKeyQueryString': 'DeliveryRuleCacheKeyQueryStringAction', 'ModifyRequestHeader': 'DeliveryRuleRequestHeaderAction', 'ModifyResponseHeader': 'DeliveryRuleResponseHeaderAction', 'UrlRedirect': 'UrlRedirectAction', 'UrlRewrite': 'UrlRewriteAction', 'UrlSigning': 'UrlSigningAction'}
+        'name': {'CacheExpiration': 'DeliveryRuleCacheExpirationAction', 'CacheKeyQueryString': 'DeliveryRuleCacheKeyQueryStringAction', 'ModifyRequestHeader': 'DeliveryRuleRequestHeaderAction', 'ModifyResponseHeader': 'DeliveryRuleResponseHeaderAction', 'OriginGroupOverride': 'OriginGroupOverrideAction', 'UrlRedirect': 'UrlRedirectAction', 'UrlRewrite': 'UrlRewriteAction', 'UrlSigning': 'UrlSigningAction'}
     }
 
     def __init__(
@@ -991,8 +2533,8 @@ class DeliveryRuleCacheExpirationAction(DeliveryRuleAction):
 
     :param name: Required. The name of the action for the delivery rule.Constant filled by server.
      Possible values include: "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader",
-     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning".
-    :type name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionName
+     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride".
+    :type name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
     :param parameters: Required. Defines the parameters for the action.
     :type parameters: ~azure.mgmt.cdn.models.CacheExpirationActionParameters
     """
@@ -1023,8 +2565,8 @@ class DeliveryRuleCacheKeyQueryStringAction(DeliveryRuleAction):
 
     :param name: Required. The name of the action for the delivery rule.Constant filled by server.
      Possible values include: "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader",
-     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning".
-    :type name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionName
+     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride".
+    :type name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
     :param parameters: Required. Defines the parameters for the action.
     :type parameters: ~azure.mgmt.cdn.models.CacheKeyQueryStringActionParameters
     """
@@ -1321,8 +2863,8 @@ class DeliveryRuleRequestHeaderAction(DeliveryRuleAction):
 
     :param name: Required. The name of the action for the delivery rule.Constant filled by server.
      Possible values include: "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader",
-     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning".
-    :type name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionName
+     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride".
+    :type name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
     :param parameters: Required. Defines the parameters for the action.
     :type parameters: ~azure.mgmt.cdn.models.HeaderActionParameters
     """
@@ -1485,8 +3027,8 @@ class DeliveryRuleResponseHeaderAction(DeliveryRuleAction):
 
     :param name: Required. The name of the action for the delivery rule.Constant filled by server.
      Possible values include: "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader",
-     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning".
-    :type name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionName
+     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride".
+    :type name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
     :param parameters: Required. Defines the parameters for the action.
     :type parameters: ~azure.mgmt.cdn.models.HeaderActionParameters
     """
@@ -1609,7 +3151,37 @@ class DeliveryRuleUrlPathCondition(DeliveryRuleCondition):
         self.parameters = kwargs['parameters']
 
 
-class EdgeNode(Resource):
+class DomainValidationProperties(msrest.serialization.Model):
+    """The JSON object that contains the properties to validate a domain.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar validation_token: Challenge used for DNS TXT record or file based validation.
+    :vartype validation_token: str
+    :ivar expiration_date: The date time that the token expires.
+    :vartype expiration_date: str
+    """
+
+    _validation = {
+        'validation_token': {'readonly': True},
+        'expiration_date': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'validation_token': {'key': 'validationToken', 'type': 'str'},
+        'expiration_date': {'key': 'expirationDate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DomainValidationProperties, self).__init__(**kwargs)
+        self.validation_token = None
+        self.expiration_date = None
+
+
+class EdgeNode(ProxyResource):
     """Edgenode is a global Point of Presence (POP) location used to deliver CDN content to end users.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1620,6 +3192,8 @@ class EdgeNode(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
     :param ip_address_groups: List of ip address groups.
     :type ip_address_groups: list[~azure.mgmt.cdn.models.IpAddressGroup]
     """
@@ -1628,12 +3202,14 @@ class EdgeNode(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'ip_address_groups': {'key': 'properties.ipAddressGroups', 'type': '[IpAddressGroup]'},
     }
 
@@ -1691,6 +3267,8 @@ class Endpoint(TrackedResource):
     :type location: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
     :param origin_path: A directory path on the origin that CDN can use to retrieve content from,
      e.g. contoso.cloudapp.net/originpath.
     :type origin_path: str
@@ -1762,6 +3340,7 @@ class Endpoint(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'system_data': {'readonly': True},
         'host_name': {'readonly': True},
         'resource_state': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -1773,6 +3352,7 @@ class Endpoint(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'origin_path': {'key': 'properties.originPath', 'type': 'str'},
         'content_types_to_compress': {'key': 'properties.contentTypesToCompress', 'type': '[str]'},
         'origin_host_header': {'key': 'properties.originHostHeader', 'type': 'str'},
@@ -2622,6 +4202,35 @@ class KeyVaultSigningKeyParameters(msrest.serialization.Model):
         self.secret_version = kwargs['secret_version']
 
 
+class LoadBalancingSettingsParameters(msrest.serialization.Model):
+    """Round-Robin load balancing settings for a backend pool.
+
+    :param sample_size: The number of samples to consider for load balancing decisions.
+    :type sample_size: int
+    :param successful_samples_required: The number of samples within the sample period that must
+     succeed.
+    :type successful_samples_required: int
+    :param additional_latency_in_milliseconds: The additional latency in milliseconds for probes to
+     fall into the lowest latency bucket.
+    :type additional_latency_in_milliseconds: int
+    """
+
+    _attribute_map = {
+        'sample_size': {'key': 'sampleSize', 'type': 'int'},
+        'successful_samples_required': {'key': 'successfulSamplesRequired', 'type': 'int'},
+        'additional_latency_in_milliseconds': {'key': 'additionalLatencyInMilliseconds', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LoadBalancingSettingsParameters, self).__init__(**kwargs)
+        self.sample_size = kwargs.get('sample_size', None)
+        self.successful_samples_required = kwargs.get('successful_samples_required', None)
+        self.additional_latency_in_milliseconds = kwargs.get('additional_latency_in_milliseconds', None)
+
+
 class LoadParameters(msrest.serialization.Model):
     """Parameters required for content load.
 
@@ -2646,6 +4255,69 @@ class LoadParameters(msrest.serialization.Model):
     ):
         super(LoadParameters, self).__init__(**kwargs)
         self.content_paths = kwargs['content_paths']
+
+
+class ManagedCertificate(Certificate):
+    """Managed Certificate used for https.
+
+    :param subject: Subject name in the certificate.
+    :type subject: str
+    :param expiration_date: Certificate expiration date.
+    :type expiration_date: str
+    :param thumbprint: Certificate thumbprint.
+    :type thumbprint: str
+    """
+
+    _attribute_map = {
+        'subject': {'key': 'subject', 'type': 'str'},
+        'expiration_date': {'key': 'expirationDate', 'type': 'str'},
+        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ManagedCertificate, self).__init__(**kwargs)
+
+
+class ManagedCertificateParameters(SecretParameters, Certificate):
+    """Managed Certificate used for https.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param subject: Subject name in the certificate.
+    :type subject: str
+    :param expiration_date: Certificate expiration date.
+    :type expiration_date: str
+    :param thumbprint: Certificate thumbprint.
+    :type thumbprint: str
+    :param type: Required. The type of the Secret to create.Constant filled by server.  Possible
+     values include: "UrlSigningKey", "CustomerCertificate", "ManagedCertificate".
+    :type type: str or ~azure.mgmt.cdn.models.SecretType
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'subject': {'key': 'subject', 'type': 'str'},
+        'expiration_date': {'key': 'expirationDate', 'type': 'str'},
+        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ManagedCertificateParameters, self).__init__(**kwargs)
+        self.subject = kwargs.get('subject', None)
+        self.expiration_date = kwargs.get('expiration_date', None)
+        self.thumbprint = kwargs.get('thumbprint', None)
+        self.type = 'ManagedCertificate'  # type: str
+        self.type = 'ManagedCertificate'  # type: str
 
 
 class ManagedRuleDefinition(msrest.serialization.Model):
@@ -2977,6 +4649,92 @@ class MatchCondition(msrest.serialization.Model):
         self.transforms = kwargs.get('transforms', None)
 
 
+class MetricsResponse(msrest.serialization.Model):
+    """Metrics Response.
+
+    :param date_time_begin:
+    :type date_time_begin: ~datetime.datetime
+    :param date_time_end:
+    :type date_time_end: ~datetime.datetime
+    :param granularity:  Possible values include: "PT5M", "PT1H", "P1D".
+    :type granularity: str or ~azure.mgmt.cdn.models.MetricsResponseGranularity
+    :param series:
+    :type series: list[~azure.mgmt.cdn.models.MetricsResponseSeriesItem]
+    """
+
+    _attribute_map = {
+        'date_time_begin': {'key': 'dateTimeBegin', 'type': 'iso-8601'},
+        'date_time_end': {'key': 'dateTimeEnd', 'type': 'iso-8601'},
+        'granularity': {'key': 'granularity', 'type': 'str'},
+        'series': {'key': 'series', 'type': '[MetricsResponseSeriesItem]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MetricsResponse, self).__init__(**kwargs)
+        self.date_time_begin = kwargs.get('date_time_begin', None)
+        self.date_time_end = kwargs.get('date_time_end', None)
+        self.granularity = kwargs.get('granularity', None)
+        self.series = kwargs.get('series', None)
+
+
+class MetricsResponseSeriesItem(msrest.serialization.Model):
+    """MetricsResponseSeriesItem.
+
+    :param metric:
+    :type metric: str
+    :param unit:  Possible values include: "count", "bytes", "bitsPerSecond".
+    :type unit: str or ~azure.mgmt.cdn.models.MetricsResponseSeriesItemUnit
+    :param groups:
+    :type groups: list[~azure.mgmt.cdn.models.MetricsResponseSeriesPropertiesItemsItem]
+    :param data:
+    :type data:
+     list[~azure.mgmt.cdn.models.Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesDataItems]
+    """
+
+    _attribute_map = {
+        'metric': {'key': 'metric', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'groups': {'key': 'groups', 'type': '[MetricsResponseSeriesPropertiesItemsItem]'},
+        'data': {'key': 'data', 'type': '[Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesDataItems]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MetricsResponseSeriesItem, self).__init__(**kwargs)
+        self.metric = kwargs.get('metric', None)
+        self.unit = kwargs.get('unit', None)
+        self.groups = kwargs.get('groups', None)
+        self.data = kwargs.get('data', None)
+
+
+class MetricsResponseSeriesPropertiesItemsItem(msrest.serialization.Model):
+    """MetricsResponseSeriesPropertiesItemsItem.
+
+    :param name:
+    :type name: str
+    :param value:
+    :type value: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MetricsResponseSeriesPropertiesItemsItem, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)
+
+
 class Operation(msrest.serialization.Model):
     """CDN REST API operation.
 
@@ -3070,7 +4828,7 @@ class OperationsListResult(msrest.serialization.Model):
         self.next_link = kwargs.get('next_link', None)
 
 
-class Origin(Resource):
+class Origin(ProxyResource):
     """CDN origin is the source of the content being delivered via CDN. When the edge nodes represented by an endpoint do not have the requested content cached, they attempt to fetch it from one or more of the configured origins.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3081,6 +4839,8 @@ class Origin(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
     :param host_name: The address of the origin. Domain names, IPv4 addresses, and IPv6 addresses
      are supported.This should be unique across all origins in an endpoint.
     :type host_name: str
@@ -3128,6 +4888,7 @@ class Origin(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'http_port': {'maximum': 65535, 'minimum': 1},
         'https_port': {'maximum': 65535, 'minimum': 1},
         'priority': {'maximum': 5, 'minimum': 1},
@@ -3141,6 +4902,7 @@ class Origin(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'http_port': {'key': 'properties.httpPort', 'type': 'int'},
         'https_port': {'key': 'properties.httpsPort', 'type': 'int'},
@@ -3178,7 +4940,7 @@ class Origin(Resource):
         self.private_endpoint_status = None
 
 
-class OriginGroup(Resource):
+class OriginGroup(ProxyResource):
     """Origin group comprising of origins is used for load balancing to origins when the content cannot be served from CDN.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3189,6 +4951,8 @@ class OriginGroup(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
     :param health_probe_settings: Health probe settings to the origin that is used to determine the
      health of the origin.
     :type health_probe_settings: ~azure.mgmt.cdn.models.HealthProbeParameters
@@ -3214,6 +4978,7 @@ class OriginGroup(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'maximum': 50, 'minimum': 0},
         'resource_state': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -3223,6 +4988,7 @@ class OriginGroup(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'health_probe_settings': {'key': 'properties.healthProbeSettings', 'type': 'HealthProbeParameters'},
         'origins': {'key': 'properties.origins', 'type': '[ResourceReference]'},
         'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'key': 'properties.trafficRestorationTimeToHealedOrNewEndpointsInMinutes', 'type': 'int'},
@@ -3271,6 +5037,73 @@ class OriginGroupListResult(msrest.serialization.Model):
         super(OriginGroupListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = kwargs.get('next_link', None)
+
+
+class OriginGroupOverrideAction(DeliveryRuleAction):
+    """Defines the origin group override action for the delivery rule.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the action for the delivery rule.Constant filled by server.
+     Possible values include: "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader",
+     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride".
+    :type name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
+    :param parameters: Required. Defines the parameters for the action.
+    :type parameters: ~azure.mgmt.cdn.models.OriginGroupOverrideActionParameters
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'parameters': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': 'OriginGroupOverrideActionParameters'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OriginGroupOverrideAction, self).__init__(**kwargs)
+        self.name = 'OriginGroupOverride'  # type: str
+        self.parameters = kwargs['parameters']
+
+
+class OriginGroupOverrideActionParameters(msrest.serialization.Model):
+    """Defines the parameters for the origin group override action.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar odata_type: Required.  Default value:
+     "#Microsoft.Azure.Cdn.Models.DeliveryRuleOriginGroupOverrideActionParameters".
+    :vartype odata_type: str
+    :param origin_group: Required. defines the OriginGroup that would override the
+     DefaultOriginGroup.
+    :type origin_group: ~azure.mgmt.cdn.models.ResourceReference
+    """
+
+    _validation = {
+        'odata_type': {'required': True, 'constant': True},
+        'origin_group': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'origin_group': {'key': 'originGroup', 'type': 'ResourceReference'},
+    }
+
+    odata_type = "#Microsoft.Azure.Cdn.Models.DeliveryRuleOriginGroupOverrideActionParameters"
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OriginGroupOverrideActionParameters, self).__init__(**kwargs)
+        self.origin_group = kwargs['origin_group']
 
 
 class OriginGroupUpdatePropertiesParameters(msrest.serialization.Model):
@@ -3688,7 +5521,7 @@ class PolicySettings(msrest.serialization.Model):
     :param default_custom_block_response_status_code: If the action type is block, this field
      defines the default customer overridable http response status code. Possible values include:
      200, 403, 405, 406, 429.
-    :type default_custom_block_response_status_code: str or ~azure.mgmt.cdn.models.Enum16
+    :type default_custom_block_response_status_code: str or ~azure.mgmt.cdn.models.Enum47
     :param default_custom_block_response_body: If the action type is block, customer can override
      the response body. The body must be specified in base64 encoding.
     :type default_custom_block_response_body: str
@@ -3732,7 +5565,7 @@ class PostArgsMatchConditionParameters(msrest.serialization.Model):
     :type selector: str
     :param operator: Required. Describes operator to be matched. Possible values include: "Any",
      "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-     "GreaterThanOrEqual".
+     "GreaterThanOrEqual", "RegEx".
     :type operator: str or ~azure.mgmt.cdn.models.PostArgsOperator
     :param negate_condition: Describes if this is negate condition or not.
     :type negate_condition: bool
@@ -3787,6 +5620,8 @@ class Profile(TrackedResource):
     :type location: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
     :param sku: Required. The pricing tier (defines a CDN provider, feature list and rate) of the
      CDN profile.
     :type sku: ~azure.mgmt.cdn.models.Sku
@@ -3795,6 +5630,8 @@ class Profile(TrackedResource):
     :vartype resource_state: str or ~azure.mgmt.cdn.models.ProfileResourceState
     :ivar provisioning_state: Provisioning status of the profile.
     :vartype provisioning_state: str
+    :ivar frontdoor_id: The Id of the frontdoor.
+    :vartype frontdoor_id: str
     """
 
     _validation = {
@@ -3802,9 +5639,11 @@ class Profile(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'system_data': {'readonly': True},
         'sku': {'required': True},
         'resource_state': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'frontdoor_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -3813,9 +5652,11 @@ class Profile(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'frontdoor_id': {'key': 'properties.frontdoorId', 'type': 'str'},
     }
 
     def __init__(
@@ -3826,6 +5667,7 @@ class Profile(TrackedResource):
         self.sku = kwargs['sku']
         self.resource_state = None
         self.provisioning_state = None
+        self.frontdoor_id = None
 
 
 class ProfileListResult(msrest.serialization.Model):
@@ -3876,38 +5718,6 @@ class ProfileUpdateParameters(msrest.serialization.Model):
         self.tags = kwargs.get('tags', None)
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
-
-
 class PurgeParameters(msrest.serialization.Model):
     """Parameters required for content purge.
 
@@ -3946,7 +5756,7 @@ class QueryStringMatchConditionParameters(msrest.serialization.Model):
     :vartype odata_type: str
     :param operator: Required. Describes operator to be matched. Possible values include: "Any",
      "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-     "GreaterThanOrEqual".
+     "GreaterThanOrEqual", "RegEx".
     :type operator: str or ~azure.mgmt.cdn.models.QueryStringOperator
     :param negate_condition: Describes if this is negate condition or not.
     :type negate_condition: bool
@@ -3980,6 +5790,106 @@ class QueryStringMatchConditionParameters(msrest.serialization.Model):
         self.negate_condition = kwargs.get('negate_condition', None)
         self.match_values = kwargs.get('match_values', None)
         self.transforms = kwargs.get('transforms', None)
+
+
+class RankingsResponse(msrest.serialization.Model):
+    """Rankings Response.
+
+    :param date_time_begin:
+    :type date_time_begin: ~datetime.datetime
+    :param date_time_end:
+    :type date_time_end: ~datetime.datetime
+    :param tables:
+    :type tables: list[~azure.mgmt.cdn.models.RankingsResponseTablesItem]
+    """
+
+    _attribute_map = {
+        'date_time_begin': {'key': 'dateTimeBegin', 'type': 'iso-8601'},
+        'date_time_end': {'key': 'dateTimeEnd', 'type': 'iso-8601'},
+        'tables': {'key': 'tables', 'type': '[RankingsResponseTablesItem]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RankingsResponse, self).__init__(**kwargs)
+        self.date_time_begin = kwargs.get('date_time_begin', None)
+        self.date_time_end = kwargs.get('date_time_end', None)
+        self.tables = kwargs.get('tables', None)
+
+
+class RankingsResponseTablesItem(msrest.serialization.Model):
+    """RankingsResponseTablesItem.
+
+    :param ranking:
+    :type ranking: str
+    :param data:
+    :type data: list[~azure.mgmt.cdn.models.RankingsResponseTablesPropertiesItemsItem]
+    """
+
+    _attribute_map = {
+        'ranking': {'key': 'ranking', 'type': 'str'},
+        'data': {'key': 'data', 'type': '[RankingsResponseTablesPropertiesItemsItem]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RankingsResponseTablesItem, self).__init__(**kwargs)
+        self.ranking = kwargs.get('ranking', None)
+        self.data = kwargs.get('data', None)
+
+
+class RankingsResponseTablesPropertiesItemsItem(msrest.serialization.Model):
+    """RankingsResponseTablesPropertiesItemsItem.
+
+    :param name:
+    :type name: str
+    :param metrics:
+    :type metrics: list[~azure.mgmt.cdn.models.RankingsResponseTablesPropertiesItemsMetricsItem]
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'metrics': {'key': 'metrics', 'type': '[RankingsResponseTablesPropertiesItemsMetricsItem]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RankingsResponseTablesPropertiesItemsItem, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.metrics = kwargs.get('metrics', None)
+
+
+class RankingsResponseTablesPropertiesItemsMetricsItem(msrest.serialization.Model):
+    """RankingsResponseTablesPropertiesItemsMetricsItem.
+
+    :param metric:
+    :type metric: str
+    :param value:
+    :type value: long
+    :param percentage:
+    :type percentage: float
+    """
+
+    _attribute_map = {
+        'metric': {'key': 'metric', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'long'},
+        'percentage': {'key': 'percentage', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RankingsResponseTablesPropertiesItemsMetricsItem, self).__init__(**kwargs)
+        self.metric = kwargs.get('metric', None)
+        self.value = kwargs.get('value', None)
+        self.percentage = kwargs.get('percentage', None)
 
 
 class RateLimitRule(CustomRule):
@@ -4115,7 +6025,7 @@ class RequestBodyMatchConditionParameters(msrest.serialization.Model):
     :vartype odata_type: str
     :param operator: Required. Describes operator to be matched. Possible values include: "Any",
      "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-     "GreaterThanOrEqual".
+     "GreaterThanOrEqual", "RegEx".
     :type operator: str or ~azure.mgmt.cdn.models.RequestBodyOperator
     :param negate_condition: Describes if this is negate condition or not.
     :type negate_condition: bool
@@ -4165,7 +6075,7 @@ class RequestHeaderMatchConditionParameters(msrest.serialization.Model):
     :type selector: str
     :param operator: Required. Describes operator to be matched. Possible values include: "Any",
      "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-     "GreaterThanOrEqual".
+     "GreaterThanOrEqual", "RegEx".
     :type operator: str or ~azure.mgmt.cdn.models.RequestHeaderOperator
     :param negate_condition: Describes if this is negate condition or not.
     :type negate_condition: bool
@@ -4301,7 +6211,7 @@ class RequestUriMatchConditionParameters(msrest.serialization.Model):
     :vartype odata_type: str
     :param operator: Required. Describes operator to be matched. Possible values include: "Any",
      "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-     "GreaterThanOrEqual".
+     "GreaterThanOrEqual", "RegEx".
     :type operator: str or ~azure.mgmt.cdn.models.RequestUriOperator
     :param negate_condition: Describes if this is negate condition or not.
     :type negate_condition: bool
@@ -4354,6 +6264,123 @@ class ResourceReference(msrest.serialization.Model):
     ):
         super(ResourceReference, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
+
+
+class ResourcesResponse(msrest.serialization.Model):
+    """Resources Response.
+
+    :param endpoints:
+    :type endpoints: list[~azure.mgmt.cdn.models.ResourcesResponseEndpointsItem]
+    :param custom_domains:
+    :type custom_domains: list[~azure.mgmt.cdn.models.ResourcesResponseCustomDomainsItem]
+    """
+
+    _attribute_map = {
+        'endpoints': {'key': 'endpoints', 'type': '[ResourcesResponseEndpointsItem]'},
+        'custom_domains': {'key': 'customDomains', 'type': '[ResourcesResponseCustomDomainsItem]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ResourcesResponse, self).__init__(**kwargs)
+        self.endpoints = kwargs.get('endpoints', None)
+        self.custom_domains = kwargs.get('custom_domains', None)
+
+
+class ResourcesResponseCustomDomainsItem(msrest.serialization.Model):
+    """ResourcesResponseCustomDomainsItem.
+
+    :param id:
+    :type id: str
+    :param name:
+    :type name: str
+    :param endpoint_id:
+    :type endpoint_id: str
+    :param history:
+    :type history: bool
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'endpoint_id': {'key': 'endpointId', 'type': 'str'},
+        'history': {'key': 'history', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ResourcesResponseCustomDomainsItem, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.endpoint_id = kwargs.get('endpoint_id', None)
+        self.history = kwargs.get('history', None)
+
+
+class ResourcesResponseEndpointsItem(msrest.serialization.Model):
+    """ResourcesResponseEndpointsItem.
+
+    :param id:
+    :type id: str
+    :param name:
+    :type name: str
+    :param history:
+    :type history: bool
+    :param custom_domains:
+    :type custom_domains:
+     list[~azure.mgmt.cdn.models.ResourcesResponseEndpointsPropertiesItemsItem]
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'history': {'key': 'history', 'type': 'bool'},
+        'custom_domains': {'key': 'customDomains', 'type': '[ResourcesResponseEndpointsPropertiesItemsItem]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ResourcesResponseEndpointsItem, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.history = kwargs.get('history', None)
+        self.custom_domains = kwargs.get('custom_domains', None)
+
+
+class ResourcesResponseEndpointsPropertiesItemsItem(msrest.serialization.Model):
+    """ResourcesResponseEndpointsPropertiesItemsItem.
+
+    :param id:
+    :type id: str
+    :param name:
+    :type name: str
+    :param endpoint_id:
+    :type endpoint_id: str
+    :param history:
+    :type history: bool
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'endpoint_id': {'key': 'endpointId', 'type': 'str'},
+        'history': {'key': 'history', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ResourcesResponseEndpointsPropertiesItemsItem, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.endpoint_id = kwargs.get('endpoint_id', None)
+        self.history = kwargs.get('history', None)
 
 
 class ResourceUsage(msrest.serialization.Model):
@@ -4461,12 +6488,1107 @@ class ResponseBasedOriginErrorDetectionParameters(msrest.serialization.Model):
         self.http_error_ranges = kwargs.get('http_error_ranges', None)
 
 
+class Route(ProxyResource):
+    """Friendly Routes name mapping to the any Routes or secret related information.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
+    :param custom_domains: Domains referenced by this endpoint.
+    :type custom_domains: list[~azure.mgmt.cdn.models.ResourceReference]
+    :param origin_group: A reference to the origin group.
+    :type origin_group: ~azure.mgmt.cdn.models.ResourceReference
+    :param origin_path: A directory path on the origin that AzureFrontDoor can use to retrieve
+     content from, e.g. contoso.cloudapp.net/originpath.
+    :type origin_path: str
+    :param rule_sets: rule sets referenced by this endpoint.
+    :type rule_sets: list[~azure.mgmt.cdn.models.ResourceReference]
+    :param supported_protocols: List of supported protocols for this route.
+    :type supported_protocols: list[str or ~azure.mgmt.cdn.models.AFDEndpointProtocols]
+    :param patterns_to_match: The route patterns of the rule.
+    :type patterns_to_match: list[str]
+    :param compression_settings: compression settings.
+    :type compression_settings: object
+    :param query_string_caching_behavior: Defines how AzureFrontDoor caches requests that include
+     query strings. You can ignore any query strings when caching, bypass caching to prevent
+     requests that contain query strings from being cached, or cache every request with a unique
+     URL. Possible values include: "IgnoreQueryString", "BypassCaching", "UseQueryString", "NotSet".
+    :type query_string_caching_behavior: str or ~azure.mgmt.cdn.models.QueryStringCachingBehavior
+    :param optimization_type: Specifies what scenario the customer wants this AzureFrontDoor
+     endpoint to optimize for, e.g. Download, Media services. With this information, AzureFrontDoor
+     can apply scenario driven optimization. Possible values include: "GeneralWebDelivery",
+     "GeneralMediaStreaming", "VideoOnDemandMediaStreaming", "LargeFileDownload",
+     "DynamicSiteAcceleration".
+    :type optimization_type: str or ~azure.mgmt.cdn.models.OptimizationType
+    :param forwarding_protocol: Protocol this rule will use when forwarding traffic to backends.
+     Possible values include: "HttpOnly", "HttpsOnly", "MatchRequest".
+    :type forwarding_protocol: str or ~azure.mgmt.cdn.models.ForwardingProtocol
+    :param link_to_default_domain: whether this route will be linked to the default endpoint
+     domain. Possible values include: "Enabled", "Disabled".
+    :type link_to_default_domain: str or ~azure.mgmt.cdn.models.LinkToDefaultDomain
+    :param https_redirect: Whether to automatically redirect HTTP traffic to HTTPS traffic. Note
+     that this is a easy way to set up this rule and it will be the first rule that gets executed.
+     Possible values include: "Enabled", "Disabled".
+    :type https_redirect: str or ~azure.mgmt.cdn.models.HttpsRedirect
+    :param enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
+     'Disabled'. Possible values include: "Enabled", "Disabled".
+    :type enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
+    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
+     "Updating", "Deleting", "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status:  Possible values include: "NotStarted", "InProgress", "Succeeded",
+     "Failed".
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'deployment_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'custom_domains': {'key': 'properties.customDomains', 'type': '[ResourceReference]'},
+        'origin_group': {'key': 'properties.originGroup', 'type': 'ResourceReference'},
+        'origin_path': {'key': 'properties.originPath', 'type': 'str'},
+        'rule_sets': {'key': 'properties.ruleSets', 'type': '[ResourceReference]'},
+        'supported_protocols': {'key': 'properties.supportedProtocols', 'type': '[str]'},
+        'patterns_to_match': {'key': 'properties.patternsToMatch', 'type': '[str]'},
+        'compression_settings': {'key': 'properties.compressionSettings', 'type': 'object'},
+        'query_string_caching_behavior': {'key': 'properties.queryStringCachingBehavior', 'type': 'str'},
+        'optimization_type': {'key': 'properties.optimizationType', 'type': 'str'},
+        'forwarding_protocol': {'key': 'properties.forwardingProtocol', 'type': 'str'},
+        'link_to_default_domain': {'key': 'properties.linkToDefaultDomain', 'type': 'str'},
+        'https_redirect': {'key': 'properties.httpsRedirect', 'type': 'str'},
+        'enabled_state': {'key': 'properties.enabledState', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Route, self).__init__(**kwargs)
+        self.custom_domains = kwargs.get('custom_domains', None)
+        self.origin_group = kwargs.get('origin_group', None)
+        self.origin_path = kwargs.get('origin_path', None)
+        self.rule_sets = kwargs.get('rule_sets', None)
+        self.supported_protocols = kwargs.get('supported_protocols', None)
+        self.patterns_to_match = kwargs.get('patterns_to_match', None)
+        self.compression_settings = kwargs.get('compression_settings', None)
+        self.query_string_caching_behavior = kwargs.get('query_string_caching_behavior', None)
+        self.optimization_type = kwargs.get('optimization_type', None)
+        self.forwarding_protocol = kwargs.get('forwarding_protocol', None)
+        self.link_to_default_domain = kwargs.get('link_to_default_domain', None)
+        self.https_redirect = kwargs.get('https_redirect', None)
+        self.enabled_state = kwargs.get('enabled_state', None)
+        self.provisioning_state = None
+        self.deployment_status = None
+
+
+class RouteListResult(msrest.serialization.Model):
+    """Result of the request to list routes. It contains a list of route objects and a URL link to get the next set of results.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of AzureFrontDoor routes within a profile.
+    :vartype value: list[~azure.mgmt.cdn.models.Route]
+    :param next_link: URL to get the next set of route objects if there are any.
+    :type next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Route]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RouteListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = kwargs.get('next_link', None)
+
+
+class RouteUpdatePropertiesParameters(msrest.serialization.Model):
+    """The JSON object that contains the properties of the domain to create.
+
+    :param custom_domains: Domains referenced by this endpoint.
+    :type custom_domains: list[~azure.mgmt.cdn.models.ResourceReference]
+    :param origin_group: A reference to the origin group.
+    :type origin_group: ~azure.mgmt.cdn.models.ResourceReference
+    :param origin_path: A directory path on the origin that AzureFrontDoor can use to retrieve
+     content from, e.g. contoso.cloudapp.net/originpath.
+    :type origin_path: str
+    :param rule_sets: rule sets referenced by this endpoint.
+    :type rule_sets: list[~azure.mgmt.cdn.models.ResourceReference]
+    :param supported_protocols: List of supported protocols for this route.
+    :type supported_protocols: list[str or ~azure.mgmt.cdn.models.AFDEndpointProtocols]
+    :param patterns_to_match: The route patterns of the rule.
+    :type patterns_to_match: list[str]
+    :param compression_settings: compression settings.
+    :type compression_settings: object
+    :param query_string_caching_behavior: Defines how AzureFrontDoor caches requests that include
+     query strings. You can ignore any query strings when caching, bypass caching to prevent
+     requests that contain query strings from being cached, or cache every request with a unique
+     URL. Possible values include: "IgnoreQueryString", "BypassCaching", "UseQueryString", "NotSet".
+    :type query_string_caching_behavior: str or ~azure.mgmt.cdn.models.QueryStringCachingBehavior
+    :param optimization_type: Specifies what scenario the customer wants this AzureFrontDoor
+     endpoint to optimize for, e.g. Download, Media services. With this information, AzureFrontDoor
+     can apply scenario driven optimization. Possible values include: "GeneralWebDelivery",
+     "GeneralMediaStreaming", "VideoOnDemandMediaStreaming", "LargeFileDownload",
+     "DynamicSiteAcceleration".
+    :type optimization_type: str or ~azure.mgmt.cdn.models.OptimizationType
+    :param forwarding_protocol: Protocol this rule will use when forwarding traffic to backends.
+     Possible values include: "HttpOnly", "HttpsOnly", "MatchRequest".
+    :type forwarding_protocol: str or ~azure.mgmt.cdn.models.ForwardingProtocol
+    :param link_to_default_domain: whether this route will be linked to the default endpoint
+     domain. Possible values include: "Enabled", "Disabled".
+    :type link_to_default_domain: str or ~azure.mgmt.cdn.models.LinkToDefaultDomain
+    :param https_redirect: Whether to automatically redirect HTTP traffic to HTTPS traffic. Note
+     that this is a easy way to set up this rule and it will be the first rule that gets executed.
+     Possible values include: "Enabled", "Disabled".
+    :type https_redirect: str or ~azure.mgmt.cdn.models.HttpsRedirect
+    :param enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
+     'Disabled'. Possible values include: "Enabled", "Disabled".
+    :type enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
+    """
+
+    _attribute_map = {
+        'custom_domains': {'key': 'customDomains', 'type': '[ResourceReference]'},
+        'origin_group': {'key': 'originGroup', 'type': 'ResourceReference'},
+        'origin_path': {'key': 'originPath', 'type': 'str'},
+        'rule_sets': {'key': 'ruleSets', 'type': '[ResourceReference]'},
+        'supported_protocols': {'key': 'supportedProtocols', 'type': '[str]'},
+        'patterns_to_match': {'key': 'patternsToMatch', 'type': '[str]'},
+        'compression_settings': {'key': 'compressionSettings', 'type': 'object'},
+        'query_string_caching_behavior': {'key': 'queryStringCachingBehavior', 'type': 'str'},
+        'optimization_type': {'key': 'optimizationType', 'type': 'str'},
+        'forwarding_protocol': {'key': 'forwardingProtocol', 'type': 'str'},
+        'link_to_default_domain': {'key': 'linkToDefaultDomain', 'type': 'str'},
+        'https_redirect': {'key': 'httpsRedirect', 'type': 'str'},
+        'enabled_state': {'key': 'enabledState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RouteUpdatePropertiesParameters, self).__init__(**kwargs)
+        self.custom_domains = kwargs.get('custom_domains', None)
+        self.origin_group = kwargs.get('origin_group', None)
+        self.origin_path = kwargs.get('origin_path', None)
+        self.rule_sets = kwargs.get('rule_sets', None)
+        self.supported_protocols = kwargs.get('supported_protocols', None)
+        self.patterns_to_match = kwargs.get('patterns_to_match', None)
+        self.compression_settings = kwargs.get('compression_settings', None)
+        self.query_string_caching_behavior = kwargs.get('query_string_caching_behavior', None)
+        self.optimization_type = kwargs.get('optimization_type', None)
+        self.forwarding_protocol = kwargs.get('forwarding_protocol', None)
+        self.link_to_default_domain = kwargs.get('link_to_default_domain', None)
+        self.https_redirect = kwargs.get('https_redirect', None)
+        self.enabled_state = kwargs.get('enabled_state', None)
+
+
+class RouteProperties(AFDStateProperties, RouteUpdatePropertiesParameters):
+    """The JSON object that contains the properties of the Routes to create.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param custom_domains: Domains referenced by this endpoint.
+    :type custom_domains: list[~azure.mgmt.cdn.models.ResourceReference]
+    :param origin_group: A reference to the origin group.
+    :type origin_group: ~azure.mgmt.cdn.models.ResourceReference
+    :param origin_path: A directory path on the origin that AzureFrontDoor can use to retrieve
+     content from, e.g. contoso.cloudapp.net/originpath.
+    :type origin_path: str
+    :param rule_sets: rule sets referenced by this endpoint.
+    :type rule_sets: list[~azure.mgmt.cdn.models.ResourceReference]
+    :param supported_protocols: List of supported protocols for this route.
+    :type supported_protocols: list[str or ~azure.mgmt.cdn.models.AFDEndpointProtocols]
+    :param patterns_to_match: The route patterns of the rule.
+    :type patterns_to_match: list[str]
+    :param compression_settings: compression settings.
+    :type compression_settings: object
+    :param query_string_caching_behavior: Defines how AzureFrontDoor caches requests that include
+     query strings. You can ignore any query strings when caching, bypass caching to prevent
+     requests that contain query strings from being cached, or cache every request with a unique
+     URL. Possible values include: "IgnoreQueryString", "BypassCaching", "UseQueryString", "NotSet".
+    :type query_string_caching_behavior: str or ~azure.mgmt.cdn.models.QueryStringCachingBehavior
+    :param optimization_type: Specifies what scenario the customer wants this AzureFrontDoor
+     endpoint to optimize for, e.g. Download, Media services. With this information, AzureFrontDoor
+     can apply scenario driven optimization. Possible values include: "GeneralWebDelivery",
+     "GeneralMediaStreaming", "VideoOnDemandMediaStreaming", "LargeFileDownload",
+     "DynamicSiteAcceleration".
+    :type optimization_type: str or ~azure.mgmt.cdn.models.OptimizationType
+    :param forwarding_protocol: Protocol this rule will use when forwarding traffic to backends.
+     Possible values include: "HttpOnly", "HttpsOnly", "MatchRequest".
+    :type forwarding_protocol: str or ~azure.mgmt.cdn.models.ForwardingProtocol
+    :param link_to_default_domain: whether this route will be linked to the default endpoint
+     domain. Possible values include: "Enabled", "Disabled".
+    :type link_to_default_domain: str or ~azure.mgmt.cdn.models.LinkToDefaultDomain
+    :param https_redirect: Whether to automatically redirect HTTP traffic to HTTPS traffic. Note
+     that this is a easy way to set up this rule and it will be the first rule that gets executed.
+     Possible values include: "Enabled", "Disabled".
+    :type https_redirect: str or ~azure.mgmt.cdn.models.HttpsRedirect
+    :param enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
+     'Disabled'. Possible values include: "Enabled", "Disabled".
+    :type enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
+    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
+     "Updating", "Deleting", "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status:  Possible values include: "NotStarted", "InProgress", "Succeeded",
+     "Failed".
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'deployment_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'custom_domains': {'key': 'customDomains', 'type': '[ResourceReference]'},
+        'origin_group': {'key': 'originGroup', 'type': 'ResourceReference'},
+        'origin_path': {'key': 'originPath', 'type': 'str'},
+        'rule_sets': {'key': 'ruleSets', 'type': '[ResourceReference]'},
+        'supported_protocols': {'key': 'supportedProtocols', 'type': '[str]'},
+        'patterns_to_match': {'key': 'patternsToMatch', 'type': '[str]'},
+        'compression_settings': {'key': 'compressionSettings', 'type': 'object'},
+        'query_string_caching_behavior': {'key': 'queryStringCachingBehavior', 'type': 'str'},
+        'optimization_type': {'key': 'optimizationType', 'type': 'str'},
+        'forwarding_protocol': {'key': 'forwardingProtocol', 'type': 'str'},
+        'link_to_default_domain': {'key': 'linkToDefaultDomain', 'type': 'str'},
+        'https_redirect': {'key': 'httpsRedirect', 'type': 'str'},
+        'enabled_state': {'key': 'enabledState', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RouteProperties, self).__init__(**kwargs)
+        self.custom_domains = kwargs.get('custom_domains', None)
+        self.origin_group = kwargs.get('origin_group', None)
+        self.origin_path = kwargs.get('origin_path', None)
+        self.rule_sets = kwargs.get('rule_sets', None)
+        self.supported_protocols = kwargs.get('supported_protocols', None)
+        self.patterns_to_match = kwargs.get('patterns_to_match', None)
+        self.compression_settings = kwargs.get('compression_settings', None)
+        self.query_string_caching_behavior = kwargs.get('query_string_caching_behavior', None)
+        self.optimization_type = kwargs.get('optimization_type', None)
+        self.forwarding_protocol = kwargs.get('forwarding_protocol', None)
+        self.link_to_default_domain = kwargs.get('link_to_default_domain', None)
+        self.https_redirect = kwargs.get('https_redirect', None)
+        self.enabled_state = kwargs.get('enabled_state', None)
+        self.provisioning_state = None
+        self.deployment_status = None
+
+
+class RouteUpdateParameters(msrest.serialization.Model):
+    """The domain JSON object required for domain creation or update.
+
+    :param custom_domains: Domains referenced by this endpoint.
+    :type custom_domains: list[~azure.mgmt.cdn.models.ResourceReference]
+    :param origin_group: A reference to the origin group.
+    :type origin_group: ~azure.mgmt.cdn.models.ResourceReference
+    :param origin_path: A directory path on the origin that AzureFrontDoor can use to retrieve
+     content from, e.g. contoso.cloudapp.net/originpath.
+    :type origin_path: str
+    :param rule_sets: rule sets referenced by this endpoint.
+    :type rule_sets: list[~azure.mgmt.cdn.models.ResourceReference]
+    :param supported_protocols: List of supported protocols for this route.
+    :type supported_protocols: list[str or ~azure.mgmt.cdn.models.AFDEndpointProtocols]
+    :param patterns_to_match: The route patterns of the rule.
+    :type patterns_to_match: list[str]
+    :param compression_settings: compression settings.
+    :type compression_settings: object
+    :param query_string_caching_behavior: Defines how AzureFrontDoor caches requests that include
+     query strings. You can ignore any query strings when caching, bypass caching to prevent
+     requests that contain query strings from being cached, or cache every request with a unique
+     URL. Possible values include: "IgnoreQueryString", "BypassCaching", "UseQueryString", "NotSet".
+    :type query_string_caching_behavior: str or ~azure.mgmt.cdn.models.QueryStringCachingBehavior
+    :param optimization_type: Specifies what scenario the customer wants this AzureFrontDoor
+     endpoint to optimize for, e.g. Download, Media services. With this information, AzureFrontDoor
+     can apply scenario driven optimization. Possible values include: "GeneralWebDelivery",
+     "GeneralMediaStreaming", "VideoOnDemandMediaStreaming", "LargeFileDownload",
+     "DynamicSiteAcceleration".
+    :type optimization_type: str or ~azure.mgmt.cdn.models.OptimizationType
+    :param forwarding_protocol: Protocol this rule will use when forwarding traffic to backends.
+     Possible values include: "HttpOnly", "HttpsOnly", "MatchRequest".
+    :type forwarding_protocol: str or ~azure.mgmt.cdn.models.ForwardingProtocol
+    :param link_to_default_domain: whether this route will be linked to the default endpoint
+     domain. Possible values include: "Enabled", "Disabled".
+    :type link_to_default_domain: str or ~azure.mgmt.cdn.models.LinkToDefaultDomain
+    :param https_redirect: Whether to automatically redirect HTTP traffic to HTTPS traffic. Note
+     that this is a easy way to set up this rule and it will be the first rule that gets executed.
+     Possible values include: "Enabled", "Disabled".
+    :type https_redirect: str or ~azure.mgmt.cdn.models.HttpsRedirect
+    :param enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
+     'Disabled'. Possible values include: "Enabled", "Disabled".
+    :type enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
+    """
+
+    _attribute_map = {
+        'custom_domains': {'key': 'properties.customDomains', 'type': '[ResourceReference]'},
+        'origin_group': {'key': 'properties.originGroup', 'type': 'ResourceReference'},
+        'origin_path': {'key': 'properties.originPath', 'type': 'str'},
+        'rule_sets': {'key': 'properties.ruleSets', 'type': '[ResourceReference]'},
+        'supported_protocols': {'key': 'properties.supportedProtocols', 'type': '[str]'},
+        'patterns_to_match': {'key': 'properties.patternsToMatch', 'type': '[str]'},
+        'compression_settings': {'key': 'properties.compressionSettings', 'type': 'object'},
+        'query_string_caching_behavior': {'key': 'properties.queryStringCachingBehavior', 'type': 'str'},
+        'optimization_type': {'key': 'properties.optimizationType', 'type': 'str'},
+        'forwarding_protocol': {'key': 'properties.forwardingProtocol', 'type': 'str'},
+        'link_to_default_domain': {'key': 'properties.linkToDefaultDomain', 'type': 'str'},
+        'https_redirect': {'key': 'properties.httpsRedirect', 'type': 'str'},
+        'enabled_state': {'key': 'properties.enabledState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RouteUpdateParameters, self).__init__(**kwargs)
+        self.custom_domains = kwargs.get('custom_domains', None)
+        self.origin_group = kwargs.get('origin_group', None)
+        self.origin_path = kwargs.get('origin_path', None)
+        self.rule_sets = kwargs.get('rule_sets', None)
+        self.supported_protocols = kwargs.get('supported_protocols', None)
+        self.patterns_to_match = kwargs.get('patterns_to_match', None)
+        self.compression_settings = kwargs.get('compression_settings', None)
+        self.query_string_caching_behavior = kwargs.get('query_string_caching_behavior', None)
+        self.optimization_type = kwargs.get('optimization_type', None)
+        self.forwarding_protocol = kwargs.get('forwarding_protocol', None)
+        self.link_to_default_domain = kwargs.get('link_to_default_domain', None)
+        self.https_redirect = kwargs.get('https_redirect', None)
+        self.enabled_state = kwargs.get('enabled_state', None)
+
+
+class Rule(ProxyResource):
+    """Friendly Rules name mapping to the any Rules or secret related information.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
+    :param order: The order in which the rules are applied for the endpoint. Possible values
+     {0,1,2,3,………}. A rule with a lesser order will be applied before a rule with a greater order.
+     Rule with order 0 is a special rule. It does not require any condition and actions listed in it
+     will always be applied.
+    :type order: int
+    :param conditions: A list of conditions that must be matched for the actions to be executed.
+    :type conditions: list[~azure.mgmt.cdn.models.DeliveryRuleCondition]
+    :param actions: A list of actions that are executed when all the conditions of a rule are
+     satisfied.
+    :type actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
+    :param match_processing_behavior: If this rule is a match should the rules engine continue
+     running the remaining rules or stop. If not present, defaults to Continue. Possible values
+     include: "Continue", "Stop".
+    :type match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
+    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
+     "Updating", "Deleting", "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status:  Possible values include: "NotStarted", "InProgress", "Succeeded",
+     "Failed".
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'deployment_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'order': {'key': 'properties.order', 'type': 'int'},
+        'conditions': {'key': 'properties.conditions', 'type': '[DeliveryRuleCondition]'},
+        'actions': {'key': 'properties.actions', 'type': '[DeliveryRuleAction]'},
+        'match_processing_behavior': {'key': 'properties.matchProcessingBehavior', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Rule, self).__init__(**kwargs)
+        self.order = kwargs.get('order', None)
+        self.conditions = kwargs.get('conditions', None)
+        self.actions = kwargs.get('actions', None)
+        self.match_processing_behavior = kwargs.get('match_processing_behavior', None)
+        self.provisioning_state = None
+        self.deployment_status = None
+
+
+class RuleListResult(msrest.serialization.Model):
+    """Result of the request to list rules. It contains a list of rule objects and a URL link to get the next set of results.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of AzureFrontDoor rules within a rule set.
+    :vartype value: list[~azure.mgmt.cdn.models.Rule]
+    :param next_link: URL to get the next set of rule objects if there are any.
+    :type next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Rule]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = kwargs.get('next_link', None)
+
+
+class RuleUpdatePropertiesParameters(msrest.serialization.Model):
+    """The JSON object that contains the properties of the domain to create.
+
+    :param order: The order in which the rules are applied for the endpoint. Possible values
+     {0,1,2,3,………}. A rule with a lesser order will be applied before a rule with a greater order.
+     Rule with order 0 is a special rule. It does not require any condition and actions listed in it
+     will always be applied.
+    :type order: int
+    :param conditions: A list of conditions that must be matched for the actions to be executed.
+    :type conditions: list[~azure.mgmt.cdn.models.DeliveryRuleCondition]
+    :param actions: A list of actions that are executed when all the conditions of a rule are
+     satisfied.
+    :type actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
+    :param match_processing_behavior: If this rule is a match should the rules engine continue
+     running the remaining rules or stop. If not present, defaults to Continue. Possible values
+     include: "Continue", "Stop".
+    :type match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
+    """
+
+    _attribute_map = {
+        'order': {'key': 'order', 'type': 'int'},
+        'conditions': {'key': 'conditions', 'type': '[DeliveryRuleCondition]'},
+        'actions': {'key': 'actions', 'type': '[DeliveryRuleAction]'},
+        'match_processing_behavior': {'key': 'matchProcessingBehavior', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleUpdatePropertiesParameters, self).__init__(**kwargs)
+        self.order = kwargs.get('order', None)
+        self.conditions = kwargs.get('conditions', None)
+        self.actions = kwargs.get('actions', None)
+        self.match_processing_behavior = kwargs.get('match_processing_behavior', None)
+
+
+class RuleProperties(AFDStateProperties, RuleUpdatePropertiesParameters):
+    """The JSON object that contains the properties of the Rules to create.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param order: The order in which the rules are applied for the endpoint. Possible values
+     {0,1,2,3,………}. A rule with a lesser order will be applied before a rule with a greater order.
+     Rule with order 0 is a special rule. It does not require any condition and actions listed in it
+     will always be applied.
+    :type order: int
+    :param conditions: A list of conditions that must be matched for the actions to be executed.
+    :type conditions: list[~azure.mgmt.cdn.models.DeliveryRuleCondition]
+    :param actions: A list of actions that are executed when all the conditions of a rule are
+     satisfied.
+    :type actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
+    :param match_processing_behavior: If this rule is a match should the rules engine continue
+     running the remaining rules or stop. If not present, defaults to Continue. Possible values
+     include: "Continue", "Stop".
+    :type match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
+    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
+     "Updating", "Deleting", "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status:  Possible values include: "NotStarted", "InProgress", "Succeeded",
+     "Failed".
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'deployment_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'order': {'key': 'order', 'type': 'int'},
+        'conditions': {'key': 'conditions', 'type': '[DeliveryRuleCondition]'},
+        'actions': {'key': 'actions', 'type': '[DeliveryRuleAction]'},
+        'match_processing_behavior': {'key': 'matchProcessingBehavior', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleProperties, self).__init__(**kwargs)
+        self.order = kwargs.get('order', None)
+        self.conditions = kwargs.get('conditions', None)
+        self.actions = kwargs.get('actions', None)
+        self.match_processing_behavior = kwargs.get('match_processing_behavior', None)
+        self.provisioning_state = None
+        self.deployment_status = None
+
+
+class RuleSet(ProxyResource):
+    """Friendly RuleSet name mapping to the any RuleSet or secret related information.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
+    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
+     "Updating", "Deleting", "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status:  Possible values include: "NotStarted", "InProgress", "Succeeded",
+     "Failed".
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'deployment_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleSet, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.deployment_status = None
+
+
+class RuleSetListResult(msrest.serialization.Model):
+    """Result of the request to list rule sets. It contains a list of rule set objects and a URL link to get the next set of results.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of AzureFrontDoor rule sets within a profile.
+    :vartype value: list[~azure.mgmt.cdn.models.RuleSet]
+    :param next_link: URL to get the next set of rule set objects if there are any.
+    :type next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[RuleSet]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleSetListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = kwargs.get('next_link', None)
+
+
+class RuleSetProperties(AFDStateProperties):
+    """The JSON object that contains the properties of the Rule Set to create.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
+     "Updating", "Deleting", "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status:  Possible values include: "NotStarted", "InProgress", "Succeeded",
+     "Failed".
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'deployment_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleSetProperties, self).__init__(**kwargs)
+
+
+class RuleUpdateParameters(msrest.serialization.Model):
+    """The domain JSON object required for domain creation or update.
+
+    :param order: The order in which the rules are applied for the endpoint. Possible values
+     {0,1,2,3,………}. A rule with a lesser order will be applied before a rule with a greater order.
+     Rule with order 0 is a special rule. It does not require any condition and actions listed in it
+     will always be applied.
+    :type order: int
+    :param conditions: A list of conditions that must be matched for the actions to be executed.
+    :type conditions: list[~azure.mgmt.cdn.models.DeliveryRuleCondition]
+    :param actions: A list of actions that are executed when all the conditions of a rule are
+     satisfied.
+    :type actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
+    :param match_processing_behavior: If this rule is a match should the rules engine continue
+     running the remaining rules or stop. If not present, defaults to Continue. Possible values
+     include: "Continue", "Stop".
+    :type match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
+    """
+
+    _attribute_map = {
+        'order': {'key': 'properties.order', 'type': 'int'},
+        'conditions': {'key': 'properties.conditions', 'type': '[DeliveryRuleCondition]'},
+        'actions': {'key': 'properties.actions', 'type': '[DeliveryRuleAction]'},
+        'match_processing_behavior': {'key': 'properties.matchProcessingBehavior', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleUpdateParameters, self).__init__(**kwargs)
+        self.order = kwargs.get('order', None)
+        self.conditions = kwargs.get('conditions', None)
+        self.actions = kwargs.get('actions', None)
+        self.match_processing_behavior = kwargs.get('match_processing_behavior', None)
+
+
+class Secret(ProxyResource):
+    """Friendly Secret name mapping to the any Secret or secret related information.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
+    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
+     "Updating", "Deleting", "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status:  Possible values include: "NotStarted", "InProgress", "Succeeded",
+     "Failed".
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
+    :param parameters: object which contains secret parameters.
+    :type parameters: ~azure.mgmt.cdn.models.SecretParameters
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'deployment_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'str'},
+        'parameters': {'key': 'properties.parameters', 'type': 'SecretParameters'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Secret, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.deployment_status = None
+        self.parameters = kwargs.get('parameters', None)
+
+
+class SecretListResult(msrest.serialization.Model):
+    """Result of the request to list secrets. It contains a list of Secret objects and a URL link to get the next set of results.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of AzureFrontDoor secrets within a profile.
+    :vartype value: list[~azure.mgmt.cdn.models.Secret]
+    :param next_link: URL to get the next set of Secret objects if there are any.
+    :type next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Secret]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SecretListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = kwargs.get('next_link', None)
+
+
+class SecretProperties(AFDStateProperties):
+    """The JSON object that contains the properties of the Secret to create.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
+     "Updating", "Deleting", "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status:  Possible values include: "NotStarted", "InProgress", "Succeeded",
+     "Failed".
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
+    :param parameters: object which contains secret parameters.
+    :type parameters: ~azure.mgmt.cdn.models.SecretParameters
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'deployment_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': 'SecretParameters'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SecretProperties, self).__init__(**kwargs)
+        self.parameters = kwargs.get('parameters', None)
+
+
+class SecurityPolicy(ProxyResource):
+    """SecurityPolicy association for AzureFrontDoor profile.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
+    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
+     "Updating", "Deleting", "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status:  Possible values include: "NotStarted", "InProgress", "Succeeded",
+     "Failed".
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
+    :param parameters: object which contains security policy parameters.
+    :type parameters: ~azure.mgmt.cdn.models.SecurityPolicyWebApplicationFirewallParameters
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'deployment_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'str'},
+        'parameters': {'key': 'properties.parameters', 'type': 'SecurityPolicyWebApplicationFirewallParameters'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SecurityPolicy, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.deployment_status = None
+        self.parameters = kwargs.get('parameters', None)
+
+
+class SecurityPolicyListResult(msrest.serialization.Model):
+    """Result of the request to list security policies. It contains a list of security policy objects and a URL link to get the next set of results.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of Security policies within a profile.
+    :vartype value: list[~azure.mgmt.cdn.models.SecurityPolicy]
+    :param next_link: URL to get the next set of security policy objects if there is any.
+    :type next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[SecurityPolicy]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SecurityPolicyListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = kwargs.get('next_link', None)
+
+
+class SecurityPolicyParameters(msrest.serialization.Model):
+    """The json object containing security policy parameters.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: SecurityPolicyWebApplicationFirewallParameters.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. The type of the Security policy to create.Constant filled by server.
+     Possible values include: "WebApplicationFirewall".
+    :type type: str or ~azure.mgmt.cdn.models.SecurityPolicyType
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'WebApplicationFirewall': 'SecurityPolicyWebApplicationFirewallParameters'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SecurityPolicyParameters, self).__init__(**kwargs)
+        self.type = None  # type: Optional[str]
+
+
+class SecurityPolicyProperties(AFDStateProperties):
+    """The json object that contains properties required to create a security policy.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
+     "Updating", "Deleting", "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status:  Possible values include: "NotStarted", "InProgress", "Succeeded",
+     "Failed".
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
+    :param parameters: object which contains security policy parameters.
+    :type parameters: ~azure.mgmt.cdn.models.SecurityPolicyWebApplicationFirewallParameters
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'deployment_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': 'SecurityPolicyWebApplicationFirewallParameters'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SecurityPolicyProperties, self).__init__(**kwargs)
+        self.parameters = kwargs.get('parameters', None)
+
+
+class SecurityPolicyWebApplicationFirewallAssociation(msrest.serialization.Model):
+    """settings for security policy patterns to match.
+
+    :param domains: List of domains.
+    :type domains: list[~azure.mgmt.cdn.models.ResourceReference]
+    :param patterns_to_match: List of paths.
+    :type patterns_to_match: list[str]
+    """
+
+    _attribute_map = {
+        'domains': {'key': 'domains', 'type': '[ResourceReference]'},
+        'patterns_to_match': {'key': 'patternsToMatch', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SecurityPolicyWebApplicationFirewallAssociation, self).__init__(**kwargs)
+        self.domains = kwargs.get('domains', None)
+        self.patterns_to_match = kwargs.get('patterns_to_match', None)
+
+
+class SecurityPolicyWebApplicationFirewallParameters(SecurityPolicyParameters):
+    """The json object containing security policy waf parameters.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. The type of the Security policy to create.Constant filled by server.
+     Possible values include: "WebApplicationFirewall".
+    :type type: str or ~azure.mgmt.cdn.models.SecurityPolicyType
+    :param waf_policy: Resource ID.
+    :type waf_policy: ~azure.mgmt.cdn.models.ResourceReference
+    :param associations: Waf associations.
+    :type associations:
+     list[~azure.mgmt.cdn.models.SecurityPolicyWebApplicationFirewallAssociation]
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'waf_policy': {'key': 'wafPolicy', 'type': 'ResourceReference'},
+        'associations': {'key': 'associations', 'type': '[SecurityPolicyWebApplicationFirewallAssociation]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SecurityPolicyWebApplicationFirewallParameters, self).__init__(**kwargs)
+        self.type = 'WebApplicationFirewall'  # type: str
+        self.waf_policy = kwargs.get('waf_policy', None)
+        self.associations = kwargs.get('associations', None)
+
+
+class SharedPrivateLinkResourceProperties(msrest.serialization.Model):
+    """Describes the properties of an existing Shared Private Link Resource to use when connecting to a private origin.
+
+    :param private_link: The resource id of the resource the shared private link resource is for.
+    :type private_link: ~azure.mgmt.cdn.models.ResourceReference
+    :param private_link_location: The location of the shared private link resource.
+    :type private_link_location: str
+    :param group_id: The group id from the provider of resource the shared private link resource is
+     for.
+    :type group_id: str
+    :param request_message: The request message for requesting approval of the shared private link
+     resource.
+    :type request_message: str
+    :param status: Status of the shared private link resource. Can be Pending, Approved, Rejected,
+     Disconnected, or Timeout. Possible values include: "Pending", "Approved", "Rejected",
+     "Disconnected", "Timeout".
+    :type status: str or ~azure.mgmt.cdn.models.SharedPrivateLinkResourceStatus
+    """
+
+    _attribute_map = {
+        'private_link': {'key': 'privateLink', 'type': 'ResourceReference'},
+        'private_link_location': {'key': 'privateLinkLocation', 'type': 'str'},
+        'group_id': {'key': 'groupId', 'type': 'str'},
+        'request_message': {'key': 'requestMessage', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SharedPrivateLinkResourceProperties, self).__init__(**kwargs)
+        self.private_link = kwargs.get('private_link', None)
+        self.private_link_location = kwargs.get('private_link_location', None)
+        self.group_id = kwargs.get('group_id', None)
+        self.request_message = kwargs.get('request_message', None)
+        self.status = kwargs.get('status', None)
+
+
 class Sku(msrest.serialization.Model):
     """The pricing tier (defines a CDN provider, feature list and rate) of the CDN profile.
 
     :param name: Name of the pricing tier. Possible values include: "Standard_Verizon",
      "Premium_Verizon", "Custom_Verizon", "Standard_Akamai", "Standard_ChinaCdn",
-     "Standard_Microsoft", "Premium_ChinaCdn".
+     "Standard_Microsoft", "Premium_ChinaCdn", "Standard_AzureFrontDoor", "Premium_AzureFrontDoor",
+     "Standard_955BandWidth_ChinaCdn", "Standard_AvgBandWidth_ChinaCdn", "StandardPlus_ChinaCdn",
+     "StandardPlus_955BandWidth_ChinaCdn", "StandardPlus_AvgBandWidth_ChinaCdn".
     :type name: str or ~azure.mgmt.cdn.models.SkuName
     """
 
@@ -4532,6 +7654,47 @@ class SupportedOptimizationTypesListResult(msrest.serialization.Model):
         self.supported_optimization_types = None
 
 
+class SystemData(msrest.serialization.Model):
+    """Read only system data.
+
+    :param created_by: An identifier for the identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource. Possible values
+     include: "user", "application", "managedIdentity", "key".
+    :type created_by_type: str or ~azure.mgmt.cdn.models.IdentityType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: An identifier for the identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "user", "application", "managedIdentity", "key".
+    :type last_modified_by_type: str or ~azure.mgmt.cdn.models.IdentityType
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = kwargs.get('created_by', None)
+        self.created_by_type = kwargs.get('created_by_type', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.last_modified_by = kwargs.get('last_modified_by', None)
+        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
+        self.last_modified_at = kwargs.get('last_modified_at', None)
+
+
 class UrlFileExtensionMatchConditionParameters(msrest.serialization.Model):
     """Defines the parameters for UrlFileExtension match conditions.
 
@@ -4544,7 +7707,7 @@ class UrlFileExtensionMatchConditionParameters(msrest.serialization.Model):
     :vartype odata_type: str
     :param operator: Required. Describes operator to be matched. Possible values include: "Any",
      "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-     "GreaterThanOrEqual".
+     "GreaterThanOrEqual", "RegEx".
     :type operator: str or ~azure.mgmt.cdn.models.UrlFileExtensionOperator
     :param negate_condition: Describes if this is negate condition or not.
     :type negate_condition: bool
@@ -4592,7 +7755,7 @@ class UrlFileNameMatchConditionParameters(msrest.serialization.Model):
     :vartype odata_type: str
     :param operator: Required. Describes operator to be matched. Possible values include: "Any",
      "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-     "GreaterThanOrEqual".
+     "GreaterThanOrEqual", "RegEx".
     :type operator: str or ~azure.mgmt.cdn.models.UrlFileNameOperator
     :param negate_condition: Describes if this is negate condition or not.
     :type negate_condition: bool
@@ -4640,7 +7803,7 @@ class UrlPathMatchConditionParameters(msrest.serialization.Model):
     :vartype odata_type: str
     :param operator: Required. Describes operator to be matched. Possible values include: "Any",
      "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-     "GreaterThanOrEqual", "Wildcard".
+     "GreaterThanOrEqual", "Wildcard", "RegEx".
     :type operator: str or ~azure.mgmt.cdn.models.UrlPathOperator
     :param negate_condition: Describes if this is negate condition or not.
     :type negate_condition: bool
@@ -4683,8 +7846,8 @@ class UrlRedirectAction(DeliveryRuleAction):
 
     :param name: Required. The name of the action for the delivery rule.Constant filled by server.
      Possible values include: "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader",
-     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning".
-    :type name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionName
+     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride".
+    :type name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
     :param parameters: Required. Defines the parameters for the action.
     :type parameters: ~azure.mgmt.cdn.models.UrlRedirectActionParameters
     """
@@ -4777,8 +7940,8 @@ class UrlRewriteAction(DeliveryRuleAction):
 
     :param name: Required. The name of the action for the delivery rule.Constant filled by server.
      Possible values include: "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader",
-     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning".
-    :type name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionName
+     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride".
+    :type name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
     :param parameters: Required. Defines the parameters for the action.
     :type parameters: ~azure.mgmt.cdn.models.UrlRewriteActionParameters
     """
@@ -4854,8 +8017,8 @@ class UrlSigningAction(DeliveryRuleAction):
 
     :param name: Required. The name of the action for the delivery rule.Constant filled by server.
      Possible values include: "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader",
-     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning".
-    :type name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionName
+     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride".
+    :type name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
     :param parameters: Required. Defines the parameters for the action.
     :type parameters: ~azure.mgmt.cdn.models.UrlSigningActionParameters
     """
@@ -4886,32 +8049,24 @@ class UrlSigningActionParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type:  Default value:
+    :ivar odata_type: Required.  Default value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleUrlSigningActionParameters".
     :vartype odata_type: str
-    :param key_id: Required. Id reference of the key to be used to verify the hash and should be
-     defined in UrlSigningKeys.
-    :type key_id: str
     :param algorithm: Algorithm to use for URL signing. Possible values include: "SHA256".
     :type algorithm: str or ~azure.mgmt.cdn.models.Algorithm
     :param parameter_name_override: Defines which query string parameters in the url to be
      considered for expires, key id etc.
     :type parameter_name_override: list[~azure.mgmt.cdn.models.UrlSigningParamIdentifier]
-    :param ip_subnets: Match values to match against. Supports CIDR ranges (both IPv4 and IPv6).
-    :type ip_subnets: list[str]
     """
 
     _validation = {
-        'odata_type': {'constant': True},
-        'key_id': {'required': True},
+        'odata_type': {'required': True, 'constant': True},
     }
 
     _attribute_map = {
         'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'key_id': {'key': 'keyId', 'type': 'str'},
         'algorithm': {'key': 'algorithm', 'type': 'str'},
         'parameter_name_override': {'key': 'parameterNameOverride', 'type': '[UrlSigningParamIdentifier]'},
-        'ip_subnets': {'key': 'ipSubnets', 'type': '[str]'},
     }
 
     odata_type = "#Microsoft.Azure.Cdn.Models.DeliveryRuleUrlSigningActionParameters"
@@ -4921,10 +8076,8 @@ class UrlSigningActionParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(UrlSigningActionParameters, self).__init__(**kwargs)
-        self.key_id = kwargs['key_id']
         self.algorithm = kwargs.get('algorithm', None)
         self.parameter_name_override = kwargs.get('parameter_name_override', None)
-        self.ip_subnets = kwargs.get('ip_subnets', None)
 
 
 class UrlSigningKey(msrest.serialization.Model):
@@ -4959,6 +8112,47 @@ class UrlSigningKey(msrest.serialization.Model):
         self.key_source_parameters = kwargs['key_source_parameters']
 
 
+class UrlSigningKeyParameters(SecretParameters):
+    """Url signing key parameters.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. The type of the Secret to create.Constant filled by server.  Possible
+     values include: "UrlSigningKey", "CustomerCertificate", "ManagedCertificate".
+    :type type: str or ~azure.mgmt.cdn.models.SecretType
+    :param key_id: Required. Defines the customer defined key Id. This id will exist in the
+     incoming request to indicate the key used to form the hash.
+    :type key_id: str
+    :param secret_source: Required. Resource reference to the KV secret.
+    :type secret_source: ~azure.mgmt.cdn.models.ResourceReference
+    :param secret_version: Version of the secret to be used.
+    :type secret_version: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'key_id': {'required': True},
+        'secret_source': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'key_id': {'key': 'keyId', 'type': 'str'},
+        'secret_source': {'key': 'secretSource', 'type': 'ResourceReference'},
+        'secret_version': {'key': 'secretVersion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(UrlSigningKeyParameters, self).__init__(**kwargs)
+        self.type = 'UrlSigningKey'  # type: str
+        self.key_id = kwargs['key_id']
+        self.secret_source = kwargs['secret_source']
+        self.secret_version = kwargs.get('secret_version', None)
+
+
 class UrlSigningParamIdentifier(msrest.serialization.Model):
     """Defines how to identify a parameter for a specific purpose e.g. expires.
 
@@ -4988,6 +8182,100 @@ class UrlSigningParamIdentifier(msrest.serialization.Model):
         super(UrlSigningParamIdentifier, self).__init__(**kwargs)
         self.param_indicator = kwargs['param_indicator']
         self.param_name = kwargs['param_name']
+
+
+class Usage(msrest.serialization.Model):
+    """Describes resource usage.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource identifier.
+    :vartype id: str
+    :param unit: Required. An enum describing the unit of measurement. Possible values include:
+     "Count".
+    :type unit: str or ~azure.mgmt.cdn.models.UsageUnit
+    :param current_value: Required. The current value of the usage.
+    :type current_value: long
+    :param limit: Required. The limit of usage.
+    :type limit: long
+    :param name: Required. The name of the type of usage.
+    :type name: ~azure.mgmt.cdn.models.UsageName
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'unit': {'required': True},
+        'current_value': {'required': True},
+        'limit': {'required': True},
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'current_value': {'key': 'currentValue', 'type': 'long'},
+        'limit': {'key': 'limit', 'type': 'long'},
+        'name': {'key': 'name', 'type': 'UsageName'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Usage, self).__init__(**kwargs)
+        self.id = None
+        self.unit = kwargs['unit']
+        self.current_value = kwargs['current_value']
+        self.limit = kwargs['limit']
+        self.name = kwargs['name']
+
+
+class UsageName(msrest.serialization.Model):
+    """The usage names.
+
+    :param value: A string describing the resource name.
+    :type value: str
+    :param localized_value: A localized string describing the resource name.
+    :type localized_value: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'str'},
+        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(UsageName, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.localized_value = kwargs.get('localized_value', None)
+
+
+class UsagesListResult(msrest.serialization.Model):
+    """The list usages operation response.
+
+    :param value: The list of resource usages.
+    :type value: list[~azure.mgmt.cdn.models.Usage]
+    :param next_link: URL to get the next set of results.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Usage]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(UsagesListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
 
 
 class UserManagedHttpsParameters(CustomDomainHttpsParameters):
@@ -5149,3 +8437,231 @@ class ValidateProbeOutput(msrest.serialization.Model):
         self.is_valid = None
         self.error_code = None
         self.message = None
+
+
+class ValidateSecretInput(msrest.serialization.Model):
+    """Input of the secret to be validated.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param secret_source: Required. The secret source.
+    :type secret_source: ~azure.mgmt.cdn.models.ResourceReference
+    :param secret_type: Required. The secret type. Possible values include: "UrlSigningKey",
+     "ManagedCertificate", "CustomerCertificate".
+    :type secret_type: str or ~azure.mgmt.cdn.models.ValidateSecretType
+    """
+
+    _validation = {
+        'secret_source': {'required': True},
+        'secret_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'secret_source': {'key': 'secretSource', 'type': 'ResourceReference'},
+        'secret_type': {'key': 'secretType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ValidateSecretInput, self).__init__(**kwargs)
+        self.secret_source = kwargs['secret_source']
+        self.secret_type = kwargs['secret_type']
+
+
+class ValidateSecretOutput(msrest.serialization.Model):
+    """Output of the validated secret.
+
+    :param status: The validation status. Possible values include: "Valid", "Invalid",
+     "AccessDenied", "CertificateExpired".
+    :type status: str or ~azure.mgmt.cdn.models.Status
+    :param message: Detailed error message.
+    :type message: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ValidateSecretOutput, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.message = kwargs.get('message', None)
+
+
+class ValidationToken(msrest.serialization.Model):
+    """The validation token.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar token:
+    :vartype token: str
+    """
+
+    _validation = {
+        'token': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'token': {'key': 'token', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ValidationToken, self).__init__(**kwargs)
+        self.token = None
+
+
+class WafMetricsResponse(msrest.serialization.Model):
+    """Waf Metrics Response.
+
+    :param date_time_begin:
+    :type date_time_begin: ~datetime.datetime
+    :param date_time_end:
+    :type date_time_end: ~datetime.datetime
+    :param granularity:  Possible values include: "PT5M", "PT1H", "P1D".
+    :type granularity: str or ~azure.mgmt.cdn.models.WafMetricsResponseGranularity
+    :param series:
+    :type series: list[~azure.mgmt.cdn.models.WafMetricsResponseSeriesItem]
+    """
+
+    _attribute_map = {
+        'date_time_begin': {'key': 'dateTimeBegin', 'type': 'iso-8601'},
+        'date_time_end': {'key': 'dateTimeEnd', 'type': 'iso-8601'},
+        'granularity': {'key': 'granularity', 'type': 'str'},
+        'series': {'key': 'series', 'type': '[WafMetricsResponseSeriesItem]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(WafMetricsResponse, self).__init__(**kwargs)
+        self.date_time_begin = kwargs.get('date_time_begin', None)
+        self.date_time_end = kwargs.get('date_time_end', None)
+        self.granularity = kwargs.get('granularity', None)
+        self.series = kwargs.get('series', None)
+
+
+class WafMetricsResponseSeriesItem(msrest.serialization.Model):
+    """WafMetricsResponseSeriesItem.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param metric:
+    :type metric: str
+    :ivar unit:  Default value: "count".
+    :vartype unit: str
+    :param groups:
+    :type groups: list[~azure.mgmt.cdn.models.WafMetricsResponseSeriesPropertiesItemsItem]
+    :param data:
+    :type data:
+     list[~azure.mgmt.cdn.models.Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems]
+    """
+
+    _validation = {
+        'unit': {'constant': True},
+    }
+
+    _attribute_map = {
+        'metric': {'key': 'metric', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'groups': {'key': 'groups', 'type': '[WafMetricsResponseSeriesPropertiesItemsItem]'},
+        'data': {'key': 'data', 'type': '[Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems]'},
+    }
+
+    unit = "count"
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(WafMetricsResponseSeriesItem, self).__init__(**kwargs)
+        self.metric = kwargs.get('metric', None)
+        self.groups = kwargs.get('groups', None)
+        self.data = kwargs.get('data', None)
+
+
+class WafMetricsResponseSeriesPropertiesItemsItem(msrest.serialization.Model):
+    """WafMetricsResponseSeriesPropertiesItemsItem.
+
+    :param name:
+    :type name: str
+    :param value:
+    :type value: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(WafMetricsResponseSeriesPropertiesItemsItem, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)
+
+
+class WafRankingsResponse(msrest.serialization.Model):
+    """Waf Rankings Response.
+
+    :param date_time_begin:
+    :type date_time_begin: ~datetime.datetime
+    :param date_time_end:
+    :type date_time_end: ~datetime.datetime
+    :param groups:
+    :type groups: list[str]
+    :param data:
+    :type data: list[~azure.mgmt.cdn.models.WafRankingsResponseDataItem]
+    """
+
+    _attribute_map = {
+        'date_time_begin': {'key': 'dateTimeBegin', 'type': 'iso-8601'},
+        'date_time_end': {'key': 'dateTimeEnd', 'type': 'iso-8601'},
+        'groups': {'key': 'groups', 'type': '[str]'},
+        'data': {'key': 'data', 'type': '[WafRankingsResponseDataItem]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(WafRankingsResponse, self).__init__(**kwargs)
+        self.date_time_begin = kwargs.get('date_time_begin', None)
+        self.date_time_end = kwargs.get('date_time_end', None)
+        self.groups = kwargs.get('groups', None)
+        self.data = kwargs.get('data', None)
+
+
+class WafRankingsResponseDataItem(msrest.serialization.Model):
+    """WafRankingsResponseDataItem.
+
+    :param group_values:
+    :type group_values: list[str]
+    :param metrics:
+    :type metrics:
+     list[~azure.mgmt.cdn.models.ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems]
+    """
+
+    _attribute_map = {
+        'group_values': {'key': 'groupValues', 'type': '[str]'},
+        'metrics': {'key': 'metrics', 'type': '[ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(WafRankingsResponseDataItem, self).__init__(**kwargs)
+        self.group_values = kwargs.get('group_values', None)
+        self.metrics = kwargs.get('metrics', None)

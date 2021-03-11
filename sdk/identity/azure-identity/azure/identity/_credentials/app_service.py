@@ -25,13 +25,14 @@ class AppServiceCredential(GetTokenMixin):
 
         client_args = _get_client_args(**kwargs)
         if client_args:
+            self._available = True
             self._client = ManagedIdentityClient(**client_args)
         else:
-            self._client = None
+            self._available = False
 
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
-        if not self._client:
+        if not self._available:
             raise CredentialUnavailableError(
                 message="App Service managed identity configuration not found in environment"
             )
@@ -85,10 +86,18 @@ def _parse_app_service_expires_on(content):
 
     :raises ValueError: ``expires_on`` didn't match an expected format
     """
+
+    # Azure ML sets the same environment variables as App Service but returns expires_on as an integer.
+    # That means we could have an Azure ML response here, so let's first try to parse expires_on as an int.
+    try:
+        content["expires_on"] = int(content["expires_on"])
+        return
+    except ValueError:
+        pass
+
     import calendar
     import time
 
-    # parse the string minus the timezone offset
     expires_on = content["expires_on"]
     if expires_on.endswith(" +00:00"):
         date_string = expires_on[: -len(" +00:00")]

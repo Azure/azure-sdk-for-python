@@ -9,10 +9,10 @@
 from enum import Enum
 
 from azure.core.paging import PageIterator
+from azure.core.exceptions import HttpResponseError
 from ._parser import _parse_datetime_from_str
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin, get_enum_value
-from ._generated.models import StorageErrorException
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
@@ -274,7 +274,7 @@ class ContentSettings(DictMixin):
     :param str cache_control:
         If the cache_control has previously been set for
         the file, that value is stored.
-    :param str content_md5:
+    :param bytearray content_md5:
         If the content_md5 has been set for the file, this response
         header is stored so that the client can check for message content
         integrity.
@@ -375,8 +375,8 @@ class ShareProperties(DictMixin):
         props.deleted_time = generated.properties.deleted_time
         props.version = generated.version
         props.remaining_retention_days = generated.properties.remaining_retention_days
-        props.provisioned_egress_mbps = generated.properties.provisioned_egress_mbps
-        props.provisioned_ingress_mbps = generated.properties.provisioned_ingress_mbps
+        props.provisioned_egress_mbps = generated.properties.provisioned_egress_m_bps
+        props.provisioned_ingress_mbps = generated.properties.provisioned_ingress_m_bps
         props.provisioned_iops = generated.properties.provisioned_iops
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.protocols = [protocol.strip() for protocol in generated.properties.enabled_protocols.split(',')]\
@@ -428,7 +428,7 @@ class SharePropertiesPaged(PageIterator):
                 prefix=self.prefix,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):
@@ -520,7 +520,7 @@ class HandlesPaged(PageIterator):
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):
@@ -634,7 +634,7 @@ class DirectoryPropertiesPaged(PageIterator):
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):

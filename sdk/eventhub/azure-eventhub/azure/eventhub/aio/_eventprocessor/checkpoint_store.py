@@ -89,7 +89,7 @@ class CheckpointStore(ABC):
     async def list_checkpoints(
         self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str
     ) -> Iterable[Dict[str, Any]]:
-        """List the updated checkpoints from the store.
+        """List the updated checkpoints from the chosen storage service.
 
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
          The format is like "<namespace>.servicebus.windows.net".

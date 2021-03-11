@@ -61,13 +61,13 @@ class StorageBlockBlobTest(StorageTestCase):
                 pass
 
     #--Helpers-----------------------------------------------------------------
-    def _get_blob_reference(self):
-        return self.get_resource_name(TEST_BLOB_PREFIX)
+    def _get_blob_reference(self, prefix=TEST_BLOB_PREFIX):
+        return self.get_resource_name(prefix)
 
     def _create_blob(self, tags=None, data=b'', **kwargs):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        blob.upload_blob(data, tags=tags, **kwargs)
+        blob.upload_blob(data, tags=tags, overwrite=True, **kwargs)
         return blob
 
     def assertBlobEqual(self, container_name, blob_name, expected_data):
@@ -266,6 +266,7 @@ class StorageBlockBlobTest(StorageTestCase):
                                       include_source_blob_properties=True,
                                       tags=new_blob_tags,
                                       content_settings=new_blob_content_settings,
+                                      overwrite=True,
                                       cpk=new_blob_cpk)
         new_blob_props = new_blob.get_blob_properties(cpk=new_blob_cpk)
 
@@ -564,6 +565,29 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self.assertEqual(props.blob_type, BlobType.BlockBlob)
+
+    @GlobalStorageAccountPreparer()
+    def test_upload_blob_content_md5(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        blob1_name = self._get_blob_reference(prefix="blob1")
+        blob2_name = self._get_blob_reference(prefix="blob2")
+        blob1 = self.bsc.get_blob_client(self.container_name, blob1_name)
+        blob2 = self.bsc.get_blob_client(self.container_name, blob2_name)
+        data1 = b'hello world'
+        data2 = b'hello world this wont work'
+
+        # Act
+        blob1.upload_blob(data1, overwrite=True)
+        blob1_md5 = blob1.get_blob_properties().content_settings.content_md5
+        blob2_content_settings = ContentSettings(content_md5=blob1_md5)
+
+        # Passing data that does not match the md5
+        with self.assertRaises(HttpResponseError):
+            blob2.upload_blob(data2, content_settings=blob2_content_settings)
+        # Correct data and corresponding md5
+        blob2.upload_blob(data1, content_settings=blob2_content_settings)
+        blob2_md5 = blob2.get_blob_properties().content_settings.content_md5
+        self.assertEqual(blob1_md5, blob2_md5)
 
     @GlobalStorageAccountPreparer()
     def test_create_small_block_blob_with_overwrite(self, resource_group, location, storage_account, storage_account_key):

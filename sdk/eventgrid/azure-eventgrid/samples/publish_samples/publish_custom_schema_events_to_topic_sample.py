@@ -12,7 +12,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) CUSTOM_SCHEMA_ACCESS_KEY - The access key of your eventgrid account.
     2) CUSTOM_SCHEMA_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
-    "<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net".
+    "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
 """
 import os
 from random import randint, sample
@@ -22,15 +22,15 @@ from msrest.serialization import UTC
 import datetime as dt
 
 from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid import EventGridPublisherClient, CustomEvent
+from azure.eventgrid import EventGridPublisherClient
 
 key = os.environ["CUSTOM_SCHEMA_ACCESS_KEY"]
-topic_hostname = os.environ["CUSTOM_SCHEMA_TOPIC_HOSTNAME"]
+endpoint = os.environ["CUSTOM_SCHEMA_TOPIC_HOSTNAME"]
 
 def publish_event():
     # authenticate client
     credential = AzureKeyCredential(key)
-    client = EventGridPublisherClient(topic_hostname, credential)
+    client = EventGridPublisherClient(endpoint, credential)
 
     custom_schema_event = {
         "customSubject": "sample",
@@ -42,13 +42,12 @@ def publish_event():
     }
 
     # publish events
-    for _  in range(10):
+    for _  in range(3):
 
         event_list = []     # list of events to publish
         # create events and append to list
         for j in range(randint(1, 3)):
-            event = CustomEvent(custom_schema_event)
-            event_list.append(event)
+            event_list.append(custom_schema_event)
 
         # publish list of events
         client.send(event_list)

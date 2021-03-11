@@ -5,10 +5,10 @@
 # --------------------------------------------------------------------------
 
 import sys
-from .._generated.version import VERSION
+from .._generated import AzureQueueStorage
 
 
-X_MS_VERSION = VERSION
+X_MS_VERSION = AzureQueueStorage(url="get_api_version")._config.version  # pylint: disable=protected-access
 
 # Socket timeout in seconds
 CONNECTION_TIMEOUT = 20

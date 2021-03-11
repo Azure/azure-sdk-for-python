@@ -1,8 +1,8 @@
 -e ../../../tools/azure-devtools
 -e ../../../tools/azure-sdk-tools
+-e ../../cosmos/azure-mgmt-cosmosdb
 ../../core/azure-core
+../azure-data-nspkg
 cryptography>=2.1.4
 aiohttp>=3.0; python_version >= '3.5'
--e ../../cosmos/azure-mgmt-cosmosdb
 azure-identity
-../azure-data-nspkg

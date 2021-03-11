@@ -1,6 +1,12 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.0.0b4 (2020-20-09)
+
+### Breaking Changes
+- CommunicationIdentityClient is moved to a new package: "azure.communication.identity".
+- Replaced CommunicationUser with CommunicationUserIdentifier.
+- Renamed CommunicationUserCredential to CommunicationTokenCredential.
+
 
 ##### `PhoneNumberAdministrationClient`
 -  `begin_reserve_phone_numbers` now takes `display_name`, `description`, `phone_plan_ids`, 
@@ -13,9 +19,18 @@ Caller must provide one of the following:
  (3) only keyword `continuation_token` to restart a poller from a saved state.
 -  `list_all_orders` renamed to `list_all_reservations`.
 
+### Added
+
+- Added `MicrosoftTeamsUserIdentifier`
+
+##### `IdentityClient`
+- Added support for Azure Active Directory authentication
+
+#### `PhoneNumberAdministrationClient`
+- Added support for Azure Active Directory authentication
 ## 1.0.0b3 (2020-11-16)
 
-**Breaking Changes**
+### Breaking Changes
 
 ##### `PhoneNumberSearch` renamed to `PhoneNumberReservation`.
 
@@ -35,7 +50,7 @@ Caller must provide one of the following:
 -  `begin_purchase_reservation` now returns `LROPoller[PurchaseReservationPolling]`.
 - `cancel_search` has been renamed to `cancel_reservation`.
 
-**New Features**
+### Added
 
 ##### `PhoneNumberAdministrationClient`
 - Add long run operation polling method `ReservePhoneNumberPolling`,`PurchaseReservationPolling`,

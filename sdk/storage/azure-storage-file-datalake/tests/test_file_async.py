@@ -8,8 +8,10 @@
 import unittest
 from datetime import datetime, timedelta
 import asyncio
+import pytest
 
 from azure.core import MatchConditions
+from azure.core.credentials import AzureSasCredential
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, \
     ClientAuthenticationError, ResourceModifiedError
@@ -111,6 +113,25 @@ class FileTest(StorageTestCase):
     def test_create_file_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file())
+
+    async def _test_file_exists(self):
+        # Arrange
+        directory_name = self._get_directory_reference()
+
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+
+        file_client1 = directory_client.get_file_client('filename')
+        file_client2 = directory_client.get_file_client('nonexistentfile')
+        await file_client1.create_file()
+
+        self.assertTrue(await file_client1.exists())
+        self.assertFalse(await file_client2.exists())
+
+    @record
+    def test_file_exists(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_file_exists())
 
     async def _test_create_file_using_oauth_token_credential(self):
         # Arrange
@@ -503,21 +524,26 @@ class FileTest(StorageTestCase):
             datetime.utcnow() + timedelta(hours=1),
         )
 
-        # read the created file which is under root directory
-        file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, file_name, credential=token)
-        properties = await file_client.get_file_properties()
+        for credential in [token, AzureSasCredential(token)]:
+            # read the created file which is under root directory
+            file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, file_name, credential=credential)
+            properties = await file_client.get_file_properties()
 
-        # make sure we can read the file properties
-        self.assertIsNotNone(properties)
+            # make sure we can read the file properties
+            self.assertIsNotNone(properties)
 
-        # try to write to the created file with the token
-        with self.assertRaises(HttpResponseError):
-            await file_client.append_data(b"abcd", 0, 4)
+            # try to write to the created file with the token
+            with self.assertRaises(HttpResponseError):
+                await file_client.append_data(b"abcd", 0, 4)
 
     @record
     def test_account_sas_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_account_sas())
+
+    def test_account_sas_raises_if_sas_already_in_uri(self):
+        with self.assertRaises(ValueError):
+            DataLakeFileClient(self.dsc.url + "?sig=foo", self.file_system_name, "foo", credential=AzureSasCredential("?foo=bar"))
 
     async def _test_file_sas_only_applies_to_file_level(self):
         # SAS URL is calculated from storage key, so this test runs live only

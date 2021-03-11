@@ -82,6 +82,12 @@ class MediaGraphOutputSelectorOperator(with_metaclass(_CaseInsensitiveEnumMeta, 
     IS_ENUM = "is"  #: A media type is the same type or a subtype.
     IS_NOT = "isNot"  #: A media type is not the same type or a subtype.
 
+class MediaGraphOutputSelectorProperty(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The stream property to compare with.
+    """
+
+    MEDIA_TYPE = "mediaType"  #: The stream's MIME type or subtype.
+
 class MediaGraphParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the parameter.
     """

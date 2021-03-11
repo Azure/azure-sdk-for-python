@@ -4,20 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import (  # pylint: disable=unused-import
-    Union,
-    Optional,
-    Any,
-    Iterable,
-    Dict,
-    List,
-    Type,
-    Tuple,
-    TYPE_CHECKING,
-)
-import logging
-from uuid import uuid4
+from typing import TYPE_CHECKING
 
+import logging
+from uuid import uuid4, UUID
+from datetime import datetime
+import six
 
 try:
     from urllib.parse import parse_qs, quote
@@ -25,12 +17,11 @@ except ImportError:
     from urlparse import parse_qs  # type: ignore
     from urllib2 import quote  # type: ignore
 
-import six
 from azure.core.configuration import Configuration
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import (
-    RequestsTransport,
     HttpTransport,
     HttpRequest,
 )
@@ -42,8 +33,10 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     UserAgentPolicy,
+    AzureSasCredentialPolicy
 )
 
+from ._common_conversion import _to_utc_datetime
 from ._shared_access_signature import QueryStringConstants
 from ._constants import (
     STORAGE_OAUTH_SCOPE,
@@ -65,6 +58,17 @@ from ._policies import (
 from ._models import BatchErrorException
 from ._sdk_moniker import SDK_MONIKER
 
+if TYPE_CHECKING:
+    from typing import (  # pylint: disable=ungrouped-imports
+        Union,
+        Optional,
+        Any,
+        Iterable,
+        Dict,
+        List,
+        Type,
+        Tuple,
+    )
 
 _LOGGER = logging.getLogger(__name__)
 _SERVICE_PARAMS = {
@@ -76,7 +80,7 @@ _SERVICE_PARAMS = {
 }
 
 
-class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
+class StorageAccountHostsMixin(object):
     def __init__(
         self,
         parsed_url,  # type: Any
@@ -123,9 +127,27 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self.require_encryption = kwargs.get("require_encryption", False)
         self.key_encryption_key = kwargs.get("key_encryption_key")
         self.key_resolver_function = kwargs.get("key_resolver_function")
-        self._config, self._pipeline = self._create_pipeline(
-            self.credential, storage_sdk=service, **kwargs
-        )
+
+        self._configure_credential(self.credential)
+        kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
+        kwargs.setdefault("read_timeout", READ_TIMEOUT)
+
+        self._policies = [
+            StorageHeadersPolicy(**kwargs),
+            ProxyPolicy(**kwargs),
+            UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
+            StorageContentValidation(),
+            StorageRequestHook(**kwargs),
+            self._credential_policy,
+            ContentDecodePolicy(response_encoding="utf-8"),
+            RedirectPolicy(**kwargs),
+            StorageHosts(hosts=self._hosts, **kwargs),
+            kwargs.get("retry_policy") or TablesRetryPolicy(**kwargs),
+            StorageLoggingPolicy(**kwargs),
+            StorageResponseHook(**kwargs),
+            DistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs),
+        ]
 
     def __enter__(self):
         self._client.__enter__()
@@ -225,6 +247,9 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             query_str += "snapshot={}&".format(self.snapshot)
         if share_snapshot:
             query_str += "sharesnapshot={}&".format(self.snapshot)
+        if sas_token and isinstance(credential, AzureSasCredential):
+            raise ValueError(
+                "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
         if sas_token and not credential:
             query_str += sas_token
         elif is_credential_sastoken(credential):
@@ -232,7 +257,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             credential = None
         return query_str.rstrip("?&"), credential
 
-    def _create_pipeline(self, credential, **kwargs):
+    def _configure_credential(self, credential):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None
         if hasattr(credential, "get_token"):
@@ -241,36 +266,12 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             )
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
+        elif isinstance(credential, AzureSasCredential):
+            self._credential_policy = AzureSasCredentialPolicy(credential)
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
-        config = kwargs.get("_configuration") or create_configuration(**kwargs)
-        if kwargs.get("_pipeline"):
-            return config, kwargs["_pipeline"]
-        config.transport = kwargs.get("transport")  # type: ignore
-        kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
-        kwargs.setdefault("read_timeout", READ_TIMEOUT)
-        if not config.transport:
-            config.transport = RequestsTransport(**kwargs)
-        policies = [
-            config.headers_policy,
-            config.proxy_policy,
-            config.user_agent_policy,
-            StorageContentValidation(),
-            StorageRequestHook(**kwargs),
-            self._credential_policy,
-            ContentDecodePolicy(response_encoding="utf-8"),
-            RedirectPolicy(**kwargs),
-            StorageHosts(hosts=self._hosts, **kwargs),
-            config.retry_policy,
-            config.logging_policy,
-            StorageResponseHook(**kwargs),
-            DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs),
-        ]
-        return config, Pipeline(config.transport, policies=policies)
-
-    def _batch_send(  # pylint: disable=inconsistent-return-statements
+    def _batch_send(
         self,
         entities,  # type: List[TableEntity]
         *reqs,  # type: List[HttpRequest]
@@ -301,7 +302,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             boundary="batch_{}".format(uuid4()),
         )
 
-        pipeline_response = self._pipeline.run(request, **kwargs)
+        pipeline_response = self._client._client._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
         response = pipeline_response.http_response
 
         if response.status_code == 403:
@@ -337,6 +338,34 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                 )
         return transaction_result
 
+    def _parameter_filter_substitution(  # pylint: disable=no-self-use
+            self,
+            parameters,  # type: dict[str,str]
+            filter  # type: str  pylint: disable=redefined-builtin
+    ):
+        """Replace user defined parameter in filter
+        :param parameters: User defined parameters
+        :param filter: Filter for querying
+        """
+        if parameters:
+            filter_strings = filter.split(' ')
+            for index, word in enumerate(filter_strings):
+                if word[0] == u'@':
+                    val = parameters[word[1:]]
+                    if val in [True, False]:
+                        filter_strings[index] = str(val).lower()
+                    elif isinstance(val, (float, six.integer_types)):
+                        filter_strings[index] = str(val)
+                    elif isinstance(val, datetime):
+                        filter_strings[index] = "datetime'{}'".format(_to_utc_datetime(val))
+                    elif isinstance(val, UUID):
+                        filter_strings[index] = "guid'{}'".format(str(val))
+                    else:
+                        filter_strings[index] = "'{}'".format(val)
+            return ' '.join(filter_strings)
+
+        return filter
+
 
 class TransportWrapper(HttpTransport):
     """Wrapper class that ensures that an inner client created
@@ -359,7 +388,7 @@ class TransportWrapper(HttpTransport):
     def __enter__(self):
         pass
 
-    def __exit__(self, *args):  # pylint: disable=arguments-differ
+    def __exit__(self, *args):
         pass
 
 
@@ -430,39 +459,6 @@ def parse_connection_str(conn_str, credential, service, keyword_args):
         keyword_args["secondary_hostname"] = secondary
 
     return primary, credential
-
-
-def create_configuration(**kwargs):
-    # type: (**Any) -> Configuration
-    config = Configuration(**kwargs)
-    config.headers_policy = StorageHeadersPolicy(**kwargs)
-    config.user_agent_policy = UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs)
-    # sdk_moniker="storage-{}/{}".format(kwargs.pop('storage_sdk'), VERSION), **kwargs)
-    config.retry_policy = kwargs.get("retry_policy") or TablesRetryPolicy(**kwargs)
-    config.logging_policy = StorageLoggingPolicy(**kwargs)
-    config.proxy_policy = ProxyPolicy(**kwargs)
-
-    # Storage settings
-    config.max_single_put_size = kwargs.get("max_single_put_size", 64 * 1024 * 1024)
-    config.copy_polling_interval = 15
-
-    # Block blob uploads
-    config.max_block_size = kwargs.get("max_block_size", 4 * 1024 * 1024)
-    config.min_large_block_upload_threshold = kwargs.get(
-        "min_large_block_upload_threshold", 4 * 1024 * 1024 + 1
-    )
-    config.use_byte_buffer = kwargs.get("use_byte_buffer", False)
-
-    # Page blob uploads
-    config.max_page_size = kwargs.get("max_page_size", 4 * 1024 * 1024)
-
-    # Blob downloads
-    config.max_single_get_size = kwargs.get("max_single_get_size", 32 * 1024 * 1024)
-    config.max_chunk_get_size = kwargs.get("max_chunk_get_size", 4 * 1024 * 1024)
-
-    # File uploads
-    config.max_range_size = kwargs.get("max_range_size", 4 * 1024 * 1024)
-    return config
 
 
 def parse_query(query_str):

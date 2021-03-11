@@ -1,8 +1,39 @@
-
 # Release History
 
-## 1.9.1 (Unreleased)
+## 1.12.1 (Unreleased)
 
+
+## 1.12.0 (2021-03-08)
+
+This version will be the last version to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
+
+### Features
+
+- Added `azure.core.messaging.CloudEvent` model that follows the cloud event spec.
+- Added `azure.core.serialization.NULL` sentinel value
+- Improve `repr`s for `HttpRequest` and `HttpResponse`s  #16972
+
+### Bug Fixes
+
+- Disable retry in stream downloading. (thanks to @jochen-ott-by @hoffmann for the contribution)  #16723
+
+## 1.11.0 (2021-02-08)
+
+### Features
+
+- Added `CaseInsensitiveEnumMeta` class for case-insensitive enums.  #16316
+- Add `raise_for_status` method onto `HttpResponse`. Calling `response.raise_for_status()` on a response with an error code
+will raise an `HttpResponseError`. Calling it on a good response will do nothing  #16399
+
+### Bug Fixes
+
+- Update conn.conn_kw rather than overriding it when setting block size. (thanks for @jiasli for the contribution)  #16587
+
+## 1.10.0 (2021-01-11)
+
+### Features
+
+- Added `AzureSasCredential` and its respective policy. #15946
 
 ## 1.9.0 (2020-11-09)
 

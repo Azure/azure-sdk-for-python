@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/devices
+  response:
+    body:
+      string: '{"value":[{"deviceId":"functionaltests-device1","moduleId":null,"deviceClassId":"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3","manufacturer":"Microsoft-Corporation","model":"Virtual-Machine","lastAttemptedUpdateId":null,"installedUpdateId":{"provider":"Microsoft-Corporation","name":"Virtual-Machine","version":"111.0"},"onLatestUpdate":true,"deploymentStatus":"InProgress","groupId":"functionaltests-groupname1","lastDeploymentId":"6f11870c-79b4-4d4e-85c4-b60e796ed283"},{"deviceId":"adu-raspi-e2etest-raps-prod-wus2","moduleId":null,"deviceClassId":"86705631a06a6d4745a516778f7e2e261a72c5b8","manufacturer":"ADUTeam","model":"RefDevice","lastAttemptedUpdateId":{"provider":"ADUTeam","name":"RefDevice","version":"1.0.3750.1"},"installedUpdateId":{"provider":"ADUTeam","name":"RefDevice","version":"1.0.3779.1"},"onLatestUpdate":false,"deploymentStatus":"Failed","groupId":null,"lastDeploymentId":"[ManagementE2ETest]
+        9134a970-df08-4fe7-8cb6-10d32a0a61f7"},{"deviceId":"Pi13279821","moduleId":null,"deviceClassId":"634a0b52a6e1fb54fe6b98e5b55534bb4800b77b","manufacturer":"ADUTeam","model":"E2ETestDevice","lastAttemptedUpdateId":{"provider":"ADUTeam","name":"E2ETestDevice","version":"1.0.3750.1"},"installedUpdateId":{"provider":"ADUTeam","name":"E2ETestDevice","version":"1.0.3750.1"},"onLatestUpdate":false,"deploymentStatus":"Succeeded","groupId":null,"lastDeploymentId":"[ManagementE2ETest]
+        043b16d7-35c4-4556-bdea-766c39686f25"},{"deviceId":"fakeDeviceId","moduleId":null,"deviceClassId":"fakeDeviceClassId","manufacturer":"Contoso","model":"Virtual-Machine","lastAttemptedUpdateId":{"provider":"Contoso","name":"Virtual-Machine","version":"fakeVersion"},"installedUpdateId":{"provider":"Contoso","name":"Virtual-Machine","version":"2021.302.1304.12"},"onLatestUpdate":false,"deploymentStatus":"InProgress","groupId":"fakeDeviceId","lastDeploymentId":"202fb59607c346cdb6bff3143668d86b"}]}'
+    headers:
+      content-length:
+      - '1923'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Mar 2021 18:10:12 GMT
+      traceparent:
+      - 00-c2a61dc4a01d7a43aabe7006106d5e20-c98c661009205740-00
+    status:
+      code: 200
+      message: OK
+version: 1

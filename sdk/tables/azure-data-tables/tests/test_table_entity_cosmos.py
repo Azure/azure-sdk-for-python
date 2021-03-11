@@ -15,6 +15,8 @@ from math import isnan
 from time import sleep
 import uuid
 
+from devtools_testutils import AzureTestCase
+
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     HttpResponseError,
@@ -38,7 +40,7 @@ from preparers import CosmosPreparer
 
 # ------------------------------------------------------------------------------
 
-class StorageTableEntityTest(TableTestCase):
+class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     def _set_up(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         self.ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
@@ -113,6 +115,32 @@ class StorageTableEntityTest(TableTestCase):
             pk = pk if pk is not None else self.get_resource_name('pk')
             rk = rk if rk is not None else self.get_resource_name('rk')
         return pk, rk
+
+    def _insert_two_opposite_entities(self, pk=None, rk=None):
+        entity1 = self._create_random_entity_dict()
+        resp = self.table.create_entity(entity1)
+
+        partition, row = self._create_pk_rk(pk, rk)
+        properties = {
+            'PartitionKey': partition + u'1',
+            'RowKey': row + u'1',
+            'age': 49,
+            'sex': u'female',
+            'married': False,
+            'deceased': True,
+            'optional': None,
+            'ratio': 5.2,
+            'evenratio': 6.0,
+            'large': 39999011,
+            'Birthday': datetime(1993, 4, 1, tzinfo=tzutc()),
+            'birthday': datetime(1990, 4, 1, tzinfo=tzutc()),
+            'binary': b'binary-binary',
+            'other': EntityProperty(value=40, type=EdmType.INT32),
+            'clsid': uuid.UUID('c8da6455-213e-42d9-9b79-3f9149a57833')
+        }
+        entity = TableEntity(**properties)
+        self.table.create_entity(entity)
+        return entity1, resp
 
     def _create_random_entity_dict(self, pk=None, rk=None):
         """
@@ -329,9 +357,136 @@ class StorageTableEntityTest(TableTestCase):
             entity = self._insert_random_entity()
 
             # Act
-            resp = self.table.query_entities(filter="married eq @my_param", parameters={'my_param': 'True'})
+            entities = self.table.query_entities(filter="married eq @my_param", parameters={'my_param': True})
 
-            assert resp is not None
+            assert entities is not None
+            length = 0
+            for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+            self.sleep(SLEEP_DELAY)
+
+    @CosmosPreparer()
+    def test_query_user_filter_multiple_params(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+            entity, _ = self._insert_random_entity()
+
+            # Act
+            parameters = {
+                'my_param': True,
+                'rk': entity['RowKey']
+            }
+            entities = self.table.query_entities(filter="married eq @my_param and RowKey eq @rk", parameters=parameters)
+
+            assert entities is not None
+            length = 0
+            for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+            self.sleep(SLEEP_DELAY)
+
+    @CosmosPreparer()
+    def test_query_user_filter_integers(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+            entity, _ = self._insert_two_opposite_entities()
+
+            # Act
+            parameters = {
+                'my_param': 40,
+            }
+            entities = self.table.query_entities(filter="age lt @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+            self.sleep(SLEEP_DELAY)
+
+    @CosmosPreparer()
+    def test_query_user_filter_floats(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+            entity, _ = self._insert_two_opposite_entities()
+
+            # Act
+            parameters = {
+                'my_param': entity['ratio'] + 1.0,
+            }
+            entities = self.table.query_entities(filter="ratio lt @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+            self.sleep(SLEEP_DELAY)
+
+    @CosmosPreparer()
+    def test_query_user_filter_datetimes(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+            entity, _ = self._insert_two_opposite_entities()
+
+            # Act
+            parameters = {
+                'my_param': entity['birthday'],
+            }
+            entities = self.table.query_entities(filter="birthday eq @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+            self.sleep(SLEEP_DELAY)
+
+    @CosmosPreparer()
+    def test_query_user_filter_guids(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+            entity, _ = self._insert_two_opposite_entities()
+
+            # Act
+            parameters = {
+                'my_param': entity['clsid']
+            }
+            entities = self.table.query_entities(filter="clsid eq @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
@@ -1341,7 +1496,10 @@ class StorageTableEntityTest(TableTestCase):
                     base_entity['PartitionKey'] += str(i)
                 base_entity['RowKey'] += str(i)
                 base_entity['value'] = i
-                self.table.create_entity(base_entity)
+                try:
+                    self.table.create_entity(base_entity)
+                except ResourceExistsError:
+                    pass
 
             query_filter = u"PartitionKey eq 'pk'"
 
@@ -1746,43 +1904,25 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Cosmos Tables does not yet support sas")
-    @pytest.mark.live_test_only
     @CosmosPreparer()
-    def test_sas_signed_identifier(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from cosmos key, so this test runs live only
+    def test_datetime_milliseconds(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # SAS URL is calculated from storage key, so this test runs live only
+        url = self.account_url(tables_cosmos_account_name, "table")
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
-            # Arrange
-            entity, _ = self._insert_random_entity()
+            entity = self._create_random_entity_dict()
 
-            access_policy = AccessPolicy()
-            access_policy.start = datetime(2011, 10, 11)
-            access_policy.expiry = datetime(2020, 10, 12)
-            access_policy.permission = TableSasPermissions(read=True)
-            identifiers = {'testid': access_policy}
+            entity['milliseconds'] = datetime(2011, 11, 4, 0, 5, 23, 283000, tzinfo=tzutc())
 
-            self.table.set_table_access_policy(identifiers)
+            self.table.create_entity(entity)
 
-            token = generate_table_sas(
-                tables_cosmos_account_name,
-                tables_primary_cosmos_account_key,
-                self.table_name,
-                policy_id='testid',
+            received_entity = self.table.get_entity(
+                partition_key=entity['PartitionKey'],
+                row_key=entity['RowKey']
             )
 
-            # Act
-            service = TableServiceClient(
-                self.account_url(tables_cosmos_account_name, "cosmos"),
-                credential=token,
-            )
-            table = service.get_table_client(self.table_name)
-            entities = list(table.query_entities(
-                filter="PartitionKey eq '{}'".format(entity.PartitionKey)))
+            assert entity['milliseconds'] == received_entity['milliseconds']
 
-            # Assert
-            assert len(entities) ==  1
-            self._assert_default_entity(entities[0])
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)

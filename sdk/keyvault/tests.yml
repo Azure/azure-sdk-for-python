@@ -1,41 +1,26 @@
 trigger: none
 
-jobs:
-  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
-    parameters:
-      ServiceDirectory: keyvault
-      BuildTargetingString: azure-keyvault-keys
-      JobName: Test_Keys
-      EnvVars:
-        AZURE_TEST_RUN_LIVE: true
-        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
-        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
-        AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid)
+parameters:
+  - name: Services
+    type: object
+    default:
+      - azure-keyvault-keys
+      - azure-keyvault-secrets
+      - azure-keyvault-certificates
 
-  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
-    parameters:
-      ServiceDirectory: keyvault
-      BuildTargetingString: azure-keyvault-secrets
-      JobName: Test_Secrets
-      EnvVars:
-        AZURE_TEST_RUN_LIVE: true
-        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
-        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
-        AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid)
-
-  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
-    parameters:
-      ServiceDirectory: keyvault
-      BuildTargetingString: azure-keyvault-certificates
-      JobName: Test_Certificates
-      EnvVars:
-        AZURE_TEST_RUN_LIVE: true
-        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
-        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
-        AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid)
+stages:
+  - ${{ each service in parameters.Services }}:
+    - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+      parameters:
+        ServiceDirectory: keyvault
+        BuildTargetingString: ${{ service }}
+        JobName: ${{ replace(service, '-', '_') }}
+        DeployArmTemplate: true
+        AllocateResourceGroup: true
+        EnvVars:
+          AZURE_TEST_RUN_LIVE: true
+          AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
+          AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+          AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
+          AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
+          AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid)

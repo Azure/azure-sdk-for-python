@@ -10,14 +10,18 @@ import logging
 import json
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.keys import JsonWebKey, KeyClient
-from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
+from azure.keyvault.keys._shared import HttpChallengeCache
+from devtools_testutils import PowerShellPreparer
 
-from _shared.preparer import KeyVaultClientPreparer as _KeyVaultClientPreparer
 from _shared.test_case import KeyVaultTestCase
 
-# pre-apply the client_cls positional argument so it needn't be explicitly passed below
-KeyVaultClientPreparer = functools.partial(_KeyVaultClientPreparer, KeyClient)
+KeyVaultPreparer = functools.partial(
+    PowerShellPreparer,
+    "keyvault",
+    azure_keyvault_url="https://vaultname.vault.azure.net"
+)
 
 # used for logging tests
 class MockHandler(logging.Handler):
@@ -30,6 +34,15 @@ class MockHandler(logging.Handler):
 
 
 class KeyClientTests(KeyVaultTestCase):
+    def tearDown(self):
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
+        super(KeyClientTests, self).tearDown()
+
+    def create_client(self, vault_uri, **kwargs):
+        credential = self.get_credential(KeyClient)
+        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
+
     def _assert_key_attributes_equal(self, k1, k2):
         self.assertEqual(k1.name, k2.name)
         self.assertEqual(k1.vault_url, k2.vault_url)
@@ -140,24 +153,26 @@ class KeyClientTests(KeyVaultTestCase):
         self._validate_rsa_key_bundle(imported_key, client.vault_url, name, key.kty, key.key_ops)
         return imported_key
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_key_crud_operations(self, client, **kwargs):
-
+    def test_key_crud_operations(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
         # create ec key
-        self._create_ec_key(client, key_name="crud-ec-key", hsm=True)
+        ec_key_name = self.get_resource_name("crud-ec-key")
+        self._create_ec_key(client, key_name=ec_key_name, hsm=True)
         # create ec with curve
-        created_ec_key_curve = client.create_ec_key(name="crud-P-256-ec-key", curve="P-256")
+        ec_key_curve_name = self.get_resource_name("crud-P-256-ec-key")
+        created_ec_key_curve = client.create_ec_key(name=ec_key_curve_name, curve="P-256")
         self.assertEqual("P-256", created_ec_key_curve.key.crv)
 
         # import key
-        self._import_test_key(client, "import-test-key")
+        import_test_key_name = self.get_resource_name("import-test-key")
+        self._import_test_key(client, import_test_key_name)
 
         # create rsa key
-        created_rsa_key = self._create_rsa_key(client, key_name="crud-rsa-key")
+        rsa_key_name = self.get_resource_name("crud-rsa-key")
+        created_rsa_key = self._create_rsa_key(client, key_name=rsa_key_name)
 
         # get the created key with version
         key = client.get_key(created_rsa_key.name, created_rsa_key.properties.version)
@@ -190,12 +205,11 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertIsNotNone(deleted_key)
         self.assertEqual(created_rsa_key.id, deleted_key.id)
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_backup_restore(self, client, **kwargs):
-
+    def test_backup_restore(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
         self.assertIsNotNone(client)
+
         key_name = self.get_resource_name("keybak")
         key_type = "RSA"
 
@@ -218,11 +232,9 @@ class KeyClientTests(KeyVaultTestCase):
         restored_key = self._poll_until_no_exception(restore_function, ResourceExistsError)
         self._assert_key_attributes_equal(created_bundle.properties, restored_key.properties)
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_key_list(self, client, **kwargs):
-
+    def test_key_list(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
         max_keys = self.list_test_size
@@ -230,7 +242,7 @@ class KeyClientTests(KeyVaultTestCase):
 
         # create many keys
         for x in range(max_keys):
-            key_name = "key{}".format(x)
+            key_name = self.get_resource_name("key{}".format(x))
             key = client.create_key(key_name, "RSA")
             expected[key.name] = key
 
@@ -242,12 +254,11 @@ class KeyClientTests(KeyVaultTestCase):
                 del expected[key.name]
         self.assertEqual(len(expected), 0)
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_list_versions(self, client, **kwargs):
-
+    def test_list_versions(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
         self.assertIsNotNone(client)
+
         key_name = self.get_resource_name("testKey")
 
         max_keys = self.list_test_size
@@ -268,17 +279,16 @@ class KeyClientTests(KeyVaultTestCase):
                 self._assert_key_attributes_equal(expected_key.properties, key)
         self.assertEqual(0, len(expected))
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_list_deleted_keys(self, client, **kwargs):
+    def test_list_deleted_keys(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
         expected = {}
 
         # create keys
         for i in range(self.list_test_size):
-            key_name = "key{}".format(i)
+            key_name = self.get_resource_name("key{}".format(i))
             key_value = "value{}".format(i)
             expected[key_name] = client.create_key(key_name, "RSA")
 
@@ -299,16 +309,15 @@ class KeyClientTests(KeyVaultTestCase):
                 self._assert_key_attributes_equal(expected[key.name].properties, key.properties)
                 del expected[key.name]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_recover(self, client, **kwargs):
+    def test_recover(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
         # create keys
         keys = {}
         for i in range(self.list_test_size):
-            key_name = "key{}".format(i)
+            key_name = self.get_resource_name("key{}".format(i))
             keys[key_name] = client.create_key(key_name, "RSA")
 
         # delete them
@@ -325,14 +334,13 @@ class KeyClientTests(KeyVaultTestCase):
             expected_key = keys[key_name]
             self._assert_key_attributes_equal(expected_key.properties, recovered_key.properties)
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_purge(self, client, **kwargs):
+    def test_purge(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
         # create keys
-        key_names = ["key{}".format(i) for i in range(self.list_test_size)]
+        key_names = [self.get_resource_name("key{}".format(i)) for i in range(self.list_test_size)]
         for name in key_names:
             client.create_key(name, "RSA")
 
@@ -356,17 +364,17 @@ class KeyClientTests(KeyVaultTestCase):
         deleted = [s.name for s in client.list_deleted_keys()]
         self.assertTrue(not any(s in deleted for s in key_names))
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer(client_kwargs={"logging_enable": True})
-    def test_logging_enabled(self, client, **kwargs):
+    def test_logging_enabled(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url, logging_enable=True)
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)
         logger.setLevel(logging.DEBUG)
 
-        client.create_rsa_key("rsa-key-name", size=2048)
+        rsa_key_name = self.get_resource_name("rsa-key-name")
+        client.create_rsa_key(rsa_key_name, size=2048)
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
@@ -380,17 +388,17 @@ class KeyClientTests(KeyVaultTestCase):
 
         assert False, "Expected request body wasn't logged"
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_logging_disabled(self, client, **kwargs):
+    def test_logging_disabled(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url, logging_enable=False)
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)
         logger.setLevel(logging.DEBUG)
 
-        client.create_rsa_key("rsa-key-name", size=2048)
+        rsa_key_name = self.get_resource_name("rsa-key-name")
+        client.create_rsa_key(rsa_key_name, size=2048)
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
@@ -409,7 +417,7 @@ def test_service_headers_allowed_in_logs():
 
 
 def test_custom_hook_policy():
-    class CustomHookPolicy(object):
+    class CustomHookPolicy(SansIOHTTPPolicy):
         pass
 
     client = KeyClient("...", object(), custom_hook_policy=CustomHookPolicy())

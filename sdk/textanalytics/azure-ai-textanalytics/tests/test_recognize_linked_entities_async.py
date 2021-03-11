@@ -620,3 +620,33 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
         for doc in result:
             for entity in doc.entities:
                 assert entity.bing_entity_search_api_id  # this checks if it's None and if it's empty
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    async def test_string_index_type_explicit_fails_v3(self, client):
+        with pytest.raises(ValueError) as excinfo:
+            await client.recognize_linked_entities(["this should fail"], string_index_type="UnicodeCodePoint")
+        assert "'string_index_type' is only available for API version V3_1_PREVIEW and up" in str(excinfo.value)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_default_string_index_type_is_UnicodeCodePoint(self, client):
+        def callback(response):
+            self.assertEqual(response.http_request.query["stringIndexType"], "UnicodeCodePoint")
+
+        res = await client.recognize_linked_entities(
+            documents=["Hello world"],
+            raw_response_hook=callback
+        )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_explicit_set_string_index_type(self, client):
+        def callback(response):
+            self.assertEqual(response.http_request.query["stringIndexType"], "TextElements_v8")
+
+        res = await client.recognize_linked_entities(
+            documents=["Hello world"],
+            string_index_type="TextElements_v8",
+            raw_response_hook=callback
+        )
