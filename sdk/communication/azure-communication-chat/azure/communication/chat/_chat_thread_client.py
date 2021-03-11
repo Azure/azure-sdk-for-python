@@ -26,7 +26,8 @@ from ._generated.models import (
 from ._models import (
     ChatThreadParticipant,
     ChatMessage,
-    ChatMessageReadReceipt
+    ChatMessageReadReceipt,
+    ChatThreadProperties
 )
 
 from ._utils import ( # pylint: disable=unused-import
@@ -116,6 +117,36 @@ class ChatThreadClient(object):
         :rtype: str
         """
         return self._thread_id
+
+    @distributed_trace
+    def get_properties(
+        self,
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> ChatThreadProperties
+        """Gets a chat thread properties.
+
+        :keyword str thread_id: Thread id to get.
+        :return: ChatThreadProperties
+        :rtype: ~azure.communication.chat.ChatThreadProperties
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/chat_thread_client_sample.py
+                :start-after: [START get_thread]
+                :end-before: [END get_thread]
+                :language: python
+                :dedent: 8
+                :caption: Getting a chat thread by thread id.
+        """
+        chat_thread_id = kwargs.pop('thread_id', None)
+        if not chat_thread_id:
+            chat_thread_id = self._thread_id
+
+        chat_thread = self._client.chat_thread.get_chat_thread_properties(chat_thread_id, **kwargs)
+        return ChatThreadProperties._from_generated(chat_thread)  # pylint:disable=protected-access
+
 
     @distributed_trace
     def update_topic(

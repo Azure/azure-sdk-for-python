@@ -121,30 +121,6 @@ async def test_delete_chat_thread():
     assert raised == False
 
 @pytest.mark.asyncio
-async def test_get_chat_thread():
-    thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
-    raised = False
-
-    async def mock_send(*_, **__):
-        return mock_response(status_code=200, json_payload={
-                "id": thread_id,
-                "topic": "Lunch Chat thread",
-                "createdOn": "2020-10-30T10:50:50Z",
-                "deletedOn": "2020-10-30T10:50:50Z",
-                "createdByCommunicationIdentifier": {"rawId": "string", "communicationUser": {"id": "string"}}
-                })
-    chat_client = ChatClient("https://endpoint", credential, transport=Mock(send=mock_send))
-
-    get_thread_result = None
-    try:
-        get_thread_result = await chat_client.get_chat_thread(thread_id)
-    except:
-        raised = True
-
-    assert raised == False
-    assert get_thread_result.id == thread_id
-
-@pytest.mark.asyncio
 async def test_list_chat_threads():
     thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
     raised = False

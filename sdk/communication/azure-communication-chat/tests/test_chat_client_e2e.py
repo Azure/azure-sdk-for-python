@@ -90,9 +90,6 @@ class ChatClientTest(CommunicationTestCase):
             create_chat_thread1_result = chat_client.create_chat_thread(topic1)
             self.thread_id = create_chat_thread1_result.chat_thread.id
 
-            # get chat thread
-            chat_thread1 = chat_client.get_chat_thread(create_chat_thread1_result.chat_thread.id)
-
             # get chat thread client
             chat_thread1_client = chat_client.get_chat_thread_client(self.thread_id)
 
@@ -132,12 +129,6 @@ class ChatClientTest(CommunicationTestCase):
 
         # test idempotency
         assert thread_id == self.thread_id
-
-    @pytest.mark.live_test_only
-    def test_get_chat_thread(self):
-        self._create_thread()
-        get_thread_result = self.chat_client.get_chat_thread(self.thread_id)
-        assert get_thread_result.id == self.thread_id
 
     @pytest.mark.live_test_only
     def test_list_chat_threads(self):

@@ -403,3 +403,17 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
 
             if not self.is_playback():
                 await self.chat_client.delete_chat_thread(self.thread_id)
+
+    @pytest.mark.live_test_only
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_get_properties(self):
+        async with self.chat_client:
+            await self._create_thread()
+
+            async with self.chat_thread_client:
+                get_thread_result = await self.chat_thread_client.get_properties(self.thread_id)
+                assert get_thread_result.id == self.thread_id
+
+                # delete created users and chat threads
+                if not self.is_playback():
+                    await self.chat_client.delete_chat_thread(self.thread_id)

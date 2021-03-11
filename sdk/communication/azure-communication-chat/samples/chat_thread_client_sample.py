@@ -80,20 +80,37 @@ class ChatThreadClientSamples(object):
         self._thread_id = create_chat_thread_result.chat_thread.id
         print("chat_thread_client created")
 
+    def get_chat_thread_properties(self):
+        thread_id = self._thread_id
+        # [START get_thread]
+        from azure.communication.chat import ChatClient
+        from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
+        from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
+
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
+        chat_thread_client = chat_client.get_chat_thread_client(thread_id)
+        chat_thread_properties = chat_thread_client.get_properties()
+        print('Expected Thread Id: ', thread_id, ' Actual Value: ', chat_thread_properties.id)
+        # [END get_thread]
+
+        print("get_chat_thread_properties succeeded, thread id: " + chat_thread.id + ", thread topic: " + chat_thread.topic)
+
+
     def update_topic(self):
         thread_id = self._thread_id
         chat_client = self._chat_client
         # [START update_topic]
         # set `thread_id` to an existing thread id
-        chat_thread = chat_client.get_chat_thread(thread_id=thread_id)
-        previous_topic = chat_thread.topic
         chat_thread_client = chat_client.get_chat_thread_client(thread_id=thread_id)
+        chat_thread_properties = chat_thread_client.get_properties()
+        previous_topic = chat_thread_properties.topic
 
         topic = "updated thread topic"
         chat_thread_client.update_topic(topic=topic)
 
-        chat_thread = chat_client.get_chat_thread(thread_id=thread_id)
-        updated_topic = chat_thread.topic
+        chat_thread_properties = chat_thread_client.get_properties()
+        updated_topic = chat_thread_properties.topic
         print("Chat Thread Topic Update: Previous value: ", previous_topic, ", Current value: ", updated_topic)
         # [END update_topic]
 

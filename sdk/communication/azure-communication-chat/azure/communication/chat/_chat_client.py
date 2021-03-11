@@ -189,34 +189,6 @@ class ChatClient(object):
 
         return create_chat_thread_result
 
-    @distributed_trace
-    def get_chat_thread(
-        self, thread_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> ChatThreadProperties
-        """Gets a chat thread.
-
-        :param thread_id: Required. Thread id to get.
-        :type thread_id: str
-        :return: ChatThreadProperties
-        :rtype: ~azure.communication.chat.ChatThreadProperties
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/chat_client_sample.py
-                :start-after: [START get_thread]
-                :end-before: [END get_thread]
-                :language: python
-                :dedent: 8
-                :caption: Getting a chat thread by thread id.
-        """
-        if not thread_id:
-            raise ValueError("thread_id cannot be None.")
-
-        chat_thread = self._client.chat.get_chat_thread(thread_id, **kwargs)
-        return ChatThreadProperties._from_generated(chat_thread)  # pylint:disable=protected-access
 
     @distributed_trace
     def list_chat_threads(

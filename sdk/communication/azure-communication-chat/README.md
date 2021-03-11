@@ -93,11 +93,10 @@ Once you initialized a `ChatClient` class, you can do the following chat operati
 
 ## Create, get, update, and delete threads
 
-Perform CRD(Create-Read-Delete) operations on thread participants
+Perform CRD(Create-Read-Delete) operations on threads
 
 ```Python
 create_chat_thread(topic, **kwargs)
-get_chat_thread(thread_id, **kwargs)
 list_chat_threads(**kwargs)
 delete_chat_thread(thread_id, **kwargs)
 ```
@@ -110,6 +109,11 @@ Perform Update operation on thread topic
 
 ```python
 update_topic(topic, **kwargs)
+```
+
+## Get Chat thread properties
+```python
+get_properties(**kwargs)
 ```
 
 ## Send, get, update, and delete messages
@@ -243,10 +247,10 @@ chat_thread_client.add_participants(retry)
 
 ### Get a thread
 
-Use `get_chat_thread` method retrieves a `ChatThreadProperties` from the service; `thread_id` is the unique ID of the thread.
-- Use `thread_id`, required, to specify the unique ID of the thread. 
+Use `get_properties` method retrieves a `ChatThreadProperties` from the service; `thread_id` is the unique ID of the thread.
+
 ```Python
-chat_thread = chat_client.get_chat_thread(thread_id=thread_id)
+chat_thread_properties = chat_thread_client.get_properties()
 ```
 
 ### List chat threads
@@ -276,10 +280,10 @@ Use `update_topic` method to update a thread's properties. `topic` is used to de
 - Use `topic` to give thread a new topic;
 
 ```python
-topic="new topic"
+topic = "new topic"
 chat_thread_client.update_topic(topic=topic)
 
-chat_thread = chat_client.get_chat_thread(thread_id)
+chat_thread = chat_client.get_properties(thread_id)
 
 assert chat_thread.topic == topic
 ```

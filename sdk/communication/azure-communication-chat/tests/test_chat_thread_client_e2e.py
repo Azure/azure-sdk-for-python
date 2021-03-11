@@ -317,3 +317,9 @@ class ChatThreadClientTest(CommunicationTestCase):
                 items.append(item)
 
         assert len(items) == 2
+
+    @pytest.mark.live_test_only
+    def test_get_properties(self):
+        self._create_thread()
+        get_thread_result = self.chat_thread_client.get_properties(self.thread_id)
+        assert get_thread_result.id == self.thread_id

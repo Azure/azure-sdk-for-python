@@ -75,6 +75,26 @@ class ChatThreadClientSamplesAsync(object):
         print("thread created, id: " + self._thread_id)
         print("create_chat_thread_client_async succeeded")
 
+    async def get_chat_thread_properties_async(self):
+        thread_id = self._thread_id
+        # [START get_thread]
+        from azure.communication.chat.aio import ChatClient
+        from azure.communication.identity._shared.user_credential_async import CommunicationTokenCredential
+        from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
+
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
+        async with chat_client:
+            chat_thread_client = chat_client.get_chat_thread_client(thread_id)
+
+            async with chat_thread_client:
+                chat_thread_properties = chat_thread_client.get_properties()
+                print('Expected Thread Id: ', thread_id, ' Actual Value: ', chat_thread_properties.id)
+        # [END get_thread]
+            print("get_chat_thread_properties_async succeeded, thread id: " + chat_thread.id
+                  + ", thread topic: " + chat_thread.topic)
+
+
     async def update_topic_async(self):
         thread_id = self._thread_id
         chat_client = self._chat_client
@@ -82,17 +102,19 @@ class ChatThreadClientSamplesAsync(object):
         # [START update_topic]
         # set `thread_id` to an existing thread id
         async with chat_client:
-            chat_thread = await chat_client.get_chat_thread(thread_id=thread_id)
-            previous_topic = chat_thread.topic
             chat_thread_client = chat_client.get_chat_thread_client(thread_id=thread_id)
 
             async with chat_thread_client:
+                chat_thread_properties = await chat_thread_client.get_properties()
+                previous_topic = chat_thread_properties.topic
+
                 topic = "updated thread topic"
                 await chat_thread_client.update_topic(topic=topic)
 
-            chat_thread = await chat_client.get_chat_thread(thread_id=thread_id)
-            updated_topic = chat_thread.topic
-            print("Chat Thread Topic Update: Previous value: ", previous_topic, ", Current value: ", updated_topic)
+                chat_thread_properties = await chat_thread_client.get_properties()
+                updated_topic = chat_thread_properties.topic
+
+                print("Chat Thread Topic Update: Previous value: ", previous_topic, ", Current value: ", updated_topic)
         # [END update_topic]
 
         print("update_topic_async succeeded")

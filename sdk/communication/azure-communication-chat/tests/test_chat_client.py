@@ -132,29 +132,6 @@ class TestChatClient(unittest.TestCase):
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
 
-    def test_get_chat_thread(self):
-        thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
-        raised = False
-
-        def mock_send(*_, **__):
-            return mock_response(status_code=200, json_payload={
-                "id": thread_id,
-                "topic": "Lunch Chat thread",
-                "createdOn": "2020-10-30T10:50:50Z",
-                "deletedOn": "2020-10-30T10:50:50Z",
-                "createdByCommunicationIdentifier": {"rawId": "string", "communicationUser": {"id": "string"}}
-                })
-        chat_client = ChatClient("https://endpoint", TestChatClient.credential, transport=Mock(send=mock_send))
-
-        get_thread_result = None
-        try:
-            get_thread_result = chat_client.get_chat_thread(thread_id)
-        except:
-            raised = True
-
-        self.assertFalse(raised, 'Expected is no excpetion raised')
-        assert get_thread_result.id == thread_id
-
     def test_list_chat_threads(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
         raised = False
