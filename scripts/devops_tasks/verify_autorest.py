@@ -35,7 +35,7 @@ def run_autorest(service_dir):
             reset_command = ["autorest", "--reset"]
             run_check_call(reset_command, root_dir)
 
-            command = ["autorest", "--python", os.path.join(working_dir, "README.md")]
+            command = ["autorest", "--python", os.path.join(working_dir, "README.md"), "--verbose"]
             logging.info("Command: {}\nLocation: {}\n".format(command, working_dir))
             run_check_call(command, working_dir)
     return swagger_folders
