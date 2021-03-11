@@ -74,6 +74,7 @@ steps:
   - task: PythonScript@0
     displayName: 'Generate Docs'
     condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})
+    timeoutInMinutes: 180
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
