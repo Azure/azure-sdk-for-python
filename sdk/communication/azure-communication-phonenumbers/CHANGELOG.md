@@ -2,6 +2,8 @@
 
 ## 1.0.0b5 (Unreleased)
 
+### Dependency Updates
+- Updated dependency `azure-core` from  azure-core<2.0.0,>=1.9.0 to azure-core<2.0.0,>=1.12.1
 
 ## 1.0.0b4 (2021-03-09)
 

@@ -1,7 +1,8 @@
 # Release History
 
 ## 1.0.0b7 (Unreleased)
-
+### Dependency Updates
+- Updated dependency `azure-core` from  azure-core<2.0.0,>=1.9.0 to azure-core<2.0.0,>=1.12.1
 
 ## 1.0.0b6 (2021-03-09)
 ### Added
