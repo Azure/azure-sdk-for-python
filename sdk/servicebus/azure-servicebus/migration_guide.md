@@ -42,7 +42,7 @@ and consistent onboarding story for those learning Azure or exploring a specific
 To try and improve the development experience across Azure services,
 a set of uniform [design guidelines](https://azure.github.io/azure-sdk/general_introduction.html) was created
 for all languages to drive a consistent experience with established API patterns for all services.
-A set of [Python-specific guidelines](https://azure.github.io/azure-sdk/python_design.html) was also introduced to ensure
+A set of [Python-specific guidelines](https://azure.github.io/azure-sdk/python/guidelines/index.html) was also introduced to ensure
 that Python clients have a natural and idiomatic feel with respect to the Python ecosystem.
 Further details are available in the guidelines for those interested.
 

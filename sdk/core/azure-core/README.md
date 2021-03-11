@@ -2,7 +2,7 @@
 # Azure Core shared client library for Python
 
 Azure core provides shared exceptions and modules for Python SDK client libraries.
-These libraries follow the [Azure SDK Design Guidelines for Python](https://azure.github.io/azure-sdk/python_design.html) .
+These libraries follow the [Azure SDK Design Guidelines for Python](https://azure.github.io/azure-sdk/python/guidelines/index.html) .
 
 If you are a client library developer, please reference [client library developer reference](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md) for more information.
 
