@@ -1,7 +1,8 @@
 # Release History
 
 ## 12.0.0b6 (Unreleased)
-
+**Dependency Updates**
+- Updated dependency `azure-core` from  azure-core<2.0.0,>=1.10.0 to azure-core<2.0.0,>=1.12.1
 
 ## 12.0.0b5 (2020-03-09)
 * This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported.
