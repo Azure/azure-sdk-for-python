@@ -27,14 +27,14 @@ def sample_translation_status_checks():
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
     # submit docs for translation
-    poller = client.create_translation_job(
+    operation = client.begin_translation(
         [
             BatchDocumentInput(
                 source_url=source_container_url_en,
                 targets=[
                     StorageTarget(target_url=target_container_url_es, language="es"),
-                    StorageTarget(target_url=target_container_url_fr, language="fr"),
-                ],
+                    StorageTarget(target_url=target_container_url_fr, language="fr")
+                ]
             )
         ]
     )  # type: DocumentTranslationPoller[ItemPaged[DocumentStatusDetail]]
@@ -43,14 +43,14 @@ def sample_translation_status_checks():
     completed_docs = []
     running_state = ["NotStarted", "Running"]
 
-    while poller.details.status in running_state:
+    while operation.details.status in running_state:
         time.sleep(30)
-        for doc in client.list_documents_statuses(poller.batch_id):
+        for doc in client.list_documents_statuses(operation.batch_id):
             if doc.id not in completed_docs and doc.status not in running_state:
                 completed_docs.append(doc.id)
                 print("Document at {} completed with status: {}".format(doc.url, doc.status))
 
-    print("Translation job completed.")
+    print("Translation batch completed.")
 
 if __name__ == '__main__':
     sample_translation_status_checks()

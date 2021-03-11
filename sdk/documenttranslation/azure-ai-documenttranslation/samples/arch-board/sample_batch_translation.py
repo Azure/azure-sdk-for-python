@@ -26,7 +26,7 @@ def sample_batch_translation():
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
     # submit documents for translation
-    poller = client.begin_translation(
+    operation = client.begin_translation(
         [
             BatchDocumentInput(
                 source_url=source_container_url_en,
@@ -39,13 +39,13 @@ def sample_batch_translation():
     )  # type: DocumentTranslationPoller[ItemPaged[DocumentStatusDetail]]
 
     # get final status
-    doc_statuses = poller.result()  # type: ItemPaged[DocumentStatusDetail]
-    translation_details = poller.details # type: TranslationStatusDetail
+    doc_statuses = operation.result()  # type: ItemPaged[DocumentStatusDetail]
+    translation_details = operation.details # type: TranslationStatusDetail
 
     # print status
-    print("Job status: {}".format(translation_details.status))
-    print("Job created on: {}".format(translation_details.created_on))
-    print("Job last updated on: {}".format(translation_details.last_updated_on))
+    print("Operation status: {}".format(translation_details.status))
+    print("Operation created on: {}".format(translation_details.created_on))
+    print("Operation last updated on: {}".format(translation_details.last_updated_on))
     print("Total number of translations on documents: {}".format(translation_details.documents_total_count))
 
     print("Of total documents...")
