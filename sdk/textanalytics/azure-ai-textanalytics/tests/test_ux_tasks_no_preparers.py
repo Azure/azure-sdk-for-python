@@ -27,12 +27,14 @@ def test_task_one():
         os.path.join(
             os.path.abspath(__file__),
             "..",
-            "./data_inputs/task_2_data.json"
+            "./data_inputs/task_1_2_3_data.txt"
         )
     )
 
     with open(path_to_data) as file:
-        documents = json.load(file)
+        lines = [line.strip() for line in file]
+
+    documents = [{"id": str(idx), "text": doc} for idx, doc in enumerate(lines)]
 
     request = HttpRequest("POST", "/text/analytics/v3.1-preview.1/sentiment",
         json={
@@ -73,12 +75,14 @@ def test_task_two():
         os.path.join(
             os.path.abspath(__file__),
             "..",
-            "./data_inputs/task_2_data.json"
+            "./data_inputs/task_1_2_3_data.txt"
         )
     )
 
     with open(path_to_data) as file:
-        documents = json.load(file)
+        lines = [line.strip() for line in file]
+
+    documents = [{"id": str(idx), "text": doc} for idx, doc in enumerate(lines)]
 
     request = HttpRequest("POST", "/text/analytics/v3.1-preview.1/entities/recognition/general",
         json={
@@ -119,12 +123,14 @@ def test_task_3():
         os.path.join(
             os.path.abspath(__file__),
             "..",
-            "./data_inputs/task_2_data.json"
+            "./data_inputs/task_1_2_3_data.txt"
         )
     )
 
     with open(path_to_data) as file:
-        documents = json.load(file)
+        lines = [line.strip() for line in file]
+
+    documents = [{"id": str(idx), "text": doc} for idx, doc in enumerate(lines)]
 
     # get person entities
 
@@ -184,12 +190,14 @@ def test_task_4():
         os.path.join(
             os.path.abspath(__file__),
             "..",
-            "./data_inputs/task_4_data.json"
+            "./data_inputs/task_4_data.txt"
         )
     )
 
     with open(path_to_data) as file:
-        documents = json.load(file)
+        lines = [line.strip() for line in file]
+
+    documents = [{"id": str(idx), "text": doc} for idx, doc in enumerate(lines)]
 
     # Get languages
 

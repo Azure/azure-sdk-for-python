@@ -29,12 +29,14 @@ async def test_task_one():
         os.path.join(
             os.path.abspath(__file__),
             "../..",
-            "./data_inputs/task_2_data.json"
+            "./data_inputs/task_1_2_3_data.txt"
         )
     )
 
     with open(path_to_data) as file:
-        documents = json.load(file)
+        lines = [line.strip() for line in file]
+
+    documents = [{"id": str(idx), "text": doc} for idx, doc in enumerate(lines)]
 
     request = prepare_sentiment(
         api_version="v3.1-preview.1",
@@ -75,12 +77,14 @@ async def test_task_two():
         os.path.join(
             os.path.abspath(__file__),
             "../..",
-            "./data_inputs/task_2_data.json"
+            "./data_inputs/task_1_2_3_data.txt"
         )
     )
 
     with open(path_to_data) as file:
-        documents = json.load(file)
+        lines = [line.strip() for line in file]
+
+    documents = [{"id": str(idx), "text": doc} for idx, doc in enumerate(lines)]
 
     request = prepare_entities_recognition_general(
         api_version="v3.1-preview.1",
@@ -121,12 +125,14 @@ async def test_task_3():
         os.path.join(
             os.path.abspath(__file__),
             "../..",
-            "./data_inputs/task_2_data.json"
+            "./data_inputs/task_1_2_3_data.txt"
         )
     )
 
     with open(path_to_data) as file:
-        documents = json.load(file)
+        lines = [line.strip() for line in file]
+
+    documents = [{"id": str(idx), "text": doc} for idx, doc in enumerate(lines)]
 
     # get person entities
 
@@ -187,12 +193,14 @@ async def test_task_4():
         os.path.join(
             os.path.abspath(__file__),
             "../..",
-            "./data_inputs/task_4_data.json"
+            "./data_inputs/task_4_data.txt"
         )
     )
 
     with open(path_to_data) as file:
-        documents = json.load(file)
+        lines = [line.strip() for line in file]
+
+    documents = [{"id": str(idx), "text": doc} for idx, doc in enumerate(lines)]
 
     # Get languages
 
