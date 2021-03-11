@@ -17,7 +17,6 @@ from typing import (
 import datetime
 import six
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from ._generated._azure_cognitive_service_metrics_advisor_restapi_open_ap_iv2 \
     import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2 as _Client
 from ._generated.models import (
@@ -53,15 +52,14 @@ from ._generated.models import (
     IngestionStatusQueryOptions as _IngestionStatusQueryOptions,
 )
 from ._version import SDK_MONIKER
-from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
-from ._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
 from ._helpers import (
     convert_to_generated_data_feed_type,
     construct_alert_config_dict,
     construct_detection_config_dict,
     construct_hook_dict,
     construct_data_feed_dict,
-    convert_datetime
+    convert_datetime,
+    get_authentication_policy,
 )
 from .models._models import (
     DataFeed,
@@ -97,6 +95,7 @@ if TYPE_CHECKING:
         NotificationHook,
         MetricDetectionCondition
     )
+    from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
 
 DataFeedSourceUnion = Union[
     AzureApplicationInsightsDataFeed,
@@ -176,32 +175,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         except AttributeError:
             raise ValueError("Base URL must be a string.")
 
-        if not credential:
-            raise ValueError("Missing credential")
-
         self._endpoint = endpoint
-
-        if isinstance(credential, MetricsAdvisorKeyCredential):
-            self._client = _Client(
-                endpoint=endpoint,
-                sdk_moniker=SDK_MONIKER,
-                authentication_policy=MetricsAdvisorKeyCredentialPolicy(credential),
-                **kwargs
-            )
-        else:
-            if hasattr(credential, "get_token"):
-                credential_scopes = kwargs.pop('credential_scopes',
-                                               ['https://cognitiveservices.azure.com/.default'])
-                credential_policy = BearerTokenCredentialPolicy(credential, *credential_scopes)
-            else:
-                raise TypeError("Please provide an instance from azure-identity "
-                                "or a class that implement the 'get_token protocol")
-            self._client = _Client(
-                endpoint=endpoint,
-                sdk_moniker=SDK_MONIKER,
-                authentication_policy=credential_policy,
-                **kwargs
-            )
+        authentication_policy = get_authentication_policy(credential)
+        self._client = _Client(
+            endpoint=endpoint,
+            credential=credential,  # type: ignore
+            sdk_moniker=SDK_MONIKER,
+            authentication_policy=authentication_policy,
+            **kwargs
+        )
 
     def __repr__(self):
         # type: () -> str

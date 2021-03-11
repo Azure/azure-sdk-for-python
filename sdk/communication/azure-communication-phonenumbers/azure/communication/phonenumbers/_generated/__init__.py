@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._phone_number_administration_service import PhoneNumberAdministrationService
-__all__ = ['PhoneNumberAdministrationService']
+from ._phone_numbers_client import PhoneNumbersClient
+__all__ = ['PhoneNumbersClient']
 
 try:
     from ._patch import patch_sdk  # type: ignore

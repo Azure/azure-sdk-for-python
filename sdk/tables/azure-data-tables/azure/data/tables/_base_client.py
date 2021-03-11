@@ -19,6 +19,7 @@ except ImportError:
 
 from azure.core import parse_connection_string_to_dict
 from azure.core.configuration import Configuration
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import (
@@ -33,6 +34,7 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     UserAgentPolicy,
+    AzureSasCredentialPolicy
 )
 
 from ._common_conversion import _to_utc_datetime
@@ -246,6 +248,9 @@ class StorageAccountHostsMixin(object):
             query_str += "snapshot={}&".format(self.snapshot)
         if share_snapshot:
             query_str += "sharesnapshot={}&".format(self.snapshot)
+        if sas_token and isinstance(credential, AzureSasCredential):
+            raise ValueError(
+                "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
         if sas_token and not credential:
             query_str += sas_token
         elif is_credential_sastoken(credential):
@@ -262,6 +267,8 @@ class StorageAccountHostsMixin(object):
             )
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
+        elif isinstance(credential, AzureSasCredential):
+            self._credential_policy = AzureSasCredentialPolicy(credential)
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 

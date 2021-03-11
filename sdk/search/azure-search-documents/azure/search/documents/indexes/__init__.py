@@ -24,8 +24,8 @@
 #
 # --------------------------------------------------------------------------
 
-from ._internal._search_index_client import SearchIndexClient
-from ._internal._search_indexer_client import SearchIndexerClient
+from ._search_index_client import SearchIndexClient
+from ._search_indexer_client import SearchIndexerClient
 
 __all__ = (
     "SearchIndexerClient",

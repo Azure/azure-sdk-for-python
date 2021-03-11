@@ -13,7 +13,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) DOMAIN_ACCESS_KEY - The access key of your eventgrid account.
     2) DOMAIN_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
-    "<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net".
+    "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
     3) DOMAIN_NAME - the name of the topic
 """
 import sys
@@ -22,7 +22,8 @@ from random import randint, sample
 import time
 
 from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid import EventGridPublisherClient, CloudEvent
+from azure.core.messaging import CloudEvent
+from azure.eventgrid import EventGridPublisherClient
 
 domain_key = os.environ["DOMAIN_ACCESS_KEY"]
 domain_endpoint = os.environ["DOMAIN_TOPIC_HOSTNAME"]

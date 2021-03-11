@@ -14,7 +14,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) EG_ACCESS_KEY - The access key of your eventgrid account.
     2) EG_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
-    "<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net".
+    "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
 """
 import os
 from datetime import datetime
@@ -26,10 +26,10 @@ topic_key = os.environ["EG_ACCESS_KEY"]
 endpoint = os.environ["EG_TOPIC_HOSTNAME"]
 
 def publish():
+    # [START publish_eg_event_dict]
     credential = AzureKeyCredential(topic_key)
     client = EventGridPublisherClient(endpoint, credential)
 
-    # [START publish_eg_event_dict]
     event0 = {	
         "eventType": "Contoso.Items.ItemReceived",	
         "data": {	

@@ -42,8 +42,9 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         tokens for multiple identities.
     :keyword AuthenticationRecord authentication_record: an authentication record returned by a user credential such as
         :class:`DeviceCodeCredential` or :class:`InteractiveBrowserCredential`
-    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
-        is unavailable. Defaults to False.
+    :keyword cache_persistence_options: configuration for persistent token caching. If not provided, the credential
+        will use the persistent cache shared by Microsoft development applications
+    :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     """
 
     def __init__(self, username=None, **kwargs):

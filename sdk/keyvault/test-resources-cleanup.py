@@ -2,13 +2,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import os
+import asyncio
 from dotenv import load_dotenv
+import os
 
-from azure.identity import ClientSecretCredential
-from azure.keyvault.certificates import CertificateClient
-from azure.keyvault.keys import KeyClient
-from azure.keyvault.secrets import SecretClient
+from azure.identity.aio import ClientSecretCredential
+from azure.keyvault.certificates.aio import CertificateClient
+from azure.keyvault.keys.aio import KeyClient
+from azure.keyvault.secrets.aio import SecretClient
 
 load_dotenv()
 
@@ -31,25 +32,60 @@ cert_client = CertificateClient(os.environ["AZURE_KEYVAULT_URL"], credential)
 key_client = KeyClient(os.environ["AZURE_KEYVAULT_URL"], credential)
 secret_client = SecretClient(os.environ["AZURE_KEYVAULT_URL"], credential)
 
-test_certificates = [c for c in cert_client.list_properties_of_certificates() if c.name.startswith("livekvtest")]
-for certificate in test_certificates:
-    cert_client.begin_delete_certificate(certificate.name).wait()
-deleted_test_certificates = [
-    c for c in cert_client.list_deleted_certificates(include_pending=True) if c.name.startswith("livekvtest")
-]
-for certificate in deleted_test_certificates:
-    cert_client.purge_deleted_certificate(certificate.name)
+async def delete_certificates():
+    coroutines = []
 
-test_keys = [k for k in key_client.list_properties_of_keys() if k.name.startswith("livekvtest")]
-for key in test_keys:
-    key_client.begin_delete_key(key.name).wait()
-deleted_test_keys = [k for k in key_client.list_deleted_keys() if k.name.startswith("livekvtest")]
-for key in deleted_test_keys:
-    key_client.purge_deleted_key(key.name)
+    test_certificates = cert_client.list_properties_of_certificates()
+    async for certificate in test_certificates:
+        if certificate.name.startswith("livekvtest"):
+            coroutines.append(cert_client.delete_certificate(certificate.name))
 
-test_secrets = [s for s in secret_client.list_properties_of_secrets() if s.name.startswith("livekvtest")]
-for secret in test_secrets:
-    secret_client.begin_delete_secret(secret.name).wait()
-deleted_test_secrets = [s for s in secret_client.list_deleted_secrets() if s.name.startswith("livekvtest")]
-for secret in deleted_test_secrets:
-    secret_client.purge_deleted_secret(secret.name)
+    return await asyncio.gather(*coroutines)
+
+async def delete_keys_and_secrets():
+    coroutines = []
+
+    test_keys = key_client.list_properties_of_keys()
+    async for key in test_keys:
+        if key.name.startswith("livekvtest"):
+            coroutines.append(key_client.delete_key(key.name))
+
+    test_secrets = secret_client.list_properties_of_secrets()
+    async for secret in test_secrets:
+        if secret.name.startswith("livekvtest"):
+            coroutines.append(secret_client.delete_secret(secret.name))
+
+    return await asyncio.gather(*coroutines)
+
+async def purge_resources():
+    coroutines = []
+
+    deleted_test_certificates = cert_client.list_deleted_certificates(include_pending=True)
+    async for certificate in deleted_test_certificates:
+        if certificate.name.startswith("livekvtest"):
+            coroutines.append(cert_client.purge_deleted_certificate(certificate.name))
+
+    deleted_test_keys = key_client.list_deleted_keys()
+    async for key in deleted_test_keys:
+        if key.name.startswith("livekvtest"):
+            coroutines.append(key_client.purge_deleted_key(key.name))
+
+    deleted_test_secrets = secret_client.list_deleted_secrets()
+    async for secret in deleted_test_secrets:
+        if secret.name.startswith("livekvtest"):
+            coroutines.append(secret_client.purge_deleted_secret(secret.name))
+
+    return await asyncio.gather(*coroutines)
+
+async def close_sessions():
+    await credential.close()
+    await cert_client.close()
+    await key_client.close()
+    await secret_client.close()
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(delete_certificates())
+loop.run_until_complete(delete_keys_and_secrets())
+loop.run_until_complete(purge_resources())
+loop.run_until_complete(close_sessions())
+loop.close()
