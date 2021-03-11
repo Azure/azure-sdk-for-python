@@ -62,6 +62,11 @@ class DocumentTranslationPoller(LROPoller):
 
         pass  # returns the batch ID
 
+    @classmethod
+    def from_batch_id(batch_id, **kwargs):
+        # creates a poller object from the given batch id
+        pass
+
 
 class DocTranslationLROPolling(PollingMethod):  # pylint: disable=too-many-instance-attributes
 

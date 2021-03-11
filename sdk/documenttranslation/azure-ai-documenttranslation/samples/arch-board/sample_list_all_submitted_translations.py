@@ -11,6 +11,7 @@ def sample_list_all_submitted_jobs():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation import (
         DocumentTranslationClient,
+        DocumentTranslationPoller
     )
 
     # get service secrets
@@ -26,6 +27,7 @@ def sample_list_all_submitted_jobs():
     for translation_operation in translation_operations:
         if translation_operation.status in ["NotStarted", "Running"]:
             poller = client.begin_translation(None, continuation_token=translation_operation.id)
+            #poller = DocumentTranslationPoller.from_batch_id(translation_operation.id)
             translation_operation = poller.result()
 
         print("Translation ID: {}".format(translation_operation.id))
