@@ -25,7 +25,7 @@ from .._shared.user_credential_async import CommunicationTokenCredential
 from .._generated.aio import AzureCommunicationChatService
 from .._generated.models import (
     CreateChatThreadRequest,
-    ChatThreadInfo
+    ChatThreadItem
 )
 from .._models import (
     ChatThreadProperties,
@@ -202,13 +202,13 @@ class ChatClient(object):
     def list_chat_threads(
         self,
         **kwargs: Any
-    ): # type: (...) -> AsyncItemPaged[ChatThreadInfo]
+    ): # type: (...) -> AsyncItemPaged[ChatThreadItem]
         """Gets the list of chat threads of a user.
 
         :keyword int results_per_page: The maximum number of chat threads to be returned per page.
         :keyword ~datetime.datetime start_time: The earliest point in time to get chat threads up to.
-        :return: An iterator like instance of ChatThreadInfo
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.chat.ChatThreadInfo]
+        :return: An iterator like instance of ChatThreadItem
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.chat.ChatThreadItem]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:

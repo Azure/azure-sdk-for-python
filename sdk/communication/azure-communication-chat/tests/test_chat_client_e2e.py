@@ -136,9 +136,9 @@ class ChatClientTest(CommunicationTestCase):
         if self.is_live:
             time.sleep(2)
 
-        chat_thread_infos = self.chat_client.list_chat_threads(results_per_page=1)
-        for chat_thread_page in chat_thread_infos.by_page():
-            li = list(chat_thread_page)
+        chat_threads = self.chat_client.list_chat_threads(results_per_page=1)
+        for chat_thread_item_page in chat_threads.by_page():
+            li = list(chat_thread_item_page)
             assert len(li) <= 1
 
     @pytest.mark.live_test_only

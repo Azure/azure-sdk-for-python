@@ -132,12 +132,12 @@ class ChatClientSamplesAsync(object):
             import pytz
             start_time = datetime.utcnow() - timedelta(days=2)
             start_time = start_time.replace(tzinfo=pytz.utc)
-            chat_thread_infos = chat_client.list_chat_threads(results_per_page=5, start_time=start_time)
+            chat_threads = chat_client.list_chat_threads(results_per_page=5, start_time=start_time)
             print("list_threads succeeded with results_per_page is 5, and were created since 2 days ago.")
-            async for chat_thread_info_page in chat_thread_infos.by_page():
-                async for chat_thread_info in chat_thread_info_page:
-                    print("thread id: ", chat_thread_info.id)
-        # [END list_threads]
+            async for chat_thread_item_page in chat_threads.by_page():
+                async for chat_thread_item in chat_thread_item_page:
+                    print("thread id: ", chat_thread_item.id)
+            # [END list_threads]
 
     async def delete_thread_async(self):
         token = self.token

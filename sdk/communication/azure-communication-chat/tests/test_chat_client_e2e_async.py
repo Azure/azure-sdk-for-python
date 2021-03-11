@@ -126,10 +126,10 @@ class ChatClientTestAsync(AsyncCommunicationTestCase):
             if self.is_live:
                 await asyncio.sleep(2)
 
-            chat_thread_infos = self.chat_client.list_chat_threads(results_per_page=1)
+            chat_threads = self.chat_client.list_chat_threads(results_per_page=1)
 
             items = []
-            async for item in chat_thread_infos:
+            async for item in chat_threads:
                 items.append(item)
             assert len(items) == 1
 

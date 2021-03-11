@@ -259,7 +259,7 @@ Use `list_chat_threads` method retrieves the list of created chat threads
 - Use `results_per_page`, optional, The maximum number of messages to be returned per page.
 - Use `start_time`, optional, The start time where the range query.
 
-An iterator of `[ChatThreadInfo]` is the response returned from listing threads
+An iterator of `[ChatThreadItem]` is the response returned from listing threads
 
 ```python
 from datetime import datetime, timedelta
@@ -268,10 +268,10 @@ import pytz
 start_time = datetime.utcnow() - timedelta(days=2)
 start_time = start_time.replace(tzinfo=pytz.utc)
 
-chat_thread_infos = chat_client.list_chat_threads(results_per_page=5, start_time=start_time)
-for chat_thread_info_page in chat_thread_infos.by_page():
-    for chat_thread_info in chat_thread_info_page:
-        print(chat_thread_info)
+chat_threads = chat_client.list_chat_threads(results_per_page=5, start_time=start_time)
+for chat_thread_item_page in chat_threads.by_page():
+    for chat_thread_item in chat_thread_item_page:
+        print("thread id:", chat_thread_item.id)
 ```
 
 ### Update a thread topic

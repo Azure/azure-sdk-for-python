@@ -195,13 +195,13 @@ class ChatClient(object):
         self,
         **kwargs
     ):
-        # type: (...) -> ItemPaged[ChatThreadInfo]
+        # type: (...) -> ItemPaged[ChatThreadItem]
         """Gets the list of chat threads of a user.
 
         :keyword int results_per_page: The maximum number of chat threads returned per page.
         :keyword ~datetime.datetime start_time: The earliest point in time to get chat threads up to.
-        :return: An iterator like instance of ChatThreadInfo
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.chat.ChatThreadInfo]
+        :return: An iterator like instance of ChatThreadItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.chat.ChatThreadItem]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:

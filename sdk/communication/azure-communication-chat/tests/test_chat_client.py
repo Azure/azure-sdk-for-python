@@ -140,15 +140,15 @@ class TestChatClient(unittest.TestCase):
             return mock_response(status_code=200, json_payload={"value": [{"id": thread_id}]})
         chat_client = ChatClient("https://endpoint", TestChatClient.credential, transport=Mock(send=mock_send))
 
-        chat_thread_infos = None
+        chat_threads = None
         try:
-            chat_thread_infos = chat_client.list_chat_threads()
+            chat_threads = chat_client.list_chat_threads()
         except:
             raised = True
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        for chat_thread_page in chat_thread_infos.by_page():
-            l = list(chat_thread_page)
+        for chat_thread_item_page in chat_threads.by_page():
+            l = list(chat_thread_item_page)
             assert len(l) == 1
             assert l[0].id == thread_id
 

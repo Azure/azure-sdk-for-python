@@ -129,16 +129,16 @@ async def test_list_chat_threads():
         return mock_response(status_code=200, json_payload={"value": [{"id": thread_id}]})
     chat_client = ChatClient("https://endpoint", credential, transport=Mock(send=mock_send))
 
-    chat_thread_infos = None
+    chat_threads = None
     try:
-        chat_thread_infos = chat_client.list_chat_threads()
+        chat_threads = chat_client.list_chat_threads()
     except:
         raised = True
 
     assert raised == False
 
     items = []
-    async for item in chat_thread_infos:
+    async for item in chat_threads:
         items.append(item)
 
     assert len(items) == 1

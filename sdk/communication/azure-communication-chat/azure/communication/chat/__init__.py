@@ -3,7 +3,7 @@ from ._chat_client import ChatClient
 from ._chat_thread_client import ChatThreadClient
 from ._generated.models import (
     SendChatMessageResult,
-    ChatThreadInfo,
+    ChatThreadItem,
     ChatMessageType,
     CommunicationError
 )
@@ -27,7 +27,7 @@ __all__ = [
     'ChatMessageReadReceipt',
     'SendChatMessageResult',
     'ChatThreadProperties',
-    'ChatThreadInfo',
+    'ChatThreadItem',
     'ChatThreadParticipant',
     'ChatMessageType',
     'CreateChatThreadResult',
