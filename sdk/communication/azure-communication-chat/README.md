@@ -243,7 +243,7 @@ chat_thread_client.add_participants(retry)
 
 ### Get a thread
 
-Use `get_chat_thread` method retrieves a `ChatThread` from the service; `thread_id` is the unique ID of the thread.
+Use `get_chat_thread` method retrieves a `ChatThreadProperties` from the service; `thread_id` is the unique ID of the thread.
 - Use `thread_id`, required, to specify the unique ID of the thread. 
 ```Python
 chat_thread = chat_client.get_chat_thread(thread_id=thread_id)

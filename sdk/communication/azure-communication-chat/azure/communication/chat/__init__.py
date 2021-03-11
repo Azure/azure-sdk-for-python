@@ -11,7 +11,7 @@ from ._generated.models import (
 from ._models import (
     ChatThreadParticipant,
     ChatMessage,
-    ChatThread,
+    ChatThreadProperties,
     ChatMessageReadReceipt,
     ChatMessageContent,
     CreateChatThreadResult
@@ -26,7 +26,7 @@ __all__ = [
     'ChatMessageContent',
     'ChatMessageReadReceipt',
     'SendChatMessageResult',
-    'ChatThread',
+    'ChatThreadProperties',
     'ChatThreadInfo',
     'ChatThreadParticipant',
     'ChatMessageType',

@@ -28,7 +28,7 @@ from .._generated.models import (
     ChatThreadInfo
 )
 from .._models import (
-    ChatThread,
+    ChatThreadProperties,
     ChatThreadParticipant,
     CreateChatThreadResult
 )
@@ -187,7 +187,7 @@ class ChatClient(object):
                 communication_errors=create_chat_thread_result.errors.invalid_participants
             )
 
-        chat_thread = ChatThread._from_generated( # pylint:disable=protected-access
+        chat_thread = ChatThreadProperties._from_generated( # pylint:disable=protected-access
             create_chat_thread_result.chat_thread)
 
         create_chat_thread_result = CreateChatThreadResult(
@@ -201,14 +201,14 @@ class ChatClient(object):
     async def get_chat_thread(
         self, thread_id: str,
         **kwargs
-    ) -> ChatThread: # type: (...) -> ChatThread
+    ) -> ChatThreadProperties: # type: (...) -> ChatThreadProperties
 
         """Gets a chat thread.
 
         :param thread_id: Required. Thread id to get.
         :type thread_id: str
-        :return: ChatThread
-        :rtype: ~azure.communication.chat.ChatThread
+        :return: ChatThreadProperties
+        :rtype: ~azure.communication.chat.ChatThreadProperties
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -224,7 +224,7 @@ class ChatClient(object):
             raise ValueError("thread_id cannot be None.")
 
         chat_thread = await self._client.chat.get_chat_thread(thread_id, **kwargs)
-        return ChatThread._from_generated(chat_thread)  # pylint:disable=protected-access
+        return ChatThreadProperties._from_generated(chat_thread)  # pylint:disable=protected-access
 
     @distributed_trace
     def list_chat_threads(

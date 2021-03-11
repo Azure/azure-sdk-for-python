@@ -182,8 +182,8 @@ class ChatMessageContent(object):
         )
 
 
-class ChatThread(object):
-    """ChatThread.
+class ChatThreadProperties(object):
+    """ChatThreadProperties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -268,7 +268,7 @@ class CreateChatThreadResult(object):
     """Result of the create chat thread operation.
 
     :ivar chat_thread: Chat thread.
-    :type chat_thread: ~azure.communication.chat.ChatThread
+    :type chat_thread: ~azure.communication.chat.ChatThreadProperties
     :ivar errors: Errors encountered during the creation of the chat thread.
     :type errors: list((~azure.communication.chat.ChatThreadParticipant, ~azure.communication.chat.CommunicationError))
     """
