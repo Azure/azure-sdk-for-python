@@ -364,3 +364,12 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
             async with client:
                 await client.begin_recognize_receipts_from_url(self.receipt_url_jpg, locale="en-US")
         assert "'locale' is only available for API version V2_1_PREVIEW and up" in str(e.value)
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    async def test_pages_kwarg_specified(self, client):
+        async with client:
+            poller = await client.begin_recognize_receipts_from_url(self.receipt_url_jpg, pages=["1"])
+            assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+            result = await poller.result()
+            assert result

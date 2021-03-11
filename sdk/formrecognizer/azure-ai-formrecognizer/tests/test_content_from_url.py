@@ -353,3 +353,12 @@ class TestContentFromUrl(FormRecognizerTest):
         layout = result[0]
         self.assertEqual(layout.page_number, 1)
         self.assertFormPagesHasValues(result)
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    def test_pages_kwarg_specified(self, client, formrecognizer_testing_data_container_sas_url):
+        blob_sas_url = self.get_blob_url(formrecognizer_testing_data_container_sas_url, "testingdata", "content_spanish.pdf")
+        poller = client.begin_recognize_content_from_url(blob_sas_url, pages=["1"])
+        assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+        result = poller.result()
+        assert result

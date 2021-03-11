@@ -789,9 +789,9 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         pages = kwargs.pop("pages", None)
         include_field_elements = kwargs.pop("include_field_elements", False)
 
-        polling=AsyncLROBasePolling(
-                timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
-            )
+        polling = AsyncLROBasePolling(
+            timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
+        )
 
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
@@ -858,9 +858,9 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         continuation_token = kwargs.pop("continuation_token", None)
         include_field_elements = kwargs.pop("include_field_elements", False)
 
-        polling=AsyncLROBasePolling(
-                timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
-            )
+        polling = AsyncLROBasePolling(
+            timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
+        )
 
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions

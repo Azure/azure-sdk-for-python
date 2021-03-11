@@ -382,3 +382,14 @@ class TestInvoice(FormRecognizerTest):
         with pytest.raises(HttpResponseError) as e:
             client.begin_recognize_invoices(invoice, locale="not a locale")
         assert "locale" in e.value.error.message
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    def test_pages_kwarg_specified(self, client):
+        with open(self.invoice_pdf, "rb") as fd:
+            invoice = fd.read()
+
+        poller = client.begin_recognize_invoices(invoice, pages=["1"])
+        assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+        result = poller.result()
+        assert result

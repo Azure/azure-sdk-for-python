@@ -775,9 +775,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         include_field_elements = kwargs.pop("include_field_elements", False)
 
-        polling=LROBasePolling(
-                timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
-            )
+        polling = LROBasePolling(
+            timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
+        )
 
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
@@ -843,9 +843,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
             "polling_interval", self._client._config.polling_interval
         )
 
-        polling=LROBasePolling(
-                timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
-            )
+        polling = LROBasePolling(
+            timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
+        )
 
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions

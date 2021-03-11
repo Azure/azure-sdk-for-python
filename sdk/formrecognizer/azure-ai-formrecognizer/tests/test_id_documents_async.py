@@ -248,3 +248,14 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
             async with client:
                 await client.begin_recognize_id_documents(id_document)
         assert "Method 'begin_recognize_id_documents' is only available for API version V2_1_PREVIEW and up" in str(e.value)
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    async def test_pages_kwarg_specified(self, client):
+        with open(self.id_document_jpg, "rb") as fd:
+            id_document = fd.read()
+        async with client:
+            poller = await client.begin_recognize_id_documents(id_document, pages=["1"])
+            assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+            result = await poller.result()
+            assert result

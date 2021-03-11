@@ -386,3 +386,13 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         layout = result[0]
         self.assertEqual(layout.page_number, 1)
         self.assertFormPagesHasValues(result)
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    async def test_pages_kwarg_specified(self, client, formrecognizer_testing_data_container_sas_url):
+        blob_sas_url = self.get_blob_url(formrecognizer_testing_data_container_sas_url, "testingdata", "content_spanish.pdf")
+        async with client:
+            poller = await client.begin_recognize_content_from_url(blob_sas_url, pages=["1"])
+            assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+            result = await poller.result()
+            assert result

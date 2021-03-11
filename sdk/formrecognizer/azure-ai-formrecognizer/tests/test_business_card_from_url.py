@@ -372,3 +372,11 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
         with pytest.raises(HttpResponseError) as e:
             client.begin_recognize_business_cards_from_url(self.business_card_url_jpg, locale="not a locale")
         assert "locale" in e.value.error.message
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    def test_pages_kwarg_specified(self, client):
+        poller = client.begin_recognize_business_cards_from_url(self.business_card_url_jpg, pages=["1"])
+        assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+        result = poller.result()
+        assert result

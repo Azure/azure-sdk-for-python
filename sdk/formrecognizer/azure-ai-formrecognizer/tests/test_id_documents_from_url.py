@@ -156,3 +156,11 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
         with pytest.raises(ValueError) as e:
             client.begin_recognize_id_documents_from_url(self.id_document_url_jpg)
         assert "Method 'begin_recognize_id_documents_from_url' is only available for API version V2_1_PREVIEW and up" in str(e.value)
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    def test_pages_kwarg_specified(self, client):
+        poller = client.begin_recognize_id_documents_from_url(self.id_document_url_jpg, pages=["1"])
+        assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+        result = poller.result()
+        assert result
