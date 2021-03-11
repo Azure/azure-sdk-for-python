@@ -111,3 +111,7 @@ steps:
       BuildTargetingString: ${{ parameters.BuildTargetingString }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
+
+  - template: ../steps/verify-autorest.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
