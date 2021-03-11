@@ -286,7 +286,8 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     def test_invoice_locale_specified(self, client):
         poller = client.begin_recognize_invoices_from_url(self.invoice_url_pdf, locale="en-US")
         assert 'en-US' == poller._polling_method._initial_response.http_response.request.query['locale']
-        poller.wait()
+        result = poller.result()
+        assert result
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

@@ -372,7 +372,8 @@ class TestInvoice(FormRecognizerTest):
             invoice = fd.read()
         poller = client.begin_recognize_invoices(invoice, locale="en-US")
         assert 'en-US' == poller._polling_method._initial_response.http_response.request.query['locale']
-        poller.wait()
+        result = poller.result()
+        assert result
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

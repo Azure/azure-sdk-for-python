@@ -364,7 +364,8 @@ class TestContentFromStream(FormRecognizerTest):
             myfile = fd.read()
         poller = client.begin_recognize_content(myfile, language="de")
         assert 'de' == poller._polling_method._initial_response.http_response.request.query['language']
-        poller.wait()
+        result = poller.result()
+        assert result
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
