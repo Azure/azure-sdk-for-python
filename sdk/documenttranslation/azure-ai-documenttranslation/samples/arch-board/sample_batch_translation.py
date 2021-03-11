@@ -65,42 +65,5 @@ def sample_batch_translation():
 
 
 
-
-
-
-
-
-
-
-
-    if translation_details.status == "Succeeded":
-        print("We translated our documents!")
-        if translation_details.documents_failed_count > 0:
-            docs_to_retry = check_documents(doc_statuses)
-            # do something with failed docs
-
-    elif translation_details.status in ["Failed", "ValidationFailed"]:
-        if translation_details.error:
-            print("Translation job failed: {}: {}".format(translation_details.error.code, translation_details.error.message))
-        docs_to_retry = check_documents(doc_statuses)
-        # do something with failed docs
-        exit(1)
-
-
-def check_documents(doc_statuses):
-    docs_to_retry = []
-    for document in doc_statuses:
-        if document.status == "Failed":
-            print("Document at {} failed to be translated to {} language".format(
-                document.url, document.translate_to
-            ))
-            print("Document ID: {}, Error Code: {}, Message: {}".format(
-                document.id, document.error.code, document.error.message
-            ))
-            if document.url not in docs_to_retry:
-                docs_to_retry.append(document.url)
-    return docs_to_retry
-
-
 if __name__ == '__main__':
     sample_batch_translation()
