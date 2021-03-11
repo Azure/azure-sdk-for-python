@@ -1,5 +1,9 @@
 # Release History
 
+## 0.0.0 (2021-03-11)
+
+change_log.py: error: the following arguments are required: latest
+
 ## 2.0.0 (2020-12-25)
 
 **Breaking changes**
