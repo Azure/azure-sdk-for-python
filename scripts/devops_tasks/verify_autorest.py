@@ -38,7 +38,7 @@ def run_autorest(service_dir):
             command = ["autorest", "--python", os.path.join(working_dir, "README.md")]
             logging.info("Command: {}\nLocation: {}\n".format(command, working_dir))
             run_check_call(command, working_dir)
-            # os.system(" ".join(command))
+    return swagger_folders
 
 
 def find_swagger_folders(directory):
@@ -76,6 +76,7 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    run_autorest(args.service_directory)
+    folders = run_autorest(args.service_directory)
 
-    check_diff()
+    if len(folders):
+        check_diff()
