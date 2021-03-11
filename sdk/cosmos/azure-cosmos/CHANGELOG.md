@@ -1,5 +1,8 @@
 ## 4.2.1 (Unreleased)
 
+**Dependency updates**
+- Updated dependency `azure-core` from  azure-core<2.0.0,>=1.0.0 to azure-core<2.0.0,>=1.12.1
+
 
 ## 4.2.0 (2020-10-08)
 
