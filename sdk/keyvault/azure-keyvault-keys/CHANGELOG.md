@@ -1,6 +1,6 @@
 # Release History
 
-## 4.4.0b3 (2021-3-10)
+## 4.4.0b3 (2021-3-11)
 ### Added
 - `CryptographyClient` will perform all operations locally if initialized with
   the `.from_jwk` factory method
