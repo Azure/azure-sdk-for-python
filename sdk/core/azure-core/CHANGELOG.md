@@ -2,6 +2,9 @@
 
 ## 1.12.1 (Unreleased)
 
+### Features
+
+- Added `parse_connection_string_to_dict` function for generic parsing and validation of connection strings across SDKs.
 
 ## 1.12.0 (2021-03-08)
 
