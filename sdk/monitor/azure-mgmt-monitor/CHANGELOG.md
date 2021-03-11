@@ -1,5 +1,18 @@
 # Release History
 
+## 0.13.0 (2021-03-11)
+
+**Features**
+
+  - Added operation ActivityLogAlertsOperations.update
+
+**Breaking changes**
+
+  - Operation ActivityLogAlertsOperations.create_or_update has a new signature
+  - Model ErrorResponse no longer has parameter target
+  - Model ErrorResponse no longer has parameter additional_info
+  - Model ErrorResponse no longer has parameter details
+
 ## 0.12.0 (2020-11-17)
 
 **Features**
