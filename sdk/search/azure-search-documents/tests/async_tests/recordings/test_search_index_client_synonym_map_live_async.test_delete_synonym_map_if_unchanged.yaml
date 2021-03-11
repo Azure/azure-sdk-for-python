@@ -12,7 +12,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searchc5e222a3.search.windows.net/synonymmaps?api-version=2020-06-30
+    uri: https://searchc5e222a3.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://searchc5e222a3.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D84B9D54161FEE\"","name":"test-syn-map","format":"solr","synonyms":"USA,
@@ -25,7 +25,7 @@ interactions:
       elapsed-time: '35'
       etag: W/"0x8D84B9D54161FEE"
       expires: '-1'
-      location: https://searchc5e222a3.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
+      location: https://searchc5e222a3.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -34,7 +34,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://searchc5e222a3.search.windows.net/synonymmaps?api-version=2020-06-30
+    url: https://searchc5e222a3.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
 - request:
     body: '{"name": "test-syn-map", "format": "solr", "synonyms": "W\na\ns\nh\ni\nn\ng\nt\no\nn\n,\n
       \nW\na\ns\nh\n.\n \n=\n>\n \nW\nA"}'
@@ -50,7 +50,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://searchc5e222a3.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
+    uri: https://searchc5e222a3.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://searchc5e222a3.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D84B9D542257EE\"","name":"test-syn-map","format":"solr","synonyms":"W\na\ns\nh\ni\nn\ng\nt\no\nn\n,\n
@@ -73,7 +73,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://searchc5e222a3.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
+    url: https://searchc5e222a3.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30-Preview
 - request:
     body: null
     headers:
@@ -84,7 +84,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://searchc5e222a3.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
+    uri: https://searchc5e222a3.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"error":{"code":"","message":"The precondition given in one of the
@@ -106,5 +106,5 @@ interactions:
     status:
       code: 412
       message: Precondition Failed
-    url: https://searchc5e222a3.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
+    url: https://searchc5e222a3.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30-Preview
 version: 1

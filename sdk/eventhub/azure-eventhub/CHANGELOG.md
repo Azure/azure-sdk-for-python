@@ -1,7 +1,15 @@
 # Release History
 
-## 5.3.1 (Unreleased)
+## 5.3.2 (Unreleased)
 
+
+## 5.3.1 (2021-03-09)
+
+This version will be the last version to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
+
+**Bug fixes**
+
+- Sending empty `event_data_batch` will be a no-op now instead of raising error.
 
 ## 5.3.0 (2021-02-08)
 

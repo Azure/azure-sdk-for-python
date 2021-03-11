@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class EncryptionScopesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,10 +50,10 @@ class EncryptionScopesOperations(object):
         resource_group_name,  # type: str
         account_name,  # type: str
         encryption_scope_name,  # type: str
-        encryption_scope,  # type: "models.EncryptionScope"
+        encryption_scope,  # type: "_models.EncryptionScope"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.EncryptionScope"
+        # type: (...) -> "_models.EncryptionScope"
         """Synchronously creates or updates an encryption scope under the specified storage account. If an
         encryption scope is already created and a subsequent request is issued with different
         properties, the encryption scope properties will be updated per the specified request.
@@ -77,7 +77,7 @@ class EncryptionScopesOperations(object):
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.EncryptionScope
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EncryptionScope"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EncryptionScope"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -114,7 +114,7 @@ class EncryptionScopesOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -134,10 +134,10 @@ class EncryptionScopesOperations(object):
         resource_group_name,  # type: str
         account_name,  # type: str
         encryption_scope_name,  # type: str
-        encryption_scope,  # type: "models.EncryptionScope"
+        encryption_scope,  # type: "_models.EncryptionScope"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.EncryptionScope"
+        # type: (...) -> "_models.EncryptionScope"
         """Update encryption scope properties as specified in the request body. Update fails if the
         specified encryption scope does not already exist.
 
@@ -160,7 +160,7 @@ class EncryptionScopesOperations(object):
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.EncryptionScope
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EncryptionScope"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EncryptionScope"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -197,7 +197,7 @@ class EncryptionScopesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('EncryptionScope', pipeline_response)
@@ -215,7 +215,7 @@ class EncryptionScopesOperations(object):
         encryption_scope_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.EncryptionScope"
+        # type: (...) -> "_models.EncryptionScope"
         """Returns the properties for the specified encryption scope.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -235,7 +235,7 @@ class EncryptionScopesOperations(object):
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.EncryptionScope
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EncryptionScope"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EncryptionScope"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -267,7 +267,7 @@ class EncryptionScopesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('EncryptionScope', pipeline_response)
@@ -284,7 +284,7 @@ class EncryptionScopesOperations(object):
         account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.EncryptionScopeListResult"]
+        # type: (...) -> Iterable["_models.EncryptionScopeListResult"]
         """Lists all the encryption scopes available under the specified storage account.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -299,7 +299,7 @@ class EncryptionScopesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.storage.v2019_06_01.models.EncryptionScopeListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EncryptionScopeListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EncryptionScopeListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

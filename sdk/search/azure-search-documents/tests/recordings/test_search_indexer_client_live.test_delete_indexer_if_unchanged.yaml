@@ -16,7 +16,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
     method: POST
-    uri: https://search54491a19.search.windows.net/datasources?api-version=2020-06-30
+    uri: https://search54491a19.search.windows.net/datasources?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search54491a19.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7EE17BEFA29F2\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
@@ -36,7 +36,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://search54491a19.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
+      - https://search54491a19.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30-Preview
       odata-version:
       - '4.0'
       pragma:
@@ -67,7 +67,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
     method: POST
-    uri: https://search54491a19.search.windows.net/indexes?api-version=2020-06-30
+    uri: https://search54491a19.search.windows.net/indexes?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search54491a19.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7EE17BF71C167\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":null,"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
@@ -87,7 +87,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://search54491a19.search.windows.net/indexes('hotels')?api-version=2020-06-30
+      - https://search54491a19.search.windows.net/indexes('hotels')?api-version=2020-06-30-Preview
       odata-version:
       - '4.0'
       pragma:
@@ -118,7 +118,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
     method: POST
-    uri: https://search54491a19.search.windows.net/indexers?api-version=2020-06-30
+    uri: https://search54491a19.search.windows.net/indexers?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search54491a19.search.windows.net/$metadata#indexers/$entity","@odata.etag":"\"0x8D7EE17BFE1B5D9\"","name":"sample-indexer","description":null,"dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null}'
@@ -138,7 +138,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://search54491a19.search.windows.net/indexers('sample-indexer')?api-version=2020-06-30
+      - https://search54491a19.search.windows.net/indexers('sample-indexer')?api-version=2020-06-30-Preview
       odata-version:
       - '4.0'
       pragma:
@@ -171,7 +171,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
     method: PUT
-    uri: https://search54491a19.search.windows.net/indexers('sample-indexer')?api-version=2020-06-30
+    uri: https://search54491a19.search.windows.net/indexers('sample-indexer')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search54491a19.search.windows.net/$metadata#indexers/$entity","@odata.etag":"\"0x8D7EE17C015077F\"","name":"sample-indexer","description":"updated","dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null}'
@@ -221,7 +221,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
     method: DELETE
-    uri: https://search54491a19.search.windows.net/indexers('sample-indexer')?api-version=2020-06-30
+    uri: https://search54491a19.search.windows.net/indexers('sample-indexer')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"error":{"code":"","message":"The precondition given in one of the

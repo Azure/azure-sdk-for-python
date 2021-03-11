@@ -66,7 +66,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
                 "key2": "value2"
               }
             }
-            result = self.storage_client.storage_accounts.create(
+            result = self.storage_client.storage_accounts.begin_create(
                 group_name,
                 storage_account_name,
                 BODY

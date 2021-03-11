@@ -24,8 +24,10 @@ IGNORED_SAMPLES = {
     "azure-eventgrid": [
         "__init__.py",
         "consume_cloud_events_from_eventhub.py",
-        "consume_cloud_events_from_service_bus_queue.py",
-        "consume_cloud_events_from_storage_queue.py"],
+        "consume_eventgrid_events_from_service_bus_queue.py",
+        "consume_cloud_events_from_storage_queue.py",
+        "sample_publish_events_to_a_topic_using_sas_credential.py",
+        "sample_publish_events_to_a_topic_using_sas_credential_async.py"],
     "azure-eventhub": [
         "authenticate_with_sas_token.py",
         "connection_to_custom_endpoint_address.py",
@@ -77,6 +79,10 @@ IGNORED_SAMPLES = {
         "receive_deferred_message_queue_async.py",
         "receive_iterator_queue_async.py",
         "session_pool_receive_async.py"
+    ],
+    "azure-ai-formrecognizer": [
+        "sample_recognize_receipts_from_url.py",
+        "sample_recognize_receipts_from_url_async.py"
     ]
 }
 

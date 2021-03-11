@@ -108,128 +108,13 @@ class UnknownIdentifier(object):
     Represents an identifier of an unknown type.
     It will be encountered in communications with endpoints that are not
     identifiable by this version of the SDK.
-    :ivar identifier: Unknown communication identifier.
-    :vartype identifier: str
+    :ivar raw_id: Unknown communication identifier.
+    :vartype raw_id: str
     :param identifier: Value to initialize UnknownIdentifier.
     :type identifier: str
     """
     def __init__(self, identifier):
-        self.identifier = identifier
-
-class CommunicationIdentifierModel(msrest.serialization.Model):
-    """Identifies a participant in Azure Communication services. A participant is, for example, a phone number or an Azure communication user. This model must be interpreted as a union: Apart from rawId, at most one further property may be set.
-
-    :param raw_id: Raw Id of the identifier. Optional in requests, required in responses.
-    :type raw_id: str
-    :param communication_user: The communication user.
-    :type communication_user: ~communication.models.CommunicationUserIdentifierModel
-    :param phone_number: The phone number.
-    :type phone_number: ~communication.models.PhoneNumberIdentifierModel
-    :param microsoft_teams_user: The Microsoft Teams user.
-    :type microsoft_teams_user: ~communication.models.MicrosoftTeamsUserIdentifierModel
-    """
-
-    _attribute_map = {
-        'raw_id': {'key': 'rawId', 'type': 'str'},
-        'communication_user': {'key': 'communicationUser', 'type': 'CommunicationUserIdentifierModel'},
-        'phone_number': {'key': 'phoneNumber', 'type': 'PhoneNumberIdentifierModel'},
-        'microsoft_teams_user': {'key': 'microsoftTeamsUser', 'type': 'MicrosoftTeamsUserIdentifierModel'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CommunicationIdentifierModel, self).__init__(**kwargs)
-        self.raw_id = kwargs.get('raw_id', None)
-        self.communication_user = kwargs.get('communication_user', None)
-        self.phone_number = kwargs.get('phone_number', None)
-        self.microsoft_teams_user = kwargs.get('microsoft_teams_user', None)
-
-class CommunicationUserIdentifierModel(msrest.serialization.Model):
-    """A user that got created with an Azure Communication Services resource.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. The Id of the communication user.
-    :type id: str
-    """
-
-    _validation = {
-        'id': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CommunicationUserIdentifierModel, self).__init__(**kwargs)
-        self.id = kwargs['id']
-
-
-class MicrosoftTeamsUserIdentifierModel(msrest.serialization.Model):
-    """A Microsoft Teams user.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param user_id: Required. The Id of the Microsoft Teams user. If not anonymous, this is the AAD
-     object Id of the user.
-    :type user_id: str
-    :param is_anonymous: True if the Microsoft Teams user is anonymous. By default false if
-     missing.
-    :type is_anonymous: bool
-    :param cloud: The cloud that the Microsoft Teams user belongs to. By default 'public' if
-     missing. Possible values include: "public", "dod", "gcch".
-    :type cloud: str or ~communication.models.CommunicationCloudEnvironmentModel
-    """
-
-    _validation = {
-        'user_id': {'required': True},
-    }
-
-    _attribute_map = {
-        'user_id': {'key': 'userId', 'type': 'str'},
-        'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
-        'cloud': {'key': 'cloud', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(MicrosoftTeamsUserIdentifierModel, self).__init__(**kwargs)
-        self.user_id = kwargs['user_id']
-        self.is_anonymous = kwargs.get('is_anonymous', None)
-        self.cloud = kwargs.get('cloud', None)
-
-
-class PhoneNumberIdentifierModel(msrest.serialization.Model):
-    """A phone number.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param value: Required. The phone number in E.164 format.
-    :type value: str
-    """
-
-    _validation = {
-        'value': {'required': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PhoneNumberIdentifierModel, self).__init__(**kwargs)
-        self.value = kwargs['value']
+        self.raw_id = identifier
 
 class _CaseInsensitiveEnumMeta(EnumMeta):
     def __getitem__(self, name):
@@ -247,14 +132,6 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
         except KeyError:
             raise AttributeError(name)
 
-class CommunicationCloudEnvironmentModel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The cloud that the identifier belongs to.
-    """
-
-    PUBLIC = "public"
-    DOD = "dod"
-    GCCH = "gcch"
-
 class CommunicationCloudEnvironment(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """
     The cloud enviornment that the identifier belongs to
@@ -271,7 +148,7 @@ class MicrosoftTeamsUserIdentifier(object):
     :vartype user_id: str
     :param user_id: Value to initialize MicrosoftTeamsUserIdentifier.
     :type user_id: str
-    :ivar rawId: Raw id of the Microsoft Teams user.
+    :ivar raw_id: Raw id of the Microsoft Teams user.
     :vartype raw_id: str
     :ivar cloud: Cloud environment that this identifier belongs to
     :vartype cloud: CommunicationCloudEnvironment

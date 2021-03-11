@@ -285,7 +285,7 @@ class TestClientRequest(unittest.TestCase):
         request.format_parameters({"g": "h"})
 
         self.assertIn(request.url, ["a/b/c?g=h&t=y", "a/b/c?t=y&g=h"])
-    
+
     def test_request_url_with_params_as_list(self):
 
         request = HttpRequest("GET", "/")
@@ -300,7 +300,7 @@ class TestClientRequest(unittest.TestCase):
         request.url = "a/b/c?t=y"
         with pytest.raises(ValueError):
             request.format_parameters({"g": ["h",None]})
-    
+
     def test_request_url_with_params_with_none(self):
 
         request = HttpRequest("GET", "/")
@@ -327,6 +327,10 @@ class TestClientRequest(unittest.TestCase):
 
         # We want a direct string
         assert request.data == "foo"
+
+    def test_repr(self):
+        request = HttpRequest("GET", "hello.com")
+        assert repr(request) == "<HttpRequest [GET], url: 'hello.com'>"
 
 
 if __name__ == "__main__":

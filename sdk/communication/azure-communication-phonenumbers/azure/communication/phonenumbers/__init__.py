@@ -4,66 +4,27 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from ._phone_number_administration_client import PhoneNumbersAdministrationClient
-from ._polling import ReservePhoneNumberPolling, PurchaseReservationPolling, ReleasePhoneNumberPolling
+from ._phone_numbers_client import PhoneNumbersClient
 
 from ._generated.models import (
-    AcquiredPhoneNumber,
-    AcquiredPhoneNumbers,
-    AreaCodes,
-    CreateSearchOptions,
-    CreateSearchResponse,
-    LocationOptionsQuery,
-    LocationOptionsResponse,
-    NumberConfigurationResponse,
-    NumberUpdateCapabilities,
-    PhoneNumberCountries,
-    PhoneNumberEntities,
-    PhoneNumberRelease,
-    PhoneNumberReservation,
-    PhonePlanGroups,
-    PhonePlansResponse,
-    PstnConfiguration,
-    ReleaseResponse,
-    UpdateNumberCapabilitiesResponse,
-    UpdatePhoneNumberCapabilitiesResponse
-)
-
-from ._shared.models import (
-    CommunicationUserIdentifier,
-    PhoneNumberIdentifier,
-    UnknownIdentifier
+    PurchasedPhoneNumber,
+    PhoneNumberCapabilities,
+    PhoneNumberCost,
+    PhoneNumberSearchResult,
+    BillingFrequency,
+    PhoneNumberAssignmentType,
+    PhoneNumberCapabilityType,
+    PhoneNumberType,
 )
 
 __all__ = [
-    'PhoneNumbersAdministrationClient',
-    'ReservePhoneNumberPolling',
-    'PurchaseReservationPolling',
-    'ReleasePhoneNumberPolling',
-
-    # from _phonenumber
-    'AcquiredPhoneNumber',
-    'AcquiredPhoneNumbers',
-    'AreaCodes',
-    'CreateSearchOptions',
-    'CreateSearchResponse',
-    'LocationOptionsQuery',
-    'LocationOptionsResponse',
-    'NumberConfigurationResponse',
-    'NumberUpdateCapabilities',
-    'PhoneNumberCountries',
-    'PhoneNumberEntities',
-    'PhoneNumberRelease',
-    'PhoneNumberReservation',
-    'PhonePlanGroups',
-    'PhonePlansResponse',
-    'PstnConfiguration',
-    'ReleaseResponse',
-    'UpdateNumberCapabilitiesResponse',
-    'UpdatePhoneNumberCapabilitiesResponse',
-
-    # from _shared
-    'CommunicationUserIdentifier',
-    'PhoneNumberIdentifier',
-    'UnknownIdentifier'
+    'PurchasedPhoneNumber',
+    'PhoneNumberCapabilities',
+    'PhoneNumberCost',
+    'PhoneNumberSearchResult',
+    'BillingFrequency',
+    'PhoneNumberAssignmentType',
+    'PhoneNumberCapabilityType',
+    'PhoneNumberType',
+    'PhoneNumbersClient'
 ]

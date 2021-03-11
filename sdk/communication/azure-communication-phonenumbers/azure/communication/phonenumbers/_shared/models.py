@@ -37,8 +37,8 @@ class UnknownIdentifier(object):
     Represents an identifier of an unknown type.
     It will be encountered in communications with endpoints that are not
     identifiable by this version of the SDK.
-    :ivar identifier: Unknown communication identifier.
-    :vartype identifier: str
+    :ivar raw_id: Unknown communication identifier.
+    :vartype raw_id: str
     :param identifier: Value to initialize UnknownIdentifier.
     :type identifier: str
     """
@@ -47,9 +47,7 @@ class UnknownIdentifier(object):
 
 class CommunicationIdentifierModel(msrest.serialization.Model):
     """Communication Identifier Model.
-
     All required parameters must be populated in order to send to Azure.
-
     :param kind: Required. Kind of Communication Identifier.
     :type kind: CommunicationIdentifierKind
     :param id: Full id of the identifier.
@@ -118,7 +116,7 @@ class CommunicationCloudEnvironment(with_metaclass(_CaseInsensitiveEnumMeta, str
     """
     The cloud enviornment that the identifier belongs to
     """
-    
+
     Public = "PUBLIC"
     Dod = "DOD"
     Gcch = "GCCH"
