@@ -16,20 +16,23 @@ USAGE:
     1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The connection string including your endpoint and 
         access key of your Azure Communication Service"""
 
+import asyncio
 import os
-from azure.communication.phonenumbers import (
+from azure.communication.phonenumbers.aio import (
     PhoneNumbersClient
 )
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
-def list_purchased_phone_numbers():
-    purchased_phone_numbers = phone_numbers_client.list_purchased_phone_numbers()
-    print('Purchased phone numbers:')
-    for acquired_phone_number in purchased_phone_numbers:
-        print(acquired_phone_number.phone_number)
+async def list_purchased_phone_numbers():
+    async with phone_numbers_client:
+        purchased_phone_numbers = phone_numbers_client.list_purchased_phone_numbers()
+        print("Purchased Phone Numbers:")
+        async for item in purchased_phone_numbers:
+            print(item.phone_number)
 
 
 if __name__ == '__main__':
-    list_purchased_phone_numbers()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(list_purchased_phone_numbers())

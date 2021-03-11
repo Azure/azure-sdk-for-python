@@ -75,7 +75,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
     async def test_update_phone_number_capabilities(self):
         async with self.phone_number_client:
             poller = await self.phone_number_client.begin_update_phone_number_capabilities(
-            self.phone_number,
+            "+18332408820",
             PhoneNumberCapabilityType.INBOUND_OUTBOUND,
             PhoneNumberCapabilityType.INBOUND,
             polling = True
