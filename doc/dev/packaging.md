@@ -19,7 +19,7 @@ Note:
 
 We want to build sdist and wheels in order to follow the following constraints:
 - Solution should work with *recent* versions of pip and setuptools (not the very latest only, but not archaeology either)
-- Wheels must work with Python 2.7 and 3.5+
+- Wheels must work with Python 2.7 and 3.6+
 - easy-install scenario is a plus, but cannot be considered critical anymore
 - mixed dev installation and PyPI installation should be explicitly addressed
 
