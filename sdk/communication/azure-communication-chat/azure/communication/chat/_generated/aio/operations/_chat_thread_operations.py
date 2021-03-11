@@ -73,7 +73,7 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-01-preview5"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -162,7 +162,7 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-01-preview5"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -228,7 +228,7 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-01-preview5"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -301,7 +301,7 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-01-preview5"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -390,7 +390,7 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-01-preview5"
         accept = "application/json"
 
         # Construct URL
@@ -458,7 +458,7 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-01-preview5"
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         accept = "application/json"
 
@@ -525,7 +525,7 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-01-preview5"
         accept = "application/json"
 
         # Construct URL
@@ -584,7 +584,7 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-01-preview5"
         accept = "application/json"
 
         # Construct URL
@@ -648,7 +648,7 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-01-preview5"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -738,7 +738,7 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-01-preview5"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -804,7 +804,7 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-01-preview5"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -844,7 +844,7 @@ class ChatThreadOperations:
         return deserialized
     add_chat_participants.metadata = {'url': '/chat/threads/{chatThreadId}/participants/:add'}  # type: ignore
 
-    async def update_chat_thread(
+    async def update_chat_thread_properties(
         self,
         chat_thread_id: str,
         update_chat_thread_request: "_models.UpdateChatThreadRequest",
@@ -873,12 +873,12 @@ class ChatThreadOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-27-preview4"
+        api_version = "2021-03-01-preview5"
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         accept = "application/json"
 
         # Construct URL
-        url = self.update_chat_thread.metadata['url']  # type: ignore
+        url = self.update_chat_thread_properties.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'chatThreadId': self._serialize.url("chat_thread_id", chat_thread_id, 'str'),
@@ -908,4 +908,65 @@ class ChatThreadOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    update_chat_thread.metadata = {'url': '/chat/threads/{chatThreadId}'}  # type: ignore
+    update_chat_thread_properties.metadata = {'url': '/chat/threads/{chatThreadId}'}  # type: ignore
+
+    async def get_chat_thread_properties(
+        self,
+        chat_thread_id: str,
+        **kwargs
+    ) -> "_models.ChatThreadProperties":
+        """Gets a chat thread's properties.
+
+        Gets a chat thread's properties.
+
+        :param chat_thread_id: Id of the thread.
+        :type chat_thread_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ChatThreadProperties, or the result of cls(response)
+        :rtype: ~azure.communication.chat.models.ChatThreadProperties
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ChatThreadProperties"]
+        error_map = {
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-01-preview5"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_chat_thread_properties.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'chatThreadId': self._serialize.url("chat_thread_id", chat_thread_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = self._deserialize('ChatThreadProperties', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_chat_thread_properties.metadata = {'url': '/chat/threads/{chatThreadId}'}  # type: ignore
