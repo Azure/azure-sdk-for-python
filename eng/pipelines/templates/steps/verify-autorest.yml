@@ -58,6 +58,7 @@ steps:
       If (Test-Path autorest.python) {
         Remove-Item -Path autorest.python -Force -Recurse
       } Else {
+        Get-ChildItem
         Write-Output "No autorest.python folder could be found"
       }
     displayName: 'Remove autorest.python'
