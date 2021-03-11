@@ -6,6 +6,7 @@
 
 
 def sample_batch_translation_with_storage():
+    # import libraries
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation import (
@@ -15,6 +16,7 @@ def sample_batch_translation_with_storage():
     )
     from azure.storage.blob import ContainerClient, generate_container_sas, ContainerSasPermissions
 
+    # get service secrets
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
     source_storage_endpoint = os.environ["AZURE_STORAGE_SOURCE_ENDPOINT"]
@@ -26,10 +28,12 @@ def sample_batch_translation_with_storage():
     target_storage_container_name = os.environ["AZURE_STORAGE_TARGET_CONTAINER_NAME"]
     target_storage_key = os.environ["AZURE_STORAGE_TARGET_KEY"]
 
+    # create translation client
     translation_client = DocumentTranslationClient(
         endpoint, AzureKeyCredential(key)
     )
 
+    # upload some document to source container
     container_client = ContainerClient(
         source_storage_endpoint,
         container_name=source_storage_container_name,
@@ -39,6 +43,7 @@ def sample_batch_translation_with_storage():
     with open("document.txt", "rb") as doc:
         container_client.upload_blob("document.txt", doc)
 
+    # prepare translation input
     source_container_sas = generate_container_sas(
         account_name=source_storage_account_name,
         container_name=source_storage_container_name,
@@ -69,20 +74,32 @@ def sample_batch_translation_with_storage():
         )
     ]
 
-    job_detail = translation_client.create_translation_job(batch)
-    job_result = translation_client.wait_until_done(job_detail.id)
+    # submit docs for translation
+    poller = translation_client.begin_translation(batch) # type: DocumentTranslationPoller[ItemPaged[DocumentStatusDetail]]
 
-    if job_result.status == "Succeeded":
+    # initial status
+    translation_details = poller.details # type: TranslationStatusDetail
+    print("Translation initial status: {}".format(translation_details.status))
+    print("Number of translations on documents: {}".format(translation_details.documents_total_count))
+
+    # get final status
+    doc_statuses = poller.result()  # type: ItemPaged[DocumentStatusDetail]
+    translation_result = poller.details # type: TranslationStatusDetail
+    if translation_result.status == "Succeeded":
         print("We translated our documents!")
-        if job_result.documents_failed_count > 0:
-            check_documents(translation_client, job_result.id)
+        if translation_result.documents_failed_count > 0:
+            docs_to_retry = check_documents(doc_statuses)
+            # do something with failed docs
 
-    elif job_result.status in ["Failed", "ValidationFailed"]:
-        if job_result.error:
-            print("Translation job failed: {}: {}".format(job_result.error.code, job_result.error.message))
-        check_documents(translation_client, job_result.id)
+    elif translation_result.status in ["Failed", "ValidationFailed"]:
+        if translation_result.error:
+            print("Translation job failed: {}: {}".format(translation_result.error.code, translation_result.error.message))
+        docs_to_retry = check_documents(doc_statuses)
+        # do something with failed docs
         exit(1)
 
+
+    # write translated document to desired storage
     container_client = ContainerClient(
         target_storage_endpoint,
         container_name=target_storage_container_name,
@@ -96,15 +113,7 @@ def sample_batch_translation_with_storage():
         my_blob.write(download_stream.readall())
 
 
-def check_documents(client, job_id):
-    from azure.core.exceptions import ResourceNotFoundError
-
-    try:
-        doc_statuses = client.list_documents_statuses(job_id)  # type: ItemPaged[DocumentStatusDetail]
-    except ResourceNotFoundError as err:
-        print("Failed to process any documents in source/target container due to insufficient permissions.")
-        raise err
-
+def check_documents(doc_statuses):
     docs_to_retry = []
     for document in doc_statuses:
         if document.status == "Failed":
@@ -116,6 +125,7 @@ def check_documents(client, job_id):
             ))
             if document.url not in docs_to_retry:
                 docs_to_retry.append(document.url)
+    return docs_to_retry
 
 
 if __name__ == '__main__':
