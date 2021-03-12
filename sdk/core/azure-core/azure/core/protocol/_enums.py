@@ -23,10 +23,13 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from ._enums import HttpVerbs
-from ._http_request import HttpRequest
+from enum import Enum
 
-__all__ = [
-    "HttpVerbs",
-    "HttpRequest",
-]
+class HttpVerbs(str, Enum):
+    GET = "GET"
+    PUT = "PUT"
+    POST = "POST"
+    HEAD = "HEAD"
+    PATCH = "PATCH"
+    DELETE = "DELETE"
+    MERGE = "MERGE"

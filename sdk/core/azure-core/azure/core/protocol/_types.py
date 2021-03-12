@@ -23,10 +23,33 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from ._enums import HttpVerbs
-from ._http_request import HttpRequest
+from typing import (
+    AsyncIterable, Iterable, Mapping,
+    Sequence,
+    Tuple,
+    Union,
+    Optional,
+    IO,
+)
 
-__all__ = [
-    "HttpVerbs",
-    "HttpRequest",
+
+Primitives = Optional[Union[str, int, float, bool]]
+
+
+# Everything is pretty much a dict of str -> content, or a list of tuples of str + content.
+QueryTypes = Union[
+    Mapping[str, Union[Primitives, Sequence[Primitives]]],
+    Sequence[Tuple[str, Primitives]]
 ]
+
+HeaderTypes = Union[
+    Mapping[str, str],
+    Sequence[Tuple[str, str]]
+]
+
+
+FileContent = Union[IO[str], IO[bytes], str, bytes]
+FileTypes = Union[Mapping[str, FileContent], Sequence[Tuple[str, FileContent]]]
+
+ByteStream = Union[Iterable[bytes], AsyncIterable[bytes]]
+ContentTypes = Union[str, bytes, ByteStream]
