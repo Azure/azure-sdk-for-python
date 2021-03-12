@@ -26,17 +26,17 @@ def prepare_entities_recognition_general(
     Analytics API</a>`. See the :code:`<a href="https://aka.ms/talangs">Supported languages in Text
     Analytics API</a>` for the list of enabled languages.
 
-    :param body: JSON body containing the set of documents to process as part of this batch.
-    :param model_version: (Optional) This value indicates which model will be used for scoring. If
+    :keyword body: JSON body containing the set of documents to process as part of this batch.
+    :keyword model_version: (Optional) This value indicates which model will be used for scoring. If
         a model-version is not specified, the API should default to the latest, non-preview version.
-    :type model_version: str
-    :param show_stats: (Optional) if set to true, response will contain request and document level
+    :paramtype model_version: str
+    :keyword show_stats: (Optional) if set to true, response will contain request and document level
         statistics.
-    :type show_stats: bool
-    :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
+    :paramtype show_stats: bool
+    :keyword string_index_type: (Optional) Specifies the method used to interpret string offsets.
         Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
         see https://aka.ms/text-analytics-offsets.
-    :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_1.models.StringIndexType
+    :paramtype string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_1.models.StringIndexType
     :return: HTTPRequest that can be passed to the client's `send_request` caller.
     :rtype: ~azure.core.protocol.HttpRequest
     """
@@ -88,19 +88,19 @@ def prepare_entities_recognition_pii(
     :code:`<a href="https://aka.ms/talangs">Supported languages in Text Analytics API</a>` for the
     list of enabled languages.
 
-    :param body: JSON body containing the set of documents to process as part of this batch.
-    :param model_version: (Optional) This value indicates which model will be used for scoring. If
+    :keyword body: JSON body containing the set of documents to process as part of this batch.
+    :keyword model_version: (Optional) This value indicates which model will be used for scoring. If
         a model-version is not specified, the API should default to the latest, non-preview version.
-    :type model_version: str
-    :param show_stats: (Optional) if set to true, response will contain request and document level
+    :paramtype model_version: str
+    :keyword show_stats: (Optional) if set to true, response will contain request and document level
         statistics.
-    :type show_stats: bool
-    :param domain: (Optional) if set to 'PHI', response will contain only PHI entities.
-    :type domain: str
-    :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
+    :paramtype show_stats: bool
+    :keyword domain: (Optional) if set to 'PHI', response will contain only PHI entities.
+    :paramtype domain: str
+    :keyword string_index_type: (Optional) Specifies the method used to interpret string offsets.
         Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
         see https://aka.ms/text-analytics-offsets.
-    :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_1.models.StringIndexType
+    :paramtype string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_1.models.StringIndexType
     :return: HTTPRequest that can be passed to the client's `send_request` caller.
     :rtype: ~azure.core.protocol.HttpRequest
     """
@@ -151,17 +151,17 @@ def prepare_entities_linking(
     the :code:`<a href="https://aka.ms/talangs">Supported languages in Text Analytics API</a>` for
     the list of enabled languages.
 
-    :param body: JSON body containing the set of documents to process as part of this batch.
-    :param model_version: (Optional) This value indicates which model will be used for scoring. If
+    :keyword body: JSON body containing the set of documents to process as part of this batch.
+    :keyword model_version: (Optional) This value indicates which model will be used for scoring. If
         a model-version is not specified, the API should default to the latest, non-preview version.
-    :type model_version: str
-    :param show_stats: (Optional) if set to true, response will contain request and document level
+    :paramtype model_version: str
+    :keyword show_stats: (Optional) if set to true, response will contain request and document level
         statistics.
-    :type show_stats: bool
-    :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
+    :paramtype show_stats: bool
+    :keyword string_index_type: (Optional) Specifies the method used to interpret string offsets.
         Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
         see https://aka.ms/text-analytics-offsets.
-    :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_1.models.StringIndexType
+    :paramtype string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_1.models.StringIndexType
     :return: HTTPRequest that can be passed to the client's `send_request` caller.
     :rtype: ~azure.core.protocol.HttpRequest
     """
@@ -209,13 +209,13 @@ def prepare_key_phrases(
     href="https://aka.ms/talangs">Supported languages in Text Analytics API</a>` for the list of
     enabled languages.
 
-    :param body: JSON body containing the set of documents to process as part of this batch.
-    :param model_version: (Optional) This value indicates which model will be used for scoring. If
+    :keyword body: JSON body containing the set of documents to process as part of this batch.
+    :keyword model_version: (Optional) This value indicates which model will be used for scoring. If
         a model-version is not specified, the API should default to the latest, non-preview version.
-    :type model_version: str
-    :param show_stats: (Optional) if set to true, response will contain request and document level
+    :paramtype model_version: str
+    :keyword show_stats: (Optional) if set to true, response will contain request and document level
         statistics.
-    :type show_stats: bool
+    :paramtype show_stats: bool
     :return: HTTPRequest that can be passed to the client's `send_request` caller.
     :rtype: ~azure.core.protocol.HttpRequest
     """
@@ -262,13 +262,13 @@ def prepare_languages(
     href="https://aka.ms/talangs">Supported languages in Text Analytics API</a>` for the list of
     enabled languages.
 
-    :param body: JSON body containing the set of documents to process as part of this batch.
-    :param model_version: (Optional) This value indicates which model will be used for scoring. If
+    :keyword body: JSON body containing the set of documents to process as part of this batch.
+    :keyword model_version: (Optional) This value indicates which model will be used for scoring. If
         a model-version is not specified, the API should default to the latest, non-preview version.
-    :type model_version: str
-    :param show_stats: (Optional) if set to true, response will contain request and document level
+    :paramtype model_version: str
+    :keyword show_stats: (Optional) if set to true, response will contain request and document level
         statistics.
-    :type show_stats: bool
+    :paramtype show_stats: bool
     :return: HTTPRequest that can be passed to the client's `send_request` caller.
     :rtype: ~azure.core.protocol.HttpRequest
     """
@@ -316,20 +316,20 @@ def prepare_sentiment(
     multiple levels of granularity, start from the a document level, down to sentence and key terms
     (aspects) and opinions.
 
-    :param body: JSON body containing the set of documents to process as part of this batch.
-    :param model_version: (Optional) This value indicates which model will be used for scoring. If
+    :keyword body: JSON body containing the set of documents to process as part of this batch.
+    :keyword model_version: (Optional) This value indicates which model will be used for scoring. If
         a model-version is not specified, the API should default to the latest, non-preview version.
-    :type model_version: str
-    :param show_stats: (Optional) if set to true, response will contain request and document level
+    :paramtype model_version: str
+    :keyword show_stats: (Optional) if set to true, response will contain request and document level
         statistics.
-    :type show_stats: bool
-    :param opinion_mining: (Optional) if set to true, response will contain input and document
+    :paramtype show_stats: bool
+    :keyword opinion_mining: (Optional) if set to true, response will contain input and document
         level statistics including aspect-based sentiment analysis results.
-    :type opinion_mining: bool
-    :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
+    :paramtype opinion_mining: bool
+    :keyword string_index_type: (Optional) Specifies the method used to interpret string offsets.
         Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
         see https://aka.ms/text-analytics-offsets.
-    :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_1.models.StringIndexType
+    :paramtype string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_1.models.StringIndexType
     :return: HTTPRequest that can be passed to the client's `send_request` caller.
     :rtype: ~azure.core.protocol.HttpRequest
     """

@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pytest
+import warnings
 from azure.core.protocol import HttpRequest
 from azure.ai.textanalytics.protocol import *
 
@@ -164,3 +165,20 @@ def test_azure_key_credential(documents):
     assert json_response['documents'][0]['sentiment'] == 'positive'
     assert json_response['documents'][1]['sentiment'] == 'positive'
 
+def test_no_api_version(documents):
+    preparers = [
+        prepare_key_phrases,
+        prepare_entities_recognition_general,
+        prepare_entities_linking,
+        prepare_entities_recognition_pii,
+        prepare_languages,
+        prepare_sentiment
+    ]
+
+    for preparer in preparers:
+        with pytest.warns(UserWarning) as w:
+            preparer(body={"documents": documents})
+        assert w[0].message.args[0] == (
+            "You did not specify an API version, so we set it to the default 'v3.1-preview.1'. "
+            "We strongly recommend you explicitly set the API version in your call to avoid breaking changes between API versions."
+        )
