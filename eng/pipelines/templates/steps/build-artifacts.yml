@@ -93,7 +93,7 @@ steps:
   - template: /eng/common/pipelines/templates/steps/resolve-artifact-name.yml
     parameters:
       ArtifactNameVariable: 'Publishing.Artifact.Name'
-      DefaultArtifactName: 'packaging'
+      DefaultArtifactName: 'packages'
 
   - task: PublishPipelineArtifact@1
     condition: succeededOrFailed()

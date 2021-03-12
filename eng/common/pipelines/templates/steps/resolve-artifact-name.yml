@@ -5,15 +5,15 @@
 
 parameters:
   ArtifactNameVariable: 'Publishing.Artifact.Name'
-  DefaultArtifactName: 'packaging'
+  DefaultArtifactName: 'packages'
 
 steps:
   - pwsh: |
-      "##vso[task.setvariable variable=${{ parameters.ArtifactNameVariable }}]${{ parameters.DefaultArtifactName }}_$(Build.BuildNumber)"
+      Write-Host "##vso[task.setvariable variable=${{ parameters.ArtifactNameVariable }}]${{ parameters.DefaultArtifactName }}_$(Build.BuildNumber)"
     condition: failed()
     displayName: 'Set Failed Artifact Name'
 
   - pwsh: |
-      "##vso[task.setvariable variable=${{ parameters.ArtifactNameVariable }}]${{ parameters.DefaultArtifactName }}"
+      Write-Host "##vso[task.setvariable variable=${{ parameters.ArtifactNameVariable }}]${{ parameters.DefaultArtifactName }}"
     condition: succeeded()
     displayName: 'Set Default Artifact Name'
