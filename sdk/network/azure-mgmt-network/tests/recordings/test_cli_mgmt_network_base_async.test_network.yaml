@@ -10,45 +10,44 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"name\": \"virtualnetworkname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname\"\
-        ,\r\n  \"etag\": \"W/\\\"e814e57c-c3a3-414d-a1d2-62b3dd203473\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"b061c5f1-18b2-40a8-b304-22009226f13a\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
-        \   \"resourceGuid\": \"3df2ce00-a40a-46c9-b17a-e65e775c9377\",\r\n    \"\
+        \   \"resourceGuid\": \"29d3a208-ac75-4652-bcc5-c1256fa85a64\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
-        : [],\r\n    \"enableDdosProtection\": false,\r\n    \"enableVmProtection\"\
-        : false\r\n  }\r\n}"
+        : [],\r\n    \"enableDdosProtection\": false\r\n  }\r\n}"
     headers:
       azure-asyncnotification: Enabled
-      azure-asyncoperation: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/f1d30cc8-2fc4-44d4-92ae-df075744043e?api-version=2020-08-01
+      azure-asyncoperation: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/2f8006b7-3f3d-4efd-9695-d7a08fd61f71?api-version=2020-11-01
       cache-control: no-cache
-      content-length: '723'
+      content-length: '689'
       content-type: application/json; charset=utf-8
-      date: Tue, 26 Jan 2021 07:46:24 GMT
+      date: Tue, 09 Mar 2021 05:06:02 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
-      x-ms-arm-service-request-id: bbb96dd1-cd6a-4380-ad58-12ebb446dd7e
-      x-ms-ratelimit-remaining-subscription-writes: '1196'
+      x-ms-arm-service-request-id: cdcc51be-742e-4901-8a72-e9c45ed65d73
+      x-ms-ratelimit-remaining-subscription-writes: '1199'
     status:
       code: 201
       message: Created
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/v5h2sddw72q5ofyg6ogv6mz4zvo7ucaz35e4oyy4qi6fj33ts5cftes3knk4lsyqjazno73g6fn/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-08-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/uvqov4ixaqz5vbzg4ajmo2ipptyvzobjo5bd767j5cn5qnpcijw7znsqfhhygmmi6hhoqkcb7ua/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-11-01
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/f1d30cc8-2fc4-44d4-92ae-df075744043e?api-version=2020-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/2f8006b7-3f3d-4efd-9695-d7a08fd61f71?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -56,7 +55,7 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 Jan 2021 07:46:28 GMT
+      date: Tue, 09 Mar 2021 05:06:05 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
@@ -64,35 +63,34 @@ interactions:
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
-      x-ms-arm-service-request-id: eecb423b-26ca-42e7-87bb-6a0863da5c22
+      x-ms-arm-service-request-id: c11a934a-af9b-4105-a871-20a9da15b7d7
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.Network/locations/eastus/operations/f1d30cc8-2fc4-44d4-92ae-df075744043e?api-version=2020-08-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.Network/locations/eastus/operations/2f8006b7-3f3d-4efd-9695-d7a08fd61f71?api-version=2020-11-01
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"name\": \"virtualnetworkname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname\"\
-        ,\r\n  \"etag\": \"W/\\\"dcbd4fd4-d9d5-4cf9-8014-69dae46edf84\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"e667a31b-286c-4136-ab06-78a6fffd2995\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
-        \    \"resourceGuid\": \"3df2ce00-a40a-46c9-b17a-e65e775c9377\",\r\n    \"\
+        \    \"resourceGuid\": \"29d3a208-ac75-4652-bcc5-c1256fa85a64\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
-        : [],\r\n    \"enableDdosProtection\": false,\r\n    \"enableVmProtection\"\
-        : false\r\n  }\r\n}"
+        : [],\r\n    \"enableDdosProtection\": false\r\n  }\r\n}"
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 Jan 2021 07:46:28 GMT
-      etag: W/"dcbd4fd4-d9d5-4cf9-8014-69dae46edf84"
+      date: Tue, 09 Mar 2021 05:06:06 GMT
+      etag: W/"e667a31b-286c-4136-ab06-78a6fffd2995"
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
@@ -100,11 +98,11 @@ interactions:
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
-      x-ms-arm-service-request-id: a810eead-1a82-4a4c-a11d-3c6d90addc00
+      x-ms-arm-service-request-id: c402c078-e169-4d81-902b-95e45e7a7c8c
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/v5h2sddw72q5ofyg6ogv6mz4zvo7ucaz35e4oyy4qi6fj33ts5cftes3knk4lsyqjazno73g6fn/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-08-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/uvqov4ixaqz5vbzg4ajmo2ipptyvzobjo5bd767j5cn5qnpcijw7znsqfhhygmmi6hhoqkcb7ua/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-11-01
 - request:
     body: '{"properties": {"addressPrefix": "10.0.0.0/24"}}'
     headers:
@@ -115,41 +113,41 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"name\": \"subnetname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname\"\
-        ,\r\n  \"etag\": \"W/\\\"8bbbc535-824b-40b5-bc52-cac1edff191d\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"9ae5a2aa-91e5-4912-b8c7-199b1f0abee2\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
         : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\
         \n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n}"
     headers:
-      azure-asyncoperation: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/dde7b015-7265-42fa-a749-5a7bfc6ef638?api-version=2020-08-01
+      azure-asyncoperation: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/bb104306-b108-4811-ac80-7544564fcc23?api-version=2020-11-01
       cache-control: no-cache
       content-length: '604'
       content-type: application/json; charset=utf-8
-      date: Tue, 26 Jan 2021 07:46:29 GMT
+      date: Tue, 09 Mar 2021 05:06:06 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
-      x-ms-arm-service-request-id: a9197f5c-1b78-4adc-bbe9-b3d09529ed1d
-      x-ms-ratelimit-remaining-subscription-writes: '1195'
+      x-ms-arm-service-request-id: e1111cf7-79ed-45bf-a9b2-dfe32ec7ce3e
+      x-ms-ratelimit-remaining-subscription-writes: '1198'
     status:
       code: 201
       message: Created
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/v5h2sddw72q5ofyg6ogv6mz4zvo7ucaz35e4oyy4qi6fj33ts5cftes3knk4lsyqjazno73g6fn/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-08-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/uvqov4ixaqz5vbzg4ajmo2ipptyvzobjo5bd767j5cn5qnpcijw7znsqfhhygmmi6hhoqkcb7ua/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-11-01
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/dde7b015-7265-42fa-a749-5a7bfc6ef638?api-version=2020-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/bb104306-b108-4811-ac80-7544564fcc23?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -157,7 +155,7 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 Jan 2021 07:46:32 GMT
+      date: Tue, 09 Mar 2021 05:06:09 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
@@ -165,22 +163,22 @@ interactions:
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
-      x-ms-arm-service-request-id: 477cb248-eb1c-4999-a8d2-0ca86ac9670b
+      x-ms-arm-service-request-id: f7074eef-47dd-4f24-8b0c-ef54c12e4ab0
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.Network/locations/eastus/operations/dde7b015-7265-42fa-a749-5a7bfc6ef638?api-version=2020-08-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.Network/locations/eastus/operations/bb104306-b108-4811-ac80-7544564fcc23?api-version=2020-11-01
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"name\": \"subnetname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname\"\
-        ,\r\n  \"etag\": \"W/\\\"efececbd-6baf-4eff-9b8c-407cb66c7c11\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"b90a53e7-f356-4777-a3f9-0268d2b05acb\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
         : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\
@@ -189,8 +187,8 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 Jan 2021 07:46:32 GMT
-      etag: W/"efececbd-6baf-4eff-9b8c-407cb66c7c11"
+      date: Tue, 09 Mar 2021 05:06:10 GMT
+      etag: W/"b90a53e7-f356-4777-a3f9-0268d2b05acb"
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
@@ -198,20 +196,20 @@ interactions:
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
-      x-ms-arm-service-request-id: 3123436c-d27c-4642-9db6-e3b4e3121c9f
+      x-ms-arm-service-request-id: 4d1a3e57-8a4b-4325-8e1a-141b87abd955
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/v5h2sddw72q5ofyg6ogv6mz4zvo7ucaz35e4oyy4qi6fj33ts5cftes3knk4lsyqjazno73g6fn/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-08-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/uvqov4ixaqz5vbzg4ajmo2ipptyvzobjo5bd767j5cn5qnpcijw7znsqfhhygmmi6hhoqkcb7ua/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-11-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/CheckIPAddressAvailability?ipAddress=10.0.0.4&api-version=2020-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/CheckIPAddressAvailability?ipAddress=10.0.0.4&api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"available\": true,\r\n  \"isPlatformReserved\": false\r\n}"
@@ -219,7 +217,7 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 Jan 2021 07:46:33 GMT
+      date: Tue, 09 Mar 2021 05:06:10 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
@@ -227,24 +225,24 @@ interactions:
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
-      x-ms-arm-service-request-id: a2ea5376-12d0-4c85-b837-b62e86b540f7
+      x-ms-arm-service-request-id: da67d114-b38d-4eb7-8613-9dd8a9813943
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/v5h2sddw72q5ofyg6ogv6mz4zvo7ucaz35e4oyy4qi6fj33ts5cftes3knk4lsyqjazno73g6fn/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/CheckIPAddressAvailability?ipAddress=10.0.0.4&api-version=2020-08-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/uvqov4ixaqz5vbzg4ajmo2ipptyvzobjo5bd767j5cn5qnpcijw7znsqfhhygmmi6hhoqkcb7ua/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/CheckIPAddressAvailability?ipAddress=10.0.0.4&api-version=2020-11-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"name\": \"subnetname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname\"\
-        ,\r\n  \"etag\": \"W/\\\"efececbd-6baf-4eff-9b8c-407cb66c7c11\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"b90a53e7-f356-4777-a3f9-0268d2b05acb\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
         : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\
@@ -253,8 +251,8 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 Jan 2021 07:46:33 GMT
-      etag: W/"efececbd-6baf-4eff-9b8c-407cb66c7c11"
+      date: Tue, 09 Mar 2021 05:06:10 GMT
+      etag: W/"b90a53e7-f356-4777-a3f9-0268d2b05acb"
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
@@ -262,25 +260,25 @@ interactions:
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
-      x-ms-arm-service-request-id: 3f3d958d-c9f8-45ca-ae7c-5cbaab582184
+      x-ms-arm-service-request-id: ed4f0191-e65d-40ac-a155-fe0f49358846
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/v5h2sddw72q5ofyg6ogv6mz4zvo7ucaz35e4oyy4qi6fj33ts5cftes3knk4lsyqjazno73g6fn/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-08-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/uvqov4ixaqz5vbzg4ajmo2ipptyvzobjo5bd767j5cn5qnpcijw7znsqfhhygmmi6hhoqkcb7ua/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-11-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets?api-version=2020-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"subnetname\",\r\n\
         \      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname\"\
-        ,\r\n      \"etag\": \"W/\\\"efececbd-6baf-4eff-9b8c-407cb66c7c11\\\"\",\r\
+        ,\r\n      \"etag\": \"W/\\\"b90a53e7-f356-4777-a3f9-0268d2b05acb\\\"\",\r\
         \n      \"properties\": {\r\n        \"provisioningState\": \"Succeeded\"\
         ,\r\n        \"addressPrefix\": \"10.0.0.0/24\",\r\n        \"delegations\"\
         : [],\r\n        \"privateEndpointNetworkPolicies\": \"Enabled\",\r\n    \
@@ -291,7 +289,7 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 Jan 2021 07:46:33 GMT
+      date: Tue, 09 Mar 2021 05:06:11 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
@@ -299,20 +297,20 @@ interactions:
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
-      x-ms-arm-service-request-id: 3f5452d6-787e-4713-85fd-6074613a8141
+      x-ms-arm-service-request-id: d5065e07-5a2c-4842-9c88-85f8f339b63b
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/v5h2sddw72q5ofyg6ogv6mz4zvo7ucaz35e4oyy4qi6fj33ts5cftes3knk4lsyqjazno73g6fn/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets?api-version=2020-08-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/uvqov4ixaqz5vbzg4ajmo2ipptyvzobjo5bd767j5cn5qnpcijw7znsqfhhygmmi6hhoqkcb7ua/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets?api-version=2020-11-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/usages?api-version=2020-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/usages?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"currentValue\": 0,\r\n    \
@@ -324,7 +322,7 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 Jan 2021 07:46:34 GMT
+      date: Tue, 09 Mar 2021 05:06:11 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
@@ -332,44 +330,44 @@ interactions:
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
-      x-ms-arm-service-request-id: 672e65f5-03fe-452b-8b2a-3c17544cf097
+      x-ms-arm-service-request-id: ca44d4b6-5115-4cf0-ab07-bc0138652469
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/v5h2sddw72q5ofyg6ogv6mz4zvo7ucaz35e4oyy4qi6fj33ts5cftes3knk4lsyqjazno73g6fn/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/usages?api-version=2020-08-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/uvqov4ixaqz5vbzg4ajmo2ipptyvzobjo5bd767j5cn5qnpcijw7znsqfhhygmmi6hhoqkcb7ua/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/usages?api-version=2020-11-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"name\": \"virtualnetworkname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname\"\
-        ,\r\n  \"etag\": \"W/\\\"efececbd-6baf-4eff-9b8c-407cb66c7c11\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"b90a53e7-f356-4777-a3f9-0268d2b05acb\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
-        \    \"resourceGuid\": \"3df2ce00-a40a-46c9-b17a-e65e775c9377\",\r\n    \"\
+        \    \"resourceGuid\": \"29d3a208-ac75-4652-bcc5-c1256fa85a64\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [\r\n      {\r\n        \"name\"\
         : \"subnetname\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname\"\
-        ,\r\n        \"etag\": \"W/\\\"efececbd-6baf-4eff-9b8c-407cb66c7c11\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"b90a53e7-f356-4777-a3f9-0268d2b05acb\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"addressPrefix\": \"10.0.0.0/24\",\r\n          \"delegations\"\
         : [],\r\n          \"privateEndpointNetworkPolicies\": \"Enabled\",\r\n  \
         \        \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\n        },\r\
         \n        \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n    \
         \  }\r\n    ],\r\n    \"virtualNetworkPeerings\": [],\r\n    \"enableDdosProtection\"\
-        : false,\r\n    \"enableVmProtection\": false\r\n  }\r\n}"
+        : false\r\n  }\r\n}"
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 Jan 2021 07:46:34 GMT
-      etag: W/"efececbd-6baf-4eff-9b8c-407cb66c7c11"
+      date: Tue, 09 Mar 2021 05:06:11 GMT
+      etag: W/"b90a53e7-f356-4777-a3f9-0268d2b05acb"
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
@@ -377,46 +375,45 @@ interactions:
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
-      x-ms-arm-service-request-id: d64fe03a-63c3-4f51-9081-f1ce51b8f2cf
+      x-ms-arm-service-request-id: b14113f0-2f9d-4674-8757-b86b63dd990e
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/v5h2sddw72q5ofyg6ogv6mz4zvo7ucaz35e4oyy4qi6fj33ts5cftes3knk4lsyqjazno73g6fn/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-08-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/uvqov4ixaqz5vbzg4ajmo2ipptyvzobjo5bd767j5cn5qnpcijw7znsqfhhygmmi6hhoqkcb7ua/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-11-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks?api-version=2020-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"virtualnetworkname\"\
         ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname\"\
-        ,\r\n      \"etag\": \"W/\\\"efececbd-6baf-4eff-9b8c-407cb66c7c11\\\"\",\r\
+        ,\r\n      \"etag\": \"W/\\\"b90a53e7-f356-4777-a3f9-0268d2b05acb\\\"\",\r\
         \n      \"type\": \"Microsoft.Network/virtualNetworks\",\r\n      \"location\"\
         : \"eastus\",\r\n      \"properties\": {\r\n        \"provisioningState\"\
-        : \"Succeeded\",\r\n        \"resourceGuid\": \"3df2ce00-a40a-46c9-b17a-e65e775c9377\"\
+        : \"Succeeded\",\r\n        \"resourceGuid\": \"29d3a208-ac75-4652-bcc5-c1256fa85a64\"\
         ,\r\n        \"addressSpace\": {\r\n          \"addressPrefixes\": [\r\n \
         \           \"10.0.0.0/16\"\r\n          ]\r\n        },\r\n        \"subnets\"\
         : [\r\n          {\r\n            \"name\": \"subnetname\",\r\n          \
         \  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname\"\
-        ,\r\n            \"etag\": \"W/\\\"efececbd-6baf-4eff-9b8c-407cb66c7c11\\\"\
+        ,\r\n            \"etag\": \"W/\\\"b90a53e7-f356-4777-a3f9-0268d2b05acb\\\"\
         \",\r\n            \"properties\": {\r\n              \"provisioningState\"\
         : \"Succeeded\",\r\n              \"addressPrefix\": \"10.0.0.0/24\",\r\n\
         \              \"delegations\": [],\r\n              \"privateEndpointNetworkPolicies\"\
         : \"Enabled\",\r\n              \"privateLinkServiceNetworkPolicies\": \"\
         Enabled\"\r\n            },\r\n            \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\
         \r\n          }\r\n        ],\r\n        \"virtualNetworkPeerings\": [],\r\
-        \n        \"enableDdosProtection\": false,\r\n        \"enableVmProtection\"\
-        : false\r\n      }\r\n    }\r\n  ]\r\n}"
+        \n        \"enableDdosProtection\": false\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 Jan 2021 07:46:34 GMT
+      date: Tue, 09 Mar 2021 05:06:12 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
@@ -424,33 +421,24 @@ interactions:
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
-      x-ms-arm-service-request-id: ae497cc2-e184-4814-9801-de2979af9ef9
+      x-ms-arm-service-request-id: d3790905-d97d-4feb-beb4-02f0bfc6ae60
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/v5h2sddw72q5ofyg6ogv6mz4zvo7ucaz35e4oyy4qi6fj33ts5cftes3knk4lsyqjazno73g6fn/providers/Microsoft.Network/virtualNetworks?api-version=2020-08-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/uvqov4ixaqz5vbzg4ajmo2ipptyvzobjo5bd767j5cn5qnpcijw7znsqfhhygmmi6hhoqkcb7ua/providers/Microsoft.Network/virtualNetworks?api-version=2020-11-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/virtualNetworks?api-version=2020-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/virtualNetworks?api-version=2020-11-01
   response:
     body:
-      string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"rmvirtualnetworkname\"\
-        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jc3vgnszph754mtc2q4qhf57x4s6bi7tcc4lqm5h65umgzirugdwlkasogj7miofa2qrs6n2zqd/providers/Microsoft.Network/virtualNetworks/rmvirtualnetworkname\"\
-        ,\r\n      \"etag\": \"W/\\\"5768872e-98cb-447d-8fde-ab15cd093395\\\"\",\r\
-        \n      \"type\": \"Microsoft.Network/virtualNetworks\",\r\n      \"location\"\
-        : \"eastus\",\r\n      \"properties\": {\r\n        \"provisioningState\"\
-        : \"Succeeded\",\r\n        \"resourceGuid\": \"36e2bf7c-b57d-453d-8cc8-300cf005cd3d\"\
-        ,\r\n        \"addressSpace\": {\r\n          \"addressPrefixes\": [\r\n \
-        \           \"10.2.0.0/16\"\r\n          ]\r\n        },\r\n        \"subnets\"\
-        : [],\r\n        \"virtualNetworkPeerings\": [],\r\n        \"enableDdosProtection\"\
-        : false,\r\n        \"enableVmProtection\": false\r\n      }\r\n    },\r\n\
-        \    {\r\n      \"name\": \"sdknettestqa2vnet464\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/virtualNetworks/sdknettestqa2vnet464\"\
+      string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"sdknettestqa2vnet464\"\
+        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/virtualNetworks/sdknettestqa2vnet464\"\
         ,\r\n      \"etag\": \"W/\\\"b2bf7f8b-0e8a-4410-b275-1f550862ebeb\\\"\",\r\
         \n      \"type\": \"Microsoft.Network/virtualNetworks\",\r\n      \"location\"\
         : \"eastus\",\r\n      \"tags\": {},\r\n      \"properties\": {\r\n      \
@@ -481,30 +469,30 @@ interactions:
         \      },\r\n            \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\
         \r\n          }\r\n        ],\r\n        \"virtualNetworkPeerings\": [],\r\
         \n        \"enableDdosProtection\": false,\r\n        \"enableVmProtection\"\
-        : false\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"virtualnetworkname\"\
-        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname\"\
-        ,\r\n      \"etag\": \"W/\\\"efececbd-6baf-4eff-9b8c-407cb66c7c11\\\"\",\r\
+        : false,\r\n        \"vmProtectionFlagHasChanged\": false\r\n      }\r\n \
+        \   },\r\n    {\r\n      \"name\": \"virtualnetworkname\",\r\n      \"id\"\
+        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname\"\
+        ,\r\n      \"etag\": \"W/\\\"b90a53e7-f356-4777-a3f9-0268d2b05acb\\\"\",\r\
         \n      \"type\": \"Microsoft.Network/virtualNetworks\",\r\n      \"location\"\
         : \"eastus\",\r\n      \"properties\": {\r\n        \"provisioningState\"\
-        : \"Succeeded\",\r\n        \"resourceGuid\": \"3df2ce00-a40a-46c9-b17a-e65e775c9377\"\
+        : \"Succeeded\",\r\n        \"resourceGuid\": \"29d3a208-ac75-4652-bcc5-c1256fa85a64\"\
         ,\r\n        \"addressSpace\": {\r\n          \"addressPrefixes\": [\r\n \
         \           \"10.0.0.0/16\"\r\n          ]\r\n        },\r\n        \"subnets\"\
         : [\r\n          {\r\n            \"name\": \"subnetname\",\r\n          \
         \  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname\"\
-        ,\r\n            \"etag\": \"W/\\\"efececbd-6baf-4eff-9b8c-407cb66c7c11\\\"\
+        ,\r\n            \"etag\": \"W/\\\"b90a53e7-f356-4777-a3f9-0268d2b05acb\\\"\
         \",\r\n            \"properties\": {\r\n              \"provisioningState\"\
         : \"Succeeded\",\r\n              \"addressPrefix\": \"10.0.0.0/24\",\r\n\
         \              \"delegations\": [],\r\n              \"privateEndpointNetworkPolicies\"\
         : \"Enabled\",\r\n              \"privateLinkServiceNetworkPolicies\": \"\
         Enabled\"\r\n            },\r\n            \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\
         \r\n          }\r\n        ],\r\n        \"virtualNetworkPeerings\": [],\r\
-        \n        \"enableDdosProtection\": false,\r\n        \"enableVmProtection\"\
-        : false\r\n      }\r\n    }\r\n  ]\r\n}"
+        \n        \"enableDdosProtection\": false\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 Jan 2021 07:46:35 GMT
+      date: Tue, 09 Mar 2021 05:06:12 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
@@ -512,11 +500,11 @@ interactions:
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
-      x-ms-arm-service-request-id: 82ecabd4-e871-4f3a-a059-14c8152d41ff
+      x-ms-arm-service-request-id: 528e1602-c21e-431c-8686-a80a05353ab3
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.Network/virtualNetworks?api-version=2020-08-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.Network/virtualNetworks?api-version=2020-11-01
 - request:
     body: '{"tags": {"tag1": "value1", "tag2": "value2"}}'
     headers:
@@ -527,34 +515,34 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"name\": \"virtualnetworkname\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname\"\
-        ,\r\n  \"etag\": \"W/\\\"a9cda41a-dcdd-4f3e-9356-55ac6d827a87\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"651f1c80-b9f0-44ee-b40f-6bc1d4f36777\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"tags\": {\r\n    \"tag1\": \"value1\",\r\n    \"tag2\": \"value2\"\
         \r\n  },\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
-        ,\r\n    \"resourceGuid\": \"3df2ce00-a40a-46c9-b17a-e65e775c9377\",\r\n \
+        ,\r\n    \"resourceGuid\": \"29d3a208-ac75-4652-bcc5-c1256fa85a64\",\r\n \
         \   \"addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [\r\n      {\r\n        \"name\"\
         : \"subnetname\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname\"\
-        ,\r\n        \"etag\": \"W/\\\"a9cda41a-dcdd-4f3e-9356-55ac6d827a87\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"651f1c80-b9f0-44ee-b40f-6bc1d4f36777\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"addressPrefix\": \"10.0.0.0/24\",\r\n          \"delegations\"\
         : [],\r\n          \"privateEndpointNetworkPolicies\": \"Enabled\",\r\n  \
         \        \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\n        },\r\
         \n        \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n    \
         \  }\r\n    ],\r\n    \"virtualNetworkPeerings\": [],\r\n    \"enableDdosProtection\"\
-        : false,\r\n    \"enableVmProtection\": false\r\n  }\r\n}"
+        : false\r\n  }\r\n}"
     headers:
       azure-asyncnotification: Enabled
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 Jan 2021 07:46:38 GMT
+      date: Tue, 09 Mar 2021 05:06:15 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
@@ -562,48 +550,48 @@ interactions:
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
-      x-ms-arm-service-request-id: 05a1e594-3e14-4869-8dd9-d442322aacee
-      x-ms-ratelimit-remaining-subscription-writes: '1194'
+      x-ms-arm-service-request-id: 3b857adb-db2b-4488-af41-c355893339a3
+      x-ms-ratelimit-remaining-subscription-writes: '1197'
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/v5h2sddw72q5ofyg6ogv6mz4zvo7ucaz35e4oyy4qi6fj33ts5cftes3knk4lsyqjazno73g6fn/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-08-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/uvqov4ixaqz5vbzg4ajmo2ipptyvzobjo5bd767j5cn5qnpcijw7znsqfhhygmmi6hhoqkcb7ua/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-11-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-11-01
   response:
     body:
       string: ''
     headers:
-      azure-asyncoperation: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/2c7547ff-d89d-4f5c-b733-7e52f3667fc9?api-version=2020-08-01
+      azure-asyncoperation: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a0344dc0-9003-406a-bee8-96e1981e43b1?api-version=2020-11-01
       cache-control: no-cache
       content-length: '0'
-      date: Tue, 26 Jan 2021 07:46:38 GMT
+      date: Tue, 09 Mar 2021 05:06:16 GMT
       expires: '-1'
-      location: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/2c7547ff-d89d-4f5c-b733-7e52f3667fc9?api-version=2020-08-01
+      location: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/a0344dc0-9003-406a-bee8-96e1981e43b1?api-version=2020-11-01
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
-      x-ms-arm-service-request-id: b02c4194-7c81-4c46-ac05-855fc087fcf5
-      x-ms-ratelimit-remaining-subscription-deletes: '14996'
+      x-ms-arm-service-request-id: edf00315-d52d-4feb-87a4-66e6102079e9
+      x-ms-ratelimit-remaining-subscription-deletes: '14999'
     status:
       code: 202
       message: Accepted
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/v5h2sddw72q5ofyg6ogv6mz4zvo7ucaz35e4oyy4qi6fj33ts5cftes3knk4lsyqjazno73g6fn/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-08-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/uvqov4ixaqz5vbzg4ajmo2ipptyvzobjo5bd767j5cn5qnpcijw7znsqfhhygmmi6hhoqkcb7ua/providers/Microsoft.Network/virtualNetworks/virtualnetworkname/subnets/subnetname?api-version=2020-11-01
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/2c7547ff-d89d-4f5c-b733-7e52f3667fc9?api-version=2020-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a0344dc0-9003-406a-bee8-96e1981e43b1?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -611,7 +599,7 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 Jan 2021 07:46:49 GMT
+      date: Tue, 09 Mar 2021 05:06:26 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
@@ -619,48 +607,48 @@ interactions:
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
-      x-ms-arm-service-request-id: 51f5432d-ac4c-45b3-bdbc-d37b7437a7a4
+      x-ms-arm-service-request-id: 4690a85b-d913-4bc6-811b-5b25105b1d7e
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.Network/locations/eastus/operations/2c7547ff-d89d-4f5c-b733-7e52f3667fc9?api-version=2020-08-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.Network/locations/eastus/operations/a0344dc0-9003-406a-bee8-96e1981e43b1?api-version=2020-11-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-11-01
   response:
     body:
       string: ''
     headers:
       azure-asyncnotification: Enabled
-      azure-asyncoperation: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/28529362-83aa-45d3-a747-ce33525193d8?api-version=2020-08-01
+      azure-asyncoperation: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/330ac913-b61c-4d1f-8e2e-290f70d7a870?api-version=2020-11-01
       cache-control: no-cache
       content-length: '0'
-      date: Tue, 26 Jan 2021 07:46:49 GMT
+      date: Tue, 09 Mar 2021 05:06:27 GMT
       expires: '-1'
-      location: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/28529362-83aa-45d3-a747-ce33525193d8?api-version=2020-08-01
+      location: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/330ac913-b61c-4d1f-8e2e-290f70d7a870?api-version=2020-11-01
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
-      x-ms-arm-service-request-id: 423b7409-5c55-4ec7-9be7-3b90380b5654
-      x-ms-ratelimit-remaining-subscription-deletes: '14995'
+      x-ms-arm-service-request-id: 764ce1ea-d7ca-41bf-b779-dcd0109eb8f3
+      x-ms-ratelimit-remaining-subscription-deletes: '14998'
     status:
       code: 202
       message: Accepted
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/v5h2sddw72q5ofyg6ogv6mz4zvo7ucaz35e4oyy4qi6fj33ts5cftes3knk4lsyqjazno73g6fn/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-08-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/uvqov4ixaqz5vbzg4ajmo2ipptyvzobjo5bd767j5cn5qnpcijw7znsqfhhygmmi6hhoqkcb7ua/providers/Microsoft.Network/virtualNetworks/virtualnetworkname?api-version=2020-11-01
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/28529362-83aa-45d3-a747-ce33525193d8?api-version=2020-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/330ac913-b61c-4d1f-8e2e-290f70d7a870?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -668,7 +656,7 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 Jan 2021 07:47:00 GMT
+      date: Tue, 09 Mar 2021 05:06:37 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
@@ -676,9 +664,9 @@ interactions:
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
-      x-ms-arm-service-request-id: 2771bb01-013a-44bc-a74c-cc5d9d7e8b2e
+      x-ms-arm-service-request-id: 4715537e-841e-4dd2-9aa5-dc2a88a45790
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.Network/locations/eastus/operations/28529362-83aa-45d3-a747-ce33525193d8?api-version=2020-08-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.Network/locations/eastus/operations/330ac913-b61c-4d1f-8e2e-290f70d7a870?api-version=2020-11-01
 version: 1
