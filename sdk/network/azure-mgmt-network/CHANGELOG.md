@@ -1,7 +1,7 @@
 # Release History
 
 ## 18.0.0 (2021-03-08)
- 
+
 **Features**
 
   - Model VpnConnection has a new parameter traffic_selector_policies
