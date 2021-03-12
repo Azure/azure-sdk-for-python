@@ -585,7 +585,7 @@ class AppConfigurationClientTest(AzureTestCase):
         updated_sent_config = client.set_configuration_setting(sent_config)
         self._assert_same_keys(sent_config, updated_sent_config)
 
-        updated_sent_config.add_feature_filter(
+        updated_sent_config.filters.append(
             FeatureFilter(
                 name=u"Microsoft.Targeting",
                 parameters={
@@ -597,7 +597,7 @@ class AppConfigurationClientTest(AzureTestCase):
                 }
             )
         )
-        updated_sent_config.add_feature_filter(
+        updated_sent_config.filters.append(
             FeatureFilter(
                 name=u"Microsoft.Targeting",
                 parameters={

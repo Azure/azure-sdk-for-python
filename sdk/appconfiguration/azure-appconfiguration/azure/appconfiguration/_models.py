@@ -40,6 +40,8 @@ class ConfigurationSetting(Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
+    kind = "Generic"
+
     def __init__(self, **kwargs):
         super(ConfigurationSetting, self).__init__(**kwargs)
         self.key = kwargs.get("key", None)
@@ -137,6 +139,7 @@ class FeatureFlagConfigurationSetting(
     feature_flag_content_type = (
         "application/vnd.microsoft.appconfig.ff+json;charset=utf-8"
     )
+    kind = "FeatureFlag"
 
     def __init__(self, key, enabled, filters=None, **kwargs):
         # type: (str, bool, Optional[List[FeatureFilter]]) -> None
@@ -218,16 +221,6 @@ class FeatureFlagConfigurationSetting(
             etag=self.etag,
         )
 
-    def add_feature_filter(self, feature_filter):
-        # type: (FeatureFilter) -> None
-
-        """Add a feature filter to the ConfigurationSetting
-        :param feature_filter:
-        :type feature_filter: list[FeatureFilter]
-        """
-
-        self.filters.append(feature_filter)
-
 
 class SecretReferenceConfigurationSetting(ConfigurationSetting):
     """A configuration value that references a KeyVault Secret
@@ -235,10 +228,10 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     sending a request.
     :ivar etag: Entity tag (etag) of the object
     :vartype etag: str
-    :param key:
-    :type key: str
-    :param uri:
-    :type uri: str
+    :ivar key:
+    :vartype key: str
+    :ivar uri:
+    :vartype uri: str
     :param label:
     :type label: str
     :param content_type:
@@ -266,6 +259,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     secret_reference_content_type = (
         "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
     )
+    kind = "SecretReference"
 
     def __init__(self, key, uri, label=None, **kwargs):
         # type: (str, str, str) -> None
