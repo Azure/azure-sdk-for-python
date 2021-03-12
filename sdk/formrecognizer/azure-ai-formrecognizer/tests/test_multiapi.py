@@ -13,7 +13,7 @@ from azure.ai.formrecognizer import FormRecognizerClient, FormTrainingClient, Fo
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
-@pytest.mark.skip
+
 class TestMultiapi(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
