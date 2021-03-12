@@ -265,7 +265,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
     async def _upload_substream_block(self, index, block_stream):
         try:
-            block_id = 'BlockId{}'.format("%05d" % index / self.chunk_size)
+            block_id = 'BlockId{}'.format("%05d" % (index/self.chunk_size))
             await self.service.stage_block(
                 block_id,
                 len(block_stream),
