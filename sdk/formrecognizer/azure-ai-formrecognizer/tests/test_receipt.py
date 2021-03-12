@@ -19,7 +19,7 @@ from preparers import FormRecognizerPreparer
 
 GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
-
+@pytest.mark.skip
 class TestReceiptFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()

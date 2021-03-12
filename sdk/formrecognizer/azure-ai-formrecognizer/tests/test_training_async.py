@@ -18,7 +18,7 @@ from preparers import GlobalClientPreparer as _GlobalClientPreparer
 
 GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
-
+@pytest.mark.skip
 class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
