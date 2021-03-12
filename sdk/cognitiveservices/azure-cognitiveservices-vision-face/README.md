@@ -7,9 +7,6 @@ For a more complete view of Azure libraries, see the [azure sdk python release](
 
 # Usage
 
-
-
-
 For code examples, see [Cognitive Services Face](https://docs.microsoft.com/python/api/overview/azure/cognitive-services) on docs.microsoft.com.
 
 
