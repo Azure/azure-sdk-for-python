@@ -23,7 +23,7 @@ def prepare_entities_recognition_general(
     Analytics API</a>`. See the :code:`<a href="https://aka.ms/talangs">Supported languages in Text
     Analytics API</a>` for the list of enabled languages.
 
-    :keyword body: JSON body containing the set of documents to process as part of this batch.
+    :keyword any body: (Required) JSON body containing the set of documents to process as part of this batch.
     :keyword model_version: (Optional) This value indicates which model will be used for scoring. If
         a model-version is not specified, the API should default to the latest, non-preview version.
     :paramtype model_version: str
@@ -75,7 +75,7 @@ def prepare_entities_linking(
     the :code:`<a href="https://aka.ms/talangs">Supported languages in Text Analytics API</a>` for
     the list of enabled languages.
 
-    :keyword body: JSON body containing the set of documents to process as part of this batch.
+    :keyword any body: (Required) JSON body containing the set of documents to process as part of this batch.
     :keyword model_version: (Optional) This value indicates which model will be used for scoring. If
         a model-version is not specified, the API should default to the latest, non-preview version.
     :paramtype model_version: str
@@ -127,7 +127,7 @@ def prepare_key_phrases(
     href="https://aka.ms/talangs">Supported languages in Text Analytics API</a>` for the list of
     enabled languages.
 
-    :keyword body: JSON body containing the set of documents to process as part of this batch.
+    :keyword any body: (Required) JSON body containing the set of documents to process as part of this batch.
     :keyword model_version: (Optional) This value indicates which model will be used for scoring. If
         a model-version is not specified, the API should default to the latest, non-preview version.
     :paramtype model_version: str
@@ -180,7 +180,7 @@ def prepare_languages(
     href="https://aka.ms/talangs">Supported languages in Text Analytics API</a>` for the list of
     enabled languages.
 
-    :keyword body: JSON body containing the set of documents to process as part of this batch.
+    :keyword any body: (Required) JSON body containing the set of documents to process as part of this batch.
     :keyword model_version: (Optional) This value indicates which model will be used for scoring. If
         a model-version is not specified, the API should default to the latest, non-preview version.
     :paramtype model_version: str
@@ -233,7 +233,7 @@ def prepare_sentiment(
     :code:`<a href="https://aka.ms/talangs">Supported languages in Text Analytics API</a>` for the
     list of enabled languages.
 
-    :keyword body: JSON body containing the set of documents to process as part of this batch.
+    :keyword any body: (Required) JSON body containing the set of documents to process as part of this batch.
     :keyword model_version: (Optional) This value indicates which model will be used for scoring. If
         a model-version is not specified, the API should default to the latest, non-preview version.
     :paramtype model_version: str
