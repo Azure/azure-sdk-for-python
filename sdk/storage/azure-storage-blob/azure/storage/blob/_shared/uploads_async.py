@@ -391,5 +391,5 @@ class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
         return range_id, response
 
     # TODO: Implement this method.
-    def _upload_substream_block(self, index, block_stream):
+    async def _upload_substream_block(self, index, block_stream):
         pass
