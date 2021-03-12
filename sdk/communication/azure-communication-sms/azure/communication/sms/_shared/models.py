@@ -43,13 +43,11 @@ class UnknownIdentifier(object):
     :type identifier: str
     """
     def __init__(self, identifier):
-        self.raw_id = identifier
+        self.identifier = identifier
 
 class CommunicationIdentifierModel(msrest.serialization.Model):
     """Communication Identifier Model.
-
     All required parameters must be populated in order to send to Azure.
-
     :param kind: Required. Kind of Communication Identifier.
     :type kind: CommunicationIdentifierKind
     :param id: Full id of the identifier.
@@ -118,7 +116,7 @@ class CommunicationCloudEnvironment(with_metaclass(_CaseInsensitiveEnumMeta, str
     """
     The cloud enviornment that the identifier belongs to
     """
-    
+
     Public = "PUBLIC"
     Dod = "DOD"
     Gcch = "GCCH"
