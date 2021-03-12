@@ -2,7 +2,8 @@
 
 1. Since our Low-Level clients are so close to REST API calls, you need to refer a lot to the [Text Analytics Service's REST API docs][rest_api_docs]
 2. Another important document for you to look at is [how to use a Python low-level client][low_level_client]
-3. Here's a code snippet on how to create and authenticate a low-level `TextAnalyticsClient`.
+3. [Here](https://docsupport.blob.core.windows.net/$web/azure-ai-textanalytics/index.html) are the docs for the Text Analytics SDK
+4. Here's a code snippet on how to create and authenticate a low-level `TextAnalyticsClient`.
 
    ```python
    from azure.ai.textanalytics import TextAnalyticsClient
