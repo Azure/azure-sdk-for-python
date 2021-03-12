@@ -146,7 +146,14 @@ autoclass_content = 'both'
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 html_theme = 'sphinx_rtd_theme'
-#html_theme_options = {'collapsiblesidebar': True}
+
+html_theme_options = {
+    'collapsiblesidebar': True
+    'collapse_navigation': True
+    'navigation_depth': 2
+}
+
+html_copy_source = False
 
 # Activate the theme.
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
