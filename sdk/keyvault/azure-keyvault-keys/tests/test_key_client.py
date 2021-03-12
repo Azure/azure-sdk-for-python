@@ -11,7 +11,7 @@ import json
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.keys import JsonWebKey, KeyClient
+from azure.keyvault.keys import JsonWebKey, KeyClient, KeyCurveName
 from azure.keyvault.keys._shared import HttpChallengeCache
 from devtools_testutils import PowerShellPreparer
 
@@ -54,13 +54,14 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(k1.tags, k2.tags)
         self.assertEqual(k1.recovery_level, k2.recovery_level)
 
-    def _create_rsa_key(self, client, key_name, hsm=False):
+    def _create_rsa_key(self, client, key_name, hsm=False, **kwargs):
         # create key with optional arguments
-        key_size = 2048
         key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
         tags = {"purpose": "unit test", "test name ": "CreateRSAKeyTest"}
+        if self.is_live:
+            time.sleep(2)  # to avoid throttling by the service
         created_key = client.create_rsa_key(
-            key_name, hardware_protected=hsm, size=key_size, key_operations=key_ops, tags=tags
+            key_name, hardware_protected=hsm, key_operations=key_ops, tags=tags, **kwargs
         )
         self.assertTrue(created_key.properties.tags, "Missing the optional key attributes.")
         self.assertEqual(tags, created_key.properties.tags)
@@ -68,20 +69,23 @@ class KeyClientTests(KeyVaultTestCase):
         self._validate_rsa_key_bundle(created_key, client.vault_url, key_name, kty, key_ops)
         return created_key
 
-    def _create_ec_key(self, client, key_name, hsm=False):
+    def _create_ec_key(self, client, key_name, key_curve=KeyCurveName.p_256, hsm=False, **kwargs):
         # create ec key with optional arguments
         enabled = True
         tags = {"purpose": "unit test", "test name": "CreateECKeyTest"}
-        created_key = client.create_ec_key(key_name, hardware_protected=hsm, enabled=enabled, tags=tags)
+        if self.is_live:
+            time.sleep(2)  # to avoid throttling by the service
+        created_key = client.create_ec_key(
+            key_name, curve=key_curve, hardware_protected=hsm, enabled=enabled, tags=tags, **kwargs
+        )
         key_type = "EC-HSM" if hsm else "EC"
         self.assertTrue(created_key.properties.enabled, "Missing the optional key attributes.")
         self.assertEqual(enabled, created_key.properties.enabled)
         self.assertEqual(tags, created_key.properties.tags)
-        self._validate_ec_key_bundle(created_key, client.vault_url, key_name, key_type)
+        self._validate_ec_key_bundle(key_curve, created_key, client.vault_url, key_name, key_type)
         return created_key
 
-    def _validate_ec_key_bundle(self, key_attributes, vault, key_name, kty):
-        key_curve = "P-256"
+    def _validate_ec_key_bundle(self, key_curve, key_attributes, vault, key_name, kty):
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
         key = key_attributes.key
         kid = key_attributes.id
@@ -163,8 +167,7 @@ class KeyClientTests(KeyVaultTestCase):
         self._create_ec_key(client, key_name=ec_key_name, hsm=True)
         # create ec with curve
         ec_key_curve_name = self.get_resource_name("crud-P-256-ec-key")
-        created_ec_key_curve = client.create_ec_key(name=ec_key_curve_name, curve="P-256")
-        self.assertEqual("P-256", created_ec_key_curve.key.crv)
+        self._create_ec_key(client, key_name=ec_key_curve_name, key_curve="P-256")
 
         # import key
         import_test_key_name = self.get_resource_name("import-test-key")
@@ -211,11 +214,9 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertIsNotNone(client)
 
         key_name = self.get_resource_name("keybak")
-        key_type = "RSA"
 
         # create key
-        created_bundle = client.create_key(key_name, key_type)
-        self.assertEqual(key_type, created_bundle.key_type)
+        created_bundle = self._create_rsa_key(client, key_name)
 
         # backup key
         key_backup = client.backup_key(created_bundle.name)
@@ -243,7 +244,7 @@ class KeyClientTests(KeyVaultTestCase):
         # create many keys
         for x in range(max_keys):
             key_name = self.get_resource_name("key{}".format(x))
-            key = client.create_key(key_name, "RSA")
+            key = self._create_rsa_key(client, key_name)
             expected[key.name] = key
 
         # list keys
@@ -266,7 +267,7 @@ class KeyClientTests(KeyVaultTestCase):
 
         # create many key versions
         for _ in range(max_keys):
-            key = client.create_key(key_name, "RSA")
+            key = self._create_rsa_key(client, key_name)
             expected[key.id] = key
 
         result = client.list_properties_of_key_versions(key_name, max_page_size=max_keys - 1)
@@ -289,8 +290,7 @@ class KeyClientTests(KeyVaultTestCase):
         # create keys
         for i in range(self.list_test_size):
             key_name = self.get_resource_name("key{}".format(i))
-            key_value = "value{}".format(i)
-            expected[key_name] = client.create_key(key_name, "RSA")
+            expected[key_name] = self._create_rsa_key(client, key_name)
 
         # delete them
         for key_name in expected.keys():
@@ -318,7 +318,7 @@ class KeyClientTests(KeyVaultTestCase):
         keys = {}
         for i in range(self.list_test_size):
             key_name = self.get_resource_name("key{}".format(i))
-            keys[key_name] = client.create_key(key_name, "RSA")
+            keys[key_name] = self._create_rsa_key(client, key_name)
 
         # delete them
         for key_name in keys.keys():
@@ -342,7 +342,7 @@ class KeyClientTests(KeyVaultTestCase):
         # create keys
         key_names = [self.get_resource_name("key{}".format(i)) for i in range(self.list_test_size)]
         for name in key_names:
-            client.create_key(name, "RSA")
+            self._create_rsa_key(client, name)
 
         # delete them
         for key_name in key_names:
@@ -374,7 +374,7 @@ class KeyClientTests(KeyVaultTestCase):
         logger.setLevel(logging.DEBUG)
 
         rsa_key_name = self.get_resource_name("rsa-key-name")
-        client.create_rsa_key(rsa_key_name, size=2048)
+        self._create_rsa_key(client, rsa_key_name, size=2048)
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
@@ -398,7 +398,7 @@ class KeyClientTests(KeyVaultTestCase):
         logger.setLevel(logging.DEBUG)
 
         rsa_key_name = self.get_resource_name("rsa-key-name")
-        client.create_rsa_key(rsa_key_name, size=2048)
+        self._create_rsa_key(client, rsa_key_name, size=2048)
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
