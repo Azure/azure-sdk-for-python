@@ -1,1 +1,1 @@
-from .farmbeatsclient.client import Client as FarmbeatsClient
+from .farmbeatsclient import FarmbeatsClient

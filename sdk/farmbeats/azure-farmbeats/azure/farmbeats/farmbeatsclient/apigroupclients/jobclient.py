@@ -51,9 +51,10 @@ class JobClient():
                 return None
 
             job = self.get_job(job_id)
-            if job.status not in ["Succeeded", "Failed"]:
-                print(job.status)
+            if job.job_status not in ["Succeeded", "Failed"]:
+                print(job.job_status)
                 time.sleep(1)
             else:
-                print("Job terminated with status:", job.status, "at", datetime.now())
+                print("Job terminated with status:",
+                      job.job_status, "at", datetime.now())
                 return job

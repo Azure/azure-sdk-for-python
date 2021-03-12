@@ -1,15 +1,17 @@
-from ..dpsclient import AzureAgFoodPlatformDataPlaneService
+from ..generated.dpsclient import AzureAgFoodPlatformDataPlaneService
 from azure.identity import ClientSecretCredential
 
-from .farmers import FarmerClient
-from .farms import FarmClient
-from .fields import FieldClient
-from .boundaries import BoundaryClient
-from .jobs import JobClient
-from .weatherdata import WeatherDataClient
-from .scenes import SceneClient
+from .apigroupclients import (
+    FarmerClient,
+    FarmClient,
+    FieldClient,
+    BoundaryClient,
+    JobClient,
+    WeatherClient,
+    SceneClient
+)
 
-class Client():
+class FarmbeatsClient():
     def __init__(
         self,
         instance_url,
@@ -18,9 +20,8 @@ class Client():
         client_secret,
 
         # Optional
-        # TODO change the default to prod.
-        authority="https://login.windows-ppe.net",
-        scope="https://farmbeats-dogfood.azure.net/.default",
+        authority="https://login.microsoftonline.com",
+        scope="https://farmbeats.azure.net/.default",
     ):
         self.credential = ClientSecretCredential(
             tenant_id=tenant_id,
@@ -40,5 +41,5 @@ class Client():
         self.fields = FieldClient(self.client)
         self.boundaries = BoundaryClient(self.client)
         self.jobs = JobClient(self.client)
-        self.weatherdata = WeatherDataClient(self.client)
+        self.weatherdata = WeatherClient(self.client)
         self.scenes = SceneClient(self.client, self.credential)

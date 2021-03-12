@@ -2,7 +2,7 @@ import time
 from datetime import datetime, timedelta
 
 
-class WeatherDataClient():
+class WeatherClient():
     def __init__(
         self,
         farmbeats_client
