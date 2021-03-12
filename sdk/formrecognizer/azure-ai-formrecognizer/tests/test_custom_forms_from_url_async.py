@@ -477,3 +477,22 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
         actual_fields = actual.analyze_result.document_results[0].fields
 
         self.assertFormPagesTransformCorrect(recognized_form[0].pages, read_results, page_results)
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    async def test_pages_kwarg_specified(self, client, formrecognizer_storage_container_sas_url):
+        fr_client = client.get_form_recognizer_client()
+        blob_sas_url = self.get_blob_url(formrecognizer_storage_container_sas_url, "testingdata", "multi1.pdf")
+
+        async with fr_client:
+            training_poller = await client.begin_training(formrecognizer_storage_container_sas_url, use_training_labels=False)
+            model = await training_poller.result()
+
+            poller = await fr_client.begin_recognize_custom_forms_from_url(
+                model.model_id, 
+                blob_sas_url, 
+                pages=["1"])
+            
+            assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+            result = await poller.result()
+            assert result

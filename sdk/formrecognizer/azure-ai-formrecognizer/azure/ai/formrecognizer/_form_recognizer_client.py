@@ -238,6 +238,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword bool include_field_elements:
             Whether or not to include all lines per page and field elements such as lines, words,
             and selection marks for each form field.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :keyword content_type: Content-type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -305,6 +308,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword bool include_field_elements:
             Whether or not to include all lines per page and field elements such as lines, words,
             and selection marks for each form field.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -467,6 +473,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword bool include_field_elements:
             Whether or not to include all lines per page and field elements such as lines, words,
             and selection marks for each form field.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :keyword content_type: Content-type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -533,6 +542,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword bool include_field_elements:
             Whether or not to include all lines per page and field elements such as lines, words,
             and selection marks for each form field.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -749,15 +761,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
             raise ValueError("model_id cannot be None or empty.")
 
         pages = kwargs.pop("pages", None)
-        # FIXME: part of this code will be removed once autorest can handle diff mixin
-        # signatures across API versions
-        if pages:
-            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
-                kwargs.update({"pages": pages})
-            else:
-                raise ValueError(
-                    "'pages' is only available for API version V2_1_PREVIEW and up"
-                )
         polling_interval = kwargs.pop(
             "polling_interval", self._client._config.polling_interval
         )
@@ -767,10 +770,24 @@ class FormRecognizerClient(FormRecognizerClientBase):
             raise TypeError(
                 "Call begin_recognize_custom_forms_from_url() to analyze a document from a URL."
             )
-
-        include_field_elements = kwargs.pop("include_field_elements", False)
         if content_type is None and continuation_token is None:
             content_type = get_content_type(form)
+
+        include_field_elements = kwargs.pop("include_field_elements", False)
+
+        polling = LROBasePolling(
+            timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
+        )
+
+        # FIXME: part of this code will be removed once autorest can handle diff mixin
+        # signatures across API versions
+        if pages:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+                kwargs.update({"pages": pages})
+            else:
+                raise ValueError(
+                    "'pages' is only available for API version V2_1_PREVIEW and up"
+                )
 
         def analyze_callback(
             raw_response, _, headers
@@ -786,9 +803,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             include_text_details=include_field_elements,
             content_type=content_type,
             cls=kwargs.pop("cls", analyze_callback),
-            polling=LROBasePolling(
-                timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
-            ),
+            polling=polling,
             continuation_token=continuation_token,
             **kwargs
         )
@@ -822,6 +837,16 @@ class FormRecognizerClient(FormRecognizerClientBase):
             raise ValueError("model_id cannot be None or empty.")
 
         pages = kwargs.pop("pages", None)
+        continuation_token = kwargs.pop("continuation_token", None)
+        include_field_elements = kwargs.pop("include_field_elements", False)
+        polling_interval = kwargs.pop(
+            "polling_interval", self._client._config.polling_interval
+        )
+
+        polling = LROBasePolling(
+            timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
+        )
+
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if pages:
@@ -831,11 +856,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 raise ValueError(
                     "'pages' is only available for API version V2_1_PREVIEW and up"
                 )
-        polling_interval = kwargs.pop(
-            "polling_interval", self._client._config.polling_interval
-        )
-        continuation_token = kwargs.pop("continuation_token", None)
-        include_field_elements = kwargs.pop("include_field_elements", False)
 
         def analyze_callback(
             raw_response, _, headers
@@ -850,9 +870,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             model_id=model_id,
             include_text_details=include_field_elements,
             cls=kwargs.pop("cls", analyze_callback),
-            polling=LROBasePolling(
-                timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
-            ),
+            polling=polling,
             continuation_token=continuation_token,
             **kwargs
         )
