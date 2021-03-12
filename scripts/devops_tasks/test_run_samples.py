@@ -11,7 +11,11 @@ import sys
 import os
 import logging
 from fnmatch import fnmatch
-from subprocess import check_call, CalledProcessError, TimeoutExpired
+from subprocess import check_call, CalledProcessError
+try:
+    from subprocess import TimeoutExpired
+except ImportError:
+    pass
 from common_tasks import (
     run_check_call,
     process_glob_string,
@@ -157,7 +161,7 @@ def execute_sample(sample, samples_errors, timed):
     command_array = [sys.executable, sample]
 
     if not timed:
-        errors = run_check_call(command_array, root_dir)
+        errors = run_check_call(command_array, root_dir, always_exit=False)
     else:
         errors = run_check_call_with_timeout(
             command_array, root_dir, timeout, pass_if_timeout
@@ -191,7 +195,7 @@ def run_samples(targeted_package):
         with open(samples_dir_path + "/sample_dev_requirements.txt") as sample_dev_reqs:
             for dep in sample_dev_reqs.readlines():
                 check_call([sys.executable, '-m', 'pip', 'install', dep])
-    except FileNotFoundError:
+    except IOError:
         pass
 
     for path, subdirs, files in os.walk(samples_dir_path):
@@ -217,6 +221,11 @@ def run_samples(targeted_package):
         execute_sample(sample, samples_errors, timed=False)
 
     for sample in timed_sample_paths:
+        if sys.version_info < (3, 5):  # currently don't have a solution to run python 2.7 timed samples
+            logging.info(
+                "Unable to run timed sample: {} with python 2.7".format(sample[0])
+            )
+            continue
         execute_sample(sample, samples_errors, timed=True)
 
     if samples_errors:
