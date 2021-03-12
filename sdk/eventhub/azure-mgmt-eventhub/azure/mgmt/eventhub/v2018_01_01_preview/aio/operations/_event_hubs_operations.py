@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class EventHubsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,7 +47,7 @@ class EventHubsOperations:
         namespace_name: str,
         event_hub_name: str,
         **kwargs
-    ) -> AsyncIterable["models.AuthorizationRuleListResult"]:
+    ) -> AsyncIterable["_models.AuthorizationRuleListResult"]:
         """Gets the authorization rules for an Event Hub.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -61,12 +61,12 @@ class EventHubsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventhub.v2018_01_01_preview.models.AuthorizationRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AuthorizationRuleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AuthorizationRuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -109,7 +109,7 @@ class EventHubsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -126,9 +126,9 @@ class EventHubsOperations:
         namespace_name: str,
         event_hub_name: str,
         authorization_rule_name: str,
-        parameters: "models.AuthorizationRule",
+        parameters: "_models.AuthorizationRule",
         **kwargs
-    ) -> "models.AuthorizationRule":
+    ) -> "_models.AuthorizationRule":
         """Creates or updates an AuthorizationRule for the specified Event Hub. Creation/update of the
         AuthorizationRule will take a few seconds to take effect.
 
@@ -147,12 +147,12 @@ class EventHubsOperations:
         :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.AuthorizationRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AuthorizationRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AuthorizationRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -185,7 +185,7 @@ class EventHubsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AuthorizationRule', pipeline_response)
@@ -203,7 +203,7 @@ class EventHubsOperations:
         event_hub_name: str,
         authorization_rule_name: str,
         **kwargs
-    ) -> "models.AuthorizationRule":
+    ) -> "_models.AuthorizationRule":
         """Gets an AuthorizationRule for an Event Hub by rule name.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -219,12 +219,12 @@ class EventHubsOperations:
         :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.AuthorizationRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AuthorizationRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AuthorizationRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -252,7 +252,7 @@ class EventHubsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AuthorizationRule', pipeline_response)
@@ -291,7 +291,7 @@ class EventHubsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -319,7 +319,7 @@ class EventHubsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -334,7 +334,7 @@ class EventHubsOperations:
         event_hub_name: str,
         authorization_rule_name: str,
         **kwargs
-    ) -> "models.AccessKeys":
+    ) -> "_models.AccessKeys":
         """Gets the ACS and SAS connection strings for the Event Hub.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -350,12 +350,12 @@ class EventHubsOperations:
         :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.AccessKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AccessKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AccessKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -383,7 +383,7 @@ class EventHubsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AccessKeys', pipeline_response)
@@ -400,9 +400,9 @@ class EventHubsOperations:
         namespace_name: str,
         event_hub_name: str,
         authorization_rule_name: str,
-        parameters: "models.RegenerateAccessKeyParameters",
+        parameters: "_models.RegenerateAccessKeyParameters",
         **kwargs
-    ) -> "models.AccessKeys":
+    ) -> "_models.AccessKeys":
         """Regenerates the ACS and SAS connection strings for the Event Hub.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -421,12 +421,12 @@ class EventHubsOperations:
         :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.AccessKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AccessKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AccessKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -459,7 +459,7 @@ class EventHubsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AccessKeys', pipeline_response)
@@ -477,7 +477,7 @@ class EventHubsOperations:
         skip: Optional[int] = None,
         top: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.EventHubListResult"]:
+    ) -> AsyncIterable["_models.EventHubListResult"]:
         """Gets all the Event Hubs in a Namespace.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -495,12 +495,12 @@ class EventHubsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventhub.v2018_01_01_preview.models.EventHubListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventHubListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventHubListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -546,7 +546,7 @@ class EventHubsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -562,9 +562,9 @@ class EventHubsOperations:
         resource_group_name: str,
         namespace_name: str,
         event_hub_name: str,
-        parameters: "models.Eventhub",
+        parameters: "_models.Eventhub",
         **kwargs
-    ) -> "models.Eventhub":
+    ) -> "_models.Eventhub":
         """Creates or updates a new Event Hub as a nested resource within a Namespace.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -580,12 +580,12 @@ class EventHubsOperations:
         :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.Eventhub
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Eventhub"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Eventhub"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -617,7 +617,7 @@ class EventHubsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Eventhub', pipeline_response)
@@ -653,7 +653,7 @@ class EventHubsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -680,7 +680,7 @@ class EventHubsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -694,7 +694,7 @@ class EventHubsOperations:
         namespace_name: str,
         event_hub_name: str,
         **kwargs
-    ) -> "models.Eventhub":
+    ) -> "_models.Eventhub":
         """Gets an Event Hubs description for the specified Event Hub.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -708,12 +708,12 @@ class EventHubsOperations:
         :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.Eventhub
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Eventhub"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Eventhub"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
+        api_version = "2018-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -740,7 +740,7 @@ class EventHubsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Eventhub', pipeline_response)
