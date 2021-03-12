@@ -90,40 +90,26 @@ steps:
 
   - ${{ parameters.BeforePublishSteps }}
 
-  - pwsh: |
-      # handle where the parameter is undefined
-      $shouldPublishDocs = $true
-      $docParam = "${{ parameters.BuildDocs }}"
-      if ($docParam) {
-        # if we set it to false handle it here
-        $shouldPublishDocs = 	[System.Convert]::ToBoolean($docParam)
-      }
-      
-      $packagePublishes = ((Get-ChildItem '$(Build.ArtifactStagingDirectory)') | Measure-Object).Count
-      
-      if ($packagePublishes -eq 0) {
-          Write-Host "We are expecting to publish package artifacts, but no artifacts were found."
-          exit 1
-      }
-
-      if ($shouldPublishDocs) {
-        $docsPublishes = ((Get-ChildItem '$(Build.SourcesDirectory)/_docs') | Measure-Object).Count
-        if ($docsPublishes -eq 0) {
-          Write-Host "We are expecting to publish documentation artifacts, but no documentation artifacts were found."
-          exit 1
-        }
-      }
-    displayName: 'Verify Presence of Artifacts'
+  - template: /eng/common/pipelines/templates/steps/resolve-artifact-name.yml
+    parameters:
+      ArtifactNameVariable: 'Publishing.Artifact.Name'
+      DefaultArtifactName: 'packaging'
 
   - task: PublishPipelineArtifact@1
+    condition: succeededOrFailed()
     displayName: 'Publish Package Artifacts'
     inputs:
-      artifactName: 'packages'
+      artifactName: '$(Publishing.Artifact.Name)'
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
 
+  - template: /eng/common/pipelines/templates/steps/resolve-artifact-name.yml
+    parameters:
+      ArtifactNameVariable: 'Documentation.Artifact.Name'
+      DefaultArtifactName: 'documentation'
+
   - task: PublishPipelineArtifact@1
-    condition: and(succeeded(), ${{ parameters.BuildDocs }})
+    condition: and(succeededOrFailed(), ${{ parameters.BuildDocs }})
     displayName: 'Publish Documentation Artifacts'
     inputs:
-      artifactName: 'documentation'
+      artifactName: '$(Documentation.Artifact.Name)'
       pathtoPublish: '$(Build.SourcesDirectory)/_docs'

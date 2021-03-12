@@ -1,0 +1,19 @@
+# Sets a variable that can be used later on to safely upload an artifact. This means that failed iterations of a build phase
+# will note REMAIN failing after the appropriate updates have been made to the source.
+# ArtifactNameVariable - The name of the DevOps Variable that will be consumed in the PublishPipelineArtifact steps
+# DefaultArtifactName  - The name of the artifact in the "successful" case.
+
+parameters:
+  ArtifactNameVariable: 'Publishing.Artifact.Name'
+  DefaultArtifactName: 'packaging'
+
+steps:
+  - pwsh: |
+      "##vso[task.setvariable variable=${{ parameters.ArtifactNameVariable }}]${{ parameters.DefaultArtifactName }}_$(Build.BuildNumber)"
+    condition: failed()
+    displayName: 'Set Failed Artifact Name'
+
+  - pwsh: |
+      "##vso[task.setvariable variable=${{ parameters.ArtifactNameVariable }}]${{ parameters.DefaultArtifactName }}"
+    condition: succeeded()
+    displayName: 'Set Default Artifact Name'
