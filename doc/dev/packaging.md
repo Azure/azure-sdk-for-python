@@ -1,25 +1,25 @@
 # Azure packaging
 
-This article describes how to declare setup.py and all packaging information for packages inside the "azure" namespace
+This article describes how to declare setup.py and all packaging information for packages inside the `azure` namespace
 
 Namespace packaging is complicated in Python, here's a few reading if you still doubt it:
 - https://packaging.python.org/guides/packaging-namespace-packages/
 - https://www.python.org/dev/peps/pep-0420/
 - https://github.com/pypa/sample-namespace-packages
 
-This articles describes the recommendation on how to do it if you want to release a package inside the "azure" namespace. Being inside the "azure" namespace meaning you have a service "myservice" that you want to import using:
+This article describes the recommendation on how to define namespace packaging to release a package inside the `azure` namespace. Being inside the `azure` namespace meaning you have a service `myservice` that you want to import using:
 ```python
 import azure.myservice
 ```
 
-Notes:
+Note:
 - This article is not about setup.py or setup.cfg or the right way to *write* the packaging, it's about what instructions you should use to achieve this. If you are fluent in setuptools, and prefer to write the suggestions in setup.cfg and not in setup.py, this is not a concern.
 
 # What are the constraints?
 
 We want to build sdist and wheels in order to follow the following constraints:
 - Solution should work with *recent* versions of pip and setuptools (not the very latest only, but not archaeology either)
-- Wheels must work with Python 2.7 and 3.4+
+- Wheels must work with Python 2.7 and 3.6+
 - easy-install scenario is a plus, but cannot be considered critical anymore
 - mixed dev installation and PyPI installation should be explicitly addressed
 
@@ -46,7 +46,7 @@ recursive-include samples *.py *.md
 ```
 In your setup.py:
 
-The "packages" section MUST EXCLUDE the "azure" package. Example:
+The "packages" section MUST EXCLUDE the `azure` package. Example:
 ```python
     packages=find_packages(exclude=[
         'tests',
@@ -147,4 +147,4 @@ This syntax works with setuptools >= 17.1 and pip >= 6.0, which is considered en
 
 - wheels must NOT contain a `azure/__init__.py` file (you can open it with a zip util to check)
 - wheels installs `azure-nskpg` ONLY on Python 2.
-- sdist must contains a `azure/__init__.py` file that declares the "azure" as a namespace package using the `pkgutil` syntax
+- sdist must contain a `azure/__init__.py` file that declares `azure` as a namespace package using the `pkgutil` syntax
