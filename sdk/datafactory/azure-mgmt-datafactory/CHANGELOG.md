@@ -1,5 +1,31 @@
 # Release History
 
+## 1.1.0 (2021-03-12)
+
+**Features**
+
+  - Model PipelineResource has a new parameter policy
+  - Model ManagedIntegrationRuntime has a new parameter managed_virtual_network
+  - Model CustomActivity has a new parameter auto_user_specification
+  - Model HttpLinkedService has a new parameter auth_headers
+  - Model AzureDatabricksLinkedService has a new parameter workspace_resource_id
+  - Model AzureDatabricksLinkedService has a new parameter authentication
+  - Model AzureDatabricksLinkedService has a new parameter policy_id
+  - Model RestServiceLinkedService has a new parameter auth_headers
+  - Model AzureBlobStorageLinkedService has a new parameter account_kind
+  - Model AzureMLExecutePipelineActivity has a new parameter version
+  - Model AzureMLExecutePipelineActivity has a new parameter ml_pipeline_endpoint_id
+  - Model AzureMLExecutePipelineActivity has a new parameter data_path_assignments
+  - Model IntegrationRuntimeSsisCatalogInfo has a new parameter dual_standby_pair_name
+  - Model WebActivityAuthentication has a new parameter user_tenant
+  - Model ODataLinkedService has a new parameter auth_headers
+  - Model CosmosDbLinkedService has a new parameter connection_mode
+  - Model CosmosDbLinkedService has a new parameter service_principal_credential_type
+  - Model CosmosDbLinkedService has a new parameter service_principal_id
+  - Model CosmosDbLinkedService has a new parameter tenant
+  - Model CosmosDbLinkedService has a new parameter service_principal_credential
+  - Model CosmosDbLinkedService has a new parameter azure_cloud_type
+
 ## 1.0.0 (2020-12-17)
 
 **Features**
