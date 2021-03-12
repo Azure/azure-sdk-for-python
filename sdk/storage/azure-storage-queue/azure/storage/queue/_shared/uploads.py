@@ -123,6 +123,7 @@ def upload_substream_blocks(
         range_ids = [uploader.process_substream_block(b) for b in uploader.get_substream_blocks()]
     if any(range_ids):
         return sorted(range_ids)
+    return
 
 
 class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
@@ -371,7 +372,6 @@ class DataLakeFileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-met
             )
         finally:
             block_stream.close()
-        return
 
 
 class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
