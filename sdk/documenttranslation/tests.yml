@@ -4,6 +4,7 @@ jobs:
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
       AllocateResourceGroup: 'false'
+      MaxParallel: 1
       BuildTargetingString: azure-ai-documenttranslation
       ServiceDirectory: documenttranslation
       EnvVars:

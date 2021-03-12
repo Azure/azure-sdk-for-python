@@ -85,8 +85,7 @@
                 "canonicalizedResource": "[concat('/blob/', parameters('targetBlobStorageAccount'), '/', parameters('targetTranslationContainer'))]",
                 "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT2H')]",
                 "signedPermission": "rlwd",
-                "signedResource": "c",
-                "signedResourceTypes": "o"
+                "signedResource": "c"
             }
         }
     },
@@ -191,6 +190,38 @@
         "DOCUMENTTRANSLATION_TEST_ENDPOINT": {
             "type": "string",
             "value": "[variables('azureDocTranslationUrl')]"
+        },
+        "DOCUMENTTRANSLATION_SOURCE_CONTAINER_URL": {
+            "type": "string",
+            "value": "[concat(reference(parameters('sourceblobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('sourceTranslationContainer'))]"
+        },
+        "DOCUMENTTRANSLATION_SOURCE_STORAGE_NAME": {
+            "type": "string",
+            "value": "[parameters('sourceBlobStorageAccount')]"
+        },
+        "DOCUMENTTRANSLATION_SOURCE_CONTAINER_NAME": {
+            "type": "string",
+            "value": "[parameters('sourceTranslationContainer')]"
+        },
+        "DOCUMENTTRANSLATION_SOURCE_STORAGE_KEY": {
+            "type": "string",
+            "value": "[listKeys(parameters('sourceBlobResourceId'), variables('storageMgmtApiVersion')).keys[0].value]"
+        },
+        "DOCUMENTTRANSLATION_TARGET_CONTAINER_URL": {
+            "type": "string",
+            "value": "[concat(reference(parameters('targetblobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetTranslationContainer'))]"
+        },
+        "DOCUMENTTRANSLATION_TARGET_STORAGE_NAME": {
+            "type": "string",
+            "value": "[parameters('targetBlobStorageAccount')]"
+        },
+        "DOCUMENTTRANSLATION_TARGET_CONTAINER_NAME": {
+            "type": "string",
+            "value": "[parameters('targetTranslationContainer')]"
+        },
+        "DOCUMENTTRANSLATION_TARGET_STORAGE_KEY": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('targetBlobStorageAccount')), variables('storageMgmtApiVersion')).keys[0].value]"
         },
         "DOCUMENTTRANSLATION_SOURCE_CONTAINER_SAS_URL": {
             "type": "string",

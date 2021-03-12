@@ -5,7 +5,6 @@
 # ------------------------------------
 
 import functools
-import time
 from testcase import DocumentTranslationTest
 from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
 from azure.ai.documenttranslation import DocumentTranslationClient, BatchDocumentInput, StorageTarget
@@ -16,30 +15,27 @@ class TestTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_storage_sources(self, client):
-
-        sources = client.get_supported_storage_sources()
-        assert sources
-
-    @DocumentTranslationPreparer()
-    @DocumentTranslationClientPreparer()
-    def test_translate(self, client, documenttranslation_source_container_sas_url, documenttranslation_target_container_sas_url):
+    def test_translate(self, client):
+        # this uses generated code and should be deleted. Using it to test live tests pending our code in master
         from azure.ai.documenttranslation._generated.models import BatchRequest, SourceInput, TargetInput
 
-        poller = client._client.document_translation.begin_submit_batch_request(
+        response_headers = client._client.document_translation._submit_batch_request_initial(
             inputs=[
                 BatchRequest(
                     source=SourceInput(
-                        source_url=documenttranslation_source_container_sas_url
+                        source_url=self.source_container_sas_url
                     ),
                     targets=[TargetInput(
-                        target_url=documenttranslation_target_container_sas_url,
+                        target_url=self.target_container_sas_url,
                         language="es"
                     )]
                 )
             ],
-            polling=True
+            cls=lambda pipeline_response, _, response_headers: response_headers
         )
 
-        batch_id = poller._polling_method._operation._async_url.split("/batches/")[1]
+        batch_id = response_headers['Operation-Location'].split('/')[-1]
         assert batch_id
+        self.wait()
+        result = client._client.document_translation.get_operation_status(batch_id)
+        assert result
