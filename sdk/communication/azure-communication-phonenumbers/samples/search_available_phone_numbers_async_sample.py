@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: search_available_phone_numbers_sample.py
+FILE: search_available_phone_numbers_async_sample.py
 DESCRIPTION:
     This sample demonstrates how to search for available numbers you can buy with the respective API.
 USAGE:

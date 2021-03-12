@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE:get_purchased_phone_number_sample.py
+FILE:get_purchased_phone_number_async_sample.py
 DESCRIPTION:
     This sample demonstrates how to get the information from an acquired phone number using your connection string
 USAGE:

@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: list_purchased_phone_numbers_sample.py
+FILE: list_purchased_phone_numbers_async_sample.py
 DESCRIPTION:
     This sample demonstrates how to get all off you acquired phone numbers using your connection string
 USAGE:

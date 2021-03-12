@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: purchase_phone_number_sample.py
+FILE: purchase_phone_number_async_sample.py
 DESCRIPTION:
     This sample demonstrates how to purchase a phone number using the search id you got from the search_available_phone_number API
 USAGE:

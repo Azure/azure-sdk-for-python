@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: release_phone_number_sample.py
+FILE: release_phone_number_async_sample.py
 DESCRIPTION:
     This sample demonstrates how to release a previously acquired phone number using your connection string.
 USAGE:

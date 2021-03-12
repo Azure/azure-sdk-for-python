@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: update_phone_number_capabilities_sample.py
+FILE: update_phone_number_capabilities_async_sample.py
 DESCRIPTION:
     This sample demonstrates how to updtae the capabilities of a phone number using your connection string.
 USAGE:
