@@ -3,6 +3,9 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import struct
+from datetime import datetime
+from time import time
 from typing import TYPE_CHECKING
 import six
 
@@ -11,7 +14,7 @@ if TYPE_CHECKING:
     from typing import Any, NamedTuple
     from typing_extensions import Protocol
 
-    AccessToken = NamedTuple("AccessToken", [("token", str), ("expires_on", int)])
+    _AccessToken = NamedTuple("AccessToken", [("token", str), ("expires_on", int)])
 
     class TokenCredential(Protocol):
         """Protocol for classes able to provide OAuth tokens.
@@ -28,9 +31,53 @@ if TYPE_CHECKING:
 else:
     from collections import namedtuple
 
-    AccessToken = namedtuple("AccessToken", ["token", "expires_on"])
+    _AccessToken = namedtuple("AccessToken", ["token", "expires_on"])
 
 __all__ = ["AzureKeyCredential", "AzureSasCredential", "AccessToken"]
+
+
+class AccessToken(_AccessToken):
+    """An access token used for authenticating to an azure service.
+    Made up of the JWT string and an expiration time. JWT is documented at:
+    https://docs.microsoft.com/en-us/azure/active-directory/develop/access-tokens
+
+    :param str token: The token value as a string
+    :param int expires_on: The expiry time in Epoch time using the current time zone
+    """
+
+    __slots__ = ()
+
+    @property
+    def is_expired(self):
+        # type: () -> bool
+        """True if this token is expired, False if it's still valid.
+        
+        :rtype: bool
+        """
+        return time() > self.expires_on
+
+    @property
+    def expires_datetime(self):
+        # type: () -> datetime
+        """The time this token expires as a datetime object.
+        
+        :rtype: datetime
+        """
+        return datetime.fromtimestamp(self.expires_on)
+    
+    @property
+    def token_struct(self):
+        # type: () -> bytes
+        """The token as a struct for use in sending to Azure services.
+
+        This provides the token as a struct, ready to send to an ODBC client.
+        The format is described in the ODBC documentation:
+        https://docs.microsoft.com/en-us/sql/connect/odbc/using-azure-active-directory#authenticating-with-an-access-token
+
+        :rtype: bytes
+        """
+        token_bytes = self.token.encode('utf-16-le')
+        return struct.pack('<I{}s'.format(len(token_bytes)), len(token_bytes), token_bytes)
 
 
 class AzureKeyCredential(object):
