@@ -136,6 +136,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         compute_client = self.create_mgmt_client(
             azure.mgmt.compute.ComputeManagementClient
         )
+        # Fix when version from 17.1.0 to 18.0.0
         result = compute_client.virtual_machines.begin_delete(group_name, vm_name)
         result = result.result()
     
