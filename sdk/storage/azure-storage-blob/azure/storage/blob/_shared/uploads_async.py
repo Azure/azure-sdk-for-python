@@ -124,7 +124,8 @@ async def upload_substream_blocks(
         range_ids = []
         for block in uploader.get_substream_blocks():
             range_ids.append(await uploader.process_substream_block(block))
-    return sorted(range_ids)
+    if any(range_ids):
+        return sorted(range_ids)
 
 
 class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes

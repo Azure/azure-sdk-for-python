@@ -121,7 +121,8 @@ def upload_substream_blocks(
         range_ids = _parallel_uploads(executor, uploader.process_substream_block, upload_tasks, running_futures)
     else:
         range_ids = [uploader.process_substream_block(b) for b in uploader.get_substream_blocks()]
-    return sorted(range_ids)
+    if any(range_ids):
+        return sorted(range_ids)
 
 
 class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
@@ -262,7 +263,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
     def _upload_substream_block(self, index, block_stream):
         try:
-            block_id = 'BlockId{}'.format("%05d" % index/self.chunk_size)
+            block_id = 'BlockId{}'.format("%05d" % (index/self.chunk_size))
             self.service.stage_block(
                 block_id,
                 len(block_stream),
