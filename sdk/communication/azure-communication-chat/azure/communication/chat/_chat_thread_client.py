@@ -127,7 +127,6 @@ class ChatThreadClient(object):
         # type: (...) -> ChatThreadProperties
         """Gets a chat thread properties.
 
-        :keyword str thread_id: Thread id to get.
         :return: ChatThreadProperties
         :rtype: ~azure.communication.chat.ChatThreadProperties
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -141,11 +140,8 @@ class ChatThreadClient(object):
                 :dedent: 8
                 :caption: Getting a chat thread by thread id.
         """
-        chat_thread_id = kwargs.pop('thread_id', None)
-        if not chat_thread_id:
-            chat_thread_id = self._thread_id
 
-        chat_thread = self._client.chat_thread.get_chat_thread_properties(chat_thread_id, **kwargs)
+        chat_thread = self._client.chat_thread.get_chat_thread_properties(self._thread_id, **kwargs)
         return ChatThreadProperties._from_generated(chat_thread)  # pylint:disable=protected-access
 
 
@@ -176,7 +172,7 @@ class ChatThreadClient(object):
         """
 
         update_topic_request = UpdateChatThreadRequest(topic=topic)
-        return self._client.chat_thread.update_chat_thread(
+        return self._client.chat_thread.update_chat_thread_properties(
             chat_thread_id=self._thread_id,
             update_chat_thread_request=update_topic_request,
             **kwargs)
@@ -540,8 +536,8 @@ class ChatThreadClient(object):
             **kwargs)
 
         response = []
-        if hasattr(add_chat_participants_result, 'errors') and \
-                add_chat_participants_result.errors is not None:
+        if hasattr(add_chat_participants_result, 'invalid_participants') and \
+                add_chat_participants_result.invalid_participants is not None:
             response = CommunicationErrorResponseConverter._convert( # pylint:disable=protected-access
                 participants=thread_participants,
                 chat_errors=add_chat_participants_result.invalid_participants

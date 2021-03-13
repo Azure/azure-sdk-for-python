@@ -483,16 +483,14 @@ async def test_add_participants_w_failed_participants_returns_nonempty_list():
 
     async def mock_send(*_, **__):
         return mock_response(status_code=201, json_payload={
-            "errors": {
-                "invalidParticipants": [
-                    {
-                        "code": "string",
-                        "message": error_message,
-                        "target": new_participant_id,
-                        "details": []
-                    }
-                ]
-            }
+            "invalidParticipants": [
+                {
+                    "code": "string",
+                    "message": error_message,
+                    "target": new_participant_id,
+                    "details": []
+                }
+            ]
         })
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
@@ -699,7 +697,7 @@ async def test_get_properties():
 
     get_thread_result = None
     try:
-        get_thread_result = await chat_thread_client.get_properties(thread_id)
+        get_thread_result = await chat_thread_client.get_properties()
     except:
         raised = True
 

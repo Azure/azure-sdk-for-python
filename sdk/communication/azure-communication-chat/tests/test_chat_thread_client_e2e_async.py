@@ -362,7 +362,7 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
                 message_result_new_user = await chat_thread_client_new_user.send_message(
                     "content",
                     sender_display_name="sender_display_name")
-                message_id_new_user = message_result_new_user
+                message_id_new_user = message_result_new_user.id
                 # send read receipt
                 await chat_thread_client_new_user.send_read_receipt(message_id_new_user)
 
@@ -389,7 +389,7 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
             await self._create_thread()
 
             async with self.chat_thread_client:
-                get_thread_result = await self.chat_thread_client.get_properties(self.thread_id)
+                get_thread_result = await self.chat_thread_client.get_properties()
                 assert get_thread_result.id == self.thread_id
 
                 # delete created users and chat threads

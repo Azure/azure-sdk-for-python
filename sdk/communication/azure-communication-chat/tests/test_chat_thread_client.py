@@ -467,16 +467,14 @@ class TestChatThreadClient(unittest.TestCase):
 
         def mock_send(*_, **__):
             return mock_response(status_code=201,json_payload={
-                "errors": {
-                    "invalidParticipants": [
-                        {
-                            "code": "string",
-                            "message": error_message,
-                            "target": new_participant_id,
-                            "details": []
-                        }
-                    ]
-                }
+                "invalidParticipants": [
+                    {
+                        "code": "string",
+                        "message": error_message,
+                        "target": new_participant_id,
+                        "details": []
+                    }
+                ]
             })
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
@@ -639,7 +637,7 @@ class TestChatThreadClient(unittest.TestCase):
 
         get_thread_result = None
         try:
-            get_thread_result = chat_thread_client.get_properties(thread_id)
+            get_thread_result = chat_thread_client.get_properties()
         except:
             raised = True
 
