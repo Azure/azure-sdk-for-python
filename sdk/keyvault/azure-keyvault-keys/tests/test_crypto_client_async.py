@@ -56,23 +56,24 @@ class CryptoClientTests(KeyVaultTestCase):
         credential = self.get_credential(CryptographyClient, is_async=True)
         return self.create_client_from_credential(CryptographyClient, credential=credential, key=key, **kwargs)
 
-    async def _create_rsa_key(self, client, key_name, hsm=False, **kwargs):
-        key_ops = kwargs.get("key_operations") or ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
+    async def _create_rsa_key(self, client, key_name, **kwargs):
+        # create key with optional arguments
+        key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
+        hsm = kwargs.get("hardware_protected") or False
         if self.is_live:
             await asyncio.sleep(2)  # to avoid throttling by the service
-        created_key = await client.create_rsa_key(key_name, hardware_protected=hsm, key_operations=key_ops, **kwargs)
+        created_key = await client.create_rsa_key(key_name, **kwargs)
         key_type = "RSA-HSM" if hsm else "RSA"
         self._validate_rsa_key_bundle(created_key, client.vault_url, key_name, key_type, key_ops)
         return created_key
 
-    async def _create_ec_key(self, client, key_name, key_curve=KeyCurveName.p_256, hsm=False, **kwargs):
+    async def _create_ec_key(self, client, key_name, **kwargs):
+        # create ec key with optional arguments
+        key_curve = kwargs.get("curve") or "P-256"
+        hsm = kwargs.get("hardware_protected") or False
         if self.is_live:
             await asyncio.sleep(2)  # to avoid throttling by the service
-        created_key = await client.create_ec_key(
-            key_name, curve=key_curve, hardware_protected=hsm, enabled=True, **kwargs
-        )
-        self.assertTrue(created_key.properties.enabled, "Missing the optional key attributes.")
-        self.assertEqual(True, created_key.properties.enabled)
+        created_key = await client.create_ec_key(key_name, **kwargs)
         key_type = "EC-HSM" if hsm else "EC"
         self._validate_ec_key_bundle(key_curve, created_key, client.vault_url, key_name, key_type)
         return created_key
@@ -417,7 +418,7 @@ class CryptoClientTests(KeyVaultTestCase):
 
         for curve, (signature_algorithm, hash_function) in sorted(matrix.items()):
             key_name = self.get_resource_name("ec-verify-{}".format(curve.value))
-            key = await self._create_ec_key(key_client, key_name, key_curve=curve)
+            key = await self._create_ec_key(key_client, key_name, curve=curve)
             crypto_client = self.create_crypto_client(key)
 
             digest = hash_function(self.plaintext).digest()
@@ -441,7 +442,7 @@ class CryptoClientTests(KeyVaultTestCase):
 
         for curve, (signature_algorithm, hash_function) in sorted(matrix.items()):
             key_name = self.get_resource_name("ec-verify-{}".format(curve.value))
-            key = await self._create_ec_key(key_client, key_name, key_curve=curve)
+            key = await self._create_ec_key(key_client, key_name, curve=curve)
             crypto_client = self.create_crypto_client(key)
             local_client = CryptographyClient.from_jwk(key.key)
 

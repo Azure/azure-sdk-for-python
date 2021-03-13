@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name20a00f12/create?api-version=7.2-preview
   response:
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 12 Mar 2021 23:12:23 GMT
+      - Sat, 06 Feb 2021 02:37:23 GMT
       expires:
       - '-1'
       pragma:
@@ -41,20 +41,18 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus2
+      - northeurope
       x-ms-keyvault-service-version:
-      - 1.2.205.0
+      - 1.2.164.0
       x-powered-by:
       - ASP.NET
     status:
       code: 401
       message: Unauthorized
 - request:
-    body: '{"key_ops": ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"],
-      "key_size": 2048, "tags": {"test name ": "CreateRSAKeyTest", "purpose": "unit
-      test"}, "kty": "RSA"}'
+    body: '{"kty": "RSA", "key_size": 2048}'
     headers:
       Accept:
       - application/json
@@ -63,26 +61,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '177'
+      - '32'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name20a00f12/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name20a00f12/f2431bc6abb74b60a0f39ee44cd20ef3","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"y_Fa0X80zqonAdEvwbIdbWp39arNBiMHgqjJyjq7PZdYS847QhgVoAJOd56lUppozNJT4yH9Qb5gBkSXHgYUhuUaH5hW6iPnnOziEXQYCK18qdH3LzaBhCrPy67pAZXafKoG06b3ygUMGNg__1gQ5obyn5kF5WIpe1_-jr15C5_RHqStkWeJoT1snYBQh3EXkLN72aTFoqrpSISQHN1QfjCRhlB7xhRNwbvTk1zKMpqjCKCPIoM7ew2M0xfh_mxyP4QN8swpPUYAoMXOpUogFjXDU4LEv9R2g0KQD09SXal9KcVW9ZGE1pCAZgTRwkykpOQYfuE-m2b7-yCbGUyjeQ","e":"AQAB"},"attributes":{"enabled":true,"created":1615590744,"updated":1615590744,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"test
-        name ":"CreateRSAKeyTest","purpose":"unit test"}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name20a00f12/b52739afd64f4f93bc6597f2ac8260a9","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"40wJ8Q93AybsxMxUA9EgNoJIS9cJuclRlGm_2qqHBaoaXpNhk8kTGIT1BNopAmyxakt07iKWSsf8ZWSev5KIy8mAzKKG3w4sexwHPYmyjLnuJxchGNxTeen6ASAeTNi6JI65m9jjSph1qptNijm9zxRVF-Fmj3VG4jdSq-Ju9tjTk3KPGQ4CTr7IdS8flgGjNkIciarwo5YazSOlcieHVMtdvHP-wW4Gte7bg1n6eNm4hc35fsGsWNUhQIBWJ1X6qygXuMO3pkagIaGPWM99vH7ZKEKWoixT96uwFn5kxh09JEsql9O9eqSaJU9oZbAaaYYC2FSgWWNTaT8G38P6ZQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579044,"updated":1612579044,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '759'
+      - '698'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 12 Mar 2021 23:12:24 GMT
+      - Sat, 06 Feb 2021 02:37:24 GMT
       expires:
       - '-1'
       pragma:
@@ -92,11 +89,11 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus2
+      - northeurope
       x-ms-keyvault-service-version:
-      - 1.2.205.0
+      - 1.2.164.0
       x-powered-by:
       - ASP.NET
     status:

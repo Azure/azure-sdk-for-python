@@ -54,34 +54,23 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(k1.tags, k2.tags)
         self.assertEqual(k1.recovery_level, k2.recovery_level)
 
-    def _create_rsa_key(self, client, key_name, hsm=False, **kwargs):
-        # create key with optional arguments
-        key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
-        tags = {"purpose": "unit test", "test name ": "CreateRSAKeyTest"}
+    def _create_rsa_key(self, client, key_name, **kwargs):
+        key_ops = kwargs.get("key_operations") or ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
+        hsm = kwargs.get("hardware_protected") or False
         if self.is_live:
             time.sleep(2)  # to avoid throttling by the service
-        created_key = client.create_rsa_key(
-            key_name, hardware_protected=hsm, key_operations=key_ops, tags=tags, **kwargs
-        )
-        self.assertTrue(created_key.properties.tags, "Missing the optional key attributes.")
-        self.assertEqual(tags, created_key.properties.tags)
+        created_key = client.create_rsa_key(key_name, **kwargs)
         kty = "RSA-HSM" if hsm else "RSA"
         self._validate_rsa_key_bundle(created_key, client.vault_url, key_name, kty, key_ops)
         return created_key
 
-    def _create_ec_key(self, client, key_name, key_curve=KeyCurveName.p_256, hsm=False, **kwargs):
-        # create ec key with optional arguments
-        enabled = True
-        tags = {"purpose": "unit test", "test name": "CreateECKeyTest"}
+    def _create_ec_key(self, client, key_name, **kwargs):
+        key_curve = kwargs.get("curve") or "P-256"
+        hsm = kwargs.get("hardware_protected") or False
         if self.is_live:
             time.sleep(2)  # to avoid throttling by the service
-        created_key = client.create_ec_key(
-            key_name, curve=key_curve, hardware_protected=hsm, enabled=enabled, tags=tags, **kwargs
-        )
+        created_key = client.create_ec_key(key_name, **kwargs)
         key_type = "EC-HSM" if hsm else "EC"
-        self.assertTrue(created_key.properties.enabled, "Missing the optional key attributes.")
-        self.assertEqual(enabled, created_key.properties.enabled)
-        self.assertEqual(tags, created_key.properties.tags)
         self._validate_ec_key_bundle(key_curve, created_key, client.vault_url, key_name, key_type)
         return created_key
 
@@ -164,10 +153,13 @@ class KeyClientTests(KeyVaultTestCase):
 
         # create ec key
         ec_key_name = self.get_resource_name("crud-ec-key")
-        self._create_ec_key(client, key_name=ec_key_name, hsm=True)
+        tags = {"purpose": "unit test", "test name": "CreateECKeyTest"}
+        ec_key = self._create_ec_key(client, enabled=True, key_name=ec_key_name, hardware_protected=True, tags=tags)
+        assert ec_key.properties.enabled
+        assert tags == ec_key.properties.tags
         # create ec with curve
         ec_key_curve_name = self.get_resource_name("crud-P-256-ec-key")
-        self._create_ec_key(client, key_name=ec_key_curve_name, key_curve="P-256")
+        self._create_ec_key(client, key_name=ec_key_curve_name, curve="P-256")
 
         # import key
         import_test_key_name = self.get_resource_name("import-test-key")
@@ -175,38 +167,41 @@ class KeyClientTests(KeyVaultTestCase):
 
         # create rsa key
         rsa_key_name = self.get_resource_name("crud-rsa-key")
-        created_rsa_key = self._create_rsa_key(client, key_name=rsa_key_name)
+        tags = {"purpose": "unit test", "test name ": "CreateRSAKeyTest"}
+        key_ops = ["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"]
+        rsa_key = self._create_rsa_key(client, key_name=rsa_key_name, key_operations=key_ops, size=2048, tags=tags)
+        assert tags == rsa_key.properties.tags
 
         # get the created key with version
-        key = client.get_key(created_rsa_key.name, created_rsa_key.properties.version)
-        self.assertEqual(key.properties.version, created_rsa_key.properties.version)
-        self._assert_key_attributes_equal(created_rsa_key.properties, key.properties)
+        key = client.get_key(rsa_key.name, rsa_key.properties.version)
+        self.assertEqual(key.properties.version, rsa_key.properties.version)
+        self._assert_key_attributes_equal(rsa_key.properties, key.properties)
 
         # get key without version
-        self._assert_key_attributes_equal(created_rsa_key.properties, client.get_key(created_rsa_key.name).properties)
+        self._assert_key_attributes_equal(rsa_key.properties, client.get_key(rsa_key.name).properties)
 
         # update key with version
         if self.is_live:
             # wait to ensure the key's update time won't equal its creation time
             time.sleep(1)
 
-        self._update_key_properties(client, created_rsa_key)
+        self._update_key_properties(client, rsa_key)
 
         # delete the new key
-        deleted_key_poller = client.begin_delete_key(created_rsa_key.name)
+        deleted_key_poller = client.begin_delete_key(rsa_key.name)
         deleted_key = deleted_key_poller.result()
         self.assertIsNotNone(deleted_key)
-        self.assertEqual(created_rsa_key.key_type, deleted_key.key_type)
-        self.assertEqual(deleted_key.id, created_rsa_key.id)
+        self.assertEqual(rsa_key.key_type, deleted_key.key_type)
+        self.assertEqual(deleted_key.id, rsa_key.id)
         self.assertTrue(
             deleted_key.recovery_id and deleted_key.deleted_date and deleted_key.scheduled_purge_date,
             "Missing required deleted key attributes.",
         )
         deleted_key_poller.wait()
         # get the deleted key when soft deleted enabled
-        deleted_key = client.get_deleted_key(created_rsa_key.name)
+        deleted_key = client.get_deleted_key(rsa_key.name)
         self.assertIsNotNone(deleted_key)
-        self.assertEqual(created_rsa_key.id, deleted_key.id)
+        self.assertEqual(rsa_key.id, deleted_key.id)
 
     @KeyVaultPreparer()
     def test_backup_restore(self, azure_keyvault_url, **kwargs):
