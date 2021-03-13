@@ -15,10 +15,21 @@ parser implementation would necessarily look like from an API perspective
 
 class PseudoParser(object):
     def __init__(self, resolver):
+        """
+        :param resolver: The resolver for the parser to use to resolve model dependencies
+        :type resolver: :class:`azure.iot.modelsrepository.resolver.DtmiResolver`
+        """
         self.resolver = resolver
 
     def expand(self, models):
-        """"""
+        """Return a dictionary containing all the provided models, as well as their dependencies,
+        indexed by DTMI
+
+        :param models list[str]: List of models
+        
+        :returns: Dictionary containing models and their dependencies, indexed by DTMI
+        :rtype: dict
+        """
         expanded_map = {}
         for model in models:
             expanded_map[model["@id"]] = model
@@ -26,7 +37,7 @@ class PseudoParser(object):
         return expanded_map
 
     def _expand(self, model, model_map):
-        dependencies = get_dependency_list(model)
+        dependencies = _get_dependency_list(model)
         dependencies_to_resolve = [
             dependency for dependency in dependencies if dependency not in model_map
         ]
@@ -38,21 +49,29 @@ class PseudoParser(object):
                 self._expand(dependency_model, model_map)
 
 
-def get_dependency_list(model):
+def _get_dependency_list(model):
     """Return a list of DTMIs for model dependencies"""
+    dependencies = []
+
     if "contents" in model:
         components = [item["schema"] for item in model["contents"] if item["@type"] == "Component"]
-    else:
-        components = []
+        dependencies += components
 
     if "extends" in model:
-        # Models defined in a DTDL can implement extensions of up to two interfaces
-        if isinstance(model["extends"], list):
-            interfaces = model["extends"]
-        else:
-            interfaces = [model["extends"]]
-    else:
-        interfaces = []
+        # Models defined in a DTDL can implement extensions of up to two interfaces.
+        # These interfaces can be in the form of a DTMI reference, or a nested model (which would
+        # have it's own dependencies)
+        if isinstance(model["extends"], str):
+            # If it's just a string, that's a single DTMI reference, so just add that to our list
+            dependencies.append(model["extends"])
+        elif isinstance(model["extends"], list):
+            # If it's a list, could have DTMIs or nested models
+            for item in model["extends"]:
+                if isinstance(item, str):
+                    # If there are strings in the list, that's a DTMI reference, so add it
+                    dependencies.append(item)
+                elif isinstance(item, dict):
+                    # This is a nested model. Now go get its dependencies and add them
+                    dependencies += _get_dependency_list(item)
 
-    dependencies = components + interfaces
     return dependencies

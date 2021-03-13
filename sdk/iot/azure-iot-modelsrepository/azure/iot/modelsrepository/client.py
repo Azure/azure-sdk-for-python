@@ -79,6 +79,7 @@ class ModelsRepositoryClient(object):
         :returns: Dictionary mapping DTMIs to models
         :rtype: dict
         """
+        # TODO: If not ResolverError, then what?
         if dependency_resolution == DEPENDENCY_MODE_DISABLED:
             # Simply retrieve the model(s)
             model_map = self.resolver.resolve(dtmis)
