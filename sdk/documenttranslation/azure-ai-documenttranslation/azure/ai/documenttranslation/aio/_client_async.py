@@ -36,7 +36,6 @@ class DocumentTranslationClient(object):
         self._endpoint = endpoint
         self._credential = credential
         self._api_version = kwargs.pop('api_version', None)
-        polling_interval = kwargs.pop("polling_interval", 30)
 
         authentication_policy = get_authentication_policy(credential)
         self._client = _BatchDocumentTranslationClient(
@@ -45,7 +44,6 @@ class DocumentTranslationClient(object):
             api_version=self._api_version,
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
-            polling_interval=polling_interval,
             **kwargs
         )
 
