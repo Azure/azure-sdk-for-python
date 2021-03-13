@@ -1,7 +1,10 @@
-# Sets a variable that can be used later on to safely upload an artifact. This means that failed iterations of a build phase
-# will note REMAIN failing after the appropriate updates have been made to the source.
-# ArtifactNameVariable - The name of the DevOps Variable that will be consumed in the PublishPipelineArtifact steps
-# DefaultArtifactName  - The name of the artifact in the "successful" case.
+# This step is used to prevent duplication of artifact publishes when there is an issue that would prevent the overall success of the job.
+# Ensuring that we only publish when successful (and two a differently named artifact otherwise) will allow easy retry on a build pipeline
+# without running into the "cannot override artifact" failure when we finally do get a passing run.
+
+# ArtifactName - The name of the artifact in the "successful" case.
+# ArtifactPath - The path we will be publishing.
+# CustomCondition - Used if there is additional logic necessary to prevent attempt of publish.
 
 parameters:
   ArtifactName: ''
