@@ -2,12 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import asyncio
 import codecs
 from datetime import datetime
 import functools
 import hashlib
 import os
-import time
 from unittest import mock
 
 from azure.core.exceptions import AzureError, HttpResponseError
@@ -59,7 +59,7 @@ class CryptoClientTests(KeyVaultTestCase):
     async def _create_rsa_key(self, client, key_name, hsm=False, **kwargs):
         key_ops = kwargs.get("key_operations") or ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
         if self.is_live:
-            time.sleep(2)  # to avoid throttling by the service
+            await asyncio.sleep(2)  # to avoid throttling by the service
         created_key = await client.create_rsa_key(key_name, hardware_protected=hsm, key_operations=key_ops, **kwargs)
         key_type = "RSA-HSM" if hsm else "RSA"
         self._validate_rsa_key_bundle(created_key, client.vault_url, key_name, key_type, key_ops)
@@ -67,7 +67,7 @@ class CryptoClientTests(KeyVaultTestCase):
 
     async def _create_ec_key(self, client, key_name, key_curve=KeyCurveName.p_256, hsm=False, **kwargs):
         if self.is_live:
-            time.sleep(2)  # to avoid throttling by the service
+            await asyncio.sleep(2)  # to avoid throttling by the service
         created_key = await client.create_ec_key(
             key_name, curve=key_curve, hardware_protected=hsm, enabled=True, **kwargs
         )

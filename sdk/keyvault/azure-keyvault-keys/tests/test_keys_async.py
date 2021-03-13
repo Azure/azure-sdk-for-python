@@ -8,7 +8,6 @@ import codecs
 import logging
 import json
 from dateutil import parser as date_parse
-import time
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -79,7 +78,7 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
         tags = {"purpose": "unit test", "test name ": "CreateRSAKeyTest"}
         if self.is_live:
-            time.sleep(2)  # to avoid throttling by the service
+            await asyncio.sleep(2)  # to avoid throttling by the service
         created_key = await client.create_rsa_key(
             key_name, hardware_protected=hsm, size=key_size, key_operations=key_ops, tags=tags
         )
@@ -94,7 +93,7 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         enabled = True
         tags = {"purpose": "unit test", "test name": "CreateECKeyTest"}
         if self.is_live:
-            time.sleep(2)  # to avoid throttling by the service
+            await asyncio.sleep(2)  # to avoid throttling by the service
         created_key = await client.create_ec_key(
             key_name, curve=key_curve, hardware_protected=hsm, enabled=enabled, tags=tags
         )
