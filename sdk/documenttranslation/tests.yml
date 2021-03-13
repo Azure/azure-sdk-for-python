@@ -4,7 +4,6 @@ stages:
   - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       DeployArmTemplate: true
-      MaxParallel: 1
       BuildTargetingString: azure-ai-documenttranslation
       ServiceDirectory: documenttranslation
       EnvVars:
