@@ -90,26 +90,14 @@ steps:
 
   - ${{ parameters.BeforePublishSteps }}
 
-  - template: /eng/common/pipelines/templates/steps/resolve-artifact-name.yml
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
-      ArtifactNameVariable: 'Publishing.Artifact.Name'
-      DefaultArtifactName: 'packages'
+      ArtifactPath: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'packages'
 
-  - task: PublishPipelineArtifact@1
-    condition: succeededOrFailed()
-    displayName: 'Publish Package Artifacts'
-    inputs:
-      artifactName: '$(Publishing.Artifact.Name)'
-      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-
-  - template: /eng/common/pipelines/templates/steps/resolve-artifact-name.yml
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
-      ArtifactNameVariable: 'Documentation.Artifact.Name'
-      DefaultArtifactName: 'documentation'
+      ArtifactPath: '$(Build.SourcesDirectory)/_docs'
+      CustomCondition: ${{ parameters.BuildDocs }}
+      ArtifactName: 'documentation'
 
-  - task: PublishPipelineArtifact@1
-    condition: and(succeededOrFailed(), ${{ parameters.BuildDocs }})
-    displayName: 'Publish Documentation Artifacts'
-    inputs:
-      artifactName: '$(Documentation.Artifact.Name)'
-      pathtoPublish: '$(Build.SourcesDirectory)/_docs'

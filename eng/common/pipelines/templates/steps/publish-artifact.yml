@@ -1,0 +1,24 @@
+# Sets a variable that can be used later on to safely upload an artifact. This means that failed iterations of a build phase
+# will note REMAIN failing after the appropriate updates have been made to the source.
+# ArtifactNameVariable - The name of the DevOps Variable that will be consumed in the PublishPipelineArtifact steps
+# DefaultArtifactName  - The name of the artifact in the "successful" case.
+
+parameters:
+  ArtifactName: ''
+  ArtifactPath: ''
+  CustomCondition: true
+
+steps:
+  - task: PublishPipelineArtifact@1
+    condition: and(succeeded(), ${{ parameters.CustomCondition }})
+    displayName: 'Publish ${{ parameters.ArtifactName }} Artifacts'
+    inputs:
+      artifactName: ${{ parameters.ArtifactName }}
+      pathtoPublish: ${{ parameters.ArtifactPath }}
+
+  - task: PublishPipelineArtifact@1
+    condition: failed()
+    displayName: 'Publish failed ${{ parameters.ArtifactName }} Artifacts'
+    inputs:
+      artifactName: '${{ parameters.ArtifactName }}-FailedAttempt$(System.JobAttempt)'
+      pathtoPublish: ${{ parameters.ArtifactPath }}
