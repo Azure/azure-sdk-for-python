@@ -1,6 +1,9 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.0.0b5 (Unreleased)
+
+
+## 1.0.0b4 (2021-03-09)
 
 ### Added
 - Added PhoneNumbersAdministrationClient (originally was part of the azure.communication.administration package).

@@ -8,10 +8,10 @@ $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=con
 function Get-AllPackageInfoFromRepo ($serviceDirectory)
 {
   $allPackageProps = @()
-  $searchPath = Join-Path sdk * * setup.py
+  $searchPath = "sdk"
   if ($serviceDirectory)
   {
-    $searchPath = Join-Path sdk ${serviceDirectory} * setup.py
+    $searchPath = Join-Path sdk ${serviceDirectory}
   }
 
   $allPkgPropLines = $null
@@ -242,20 +242,25 @@ function Update-python-CIConfig($pkgs, $ciRepo, $locationInDocRepo, $monikerId=$
         $existingPackageDef.package_info.version = ">=$($releasingPkg.PackageVersion)"
       }
       else {
-        if ($def.version) {
-          $def.PSObject.Properties.Remove('version')  
+        if ($existingPackageDef.package_info.version) {
+          $existingPackageDef.package_info.PSObject.Properties.Remove('version')
         }
       }
     }
     else {
       $newItem = New-Object PSObject -Property @{ 
-          package_info = New-Object PSObject -Property @{ 
-            prefer_source_distribution = "true"
-            install_type = "pypi"
-            name=$releasingPkg.PackageId
-          }
-          exclude_path = @("test*","example*","sample*","doc*")
+        package_info = New-Object PSObject -Property @{
+          prefer_source_distribution = "true"
+          install_type = "pypi"
+          name=$releasingPkg.PackageId
         }
+        exclude_path = @("test*","example*","sample*","doc*")
+      }
+
+      if ($releasingPkg.IsPrerelease) {
+        $newItem.package_info | Add-Member -NotePropertyName version -NotePropertyValue ">=$($releasingPkg.PackageVersion)"
+      }
+
       $allJson.packages += $newItem
     }
   }

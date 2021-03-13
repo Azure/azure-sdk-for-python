@@ -98,7 +98,7 @@ class DocumentTranslationClient(object):
         :return: JobStatusDetail
         :rtype: JobStatusDetail
         """
-        pass
+        pass  # pylint: disable=unnecessary-pass
 
     @distributed_trace
     def list_submitted_jobs(self, **kwargs):

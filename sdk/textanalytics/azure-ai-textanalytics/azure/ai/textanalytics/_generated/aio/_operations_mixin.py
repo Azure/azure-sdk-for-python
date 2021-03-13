@@ -139,7 +139,7 @@ class TextAnalyticsClientOperationsMixin(object):
         self,
         documents: List["_models.MultiLanguageInput"],
         model_version: Optional[str] = None,
-        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = "TextElements_v8",
+        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
         **kwargs
     ) -> AnalyzeHealthcareEntitiesAsyncLROPoller["_models.HealthcareJobState"]:
         """Submit healthcare analysis job.

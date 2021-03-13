@@ -17,7 +17,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search549e1a2d.search.windows.net/datasources?api-version=2020-06-30
+    uri: https://search549e1a2d.search.windows.net/datasources?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search549e1a2d.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D84B8895A20E7D\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
@@ -37,7 +37,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://search549e1a2d.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
+      - https://search549e1a2d.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30-Preview
       odata-version:
       - '4.0'
       pragma:
@@ -63,7 +63,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search549e1a2d.search.windows.net/datasources?api-version=2020-06-30
+    uri: https://search549e1a2d.search.windows.net/datasources?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search549e1a2d.search.windows.net/$metadata#datasources","value":[{"@odata.etag":"\"0x8D84B8895A20E7D\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}]}'
@@ -109,7 +109,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://search549e1a2d.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
+    uri: https://search549e1a2d.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30-Preview
   response:
     body:
       string: ''
@@ -143,7 +143,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search549e1a2d.search.windows.net/datasources?api-version=2020-06-30
+    uri: https://search549e1a2d.search.windows.net/datasources?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search549e1a2d.search.windows.net/$metadata#datasources","value":[]}'
