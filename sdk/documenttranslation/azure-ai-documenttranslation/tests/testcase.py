@@ -50,7 +50,11 @@ class DocumentTranslationTest(AzureTestCase):
         super(DocumentTranslationTest, self).__init__(method_name)
         self.vcr.match_on = ["path", "method", "query"]
         self.recording_processors.append(OperationLocationReplacer())
-        self.generate_sas()
+        if self.is_live:
+            self.generate_sas()
+        else:
+            self.source_container_sas_url = "source_container_sas_url"
+            self.target_container_sas_url = "target_container_sas_url"
 
     def generate_sas(self):
         source_url = os.getenv("DOCUMENTTRANSLATION_SOURCE_CONTAINER_URL")
