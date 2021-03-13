@@ -69,11 +69,11 @@
         },
         "targetBlobStorageAccount": {
             "type": "string",
-            "defaultValue": "storagedoctranslation"
+            "defaultValue": "[concat(parameters('baseName'), 'target')]"
         },
         "targetBlobResourceId": {
             "type": "string",
-            "defaultValue": "[resourceId('2cd617ea-1866-46b1-90e3-fffb087ebf9b', concat('rg-documenttranslation-', parameters('baseName')), 'Microsoft.Storage/storageAccounts', parameters('targetBlobStorageAccount'))]"
+            "defaultValue": "[resourceId('2cd617ea-1866-46b1-90e3-fffb087ebf9b', concat('rg-', parameters('baseName')), 'Microsoft.Storage/storageAccounts', parameters('targetBlobStorageAccount'))]"
         },
         "targetTranslationContainer": {
             "type": "string",
@@ -94,7 +94,7 @@
         "docTranslationBaseName": "[parameters('baseName')]",
         "docTranslationApiVersion": "2017-04-18",
         "storageMgmtApiVersion": "2019-04-01",
-        "storageAccountName": "storagedoctranslation",
+        "storageAccountName": "[concat(parameters('baseName'), 'target')]",
         "containerName": "[concat(parameters('baseName'), 'container')]",
         "location": "[resourceGroup().location]",
         "azureDocTranslationUrl": "[concat('https://', variables('docTranslationBaseName'), parameters('docTranslationEndpointSuffix'))]",
