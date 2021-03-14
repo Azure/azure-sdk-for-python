@@ -580,7 +580,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             process_storage_error(error)
 
     @distributed_trace
-    def get_blob_service_client(self):
+    def get_blob_service_client(self):  # pylint: disable=client-method-missing-kwargs
         # type: (...) -> BlobServiceClient
         """Get a client to interact with the container's parent service account.
 
