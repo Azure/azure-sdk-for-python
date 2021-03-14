@@ -167,7 +167,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 self.snapshot = snapshot or path_snapshot
 
         # This parameter is used for the hierarchy traversal. Give precedence to credential.
-        self.client_credential = credential if credential else sas_token
+        self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
@@ -3753,10 +3753,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         The container need not already exist. Defaults to current blob's credentials.
 
-        :keyword credential:
-            This enables you to change credentials when its necessary. The value can be a SAS token string,
-            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
         :returns: A ContainerClient.
         :rtype: ~azure.storage.blob.ContainerClient
 
@@ -3770,14 +3766,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 :caption: Get container client from blob object.
         """
         from ._container_client import ContainerClient
-        _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
-        )
-
         return ContainerClient(
             "{}://{}".format(self.scheme, self.primary_hostname), container_name=self.container_name,
-            credential=kwargs.pop("credential", self.client_credential), api_version=self.api_version,
-            _configuration=self._config, _pipeline=_pipeline, _location_mode=self._location_mode,
-            _hosts=self._hosts, require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
+            _location_mode=self._location_mode, _hosts=self._hosts, require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
