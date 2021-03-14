@@ -10,11 +10,10 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
-from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._deserialize import get_page_ranges_result, parse_tags, deserialize_pipeline_response_into_cls

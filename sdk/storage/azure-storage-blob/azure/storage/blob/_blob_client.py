@@ -20,10 +20,9 @@ except ImportError:
 import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
-from azure.core.pipeline import Pipeline
 
 from ._shared import encode_base64
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, TransportWrapper
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.encryption import generate_blob_encryption_data
 from ._shared.uploads import IterStreamer
 from ._shared.request_handlers import (
