@@ -3746,7 +3746,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             process_storage_error(error)
 
     @distributed_trace
-    def get_container_client(self, **kwargs):
+    def get_container_client(self):
         # type: (...) -> ContainerClient
         """Get a client to interact with the blob's parent container.
 

@@ -2444,7 +2444,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def get_container_client(self, **kwargs):
+    def get_container_client(self):
         # type: (...) -> ContainerClient
         """Get a client to interact with the blob's parent container.
 
