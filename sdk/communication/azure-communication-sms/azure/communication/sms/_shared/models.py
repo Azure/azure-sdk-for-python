@@ -174,6 +174,15 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
         except KeyError:
             raise AttributeError(name)
 
+class CommunicationIdentifierKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Communication Identifier Kind.
+    """
+    Unknown = "UNKNOWN"
+    CommunicationUser = "COMMUNICATIONUSER"
+    PhoneNumber = "PHONENUMBER"
+    CallingApplication = "CALLINGAPPLICATION"
+    MicrosoftTeamsUser = "MICROSOFTTEAMSUSER"
+
 class CommunicationCloudEnvironment(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """
     The cloud enviornment that the identifier belongs to
