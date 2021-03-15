@@ -19,8 +19,8 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class WorkspaceManagedSqlServerRecoverableSqlpoolsOperations:
-    """WorkspaceManagedSqlServerRecoverableSqlpoolsOperations async operations.
+class LibrariesOperations:
+    """LibrariesOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -41,31 +41,31 @@ class WorkspaceManagedSqlServerRecoverableSqlpoolsOperations:
         self._deserialize = deserializer
         self._config = config
 
-    def list(
+    def list_by_workspace(
         self,
         resource_group_name: str,
         workspace_name: str,
         **kwargs
-    ) -> AsyncIterable["_models.RecoverableSqlPoolListResult"]:
-        """Get list of recoverable sql pools for the server.
+    ) -> AsyncIterable["_models.LibraryListResponse"]:
+        """List the libraries in a workspace.
 
-        Get list of recoverable sql pools for workspace managed sql server.
+        List libraries in a workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either RecoverableSqlPoolListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.synapse.models.RecoverableSqlPoolListResult]
+        :return: An iterator like instance of either LibraryListResponse or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.synapse.models.LibraryListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RecoverableSqlPoolListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LibraryListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -75,7 +75,7 @@ class WorkspaceManagedSqlServerRecoverableSqlpoolsOperations:
 
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']  # type: ignore
+                url = self.list_by_workspace.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -94,7 +94,7 @@ class WorkspaceManagedSqlServerRecoverableSqlpoolsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('RecoverableSqlPoolListResult', pipeline_response)
+            deserialized = self._deserialize('LibraryListResponse', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -107,76 +107,13 @@ class WorkspaceManagedSqlServerRecoverableSqlpoolsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/recoverableSqlpools'}  # type: ignore
-
-    async def get(
-        self,
-        resource_group_name: str,
-        workspace_name: str,
-        sql_compute_name: str,
-        **kwargs
-    ) -> "_models.RecoverableSqlPool":
-        """Get recoverable sql pools for the server.
-
-        Get recoverable sql pools for workspace managed sql server.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: The name of the workspace.
-        :type workspace_name: str
-        :param sql_compute_name: The name of the sql compute.
-        :type sql_compute_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RecoverableSqlPool, or the result of cls(response)
-        :rtype: ~azure.mgmt.synapse.models.RecoverableSqlPool
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RecoverableSqlPool"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.get.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'sqlComputeName': self._serialize.url("sql_compute_name", sql_compute_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('RecoverableSqlPool', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/recoverableSqlPools/{sqlComputeName}'}  # type: ignore
+    list_by_workspace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/libraries'}  # type: ignore
