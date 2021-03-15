@@ -1,4 +1,8 @@
-#my_polling 
+# coding=utf-8
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 
 from azure.core.polling.base_polling import (
     LongRunningOperation,
@@ -62,3 +66,11 @@ class TranslationPolling(LongRunningOperation):
             else:
                 raise BadResponse("No status found in body")
         raise BadResponse("The response from long running operation does not contain a body.")
+
+    def get_final_get_url(self, pipeline_response):
+        # type: (PipelineResponseType) -> Optional[str]
+        """If a final GET is needed, returns the URL.
+
+        :rtype: str
+        """
+        return None
