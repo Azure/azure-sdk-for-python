@@ -207,7 +207,7 @@ class JobStatusDetail(object):
             created_on = batch_status_details.created_date_time_utc,
             last_updated_on = batch_status_details.last_action_date_time_utc,
             status = batch_status_details.status,
-            error = DocumentTranslationError.from_generated(batch_status_details.error),
+            error = DocumentTranslationError.from_generated(batch_status_details.error) if batch_status_details.error else None,
             documents_total_count = batch_status_details.summary.total,
             documents_failed_count = batch_status_details.summary.failed,
             documents_succeeded_count = batch_status_details.summary.success,
@@ -268,7 +268,7 @@ class DocumentStatusDetail(object):
             last_updated_on = doc_status.last_action_date_time_utc,
             status = doc_status.status,
             translate_to = doc_status.to,
-            error = DocumentTranslationError.from_generated(doc_status.error),
+            error = DocumentTranslationError.from_generated(doc_status.error) if doc_status.error else None,
             translation_progress = doc_status.progress,
             id = doc_status.id,
             characters_charged = doc_status.character_charged
