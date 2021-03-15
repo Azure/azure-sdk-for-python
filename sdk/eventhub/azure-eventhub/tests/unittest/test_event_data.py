@@ -1,5 +1,6 @@
 import platform
 import pytest
+import pickle
 import uamqp
 from packaging import version
 from azure.eventhub import _common
@@ -105,3 +106,84 @@ def test_event_data_batch():
         assert batch.size_in_bytes == 89 and len(batch) == 1
     with pytest.raises(ValueError):
         batch.add(EventData("A"))
+
+@pytest.mark.parametrize("test_input, expected_result",
+                         [("", ""), ("AAA", "AAA"), (None, ValueError), (["a", "b", "c"], "abc"), (b"abc", "abc")])
+def test_pickle_event_data(test_input, expected_result):
+    if isinstance(expected_result, type):
+        with pytest.raises(expected_result):
+            EventData(test_input)
+    else:
+        event_data = EventData(test_input)
+        pickled_event_data = pickle.loads(pickle.dumps(event_data))
+        # check that, even if test_input is changed, pickled_event_data doesn't change
+        event_data.properties["a"] = "b"
+        assert len(event_data.properties) == 1
+
+        # check that pickled event data produces expected result
+        assert pickled_event_data.body_as_str() == expected_result
+        assert pickled_event_data.partition_key is None
+        assert len(pickled_event_data.properties) == 0
+        assert pickled_event_data.enqueued_time is None
+        assert pickled_event_data.offset is None
+        assert pickled_event_data.sequence_number is None
+        assert len(pickled_event_data.system_properties) == 0
+        assert str(pickled_event_data) == "{{ body: '{}', properties: {{}} }}".format(expected_result)
+        assert repr(pickled_event_data) == "EventData(body='{}', properties={{}}, offset=None, sequence_number=None, partition_key=None, enqueued_time=None)".format(expected_result)
+
+        with pytest.raises(TypeError):
+            pickled_event_data.body_as_json()
+
+
+def test_pickle_body_json():
+    event_data = EventData('{"a":"b"}')
+    pickled_event_data = pickle.loads(pickle.dumps(event_data))
+    assert str(pickled_event_data) == "{ body: '{\"a\":\"b\"}', properties: {} }"
+    assert repr(pickled_event_data) == "EventData(body='{\"a\":\"b\"}', properties={}, offset=None, sequence_number=None, partition_key=None, enqueued_time=None)"
+    jo = pickled_event_data.body_as_json()
+    assert jo["a"] == "b"
+
+
+def test_pickle_app_properties():
+    app_props = {"a": "b"}
+    event_data = EventData("")
+    event_data.properties = app_props
+    pickled_event_data = pickle.loads(pickle.dumps(event_data))
+    assert str(pickled_event_data) == "{ body: '', properties: {'a': 'b'} }"
+    assert repr(pickled_event_data) == "EventData(body='', properties={'a': 'b'}, offset=None, sequence_number=None, partition_key=None, enqueued_time=None)"
+    assert pickled_event_data.properties["a"] == "b"
+
+def test_pickle_sys_properties():
+    properties = uamqp.message.MessageProperties()
+    properties.message_id = "message_id"
+    properties.user_id = "user_id"
+    properties.to = "to"
+    properties.subject = "subject"
+    properties.reply_to = "reply_to"
+    properties.correlation_id = "correlation_id"
+    properties.content_type = "content_type"
+    properties.content_encoding = "content_encoding"
+    properties.absolute_expiry_time = 1
+    properties.creation_time = 1
+    properties.group_id = "group_id"
+    properties.group_sequence = 1
+    properties.reply_to_group_id = "reply_to_group_id"
+    message = uamqp.Message(properties=properties)
+    message.annotations = {_common.PROP_OFFSET: "@latest"}
+    ed = EventData._from_message(message)  # type: EventData
+    pickle_ed = pickle.loads(pickle.dumps(ed))
+
+    assert pickle_ed.system_properties[_common.PROP_OFFSET] == "@latest"
+    assert pickle_ed.system_properties[_common.PROP_CORRELATION_ID] == properties.correlation_id
+    assert pickle_ed.system_properties[_common.PROP_MESSAGE_ID] == properties.message_id
+    assert pickle_ed.system_properties[_common.PROP_CONTENT_ENCODING] == properties.content_encoding
+    assert pickle_ed.system_properties[_common.PROP_CONTENT_TYPE] == properties.content_type
+    assert pickle_ed.system_properties[_common.PROP_USER_ID] == properties.user_id
+    assert pickle_ed.system_properties[_common.PROP_TO] == properties.to
+    assert pickle_ed.system_properties[_common.PROP_SUBJECT] == properties.subject
+    assert pickle_ed.system_properties[_common.PROP_REPLY_TO] == properties.reply_to
+    assert pickle_ed.system_properties[_common.PROP_ABSOLUTE_EXPIRY_TIME] == properties.absolute_expiry_time
+    assert pickle_ed.system_properties[_common.PROP_CREATION_TIME] == properties.creation_time
+    assert pickle_ed.system_properties[_common.PROP_GROUP_ID] == properties.group_id
+    assert pickle_ed.system_properties[_common.PROP_GROUP_SEQUENCE] == properties.group_sequence
+    assert pickle_ed.system_properties[_common.PROP_REPLY_TO_GROUP_ID] == properties.reply_to_group_id

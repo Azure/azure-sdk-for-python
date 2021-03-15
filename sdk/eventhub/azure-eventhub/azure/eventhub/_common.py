@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import json
 import logging
+import copy
 from typing import (
     Union,
     Dict,
@@ -21,6 +22,7 @@ from typing import (
 import six
 
 from uamqp import BatchMessage, Message, constants
+from uamqp.message import MessageProperties, MessageHeader
 
 from ._utils import set_message_partition_key, trace_message, utc_from_timestamp
 from ._constants import (
@@ -155,39 +157,106 @@ class EventData(object):
 
     def __getstate__(self):
         state = self.__dict__.copy()
-        message_state = state['message'].__dict__.copy()
-        body_data = list(message_state['_body'].data)
-        del message_state['_message']
-        message_state['_body'] = body_data
-        state['message'] = message_state
-        return state
+        message_state = state["message"].__dict__.copy()
 
-    def _create_message_from_properties(self, body, message_state):
-        # remove properties in state that are not args
-        del message_state['_body']
-        self.message = Message(body)
-        for prop, value in message_state.items():
-            setattr(self.message, prop, value)
+        # get _body as list of bytes/str to serialize
+        if message_state["_body"].data:
+            body_data = list(message_state["_body"].data)
+        else:
+            body_data = ""
+        message_state["_body"] = body_data
+
+        # get message properties as dict to serialize, if exists
+        if message_state["_properties"]:
+            message_props = message_state["_properties"]
+            message_props_dict = {
+                "message_id": message_props.message_id,
+                "user_id": message_props.user_id,
+                "to": message_props.to,
+                "subject": message_props.subject,
+                "reply_to": message_props.reply_to,
+                "correlation_id": message_props.correlation_id,
+                "content_type": message_props.content_type,
+                "content_encoding": message_props.content_encoding,
+                "absolute_expiry_time": message_props.absolute_expiry_time,
+                "creation_time": message_props.creation_time,
+                "group_id": message_props.group_id,
+                "group_sequence": message_props.group_sequence,
+                "reply_to_group_id": message_props.reply_to_group_id,
+            }
+            message_state["_properties"] = message_props_dict
+
+        # get message header as dict to serialize, if exists
+        if message_state["_header"]:
+            message_header = message_state["_header"]
+            message_header_dict = {
+                "delivery_count": message_header.delivery_count,
+                "time_to_live": message_header.time_to_live,
+                "first_acquirer": message_header.first_acquirer,
+                "durable": message_header.durable,
+                "priority": message_header.priority,
+            }
+            message_state["_header"] = message_header_dict
+
+        # remove _message to serialize
+        del message_state["_message"]
+
+        # TODO:check whether saving _message and _settler is needed/can be done
+
+        # reset message property to serializable message state
+        state["message"] = message_state
+        return state
 
     def __setstate__(self, state):
         self.__dict__.update(state)
+        self._populate_message_properties(state["message"])
 
-        # get list of bytes data from state message and decode
-        data = state['message']['_body']
+    def _populate_message_properties(self, message_state):
+        # deserialize _body
+        data = message_state["_body"]
         try:
             body = "".join(b.decode("UTF-8") for b in cast(Iterable[bytes], data))
         except TypeError:
             body = six.text_type(data)
+        del message_state["_body"]
+
+        # update message with serializable properties, if they exist
+        properties = None
+        header = None
+        message = None
+        settler = None
+        if message_state["_properties"]:
+            properties = MessageProperties(**message_state["_properties"])
+            del message_state["_properties"]
+
+        if message_state["_header"]:
+            header = MessageHeader(**message_state["_header"])
+            del message_state["_header"]
+
+        # TODO:deserialize _message and _settler if they are saved
 
         if body and isinstance(body, list):
             # create message from body
-            self._create_message_from_properties(body[0], state['message'])
+            self.message = Message(
+                body[0],
+                properties=properties,
+                header=header,
+                message=message,
+                settler=settler,
+            )
             for more in body[1:]:
                 self.message._body.append(more)  # pylint: disable=protected-access
-        elif body is None:
-            raise ValueError("EventData cannot be None.")
         else:
-            self._create_message_from_properties(body, state['message'])
+            self.message = Message(
+                body,
+                properties=properties,
+                header=header,
+                message=message,
+                settler=settler,
+            )
+
+        for prop, value in message_state.items():
+            setattr(self.message, prop, value)
 
     @classmethod
     def _from_message(cls, message):
@@ -415,9 +484,11 @@ class EventDataBatch(object):
             try:
                 self.add(event_data)
             except ValueError:
-                raise ValueError("The combined size of EventData collection exceeds the Event Hub frame size limit. "
-                                 "Please send a smaller collection of EventData, or use EventDataBatch, "
-                                 "which is guaranteed to be under the frame size limit")
+                raise ValueError(
+                    "The combined size of EventData collection exceeds the Event Hub frame size limit. "
+                    "Please send a smaller collection of EventData, or use EventDataBatch, "
+                    "which is guaranteed to be under the frame size limit"
+                )
 
     @property
     def size_in_bytes(self):
@@ -473,6 +544,7 @@ class EventDataBatch(object):
         self.message._body_gen.append(event_data)  # pylint: disable=protected-access
         self._size = size_after_add
         self._count += 1
+
 
 class DictMixin(object):
     def __setitem__(self, key, item):
