@@ -9,6 +9,7 @@
 - Changed return type of `create_chat_thread`: `ChatThreadClient -> CreateChatThreadResult`
 - Changed return types `add_participants`: `None -> list[(ChatThreadParticipant, CommunicationError)]`
 - Added check for failure in `add_participant`
+- Dropped support for Python 3.5
 ### Added
 - Removed nullable references from method signatures.
 
