@@ -12,7 +12,7 @@ from ._generated import BatchDocumentTranslationClient as _BatchDocumentTranslat
 from ._generated.models import BatchStatusDetail as _BatchStatusDetail
 from ._helpers import get_authentication_policy
 from ._user_agent import USER_AGENT
-from ._poller_helpers import StatusPollingGETRequest
+from ._polling import TranslationPolling
 if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
     from azure.core.credentials import AzureKeyCredential, TokenCredential
@@ -129,7 +129,7 @@ class DocumentTranslationClient(object):
             deserialization_callback=callback,
             polling_method=LROBasePolling(
                 timeout=30,
-                lro_algorithms=StatusPollingGETRequest(),
+                lro_algorithms=TranslationPolling(),
                 **kwargs
             ),
         )

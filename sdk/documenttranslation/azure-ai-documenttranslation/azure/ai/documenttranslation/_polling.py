@@ -9,12 +9,12 @@ from azure.core.polling.base_polling import (
 )
 
 
-class StatusPollingGETRequest(LongRunningOperation):
+class TranslationPolling(LongRunningOperation):
     """Implements a Location polling.
     """
 
     def __init__(self):
-        self._location_url = None
+        self._async_url = None
 
     def can_poll(self, pipeline_response):
         # type: (PipelineResponseType) -> bool
@@ -33,26 +33,17 @@ class StatusPollingGETRequest(LongRunningOperation):
         """
         return self._async_url
 
-    def get_final_get_url(self, pipeline_response):
-        # type: (PipelineResponseType) -> Optional[str]
-        """If a final GET is needed, returns the URL.
-
-        :rtype: str
-        """
-        return self._async_url
-
     def set_initial_status(self, pipeline_response):
         # type: (PipelineResponseType) -> str
         """Process first response after initiating long running operation.
 
         :param azure.core.pipeline.PipelineResponse response: initial REST call response.
         """
+        self._async_url = pipeline_response.http_response.request.url
+
         response = pipeline_response.http_response
-        if not _is_empty(response):
-            body = _as_json(response)
-            status = body.get("status")
-            if status:
-                return status
+        if response.status_code in {200, 201, 202, 204} and self._async_url:
+            return "InProgress"
         raise OperationFailed("Operation failed or canceled")
 
     def get_status(self, pipeline_response):
