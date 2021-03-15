@@ -9,7 +9,7 @@ import re
 def is_valid_dtmi(dtmi):
     """Checks validity of a DTMI
 
-    :param dtmi str: DTMI
+    :param str dtmi: DTMI
 
     :returns: Boolean indicating if DTMI is valid
     :rtype: bool
@@ -26,9 +26,9 @@ def is_valid_dtmi(dtmi):
 def get_model_uri(dtmi, repository_uri, expanded=False):
     """Get the URI representing the absolute location of a model in a Models Repository
 
-    :param dtmi str: DTMI for a model
-    :param repository_uri str: URI for a Models Repository
-    :param expanded bool: Indicates if the URI should be for an expanded model (Default: False)
+    :param str dtmi: DTMI for a model
+    :param str repository_uri: URI for a Models Repository
+    :param bool expanded: Indicates if the URI should be for an expanded model (Default: False)
 
     :raises: ValueError if given an invalid DTMI
 

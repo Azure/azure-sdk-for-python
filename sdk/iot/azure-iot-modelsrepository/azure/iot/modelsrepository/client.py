@@ -13,13 +13,12 @@ from azure.core.pipeline.policies import (
     HeadersPolicy,
     RetryPolicy,
     RedirectPolicy,
-    BearerTokenCredentialPolicy,
     ContentDecodePolicy,
     NetworkTraceLoggingPolicy,
     ProxyPolicy,
 )
-from . import resolver
-from . import pseudo_parser
+from . import _resolver
+from . import _pseudo_parser
 
 
 # Public constants exposed to consumers
@@ -60,14 +59,14 @@ class ModelsRepositoryClient(object):
         self.fetcher = _create_fetcher(
             location=repository_location, api_version=api_version, **kwargs
         )
-        self.resolver = resolver.DtmiResolver(self.fetcher)
-        self.pseudo_parser = pseudo_parser.PseudoParser(self.resolver)
+        self.resolver = _resolver.DtmiResolver(self.fetcher)
+        self._psuedo_parser = _pseudo_parser.PseudoParser(self.resolver)
 
     def get_models(self, dtmis, dependency_resolution=DEPENDENCY_MODE_DISABLED):
         """Retrieve a model from the Models Repository.
 
         :param list[str] dtmis: The DTMIs for the models you wish to retrieve
-        :param str dependency_resolution : Dependency resolution mode. Possible values:
+        :param str dependency_resolution: Dependency resolution mode. Possible values:
             - "disabled": Do not resolve model dependencies
             - "enabled": Resolve model dependencies from the repository
             - "tryFromExpanded": Attempt to resolve model and dependencies from an expanded DTDL
@@ -88,16 +87,16 @@ class ModelsRepositoryClient(object):
             # Manually resolve dependencies using pseudo-parser
             base_model_map = self.resolver.resolve(dtmis)
             base_model_list = list(base_model_map.values())
-            model_map = self.pseudo_parser.expand(base_model_list)
+            model_map = self._psuedo_parser.expand(base_model_list)
         elif dependency_resolution == DEPENDENCY_MODE_TRY_FROM_EXPANDED:
             # Try to use an expanded DTDL to resolve dependencies
             try:
                 model_map = self.resolver.resolve(dtmis, expanded_model=True)
-            except resolver.ResolverError:
+            except _resolver.ResolverError:
                 # Fallback to manual dependency resolution
                 base_model_map = self.resolver.resolve(dtmis)
                 base_model_list = list(base_model_map.items())
-                model_map = self.pseudo_parser.expand(base_model_list)
+                model_map = self._psuedo_parser.expand(base_model_list)
         else:
             raise ValueError("Invalid dependency resolution mode: {}".format(dependency_resolution))
         return model_map
@@ -122,22 +121,22 @@ def _create_fetcher(location, **kwargs):
     if scheme in _REMOTE_PROTOCOLS:
         # HTTP/HTTPS URL
         client = _create_pipeline_client(base_url=location, **kwargs)
-        fetcher = resolver.HttpFetcher(client)
+        fetcher = _resolver.HttpFetcher(client)
     elif scheme == "file":
         # Filesystem URI
         location = location[len("file://") :]
-        fetcher = resolver.FilesystemFetcher(location)
+        fetcher = _resolver.FilesystemFetcher(location)
     elif scheme == "" and location.startswith("/"):
         # POSIX filesystem path
-        fetcher = resolver.FilesystemFetcher(location)
+        fetcher = _resolver.FilesystemFetcher(location)
     elif scheme == "" and re.search(r"\.[a-zA-z]{2,63}$", location[: location.find("/")]):
         # Web URL with protocol unspecified - default to HTTPS
         location = "https://" + location
         client = _create_pipeline_client(base_url=location, **kwargs)
-        fetcher = resolver.HttpFetcher(client)
+        fetcher = _resolver.HttpFetcher(client)
     elif scheme != "" and len(scheme) == 1 and scheme.isalpha():
         # Filesystem path using drive letters (e.g. "C:", "D:", etc.)
-        fetcher = resolver.FilesystemFetcher(location)
+        fetcher = _resolver.FilesystemFetcher(location)
     else:
         raise ValueError("Unable to identify location: {}".format(location))
     return fetcher

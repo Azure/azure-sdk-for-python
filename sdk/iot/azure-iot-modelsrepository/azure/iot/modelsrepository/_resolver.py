@@ -4,13 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 import logging
-import six
 import json
 import abc
-import re
 import os
+import six
 from . import dtmi_conventions
-from .chainable_exception import ChainableException
+from ._chainable_exception import ChainableException
 
 logger = logging.getLogger(__name__)
 
