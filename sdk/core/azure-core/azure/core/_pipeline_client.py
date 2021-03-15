@@ -121,7 +121,7 @@ class PipelineClient(PipelineClientBase):
                 ContentDecodePolicy(**kwargs)
             ]
             if non_retriable_policies:
-                if isinstance(non_retriable_policies, HTTPPolicy) or isinstance(non_retriable_policies, SansIOHTTPPolicy):
+                if isinstance(non_retriable_policies, (HTTPPolicy, SansIOHTTPPolicy)):
                     policies.append(non_retriable_policies)
                 else:
                     for policy in non_retriable_policies:
@@ -131,7 +131,7 @@ class PipelineClient(PipelineClientBase):
                                config.authentication_policy,
                                config.custom_hook_policy]
             if retriable_policies:
-                if isinstance(retriable_policies, HTTPPolicy) or isinstance(retriable_policies, SansIOHTTPPolicy):
+                if isinstance(retriable_policies, (HTTPPolicy, SansIOHTTPPolicy)):
                     policies.append(retriable_policies)
                 else:
                     for policy in retriable_policies:

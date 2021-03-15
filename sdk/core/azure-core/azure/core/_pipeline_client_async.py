@@ -122,8 +122,7 @@ class AsyncPipelineClient(PipelineClientBase):
                 ContentDecodePolicy(**kwargs)
             ]
             if non_retriable_policies:
-                if isinstance(non_retriable_policies, AsyncHTTPPolicy) \
-                        or isinstance(non_retriable_policies, SansIOHTTPPolicy):
+                if isinstance(non_retriable_policies, (AsyncHTTPPolicy, SansIOHTTPPolicy)):
                     policies.append(non_retriable_policies)
                 else:
                     for policy in non_retriable_policies:
@@ -135,8 +134,7 @@ class AsyncPipelineClient(PipelineClientBase):
                 config.custom_hook_policy
             ]
             if retriable_policies:
-                if isinstance(retriable_policies, AsyncHTTPPolicy) \
-                        or isinstance(retriable_policies, SansIOHTTPPolicy):
+                if isinstance(retriable_policies, (AsyncHTTPPolicy, SansIOHTTPPolicy)):
                     policies.append(retriable_policies)
                 else:
                     for policy in retriable_policies:
