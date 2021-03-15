@@ -9,4 +9,4 @@ The pre-configured endpoints and DTMIs within the sampmles refer to example DTDL
 
 * [client_configuration_sample.py](client_configuration_sample.py) - Configure the client to work with local or remote repositories, as well as custom policies and transports
 
-* [dtmi_utils_sample.py](dtmi_utils_sample.py) - Use the dtmi_utils module to manipulate and check DTMIs
+* [dtmi_conventions_sample.py](dtmi_conventions_sample.py) - Use the `dtmi_conventions` module to manipulate and check DTMIs
