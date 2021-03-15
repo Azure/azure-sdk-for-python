@@ -1,0 +1,2 @@
+azure-eventhub-checkpointstoreblob
+azure-eventhub-checkpointstoreblob-aio; python_version >= '3.5'

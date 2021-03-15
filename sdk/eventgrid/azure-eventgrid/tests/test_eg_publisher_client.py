@@ -14,6 +14,11 @@ from datetime import datetime, timedelta
 from msrest.serialization import UTC
 import datetime as dt
 
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
+
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 
 from azure_devtools.scenario_tests import ReplayableTest
@@ -28,7 +33,7 @@ from eventgrid_preparer import (
 )
 
 class EventGridPublisherClientTests(AzureMgmtTestCase):
-    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['aeg-sas-key']
+    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['aeg-sas-key', 'aeg-sas-token']
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
@@ -42,6 +47,21 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 data_version="2.0"
                 )
         client.send(eg_event)
+
+    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
+    @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
+    def test_send_event_grid_event_fails_without_full_url(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
+        parsed_url = urlparse(eventgrid_topic_endpoint)
+        client = EventGridPublisherClient(parsed_url.netloc, akc_credential)
+        eg_event = EventGridEvent(
+                subject="sample", 
+                data={"sample": "eventgridevent"}, 
+                event_type="Sample.EventGrid.Event",
+                data_version="2.0"
+                )
+        with pytest.raises(ValueError):
+            client.send(eg_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')

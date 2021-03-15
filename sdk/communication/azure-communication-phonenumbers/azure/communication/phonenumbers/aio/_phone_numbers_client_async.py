@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from typing import TYPE_CHECKING
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.paging import ItemPaged
@@ -13,11 +14,26 @@ from .._generated.models import PhoneNumberSearchRequest
 from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._version import SDK_MONIKER
 
+if TYPE_CHECKING:
+    from typing import Any
+    from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.async_paging import AsyncItemPaged
+    from azure.core.polling import AsyncLROPoller
+    from .._generated.models import PhoneNumberSearchResult, PurchasedPhoneNumber, PhoneNumberCapabilities
+
 class PhoneNumbersClient(object):
+    """A client to interact with the AzureCommunicationService Phone Numbers gateway.
+
+    This client provides operations to interact with the phone numbers service
+    :param str endpoint:
+        The endpoint url for Azure Communication Service resource.
+    :param AsyncTokenCredential credential:
+        The credentials with which to authenticate.
+    """
     def __init__(
                 self,
                 endpoint, # type: str
-                credential, # type: str
+                credential, # type: AsyncTokenCredential
                 **kwargs # type: Any
         ):
         # type: (...) -> None
@@ -85,7 +101,7 @@ class PhoneNumbersClient(object):
             **kwargs # type: Any
     ):
         # type: (...) -> AsyncLROPoller[None]
-        """Releases an acquired phone number.
+        """Releases an purchased phone number.
 
         :param phone_number: Phone number to be released, e.g. +11234567890.
         :type phone_number: str
@@ -158,7 +174,7 @@ class PhoneNumbersClient(object):
             calling=None, # type: str
             **kwargs # type: Any
     ):
-        # type: (...) -> AsyncLROPoller["_models.AcquiredPhoneNumber"]
+        # type: (...) -> AsyncLROPoller["_models.PurchasedPhoneNumber"]
         """Updates the capabilities of a phone number.
 
         :param phone_number: The phone number id in E.164 format. The leading plus can be either + or
@@ -174,7 +190,7 @@ class PhoneNumbersClient(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls
             for LRO operations if no Retry-After header is present.
-        :rtype: ~azure.core.polling.AsyncLROPoller[AcquiredPhoneNumber]
+        :rtype: ~azure.core.polling.AsyncLROPoller[PurchasedPhoneNumber]
         """
         return await self._phone_number_client.phone_numbers.begin_update_capabilities(
             phone_number,
@@ -184,18 +200,18 @@ class PhoneNumbersClient(object):
         )
 
     @distributed_trace_async
-    async def get_phone_number(
+    async def get_purchased_phone_number(
             self,
             phone_number, # type: str
             **kwargs # type: Any
     ):
-        # type: (...) -> AcquiredPhoneNumber
-        """Gets the details of the given acquired phone number.
+        # type: (...) -> PurchasedPhoneNumber
+        """Gets the details of the given purchased phone number.
 
-        :param phone_number: The acquired phone number whose details are to be fetched in E.164 format,
+        :param phone_number: The purchased phone number whose details are to be fetched in E.164 format,
          e.g. +11234567890.
         :type phone_number: str
-        :rtype: ~azure.communication.phonenumbers.models.AcquiredPhoneNumber
+        :rtype: ~azure.communication.phonenumbers.models.PurchasedPhoneNumber
         """
         return await self._phone_number_client.phone_numbers.get_by_number(
             phone_number,
@@ -203,12 +219,12 @@ class PhoneNumbersClient(object):
         )
 
     @distributed_trace
-    def list_acquired_phone_numbers(
+    def list_purchased_phone_numbers(
         self,
         **kwargs # type: Any
     ):
-        # type: (...) -> AsyncItemPaged[AcquiredPhoneNumbers]
-        """Gets the list of all acquired phone numbers.
+        # type: (...) -> AsyncItemPaged[PurchasedPhoneNumber]
+        """Gets the list of all purchased phone numbers.
 
         :param skip: An optional parameter for how many entries to skip, for pagination purposes. The
             default value is 0.
@@ -216,7 +232,7 @@ class PhoneNumbersClient(object):
         :param top: An optional parameter for how many entries to return, for pagination purposes. The
             default value is 100.
         :type top: int
-        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.communication.phonenumbers.models.AcquiredPhoneNumbers]
+        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
         """
         return self._phone_number_client.phone_numbers.list_phone_numbers(
             **kwargs

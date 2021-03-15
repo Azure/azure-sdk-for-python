@@ -296,16 +296,20 @@ class BigDataPoolResourceInfo(TrackedResource):
     :type auto_pause: ~azure.mgmt.synapse.models.AutoPauseProperties
     :param is_compute_isolation_enabled: Whether compute isolation is required or not.
     :type is_compute_isolation_enabled: bool
-    :param have_library_requirements_changed: Whether library requirements changed.
-    :type have_library_requirements_changed: bool
     :param session_level_packages_enabled: Whether session level packages enabled.
     :type session_level_packages_enabled: bool
+    :param cache_size: The cache size.
+    :type cache_size: int
+    :param dynamic_executor_allocation: Dynamic Executor Allocation.
+    :type dynamic_executor_allocation: ~azure.mgmt.synapse.models.DynamicExecutorAllocation
     :param spark_events_folder: The Spark events folder.
     :type spark_events_folder: str
     :param node_count: The number of nodes in the Big Data pool.
     :type node_count: int
     :param library_requirements: Library version requirements.
     :type library_requirements: ~azure.mgmt.synapse.models.LibraryRequirements
+    :param custom_libraries: List of custom libraries/packages associated with the spark pool.
+    :type custom_libraries: list[~azure.mgmt.synapse.models.LibraryInfo]
     :param spark_config_properties: Spark configuration file to specify additional properties.
     :type spark_config_properties: ~azure.mgmt.synapse.models.LibraryRequirements
     :param spark_version: The Apache Spark version.
@@ -318,6 +322,8 @@ class BigDataPoolResourceInfo(TrackedResource):
     :param node_size_family: The kind of nodes that the Big Data pool provides. Possible values
      include: "None", "MemoryOptimized".
     :type node_size_family: str or ~azure.mgmt.synapse.models.NodeSizeFamily
+    :ivar last_succeeded_timestamp: The time when the Big Data pool was updated successfully.
+    :vartype last_succeeded_timestamp: ~datetime.datetime
     """
 
     _validation = {
@@ -325,6 +331,7 @@ class BigDataPoolResourceInfo(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'last_succeeded_timestamp': {'readonly': True},
     }
 
     _attribute_map = {
@@ -338,16 +345,19 @@ class BigDataPoolResourceInfo(TrackedResource):
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'auto_pause': {'key': 'properties.autoPause', 'type': 'AutoPauseProperties'},
         'is_compute_isolation_enabled': {'key': 'properties.isComputeIsolationEnabled', 'type': 'bool'},
-        'have_library_requirements_changed': {'key': 'properties.haveLibraryRequirementsChanged', 'type': 'bool'},
         'session_level_packages_enabled': {'key': 'properties.sessionLevelPackagesEnabled', 'type': 'bool'},
+        'cache_size': {'key': 'properties.cacheSize', 'type': 'int'},
+        'dynamic_executor_allocation': {'key': 'properties.dynamicExecutorAllocation', 'type': 'DynamicExecutorAllocation'},
         'spark_events_folder': {'key': 'properties.sparkEventsFolder', 'type': 'str'},
         'node_count': {'key': 'properties.nodeCount', 'type': 'int'},
         'library_requirements': {'key': 'properties.libraryRequirements', 'type': 'LibraryRequirements'},
+        'custom_libraries': {'key': 'properties.customLibraries', 'type': '[LibraryInfo]'},
         'spark_config_properties': {'key': 'properties.sparkConfigProperties', 'type': 'LibraryRequirements'},
         'spark_version': {'key': 'properties.sparkVersion', 'type': 'str'},
         'default_spark_log_folder': {'key': 'properties.defaultSparkLogFolder', 'type': 'str'},
         'node_size': {'key': 'properties.nodeSize', 'type': 'str'},
         'node_size_family': {'key': 'properties.nodeSizeFamily', 'type': 'str'},
+        'last_succeeded_timestamp': {'key': 'properties.lastSucceededTimestamp', 'type': 'iso-8601'},
     }
 
     def __init__(
@@ -360,16 +370,19 @@ class BigDataPoolResourceInfo(TrackedResource):
         self.creation_date = kwargs.get('creation_date', None)
         self.auto_pause = kwargs.get('auto_pause', None)
         self.is_compute_isolation_enabled = kwargs.get('is_compute_isolation_enabled', None)
-        self.have_library_requirements_changed = kwargs.get('have_library_requirements_changed', None)
         self.session_level_packages_enabled = kwargs.get('session_level_packages_enabled', None)
+        self.cache_size = kwargs.get('cache_size', None)
+        self.dynamic_executor_allocation = kwargs.get('dynamic_executor_allocation', None)
         self.spark_events_folder = kwargs.get('spark_events_folder', None)
         self.node_count = kwargs.get('node_count', None)
         self.library_requirements = kwargs.get('library_requirements', None)
+        self.custom_libraries = kwargs.get('custom_libraries', None)
         self.spark_config_properties = kwargs.get('spark_config_properties', None)
         self.spark_version = kwargs.get('spark_version', None)
         self.default_spark_log_folder = kwargs.get('default_spark_log_folder', None)
         self.node_size = kwargs.get('node_size', None)
         self.node_size_family = kwargs.get('node_size_family', None)
+        self.last_succeeded_timestamp = None
 
 
 class BigDataPoolResourceInfoListResult(msrest.serialization.Model):
@@ -447,82 +460,6 @@ class CheckNameAvailabilityResponse(msrest.serialization.Model):
         self.available = kwargs.get('available', None)
         self.reason = kwargs.get('reason', None)
         self.name = kwargs.get('name', None)
-
-
-class CloudError(msrest.serialization.Model):
-    """The object that defines the structure of an Azure Synapse error response.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param code: Required. Error code.
-    :type code: str
-    :param message: Required. Error message.
-    :type message: str
-    :param target: Property name/path in request associated with error.
-    :type target: str
-    :param details: Array with additional error details.
-    :type details: list[~azure.mgmt.synapse.models.CloudError]
-    """
-
-    _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
-    }
-
-    _attribute_map = {
-        'code': {'key': 'error.code', 'type': 'str'},
-        'message': {'key': 'error.message', 'type': 'str'},
-        'target': {'key': 'error.target', 'type': 'str'},
-        'details': {'key': 'error.details', 'type': '[CloudError]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CloudError, self).__init__(**kwargs)
-        self.code = kwargs['code']
-        self.message = kwargs['message']
-        self.target = kwargs.get('target', None)
-        self.details = kwargs.get('details', None)
-
-
-class CloudErrorAutoGenerated(msrest.serialization.Model):
-    """The object that defines the structure of an Azure Synapse error response.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param code: Required. Error code.
-    :type code: str
-    :param message: Required. Error message.
-    :type message: str
-    :param target: Property name/path in request associated with error.
-    :type target: str
-    :param details: Array with additional error details.
-    :type details: list[~azure.mgmt.synapse.models.CloudErrorAutoGenerated]
-    """
-
-    _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
-    }
-
-    _attribute_map = {
-        'code': {'key': 'error.code', 'type': 'str'},
-        'message': {'key': 'error.message', 'type': 'str'},
-        'target': {'key': 'error.target', 'type': 'str'},
-        'details': {'key': 'error.details', 'type': '[CloudErrorAutoGenerated]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CloudErrorAutoGenerated, self).__init__(**kwargs)
-        self.code = kwargs['code']
-        self.message = kwargs['message']
-        self.target = kwargs.get('target', None)
-        self.details = kwargs.get('details', None)
 
 
 class CustomSetupBase(msrest.serialization.Model):
@@ -940,6 +877,25 @@ class DataWarehouseUserActivities(Resource):
         self.active_queries_count = None
 
 
+class DynamicExecutorAllocation(msrest.serialization.Model):
+    """Dynamic Executor Allocation Properties.
+
+    :param enabled: Indicates whether Dynamic Executor Allocation is enabled or not.
+    :type enabled: bool
+    """
+
+    _attribute_map = {
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DynamicExecutorAllocation, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+
+
 class EncryptionDetails(msrest.serialization.Model):
     """Details of the encryption associated with the workspace.
 
@@ -967,6 +923,105 @@ class EncryptionDetails(msrest.serialization.Model):
         super(EncryptionDetails, self).__init__(**kwargs)
         self.double_encryption_enabled = None
         self.cmk = kwargs.get('cmk', None)
+
+
+class EncryptionProtector(Resource):
+    """The server encryption protector.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar kind: Kind of encryption protector. This is metadata used for the Azure portal
+     experience.
+    :vartype kind: str
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar subregion: Subregion of the encryption protector.
+    :vartype subregion: str
+    :param server_key_name: The name of the server key.
+    :type server_key_name: str
+    :param server_key_type: The encryption protector type like 'ServiceManaged', 'AzureKeyVault'.
+     Possible values include: "ServiceManaged", "AzureKeyVault".
+    :type server_key_type: str or ~azure.mgmt.synapse.models.ServerKeyType
+    :ivar uri: The URI of the server key.
+    :vartype uri: str
+    :ivar thumbprint: Thumbprint of the server key.
+    :vartype thumbprint: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'readonly': True},
+        'location': {'readonly': True},
+        'subregion': {'readonly': True},
+        'uri': {'readonly': True},
+        'thumbprint': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'subregion': {'key': 'properties.subregion', 'type': 'str'},
+        'server_key_name': {'key': 'properties.serverKeyName', 'type': 'str'},
+        'server_key_type': {'key': 'properties.serverKeyType', 'type': 'str'},
+        'uri': {'key': 'properties.uri', 'type': 'str'},
+        'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(EncryptionProtector, self).__init__(**kwargs)
+        self.kind = None
+        self.location = None
+        self.subregion = None
+        self.server_key_name = kwargs.get('server_key_name', None)
+        self.server_key_type = kwargs.get('server_key_type', None)
+        self.uri = None
+        self.thumbprint = None
+
+
+class EncryptionProtectorListResult(msrest.serialization.Model):
+    """A list of server encryption protectors.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.synapse.models.EncryptionProtector]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[EncryptionProtector]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(EncryptionProtectorListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class EntityReference(msrest.serialization.Model):
@@ -1058,54 +1113,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self.info = None
 
 
-class ErrorContract(msrest.serialization.Model):
-    """Contains details when the response code indicates an error.
-
-    :param error: The error details.
-    :type error: ~azure.mgmt.synapse.models.ErrorResponse
-    """
-
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorContract, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
-
-
 class ErrorDetail(msrest.serialization.Model):
-    """Error details.
-
-    :param message: Error message.
-    :type message: str
-    :param code: Error code.
-    :type code: str
-    :param target: Error target.
-    :type target: str
-    """
-
-    _attribute_map = {
-        'message': {'key': 'message', 'type': 'str'},
-        'code': {'key': 'code', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorDetail, self).__init__(**kwargs)
-        self.message = kwargs.get('message', None)
-        self.code = kwargs.get('code', None)
-        self.target = kwargs.get('target', None)
-
-
-class ErrorResponse(msrest.serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1116,7 +1125,7 @@ class ErrorResponse(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.synapse.models.ErrorResponse]
+    :vartype details: list[~azure.mgmt.synapse.models.ErrorDetail]
     :ivar additional_info: The error additional info.
     :vartype additional_info: list[~azure.mgmt.synapse.models.ErrorAdditionalInfo]
     """
@@ -1133,7 +1142,7 @@ class ErrorResponse(msrest.serialization.Model):
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorResponse]'},
+        'details': {'key': 'details', 'type': '[ErrorDetail]'},
         'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
     }
 
@@ -1141,12 +1150,31 @@ class ErrorResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(ErrorResponse, self).__init__(**kwargs)
+        super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
         self.details = None
         self.additional_info = None
+
+
+class ErrorResponse(msrest.serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+
+    :param error: The error object.
+    :type error: ~azure.mgmt.synapse.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorDetail'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
 
 
 class ExtendedServerBlobAuditingPolicy(Resource):
@@ -2516,6 +2544,86 @@ class KeyInfoListResult(msrest.serialization.Model):
         self.value = kwargs.get('value', None)
 
 
+class LibraryInfo(msrest.serialization.Model):
+    """Library/package information of a Big Data pool powered by Apache Spark.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param name: Name of the library.
+    :type name: str
+    :param path: Storage blob path of library.
+    :type path: str
+    :param container_name: Storage blob container name.
+    :type container_name: str
+    :ivar uploaded_timestamp: The last update time of the library.
+    :vartype uploaded_timestamp: ~datetime.datetime
+    :param type: Type of the library.
+    :type type: str
+    :ivar provisioning_status: Provisioning status of the library/package.
+    :vartype provisioning_status: str
+    :ivar creator_id: Creator Id of the library/package.
+    :vartype creator_id: str
+    """
+
+    _validation = {
+        'uploaded_timestamp': {'readonly': True},
+        'provisioning_status': {'readonly': True},
+        'creator_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'path': {'key': 'path', 'type': 'str'},
+        'container_name': {'key': 'containerName', 'type': 'str'},
+        'uploaded_timestamp': {'key': 'uploadedTimestamp', 'type': 'iso-8601'},
+        'type': {'key': 'type', 'type': 'str'},
+        'provisioning_status': {'key': 'provisioningStatus', 'type': 'str'},
+        'creator_id': {'key': 'creatorId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LibraryInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.path = kwargs.get('path', None)
+        self.container_name = kwargs.get('container_name', None)
+        self.uploaded_timestamp = None
+        self.type = kwargs.get('type', None)
+        self.provisioning_status = None
+        self.creator_id = None
+
+
+class LibraryListResponse(msrest.serialization.Model):
+    """A list of Library resources.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. List of Library.
+    :type value: list[~azure.mgmt.synapse.models.LibraryResource]
+    :param next_link: The link to the next page of results, if any remaining results exist.
+    :type next_link: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[LibraryResource]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LibraryListResponse, self).__init__(**kwargs)
+        self.value = kwargs['value']
+        self.next_link = kwargs.get('next_link', None)
+
+
 class LibraryRequirements(msrest.serialization.Model):
     """Library requirements for a Big Data pool powered by Apache Spark.
 
@@ -2547,6 +2655,75 @@ class LibraryRequirements(msrest.serialization.Model):
         self.time = None
         self.content = kwargs.get('content', None)
         self.filename = kwargs.get('filename', None)
+
+
+class LibraryResource(AzureEntityResource):
+    """Library response details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    :param name_properties_name: Name of the library.
+    :type name_properties_name: str
+    :param path: Storage blob path of library.
+    :type path: str
+    :param container_name: Storage blob container name.
+    :type container_name: str
+    :ivar uploaded_timestamp: The last update time of the library.
+    :vartype uploaded_timestamp: ~datetime.datetime
+    :param type_properties_type: Type of the library.
+    :type type_properties_type: str
+    :ivar provisioning_status: Provisioning status of the library/package.
+    :vartype provisioning_status: str
+    :ivar creator_id: Creator Id of the library/package.
+    :vartype creator_id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'uploaded_timestamp': {'readonly': True},
+        'provisioning_status': {'readonly': True},
+        'creator_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
+        'path': {'key': 'properties.path', 'type': 'str'},
+        'container_name': {'key': 'properties.containerName', 'type': 'str'},
+        'uploaded_timestamp': {'key': 'properties.uploadedTimestamp', 'type': 'iso-8601'},
+        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
+        'provisioning_status': {'key': 'properties.provisioningStatus', 'type': 'str'},
+        'creator_id': {'key': 'properties.creatorId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LibraryResource, self).__init__(**kwargs)
+        self.name_properties_name = kwargs.get('name_properties_name', None)
+        self.path = kwargs.get('path', None)
+        self.container_name = kwargs.get('container_name', None)
+        self.uploaded_timestamp = None
+        self.type_properties_type = kwargs.get('type_properties_type', None)
+        self.provisioning_status = None
+        self.creator_id = None
 
 
 class LinkedIntegrationRuntime(msrest.serialization.Model):
@@ -2719,6 +2896,136 @@ class ListSqlPoolSecurityAlertPolicies(msrest.serialization.Model):
         super(ListSqlPoolSecurityAlertPolicies, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class MaintenanceWindowOptions(Resource):
+    """Maintenance window options.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :param is_enabled: Whether maintenance windows are enabled for the database.
+    :type is_enabled: bool
+    :param maintenance_window_cycles: Available maintenance cycles e.g. {Saturday, 0, 48\ *60},
+     {Wednesday, 0, 24*\ 60}.
+    :type maintenance_window_cycles: list[~azure.mgmt.synapse.models.MaintenanceWindowTimeRange]
+    :param min_duration_in_minutes: Minimum duration of maintenance window.
+    :type min_duration_in_minutes: int
+    :param default_duration_in_minutes: Default duration for maintenance window.
+    :type default_duration_in_minutes: int
+    :param min_cycles: Minimum number of maintenance windows cycles to be set on the database.
+    :type min_cycles: int
+    :param time_granularity_in_minutes: Time granularity in minutes for maintenance windows.
+    :type time_granularity_in_minutes: int
+    :param allow_multiple_maintenance_windows_per_cycle: Whether we allow multiple maintenance
+     windows per cycle.
+    :type allow_multiple_maintenance_windows_per_cycle: bool
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'is_enabled': {'key': 'properties.isEnabled', 'type': 'bool'},
+        'maintenance_window_cycles': {'key': 'properties.maintenanceWindowCycles', 'type': '[MaintenanceWindowTimeRange]'},
+        'min_duration_in_minutes': {'key': 'properties.minDurationInMinutes', 'type': 'int'},
+        'default_duration_in_minutes': {'key': 'properties.defaultDurationInMinutes', 'type': 'int'},
+        'min_cycles': {'key': 'properties.minCycles', 'type': 'int'},
+        'time_granularity_in_minutes': {'key': 'properties.timeGranularityInMinutes', 'type': 'int'},
+        'allow_multiple_maintenance_windows_per_cycle': {'key': 'properties.allowMultipleMaintenanceWindowsPerCycle', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MaintenanceWindowOptions, self).__init__(**kwargs)
+        self.is_enabled = kwargs.get('is_enabled', None)
+        self.maintenance_window_cycles = kwargs.get('maintenance_window_cycles', None)
+        self.min_duration_in_minutes = kwargs.get('min_duration_in_minutes', None)
+        self.default_duration_in_minutes = kwargs.get('default_duration_in_minutes', None)
+        self.min_cycles = kwargs.get('min_cycles', None)
+        self.time_granularity_in_minutes = kwargs.get('time_granularity_in_minutes', None)
+        self.allow_multiple_maintenance_windows_per_cycle = kwargs.get('allow_multiple_maintenance_windows_per_cycle', None)
+
+
+class MaintenanceWindows(Resource):
+    """Maintenance windows.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :param time_ranges:
+    :type time_ranges: list[~azure.mgmt.synapse.models.MaintenanceWindowTimeRange]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'time_ranges': {'key': 'properties.timeRanges', 'type': '[MaintenanceWindowTimeRange]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MaintenanceWindows, self).__init__(**kwargs)
+        self.time_ranges = kwargs.get('time_ranges', None)
+
+
+class MaintenanceWindowTimeRange(msrest.serialization.Model):
+    """Maintenance window time range.
+
+    :param day_of_week: Day of maintenance window. Possible values include: "Sunday", "Monday",
+     "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday".
+    :type day_of_week: str or ~azure.mgmt.synapse.models.DayOfWeek
+    :param start_time: Start time minutes offset from 12am.
+    :type start_time: str
+    :param duration: Duration of maintenance window in minutes.
+    :type duration: str
+    """
+
+    _attribute_map = {
+        'day_of_week': {'key': 'dayOfWeek', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'str'},
+        'duration': {'key': 'duration', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MaintenanceWindowTimeRange, self).__init__(**kwargs)
+        self.day_of_week = kwargs.get('day_of_week', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.duration = kwargs.get('duration', None)
 
 
 class ManagedIdentity(msrest.serialization.Model):
@@ -3146,6 +3453,26 @@ class MetadataSyncConfig(Resource):
         super(MetadataSyncConfig, self).__init__(**kwargs)
         self.enabled = kwargs.get('enabled', None)
         self.sync_interval_in_minutes = kwargs.get('sync_interval_in_minutes', None)
+
+
+class NetworkSettings(msrest.serialization.Model):
+    """Network Settings.
+
+    :param public_network_access: Enable or Disable pubic network access to workspace. Possible
+     values include: "Enabled", "Disabled".
+    :type public_network_access: str or ~azure.mgmt.synapse.models.WorkspacePublicNetworkAccess
+    """
+
+    _attribute_map = {
+        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(NetworkSettings, self).__init__(**kwargs)
+        self.public_network_access = kwargs.get('public_network_access', None)
 
 
 class OperationMetaLogSpecification(msrest.serialization.Model):
@@ -3978,6 +4305,75 @@ class QueryStatistic(msrest.serialization.Model):
         self.intervals = None
 
 
+class RecommendedSensitivityLabelUpdate(Resource):
+    """A recommended sensitivity label update operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :param op:  Possible values include: "enable", "disable".
+    :type op: str or ~azure.mgmt.synapse.models.RecommendedSensitivityLabelUpdateKind
+    :param schema: Schema name of the column to update.
+    :type schema: str
+    :param table: Table name of the column to update.
+    :type table: str
+    :param column: Column name to update.
+    :type column: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'op': {'key': 'properties.op', 'type': 'str'},
+        'schema': {'key': 'properties.schema', 'type': 'str'},
+        'table': {'key': 'properties.table', 'type': 'str'},
+        'column': {'key': 'properties.column', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RecommendedSensitivityLabelUpdate, self).__init__(**kwargs)
+        self.op = kwargs.get('op', None)
+        self.schema = kwargs.get('schema', None)
+        self.table = kwargs.get('table', None)
+        self.column = kwargs.get('column', None)
+
+
+class RecommendedSensitivityLabelUpdateList(msrest.serialization.Model):
+    """A list of recommended sensitivity label update operations.
+
+    :param operations:
+    :type operations: list[~azure.mgmt.synapse.models.RecommendedSensitivityLabelUpdate]
+    """
+
+    _attribute_map = {
+        'operations': {'key': 'operations', 'type': '[RecommendedSensitivityLabelUpdate]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RecommendedSensitivityLabelUpdateList, self).__init__(**kwargs)
+        self.operations = kwargs.get('operations', None)
+
+
 class RecoverableSqlPool(Resource):
     """A recoverable sql pool.
 
@@ -4221,6 +4617,31 @@ class ReplicationLinkListResult(msrest.serialization.Model):
         super(ReplicationLinkListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = None
+
+
+class ResourceMoveDefinition(msrest.serialization.Model):
+    """Contains the information necessary to perform a resource move (rename).
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. The target ID for the resource.
+    :type id: str
+    """
+
+    _validation = {
+        'id': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ResourceMoveDefinition, self).__init__(**kwargs)
+        self.id = kwargs['id']
 
 
 class RestorableDroppedSqlPool(Resource):
@@ -4784,6 +5205,14 @@ class SensitivityLabel(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar managed_by: managed by.
+    :vartype managed_by: str
+    :ivar schema_name: The schema name.
+    :vartype schema_name: str
+    :ivar table_name: The table name.
+    :vartype table_name: str
+    :ivar column_name: The column name.
+    :vartype column_name: str
     :param label_name: The label name.
     :type label_name: str
     :param label_id: The label ID.
@@ -4796,12 +5225,18 @@ class SensitivityLabel(Resource):
      sensitivity label only. Specifies whether the sensitivity recommendation on this column is
      disabled (dismissed) or not.
     :vartype is_disabled: bool
+    :param rank:  Possible values include: "None", "Low", "Medium", "High", "Critical".
+    :type rank: str or ~azure.mgmt.synapse.models.SensitivityLabelRank
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'managed_by': {'readonly': True},
+        'schema_name': {'readonly': True},
+        'table_name': {'readonly': True},
+        'column_name': {'readonly': True},
         'is_disabled': {'readonly': True},
     }
 
@@ -4809,11 +5244,16 @@ class SensitivityLabel(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'managed_by': {'key': 'managedBy', 'type': 'str'},
+        'schema_name': {'key': 'properties.schemaName', 'type': 'str'},
+        'table_name': {'key': 'properties.tableName', 'type': 'str'},
+        'column_name': {'key': 'properties.columnName', 'type': 'str'},
         'label_name': {'key': 'properties.labelName', 'type': 'str'},
         'label_id': {'key': 'properties.labelId', 'type': 'str'},
         'information_type': {'key': 'properties.informationType', 'type': 'str'},
         'information_type_id': {'key': 'properties.informationTypeId', 'type': 'str'},
         'is_disabled': {'key': 'properties.isDisabled', 'type': 'bool'},
+        'rank': {'key': 'properties.rank', 'type': 'str'},
     }
 
     def __init__(
@@ -4821,11 +5261,16 @@ class SensitivityLabel(Resource):
         **kwargs
     ):
         super(SensitivityLabel, self).__init__(**kwargs)
+        self.managed_by = None
+        self.schema_name = None
+        self.table_name = None
+        self.column_name = None
         self.label_name = kwargs.get('label_name', None)
         self.label_id = kwargs.get('label_id', None)
         self.information_type = kwargs.get('information_type', None)
         self.information_type_id = kwargs.get('information_type_id', None)
         self.is_disabled = None
+        self.rank = kwargs.get('rank', None)
 
 
 class SensitivityLabelListResult(msrest.serialization.Model):
@@ -4856,6 +5301,79 @@ class SensitivityLabelListResult(msrest.serialization.Model):
         super(SensitivityLabelListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class SensitivityLabelUpdate(Resource):
+    """A sensitivity label update operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :param op:  Possible values include: "set", "remove".
+    :type op: str or ~azure.mgmt.synapse.models.SensitivityLabelUpdateKind
+    :param schema: Schema name of the column to update.
+    :type schema: str
+    :param table: Table name of the column to update.
+    :type table: str
+    :param column: Column name to update.
+    :type column: str
+    :param sensitivity_label: The sensitivity label information to apply on a column.
+    :type sensitivity_label: ~azure.mgmt.synapse.models.SensitivityLabel
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'op': {'key': 'properties.op', 'type': 'str'},
+        'schema': {'key': 'properties.schema', 'type': 'str'},
+        'table': {'key': 'properties.table', 'type': 'str'},
+        'column': {'key': 'properties.column', 'type': 'str'},
+        'sensitivity_label': {'key': 'properties.sensitivityLabel', 'type': 'SensitivityLabel'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SensitivityLabelUpdate, self).__init__(**kwargs)
+        self.op = kwargs.get('op', None)
+        self.schema = kwargs.get('schema', None)
+        self.table = kwargs.get('table', None)
+        self.column = kwargs.get('column', None)
+        self.sensitivity_label = kwargs.get('sensitivity_label', None)
+
+
+class SensitivityLabelUpdateList(msrest.serialization.Model):
+    """A list of sensitivity label update operations.
+
+    :param operations:
+    :type operations: list[~azure.mgmt.synapse.models.SensitivityLabelUpdate]
+    """
+
+    _attribute_map = {
+        'operations': {'key': 'operations', 'type': '[SensitivityLabelUpdate]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SensitivityLabelUpdateList, self).__init__(**kwargs)
+        self.operations = kwargs.get('operations', None)
 
 
 class ServerBlobAuditingPolicy(Resource):
@@ -5400,11 +5918,14 @@ class SqlPool(TrackedResource):
     :param status: Resource status.
     :type status: str
     :param restore_point_in_time: Snapshot time to restore.
-    :type restore_point_in_time: str
+    :type restore_point_in_time: ~datetime.datetime
     :param create_mode: What is this?.
     :type create_mode: str
     :param creation_date: Date the SQL pool was created.
     :type creation_date: ~datetime.datetime
+    :param storage_account_type: The storage account type used to store backups for this sql pool.
+     Possible values include: "GRS", "LRS", "ZRS".
+    :type storage_account_type: str or ~azure.mgmt.synapse.models.StorageAccountType
     """
 
     _validation = {
@@ -5427,9 +5948,10 @@ class SqlPool(TrackedResource):
         'recoverable_database_id': {'key': 'properties.recoverableDatabaseId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
-        'restore_point_in_time': {'key': 'properties.restorePointInTime', 'type': 'str'},
+        'restore_point_in_time': {'key': 'properties.restorePointInTime', 'type': 'iso-8601'},
         'create_mode': {'key': 'properties.createMode', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
+        'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
     }
 
     def __init__(
@@ -5447,6 +5969,7 @@ class SqlPool(TrackedResource):
         self.restore_point_in_time = kwargs.get('restore_point_in_time', None)
         self.create_mode = kwargs.get('create_mode', None)
         self.creation_date = kwargs.get('creation_date', None)
+        self.storage_account_type = kwargs.get('storage_account_type', None)
 
 
 class SqlPoolBlobAuditingPolicy(Resource):
@@ -5690,12 +6213,15 @@ class SqlPoolColumn(Resource):
      "decimal", "numeric", "smallmoney", "bigint", "hierarchyid", "geometry", "geography",
      "varbinary", "varchar", "binary", "char", "timestamp", "nvarchar", "nchar", "xml", "sysname".
     :type column_type: str or ~azure.mgmt.synapse.models.ColumnDataType
+    :ivar is_computed: Indicates whether column value is computed or not.
+    :vartype is_computed: bool
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'is_computed': {'readonly': True},
     }
 
     _attribute_map = {
@@ -5703,6 +6229,7 @@ class SqlPoolColumn(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'column_type': {'key': 'properties.columnType', 'type': 'str'},
+        'is_computed': {'key': 'properties.isComputed', 'type': 'bool'},
     }
 
     def __init__(
@@ -5711,6 +6238,7 @@ class SqlPoolColumn(Resource):
     ):
         super(SqlPoolColumn, self).__init__(**kwargs)
         self.column_type = kwargs.get('column_type', None)
+        self.is_computed = None
 
 
 class SqlPoolColumnListResult(msrest.serialization.Model):
@@ -5965,11 +6493,14 @@ class SqlPoolPatchInfo(msrest.serialization.Model):
     :param status: Resource status.
     :type status: str
     :param restore_point_in_time: Snapshot time to restore.
-    :type restore_point_in_time: str
+    :type restore_point_in_time: ~datetime.datetime
     :param create_mode: What is this?.
     :type create_mode: str
     :param creation_date: Date the SQL pool was created.
     :type creation_date: ~datetime.datetime
+    :param storage_account_type: The storage account type used to store backups for this sql pool.
+     Possible values include: "GRS", "LRS", "ZRS".
+    :type storage_account_type: str or ~azure.mgmt.synapse.models.StorageAccountType
     """
 
     _attribute_map = {
@@ -5982,9 +6513,10 @@ class SqlPoolPatchInfo(msrest.serialization.Model):
         'recoverable_database_id': {'key': 'properties.recoverableDatabaseId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
-        'restore_point_in_time': {'key': 'properties.restorePointInTime', 'type': 'str'},
+        'restore_point_in_time': {'key': 'properties.restorePointInTime', 'type': 'iso-8601'},
         'create_mode': {'key': 'properties.createMode', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
+        'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
     }
 
     def __init__(
@@ -6004,6 +6536,7 @@ class SqlPoolPatchInfo(msrest.serialization.Model):
         self.restore_point_in_time = kwargs.get('restore_point_in_time', None)
         self.create_mode = kwargs.get('create_mode', None)
         self.creation_date = kwargs.get('creation_date', None)
+        self.storage_account_type = kwargs.get('storage_account_type', None)
 
 
 class SqlPoolSchema(Resource):
@@ -7566,6 +8099,10 @@ class Workspace(TrackedResource):
      ~azure.mgmt.synapse.models.WorkspaceRepositoryConfiguration
     :param purview_configuration: Purview Configuration.
     :type purview_configuration: ~azure.mgmt.synapse.models.PurviewConfiguration
+    :ivar adla_resource_id: The ADLA resource ID.
+    :vartype adla_resource_id: str
+    :param network_settings: Network Settings.
+    :type network_settings: ~azure.mgmt.synapse.models.NetworkSettings
     """
 
     _validation = {
@@ -7576,6 +8113,7 @@ class Workspace(TrackedResource):
         'provisioning_state': {'readonly': True},
         'workspace_uid': {'readonly': True},
         'extra_properties': {'readonly': True},
+        'adla_resource_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -7600,6 +8138,8 @@ class Workspace(TrackedResource):
         'managed_virtual_network_settings': {'key': 'properties.managedVirtualNetworkSettings', 'type': 'ManagedVirtualNetworkSettings'},
         'workspace_repository_configuration': {'key': 'properties.workspaceRepositoryConfiguration', 'type': 'WorkspaceRepositoryConfiguration'},
         'purview_configuration': {'key': 'properties.purviewConfiguration', 'type': 'PurviewConfiguration'},
+        'adla_resource_id': {'key': 'properties.adlaResourceId', 'type': 'str'},
+        'network_settings': {'key': 'properties.networkSettings', 'type': 'NetworkSettings'},
     }
 
     def __init__(
@@ -7623,6 +8163,8 @@ class Workspace(TrackedResource):
         self.managed_virtual_network_settings = kwargs.get('managed_virtual_network_settings', None)
         self.workspace_repository_configuration = kwargs.get('workspace_repository_configuration', None)
         self.purview_configuration = kwargs.get('purview_configuration', None)
+        self.adla_resource_id = None
+        self.network_settings = kwargs.get('network_settings', None)
 
 
 class WorkspaceAadAdminInfo(Resource):
@@ -7742,6 +8284,10 @@ class WorkspacePatchInfo(msrest.serialization.Model):
     :type purview_configuration: ~azure.mgmt.synapse.models.PurviewConfiguration
     :ivar provisioning_state: Resource provisioning state.
     :vartype provisioning_state: str
+    :param encryption: The encryption details of the workspace.
+    :type encryption: ~azure.mgmt.synapse.models.EncryptionDetails
+    :param network_settings: Network Settings.
+    :type network_settings: ~azure.mgmt.synapse.models.NetworkSettings
     """
 
     _validation = {
@@ -7756,6 +8302,8 @@ class WorkspacePatchInfo(msrest.serialization.Model):
         'workspace_repository_configuration': {'key': 'properties.workspaceRepositoryConfiguration', 'type': 'WorkspaceRepositoryConfiguration'},
         'purview_configuration': {'key': 'properties.purviewConfiguration', 'type': 'PurviewConfiguration'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionDetails'},
+        'network_settings': {'key': 'properties.networkSettings', 'type': 'NetworkSettings'},
     }
 
     def __init__(
@@ -7770,6 +8318,8 @@ class WorkspacePatchInfo(msrest.serialization.Model):
         self.workspace_repository_configuration = kwargs.get('workspace_repository_configuration', None)
         self.purview_configuration = kwargs.get('purview_configuration', None)
         self.provisioning_state = None
+        self.encryption = kwargs.get('encryption', None)
+        self.network_settings = kwargs.get('network_settings', None)
 
 
 class WorkspaceRepositoryConfiguration(msrest.serialization.Model):
@@ -7790,6 +8340,10 @@ class WorkspaceRepositoryConfiguration(msrest.serialization.Model):
     :type collaboration_branch: str
     :param root_folder: Root folder to use in the repository.
     :type root_folder: str
+    :param last_commit_id: The last commit ID.
+    :type last_commit_id: str
+    :param tenant_id: The VSTS tenant ID.
+    :type tenant_id: str
     """
 
     _attribute_map = {
@@ -7800,6 +8354,8 @@ class WorkspaceRepositoryConfiguration(msrest.serialization.Model):
         'repository_name': {'key': 'repositoryName', 'type': 'str'},
         'collaboration_branch': {'key': 'collaborationBranch', 'type': 'str'},
         'root_folder': {'key': 'rootFolder', 'type': 'str'},
+        'last_commit_id': {'key': 'lastCommitId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
     def __init__(
@@ -7814,3 +8370,5 @@ class WorkspaceRepositoryConfiguration(msrest.serialization.Model):
         self.repository_name = kwargs.get('repository_name', None)
         self.collaboration_branch = kwargs.get('collaboration_branch', None)
         self.root_folder = kwargs.get('root_folder', None)
+        self.last_commit_id = kwargs.get('last_commit_id', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
