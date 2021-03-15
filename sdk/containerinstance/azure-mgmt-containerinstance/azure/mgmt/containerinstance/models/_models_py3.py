@@ -373,6 +373,33 @@ class Container(msrest.serialization.Model):
         self.readiness_probe = readiness_probe
 
 
+class ContainerAttachResponse(msrest.serialization.Model):
+    """The information for the output stream from container attach.
+
+    :param web_socket_uri: The uri for the output stream from the attach.
+    :type web_socket_uri: str
+    :param password: The password to the output stream from the attach. Send as an Authorization
+     header value when connecting to the websocketUri.
+    :type password: str
+    """
+
+    _attribute_map = {
+        'web_socket_uri': {'key': 'webSocketUri', 'type': 'str'},
+        'password': {'key': 'password', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        web_socket_uri: Optional[str] = None,
+        password: Optional[str] = None,
+        **kwargs
+    ):
+        super(ContainerAttachResponse, self).__init__(**kwargs)
+        self.web_socket_uri = web_socket_uri
+        self.password = password
+
+
 class ContainerExec(msrest.serialization.Model):
     """The container execution command, for liveness or readiness probe.
 
@@ -812,6 +839,8 @@ class ContainerHttpGet(msrest.serialization.Model):
     :type port: int
     :param scheme: The scheme. Possible values include: "http", "https".
     :type scheme: str or ~azure.mgmt.containerinstance.models.Scheme
+    :param http_headers: The HTTP headers.
+    :type http_headers: ~azure.mgmt.containerinstance.models.HttpHeaders
     """
 
     _validation = {
@@ -822,6 +851,7 @@ class ContainerHttpGet(msrest.serialization.Model):
         'path': {'key': 'path', 'type': 'str'},
         'port': {'key': 'port', 'type': 'int'},
         'scheme': {'key': 'scheme', 'type': 'str'},
+        'http_headers': {'key': 'httpHeaders', 'type': 'HttpHeaders'},
     }
 
     def __init__(
@@ -830,12 +860,14 @@ class ContainerHttpGet(msrest.serialization.Model):
         port: int,
         path: Optional[str] = None,
         scheme: Optional[Union[str, "Scheme"]] = None,
+        http_headers: Optional["HttpHeaders"] = None,
         **kwargs
     ):
         super(ContainerHttpGet, self).__init__(**kwargs)
         self.path = path
         self.port = port
         self.scheme = scheme
+        self.http_headers = http_headers
 
 
 class ContainerPort(msrest.serialization.Model):
@@ -1243,6 +1275,32 @@ class GpuResource(msrest.serialization.Model):
         self.sku = sku
 
 
+class HttpHeaders(msrest.serialization.Model):
+    """The HTTP headers.
+
+    :param name: The header name.
+    :type name: str
+    :param value: The header value.
+    :type value: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        value: Optional[str] = None,
+        **kwargs
+    ):
+        super(HttpHeaders, self).__init__(**kwargs)
+        self.name = name
+        self.value = value
+
+
 class ImageRegistryCredential(msrest.serialization.Model):
     """Image registry credential.
 
@@ -1442,6 +1500,8 @@ class LogAnalytics(msrest.serialization.Model):
     :type log_type: str or ~azure.mgmt.containerinstance.models.LogAnalyticsLogType
     :param metadata: Metadata for log analytics.
     :type metadata: dict[str, str]
+    :param workspace_resource_id: The workspace resource id for log analytics.
+    :type workspace_resource_id: dict[str, str]
     """
 
     _validation = {
@@ -1454,6 +1514,7 @@ class LogAnalytics(msrest.serialization.Model):
         'workspace_key': {'key': 'workspaceKey', 'type': 'str'},
         'log_type': {'key': 'logType', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': '{str}'},
+        'workspace_resource_id': {'key': 'workspaceResourceId', 'type': '{str}'},
     }
 
     def __init__(
@@ -1463,6 +1524,7 @@ class LogAnalytics(msrest.serialization.Model):
         workspace_key: str,
         log_type: Optional[Union[str, "LogAnalyticsLogType"]] = None,
         metadata: Optional[Dict[str, str]] = None,
+        workspace_resource_id: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         super(LogAnalytics, self).__init__(**kwargs)
@@ -1470,6 +1532,7 @@ class LogAnalytics(msrest.serialization.Model):
         self.workspace_key = workspace_key
         self.log_type = log_type
         self.metadata = metadata
+        self.workspace_resource_id = workspace_resource_id
 
 
 class Logs(msrest.serialization.Model):
