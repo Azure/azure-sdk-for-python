@@ -204,7 +204,8 @@ class FeatureFlagConfigurationSetting(
             u"enabled": self.enabled,
             u"conditions": {
                 u"client_filters": [
-                    f._to_generated() if isinstance(f, FeatureFilter) else f for f in self.filters
+                    f._to_generated() if isinstance(f, FeatureFilter) else f  # pylint:disable=protected-access
+                    for f in self.filters
                 ]
             },
         }
