@@ -72,3 +72,11 @@ azure.core.serialization
    :members:
    :undoc-members:
    :inherited-members:
+
+azure.core.protocol
+-------------------
+
+.. automodule:: azure.core.protocol
+   :members:
+   :undoc-members:
+   :inherited-members:
