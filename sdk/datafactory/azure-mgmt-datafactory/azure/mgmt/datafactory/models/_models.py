@@ -8947,6 +8947,39 @@ class CosmosDbLinkedService(LinkedService):
     :param account_key: The account key of the Azure CosmosDB account. Type:
      SecureString or AzureKeyVaultSecretReference.
     :type account_key: ~azure.mgmt.datafactory.models.SecretBase
+    :param service_principal_id: The client ID of the application in Azure
+     Active Directory used for Server-To-Server authentication. Type: string
+     (or Expression with resultType string).
+    :type service_principal_id: object
+    :param service_principal_credential_type: The service principal credential
+     type to use in Server-To-Server authentication. 'ServicePrincipalKey' for
+     key/secret, 'ServicePrincipalCert' for certificate. Type: string (or
+     Expression with resultType string). Possible values include:
+     'ServicePrincipalKey', 'ServicePrincipalCert'
+    :type service_principal_credential_type: str or
+     ~azure.mgmt.datafactory.models.CosmosDbServicePrincipalCredentialType
+    :param service_principal_credential: The credential of the service
+     principal object in Azure Active Directory. If
+     servicePrincipalCredentialType is 'ServicePrincipalKey',
+     servicePrincipalCredential can be SecureString or
+     AzureKeyVaultSecretReference. If servicePrincipalCredentialType is
+     'ServicePrincipalCert', servicePrincipalCredential can only be
+     AzureKeyVaultSecretReference.
+    :type service_principal_credential:
+     ~azure.mgmt.datafactory.models.SecretBase
+    :param tenant: The name or ID of the tenant to which the service principal
+     belongs. Type: string (or Expression with resultType string).
+    :type tenant: object
+    :param azure_cloud_type: Indicates the azure cloud type of the service
+     principle auth. Allowed values are AzurePublic, AzureChina,
+     AzureUsGovernment, AzureGermany. Default value is the data factory
+     regions’ cloud type. Type: string (or Expression with resultType string).
+    :type azure_cloud_type: object
+    :param connection_mode: The connection mode used to access CosmosDB
+     account. Type: string (or Expression with resultType string). Possible
+     values include: 'Gateway', 'Direct'
+    :type connection_mode: str or
+     ~azure.mgmt.datafactory.models.CosmosDbConnectionMode
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -8968,6 +9001,12 @@ class CosmosDbLinkedService(LinkedService):
         'account_endpoint': {'key': 'typeProperties.accountEndpoint', 'type': 'object'},
         'database': {'key': 'typeProperties.database', 'type': 'object'},
         'account_key': {'key': 'typeProperties.accountKey', 'type': 'SecretBase'},
+        'service_principal_id': {'key': 'typeProperties.servicePrincipalId', 'type': 'object'},
+        'service_principal_credential_type': {'key': 'typeProperties.servicePrincipalCredentialType', 'type': 'str'},
+        'service_principal_credential': {'key': 'typeProperties.servicePrincipalCredential', 'type': 'SecretBase'},
+        'tenant': {'key': 'typeProperties.tenant', 'type': 'object'},
+        'azure_cloud_type': {'key': 'typeProperties.azureCloudType', 'type': 'object'},
+        'connection_mode': {'key': 'typeProperties.connectionMode', 'type': 'str'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
@@ -8977,6 +9016,12 @@ class CosmosDbLinkedService(LinkedService):
         self.account_endpoint = kwargs.get('account_endpoint', None)
         self.database = kwargs.get('database', None)
         self.account_key = kwargs.get('account_key', None)
+        self.service_principal_id = kwargs.get('service_principal_id', None)
+        self.service_principal_credential_type = kwargs.get('service_principal_credential_type', None)
+        self.service_principal_credential = kwargs.get('service_principal_credential', None)
+        self.tenant = kwargs.get('tenant', None)
+        self.azure_cloud_type = kwargs.get('azure_cloud_type', None)
+        self.connection_mode = kwargs.get('connection_mode', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'CosmosDb'
 
@@ -14195,8 +14240,9 @@ class FactoryIdentity(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The identity type. Default value: "SystemAssigned" .
-    :vartype type: str
+    :param type: Required. The identity type. Possible values include:
+     'SystemAssigned', 'UserAssigned', 'SystemAssigned,UserAssigned'
+    :type type: str or ~azure.mgmt.datafactory.models.FactoryIdentityType
     :ivar principal_id: The principal id of the identity.
     :vartype principal_id: str
     :ivar tenant_id: The client tenant id of the identity.
@@ -14207,7 +14253,7 @@ class FactoryIdentity(Model):
     """
 
     _validation = {
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
         'principal_id': {'readonly': True},
         'tenant_id': {'readonly': True},
     }
@@ -14219,10 +14265,9 @@ class FactoryIdentity(Model):
         'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{object}'},
     }
 
-    type = "SystemAssigned"
-
     def __init__(self, **kwargs):
         super(FactoryIdentity, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
         self.principal_id = None
         self.tenant_id = None
         self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
@@ -17643,6 +17688,10 @@ class HttpLinkedService(LinkedService):
     :param password: Password for Basic, Digest, Windows, or ClientCertificate
      with EmbeddedCertData authentication.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
+    :param auth_headers: The additional HTTP headers in the request to RESTful
+     API used for authorization. Type: object (or Expression with resultType
+     object).
+    :type auth_headers: object
     :param embedded_cert_data: Base64 encoded certificate data for
      ClientCertificate authentication. For on-premises copy with
      ClientCertificate authentication, either CertThumbprint or
@@ -17681,6 +17730,7 @@ class HttpLinkedService(LinkedService):
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
         'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'auth_headers': {'key': 'typeProperties.authHeaders', 'type': 'object'},
         'embedded_cert_data': {'key': 'typeProperties.embeddedCertData', 'type': 'object'},
         'cert_thumbprint': {'key': 'typeProperties.certThumbprint', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
@@ -17693,6 +17743,7 @@ class HttpLinkedService(LinkedService):
         self.authentication_type = kwargs.get('authentication_type', None)
         self.user_name = kwargs.get('user_name', None)
         self.password = kwargs.get('password', None)
+        self.auth_headers = kwargs.get('auth_headers', None)
         self.embedded_cert_data = kwargs.get('embedded_cert_data', None)
         self.cert_thumbprint = kwargs.get('cert_thumbprint', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
@@ -22629,6 +22680,10 @@ class ODataLinkedService(LinkedService):
     :type user_name: object
     :param password: Password of the OData service.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
+    :param auth_headers: The additional HTTP headers in the request to RESTful
+     API used for authorization. Type: object (or Expression with resultType
+     object).
+    :type auth_headers: object
     :param tenant: Specify the tenant information (domain name or tenant ID)
      under which your application resides. Type: string (or Expression with
      resultType string).
@@ -22688,6 +22743,7 @@ class ODataLinkedService(LinkedService):
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
         'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'auth_headers': {'key': 'typeProperties.authHeaders', 'type': 'object'},
         'tenant': {'key': 'typeProperties.tenant', 'type': 'object'},
         'service_principal_id': {'key': 'typeProperties.servicePrincipalId', 'type': 'object'},
         'azure_cloud_type': {'key': 'typeProperties.azureCloudType', 'type': 'object'},
@@ -22705,6 +22761,7 @@ class ODataLinkedService(LinkedService):
         self.authentication_type = kwargs.get('authentication_type', None)
         self.user_name = kwargs.get('user_name', None)
         self.password = kwargs.get('password', None)
+        self.auth_headers = kwargs.get('auth_headers', None)
         self.tenant = kwargs.get('tenant', None)
         self.service_principal_id = kwargs.get('service_principal_id', None)
         self.azure_cloud_type = kwargs.get('azure_cloud_type', None)
@@ -26582,6 +26639,10 @@ class RestServiceLinkedService(LinkedService):
     :type user_name: object
     :param password: The password used in Basic authentication type.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
+    :param auth_headers: The additional HTTP headers in the request to RESTful
+     API used for authorization. Type: object (or Expression with resultType
+     object).
+    :type auth_headers: object
     :param service_principal_id: The application's client ID used in
      AadServicePrincipal authentication type.
     :type service_principal_id: object
@@ -26624,6 +26685,7 @@ class RestServiceLinkedService(LinkedService):
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
         'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'auth_headers': {'key': 'typeProperties.authHeaders', 'type': 'object'},
         'service_principal_id': {'key': 'typeProperties.servicePrincipalId', 'type': 'object'},
         'service_principal_key': {'key': 'typeProperties.servicePrincipalKey', 'type': 'SecretBase'},
         'tenant': {'key': 'typeProperties.tenant', 'type': 'object'},
@@ -26639,6 +26701,7 @@ class RestServiceLinkedService(LinkedService):
         self.authentication_type = kwargs.get('authentication_type', None)
         self.user_name = kwargs.get('user_name', None)
         self.password = kwargs.get('password', None)
+        self.auth_headers = kwargs.get('auth_headers', None)
         self.service_principal_id = kwargs.get('service_principal_id', None)
         self.service_principal_key = kwargs.get('service_principal_key', None)
         self.tenant = kwargs.get('tenant', None)
@@ -30015,7 +30078,8 @@ class SftpServerLinkedService(LinkedService):
      resultType integer), minimum: 0.
     :type port: object
     :param authentication_type: The authentication type to be used to connect
-     to the FTP server. Possible values include: 'Basic', 'SshPublicKey'
+     to the FTP server. Possible values include: 'Basic', 'SshPublicKey',
+     'MultiFactor'
     :type authentication_type: str or
      ~azure.mgmt.datafactory.models.SftpAuthenticationType
     :param user_name: The username used to log on to the SFTP server. Type:
@@ -34723,14 +34787,16 @@ class WebActivityAuthentication(Model):
      for ServicePrincipal
     :type pfx: ~azure.mgmt.datafactory.models.SecretBase
     :param username: Web activity authentication user name for basic
-     authentication or ClientID when used for ServicePrincipal
-    :type username: str
+     authentication or ClientID when used for ServicePrincipal. Type: string
+     (or Expression with resultType string).
+    :type username: object
     :param password: Password for the PFX file or basic authentication /
      Secret when used for ServicePrincipal
     :type password: ~azure.mgmt.datafactory.models.SecretBase
     :param resource: Resource for which Azure Auth token will be requested
-     when using MSI Authentication.
-    :type resource: str
+     when using MSI Authentication. Type: string (or Expression with resultType
+     string).
+    :type resource: object
     :param user_tenant: TenantId for which Azure Auth token will be requested
      when using ServicePrincipal Authentication. Type: string (or Expression
      with resultType string).
@@ -34744,9 +34810,9 @@ class WebActivityAuthentication(Model):
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
         'pfx': {'key': 'pfx', 'type': 'SecretBase'},
-        'username': {'key': 'username', 'type': 'str'},
+        'username': {'key': 'username', 'type': 'object'},
         'password': {'key': 'password', 'type': 'SecretBase'},
-        'resource': {'key': 'resource', 'type': 'str'},
+        'resource': {'key': 'resource', 'type': 'object'},
         'user_tenant': {'key': 'userTenant', 'type': 'object'},
     }
 
