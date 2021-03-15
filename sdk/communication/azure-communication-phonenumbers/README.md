@@ -6,7 +6,7 @@ Azure Communication Phone Numbers client package is used to administer Phone Num
 
 # Getting started
 ### Prerequisites
-- Python 2.7, or 3.5 or later is required to use this package.
+- Python 2.7, or 3.6 or later is required to use this package.
 - You must have an [Azure subscription](https://azure.microsoft.com/free/)
 - A deployed Communication Services resource. You can use the [Azure Portal](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp) or the [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice) to set it up.
 ### Install the package
@@ -56,22 +56,22 @@ Phone numbers can also be released using the release API.
 
 ## Examples
 
-### Get All Phone Numbers
+### Get All Purchased Phone Numbers
 
-Lists all of your acquired phone numbers
+Lists all of your purchased phone numbers
 
 ```python
-acquired_phone_numbers = phone_numbers_client.list_acquired_phone_numbers()
-acquired_phone_number = acquired_phone_numbers.next()
+purchased_phone_numbers = phone_numbers_client.list_purchased_phone_numbers()
+purchased_phone_number = purchased_phone_numbers.next()
 print(acquired_phone_number.phone_number)
 ```
 
-### Get Phone Number
+### Get Purchased Phone Number
 
 Gets the information from the specified phone number
 
 ```python
-result = phone_numbers_client.get_phone_number("<phone number>")
+result = phone_numbers_client.get_purchased_phone_number("<phone number>")
 print(result.country_code)
 print(result.phone_number)
 ```

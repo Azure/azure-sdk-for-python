@@ -517,6 +517,30 @@ class LexicalAnalyzerName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: common/org/apache/lucene/analysis/core/WhitespaceAnalyzer.html.
     WHITESPACE = "whitespace"
 
+class LexicalNormalizerName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Defines the names of all text normalizers supported by Azure Cognitive Search.
+    """
+
+    #: Converts alphabetic, numeric, and symbolic Unicode characters which are not in the first 127
+    #: ASCII characters (the "Basic Latin" Unicode block) into their ASCII equivalents, if such
+    #: equivalents exist. See http://lucene.apache.org/core/4_10_3/analyzers-
+    #: common/org/apache/lucene/analysis/miscellaneous/ASCIIFoldingFilter.html.
+    ASCII_FOLDING = "asciifolding"
+    #: Removes elisions. For example, "l'avion" (the plane) will be converted to "avion" (plane). See
+    #: http://lucene.apache.org/core/4_10_3/analyzers-
+    #: common/org/apache/lucene/analysis/util/ElisionFilter.html.
+    ELISION = "elision"
+    #: Normalizes token text to lowercase. See https://lucene.apache.org/core/6_6_1/analyzers-
+    #: common/org/apache/lucene/analysis/core/LowerCaseFilter.html.
+    LOWERCASE = "lowercase"
+    #: Standard normalizer, which consists of lowercase and asciifolding. See
+    #: http://lucene.apache.org/core/4_10_3/analyzers-
+    #: common/org/apache/lucene/analysis/reverse/ReverseStringFilter.html.
+    STANDARD = "standard"
+    #: Normalizes token text to uppercase. See https://lucene.apache.org/core/6_6_1/analyzers-
+    #: common/org/apache/lucene/analysis/core/UpperCaseFilter.html.
+    UPPERCASE = "uppercase"
+
 class LexicalTokenizerName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the names of all tokenizers supported by Azure Cognitive Search.
     """
@@ -1443,8 +1467,8 @@ class TokenFilterName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Limits the number of tokens while indexing. See http://lucene.apache.org/core/4_10_3/analyzers-
     #: common/org/apache/lucene/analysis/miscellaneous/LimitTokenCountFilter.html.
     LIMIT = "limit"
-    #: Normalizes token text to lower case. See http://lucene.apache.org/core/4_10_3/analyzers-
-    #: common/org/apache/lucene/analysis/core/LowerCaseFilter.htm.
+    #: Normalizes token text to lower case. See https://lucene.apache.org/core/6_6_1/analyzers-
+    #: common/org/apache/lucene/analysis/core/LowerCaseFilter.html.
     LOWERCASE = "lowercase"
     #: Generates n-grams of the given size(s). See http://lucene.apache.org/core/4_10_3/analyzers-
     #: common/org/apache/lucene/analysis/ngram/NGramTokenFilter.html.
@@ -1500,7 +1524,7 @@ class TokenFilterName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: http://lucene.apache.org/core/4_10_3/analyzers-
     #: common/org/apache/lucene/analysis/miscellaneous/RemoveDuplicatesTokenFilter.html.
     UNIQUE = "unique"
-    #: Normalizes token text to upper case. See http://lucene.apache.org/core/4_10_3/analyzers-
+    #: Normalizes token text to upper case. See https://lucene.apache.org/core/6_6_1/analyzers-
     #: common/org/apache/lucene/analysis/core/UpperCaseFilter.html.
     UPPERCASE = "uppercase"
     #: Splits words into subwords and performs optional transformations on subword groups.

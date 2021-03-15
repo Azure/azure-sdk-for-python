@@ -79,7 +79,7 @@ class ManagedIdentityClientBase(ABC):
 
         # caching is the final step because TokenCache.add mutates its "event"
         self._cache.add(
-            event={"response": content, "scope": content["resource"]}, now=request_time,
+            event={"response": content, "scope": [content["resource"]]}, now=request_time,
         )
 
         return token
@@ -89,8 +89,9 @@ class ManagedIdentityClientBase(ABC):
         resource = _scopes_to_resource(*scopes)
         tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=[resource])
         for token in tokens:
-            if token["expires_on"] > time.time():
-                return AccessToken(token["secret"], token["expires_on"])
+            expires_on = int(token["expires_on"])
+            if expires_on > time.time():
+                return AccessToken(token["secret"], expires_on)
         return None
 
     @abc.abstractmethod
