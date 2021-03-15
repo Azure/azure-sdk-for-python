@@ -120,8 +120,7 @@ class DocumentTranslationClient(object):
 
         def callback(raw_response):
             detail = self._client._deserialize(_BatchStatusDetail, raw_response)
-            # return JobStatusDetail._from_generated(detail)
-            return detail
+            return JobStatusDetail._from_generated(detail)
 
         poller = LROPoller(
             client=self._client._client,
