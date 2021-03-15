@@ -145,7 +145,7 @@ class DocumentTranslationClient(object):
         """
 
         skip = kwargs.pop('skip', None)
-        top = kwargs.pop('results_per_page', None)
+        results_per_page  = kwargs.pop('results_per_page', None)
 
         def _convert_from_generated_model(generated_model):
             return JobStatusDetail.from_generated(generated_model)
@@ -153,7 +153,7 @@ class DocumentTranslationClient(object):
         model_conversion_function = kwargs.pop("cls", lambda job_statuses: [_convert_from_generated_model(job_status) for job_status in job_statuses])
 
         return self._client.document_translation.get_operations(
-            top = top,
+            top = results_per_page,
             skip = skip,
             cls = model_conversion_function,
             **kwargs
@@ -172,7 +172,7 @@ class DocumentTranslationClient(object):
         """
 
         skip = kwargs.pop('skip', None)
-        top = kwargs.pop('top', None)
+        results_per_page = kwargs.pop('results_per_page', None)
 
         def _convert_from_generated_model(generated_model):
             return DocumentStatusDetail.from_generated(generated_model)
@@ -181,7 +181,7 @@ class DocumentTranslationClient(object):
 
         return self._client.document_translation.get_operation_documents_status(
             id = job_id,
-            top = top,
+            top = results_per_page,
             skip = skip,
             cls = model_conversion_function,
             **kwargs
