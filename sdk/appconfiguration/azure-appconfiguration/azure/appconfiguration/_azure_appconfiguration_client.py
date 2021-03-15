@@ -574,7 +574,7 @@ class AzureAppConfigurationClient:
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
-    def add_sync_token(self, token):
+    def update_sync_token(self, token):
         # type: (str) -> None
 
         """Add a sync token to the internal list of tokens.

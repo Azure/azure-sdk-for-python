@@ -267,7 +267,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         super(SecretReferenceConfigurationSetting, self).__init__(**kwargs)
         self.key = key
         self.label = label
-        self.uri = uri
+        self.secret_uri = uri
         self.content_type = kwargs.get(
             "content_type", self.secret_reference_content_type
         )
@@ -302,7 +302,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         return KeyValue(
             key=self.key,
             label=self.label,
-            value=json.dumps({u"uri": self.uri}),
+            value=json.dumps({u"uri": self.secret_uri}),
             content_type=self.content_type,
             last_modified=self.last_modified,
             tags=self.tags,
