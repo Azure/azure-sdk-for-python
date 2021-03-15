@@ -57,7 +57,6 @@ class CryptoClientTests(KeyVaultTestCase):
         return self.create_client_from_credential(CryptographyClient, credential=credential, key=key, **kwargs)
 
     async def _create_rsa_key(self, client, key_name, **kwargs):
-        # create key with optional arguments
         key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
         hsm = kwargs.get("hardware_protected") or False
         if self.is_live:
@@ -68,7 +67,6 @@ class CryptoClientTests(KeyVaultTestCase):
         return created_key
 
     async def _create_ec_key(self, client, key_name, **kwargs):
-        # create ec key with optional arguments
         key_curve = kwargs.get("curve") or "P-256"
         hsm = kwargs.get("hardware_protected") or False
         if self.is_live:
