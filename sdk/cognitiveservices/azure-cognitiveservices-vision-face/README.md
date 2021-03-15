@@ -7,15 +7,17 @@ For a more complete view of Azure libraries, see the [azure sdk python release](
 
 # Usage
 
-For code examples, see [Cognitive Services Face](https://docs.microsoft.com/python/api/overview/azure/cognitive-services)
-on docs.microsoft.com.
+
+
+
+For code examples, see [Cognitive Services Face](https://docs.microsoft.com/python/api/overview/azure/cognitive-services) on docs.microsoft.com.
 
 
 # Provide Feedback
 
 If you encounter any bugs or have suggestions, please file an issue in the
 [Issues](https://github.com/Azure/azure-sdk-for-python/issues)
-section of the project.
+section of the project. 
 
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-cognitiveservices-vision-face%2FREADME.png)

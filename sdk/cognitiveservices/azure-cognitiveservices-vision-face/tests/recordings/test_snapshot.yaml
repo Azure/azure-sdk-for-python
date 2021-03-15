@@ -2,309 +2,431 @@ interactions:
 - request:
     body: null
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      User-Agent: [python/3.6.3 (Windows-10-10.0.18362-SP0) msrest/0.6.6 azure-cognitiveservices-vision-face/0.4.0]
-      X-BingApis-SDK-Client: [Python-SDK]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.9.2 (Windows-10-10.0.19041-SP0) msrest/0.6.21 azure-cognitiveservices-vision-face/0.5.0
+      X-BingApis-SDK-Client:
+      - Python-SDK
     method: DELETE
     uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/persongroups/69ff3e98-2de7-468e-beae-f78aa85200db
   response:
-    body: {string: '{"error":{"code":"PersonGroupNotFound","message":"Person group
-        is not found.\r\nParameter name: personGroupId"}}'}
+    body:
+      string: '{"error":{"code":"PersonGroupNotFound","message":"Person group is not
+        found. (Parameter ''personGroupId'')"}}'
     headers:
-      apim-request-id: [4a7724d5-2770-4dee-a312-403d72a60052]
-      cache-control: [no-cache]
-      content-length: ['112']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 27 Jun 2019 21:22:55 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
-      x-aspnet-version: [4.0.30319]
-      x-content-type-options: [nosniff]
-      x-powered-by: [ASP.NET]
-    status: {code: 404, message: Not Found}
+      apim-request-id:
+      - c0be3be0-3a9a-4d9f-8656-fb3f46ed26c7
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 15 Mar 2021 18:54:58 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '13'
+    status:
+      code: 404
+      message: Not Found
 - request:
     body: '{"name": "test", "userData": "test", "recognitionModel": "recognition_01"}'
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['74']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.18362-SP0) msrest/0.6.6 azure-cognitiveservices-vision-face/0.4.0]
-      X-BingApis-SDK-Client: [Python-SDK]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '74'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.9.2 (Windows-10-10.0.19041-SP0) msrest/0.6.21 azure-cognitiveservices-vision-face/0.5.0
+      X-BingApis-SDK-Client:
+      - Python-SDK
     method: PUT
     uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/persongroups/69ff3e98-2de7-468e-beae-f78aa85200db
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      apim-request-id: [bbf58cb4-18a1-4da9-a402-61bad5f63f6a]
-      cache-control: [no-cache]
-      content-length: ['0']
-      date: ['Thu, 27 Jun 2019 21:22:55 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
-      x-aspnet-version: [4.0.30319]
-      x-content-type-options: [nosniff]
-      x-powered-by: [ASP.NET]
-    status: {code: 200, message: OK}
+      apim-request-id:
+      - 41884ed1-f014-49ab-b873-97b36571b4fc
+      content-length:
+      - '0'
+      csp-billing-usage:
+      - CognitiveServices.Face.Transaction=1
+      date:
+      - Mon, 15 Mar 2021 18:54:58 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '189'
+    status:
+      code: 200
+      message: OK
 - request:
     body: '{"type": "PersonGroup", "objectId": "69ff3e98-2de7-468e-beae-f78aa85200db",
-      "applyScope": ["00977cdb-163f-435f-9c32-39ec8ae61f4d"]}'
+      "applyScope": ["faa080af-c1d8-40ad-9cce-e1a450ca5b57"]}'
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['131']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.18362-SP0) msrest/0.6.6 azure-cognitiveservices-vision-face/0.4.0]
-      X-BingApis-SDK-Client: [Python-SDK]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '131'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.9.2 (Windows-10-10.0.19041-SP0) msrest/0.6.21 azure-cognitiveservices-vision-face/0.5.0
+      X-BingApis-SDK-Client:
+      - Python-SDK
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/snapshots
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      apim-request-id: [01cf83a1-9773-4849-8938-9722f0e74c76]
-      cache-control: [no-cache]
-      content-length: ['0']
-      date: ['Thu, 27 Jun 2019 21:22:55 GMT']
-      expires: ['-1']
-      operation-location: [/operations/4ff5f990-b88b-4f46-bc9e-8eb505589bd4]
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
-      x-aspnet-version: [4.0.30319]
-      x-content-type-options: [nosniff]
-      x-powered-by: [ASP.NET]
-    status: {code: 202, message: Accepted}
+      apim-request-id:
+      - a36e02a6-4847-4601-b3c7-a266728b76cb
+      content-length:
+      - '0'
+      csp-billing-usage:
+      - CognitiveServices.Face.Transaction=1
+      date:
+      - Mon, 15 Mar 2021 18:54:58 GMT
+      operation-location:
+      - /operations/d72942a9-3936-43c2-b3f2-d0aeba152dbc
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '187'
+    status:
+      code: 202
+      message: Accepted
 - request:
     body: null
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.18362-SP0) msrest/0.6.6 azure-cognitiveservices-vision-face/0.4.0]
-      X-BingApis-SDK-Client: [Python-SDK]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.9.2 (Windows-10-10.0.19041-SP0) msrest/0.6.21 azure-cognitiveservices-vision-face/0.5.0
+      X-BingApis-SDK-Client:
+      - Python-SDK
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/operations/4ff5f990-b88b-4f46-bc9e-8eb505589bd4
+    uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/operations/d72942a9-3936-43c2-b3f2-d0aeba152dbc
   response:
-    body: {string: '{"createdTime":"2019-06-27T21:22:55.3043353Z","lastActionTime":"2019-06-27T21:22:55.3043353Z","message":null,"resourceLocation":null,"status":"notStarted"}'}
+    body:
+      string: '{"status":"notStarted","createdTime":"2021-03-15T18:54:58.7756976Z","lastActionTime":"2021-03-15T18:54:58.7757487Z","resourceLocation":"/snapshots/"}'
     headers:
-      apim-request-id: [60524070-d2c0-4df8-9c9c-63d53e8abc7b]
-      cache-control: [no-cache]
-      content-length: ['155']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 27 Jun 2019 21:22:55 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
-      x-aspnet-version: [4.0.30319]
-      x-content-type-options: [nosniff]
-      x-powered-by: [ASP.NET]
-    status: {code: 200, message: OK}
+      apim-request-id:
+      - 071dd235-9b3c-4411-8f5a-8a4d796b9bd0
+      content-length:
+      - '149'
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.Face.Transaction=1
+      date:
+      - Mon, 15 Mar 2021 18:54:58 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '8'
+    status:
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.18362-SP0) msrest/0.6.6 azure-cognitiveservices-vision-face/0.4.0]
-      X-BingApis-SDK-Client: [Python-SDK]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.9.2 (Windows-10-10.0.19041-SP0) msrest/0.6.21 azure-cognitiveservices-vision-face/0.5.0
+      X-BingApis-SDK-Client:
+      - Python-SDK
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/operations/4ff5f990-b88b-4f46-bc9e-8eb505589bd4
+    uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/operations/d72942a9-3936-43c2-b3f2-d0aeba152dbc
   response:
-    body: {string: '{"createdTime":"2019-06-27T21:22:55.3043353Z","lastActionTime":"2019-06-27T21:22:56.7620246Z","message":null,"resourceLocation":"/snapshots/8bc8d286-2c39-40b6-8190-4a8a2eb95297","status":"succeeded"}'}
+    body:
+      string: '{"status":"notStarted","createdTime":"2021-03-15T18:54:58.7756976Z","lastActionTime":"2021-03-15T18:54:58.7757487Z","resourceLocation":"/snapshots/"}'
     headers:
-      apim-request-id: [e3f68883-ad66-4d7f-a504-f02cbb4a49ef]
-      cache-control: [no-cache]
-      content-length: ['199']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 27 Jun 2019 21:23:16 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
-      x-aspnet-version: [4.0.30319]
-      x-content-type-options: [nosniff]
-      x-powered-by: [ASP.NET]
-    status: {code: 200, message: OK}
+      apim-request-id:
+      - 9eb8569f-cb51-46cc-b692-e5e8e58ece56
+      content-length:
+      - '149'
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.Face.Transaction=1
+      date:
+      - Mon, 15 Mar 2021 18:54:58 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '9'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.9.2 (Windows-10-10.0.19041-SP0) msrest/0.6.21 azure-cognitiveservices-vision-face/0.5.0
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/operations/d72942a9-3936-43c2-b3f2-d0aeba152dbc
+  response:
+    body:
+      string: '{"status":"succeeded","createdTime":"2021-03-15T18:54:58.7756976Z","lastActionTime":"2021-03-15T18:54:59.7791523Z","finishedTime":"2021-03-15T18:54:59.7791375Z","resourceLocation":"/snapshots/281552b2-99bc-4fc7-a86b-8a81b39e9cb3"}'
+    headers:
+      apim-request-id:
+      - a242c3e7-b85c-4464-8385-fbc12279b5cf
+      content-length:
+      - '230'
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.Face.Transaction=1
+      date:
+      - Mon, 15 Mar 2021 18:54:59 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '9'
+    status:
+      code: 200
+      message: OK
 - request:
     body: '{"objectId": "fb644ecf-3ed0-4b25-9270-1d174b980afb", "mode": "CreateNew"}'
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['73']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.18362-SP0) msrest/0.6.6 azure-cognitiveservices-vision-face/0.4.0]
-      X-BingApis-SDK-Client: [Python-SDK]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '73'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.9.2 (Windows-10-10.0.19041-SP0) msrest/0.6.21 azure-cognitiveservices-vision-face/0.5.0
+      X-BingApis-SDK-Client:
+      - Python-SDK
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/snapshots/8bc8d286-2c39-40b6-8190-4a8a2eb95297/apply
+    uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/snapshots/281552b2-99bc-4fc7-a86b-8a81b39e9cb3/apply
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      apim-request-id: [dead0f63-b310-4e63-8bf2-ffdf04c15fa8]
-      cache-control: [no-cache]
-      content-length: ['0']
-      date: ['Thu, 27 Jun 2019 21:23:17 GMT']
-      expires: ['-1']
-      operation-location: [/operations/22a4e674-9598-45dd-9612-51ab1aba90eb]
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
-      x-aspnet-version: [4.0.30319]
-      x-content-type-options: [nosniff]
-      x-powered-by: [ASP.NET]
-    status: {code: 202, message: Accepted}
+      apim-request-id:
+      - 40b65401-2b5e-471e-8abb-9f5f81086b6c
+      content-length:
+      - '0'
+      csp-billing-usage:
+      - CognitiveServices.Face.Transaction=1
+      date:
+      - Mon, 15 Mar 2021 18:55:01 GMT
+      operation-location:
+      - /operations/39b6f0b6-4ce0-4d61-81f5-866ead40abdd
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '503'
+    status:
+      code: 202
+      message: Accepted
 - request:
     body: null
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.18362-SP0) msrest/0.6.6 azure-cognitiveservices-vision-face/0.4.0]
-      X-BingApis-SDK-Client: [Python-SDK]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.9.2 (Windows-10-10.0.19041-SP0) msrest/0.6.21 azure-cognitiveservices-vision-face/0.5.0
+      X-BingApis-SDK-Client:
+      - Python-SDK
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/operations/22a4e674-9598-45dd-9612-51ab1aba90eb
+    uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/operations/39b6f0b6-4ce0-4d61-81f5-866ead40abdd
   response:
-    body: {string: '{"createdTime":"2019-06-27T21:23:18.0324166Z","lastActionTime":"2019-06-27T21:23:18.0324166Z","message":null,"resourceLocation":null,"status":"notStarted"}'}
+    body:
+      string: '{"status":"succeeded","createdTime":"2021-03-15T18:55:01.3931989Z","lastActionTime":"2021-03-15T18:55:02.5052771Z","finishedTime":"2021-03-15T18:55:02.5052652Z","resourceLocation":"/persongroup/fb644ecf-3ed0-4b25-9270-1d174b980afb"}'
     headers:
-      apim-request-id: [c116c7aa-997f-4326-b4be-21ebf3851fd6]
-      cache-control: [no-cache]
-      content-length: ['155']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 27 Jun 2019 21:23:17 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
-      x-aspnet-version: [4.0.30319]
-      x-content-type-options: [nosniff]
-      x-powered-by: [ASP.NET]
-    status: {code: 200, message: OK}
+      apim-request-id:
+      - 748083b8-ed59-4c28-ba5e-886531120ede
+      content-length:
+      - '232'
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.Face.Transaction=1
+      date:
+      - Mon, 15 Mar 2021 18:55:02 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '865'
+    status:
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.18362-SP0) msrest/0.6.6 azure-cognitiveservices-vision-face/0.4.0]
-      X-BingApis-SDK-Client: [Python-SDK]
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/operations/22a4e674-9598-45dd-9612-51ab1aba90eb
-  response:
-    body: {string: '{"createdTime":"2019-06-27T21:23:18.0324166Z","lastActionTime":"2019-06-27T21:23:18.0324166Z","message":null,"resourceLocation":null,"status":"notStarted"}'}
-    headers:
-      apim-request-id: [4de9d0c4-e1fe-431d-be50-2ababdbe73b8]
-      cache-control: [no-cache]
-      content-length: ['155']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 27 Jun 2019 21:23:17 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
-      x-aspnet-version: [4.0.30319]
-      x-content-type-options: [nosniff]
-      x-powered-by: [ASP.NET]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.18362-SP0) msrest/0.6.6 azure-cognitiveservices-vision-face/0.4.0]
-      X-BingApis-SDK-Client: [Python-SDK]
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/operations/22a4e674-9598-45dd-9612-51ab1aba90eb
-  response:
-    body: {string: '{"createdTime":"2019-06-27T21:23:18.0324166Z","lastActionTime":"2019-06-27T21:23:19.0817675Z","message":null,"resourceLocation":"/persongroup/fb644ecf-3ed0-4b25-9270-1d174b980afb","status":"succeeded"}'}
-    headers:
-      apim-request-id: [cd45a786-82f1-4e98-a7dc-86c8e967488e]
-      cache-control: [no-cache]
-      content-length: ['201']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 27 Jun 2019 21:23:18 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
-      x-aspnet-version: [4.0.30319]
-      x-content-type-options: [nosniff]
-      x-powered-by: [ASP.NET]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      User-Agent: [python/3.6.3 (Windows-10-10.0.18362-SP0) msrest/0.6.6 azure-cognitiveservices-vision-face/0.4.0]
-      X-BingApis-SDK-Client: [Python-SDK]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.9.2 (Windows-10-10.0.19041-SP0) msrest/0.6.21 azure-cognitiveservices-vision-face/0.5.0
+      X-BingApis-SDK-Client:
+      - Python-SDK
     method: DELETE
-    uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/snapshots/8bc8d286-2c39-40b6-8190-4a8a2eb95297
+    uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/snapshots/281552b2-99bc-4fc7-a86b-8a81b39e9cb3
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      apim-request-id: [5be1c00d-7d07-44a7-8206-8c3bf8ad4289]
-      cache-control: [no-cache]
-      content-length: ['0']
-      date: ['Thu, 27 Jun 2019 21:23:20 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
-      x-aspnet-version: [4.0.30319]
-      x-content-type-options: [nosniff]
-      x-powered-by: [ASP.NET]
-    status: {code: 200, message: OK}
+      apim-request-id:
+      - cd6433f2-23f2-405a-ab09-0a4e68c3c199
+      content-length:
+      - '0'
+      csp-billing-usage:
+      - CognitiveServices.Face.Transaction=1
+      date:
+      - Mon, 15 Mar 2021 18:55:04 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '2330'
+    status:
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      User-Agent: [python/3.6.3 (Windows-10-10.0.18362-SP0) msrest/0.6.6 azure-cognitiveservices-vision-face/0.4.0]
-      X-BingApis-SDK-Client: [Python-SDK]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.9.2 (Windows-10-10.0.19041-SP0) msrest/0.6.21 azure-cognitiveservices-vision-face/0.5.0
+      X-BingApis-SDK-Client:
+      - Python-SDK
     method: DELETE
     uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/persongroups/69ff3e98-2de7-468e-beae-f78aa85200db
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      apim-request-id: [93a197b1-fc9c-4f5b-b419-48e237e58c03]
-      cache-control: [no-cache]
-      content-length: ['0']
-      date: ['Thu, 27 Jun 2019 21:23:21 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
-      x-aspnet-version: [4.0.30319]
-      x-content-type-options: [nosniff]
-      x-powered-by: [ASP.NET]
-    status: {code: 200, message: OK}
+      apim-request-id:
+      - f12039fb-0116-4a3f-92f2-8759366b4f0e
+      content-length:
+      - '0'
+      csp-billing-usage:
+      - CognitiveServices.Face.Transaction=1
+      date:
+      - Mon, 15 Mar 2021 18:55:05 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '350'
+    status:
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      User-Agent: [python/3.6.3 (Windows-10-10.0.18362-SP0) msrest/0.6.6 azure-cognitiveservices-vision-face/0.4.0]
-      X-BingApis-SDK-Client: [Python-SDK]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.9.2 (Windows-10-10.0.19041-SP0) msrest/0.6.21 azure-cognitiveservices-vision-face/0.5.0
+      X-BingApis-SDK-Client:
+      - Python-SDK
     method: DELETE
     uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/persongroups/fb644ecf-3ed0-4b25-9270-1d174b980afb
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      apim-request-id: [ca84ec64-386f-4f09-9394-3a053336b813]
-      cache-control: [no-cache]
-      content-length: ['0']
-      date: ['Thu, 27 Jun 2019 21:23:21 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
-      x-aspnet-version: [4.0.30319]
-      x-content-type-options: [nosniff]
-      x-powered-by: [ASP.NET]
-    status: {code: 200, message: OK}
+      apim-request-id:
+      - 3db19722-2340-4308-8eca-8452c90073eb
+      content-length:
+      - '0'
+      csp-billing-usage:
+      - CognitiveServices.Face.Transaction=1
+      date:
+      - Mon, 15 Mar 2021 18:55:05 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '348'
+    status:
+      code: 200
+      message: OK
 version: 1
