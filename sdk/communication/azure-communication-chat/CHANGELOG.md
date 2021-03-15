@@ -1,5 +1,18 @@
 # Release History
 
+## 1.0.0b6 (Unreleased)
+
+
+## 1.0.0b5 (2021-03-09)
+### Breaking Changes
+- Added support for communication identifiers instead of raw strings.
+- Changed return type of `create_chat_thread`: `ChatThreadClient -> CreateChatThreadResult`
+- Changed return types `add_participants`: `None -> list[(ChatThreadParticipant, CommunicationError)]`
+- Added check for failure in `add_participant`
+- Dropped support for Python 3.5
+### Added
+- Removed nullable references from method signatures.
+
 ## 1.0.0b4 (2021-02-09)
 ### Breaking Changes
 - Uses `CommunicationUserIdentifier` and `CommunicationIdentifier` in place of `CommunicationUser`, and `CommunicationTokenCredential` instead of `CommunicationUserCredential`.

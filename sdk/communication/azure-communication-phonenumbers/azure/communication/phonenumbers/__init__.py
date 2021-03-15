@@ -7,7 +7,7 @@
 from ._phone_numbers_client import PhoneNumbersClient
 
 from ._generated.models import (
-    AcquiredPhoneNumber,
+    PurchasedPhoneNumber,
     PhoneNumberCapabilities,
     PhoneNumberCost,
     PhoneNumberSearchResult,
@@ -18,7 +18,7 @@ from ._generated.models import (
 )
 
 __all__ = [
-    'AcquiredPhoneNumber',
+    'PurchasedPhoneNumber',
     'PhoneNumberCapabilities',
     'PhoneNumberCost',
     'PhoneNumberSearchResult',

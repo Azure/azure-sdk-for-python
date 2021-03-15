@@ -1167,7 +1167,6 @@ class StorageContainerTest(StorageTestCase):
         blob_list = list()
         container_client.delete_blobs(*blob_list)
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @GlobalStorageAccountPreparer()
     def test_delete_blobs_simple(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1196,7 +1195,6 @@ class StorageContainerTest(StorageTestCase):
         assert response[2].status_code == 202
 
     @pytest.mark.live_test_only
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @GlobalStorageAccountPreparer()
     def test_batch_blobs_with_container_sas(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1234,7 +1232,6 @@ class StorageContainerTest(StorageTestCase):
         assert response[1].status_code == 202
         assert response[2].status_code == 202
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     def test_delete_blobs_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
@@ -1276,7 +1273,6 @@ class StorageContainerTest(StorageTestCase):
         assert response[2].status_code == 202
 
     @pytest.mark.live_test_only
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @GlobalStorageAccountPreparer()
     def test_delete_blobs_and_snapshot_using_sas(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1327,7 +1323,6 @@ class StorageContainerTest(StorageTestCase):
         assert response[2].status_code == 202
         assert response[3].status_code == 202
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @GlobalStorageAccountPreparer()
     def test_delete_blobs_simple_no_raise(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1354,7 +1349,6 @@ class StorageContainerTest(StorageTestCase):
         assert response[1].status_code == 202
         assert response[2].status_code == 202
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @GlobalStorageAccountPreparer()
     def test_delete_blobs_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1391,7 +1385,6 @@ class StorageContainerTest(StorageTestCase):
             blobs = list(container.list_blobs(include='snapshots'))
             assert len(blobs) == 3  # 3 blobs
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @GlobalStorageAccountPreparer()
     def test_standard_blob_tier_set_tier_api_batch(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
@@ -1442,7 +1435,7 @@ class StorageContainerTest(StorageTestCase):
             raise_on_any_failure=False
         )
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_batch_set_standard_blob_tier_for_version(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
@@ -1501,8 +1494,7 @@ class StorageContainerTest(StorageTestCase):
             'blob3',
             raise_on_any_failure=False
         )
-        
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
+
     @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     def test_standard_blob_tier_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
@@ -1559,7 +1551,6 @@ class StorageContainerTest(StorageTestCase):
         )
 
     @pytest.mark.live_test_only
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @GlobalStorageAccountPreparer()
     def test_standard_blob_tier_set_tiers_with_sas(self, resource_group, location, storage_account,
                                                    storage_account_key):

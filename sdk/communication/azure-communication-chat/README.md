@@ -9,7 +9,7 @@ Read more about Azure Communication Services [here](https://docs.microsoft.com/a
 
 ## Prerequisites
 
-- Python 2.7, or 3.5 or later is required to use this package.
+- Python 2.7, or 3.6 or later is required to use this package.
 - A deployed Communication Services resource. You can use the [Azure Portal](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp) or the [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice) to set it up.
 
 ## Install the package
@@ -262,6 +262,8 @@ An iterator of `[ChatThreadInfo]` is the response returned from listing threads
 
 ```python
 from datetime import datetime, timedelta
+import pytz
+
 start_time = datetime.utcnow() - timedelta(days=2)
 start_time = start_time.replace(tzinfo=pytz.utc)
 
@@ -353,12 +355,15 @@ An iterator of `[ChatMessage]` is the response returned from listing messages
 
 ```Python
 from datetime import datetime, timedelta
+import pytz
+
 start_time = datetime.utcnow() - timedelta(days=1)
 start_time = start_time.replace(tzinfo=pytz.utc)
+
 chat_messages = chat_thread_client.list_messages(results_per_page=1, start_time=start_time)
 for chat_message_page in chat_messages.by_page():
     for chat_message in chat_message_page:
-        print("ChatMessage: Id=", chat_message.id, "; Content=", chat_message.content)
+        print("ChatMessage: Id=", chat_message.id, "; Content=", chat_message.content.message)
 ```
 
 ### Update a message
@@ -411,9 +416,8 @@ Use `add_participant` method to add a single thread participants to the thread.
   - `display_name`, optional, is the display name for the thread participant.
   - `share_history_time`, optional, time from which the chat history is shared with the participant.
 
-A `tuple(ChatThreadParticipant, CommunicationError)` is returned. When participant is successfully added,
-`(None, None)` is expected. In case of an error encountered while adding participant, the tuple is populated
-with the participant along with the error that was encountered.
+When participant is successfully added, no error is thrown. In case of an error encountered while adding participant, 
+a `RuntimeError` is thrown
 ```python
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.chat import ChatThreadParticipant
@@ -465,6 +469,7 @@ Use `add_participants` method to add thread participants to the thread.
 A `list(tuple(ChatThreadParticipant, CommunicationError))` is returned. When participant is successfully added,
 an empty list is expected. In case of an error encountered while adding participant, the list is populated
 with the failed participants along with the error that was encountered.
+
 ```Python
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.chat import ChatThreadParticipant
@@ -556,6 +561,7 @@ An iterator of `[ChatMessageReadReceipt]` is the response returned from listing 
 
 ```python
 read_receipts = chat_thread_client.list_read_receipts(results_per_page=5, skip=5)
+
 for read_receipt_page in read_receipts.by_page():
     for read_receipt in read_receipt_page:
         print(read_receipt)
@@ -568,7 +574,7 @@ for read_receipt_page in read_receipts.by_page():
 
 These are code samples that show common scenario operations with the Azure Communication Chat client library.
 The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations,
-and require Python 3.5 or later.
+and require Python 3.6 or later.
 Before run the sample code, refer to Prerequisites
 <!-- [Prerequisites](#Prerequisites) -->
 to create a resource, then set some Environment Variables
