@@ -222,7 +222,7 @@ class DocumentTranslationClient(object):
         """
 
         glossary_formats = self._client.document_translation.get_glossary_formats(**kwargs)
-        return FileFormat.from_generated_list(glossary_formats)
+        return FileFormat.from_generated_list(glossary_formats.value)
 
     @distributed_trace
     def get_supported_document_formats(self, **kwargs):
@@ -233,4 +233,4 @@ class DocumentTranslationClient(object):
         """
 
         document_formats = self._client.document_translation.get_document_formats(**kwargs)
-        return FileFormat.from_generated_list(document_formats)
+        return FileFormat.from_generated_list(document_formats.value)
