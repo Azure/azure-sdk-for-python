@@ -89,7 +89,7 @@ class DocumentTranslationClient(object):
         """
 
         job_status = self._client.document_translation.get_operation_status(job_id, **kwargs)
-        return JobStatusDetail._from_generated(job_status)
+        return JobStatusDetail.from_generated(job_status)
 
     @distributed_trace
     def cancel_job(self, job_id, **kwargs):
@@ -120,7 +120,7 @@ class DocumentTranslationClient(object):
 
         def callback(raw_response):
             detail = self._client._deserialize(_BatchStatusDetail, raw_response)
-            return JobStatusDetail._from_generated(detail)
+            return JobStatusDetail.from_generated(detail)
 
         poller = LROPoller(
             client=self._client._client,
@@ -148,7 +148,7 @@ class DocumentTranslationClient(object):
         top = kwargs.pop('top', None)
 
         def _convert_from_generated_model(generated_model):
-            return JobStatusDetail._from_generated(generated_model)
+            return JobStatusDetail.from_generated(generated_model)
 
         model_conversion_function = kwargs.pop("cls", lambda job_statuses: [_convert_from_generated_model(job_status) for job_status in job_statuses])
 
@@ -175,7 +175,7 @@ class DocumentTranslationClient(object):
         top = kwargs.pop('top', None)
 
         def _convert_from_generated_model(generated_model):
-            return DocumentStatusDetail._from_generated(generated_model)
+            return DocumentStatusDetail.from_generated(generated_model)
 
         model_conversion_function = kwargs.pop("cls", lambda doc_statuses: [_convert_from_generated_model(doc_status) for doc_status in doc_statuses])
 
@@ -201,7 +201,7 @@ class DocumentTranslationClient(object):
         """
 
         document_status = self._client.document_translation.get_document_status(job_id, document_id, **kwargs)
-        return DocumentStatusDetail._from_generated(document_status)
+        return DocumentStatusDetail.from_generated(document_status)
 
     @distributed_trace
     def get_supported_storage_sources(self, **kwargs):
