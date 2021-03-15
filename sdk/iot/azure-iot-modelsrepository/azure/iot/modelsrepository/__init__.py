@@ -7,6 +7,9 @@
 # Main Client
 from .client import ModelsRepositoryClient
 
+# Modules
+from . import dtmi_conventions
+
 # Constants
 from .client import (
     DEPENDENCY_MODE_DISABLED,

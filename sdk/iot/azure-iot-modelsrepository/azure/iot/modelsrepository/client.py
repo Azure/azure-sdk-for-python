@@ -20,7 +20,6 @@ from azure.core.pipeline.policies import (
 )
 from . import resolver
 from . import pseudo_parser
-from .chainable_exception import ChainableException
 
 
 # Public constants exposed to consumers
@@ -44,6 +43,8 @@ class ModelsRepositoryClient(object):
         :param str repository_location: Location of the Models Repository you wish to access.
             This location can be a remote HTTP/HTTPS URL, or a local filesystem path.
             If omitted, will default to using "https://devicemodels.azure.com".
+        :param str api_version: The API version for the Models Repository Service you wish to
+            access.
 
         :raises: ValueError if repository_location is invalid
         """
@@ -65,7 +66,7 @@ class ModelsRepositoryClient(object):
     def get_models(self, dtmis, dependency_resolution=DEPENDENCY_MODE_DISABLED):
         """Retrieve a model from the Models Repository.
 
-        :param list[str]: The DTMIs for the models you wish to retrieve
+        :param list[str] dtmis: The DTMIs for the models you wish to retrieve
         :param str dependency_resolution : Dependency resolution mode. Possible values:
             - "disabled": Do not resolve model dependencies
             - "enabled": Resolve model dependencies from the repository
@@ -85,8 +86,8 @@ class ModelsRepositoryClient(object):
             model_map = self.resolver.resolve(dtmis)
         elif dependency_resolution == DEPENDENCY_MODE_ENABLED:
             # Manually resolve dependencies using pseudo-parser
-            base_model_map = model_map = self.resolver.resolve(dtmis)
-            base_model_list = [model for model in base_model_map.values()]
+            base_model_map = self.resolver.resolve(dtmis)
+            base_model_list = list(base_model_map.values())
             model_map = self.pseudo_parser.expand(base_model_list)
         elif dependency_resolution == DEPENDENCY_MODE_TRY_FROM_EXPANDED:
             # Try to use an expanded DTDL to resolve dependencies
@@ -94,8 +95,8 @@ class ModelsRepositoryClient(object):
                 model_map = self.resolver.resolve(dtmis, expanded_model=True)
             except resolver.ResolverError:
                 # Fallback to manual dependency resolution
-                base_model_map = model_map = self.resolver.resolve(dtmis)
-                base_model_list = [model for model in base_model_map.items()]
+                base_model_map = self.resolver.resolve(dtmis)
+                base_model_list = list(base_model_map.items())
                 model_map = self.pseudo_parser.expand(base_model_list)
         else:
             raise ValueError("Invalid dependency resolution mode: {}".format(dependency_resolution))

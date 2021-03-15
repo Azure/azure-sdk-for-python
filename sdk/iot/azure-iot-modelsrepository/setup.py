@@ -51,7 +51,7 @@ setup(
         "Programming Language :: Python :: 3.9",
     ],
     install_requires=[
-        "azure-core"
+        "azure-core",
         "six",
     ],
     extras_require={":python_version<'3.0'": ["azure-iot-nspkg>=1.0.1"]},

@@ -9,7 +9,7 @@ import json
 import abc
 import re
 import os
-from . import dtmi_utils
+from . import dtmi_conventions
 from .chainable_exception import ChainableException
 
 logger = logging.getLogger(__name__)
@@ -41,7 +41,7 @@ class DtmiResolver(object):
         """
         model_map = {}
         for dtmi in dtmis:
-            dtdl_path = dtmi_utils._convert_dtmi_to_path(dtmi)
+            dtdl_path = dtmi_conventions._convert_dtmi_to_path(dtmi)
             if expanded_model:
                 dtdl_path = dtdl_path.replace(".json", ".expanded.json")
 

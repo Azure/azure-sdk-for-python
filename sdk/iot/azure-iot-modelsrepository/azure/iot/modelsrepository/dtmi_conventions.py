@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import re
-import pathlib
 
 
 def is_valid_dtmi(dtmi):
@@ -25,8 +24,8 @@ def is_valid_dtmi(dtmi):
 
 
 def get_model_uri(dtmi, repository_uri, expanded=False):
-    """Get the URI representing the absolute location of a model in a Models Repository 
-    
+    """Get the URI representing the absolute location of a model in a Models Repository
+
     :param dtmi str: DTMI for a model
     :param repository_uri str: URI for a Models Repository
     :param expanded bool: Indicates if the URI should be for an expanded model (Default: False)
@@ -38,7 +37,7 @@ def get_model_uri(dtmi, repository_uri, expanded=False):
     """
     if not repository_uri.endswith("/"):
         repository_uri += "/"
-    model_uri = repository_uri + _convert_dtmi_to_path(dtmi)
+    model_uri = repository_uri + _convert_dtmi_to_path(dtmi, expanded)
     return model_uri
 
 
@@ -51,7 +50,8 @@ def _convert_dtmi_to_path(dtmi, expanded=False):
 
     :raises ValueError if DTMI is invalid
 
-    :returns: Relative path 
+    :returns: Relative path of the model in a Models Repository
+    :rtype: str
     """
     pattern = re.compile(
         "^dtmi:[A-Za-z](?:[A-Za-z0-9_]*[A-Za-z0-9])?(?::[A-Za-z](?:[A-Za-z0-9_]*[A-Za-z0-9])?)*;[1-9][0-9]{0,8}$"
