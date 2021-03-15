@@ -1,4 +1,4 @@
-from ..generated.dpsclient import AzureAgFoodPlatformDataPlaneService
+from ._generated.dpsclient import AzureAgFoodPlatformDataPlaneService
 from azure.identity import ClientSecretCredential
 
 from .apigroupclients import (
