@@ -39,7 +39,7 @@ class TranslationGlossary(object):
         self.format_version = kwargs.get("format_version", None)
         self.storage_source = kwargs.get("storage_source", None)
 
-    def _to_generated(self):
+    def to_generated(self):
         return _Glossary(
                 glossary_url = self.glossary_url,
                 format = self.format,
@@ -47,18 +47,16 @@ class TranslationGlossary(object):
                 storage_source = self.storage_source
             )
 
-    @staticmethod
-    def _to_generated(glossary):
+    def to_generated_unknown_type(glossary):
         if isinstance(glossary, TranslationGlossary):
-            return glossary._to_generated()
+            return glossary.to_generated()
         elif isinstance(glossary, six.string_types):
             return _Glossary(
                     glossary_url = glossary,
                 )
 
-    @staticmethod
-    def _to_generated_list(glossaries):
-        return [TranslationGlossary._to_generated(glossary) for glossary in glossaries]
+    def to_generated_list(glossaries):
+        return [TranslationGlossary.to_generated_unknown_type(glossary) for glossary in glossaries]
 
 
 class StorageTarget(object):
@@ -88,18 +86,17 @@ class StorageTarget(object):
         self.glossaries = kwargs.get("glossaries", None)
         self.storage_source = kwargs.get("storage_source", None)
 
-    def _to_generated(self):
+    def to_generated(self):
         return _TargetInput(
             target_url = self.target_url,
             category = self.category_id,
             language = self.language,
             storage_source = self.storage_source,
-            glossaries = TranslationGlossary._to_generated_list(self.glossaries)
+            glossaries = TranslationGlossary.to_generated_list(self.glossaries)
         )
 
-    @staticmethod
-    def _to_generated_list(targets):
-        return [ target._to_generated() for target in targets]
+    def to_generated_list(targets):
+        return [ target.to_generated() for target in targets]
 
 
 class BatchDocumentInput(object):
@@ -138,7 +135,7 @@ class BatchDocumentInput(object):
         self.prefix = kwargs.get("prefix", None)
         self.suffix = kwargs.get("suffix", None)
 
-    def _to_generated(self):
+    def to_generated(self):
         return _BatchRequest(
             source = _SourceInput(
                 source_url = self.source_url,
@@ -149,13 +146,12 @@ class BatchDocumentInput(object):
                 language = self.source_language,
                 storage_source = self.storage_source
             ),
-            targets = StorageTarget._to_generated_list(self.targets),
+            targets = StorageTarget.to_generated_list(self.targets),
             storage_type = self.storage_type
         )
 
-    @staticmethod
-    def _to_generated_list(batch_document_inputs):
-        return [ batch_document_input._to_generated() for batch_document_input in batch_document_inputs ]
+    def to_generated_list(batch_document_inputs):
+        return [ batch_document_input.to_generated() for batch_document_input in batch_document_inputs ]
 
 
 
@@ -205,13 +201,13 @@ class JobStatusDetail(object):
         self.total_characters_charged = kwargs.get('total_characters_charged', None)
 
     @classmethod
-    def _from_generated(cls, batch_status_details):
+    def from_generated(cls, batch_status_details):
         return cls(
             id = batch_status_details.id,
             created_on = batch_status_details.created_date_time_utc,
             last_updated_on = batch_status_details.last_action_date_time_utc,
             status = batch_status_details.status,
-            error = DocumentTranslationError._from_generated(batch_status_details.error),
+            error = DocumentTranslationError.from_generated(batch_status_details.error),
             documents_total_count = batch_status_details.summary.total,
             documents_failed_count = batch_status_details.summary.failed,
             documents_succeeded_count = batch_status_details.summary.success,
@@ -265,14 +261,14 @@ class DocumentStatusDetail(object):
 
 
     @classmethod
-    def _from_generated(cls, doc_status):
+    def from_generated(cls, doc_status):
         return cls(
             url = doc_status.path,
             created_on = doc_status.created_date_time_utc,
             last_updated_on = doc_status.last_action_date_time_utc,
             status = doc_status.status,
             translate_to = doc_status.to,
-            error = DocumentTranslationError._from_generated(doc_status.error),
+            error = DocumentTranslationError.from_generated(doc_status.error),
             translation_progress = doc_status.progress,
             id = doc_status.id,
             characters_charged = doc_status.character_charged
@@ -304,7 +300,7 @@ class DocumentTranslationError(object):
         self.target = None
 
     @classmethod
-    def _from_generated(cls, error):
+    def from_generated(cls, error):
         return cls(
             code=error.code,
             message=error.message,
@@ -336,7 +332,7 @@ class FileFormat(object):
         self.versions = kwargs.get('versions', None)
 
     @classmethod
-    def _from_generated(cls, file_format):
+    def from_generated(cls, file_format):
         return cls(
             format=file_format.format,
             file_extensions=file_format.file_extensions,
@@ -344,6 +340,5 @@ class FileFormat(object):
             versions=file_format.versions
         )
 
-    @classmethod
-    def _from_generated_list(cls, file_formats):
-        return list( [ FileFormat._from_generated(file_formats) for file_formats in file_formats ] ) 
+    def from_generated_list(file_formats):
+        return list( [ FileFormat.from_generated(file_formats) for file_formats in file_formats ] ) 

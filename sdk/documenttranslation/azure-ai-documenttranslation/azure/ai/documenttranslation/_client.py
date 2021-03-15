@@ -61,7 +61,7 @@ class DocumentTranslationClient(object):
 
         # submit translation job
         response_headers = self._client.document_translation._submit_batch_request_initial(
-            inputs = BatchDocumentInput._to_generated_list(batch),
+            inputs = BatchDocumentInput.to_generated_list(batch),
             cls = lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
@@ -222,7 +222,7 @@ class DocumentTranslationClient(object):
         """
 
         glossary_formats = self._client.document_translation.get_glossary_formats(**kwargs)
-        return FileFormat._from_generated_list(glossary_formats)
+        return FileFormat.from_generated_list(glossary_formats)
 
     @distributed_trace
     def get_supported_document_formats(self, **kwargs):
@@ -233,4 +233,4 @@ class DocumentTranslationClient(object):
         """
 
         document_formats = self._client.document_translation.get_document_formats(**kwargs)
-        return FileFormat._from_generated_list(document_formats)
+        return FileFormat.from_generated_list(document_formats)
