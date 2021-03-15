@@ -111,6 +111,10 @@ Mypy install and run.
 **Example: Invoke tox, breaking into the debugger on failure**
 `tox -e whl -c ../../../eng/tox/tox.ini -- --pdb`
 
+### Performance Testing
+
+The `azure-devtools` package now supports a custom performance testing framework. For full details on this framework, and how to write and run tests for an SDK - see the [perfstress tests documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-devtools/doc/perfstress_tests.md).
+
 ### More Reading
 
 We maintain an [additional document](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/eng_sys_checks.md) that has a ton of detail as to what is actually _happening_ in these executions.
