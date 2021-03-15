@@ -41,6 +41,7 @@ class ConfigurationSetting(Model):
     }
 
     kind = "Generic"
+    content_type = None
 
     def __init__(self, **kwargs):
         super(ConfigurationSetting, self).__init__(**kwargs)
@@ -48,7 +49,7 @@ class ConfigurationSetting(Model):
         self.label = kwargs.get("label", None)
         self.value = kwargs.get("value", None)
         self.etag = kwargs.get("etag", None)
-        self.content_type = kwargs.get("content_type", None)
+        self.content_type = kwargs.get("content_type", self.content_type)
         self.last_modified = kwargs.get("last_modified", None)
         self.read_only = kwargs.get("read_only", None)
         self.tags = kwargs.get("tags", {})
@@ -203,8 +204,7 @@ class FeatureFlagConfigurationSetting(
             u"enabled": self.enabled,
             u"conditions": {
                 u"client_filters": [
-                    f._to_generated()  # pylint: disable=protected-access
-                    for f in self.filters
+                    f._to_generated() if isinstance(f, FeatureFilter) else f for f in self.filters
                 ]
             },
         }
@@ -230,8 +230,8 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     :vartype etag: str
     :ivar key:
     :vartype key: str
-    :ivar uri:
-    :vartype uri: str
+    :param uri:
+    :type uri: str
     :param label:
     :type label: str
     :param content_type:
@@ -327,7 +327,10 @@ class FeatureFilter(object):
 
     @classmethod
     def _from_generated(cls, feature_filter):
-        return cls(feature_filter["name"], feature_filter["parameters"])
+        try:
+            return cls(feature_filter["name"], feature_filter["parameters"])
+        except KeyError:
+            return feature_filter
 
     def _to_generated(self):
         # type: (...) -> Dict[str, Any]

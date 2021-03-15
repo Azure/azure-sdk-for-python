@@ -686,5 +686,138 @@ class AppConfigurationClientTest(AzureTestCase):
 
         client.delete_configuration_setting(new_sent.key)
 
-    # @app_config_decorator
-    # def test_breaking1(self, client):
+    @app_config_decorator
+    def test_breaking1(self, client):
+        new = FeatureFlagConfigurationSetting(
+            'breaking1',
+            True,
+            filters=[
+                FeatureFilter(
+                    name=u"Microsoft.TimeWindow",
+                    parameters={
+                        "Start": "bababooey, 31 Mar 2021 25:00:00 GMT",
+                        "End": "Fri, 02 Apr 2021 04:00:00 GMT"
+                    }
+                ),
+            ]
+        )
+        client.set_configuration_setting(new)
+        new1 = client.get_configuration_setting(new.key)
+
+        new = FeatureFlagConfigurationSetting(
+            'breaking2',
+            True,
+            filters=[
+                FeatureFilter(
+                    name=u"Microsoft.TimeWindow",
+                    parameters={
+                        "Start": "bababooey, 31 Mar 2021 25:00:00 GMT",
+                        "End": "not even trying to be a date"
+                    }
+                ),
+            ]
+        )
+        client.set_configuration_setting(new)
+        new1 = client.get_configuration_setting(new.key)
+
+        # This will show up as a Custom filter
+        new = FeatureFlagConfigurationSetting(
+            'breaking3',
+            True,
+            filters=[
+                FeatureFilter(
+                    name=u"Microsoft.TimeWidow",
+                    parameters={
+                        "Start": "bababooey, 31 Mar 2021 25:00:00 GMT",
+                        "End": "not even trying to be a date"
+                    }
+                ),
+            ]
+        )
+        client.set_configuration_setting(new)
+        new1 = client.get_configuration_setting(new.key)
+
+        new = FeatureFlagConfigurationSetting(
+            'breaking4',
+            True,
+            filters=[
+                FeatureFilter(
+                    name=u"Microsoft.TimeWidow",
+                    parameters="stringystring"
+                ),
+            ]
+        )
+        client.set_configuration_setting(new)
+        new1 = client.get_configuration_setting(new.key)
+
+        new = FeatureFlagConfigurationSetting(
+            'breaking5',
+            True,
+            filters=[
+                FeatureFilter(
+                    name=u"Microsoft.Targeting",
+                    parameters={
+                        u"Audience": {
+                            u"Users": '123'
+                        }
+                    }
+                )
+            ]
+        )
+        client.set_configuration_setting(new)
+        new1 = client.get_configuration_setting(new.key)
+
+        new = FeatureFlagConfigurationSetting(
+            'breaking6',
+            True,
+            filters=[
+                FeatureFilter(
+                    name=u"Microsoft.Targeting",
+                    parameters="invalidformat"
+                )
+            ]
+        )
+        client.set_configuration_setting(new)
+        new1 = client.get_configuration_setting(new.key)
+
+        new = FeatureFlagConfigurationSetting(
+            'breaking7',
+            True,
+            filters=[
+                {
+                    'abc': 'def'
+                }
+            ]
+        )
+        client.set_configuration_setting(new)
+        new1 = client.get_configuration_setting(new.key)
+
+        new = FeatureFlagConfigurationSetting(
+            'breaking8',
+            True,
+            filters=[
+                {
+                    'abc': 'def'
+                }
+            ]
+        )
+        new.feature_flag_content_type = "fakeyfakey"
+        client.set_configuration_setting(new)
+        new1 = client.get_configuration_setting(new.key)
+
+    @app_config_decorator
+    def test_breaking2(self, client):
+        new = SecretReferenceConfigurationSetting(
+            "aref",
+            "notaurl"
+        )
+        client.set_configuration_setting(new)
+        new1 = client.get_configuration_setting(new.key)
+
+        new = SecretReferenceConfigurationSetting(
+            "aref1",
+            "notaurl"
+        )
+        new.content_type = "fkaeyjfdkal;"
+        client.set_configuration_setting(new)
+        new1 = client.get_configuration_setting(new.key)
