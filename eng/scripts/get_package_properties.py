@@ -15,4 +15,5 @@ if __name__ == '__main__':
         for filename in files:
             if os.path.basename(filename) == "setup.py":
                 if os.path.basename(root) != 'azure-mgmt' and os.path.basename(root) != 'azure' and os.path.basename(root) != 'azure-storage' and os.path.basename(root) != 'tests':
-                    print(get_package_properties(root))
+                    pkgName, version, is_new_sdk, setup_py_path = get_package_properties(root)
+                    print("{0} {1} {2} {3}".format(pkgName, version, is_new_sdk, setup_py_path))
