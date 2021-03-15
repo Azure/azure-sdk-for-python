@@ -231,8 +231,8 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     :vartype etag: str
     :ivar key:
     :vartype key: str
-    :param uri:
-    :type uri: str
+    :param secret_uri:
+    :type secret_uri: str
     :param label:
     :type label: str
     :param content_type:
@@ -262,12 +262,12 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     )
     kind = "SecretReference"
 
-    def __init__(self, key, uri, label=None, **kwargs):
+    def __init__(self, key, secret_uri, label=None, **kwargs):
         # type: (str, str, str) -> None
         super(SecretReferenceConfigurationSetting, self).__init__(**kwargs)
         self.key = key
         self.label = label
-        self.secret_uri = uri
+        self.secret_uri = secret_uri
         self.content_type = kwargs.get(
             "content_type", self.secret_reference_content_type
         )
@@ -288,7 +288,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
                 pass
         return cls(
             key=key_value.key,
-            uri=key_value.value[u"uri"],
+            secret_uri=key_value.value[u"secret_uri"],
             label=key_value.label,
             secret_id=key_value.value,
             last_modified=key_value.last_modified,
@@ -302,7 +302,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         return KeyValue(
             key=self.key,
             label=self.label,
-            value=json.dumps({u"uri": self.secret_uri}),
+            value=json.dumps({u"secret_uri": self.secret_uri}),
             content_type=self.content_type,
             last_modified=self.last_modified,
             tags=self.tags,
