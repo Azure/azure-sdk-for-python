@@ -128,7 +128,7 @@ class DocumentTranslationClient(object):
             deserialization_callback=callback,
             polling_method=LROBasePolling(
                 timeout=30,
-                lro_algorithms=TranslationPolling(),
+                lro_algorithms=[TranslationPolling()],
                 **kwargs
             ),
         )
