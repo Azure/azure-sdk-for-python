@@ -145,7 +145,7 @@ class DocumentTranslationClient(object):
         """
 
         skip = kwargs.pop('skip', None)
-        top = kwargs.pop('top', None)
+        top = kwargs.pop('results_per_page', None)
 
         def _convert_from_generated_model(generated_model):
             return JobStatusDetail.from_generated(generated_model)
