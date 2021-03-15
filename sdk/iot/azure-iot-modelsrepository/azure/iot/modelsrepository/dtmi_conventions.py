@@ -42,11 +42,12 @@ def get_model_uri(dtmi, repository_uri, expanded=False):
 
 
 def _convert_dtmi_to_path(dtmi, expanded=False):
-    """Returns the DTMI path for a DTMI
+    """Returns the relative path for a model given a DTMI
     E.g:
     dtmi:com:example:Thermostat;1 -> dtmi/com/example/thermostat-1.json
 
-    :param dtmi str: DTMI
+    :param str dtmi : DTMI for a model
+    :param bool expanded: Indicates if the relative path should be for an exapnded model
 
     :raises ValueError if DTMI is invalid
 
@@ -60,5 +61,5 @@ def _convert_dtmi_to_path(dtmi, expanded=False):
         raise ValueError("Invalid DTMI")
     dtmi_path = dtmi.lower().replace(":", "/").replace(";", "-") + ".json"
     if expanded:
-        dtmi_path = dtmi.replace(".json", ".expanded.json")
+        dtmi_path = dtmi_path.replace(".json", ".expanded.json")
     return dtmi_path
