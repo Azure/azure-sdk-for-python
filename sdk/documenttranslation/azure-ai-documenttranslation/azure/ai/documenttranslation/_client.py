@@ -61,6 +61,7 @@ class DocumentTranslationClient(object):
 
         # submit translation job
         response_headers = self._client.document_translation._submit_batch_request_initial(
+            # pylint: disable=protected-access
             inputs = BatchDocumentInput.to_generated_list(batch),
             cls = lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
@@ -89,7 +90,8 @@ class DocumentTranslationClient(object):
         """
 
         job_status = self._client.document_translation.get_operation_status(job_id, **kwargs)
-        return JobStatusDetail.from_generated(job_status)
+        # pylint: disable=protected-access
+        return JobStatusDetail._from_generated(job_status)
 
     @distributed_trace
     def cancel_job(self, job_id, **kwargs):
@@ -120,7 +122,8 @@ class DocumentTranslationClient(object):
 
         def callback(raw_response):
             detail = self._client._deserialize(_BatchStatusDetail, raw_response)
-            return JobStatusDetail.from_generated(detail)
+            # pylint: disable=protected-access
+            return JobStatusDetail._from_generated(detail)
 
         poller = LROPoller(
             client=self._client._client,
@@ -148,7 +151,8 @@ class DocumentTranslationClient(object):
         results_per_page  = kwargs.pop('results_per_page', None)
 
         def _convert_from_generated_model(generated_model):
-            return JobStatusDetail.from_generated(generated_model)
+            # pylint: disable=protected-access
+            return JobStatusDetail._from_generated(generated_model)
 
         model_conversion_function = kwargs.pop("cls", lambda job_statuses: [_convert_from_generated_model(job_status) for job_status in job_statuses])
 
@@ -175,7 +179,8 @@ class DocumentTranslationClient(object):
         results_per_page = kwargs.pop('results_per_page', None)
 
         def _convert_from_generated_model(generated_model):
-            return DocumentStatusDetail.from_generated(generated_model)
+            # pylint: disable=protected-access
+            return DocumentStatusDetail._from_generated(generated_model)
 
         model_conversion_function = kwargs.pop("cls", lambda doc_statuses: [_convert_from_generated_model(doc_status) for doc_status in doc_statuses])
 
@@ -201,7 +206,8 @@ class DocumentTranslationClient(object):
         """
 
         document_status = self._client.document_translation.get_document_status(job_id, document_id, **kwargs)
-        return DocumentStatusDetail.from_generated(document_status)
+        # pylint: disable=protected-access
+        return DocumentStatusDetail._from_generated(document_status)
 
     @distributed_trace
     def get_supported_storage_sources(self, **kwargs):
@@ -222,7 +228,8 @@ class DocumentTranslationClient(object):
         """
 
         glossary_formats = self._client.document_translation.get_glossary_formats(**kwargs)
-        return FileFormat.from_generated_list(glossary_formats.value)
+        # pylint: disable=protected-access
+        return FileFormat._from_generated_list(glossary_formats.value)
 
     @distributed_trace
     def get_supported_document_formats(self, **kwargs):
@@ -233,4 +240,5 @@ class DocumentTranslationClient(object):
         """
 
         document_formats = self._client.document_translation.get_document_formats(**kwargs)
-        return FileFormat.from_generated_list(document_formats.value)
+        # pylint: disable=protected-access
+        return FileFormat._from_generated_list(document_formats.value)
