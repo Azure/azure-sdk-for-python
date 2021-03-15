@@ -5,16 +5,14 @@
 # ------------------------------------
 
 from typing import Any, List
-
+import six
 from ._generated.models import (
     BatchRequest as _BatchRequest,
     SourceInput as _SourceInput,
     DocumentFilter as _DocumentFilter,
     TargetInput as _TargetInput,
     Glossary as _Glossary
-)
-
-import six 
+) 
 
 class TranslationGlossary(object):
     """Glossary / translation memory for the request.
