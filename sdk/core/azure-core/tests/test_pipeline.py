@@ -51,7 +51,9 @@ from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     UserAgentPolicy,
     RedirectPolicy,
-    HttpLoggingPolicy
+    HttpLoggingPolicy,
+    HTTPPolicy,
+    SansIOHTTPPolicy
 )
 from azure.core.pipeline.transport._base import PipelineClientBase
 from azure.core.pipeline.transport import (
@@ -331,6 +333,43 @@ class TestClientRequest(unittest.TestCase):
     def test_repr(self):
         request = HttpRequest("GET", "hello.com")
         assert repr(request) == "<HttpRequest [GET], url: 'hello.com'>"
+
+    def test_add_custom_policy(self):
+        class BooPolicy(HTTPPolicy):
+            def send(*args):
+                raise AzureError('boo')
+
+        class FooPolicy(HTTPPolicy):
+            def send(*args):
+                raise AzureError('boo')
+
+        boo_policy = BooPolicy()
+        foo_policy = FooPolicy()
+        client = PipelineClient(base_url="test", non_retriable_policies=boo_policy)
+        policies = client._pipeline._impl_policies
+        assert boo_policy in policies
+
+        client = PipelineClient(base_url="test", non_retriable_policies=[boo_policy])
+        policies = client._pipeline._impl_policies
+        assert boo_policy in policies
+
+        client = PipelineClient(base_url="test", retriable_policies=boo_policy)
+        policies = client._pipeline._impl_policies
+        assert boo_policy in policies
+        client = PipelineClient(base_url="test", retriable_policies=[boo_policy])
+        policies = client._pipeline._impl_policies
+        assert boo_policy in policies
+
+        client = PipelineClient(base_url="test", non_retriable_policies=boo_policy, retriable_policies=foo_policy)
+        policies = client._pipeline._impl_policies
+        assert boo_policy in policies
+        assert foo_policy in policies
+
+        client = PipelineClient(base_url="test", non_retriable_policies=[boo_policy],
+                                retriable_policies=[foo_policy])
+        policies = client._pipeline._impl_policies
+        assert boo_policy in policies
+        assert foo_policy in policies
 
 
 if __name__ == "__main__":

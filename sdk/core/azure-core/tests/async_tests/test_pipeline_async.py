@@ -220,3 +220,41 @@ async def test_retry_without_http_response():
     pipeline = AsyncPipeline(policies=policies, transport=None)
     with pytest.raises(AzureError):
         await pipeline.run(HttpRequest('GET', url='https://foo.bar'))
+
+@pytest.mark.asyncio
+async def test_add_custom_policy():
+    class BooPolicy(AsyncHTTPPolicy):
+        def send(*args):
+            raise AzureError('boo')
+
+    class FooPolicy(AsyncHTTPPolicy):
+        def send(*args):
+            raise AzureError('boo')
+
+    boo_policy = BooPolicy()
+    foo_policy = FooPolicy()
+    client = AsyncPipelineClient(base_url="test", non_retriable_policies=boo_policy)
+    policies = client._pipeline._impl_policies
+    assert boo_policy in policies
+
+    client = AsyncPipelineClient(base_url="test", non_retriable_policies=[boo_policy])
+    policies = client._pipeline._impl_policies
+    assert boo_policy in policies
+
+    client = AsyncPipelineClient(base_url="test", retriable_policies=boo_policy)
+    policies = client._pipeline._impl_policies
+    assert boo_policy in policies
+    client = AsyncPipelineClient(base_url="test", retriable_policies=[boo_policy])
+    policies = client._pipeline._impl_policies
+    assert boo_policy in policies
+
+    client = AsyncPipelineClient(base_url="test", non_retriable_policies=boo_policy, retriable_policies=foo_policy)
+    policies = client._pipeline._impl_policies
+    assert boo_policy in policies
+    assert foo_policy in policies
+
+    client = AsyncPipelineClient(base_url="test", non_retriable_policies=[boo_policy],
+                            retriable_policies=[foo_policy])
+    policies = client._pipeline._impl_policies
+    assert boo_policy in policies
+    assert foo_policy in policies

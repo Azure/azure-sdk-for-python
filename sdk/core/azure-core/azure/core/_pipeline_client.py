@@ -29,7 +29,12 @@ from .configuration import Configuration
 from .pipeline import Pipeline
 from .pipeline.transport._base import PipelineClientBase
 from .pipeline.policies import (
-    ContentDecodePolicy, DistributedTracingPolicy, HttpLoggingPolicy, RequestIdPolicy
+    ContentDecodePolicy,
+    DistributedTracingPolicy,
+    HttpLoggingPolicy,
+    RequestIdPolicy,
+    HTTPPolicy,
+    SansIOHTTPPolicy
 )
 from .pipeline.transport import RequestsTransport
 
@@ -64,6 +69,10 @@ class PipelineClient(PipelineClientBase):
     :keyword ~azure.core.configuration.Configuration config: If omitted, the standard configuration is used.
     :keyword Pipeline pipeline: If omitted, a Pipeline object is created and returned.
     :keyword list[HTTPPolicy] policies: If omitted, the standard policies of the configuration object is used.
+    :keyword non_retriable_policies: If specified, the policies will be added into the policy list before RetryPolicy
+    :paramtype non_retriable_policies: Union[HTTPPolicy, SansIOHTTPPolicy, list[HTTPPolicy], list[SansIOHTTPPolicy]]
+    :keyword retriable_policies: If specified, the policies will be added into the policy list after RetryPolicy
+    :paramtype retriable_policies: Union[HTTPPolicy, SansIOHTTPPolicy, list[HTTPPolicy], list[SansIOHTTPPolicy]]
     :keyword HttpTransport transport: If omitted, RequestsTransport is used for synchronous transport.
     :return: A pipeline object.
     :rtype: ~azure.core.pipeline.Pipeline
@@ -102,20 +111,34 @@ class PipelineClient(PipelineClientBase):
         policies = kwargs.get('policies')
 
         if policies is None:  # [] is a valid policy list
+            non_retriable_policies = kwargs.get('non_retriable_policies')
+            retriable_policies = kwargs.get('retriable_policies')
             policies = [
                 RequestIdPolicy(**kwargs),
                 config.headers_policy,
                 config.user_agent_policy,
                 config.proxy_policy,
-                ContentDecodePolicy(**kwargs),
-                config.redirect_policy,
-                config.retry_policy,
-                config.authentication_policy,
-                config.custom_hook_policy,
-                config.logging_policy,
-                DistributedTracingPolicy(**kwargs),
-                config.http_logging_policy or HttpLoggingPolicy(**kwargs)
+                ContentDecodePolicy(**kwargs)
             ]
+            if non_retriable_policies:
+                if isinstance(non_retriable_policies, HTTPPolicy) or isinstance(non_retriable_policies, SansIOHTTPPolicy):
+                    policies.append(non_retriable_policies)
+                else:
+                    for policy in non_retriable_policies:
+                        policies.append(policy)
+            policies = policies + [config.redirect_policy,
+                               config.retry_policy,
+                               config.authentication_policy,
+                               config.custom_hook_policy]
+            if retriable_policies:
+                if isinstance(retriable_policies, HTTPPolicy) or isinstance(retriable_policies, SansIOHTTPPolicy):
+                    policies.append(retriable_policies)
+                else:
+                    for policy in retriable_policies:
+                        policies.append(policy)
+            policies = policies + [config.logging_policy,
+                               DistributedTracingPolicy(**kwargs),
+                               config.http_logging_policy or HttpLoggingPolicy(**kwargs)]
 
         if not transport:
             transport = RequestsTransport(**kwargs)
