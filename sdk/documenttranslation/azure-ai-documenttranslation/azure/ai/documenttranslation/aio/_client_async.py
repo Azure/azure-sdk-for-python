@@ -7,11 +7,19 @@
 from typing import Union, Any, List, TYPE_CHECKING
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.polling import LROPoller
+from azure.core.polling.base_polling import LROBasePolling
 from azure.core.async_paging import AsyncItemPaged
 from .._generated.aio import BatchDocumentTranslationClient as _BatchDocumentTranslationClient
 from .._user_agent import USER_AGENT
-from .._models import JobStatusDetail, DocumentStatusDetail, BatchDocumentInput, FileFormat
+from .._models import (
+    JobStatusDetail,
+    BatchDocumentInput,
+    BatchStatusDetail as _BatchStatusDetail,
+    FileFormat
+)
 from .._helpers import get_authentication_policy
+from .._polling import TranslationPolling
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.credentials import AzureKeyCredential
@@ -68,13 +76,13 @@ class DocumentTranslationClient(object):
             **kwargs
         )
 
-        def get_job_id(operation_loc_header):
+        def get_job_id(response_headers):
             # extract job id. ex: https://document-translator.cognitiveservices.azure.com/translator/text/batch/v1.0-preview.1/batches/cd0asdd0-2ce6-asd4-abd4-9asd7698c26a
-            return operation_loc_header.split('/')[-1]
+            operation_location_header = response_headers['Operation-Location']
+            return operation_location_header.split('/')[-1]
 
         # get job id from response header
-        operation_location_header = response_headers['Operation-Location']
-        job_id = get_job_id(operation_location_header)
+        job_id = get_job_id(response_headers)
 
         # get job status
         return await self.get_job_status(job_id)
@@ -116,7 +124,27 @@ class DocumentTranslationClient(object):
         :return: JobStatusDetail
         :rtype: JobStatusDetail
         """
-        pass  # pylint: disable=unnecessary-pass
+        pipeline_response = await self._client.document_translation.get_operation_status(
+            job_id,
+            cls=lambda pipeline_response, _, response_headers: pipeline_response
+        )
+
+        def callback(raw_response):
+            detail = self._client._deserialize(_BatchStatusDetail, raw_response)
+            # pylint: disable=protected-access
+            return JobStatusDetail._from_generated(detail)
+
+        poller = LROPoller(
+            client=self._client._client,
+            initial_response=pipeline_response,
+            deserialization_callback=callback,
+            polling_method=LROBasePolling(
+                timeout=30,
+                lro_algorithms=[TranslationPolling()],
+                **kwargs
+            ),
+        )
+        return poller.result()
 
     @distributed_trace
     def list_submitted_jobs(self, **kwargs):
@@ -157,23 +185,15 @@ class DocumentTranslationClient(object):
         return await self._client.document_translation.get_document_status(job_id, document_id, **kwargs)
 
     @distributed_trace_async
-    async def get_supported_storage_sources(self, **kwargs):
-        # type: (**Any) -> List[str]
-        """
-
-        :rtype: list[str]
-        """
-        return await self._client.document_translation.get_document_storage_source(**kwargs)
-
-    @distributed_trace_async
     async def get_supported_glossary_formats(self, **kwargs):
         # type: (**Any) -> List[FileFormat]
         """
 
         :rtype: list[FileFormat]
         """
-
-        return await self._client.document_translation.get_glossary_formats(**kwargs)
+        glossary_formats = self._client.document_translation.get_glossary_formats(**kwargs)
+        # pylint: disable=protected-access
+        return FileFormat._from_generated_list(glossary_formats.value)
 
     @distributed_trace_async
     async def get_supported_document_formats(self, **kwargs):
@@ -182,5 +202,6 @@ class DocumentTranslationClient(object):
 
         :rtype: list[FileFormat]
         """
-
-        return await self._client.document_translation.get_document_formats(**kwargs)
+        document_formats = await self._client.document_translation.get_document_formats(**kwargs)
+        # pylint: disable=protected-access
+        return FileFormat._from_generated_list(document_formats.value)
