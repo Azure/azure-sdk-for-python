@@ -42,7 +42,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
         # NOTE: DELETE `/acr/v1/{name}`
-        deleted_repository = self._client.container_registry.delete_repository(repository)
+        deleted_repository = self._client.container_registry.delete_repository(
+            repository
+        )
         return DeletedRepositoryResult.from_generated(deleted_repository)
 
     def list_repositories(self, **kwargs):
@@ -61,9 +63,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         repos = self._client.repository.get_list(
             last=kwargs.get("last", None), n=kwargs.get("max", None)
         )
-        return ItemPaged(
-
-        )
+        return ItemPaged()
 
     def get_repository_client(self, repository, **kwargs):
         # type: (str) -> ContainerRepositoryClient

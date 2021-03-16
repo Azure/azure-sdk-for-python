@@ -23,7 +23,7 @@ class ContentPermissions(object):
             delete=generated.can_delete,
             list=generated.can_list,
             read=generated.can_read,
-            write=generated.can_write
+            write=generated.can_write,
         )
 
 
@@ -38,7 +38,7 @@ class DeletedRepositoryResult(object):
     def from_generated(cls, gen):
         return cls(
             deleted_tags=gen.deleted_tags,
-            deleted_registry_artifact_digests=gen.deleted_registry_artifact_digests
+            deleted_registry_artifact_digests=gen.deleted_registry_artifact_digests,
         )
 
 
@@ -105,9 +105,11 @@ class RepositoryProperties(object):
         self.registry = kwargs.get("registry", None)
         self.tag_count = kwargs.get("tag_count", None)
         self.manifest_count = kwargs.get("manifest_count", None)
-        self.content_permissions = kwargs.get('content_permissions', None)
+        self.content_permissions = kwargs.get("content_permissions", None)
         if self.content_permissions:
-            self.content_permissions = ContentPermissions.from_generated(self.content_permissions)
+            self.content_permissions = ContentPermissions.from_generated(
+                self.content_permissions
+            )
 
     @classmethod
     def from_generated(cls, generated):
@@ -119,7 +121,7 @@ class RepositoryProperties(object):
             registry=generated.registry,
             manifest_count=generated.registry_artifact_count,
             tag_count=generated.tag_count,
-            content_permissions=generated.writeable_properties
+            content_permissions=generated.writeable_properties,
         )
         return cls(generated)
 
@@ -161,7 +163,9 @@ class TagProperties(object):
         self.last_updated_on = kwargs.get("last_updated_on", None)
         self.content_permissions = kwargs.get("content_permissions", None)
         if self.content_permissions:
-            self.content_permissions = ContentPermissions.from_generated(self.content_permissions)
+            self.content_permissions = ContentPermissions.from_generated(
+                self.content_permissions
+            )
         self.name = kwargs.get("name", None)
         self.registry = kwargs.get("registry", None)
         self.repository = kwargs.get("repository", None)
@@ -177,5 +181,3 @@ class TagProperties(object):
             registry=generated.registry,
             repository=generated.repository,
         )
-
-

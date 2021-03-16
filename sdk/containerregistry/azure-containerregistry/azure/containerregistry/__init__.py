@@ -17,7 +17,7 @@ from ._models import (
     RegistryArtifactProperties,
     RepositoryProperties,
     TagOrderBy,
-    TagProperties
+    TagProperties,
 )
 from ._storage_models import (
     ArtifactManifest,

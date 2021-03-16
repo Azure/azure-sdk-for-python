@@ -30,7 +30,6 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             endpoint=self.endpoint, credential=credential, **kwargs
         )
 
-
     def delete(self, **kwargs):
         # type: (...) -> None
         """Delete a repository
@@ -62,6 +61,12 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         raise NotImplementedError("Has not been implemented")
 
+    def get_digest_from_tag(self, tag):
+        # type: (str) -> str
+        for t in self.list_tags():
+            if t.tag == tag:
+                return t.digest
+
     def get_properties(self):
         # type: (...) -> RepositoryProperties
         """Get the properties of a repository
@@ -69,7 +74,9 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: :class:~azure.containerregistry.RepositoryProperties
         :raises: None
         """
-        resp = self._client.container_registry.get_repository_attributes(self.repository)
+        resp = self._client.container_registry.get_repository_attributes(
+            self.repository
+        )
         return RepositoryProperties.from_generated(resp)
 
     def get_registry_artifact_properties(self, tag_or_digest, **kwargs):
@@ -82,9 +89,13 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
         # TODO: If `tag_or_digest` is a tag, need to do a get_tags to find the appropriate digest, generated code only takes a digest
+        if self._is_tag(tag_or_digest):
+            tag_or_digest = self.get_digest_from_tag(tag_or_digest)
         # TODO: The returned object from the generated code is not being deserialized properly
         return RegistryArtifactProperties.from_generated(
-            self._client.container_registry_repository.get_manifest_attributes(self.repository, tag_or_digest)
+            self._client.container_registry_repository.get_manifest_attributes(
+                self.repository, tag_or_digest
+            )
         )
 
     def get_tag_properties(self, tag, **kwargs):
@@ -97,7 +108,9 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
         return TagProperties.from_generated(
-            self._client.container_registry_repository.get_tag_attributes(self.repository, tag)
+            self._client.container_registry_repository.get_tag_attributes(
+                self.repository, tag
+            )
         )
 
     def list_registry_artifacts(self, **kwargs):
@@ -119,8 +132,9 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             self.repository,
             last=kwargs.get("last", None),
             n=kwargs.get("n", None),
-            orderby=kwargs.get("orderby"))#,
-            # cls=lambda objs: [RegistryArtifacts.from_generated(x) for x in objs])
+            orderby=kwargs.get("orderby"),
+        )  # ,
+        # cls=lambda objs: [RegistryArtifacts.from_generated(x) for x in objs])
 
         return RegistryArtifactProperties.from_generated(artifacts)
 
@@ -132,9 +146,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :raises: None
         """
         raise NotImplementedError("Not implemented")
-        tags = self._client.container_registry.get_attributes(
-            self.repository, **kwargs
-        )
+        tags = self._client.container_registry.get_attributes(self.repository, **kwargs)
         return tags
 
     def set_manifest_properties(self, digest, value):

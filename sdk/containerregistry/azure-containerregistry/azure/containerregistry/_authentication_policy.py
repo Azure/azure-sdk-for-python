@@ -8,8 +8,10 @@ from base64 import b64encode
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
+
 class ContainerRegistryUserCredential(object):
     """Credential used to authenticate with Container Registry service"""
+
     def __init__(self, username, password):
         self._user = username
         self._password = password
@@ -23,6 +25,7 @@ class ContainerRegistryUserCredential(object):
 
 class ContainerRegistryUserCredentialPolicy(SansIOHTTPPolicy):
     """HTTP pipeline policy to authenticate using ContainerRegistryUserCredential"""
+
     def __init__(self, credential):
         self.credential = credential
 
