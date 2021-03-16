@@ -11,6 +11,10 @@ of truth for the DTDL model specifications.
 Note that this implementation is not representative of what an eventual full
 parser implementation would necessarily look like from an API perspective
 """
+from ._chainable_exception import ChainableException
+
+class ParsingError(ChainableException):
+    pass
 
 
 class PseudoParser(object):
@@ -25,8 +29,8 @@ class PseudoParser(object):
         """Return a dictionary containing all the provided models, as well as their dependencies,
         indexed by DTMI
 
-        :param models list[str]: List of models
-        
+        :param list[str] models: List of models
+
         :returns: Dictionary containing models and their dependencies, indexed by DTMI
         :rtype: dict
         """
@@ -73,5 +77,9 @@ def _get_dependency_list(model):
                 elif isinstance(item, dict):
                     # This is a nested model. Now go get its dependencies and add them
                     dependencies += _get_dependency_list(item)
+                else:
+                    raise ParsingError("Invalid DTDL")
+        else:
+            raise ParsingError("Invalid DTDL")
 
     return dependencies

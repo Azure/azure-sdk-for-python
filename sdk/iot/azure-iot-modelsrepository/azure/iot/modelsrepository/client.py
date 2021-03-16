@@ -36,22 +36,45 @@ _REMOTE_PROTOCOLS = ["http", "https"]
 class ModelsRepositoryClient(object):
     """Client providing APIs for Models Repository operations"""
 
-    # TODO: Should api_version be a kwarg?
-    def __init__(self, repository_location=None, api_version=None, **kwargs):
+    def __init__(self, repository_location=None, dependency_resolution=None, api_version=None, **kwargs):
         """
         :param str repository_location: Location of the Models Repository you wish to access.
             This location can be a remote HTTP/HTTPS URL, or a local filesystem path.
             If omitted, will default to using "https://devicemodels.azure.com".
         :param str api_version: The API version for the Models Repository Service you wish to
             access.
+        :param str dependency_resolution: Dependency resolution mode.
+            Possible values:
+                - "disabled": Do not resolve model dependencies
+                - "enabled": Resolve model dependencies from the repository
+                - "tryFromExpanded": Attempt to resolve model and dependencies from an expanded
+                        DTDL document in the repository. If this is not successful, will fall back
+                        on manually resolving dependencies in the repository
+            If using the default repository location, the default dependency resolution mode will
+            be "tryFromExpanded". If using a custom repository location, the default dependency
+            resolution mode will be "enabled".
 
         :raises: ValueError if repository_location is invalid
+        :raises: ValueError if dependency_resolution is invalid
         """
         repository_location = (
             _DEFAULT_LOCATION if repository_location is None else repository_location
         )
-        # api_version = _DEFAULT_API_VERSION if api_version is None else api_version
 
+        if dependency_resolution is None:
+            # If using the default repository location, the resolution mode should default to
+            # expanded mode because the defeault repo guarantees the existence of expanded DTDLs
+            if repository_location == _DEFAULT_LOCATION:
+                self.resolution_mode = DEPENDENCY_MODE_TRY_FROM_EXPANDED
+            else:
+                self.resolution_mode = DEPENDENCY_MODE_ENABLED
+        else:
+            if dependency_resolution not in [DEPENDENCY_MODE_ENABLED, DEPENDENCY_MODE_DISABLED, DEPENDENCY_MODE_TRY_FROM_EXPANDED]:
+                raise ValueError("Invalid dependency resolution mode: {}".format(dependency_resolution))
+            self.resolution_mode = dependency_resolution
+
+        # TODO: Should api_version be a kwarg in the API surface?
+        # api_version = _DEFAULT_API_VERSION if api_version is None else api_version
         kwargs.setdefault("api_verison", api_version)
 
         # NOTE: depending on how this class develops over time, may need to adjust relationship
@@ -62,16 +85,18 @@ class ModelsRepositoryClient(object):
         self.resolver = _resolver.DtmiResolver(self.fetcher)
         self._psuedo_parser = _pseudo_parser.PseudoParser(self.resolver)
 
-    def get_models(self, dtmis, dependency_resolution=DEPENDENCY_MODE_DISABLED):
+    def get_models(self, dtmis, dependency_resolution=None):
         """Retrieve a model from the Models Repository.
 
         :param list[str] dtmis: The DTMIs for the models you wish to retrieve
-        :param str dependency_resolution: Dependency resolution mode. Possible values:
-            - "disabled": Do not resolve model dependencies
-            - "enabled": Resolve model dependencies from the repository
-            - "tryFromExpanded": Attempt to resolve model and dependencies from an expanded DTDL
-                    document in the repository. If this is not successful, will fall back on
-                    manually resolving dependencies in the repository
+        :param str dependency_resolution: Dependency resolution mode override. This value takes
+            precedence over the value set on the client.
+            Possible values:
+                - "disabled": Do not resolve model dependencies
+                - "enabled": Resolve model dependencies from the repository
+                - "tryFromExpanded": Attempt to resolve model and dependencies from an expanded DTDL
+                        document in the repository. If this is not successful, will fall back on
+                        manually resolving dependencies in the repository
 
         :raises: ValueError if given an invalid dependency resolution mode
         :raises: ResolverError if there is an error retrieving a model
@@ -79,7 +104,10 @@ class ModelsRepositoryClient(object):
         :returns: Dictionary mapping DTMIs to models
         :rtype: dict
         """
-        # TODO: If not ResolverError, then what?
+        # TODO: Use better error surface than the custom ResolverError
+        if dependency_resolution is None:
+            dependency_resolution = self.resolution_mode
+
         if dependency_resolution == DEPENDENCY_MODE_DISABLED:
             # Simply retrieve the model(s)
             model_map = self.resolver.resolve(dtmis)

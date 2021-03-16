@@ -50,9 +50,22 @@ class DtmiResolver(object):
                 raise ResolverError("Failed to resolve dtmi: {}".format(dtmi), cause=e)
 
             if expanded_model:
+                # Verify that the DTMI of the "root" model (i.e. the model we requested the
+                # expanded DTDL for) within the expanded DTDL matches the DTMI of the request
+                if True not in (model["@id"] == dtmi for model in dtdl):
+                    raise ResolverError("DTMI mismatch on expanded DTDL - Request: {}".format(
+                        dtmi
+                    ))
+                # Add all the models in the expanded DTDL to the map
                 for model in dtdl:
                     model_map[model["@id"]] = model
             else:
+                # Verify that the DTMI of the fetched model matches the DTMI of the request
+                if model["@id"] != dtmi:
+                    raise ResolverError("DTMI mismatch - Request: {}, Response: {}".format(
+                        dtmi, model["@id"]
+                    ))
+                # Add the model to the map
                 model_map[dtmi] = dtdl
         return model_map
 
