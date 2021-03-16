@@ -52,7 +52,7 @@ class DscNodeOperations(object):
         node_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.DscNode"
+        # type: (...) -> None
         """Delete the dsc node identified by node id.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -62,16 +62,16 @@ class DscNodeOperations(object):
         :param node_id: The node id.
         :type node_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DscNode, or the result of cls(response)
-        :rtype: ~azure.mgmt.automation.models.DscNode
+        :return: None, or the result of cls(response)
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DscNode"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-01-15"
+        api_version = "2020-01-13-preview"
         accept = "application/json"
 
         # Construct URL
@@ -101,12 +101,9 @@ class DscNodeOperations(object):
             error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DscNode', pipeline_response)
-
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, None, {})
 
-        return deserialized
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/nodes/{nodeId}'}  # type: ignore
 
     def get(
@@ -135,7 +132,7 @@ class DscNodeOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-01-15"
+        api_version = "2020-01-13-preview"
         accept = "application/json"
 
         # Construct URL
@@ -202,7 +199,7 @@ class DscNodeOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-01-15"
+        api_version = "2020-01-13-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -280,7 +277,7 @@ class DscNodeOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-01-15"
+        api_version = "2020-01-13-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):

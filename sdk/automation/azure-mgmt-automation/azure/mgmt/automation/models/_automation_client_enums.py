@@ -75,6 +75,13 @@ class DscConfigurationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     EDIT = "Edit"
     PUBLISHED = "Published"
 
+class EncryptionKeySourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Encryption Key Source
+    """
+
+    MICROSOFT_AUTOMATION = "Microsoft.Automation"
+    MICROSOFT_KEYVAULT = "Microsoft.Keyvault"
+
 class GroupTypeEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Type of the HybridWorkerGroup.
     """
@@ -171,15 +178,6 @@ class JobStreamType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     VERBOSE = "Verbose"
     ANY = "Any"
 
-class LinuxUpdateClasses(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Update classifications included in the software update configuration.
-    """
-
-    UNCLASSIFIED = "Unclassified"
-    CRITICAL = "Critical"
-    SECURITY = "Security"
-    OTHER = "Other"
-
 class ModuleProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Gets or sets the provisioning state of the module.
     """
@@ -201,13 +199,6 @@ class ModuleProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     CANCELLED = "Cancelled"
     UPDATING = "Updating"
 
-class OperatingSystemType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Target operating system for the software update configuration.
-    """
-
-    WINDOWS = "Windows"
-    LINUX = "Linux"
-
 class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The provisioning state of the job.
     """
@@ -215,6 +206,15 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     COMPLETED = "Completed"
     FAILED = "Failed"
     RUNNING = "Running"
+
+class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The identity type.
+    """
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
+    NONE = "None"
 
 class RunbookState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Gets or sets the state of the runbook.
@@ -288,31 +288,9 @@ class SyncType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PARTIAL_SYNC = "PartialSync"
     FULL_SYNC = "FullSync"
 
-class TagOperators(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Filter VMs by Any or All specified tags.
-    """
-
-    ALL = "All"
-    ANY = "Any"
-
 class TokenType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The token type. Must be either PersonalAccessToken or Oauth.
     """
 
     PERSONAL_ACCESS_TOKEN = "PersonalAccessToken"
     OAUTH = "Oauth"
-
-class WindowsUpdateClasses(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Update classification included in the software update configuration. A comma separated string
-    with required values
-    """
-
-    UNCLASSIFIED = "Unclassified"
-    CRITICAL = "Critical"
-    SECURITY = "Security"
-    UPDATE_ROLLUP = "UpdateRollup"
-    FEATURE_PACK = "FeaturePack"
-    SERVICE_PACK = "ServicePack"
-    DEFINITION = "Definition"
-    TOOLS = "Tools"
-    UPDATES = "Updates"

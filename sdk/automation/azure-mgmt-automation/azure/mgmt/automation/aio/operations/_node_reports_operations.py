@@ -69,7 +69,7 @@ class NodeReportsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-01-15"
+        api_version = "2020-01-13-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -153,7 +153,7 @@ class NodeReportsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-01-15"
+        api_version = "2020-01-13-preview"
         accept = "application/json"
 
         # Construct URL
@@ -220,7 +220,7 @@ class NodeReportsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-01-15"
+        api_version = "2020-01-13-preview"
         accept = "application/json"
 
         # Construct URL

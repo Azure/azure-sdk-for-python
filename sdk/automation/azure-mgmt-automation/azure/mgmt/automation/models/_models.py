@@ -442,6 +442,8 @@ class AutomationAccount(TrackedResource):
     :type location: str
     :param etag: Gets or sets the etag of the resource.
     :type etag: str
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.automation.models.Identity
     :param sku: Gets or sets the SKU of account.
     :type sku: ~azure.mgmt.automation.models.Sku
     :param last_modified_by: Gets or sets the last modified by.
@@ -454,6 +456,15 @@ class AutomationAccount(TrackedResource):
     :vartype last_modified_time: ~datetime.datetime
     :param description: Gets or sets the description.
     :type description: str
+    :param encryption: Encryption properties for the automation account.
+    :type encryption: ~azure.mgmt.automation.models.EncryptionProperties
+    :param private_endpoint_connections: List of Automation operations supported by the Automation
+     resource provider.
+    :type private_endpoint_connections:
+     list[~azure.mgmt.automation.models.PrivateEndpointConnection]
+    :param public_network_access: Indicates whether traffic on the non-ARM endpoint (Webhook/Agent)
+     is allowed from the public internet.
+    :type public_network_access: bool
     """
 
     _validation = {
@@ -472,12 +483,16 @@ class AutomationAccount(TrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
         'sku': {'key': 'properties.sku', 'type': 'Sku'},
         'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'description': {'key': 'properties.description', 'type': 'str'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'bool'},
     }
 
     def __init__(
@@ -486,12 +501,16 @@ class AutomationAccount(TrackedResource):
     ):
         super(AutomationAccount, self).__init__(**kwargs)
         self.etag = kwargs.get('etag', None)
+        self.identity = kwargs.get('identity', None)
         self.sku = kwargs.get('sku', None)
         self.last_modified_by = kwargs.get('last_modified_by', None)
         self.state = None
         self.creation_time = None
         self.last_modified_time = None
         self.description = kwargs.get('description', None)
+        self.encryption = kwargs.get('encryption', None)
+        self.private_endpoint_connections = kwargs.get('private_endpoint_connections', None)
+        self.public_network_access = kwargs.get('public_network_access', None)
 
 
 class AutomationAccountCreateOrUpdateParameters(msrest.serialization.Model):
@@ -501,17 +520,27 @@ class AutomationAccountCreateOrUpdateParameters(msrest.serialization.Model):
     :type name: str
     :param location: Gets or sets the location of the resource.
     :type location: str
+    :param identity: Sets the identity property for automation account.
+    :type identity: ~azure.mgmt.automation.models.Identity
     :param tags: A set of tags. Gets or sets the tags attached to the resource.
     :type tags: dict[str, str]
     :param sku: Gets or sets account SKU.
     :type sku: ~azure.mgmt.automation.models.Sku
+    :param encryption: Set the encryption properties for the automation account.
+    :type encryption: ~azure.mgmt.automation.models.EncryptionProperties
+    :param public_network_access: Indicates whether traffic on the non-ARM endpoint (Webhook/Agent)
+     is allowed from the public internet.
+    :type public_network_access: bool
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'properties.sku', 'type': 'Sku'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'bool'},
     }
 
     def __init__(
@@ -521,8 +550,11 @@ class AutomationAccountCreateOrUpdateParameters(msrest.serialization.Model):
         super(AutomationAccountCreateOrUpdateParameters, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.location = kwargs.get('location', None)
+        self.identity = kwargs.get('identity', None)
         self.tags = kwargs.get('tags', None)
         self.sku = kwargs.get('sku', None)
+        self.encryption = kwargs.get('encryption', None)
+        self.public_network_access = kwargs.get('public_network_access', None)
 
 
 class AutomationAccountListResult(msrest.serialization.Model):
@@ -555,17 +587,27 @@ class AutomationAccountUpdateParameters(msrest.serialization.Model):
     :type name: str
     :param location: Gets or sets the location of the resource.
     :type location: str
+    :param identity: Sets the identity property for automation account.
+    :type identity: ~azure.mgmt.automation.models.Identity
     :param tags: A set of tags. Gets or sets the tags attached to the resource.
     :type tags: dict[str, str]
     :param sku: Gets or sets account SKU.
     :type sku: ~azure.mgmt.automation.models.Sku
+    :param encryption: Set the encryption properties for the automation account.
+    :type encryption: ~azure.mgmt.automation.models.EncryptionProperties
+    :param public_network_access: Indicates whether traffic on the non-ARM endpoint (Webhook/Agent)
+     is allowed from the public internet.
+    :type public_network_access: bool
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'properties.sku', 'type': 'Sku'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'bool'},
     }
 
     def __init__(
@@ -575,35 +617,11 @@ class AutomationAccountUpdateParameters(msrest.serialization.Model):
         super(AutomationAccountUpdateParameters, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.location = kwargs.get('location', None)
+        self.identity = kwargs.get('identity', None)
         self.tags = kwargs.get('tags', None)
         self.sku = kwargs.get('sku', None)
-
-
-class AzureQueryProperties(msrest.serialization.Model):
-    """Azure query for the update configuration.
-
-    :param scope: List of Subscription or Resource Group ARM Ids.
-    :type scope: list[str]
-    :param locations: List of locations to scope the query to.
-    :type locations: list[str]
-    :param tag_settings: Tag settings for the VM.
-    :type tag_settings: ~azure.mgmt.automation.models.TagSettingsProperties
-    """
-
-    _attribute_map = {
-        'scope': {'key': 'scope', 'type': '[str]'},
-        'locations': {'key': 'locations', 'type': '[str]'},
-        'tag_settings': {'key': 'tagSettings', 'type': 'TagSettingsProperties'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AzureQueryProperties, self).__init__(**kwargs)
-        self.scope = kwargs.get('scope', None)
-        self.locations = kwargs.get('locations', None)
-        self.tag_settings = kwargs.get('tag_settings', None)
+        self.encryption = kwargs.get('encryption', None)
+        self.public_network_access = kwargs.get('public_network_access', None)
 
 
 class Certificate(Resource):
@@ -755,29 +773,34 @@ class CertificateUpdateParameters(msrest.serialization.Model):
         self.description = kwargs.get('description', None)
 
 
-class CollectionItemUpdateConfiguration(msrest.serialization.Model):
-    """object returned when requesting a collection of software update configuration.
+class ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties(msrest.serialization.Model):
+    """ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties.
 
-    :param azure_virtual_machines: List of azure resource Ids for azure virtual machines targeted
-     by the software update configuration.
-    :type azure_virtual_machines: list[str]
-    :param duration: Maximum time allowed for the software update configuration run. Duration needs
-     to be specified using the format PT[n]H[n]M[n]S as per ISO8601.
-    :type duration: ~datetime.timedelta
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client id of user assigned identity.
+    :vartype client_id: str
     """
 
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
     _attribute_map = {
-        'azure_virtual_machines': {'key': 'azureVirtualMachines', 'type': '[str]'},
-        'duration': {'key': 'duration', 'type': 'duration'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(CollectionItemUpdateConfiguration, self).__init__(**kwargs)
-        self.azure_virtual_machines = kwargs.get('azure_virtual_machines', None)
-        self.duration = kwargs.get('duration', None)
+        super(ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
 
 
 class Connection(Resource):
@@ -2280,6 +2303,55 @@ class DscReportResourceNavigation(msrest.serialization.Model):
         self.resource_id = kwargs.get('resource_id', None)
 
 
+class EncryptionProperties(msrest.serialization.Model):
+    """The encryption settings for automation account.
+
+    :param key_vault_properties: Key vault properties.
+    :type key_vault_properties: ~azure.mgmt.automation.models.KeyVaultProperties
+    :param key_source: Encryption Key Source. Possible values include: "Microsoft.Automation",
+     "Microsoft.Keyvault".
+    :type key_source: str or ~azure.mgmt.automation.models.EncryptionKeySourceType
+    :param identity: User identity used for CMK.
+    :type identity: ~azure.mgmt.automation.models.EncryptionPropertiesIdentity
+    """
+
+    _attribute_map = {
+        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
+        'key_source': {'key': 'keySource', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'EncryptionPropertiesIdentity'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(EncryptionProperties, self).__init__(**kwargs)
+        self.key_vault_properties = kwargs.get('key_vault_properties', None)
+        self.key_source = kwargs.get('key_source', None)
+        self.identity = kwargs.get('identity', None)
+
+
+class EncryptionPropertiesIdentity(msrest.serialization.Model):
+    """User identity used for CMK.
+
+    :param user_assigned_identity: The user identity used for CMK. It will be an ARM resource id in
+     the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+    :type user_assigned_identity: object
+    """
+
+    _attribute_map = {
+        'user_assigned_identity': {'key': 'userAssignedIdentity', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(EncryptionPropertiesIdentity, self).__init__(**kwargs)
+        self.user_assigned_identity = kwargs.get('user_assigned_identity', None)
+
+
 class ErrorResponse(msrest.serialization.Model):
     """Error response of an operation failure.
 
@@ -2442,6 +2514,48 @@ class HybridRunbookWorkerGroupUpdateParameters(msrest.serialization.Model):
     ):
         super(HybridRunbookWorkerGroupUpdateParameters, self).__init__(**kwargs)
         self.credential = kwargs.get('credential', None)
+
+
+class Identity(msrest.serialization.Model):
+    """Identity for the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of resource identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of resource.
+    :vartype tenant_id: str
+    :param type: The identity type. Possible values include: "SystemAssigned", "UserAssigned",
+     "SystemAssigned, UserAssigned", "None".
+    :type type: str or ~azure.mgmt.automation.models.ResourceIdentityType
+    :param user_assigned_identities: The list of user identities associated with the resource. The
+     user identity dictionary key references will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.automation.models.ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties]
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Identity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = kwargs.get('type', None)
+        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
 
 
 class Job(Resource):
@@ -2933,6 +3047,33 @@ class KeyListResult(msrest.serialization.Model):
         self.keys = kwargs.get('keys', None)
 
 
+class KeyVaultProperties(msrest.serialization.Model):
+    """Settings concerning key vault encryption for a configuration store.
+
+    :param keyvault_uri: The URI of the key vault key used to encrypt data.
+    :type keyvault_uri: str
+    :param key_name: The name of key used to encrypt data.
+    :type key_name: str
+    :param key_version: The key version of the key used to encrypt data.
+    :type key_version: str
+    """
+
+    _attribute_map = {
+        'keyvault_uri': {'key': 'keyvaultUri', 'type': 'str'},
+        'key_name': {'key': 'keyName', 'type': 'str'},
+        'key_version': {'key': 'keyVersion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(KeyVaultProperties, self).__init__(**kwargs)
+        self.keyvault_uri = kwargs.get('keyvault_uri', None)
+        self.key_name = kwargs.get('key_name', None)
+        self.key_version = kwargs.get('key_version', None)
+
+
 class LinkedWorkspace(msrest.serialization.Model):
     """Definition of the linked workspace.
 
@@ -2956,38 +3097,6 @@ class LinkedWorkspace(msrest.serialization.Model):
     ):
         super(LinkedWorkspace, self).__init__(**kwargs)
         self.id = None
-
-
-class LinuxProperties(msrest.serialization.Model):
-    """Linux specific update configuration.
-
-    :param included_package_classifications: Update classifications included in the software update
-     configuration. Possible values include: "Unclassified", "Critical", "Security", "Other".
-    :type included_package_classifications: str or ~azure.mgmt.automation.models.LinuxUpdateClasses
-    :param excluded_package_name_masks: packages excluded from the software update configuration.
-    :type excluded_package_name_masks: list[str]
-    :param included_package_name_masks: packages included from the software update configuration.
-    :type included_package_name_masks: list[str]
-    :param reboot_setting: Reboot setting for the software update configuration.
-    :type reboot_setting: str
-    """
-
-    _attribute_map = {
-        'included_package_classifications': {'key': 'includedPackageClassifications', 'type': 'str'},
-        'excluded_package_name_masks': {'key': 'excludedPackageNameMasks', 'type': '[str]'},
-        'included_package_name_masks': {'key': 'includedPackageNameMasks', 'type': '[str]'},
-        'reboot_setting': {'key': 'rebootSetting', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(LinuxProperties, self).__init__(**kwargs)
-        self.included_package_classifications = kwargs.get('included_package_classifications', None)
-        self.excluded_package_name_masks = kwargs.get('excluded_package_name_masks', None)
-        self.included_package_name_masks = kwargs.get('included_package_name_masks', None)
-        self.reboot_setting = kwargs.get('reboot_setting', None)
 
 
 class Module(TrackedResource):
@@ -3259,29 +3368,6 @@ class NodeCounts(msrest.serialization.Model):
         self.total_count = kwargs.get('total_count', None)
 
 
-class NonAzureQueryProperties(msrest.serialization.Model):
-    """Non Azure query for the update configuration.
-
-    :param function_alias: Log Analytics Saved Search name.
-    :type function_alias: str
-    :param workspace_id: Workspace Id for Log Analytics in which the saved Search is resided.
-    :type workspace_id: str
-    """
-
-    _attribute_map = {
-        'function_alias': {'key': 'functionAlias', 'type': 'str'},
-        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(NonAzureQueryProperties, self).__init__(**kwargs)
-        self.function_alias = kwargs.get('function_alias', None)
-        self.workspace_id = kwargs.get('workspace_id', None)
-
-
 class Operation(msrest.serialization.Model):
     """Automation REST API operation.
 
@@ -3349,6 +3435,181 @@ class OperationListResult(msrest.serialization.Model):
     ):
         super(OperationListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
+
+
+class PrivateEndpointConnection(Resource):
+    """A private endpoint connection.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :param private_endpoint: Private endpoint which the connection belongs to.
+    :type private_endpoint: ~azure.mgmt.automation.models.PrivateEndpointProperty
+    :param private_link_service_connection_state: Connection State of the Private Endpoint
+     Connection.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.automation.models.PrivateLinkServiceConnectionStateProperty
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpointProperty'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionStateProperty'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+
+
+class PrivateEndpointConnectionListResult(msrest.serialization.Model):
+    """A list of private endpoint connections.
+
+    :param value: Array of private endpoint connections.
+    :type value: list[~azure.mgmt.automation.models.PrivateEndpointConnection]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
+class PrivateEndpointProperty(msrest.serialization.Model):
+    """Private endpoint which the connection belongs to.
+
+    :param id: Resource id of the private endpoint.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateEndpointProperty, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+
+
+class PrivateLinkResource(Resource):
+    """A private link resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.group_id = None
+        self.required_members = None
+
+
+class PrivateLinkResourceListResult(msrest.serialization.Model):
+    """A list of private link resources.
+
+    :param value: Array of private link resources.
+    :type value: list[~azure.mgmt.automation.models.PrivateLinkResource]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateLinkResourceListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
+class PrivateLinkServiceConnectionStateProperty(msrest.serialization.Model):
+    """Connection State of the Private Endpoint Connection.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param status: The private link service connection status.
+    :type status: str
+    :param description: The private link service connection description.
+    :type description: str
+    :ivar actions_required: Any action that is required beyond basic workflow (approve/ reject/
+     disconnect).
+    :vartype actions_required: str
+    """
+
+    _validation = {
+        'actions_required': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.description = kwargs.get('description', None)
+        self.actions_required = None
 
 
 class ProxyResource(Resource):
@@ -4070,84 +4331,6 @@ class ScheduleListResult(msrest.serialization.Model):
         self.next_link = kwargs.get('next_link', None)
 
 
-class ScheduleProperties(msrest.serialization.Model):
-    """Definition of schedule parameters.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param start_time: Gets or sets the start time of the schedule.
-    :type start_time: ~datetime.datetime
-    :ivar start_time_offset_minutes: Gets the start time's offset in minutes.
-    :vartype start_time_offset_minutes: float
-    :param expiry_time: Gets or sets the end time of the schedule.
-    :type expiry_time: ~datetime.datetime
-    :param expiry_time_offset_minutes: Gets or sets the expiry time's offset in minutes.
-    :type expiry_time_offset_minutes: float
-    :param is_enabled: Gets or sets a value indicating whether this schedule is enabled.
-    :type is_enabled: bool
-    :param next_run: Gets or sets the next run time of the schedule.
-    :type next_run: ~datetime.datetime
-    :param next_run_offset_minutes: Gets or sets the next run time's offset in minutes.
-    :type next_run_offset_minutes: float
-    :param interval: Gets or sets the interval of the schedule.
-    :type interval: int
-    :param frequency: Gets or sets the frequency of the schedule. Possible values include:
-     "OneTime", "Day", "Hour", "Week", "Month", "Minute".
-    :type frequency: str or ~azure.mgmt.automation.models.ScheduleFrequency
-    :param time_zone: Gets or sets the time zone of the schedule.
-    :type time_zone: str
-    :param advanced_schedule: Gets or sets the advanced schedule.
-    :type advanced_schedule: ~azure.mgmt.automation.models.AdvancedSchedule
-    :param creation_time: Gets or sets the creation time.
-    :type creation_time: ~datetime.datetime
-    :param last_modified_time: Gets or sets the last modified time.
-    :type last_modified_time: ~datetime.datetime
-    :param description: Gets or sets the description.
-    :type description: str
-    """
-
-    _validation = {
-        'start_time_offset_minutes': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'start_time_offset_minutes': {'key': 'startTimeOffsetMinutes', 'type': 'float'},
-        'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
-        'expiry_time_offset_minutes': {'key': 'expiryTimeOffsetMinutes', 'type': 'float'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'next_run': {'key': 'nextRun', 'type': 'iso-8601'},
-        'next_run_offset_minutes': {'key': 'nextRunOffsetMinutes', 'type': 'float'},
-        'interval': {'key': 'interval', 'type': 'int'},
-        'frequency': {'key': 'frequency', 'type': 'str'},
-        'time_zone': {'key': 'timeZone', 'type': 'str'},
-        'advanced_schedule': {'key': 'advancedSchedule', 'type': 'AdvancedSchedule'},
-        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
-        'description': {'key': 'description', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ScheduleProperties, self).__init__(**kwargs)
-        self.start_time = kwargs.get('start_time', None)
-        self.start_time_offset_minutes = None
-        self.expiry_time = kwargs.get('expiry_time', None)
-        self.expiry_time_offset_minutes = kwargs.get('expiry_time_offset_minutes', None)
-        self.is_enabled = kwargs.get('is_enabled', False)
-        self.next_run = kwargs.get('next_run', None)
-        self.next_run_offset_minutes = kwargs.get('next_run_offset_minutes', None)
-        self.interval = kwargs.get('interval', None)
-        self.frequency = kwargs.get('frequency', None)
-        self.time_zone = kwargs.get('time_zone', None)
-        self.advanced_schedule = kwargs.get('advanced_schedule', None)
-        self.creation_time = kwargs.get('creation_time', None)
-        self.last_modified_time = kwargs.get('last_modified_time', None)
-        self.description = kwargs.get('description', None)
-
-
 class ScheduleUpdateParameters(msrest.serialization.Model):
     """The parameters supplied to the update schedule operation.
 
@@ -4207,222 +4390,6 @@ class Sku(msrest.serialization.Model):
         self.name = kwargs['name']
         self.family = kwargs.get('family', None)
         self.capacity = kwargs.get('capacity', None)
-
-
-class SoftareUpdateConfigurationRunTaskProperties(msrest.serialization.Model):
-    """Task properties of the software update configuration.
-
-    :param status: The status of the task.
-    :type status: str
-    :param source: The name of the source of the task.
-    :type source: str
-    :param job_id: The job id of the task.
-    :type job_id: str
-    """
-
-    _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'str'},
-        'job_id': {'key': 'jobId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SoftareUpdateConfigurationRunTaskProperties, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
-        self.source = kwargs.get('source', None)
-        self.job_id = kwargs.get('job_id', None)
-
-
-class SoftareUpdateConfigurationRunTasks(msrest.serialization.Model):
-    """Software update configuration run tasks model.
-
-    :param pre_task: Pre task properties.
-    :type pre_task: ~azure.mgmt.automation.models.SoftareUpdateConfigurationRunTaskProperties
-    :param post_task: Post task properties.
-    :type post_task: ~azure.mgmt.automation.models.SoftareUpdateConfigurationRunTaskProperties
-    """
-
-    _attribute_map = {
-        'pre_task': {'key': 'preTask', 'type': 'SoftareUpdateConfigurationRunTaskProperties'},
-        'post_task': {'key': 'postTask', 'type': 'SoftareUpdateConfigurationRunTaskProperties'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SoftareUpdateConfigurationRunTasks, self).__init__(**kwargs)
-        self.pre_task = kwargs.get('pre_task', None)
-        self.post_task = kwargs.get('post_task', None)
-
-
-class SoftwareUpdateConfiguration(msrest.serialization.Model):
-    """Software update configuration properties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :param update_configuration: Required. update specific properties for the Software update
-     configuration.
-    :type update_configuration: ~azure.mgmt.automation.models.UpdateConfiguration
-    :param schedule_info: Required. Schedule information for the Software update configuration.
-    :type schedule_info: ~azure.mgmt.automation.models.ScheduleProperties
-    :ivar provisioning_state: Provisioning state for the software update configuration, which only
-     appears in the response.
-    :vartype provisioning_state: str
-    :param error: Details of provisioning error.
-    :type error: ~azure.mgmt.automation.models.ErrorResponse
-    :ivar creation_time: Creation time of the resource, which only appears in the response.
-    :vartype creation_time: ~datetime.datetime
-    :ivar created_by: CreatedBy property, which only appears in the response.
-    :vartype created_by: str
-    :ivar last_modified_time: Last time resource was modified, which only appears in the response.
-    :vartype last_modified_time: ~datetime.datetime
-    :ivar last_modified_by: LastModifiedBy property, which only appears in the response.
-    :vartype last_modified_by: str
-    :param tasks: Tasks information for the Software update configuration.
-    :type tasks: ~azure.mgmt.automation.models.SoftwareUpdateConfigurationTasks
-    """
-
-    _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'update_configuration': {'required': True},
-        'schedule_info': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'created_by': {'readonly': True},
-        'last_modified_time': {'readonly': True},
-        'last_modified_by': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'update_configuration': {'key': 'properties.updateConfiguration', 'type': 'UpdateConfiguration'},
-        'schedule_info': {'key': 'properties.scheduleInfo', 'type': 'ScheduleProperties'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'error': {'key': 'properties.error', 'type': 'ErrorResponse'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'created_by': {'key': 'properties.createdBy', 'type': 'str'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
-        'tasks': {'key': 'properties.tasks', 'type': 'SoftwareUpdateConfigurationTasks'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SoftwareUpdateConfiguration, self).__init__(**kwargs)
-        self.name = None
-        self.id = None
-        self.type = None
-        self.update_configuration = kwargs['update_configuration']
-        self.schedule_info = kwargs['schedule_info']
-        self.provisioning_state = None
-        self.error = kwargs.get('error', None)
-        self.creation_time = None
-        self.created_by = None
-        self.last_modified_time = None
-        self.last_modified_by = None
-        self.tasks = kwargs.get('tasks', None)
-
-
-class SoftwareUpdateConfigurationCollectionItem(msrest.serialization.Model):
-    """Software update configuration collection item properties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name: Name of the software update configuration.
-    :vartype name: str
-    :ivar id: Resource Id of the software update configuration.
-    :vartype id: str
-    :param update_configuration: Update specific properties of the software update configuration.
-    :type update_configuration: ~azure.mgmt.automation.models.CollectionItemUpdateConfiguration
-    :param frequency: execution frequency of the schedule associated with the software update
-     configuration. Possible values include: "OneTime", "Day", "Hour", "Week", "Month", "Minute".
-    :type frequency: str or ~azure.mgmt.automation.models.ScheduleFrequency
-    :param start_time: the start time of the update.
-    :type start_time: ~datetime.datetime
-    :ivar creation_time: Creation time of the software update configuration, which only appears in
-     the response.
-    :vartype creation_time: ~datetime.datetime
-    :ivar last_modified_time: Last time software update configuration was modified, which only
-     appears in the response.
-    :vartype last_modified_time: ~datetime.datetime
-    :ivar provisioning_state: Provisioning state for the software update configuration, which only
-     appears in the response.
-    :vartype provisioning_state: str
-    :param next_run: ext run time of the update.
-    :type next_run: ~datetime.datetime
-    """
-
-    _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'last_modified_time': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'update_configuration': {'key': 'properties.updateConfiguration', 'type': 'CollectionItemUpdateConfiguration'},
-        'frequency': {'key': 'properties.frequency', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'next_run': {'key': 'properties.nextRun', 'type': 'iso-8601'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SoftwareUpdateConfigurationCollectionItem, self).__init__(**kwargs)
-        self.name = None
-        self.id = None
-        self.update_configuration = kwargs.get('update_configuration', None)
-        self.frequency = kwargs.get('frequency', None)
-        self.start_time = kwargs.get('start_time', None)
-        self.creation_time = None
-        self.last_modified_time = None
-        self.provisioning_state = None
-        self.next_run = kwargs.get('next_run', None)
-
-
-class SoftwareUpdateConfigurationListResult(msrest.serialization.Model):
-    """result of listing all software update configuration.
-
-    :param value: outer object returned when listing all software update configurations.
-    :type value: list[~azure.mgmt.automation.models.SoftwareUpdateConfigurationCollectionItem]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[SoftwareUpdateConfigurationCollectionItem]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SoftwareUpdateConfigurationListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
 
 
 class SoftwareUpdateConfigurationMachineRun(msrest.serialization.Model):
@@ -4592,7 +4559,7 @@ class SoftwareUpdateConfigurationRun(msrest.serialization.Model):
     :ivar last_modified_by: LastModifiedBy property, which only appears in the response.
     :vartype last_modified_by: str
     :param tasks: Software update configuration tasks triggered in this run.
-    :type tasks: ~azure.mgmt.automation.models.SoftareUpdateConfigurationRunTasks
+    :type tasks: ~azure.mgmt.automation.models.SoftwareUpdateConfigurationRunTasks
     """
 
     _validation = {
@@ -4626,7 +4593,7 @@ class SoftwareUpdateConfigurationRun(msrest.serialization.Model):
         'created_by': {'key': 'properties.createdBy', 'type': 'str'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
-        'tasks': {'key': 'properties.tasks', 'type': 'SoftareUpdateConfigurationRunTasks'},
+        'tasks': {'key': 'properties.tasks', 'type': 'SoftwareUpdateConfigurationRunTasks'},
     }
 
     def __init__(
@@ -4674,25 +4641,52 @@ class SoftwareUpdateConfigurationRunListResult(msrest.serialization.Model):
         self.next_link = kwargs.get('next_link', None)
 
 
-class SoftwareUpdateConfigurationTasks(msrest.serialization.Model):
+class SoftwareUpdateConfigurationRunTaskProperties(msrest.serialization.Model):
     """Task properties of the software update configuration.
 
-    :param pre_task: Pre task properties.
-    :type pre_task: ~azure.mgmt.automation.models.TaskProperties
-    :param post_task: Post task properties.
-    :type post_task: ~azure.mgmt.automation.models.TaskProperties
+    :param status: The status of the task.
+    :type status: str
+    :param source: The name of the source of the task.
+    :type source: str
+    :param job_id: The job id of the task.
+    :type job_id: str
     """
 
     _attribute_map = {
-        'pre_task': {'key': 'preTask', 'type': 'TaskProperties'},
-        'post_task': {'key': 'postTask', 'type': 'TaskProperties'},
+        'status': {'key': 'status', 'type': 'str'},
+        'source': {'key': 'source', 'type': 'str'},
+        'job_id': {'key': 'jobId', 'type': 'str'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(SoftwareUpdateConfigurationTasks, self).__init__(**kwargs)
+        super(SoftwareUpdateConfigurationRunTaskProperties, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.source = kwargs.get('source', None)
+        self.job_id = kwargs.get('job_id', None)
+
+
+class SoftwareUpdateConfigurationRunTasks(msrest.serialization.Model):
+    """Software update configuration run tasks model.
+
+    :param pre_task: Pre task properties.
+    :type pre_task: ~azure.mgmt.automation.models.SoftwareUpdateConfigurationRunTaskProperties
+    :param post_task: Post task properties.
+    :type post_task: ~azure.mgmt.automation.models.SoftwareUpdateConfigurationRunTaskProperties
+    """
+
+    _attribute_map = {
+        'pre_task': {'key': 'preTask', 'type': 'SoftwareUpdateConfigurationRunTaskProperties'},
+        'post_task': {'key': 'postTask', 'type': 'SoftwareUpdateConfigurationRunTaskProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SoftwareUpdateConfigurationRunTasks, self).__init__(**kwargs)
         self.pre_task = kwargs.get('pre_task', None)
         self.post_task = kwargs.get('post_task', None)
 
@@ -5273,76 +5267,6 @@ class StatisticsListResult(msrest.serialization.Model):
         self.value = kwargs.get('value', None)
 
 
-class TagSettingsProperties(msrest.serialization.Model):
-    """Tag filter information for the VM.
-
-    :param tags: A set of tags. Dictionary of tags with its list of values.
-    :type tags: dict[str, list[str]]
-    :param filter_operator: Filter VMs by Any or All specified tags. Possible values include:
-     "All", "Any".
-    :type filter_operator: str or ~azure.mgmt.automation.models.TagOperators
-    """
-
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{[str]}'},
-        'filter_operator': {'key': 'filterOperator', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TagSettingsProperties, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.filter_operator = kwargs.get('filter_operator', None)
-
-
-class TargetProperties(msrest.serialization.Model):
-    """Group specific to the update configuration.
-
-    :param azure_queries: List of Azure queries in the software update configuration.
-    :type azure_queries: list[~azure.mgmt.automation.models.AzureQueryProperties]
-    :param non_azure_queries: List of non Azure queries in the software update configuration.
-    :type non_azure_queries: list[~azure.mgmt.automation.models.NonAzureQueryProperties]
-    """
-
-    _attribute_map = {
-        'azure_queries': {'key': 'azureQueries', 'type': '[AzureQueryProperties]'},
-        'non_azure_queries': {'key': 'nonAzureQueries', 'type': '[NonAzureQueryProperties]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TargetProperties, self).__init__(**kwargs)
-        self.azure_queries = kwargs.get('azure_queries', None)
-        self.non_azure_queries = kwargs.get('non_azure_queries', None)
-
-
-class TaskProperties(msrest.serialization.Model):
-    """Task properties of the software update configuration.
-
-    :param parameters: Gets or sets the parameters of the task.
-    :type parameters: dict[str, str]
-    :param source: Gets or sets the name of the runbook.
-    :type source: str
-    """
-
-    _attribute_map = {
-        'parameters': {'key': 'parameters', 'type': '{str}'},
-        'source': {'key': 'source', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TaskProperties, self).__init__(**kwargs)
-        self.parameters = kwargs.get('parameters', None)
-        self.source = kwargs.get('source', None)
-
-
 class TestJob(msrest.serialization.Model):
     """Definition of the test job.
 
@@ -5467,59 +5391,6 @@ class TypeFieldListResult(msrest.serialization.Model):
     ):
         super(TypeFieldListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
-
-
-class UpdateConfiguration(msrest.serialization.Model):
-    """Update specific properties of the software update configuration.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param operating_system: Required. operating system of target machines. Possible values
-     include: "Windows", "Linux".
-    :type operating_system: str or ~azure.mgmt.automation.models.OperatingSystemType
-    :param windows: Windows specific update configuration.
-    :type windows: ~azure.mgmt.automation.models.WindowsProperties
-    :param linux: Linux specific update configuration.
-    :type linux: ~azure.mgmt.automation.models.LinuxProperties
-    :param duration: Maximum time allowed for the software update configuration run. Duration needs
-     to be specified using the format PT[n]H[n]M[n]S as per ISO8601.
-    :type duration: ~datetime.timedelta
-    :param azure_virtual_machines: List of azure resource Ids for azure virtual machines targeted
-     by the software update configuration.
-    :type azure_virtual_machines: list[str]
-    :param non_azure_computer_names: List of names of non-azure machines targeted by the software
-     update configuration.
-    :type non_azure_computer_names: list[str]
-    :param targets: Group targets for the software update configuration.
-    :type targets: ~azure.mgmt.automation.models.TargetProperties
-    """
-
-    _validation = {
-        'operating_system': {'required': True},
-    }
-
-    _attribute_map = {
-        'operating_system': {'key': 'operatingSystem', 'type': 'str'},
-        'windows': {'key': 'windows', 'type': 'WindowsProperties'},
-        'linux': {'key': 'linux', 'type': 'LinuxProperties'},
-        'duration': {'key': 'duration', 'type': 'duration'},
-        'azure_virtual_machines': {'key': 'azureVirtualMachines', 'type': '[str]'},
-        'non_azure_computer_names': {'key': 'nonAzureComputerNames', 'type': '[str]'},
-        'targets': {'key': 'targets', 'type': 'TargetProperties'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(UpdateConfiguration, self).__init__(**kwargs)
-        self.operating_system = kwargs['operating_system']
-        self.windows = kwargs.get('windows', None)
-        self.linux = kwargs.get('linux', None)
-        self.duration = kwargs.get('duration', None)
-        self.azure_virtual_machines = kwargs.get('azure_virtual_machines', None)
-        self.non_azure_computer_names = kwargs.get('non_azure_computer_names', None)
-        self.targets = kwargs.get('targets', None)
 
 
 class UpdateConfigurationNavigation(msrest.serialization.Model):
@@ -5768,7 +5639,7 @@ class VariableUpdateParameters(msrest.serialization.Model):
         self.description = kwargs.get('description', None)
 
 
-class Watcher(TrackedResource):
+class Watcher(Resource):
     """Definition of the watcher type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5779,12 +5650,12 @@ class Watcher(TrackedResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: The Azure Region where the resource lives.
-    :type location: str
     :param etag: Gets or sets the etag of the resource.
     :type etag: str
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    :param location: The geo-location where the resource lives.
+    :type location: str
     :param execution_frequency_in_seconds: Gets or sets the frequency at which the watcher is
      invoked.
     :type execution_frequency_in_seconds: long
@@ -5821,9 +5692,9 @@ class Watcher(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
         'execution_frequency_in_seconds': {'key': 'properties.executionFrequencyInSeconds', 'type': 'long'},
         'script_name': {'key': 'properties.scriptName', 'type': 'str'},
         'script_parameters': {'key': 'properties.scriptParameters', 'type': '{str}'},
@@ -5841,6 +5712,8 @@ class Watcher(TrackedResource):
     ):
         super(Watcher, self).__init__(**kwargs)
         self.etag = kwargs.get('etag', None)
+        self.tags = kwargs.get('tags', None)
+        self.location = kwargs.get('location', None)
         self.execution_frequency_in_seconds = kwargs.get('execution_frequency_in_seconds', None)
         self.script_name = kwargs.get('script_name', None)
         self.script_parameters = kwargs.get('script_parameters', None)
@@ -6081,38 +5954,3 @@ class WebhookUpdateParameters(msrest.serialization.Model):
         self.run_on = kwargs.get('run_on', None)
         self.parameters = kwargs.get('parameters', None)
         self.description = kwargs.get('description', None)
-
-
-class WindowsProperties(msrest.serialization.Model):
-    """Windows specific update configuration.
-
-    :param included_update_classifications: Update classification included in the software update
-     configuration. A comma separated string with required values. Possible values include:
-     "Unclassified", "Critical", "Security", "UpdateRollup", "FeaturePack", "ServicePack",
-     "Definition", "Tools", "Updates".
-    :type included_update_classifications: str or
-     ~azure.mgmt.automation.models.WindowsUpdateClasses
-    :param excluded_kb_numbers: KB numbers excluded from the software update configuration.
-    :type excluded_kb_numbers: list[str]
-    :param included_kb_numbers: KB numbers included from the software update configuration.
-    :type included_kb_numbers: list[str]
-    :param reboot_setting: Reboot setting for the software update configuration.
-    :type reboot_setting: str
-    """
-
-    _attribute_map = {
-        'included_update_classifications': {'key': 'includedUpdateClassifications', 'type': 'str'},
-        'excluded_kb_numbers': {'key': 'excludedKbNumbers', 'type': '[str]'},
-        'included_kb_numbers': {'key': 'includedKbNumbers', 'type': '[str]'},
-        'reboot_setting': {'key': 'rebootSetting', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(WindowsProperties, self).__init__(**kwargs)
-        self.included_update_classifications = kwargs.get('included_update_classifications', None)
-        self.excluded_kb_numbers = kwargs.get('excluded_kb_numbers', None)
-        self.included_kb_numbers = kwargs.get('included_kb_numbers', None)
-        self.reboot_setting = kwargs.get('reboot_setting', None)

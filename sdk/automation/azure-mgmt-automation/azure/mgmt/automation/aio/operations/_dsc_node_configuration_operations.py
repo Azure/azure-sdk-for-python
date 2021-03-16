@@ -68,7 +68,7 @@ class DscNodeConfigurationOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-01-15"
+        api_version = "2020-01-13-preview"
         accept = "application/json"
 
         # Construct URL
@@ -128,7 +128,7 @@ class DscNodeConfigurationOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-01-15"
+        api_version = "2020-01-13-preview"
         accept = "application/json"
 
         # Construct URL
@@ -179,7 +179,7 @@ class DscNodeConfigurationOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-01-15"
+        api_version = "2020-01-13-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -334,7 +334,7 @@ class DscNodeConfigurationOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-01-15"
+        api_version = "2020-01-13-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):

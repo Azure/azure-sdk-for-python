@@ -6,8 +6,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._python2_package_operations import Python2PackageOperations
+from ._agent_registration_information_operations import AgentRegistrationInformationOperations
+from ._dsc_node_operations import DscNodeOperations
+from ._node_reports_operations import NodeReportsOperations
+from ._dsc_node_configuration_operations import DscNodeConfigurationOperations
+from ._dsc_compilation_job_operations import DscCompilationJobOperations
+from ._dsc_compilation_job_stream_operations import DscCompilationJobStreamOperations
+from ._node_count_information_operations import NodeCountInformationOperations
+from ._source_control_operations import SourceControlOperations
+from ._source_control_sync_job_operations import SourceControlSyncJobOperations
+from ._source_control_sync_job_streams_operations import SourceControlSyncJobStreamsOperations
 from ._automation_account_operations import AutomationAccountOperations
-from ._operations import Operations
 from ._statistics_operations import StatisticsOperations
 from ._usages_operations import UsagesOperations
 from ._keys_operations import KeysOperations
@@ -15,7 +27,6 @@ from ._certificate_operations import CertificateOperations
 from ._connection_operations import ConnectionOperations
 from ._connection_type_operations import ConnectionTypeOperations
 from ._credential_operations import CredentialOperations
-from ._dsc_configuration_operations import DscConfigurationOperations
 from ._hybrid_runbook_worker_group_operations import HybridRunbookWorkerGroupOperations
 from ._job_schedule_operations import JobScheduleOperations
 from ._linked_workspace_operations import LinkedWorkspaceOperations
@@ -25,32 +36,34 @@ from ._object_data_types_operations import ObjectDataTypesOperations
 from ._fields_operations import FieldsOperations
 from ._schedule_operations import ScheduleOperations
 from ._variable_operations import VariableOperations
-from ._webhook_operations import WebhookOperations
 from ._watcher_operations import WatcherOperations
-from ._software_update_configurations_operations import SoftwareUpdateConfigurationsOperations
-from ._software_update_configuration_runs_operations import SoftwareUpdateConfigurationRunsOperations
-from ._software_update_configuration_machine_runs_operations import SoftwareUpdateConfigurationMachineRunsOperations
-from ._source_control_operations import SourceControlOperations
-from ._source_control_sync_job_operations import SourceControlSyncJobOperations
-from ._source_control_sync_job_streams_operations import SourceControlSyncJobStreamsOperations
+from ._dsc_configuration_operations import DscConfigurationOperations
 from ._job_operations import JobOperations
 from ._job_stream_operations import JobStreamOperations
-from ._agent_registration_information_operations import AgentRegistrationInformationOperations
-from ._dsc_node_operations import DscNodeOperations
-from ._node_reports_operations import NodeReportsOperations
-from ._dsc_compilation_job_operations import DscCompilationJobOperations
-from ._dsc_compilation_job_stream_operations import DscCompilationJobStreamOperations
-from ._dsc_node_configuration_operations import DscNodeConfigurationOperations
-from ._node_count_information_operations import NodeCountInformationOperations
+from ._operations import Operations
 from ._runbook_draft_operations import RunbookDraftOperations
 from ._runbook_operations import RunbookOperations
 from ._test_job_streams_operations import TestJobStreamsOperations
 from ._test_job_operations import TestJobOperations
-from ._python2_package_operations import Python2PackageOperations
+from ._software_update_configuration_runs_operations import SoftwareUpdateConfigurationRunsOperations
+from ._software_update_configuration_machine_runs_operations import SoftwareUpdateConfigurationMachineRunsOperations
+from ._webhook_operations import WebhookOperations
 
 __all__ = [
+    'PrivateEndpointConnectionsOperations',
+    'PrivateLinkResourcesOperations',
+    'Python2PackageOperations',
+    'AgentRegistrationInformationOperations',
+    'DscNodeOperations',
+    'NodeReportsOperations',
+    'DscNodeConfigurationOperations',
+    'DscCompilationJobOperations',
+    'DscCompilationJobStreamOperations',
+    'NodeCountInformationOperations',
+    'SourceControlOperations',
+    'SourceControlSyncJobOperations',
+    'SourceControlSyncJobStreamsOperations',
     'AutomationAccountOperations',
-    'Operations',
     'StatisticsOperations',
     'UsagesOperations',
     'KeysOperations',
@@ -58,7 +71,6 @@ __all__ = [
     'ConnectionOperations',
     'ConnectionTypeOperations',
     'CredentialOperations',
-    'DscConfigurationOperations',
     'HybridRunbookWorkerGroupOperations',
     'JobScheduleOperations',
     'LinkedWorkspaceOperations',
@@ -68,26 +80,16 @@ __all__ = [
     'FieldsOperations',
     'ScheduleOperations',
     'VariableOperations',
-    'WebhookOperations',
     'WatcherOperations',
-    'SoftwareUpdateConfigurationsOperations',
-    'SoftwareUpdateConfigurationRunsOperations',
-    'SoftwareUpdateConfigurationMachineRunsOperations',
-    'SourceControlOperations',
-    'SourceControlSyncJobOperations',
-    'SourceControlSyncJobStreamsOperations',
+    'DscConfigurationOperations',
     'JobOperations',
     'JobStreamOperations',
-    'AgentRegistrationInformationOperations',
-    'DscNodeOperations',
-    'NodeReportsOperations',
-    'DscCompilationJobOperations',
-    'DscCompilationJobStreamOperations',
-    'DscNodeConfigurationOperations',
-    'NodeCountInformationOperations',
+    'Operations',
     'RunbookDraftOperations',
     'RunbookOperations',
     'TestJobStreamsOperations',
     'TestJobOperations',
-    'Python2PackageOperations',
+    'SoftwareUpdateConfigurationRunsOperations',
+    'SoftwareUpdateConfigurationMachineRunsOperations',
+    'WebhookOperations',
 ]

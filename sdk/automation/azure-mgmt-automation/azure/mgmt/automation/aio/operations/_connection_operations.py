@@ -47,7 +47,7 @@ class ConnectionOperations:
         automation_account_name: str,
         connection_name: str,
         **kwargs
-    ) -> Optional["_models.Connection"]:
+    ) -> None:
         """Delete the connection.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -57,16 +57,16 @@ class ConnectionOperations:
         :param connection_name: The name of connection.
         :type connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Connection, or the result of cls(response)
-        :rtype: ~azure.mgmt.automation.models.Connection or None
+        :return: None, or the result of cls(response)
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Connection"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2020-01-13-preview"
         accept = "application/json"
 
         # Construct URL
@@ -96,14 +96,9 @@ class ConnectionOperations:
             error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('Connection', pipeline_response)
-
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, None, {})
 
-        return deserialized
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/connections/{connectionName}'}  # type: ignore
 
     async def get(
@@ -131,7 +126,7 @@ class ConnectionOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2020-01-13-preview"
         accept = "application/json"
 
         # Construct URL
@@ -197,7 +192,7 @@ class ConnectionOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2020-01-13-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -272,7 +267,7 @@ class ConnectionOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2020-01-13-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -337,7 +332,7 @@ class ConnectionOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2020-01-13-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):

@@ -22,12 +22,11 @@ try:
     from ._models_py3 import AutomationAccountCreateOrUpdateParameters
     from ._models_py3 import AutomationAccountListResult
     from ._models_py3 import AutomationAccountUpdateParameters
-    from ._models_py3 import AzureQueryProperties
     from ._models_py3 import Certificate
     from ._models_py3 import CertificateCreateOrUpdateParameters
     from ._models_py3 import CertificateListResult
     from ._models_py3 import CertificateUpdateParameters
-    from ._models_py3 import CollectionItemUpdateConfiguration
+    from ._models_py3 import ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties
     from ._models_py3 import Connection
     from ._models_py3 import ConnectionCreateOrUpdateParameters
     from ._models_py3 import ConnectionListResult
@@ -66,12 +65,15 @@ try:
     from ._models_py3 import DscReportError
     from ._models_py3 import DscReportResource
     from ._models_py3 import DscReportResourceNavigation
+    from ._models_py3 import EncryptionProperties
+    from ._models_py3 import EncryptionPropertiesIdentity
     from ._models_py3 import ErrorResponse
     from ._models_py3 import FieldDefinition
     from ._models_py3 import HybridRunbookWorker
     from ._models_py3 import HybridRunbookWorkerGroup
     from ._models_py3 import HybridRunbookWorkerGroupUpdateParameters
     from ._models_py3 import HybridRunbookWorkerGroupsListResult
+    from ._models_py3 import Identity
     from ._models_py3 import Job
     from ._models_py3 import JobCollectionItem
     from ._models_py3 import JobCreateParameters
@@ -84,8 +86,8 @@ try:
     from ._models_py3 import JobStreamListResult
     from ._models_py3 import Key
     from ._models_py3 import KeyListResult
+    from ._models_py3 import KeyVaultProperties
     from ._models_py3 import LinkedWorkspace
-    from ._models_py3 import LinuxProperties
     from ._models_py3 import Module
     from ._models_py3 import ModuleCreateOrUpdateParameters
     from ._models_py3 import ModuleErrorInfo
@@ -94,10 +96,15 @@ try:
     from ._models_py3 import NodeCount
     from ._models_py3 import NodeCountProperties
     from ._models_py3 import NodeCounts
-    from ._models_py3 import NonAzureQueryProperties
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointConnectionListResult
+    from ._models_py3 import PrivateEndpointProperty
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkResourceListResult
+    from ._models_py3 import PrivateLinkServiceConnectionStateProperty
     from ._models_py3 import ProxyResource
     from ._models_py3 import PythonPackageCreateParameters
     from ._models_py3 import PythonPackageUpdateParameters
@@ -117,19 +124,14 @@ try:
     from ._models_py3 import ScheduleAssociationProperty
     from ._models_py3 import ScheduleCreateOrUpdateParameters
     from ._models_py3 import ScheduleListResult
-    from ._models_py3 import ScheduleProperties
     from ._models_py3 import ScheduleUpdateParameters
     from ._models_py3 import Sku
-    from ._models_py3 import SoftareUpdateConfigurationRunTaskProperties
-    from ._models_py3 import SoftareUpdateConfigurationRunTasks
-    from ._models_py3 import SoftwareUpdateConfiguration
-    from ._models_py3 import SoftwareUpdateConfigurationCollectionItem
-    from ._models_py3 import SoftwareUpdateConfigurationListResult
     from ._models_py3 import SoftwareUpdateConfigurationMachineRun
     from ._models_py3 import SoftwareUpdateConfigurationMachineRunListResult
     from ._models_py3 import SoftwareUpdateConfigurationRun
     from ._models_py3 import SoftwareUpdateConfigurationRunListResult
-    from ._models_py3 import SoftwareUpdateConfigurationTasks
+    from ._models_py3 import SoftwareUpdateConfigurationRunTaskProperties
+    from ._models_py3 import SoftwareUpdateConfigurationRunTasks
     from ._models_py3 import SourceControl
     from ._models_py3 import SourceControlCreateOrUpdateParameters
     from ._models_py3 import SourceControlListResult
@@ -144,15 +146,11 @@ try:
     from ._models_py3 import SourceControlUpdateParameters
     from ._models_py3 import Statistics
     from ._models_py3 import StatisticsListResult
-    from ._models_py3 import TagSettingsProperties
-    from ._models_py3 import TargetProperties
-    from ._models_py3 import TaskProperties
     from ._models_py3 import TestJob
     from ._models_py3 import TestJobCreateParameters
     from ._models_py3 import TrackedResource
     from ._models_py3 import TypeField
     from ._models_py3 import TypeFieldListResult
-    from ._models_py3 import UpdateConfiguration
     from ._models_py3 import UpdateConfigurationNavigation
     from ._models_py3 import Usage
     from ._models_py3 import UsageCounterName
@@ -168,7 +166,6 @@ try:
     from ._models_py3 import WebhookCreateOrUpdateParameters
     from ._models_py3 import WebhookListResult
     from ._models_py3 import WebhookUpdateParameters
-    from ._models_py3 import WindowsProperties
 except (SyntaxError, ImportError):
     from ._models import Activity  # type: ignore
     from ._models import ActivityListResult  # type: ignore
@@ -185,12 +182,11 @@ except (SyntaxError, ImportError):
     from ._models import AutomationAccountCreateOrUpdateParameters  # type: ignore
     from ._models import AutomationAccountListResult  # type: ignore
     from ._models import AutomationAccountUpdateParameters  # type: ignore
-    from ._models import AzureQueryProperties  # type: ignore
     from ._models import Certificate  # type: ignore
     from ._models import CertificateCreateOrUpdateParameters  # type: ignore
     from ._models import CertificateListResult  # type: ignore
     from ._models import CertificateUpdateParameters  # type: ignore
-    from ._models import CollectionItemUpdateConfiguration  # type: ignore
+    from ._models import ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties  # type: ignore
     from ._models import Connection  # type: ignore
     from ._models import ConnectionCreateOrUpdateParameters  # type: ignore
     from ._models import ConnectionListResult  # type: ignore
@@ -229,12 +225,15 @@ except (SyntaxError, ImportError):
     from ._models import DscReportError  # type: ignore
     from ._models import DscReportResource  # type: ignore
     from ._models import DscReportResourceNavigation  # type: ignore
+    from ._models import EncryptionProperties  # type: ignore
+    from ._models import EncryptionPropertiesIdentity  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import FieldDefinition  # type: ignore
     from ._models import HybridRunbookWorker  # type: ignore
     from ._models import HybridRunbookWorkerGroup  # type: ignore
     from ._models import HybridRunbookWorkerGroupUpdateParameters  # type: ignore
     from ._models import HybridRunbookWorkerGroupsListResult  # type: ignore
+    from ._models import Identity  # type: ignore
     from ._models import Job  # type: ignore
     from ._models import JobCollectionItem  # type: ignore
     from ._models import JobCreateParameters  # type: ignore
@@ -247,8 +246,8 @@ except (SyntaxError, ImportError):
     from ._models import JobStreamListResult  # type: ignore
     from ._models import Key  # type: ignore
     from ._models import KeyListResult  # type: ignore
+    from ._models import KeyVaultProperties  # type: ignore
     from ._models import LinkedWorkspace  # type: ignore
-    from ._models import LinuxProperties  # type: ignore
     from ._models import Module  # type: ignore
     from ._models import ModuleCreateOrUpdateParameters  # type: ignore
     from ._models import ModuleErrorInfo  # type: ignore
@@ -257,10 +256,15 @@ except (SyntaxError, ImportError):
     from ._models import NodeCount  # type: ignore
     from ._models import NodeCountProperties  # type: ignore
     from ._models import NodeCounts  # type: ignore
-    from ._models import NonAzureQueryProperties  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
+    from ._models import PrivateEndpointConnection  # type: ignore
+    from ._models import PrivateEndpointConnectionListResult  # type: ignore
+    from ._models import PrivateEndpointProperty  # type: ignore
+    from ._models import PrivateLinkResource  # type: ignore
+    from ._models import PrivateLinkResourceListResult  # type: ignore
+    from ._models import PrivateLinkServiceConnectionStateProperty  # type: ignore
     from ._models import ProxyResource  # type: ignore
     from ._models import PythonPackageCreateParameters  # type: ignore
     from ._models import PythonPackageUpdateParameters  # type: ignore
@@ -280,19 +284,14 @@ except (SyntaxError, ImportError):
     from ._models import ScheduleAssociationProperty  # type: ignore
     from ._models import ScheduleCreateOrUpdateParameters  # type: ignore
     from ._models import ScheduleListResult  # type: ignore
-    from ._models import ScheduleProperties  # type: ignore
     from ._models import ScheduleUpdateParameters  # type: ignore
     from ._models import Sku  # type: ignore
-    from ._models import SoftareUpdateConfigurationRunTaskProperties  # type: ignore
-    from ._models import SoftareUpdateConfigurationRunTasks  # type: ignore
-    from ._models import SoftwareUpdateConfiguration  # type: ignore
-    from ._models import SoftwareUpdateConfigurationCollectionItem  # type: ignore
-    from ._models import SoftwareUpdateConfigurationListResult  # type: ignore
     from ._models import SoftwareUpdateConfigurationMachineRun  # type: ignore
     from ._models import SoftwareUpdateConfigurationMachineRunListResult  # type: ignore
     from ._models import SoftwareUpdateConfigurationRun  # type: ignore
     from ._models import SoftwareUpdateConfigurationRunListResult  # type: ignore
-    from ._models import SoftwareUpdateConfigurationTasks  # type: ignore
+    from ._models import SoftwareUpdateConfigurationRunTaskProperties  # type: ignore
+    from ._models import SoftwareUpdateConfigurationRunTasks  # type: ignore
     from ._models import SourceControl  # type: ignore
     from ._models import SourceControlCreateOrUpdateParameters  # type: ignore
     from ._models import SourceControlListResult  # type: ignore
@@ -307,15 +306,11 @@ except (SyntaxError, ImportError):
     from ._models import SourceControlUpdateParameters  # type: ignore
     from ._models import Statistics  # type: ignore
     from ._models import StatisticsListResult  # type: ignore
-    from ._models import TagSettingsProperties  # type: ignore
-    from ._models import TargetProperties  # type: ignore
-    from ._models import TaskProperties  # type: ignore
     from ._models import TestJob  # type: ignore
     from ._models import TestJobCreateParameters  # type: ignore
     from ._models import TrackedResource  # type: ignore
     from ._models import TypeField  # type: ignore
     from ._models import TypeFieldListResult  # type: ignore
-    from ._models import UpdateConfiguration  # type: ignore
     from ._models import UpdateConfigurationNavigation  # type: ignore
     from ._models import Usage  # type: ignore
     from ._models import UsageCounterName  # type: ignore
@@ -331,7 +326,6 @@ except (SyntaxError, ImportError):
     from ._models import WebhookCreateOrUpdateParameters  # type: ignore
     from ._models import WebhookListResult  # type: ignore
     from ._models import WebhookUpdateParameters  # type: ignore
-    from ._models import WindowsProperties  # type: ignore
 
 from ._automation_client_enums import (
     AgentRegistrationKeyName,
@@ -341,15 +335,15 @@ from ._automation_client_enums import (
     ContentSourceType,
     CountType,
     DscConfigurationState,
+    EncryptionKeySourceType,
     GroupTypeEnum,
     HttpStatusCode,
     JobProvisioningState,
     JobStatus,
     JobStreamType,
-    LinuxUpdateClasses,
     ModuleProvisioningState,
-    OperatingSystemType,
     ProvisioningState,
+    ResourceIdentityType,
     RunbookState,
     RunbookTypeEnum,
     ScheduleDay,
@@ -358,9 +352,7 @@ from ._automation_client_enums import (
     SourceType,
     StreamType,
     SyncType,
-    TagOperators,
     TokenType,
-    WindowsUpdateClasses,
 )
 
 __all__ = [
@@ -379,12 +371,11 @@ __all__ = [
     'AutomationAccountCreateOrUpdateParameters',
     'AutomationAccountListResult',
     'AutomationAccountUpdateParameters',
-    'AzureQueryProperties',
     'Certificate',
     'CertificateCreateOrUpdateParameters',
     'CertificateListResult',
     'CertificateUpdateParameters',
-    'CollectionItemUpdateConfiguration',
+    'ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties',
     'Connection',
     'ConnectionCreateOrUpdateParameters',
     'ConnectionListResult',
@@ -423,12 +414,15 @@ __all__ = [
     'DscReportError',
     'DscReportResource',
     'DscReportResourceNavigation',
+    'EncryptionProperties',
+    'EncryptionPropertiesIdentity',
     'ErrorResponse',
     'FieldDefinition',
     'HybridRunbookWorker',
     'HybridRunbookWorkerGroup',
     'HybridRunbookWorkerGroupUpdateParameters',
     'HybridRunbookWorkerGroupsListResult',
+    'Identity',
     'Job',
     'JobCollectionItem',
     'JobCreateParameters',
@@ -441,8 +435,8 @@ __all__ = [
     'JobStreamListResult',
     'Key',
     'KeyListResult',
+    'KeyVaultProperties',
     'LinkedWorkspace',
-    'LinuxProperties',
     'Module',
     'ModuleCreateOrUpdateParameters',
     'ModuleErrorInfo',
@@ -451,10 +445,15 @@ __all__ = [
     'NodeCount',
     'NodeCountProperties',
     'NodeCounts',
-    'NonAzureQueryProperties',
     'Operation',
     'OperationDisplay',
     'OperationListResult',
+    'PrivateEndpointConnection',
+    'PrivateEndpointConnectionListResult',
+    'PrivateEndpointProperty',
+    'PrivateLinkResource',
+    'PrivateLinkResourceListResult',
+    'PrivateLinkServiceConnectionStateProperty',
     'ProxyResource',
     'PythonPackageCreateParameters',
     'PythonPackageUpdateParameters',
@@ -474,19 +473,14 @@ __all__ = [
     'ScheduleAssociationProperty',
     'ScheduleCreateOrUpdateParameters',
     'ScheduleListResult',
-    'ScheduleProperties',
     'ScheduleUpdateParameters',
     'Sku',
-    'SoftareUpdateConfigurationRunTaskProperties',
-    'SoftareUpdateConfigurationRunTasks',
-    'SoftwareUpdateConfiguration',
-    'SoftwareUpdateConfigurationCollectionItem',
-    'SoftwareUpdateConfigurationListResult',
     'SoftwareUpdateConfigurationMachineRun',
     'SoftwareUpdateConfigurationMachineRunListResult',
     'SoftwareUpdateConfigurationRun',
     'SoftwareUpdateConfigurationRunListResult',
-    'SoftwareUpdateConfigurationTasks',
+    'SoftwareUpdateConfigurationRunTaskProperties',
+    'SoftwareUpdateConfigurationRunTasks',
     'SourceControl',
     'SourceControlCreateOrUpdateParameters',
     'SourceControlListResult',
@@ -501,15 +495,11 @@ __all__ = [
     'SourceControlUpdateParameters',
     'Statistics',
     'StatisticsListResult',
-    'TagSettingsProperties',
-    'TargetProperties',
-    'TaskProperties',
     'TestJob',
     'TestJobCreateParameters',
     'TrackedResource',
     'TypeField',
     'TypeFieldListResult',
-    'UpdateConfiguration',
     'UpdateConfigurationNavigation',
     'Usage',
     'UsageCounterName',
@@ -525,7 +515,6 @@ __all__ = [
     'WebhookCreateOrUpdateParameters',
     'WebhookListResult',
     'WebhookUpdateParameters',
-    'WindowsProperties',
     'AgentRegistrationKeyName',
     'AutomationAccountState',
     'AutomationKeyName',
@@ -533,15 +522,15 @@ __all__ = [
     'ContentSourceType',
     'CountType',
     'DscConfigurationState',
+    'EncryptionKeySourceType',
     'GroupTypeEnum',
     'HttpStatusCode',
     'JobProvisioningState',
     'JobStatus',
     'JobStreamType',
-    'LinuxUpdateClasses',
     'ModuleProvisioningState',
-    'OperatingSystemType',
     'ProvisioningState',
+    'ResourceIdentityType',
     'RunbookState',
     'RunbookTypeEnum',
     'ScheduleDay',
@@ -550,7 +539,5 @@ __all__ = [
     'SourceType',
     'StreamType',
     'SyncType',
-    'TagOperators',
     'TokenType',
-    'WindowsUpdateClasses',
 ]
