@@ -41,3 +41,22 @@ class TestContainerRepositoryClient(AzureTestCase):
         print(repos)
 
         # assert count > 0
+
+    @acr_preparer()
+    def test_get_attributes(self, containerregistry_baseurl):
+        client = self.set_up(containerregistry_baseurl)
+
+        repo_attribs = client.get_properties()
+
+        assert repo_attribs is not None
+        assert repo_attribs.content_permissions is not None
+
+    @acr_preparer()
+    def test_list_registry_artifacts(self, containerregistry_baseurl):
+        client = self.set_up(containerregistry_baseurl)
+
+        repo_attribs = client.list_registry_artifacts()
+
+        print(repo_attribs)
+
+

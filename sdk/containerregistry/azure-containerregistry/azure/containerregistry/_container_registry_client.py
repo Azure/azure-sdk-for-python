@@ -75,6 +75,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         return ContainerRepositoryClient(
             repository,
-            credential = self.credential,
+            credential=self.credential,
         )
         pass

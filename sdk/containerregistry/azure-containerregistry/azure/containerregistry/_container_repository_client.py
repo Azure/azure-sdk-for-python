@@ -5,6 +5,8 @@
 # ------------------------------------
 
 from ._base_client import ContainerRegistryBaseClient
+from ._models import RepositoryProperties
+
 
 class ContainerRepositoryClient(ContainerRegistryBaseClient):
     def __init__(self, endpoint, repository, credential, **kwargs):
@@ -67,7 +69,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: :class:~azure.containerregistry.RepositoryProperties
         :raises: None
         """
-        pass
+        resp = self._client.repository.get_attributes(self.repository)
+        return RepositoryProperties.from_generated(resp)
 
     def get_registry_artifact_properties(self, tag_or_digest, **kwargs):
         # type: (str) -> RegistryArtifactProperties
@@ -77,15 +80,6 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :type tag_or_digest: str
         :returns: :class:~azure.containerregistry.RegistryArtifactProperties
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
-        """
-        pass
-
-    def list_registry_artifacts(self, **kwargs):
-        # type: (...) -> ItemPaged[RegistryArtifactProperties]
-        """List the registry artifacts for a repository
-
-        :returns: ~azure.core.paging.ItemPaged[RegistryArtifactProperties]
-        :raises: None
         """
         pass
 
@@ -99,6 +93,26 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
         pass
+
+    def list_registry_artifacts(self, **kwargs):
+        # type: (...) -> ItemPaged[RegistryArtifactProperties]
+        """List the registry artifacts for a repository
+
+        :keyword last: Query parameter for the last item in the previous query
+        :type last: str
+        :keyword n: Max number of items to be returned
+        :type n: int
+        :keyword orderby: Order by query parameter
+        :type orderby: :class:~azure.containerregistry.RegistryArtifactOrderBy
+        :returns: ~azure.core.paging.ItemPaged[RegistryArtifactProperties]
+        :raises: None
+        """
+
+        return self._client.manifests.get_list(
+            self.repository,
+            last=kwargs.get("last", None),
+            n=kwargs.get("n", None),
+            orderby=kwargs.get("orderby"))
 
     def list_tags(self, **kwargs):
         # type: (...) -> ItemPaged[TagProperties]

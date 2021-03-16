@@ -32,7 +32,7 @@ class ContainerRegistryBaseClient(object):
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=auth_policy,
-            credential_scopes=kwargs.pop("credential_scopes", ["https://dev.azurecr.io/.default"]),
+            credential_scopes=kwargs.pop("credential_scopes", ["https://management.core.windows.net/.default"]),
             **kwargs
         )
 
