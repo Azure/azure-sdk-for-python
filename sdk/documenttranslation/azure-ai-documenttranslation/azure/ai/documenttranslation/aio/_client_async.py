@@ -156,7 +156,21 @@ class DocumentTranslationClient(object):
         :keyword int skip:
         :rtype: ~azure.core.polling.AsyncItemPaged[JobStatusDetail]
         """
-        return self._client.document_translation.get_operations(**kwargs)
+        skip = kwargs.pop('skip', None)
+        results_per_page  = kwargs.pop('results_per_page', None)
+
+        def _convert_from_generated_model(generated_model):
+            # pylint: disable=protected-access
+            return JobStatusDetail._from_generated(generated_model)
+
+        model_conversion_function = kwargs.pop("cls", lambda job_statuses: [_convert_from_generated_model(job_status) for job_status in job_statuses])
+
+        return self._client.document_translation.get_operations(
+            top = results_per_page,
+            skip = skip,
+            cls = model_conversion_function,
+            **kwargs
+        )
 
     @distributed_trace
     def list_documents_statuses(self, job_id, **kwargs):
@@ -169,8 +183,23 @@ class DocumentTranslationClient(object):
         :keyword int skip:
         :rtype: ~azure.core.paging.AsyncItemPaged[DocumentStatusDetail]
         """
+        skip = kwargs.pop('skip', None)
+        results_per_page = kwargs.pop('results_per_page', None)
 
-        return self._client.document_translation.get_operation_documents_status(job_id, **kwargs)
+        def _convert_from_generated_model(generated_model):
+            # pylint: disable=protected-access
+            return DocumentStatusDetail._from_generated(generated_model)
+
+        model_conversion_function = kwargs.pop("cls", lambda doc_statuses: [_convert_from_generated_model(doc_status) for doc_status in doc_statuses])
+
+        return self._client.document_translation.get_operation_documents_status(
+            id = job_id,
+            top = results_per_page,
+            skip = skip,
+            cls = model_conversion_function,
+            **kwargs
+        )
+
 
     @distributed_trace_async
     async def get_document_status(self, job_id, document_id, **kwargs):
