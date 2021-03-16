@@ -32,7 +32,7 @@ phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
 def update_phone_number_capabilities():
     poller = phone_numbers_client.begin_update_phone_number_capabilities(
-        "+18332408820",
+        phone_number_to_update,
         PhoneNumberCapabilityType.INBOUND_OUTBOUND,
         PhoneNumberCapabilityType.INBOUND,
         polling = True

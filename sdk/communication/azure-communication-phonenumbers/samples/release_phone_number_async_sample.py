@@ -32,7 +32,7 @@ phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
 async def release_phone_number():
     async with phone_numbers_client:
-        poller = await phone_numbers_client.begin_release_phone_number("+18332949794")
+        poller = await phone_numbers_client.begin_release_phone_number(phone_number_to_release)
         await poller.result()
         print('Status of the operation: ' + poller.status())
 

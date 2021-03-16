@@ -9,7 +9,7 @@
 """
 FILE: list_purchased_phone_numbers_sample.py
 DESCRIPTION:
-    This sample demonstrates how to get all off you acquired phone numbers using your connection string
+    This sample demonstrates how to get all of you acquired phone numbers using your connection string
 USAGE:
     python list_purchased_phone_numbers_sample.py
     Set the environment variables with your own values before running the sample:

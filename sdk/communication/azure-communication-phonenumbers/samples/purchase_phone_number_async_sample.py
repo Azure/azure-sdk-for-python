@@ -14,7 +14,9 @@ USAGE:
     python purchase_phone_number_sample.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The connection string including your endpoint and 
-        access key of your Azure Communication Service    2) AZURE_COMMUNICATION_SERVICE_SEARCH_ID_TO_PURCHASE - The search id for the phone number you reserved and want to purchase
+        access key of your Azure Communication Service    
+    2) AZURE_COMMUNICATION_SERVICE_SEARCH_ID_TO_PURCHASE - The search id for the phone number you 
+        reserved and want to purchase
 """
 
 import asyncio
@@ -30,7 +32,7 @@ phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 async def purchase_phone_number():
     async with phone_numbers_client:
         poller = await phone_numbers_client.begin_purchase_phone_numbers(
-            "dcfb7f16-491d-4074-b739-ec5b904bd06e",
+            search_id,
             polling = True
         )
         await poller.result()
