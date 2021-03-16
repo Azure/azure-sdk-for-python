@@ -31,7 +31,7 @@ __all__ = [
     'ChatThreadParticipant',
     'ChatMessageType',
     'CreateChatThreadResult',
-    'ChatError'
+    'ChatError',
     'CommunicationTokenCredential'
 ]
 __version__ = VERSION
