@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE:get_purchased_phone_number_sample.py
+FILE:get_purchased_phone_number_async_sample.py
 DESCRIPTION:
     This sample demonstrates how to get the information from an acquired phone number using your connection string
 USAGE:
@@ -18,8 +18,9 @@ USAGE:
     2) AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER - The phone number you want to get its information
 """
 
+import asyncio
 import os
-from azure.communication.phonenumbers import (
+from azure.communication.phonenumbers.aio import (
     PhoneNumbersClient
 )
 
@@ -27,10 +28,12 @@ connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
 phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER") # e.g. "+18001234567"
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
-def get_purchased_phone_number_information():
-    purchased_phone_number_information = phone_numbers_client.get_purchased_phone_number(phone_number)
+async def get_purchased_phone_number_information():
+    async with phone_numbers_client:
+        purchased_phone_number_information = await phone_numbers_client.get_purchased_phone_number(phone_number)
     print('Phone number: ' + purchased_phone_number_information.phone_number)
     print('Country code: ' + purchased_phone_number_information.country_code)
 
 if __name__ == '__main__':
-    get_purchased_phone_number_information()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(get_purchased_phone_number_information())
