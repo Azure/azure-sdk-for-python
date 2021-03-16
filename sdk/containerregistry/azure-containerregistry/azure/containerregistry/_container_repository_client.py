@@ -5,7 +5,7 @@
 # ------------------------------------
 
 from ._base_client import ContainerRegistryBaseClient
-from ._models import RepositoryProperties
+from ._models import RepositoryProperties, TagProperties, RegistryArtifactProperties
 
 
 class ContainerRepositoryClient(ContainerRegistryBaseClient):
@@ -81,7 +81,11 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: :class:~azure.containerregistry.RegistryArtifactProperties
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        raise NotImplementedError("Has not been implemented")
+        # TODO: If `tag_or_digest` is a tag, need to do a get_tags to find the appropriate digest, generated code only takes a digest
+        # TODO: The returned object from the generated code is not being deserialized properly
+        return RegistryArtifactProperties.from_generated(
+            self._client.container_registry_repository.get_manifest_attributes(self.repository, tag_or_digest)
+        )
 
     def get_tag_properties(self, tag, **kwargs):
         # type: (str) -> TagProperties
@@ -92,7 +96,9 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: :class:~azure.containerregistry.TagProperties
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        return self._client.tag.get_attributes()
+        return TagProperties.from_generated(
+            self._client.container_registry_repository.get_tag_attributes(self.repository, tag)
+        )
 
     def list_registry_artifacts(self, **kwargs):
         # type: (...) -> ItemPaged[RegistryArtifactProperties]

@@ -8,7 +8,7 @@ import functools
 from azure.core.paging import ItemPaged
 
 from ._base_client import ContainerRegistryBaseClient
-from ._models import RepositoryProperties
+from ._models import RepositoryProperties, DeletedRepositoryResult
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
@@ -41,7 +41,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        raise NotImplementedError("Not implemented")
+        # NOTE: DELETE `/acr/v1/{name}`
+        deleted_repository = self._client.container_registry.delete_repository(repository)
+        return DeletedRepositoryResult.from_generated(deleted_repository)
 
     def list_repositories(self, **kwargs):
         # type: (...) -> ItemPaged[str]
@@ -54,6 +56,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: ~azure.core.paging.ItemPaged[str]
         :raises: None
         """
+        # NOTE: `/acr/v1/_catalog`
         raise NotImplementedError("Not implemented")
         repos = self._client.repository.get_list(
             last=kwargs.get("last", None), n=kwargs.get("max", None)

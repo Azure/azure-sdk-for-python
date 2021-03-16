@@ -14,8 +14,10 @@ from ._models import (
     ContentPermissions,
     DeletedRepositoryResult,
     RegistryArtifactOrderBy,
+    RegistryArtifactProperties,
     RepositoryProperties,
     TagOrderBy,
+    TagProperties
 )
 from ._storage_models import (
     ArtifactManifest,
@@ -56,8 +58,10 @@ __all__ = [
     "ContentPermissions",
     "DeletedRepositoryResult",
     "RegistryArtifactOrderBy",
+    "RegistryArtifactProperties",
     "RepositoryProperties",
     "TagOrderBy",
+    "TagProperties",
     "ArtifactManifest",
     "CompleteUploadResult",
     "ConfigMediaType",

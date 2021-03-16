@@ -11,6 +11,7 @@ from devtools_testutils import AzureTestCase, PowerShellPreparer
 from azure.containerregistry import (
     ContainerRegistryClient,
     ContainerRegistryUserCredential,
+    DeletedRepositoryResult,
 )
 from azure.identity import DefaultAzureCredential
 
@@ -36,3 +37,13 @@ class TestContainerRegistryClient(AzureTestCase, ContainerRegistryTestClass):
             count += 1
 
         assert count > 0
+
+    @acr_preparer()
+    def test_delete_repository(self, containerregistry_baseurl):
+        client = self.create_registry_client(containerregistry_baseurl)
+
+        deleted_result = client.delete_repository("debian")
+
+        assert isinstance(deleted_result, DeletedRepositoryResult)
+        assert len(deleted_result.deleted_registry_artifact_digests) == 1
+        assert len(deleted_result.deleted_tags) == 1

@@ -8,9 +8,6 @@ from enum import Enum
 
 from azure.core.paging import PageIterator
 
-from ._generated.models import (
-    DeletedRepository,
-)
 
 class ContentPermissions(object):
     def __init__(self, **kwargs):
@@ -30,23 +27,25 @@ class ContentPermissions(object):
         )
 
 
-class DeletedRepositoryResult(DeletedRepository):
+class DeletedRepositoryResult(object):
     def __init__(self, **kwargs):
-        super(DeletedRepositoryResult, self).__init__(**kwargs)
         self.deleted_registry_artifact_digests = kwargs.get(
             "deleted_registry_artifact_digests", None
         )
         self.deleted_tags = kwargs.get("deleted_tags", None)
-        pass
+
+    @classmethod
+    def from_generated(cls, gen):
+        return cls(
+            deleted_tags=gen.deleted_tags,
+            deleted_registry_artifact_digests=gen.deleted_registry_artifact_digests
+        )
 
 
 class RegistryArtifactProperties(object):
     def __init__(self, **kwargs):
         self.created_on = kwargs.get("created_on", None)
-        self.image_name = kwargs.get("image_name", None)
         self.registry = kwargs.get("registry", None)
-        self.manifest_properties = ManifestProperties.from_generated(kwargs.get("manifest_attributes"))
-
         # self.cpu_arch = kwargs.get("arch", None)
         # self.digest = kwargs.get("digest", None)
         # self.last_updated = kwargs.get("last_updated", None)
@@ -61,11 +60,19 @@ class RegistryArtifactProperties(object):
     @classmethod
     def from_generated(cls, generated):
         # type: (azure.containerregistry._generated.models.ManfiestAttributestBase) -> RegistryArtifactProperties
-        cls(
+        return cls(
+            config_media_type=generated.config_media_type,
+            cpu_architecture=generated.cpu_architecture,
             created_on=generated.created_on,
-            image_name=generated.image_name,
+            digest=generated.digest,
+            last_updated_on=generated.last_updated_on,
+            manifest_media_type=generated.manifest_media_type,
+            manifest_properties=generated.manifest_properties,
+            operating_system=generated.operating_system,
             registry=generated.registry,
-            manifest_attributes=generated.manifest_attributes,
+            repository=generated.repository,
+            size=generated.size,
+            tags=generated.tags,
         )
 
 
@@ -127,3 +134,48 @@ class TagOrderBy(int, Enum):
 
     LastUpdateTimeDescending = 0
     LastUpdateTimeAscending = 1
+
+
+class TagProperties(object):
+    """Model for storing properties of a single tag
+
+    :ivar created_on: Time the tag was created
+    :vartype created_on: datetime
+    :ivar digest: Digest for the tag
+    :vartype digest: str
+    :ivar last_updated_on: Time the tag was last updated
+    :vartype last_updated_on: datetime
+    :ivar modifiable_properties: Read/Write/Update/Delete permissions for the tag
+    :vartype modifiable_properties: ContentPermissions
+    :ivar name: Name of the image the tag corresponds to
+    :vartype name: str
+    :ivar registry: Registry the tag belongs to
+    :vartype registry: str
+    :ivar repository: Repository the tag belongs to
+    :vartype repository: str
+    """
+
+    def __init__(self, **kwargs):
+        self.created_on = kwargs.get("created_on", None)
+        self.digest = kwargs.get("digest", None)
+        self.last_updated_on = kwargs.get("last_updated_on", None)
+        self.content_permissions = kwargs.get("content_permissions", None)
+        if self.content_permissions:
+            self.content_permissions = ContentPermissions.from_generated(self.content_permissions)
+        self.name = kwargs.get("name", None)
+        self.registry = kwargs.get("registry", None)
+        self.repository = kwargs.get("repository", None)
+
+    @classmethod
+    def from_generated(cls, generated):
+        return cls(
+            created_on=generated.created_on,
+            digest=generated.digest,
+            last_updated_on=generated.last_updated_on,
+            content_permissions=generated.modifiable_properties,
+            name=generated.name,
+            registry=generated.registry,
+            repository=generated.repository,
+        )
+
+
