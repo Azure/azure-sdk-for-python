@@ -132,6 +132,7 @@ jobs:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
 
   - job: 'Test'
