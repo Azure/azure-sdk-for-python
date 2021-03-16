@@ -60,7 +60,7 @@ def _verify_body(
         data,
     ]
     allowed_combos = [
-        set(list[files, data])  # allowed for multipart
+        set([files, data])  # allowed for multipart
     ]
     set_bodies = [t for t in types_of_body if t]
     if len(set_bodies) > 1 and set(set_bodies) not in allowed_combos:

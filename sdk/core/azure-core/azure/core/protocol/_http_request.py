@@ -44,13 +44,12 @@ if TYPE_CHECKING:
     except ImportError:
         pass
 
-def _format_parameters(url, query):
+def _format_parameters(url, query=None):
     # type: (str, Optional[QueryTypes]) -> str
     """Placeholder code using current implementation in pipeline.transport
     Johan is working on new code that accepts list of tuples etc.
     """
     dummy_request = _PipelineTransportHttpRequest(method="dummy", url=url)
-    query = kwargs.pop("query", None)
     if query:
         dummy_request.format_parameters(query)
     return dummy_request.url
@@ -67,21 +66,26 @@ class HttpRequest(object):
     :keyword headers: HTTP headers you want in your request. Your input should
      be a mapping or sequence of header name to header value.
     :paramtype headers: mapping or sequence
-    :keyword content: Content you want in your request body.
-    :paramtype content: str or bytes or iterable[bytes] or asynciterable[bytes]
+    :keyword dict data: Form data you want in your request body. Use for form-encoded data, i.e.
+     HTML forms.
     :keyword any json: A JSON serializable object. We handle JSON-serialization for your
-     object.
-    :keyword dict data: Form data you want in your request body.
-    :keyword files: Files you want to in your request body. Your input should be
-     a mapping or sequence of file name to file content.
+     object, so use this for more complicated data structures than `data`.
+    :keyword files: Files you want to in your request body. Use for uploading files with
+     multipart encoding. Your input should be a mapping or sequence of file name to file content.
+     Use the `data` kwarg in addition if you want to include non-file data files as part of your request.
     :paramtype files: mapping or sequence
+    :keyword content: Content you want in your request body. Think of it as the kwarg you should input
+     if your data doesn't fit into `json`, `data`, or `files`. Accepts a bytes type, or a generator
+     that yields bytes.
+    :paramtype content: str or bytes or iterable[bytes] or asynciterable[bytes]
     """
 
     def __init__(self, method, url, **kwargs):
         # type: (str, str, Any) -> None
         self.method = method
-        self.url = _format_parameters(url, kwargs.pop("query", None))
+        self.url = _format_parameters(url, kwargs.pop("params", None))
         self.headers = _case_insensitive_dict(kwargs.pop("headers", None))  # type: Union[CIMultiDict, CaseInsensitiveDict]
+        self._multipart_mixed_info = None  # keeping for now, hacking multipart code
 
         self._body = handle_request_body(
             content=kwargs.pop("content", None),
