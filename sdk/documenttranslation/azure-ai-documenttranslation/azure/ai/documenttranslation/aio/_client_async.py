@@ -59,11 +59,31 @@ class DocumentTranslationClient(object):
         :rtype: JobStatusDetail
         """
 
-        return await self._client.document_translation.begin_submit_batch_request(
+        await self._client.document_translation.begin_submit_batch_request(
             inputs=batch,
             polling=True,
             **kwargs
         )
+
+        # submit translation job
+        response_headers = await self._client.document_translation._submit_batch_request_initial(
+            # pylint: disable=protected-access
+            inputs = BatchDocumentInput.to_generated_list(batch),
+            cls = lambda pipeline_response, _, response_headers: response_headers,
+            **kwargs
+        )
+
+        def get_job_id(operation_loc_header):
+            # extract job id. ex: https://document-translator.cognitiveservices.azure.com/translator/text/batch/v1.0-preview.1/batches/cd0asdd0-2ce6-asd4-abd4-9asd7698c26a
+            return operation_loc_header.split('/')[-1]
+
+        # get job id from response header
+        operation_location_header = response_headers['Operation-Location']
+        job_id = get_job_id(operation_location_header)
+
+        # get job status
+        return await self.get_job_status(job_id)
+
 
     @distributed_trace_async
     async def get_job_status(self, job_id, **kwargs):
