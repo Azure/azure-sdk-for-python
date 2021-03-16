@@ -120,7 +120,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         )
         if kind is None:
             raise ValueError("Kind {} is not supported in OpenTelemetry".format(value))
-        self.span_instance.set_attribute("kind", kind)
+        self._span_instance._kind = kind
 
     def __enter__(self):
         """Start a span."""
@@ -206,9 +206,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         ctx = extract(DictGetter(), headers)
         span_ctx = get_span_from_context(ctx).get_span_context()
         current_span = cls.get_current_span()
-        updated_links = current_span.links + (Link(span_ctx, attributes),)
-        current_span.set_attribute("links", updated_links)
-        #current_span.links.append(Link(span_ctx, attributes))
+        current_span._links.append(Link(span_ctx, attributes))        
 
     @classmethod
     def get_current_span(cls):
