@@ -14,19 +14,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-resourcegraph/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resourcegraph/8.0.0 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2020-04-01-preview
+    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01
   response:
     body:
-      string: "{\"error\":{\"code\":\"BadRequest\",\"message\":\"Please provide below\
-        \ info when asking for support: timestamp = 2020-12-15T09:46:59.0405078Z,\
-        \ correlationId = c0a5961d-2258-4095-a131-5549202a1243.\",\"details\":[{\"\
-        code\":\"InvalidQuery\",\"message\":\"Query is invalid. Please refer to the\
-        \ documentation for the Azure Resource Graph service and fix the error before\
-        \ retrying.\"},{\"code\":\"ParserFailure\",\"message\":\"ParserFailure\",\"\
-        line\":1,\"characterPositionInLine\":34,\"token\":\"<EOF>\",\"expectedToken\"\
-        :\"\u0179\"}]}}"
+      string: "{\"error\":{\"code\":\"BadRequest\",\"message\":\"Please provide below
+        info when asking for support: timestamp = 2021-03-16T07:12:06.9604898Z, correlationId
+        = 8e1c247b-0c97-4b10-ac62-1b18099a3ef4.\",\"details\":[{\"code\":\"InvalidQuery\",\"message\":\"Query
+        is invalid. Please refer to the documentation for the Azure Resource Graph
+        service and fix the error before retrying.\"},{\"code\":\"ParserFailure\",\"message\":\"ParserFailure\",\"line\":1,\"characterPositionInLine\":34,\"token\":\"<EOF>\",\"expectedToken\":\"\u0179\"}]}}"
     headers:
       cache-control:
       - no-cache
@@ -35,7 +32,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 15 Dec 2020 09:46:58 GMT
+      - Tue, 16 Mar 2021 07:12:06 GMT
       expires:
       - '-1'
       pragma:

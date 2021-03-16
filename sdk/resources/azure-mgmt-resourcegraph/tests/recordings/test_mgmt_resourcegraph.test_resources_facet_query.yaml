@@ -16,23 +16,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-resourcegraph/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resourcegraph/8.0.0 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2020-04-01-preview
+    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01
   response:
     body:
-      string: '{"totalRecords":8,"count":8,"data":{"columns":[{"name":"id","type":"string"},{"name":"location","type":"string"}],"rows":[["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/move_resource_name/providers/Microsoft.Migrate/moveCollections/move-collection-test6","eastus2"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/networkInterfaces/anf-sdknettestqa2vnet464-nic-2JBDNX","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/virtualNetworks/sdknettestqa2vnet464","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lianwrs/providers/Microsoft.RecoveryServices/vaults/lianwvault0727","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/iyljd2wtoqh43dern43sawzmqxkeari3bcqiadgfste4outj7cdmmslvr4yfw2vmrsqeiogmitj/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzsecond","southcentralus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/iyljd2wtoqh43dern43sawzmqxkeari3bcqiadgfste4outj7cdmmslvr4yfw2vmrsqeiogmitj/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyz","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qiaozhatest/providers/Microsoft.RecoveryServices/vaults/vault886","eastus"]]},"facets":[{"expression":"location","totalRecords":3,"count":1,"data":{"columns":[{"name":"location","type":"string"},{"name":"count","type":"integer"}],"rows":[["eastus",6]]},"resultType":"FacetResult"},{"expression":"nonExistingColumn","errors":[{"code":"NoValidColumns","message":"No
+      string: '{"totalRecords":10,"count":10,"data":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzureResourcesCacheProvider-TM-DF/providers/Microsoft.Network/trafficmanagerprofiles/gov-art-df-changeCompute","location":"global"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzureResourcesTopologyDfStorage/providers/Microsoft.EventGrid/domains/gov-rp-df-art-eg","location":"eastus"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzureResourcesTopologyDfStorage/providers/Microsoft.EventHub/namespaces/gov-rp-art-multiplexer-eventhub-df-1","location":"eastus"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzureResourcesTopologyDfStorage/providers/Microsoft.Insights/autoscalesettings/twowriteservicebusdf-AutoscaleSettings","location":"eastus"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzureResourcesTopologyDfStorage/providers/Microsoft.Storage/storageAccounts/15chgblobsdf","location":"eastus"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzureResourcesTopologyDfStorage/providers/Microsoft.Storage/storageAccounts/govrpreplayeventhubdf","location":"eastus"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzureResourcesTopologyDfStorage/providers/Microsoft.Storage/storageAccounts/1argwriteblobsdf","location":"eastus"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resource-graph-queries/providers/Microsoft.ResourceGraph/queries/asdsadsadas","location":"global"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzureResourcesCacheProvider-TM-DF/providers/Microsoft.Network/trafficmanagerprofiles/gov-art-df-validator","location":"global"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzureResourcesTopologyDfStorage/providers/Microsoft.Storage/storageAccounts/artingestiondfeus3","location":"eastus"}],"facets":[{"expression":"location","totalRecords":2,"count":1,"data":[{"location":"eastus","count":7}],"resultType":"FacetResult"},{"expression":"nonExistingColumn","errors":[{"code":"NoValidColumns","message":"No
         valid columns in facet expression."},{"code":"InvalidColumnNames","message":"Invalid
         column names: [nonExistingColumn]."}],"resultType":"FacetError"}],"resultTruncated":"false"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '2003'
+      - '2372'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 15 Dec 2020 09:46:56 GMT
+      - Tue, 16 Mar 2021 07:12:06 GMT
       expires:
       - '-1'
       pragma:

@@ -38,6 +38,35 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
         self.assertIsNotNone(query_response.facets)
         self.assertEqual(len(query_response.facets), 0)
 
+        # Data
+        self.assertIsNotNone(query_response.data)
+        self.assertEqual(len(query_response.data), 2)
+        self.assertEqual(len(query_response.data[0]), 3)
+        self.assertIsInstance(query_response.data[0]['id'], six.string_types)
+        if query_response.data[0]['tags']:
+            self.assertIsInstance(query_response.data[0]['tags'], dict)
+        self.assertIsInstance(query_response.data[0]['properties'], dict)
+
+    def test_resources_basic_query_table(self):
+        query = QueryRequest(
+            query='project id, tags, properties | limit 2',
+            subscriptions=[self.settings.SUBSCRIPTION_ID],
+            options=QueryRequestOptions(
+                result_format=ResultFormat.table
+            )
+        )
+
+        query_response = self.resourcegraph_client.resources(query)
+
+        # Top-level response fields
+        self.assertEqual(query_response.count, 2)
+        self.assertEqual(query_response.total_records, 2)
+        self.assertIsNone(query_response.skip_token)
+        self.assertEqual(query_response.result_truncated, ResultTruncated.false)
+        self.assertIsNotNone(query_response.data)
+        self.assertIsNotNone(query_response.facets)
+        self.assertEqual(len(query_response.facets), 0)
+
         # Data columns
         self.assertIsNotNone(query_response.data['columns'])
         self.assertEqual(len(query_response.data['columns']), 3)
@@ -56,42 +85,13 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
         # self.assertIsInstance(query_response.data["rows"][0][1], dict)
         # self.assertIsInstance(query_response.data["rows"][0][2], dict)
 
-    def test_resources_basic_query_object_array(self):
-        query = QueryRequest(
-            query='project id, tags, properties | limit 2',
-            subscriptions=[self.settings.SUBSCRIPTION_ID],
-            options=QueryRequestOptions(
-                result_format=ResultFormat.object_array
-            )
-        )
-
-        query_response = self.resourcegraph_client.resources(query)
-
-        # Top-level response fields
-        self.assertEqual(query_response.count, 2)
-        self.assertEqual(query_response.total_records, 2)
-        self.assertIsNone(query_response.skip_token)
-        self.assertEqual(query_response.result_truncated, ResultTruncated.false)
-        self.assertIsNotNone(query_response.data)
-        self.assertIsNotNone(query_response.facets)
-        self.assertEqual(len(query_response.facets), 0)
-
-        # Data
-        self.assertIsNotNone(query_response.data)
-        self.assertEqual(len(query_response.data), 2)
-        self.assertEqual(len(query_response.data[0]), 3)
-        self.assertIsInstance(query_response.data[0]['id'], six.string_types)
-        if query_response.data[0]['tags']:
-            self.assertIsInstance(query_response.data[0]['tags'], dict)
-        self.assertIsInstance(query_response.data[0]['properties'], dict)
-
     def test_resources_query_options(self):
         raise unittest.SkipTest("Skipping resources_query_options")
         query = QueryRequest(
             query='project id',
             subscriptions=[self.settings.SUBSCRIPTION_ID],
             options=QueryRequestOptions(
-                skip_token='82aw3vQlArEastJ24LABY8oPgQLesIyAyzYs2g6/aOOOmJHSYFj39fODurJV5e2tTFFebWcfxn7n5edicA8u6HgSJe1GCEk5HjxwLkeJiye2LVZDC7TaValkJbsk9JqY4yv5c7iRiLqgO34RbHEeVfLJpa56u4RZu0K+GpQvnBRPyAhy3KbwhZWpU5Nnqnud2whGb5WKdlL8xF7wnQaUnUN2lns8WwqwM4rc0VK4BbQt/WfWWcYJivSAyB3m4Z5g73df1KiU4C+K8auvUMpLPYVxxnKC/YZz42YslVAWXXUmuGOaM2SfLHRO6o4O9DgXlUgYjeFWqIbAkmMiVEqU',
+                skip_token='0000ICAiJGlkIjogIjEiLA0KICAiTWF4Um93cyI6IDgsDQogICJSb3dzVG9Ta2lwIjogOCwNCiAgIkt1c3RvQ2x1c3RlclVybCI6ICJodHRwczovL2FyZy13dXMyLWZvdXItc2YuYXJnLmNvcmUud2luZG93cy5uZXQiDQp9',
                 top=4,
                 skip=8
             )
@@ -101,24 +101,18 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
 
         # Top-level response fields
         self.assertEqual(query_response.count, 4)
-        self.assertEqual(query_response.total_records, 743)
+        self.assertEqual(query_response.total_records, 240)
         self.assertIsNotNone(query_response.skip_token)
         self.assertEqual(query_response.result_truncated, ResultTruncated.false)
         self.assertIsNotNone(query_response.data)
         self.assertIsNotNone(query_response.facets)
         self.assertEqual(len(query_response.facets), 0)
 
-        # Data columns
-        self.assertIsNotNone(query_response.data["columns"])
-        self.assertEqual(len(query_response.data["columns"]), 1)
-        self.assertIsNotNone(query_response.data["columns"][0]["name"])
-        self.assertEqual(query_response.data["columns"][0]["type"], ColumnDataType.string)
-
-        # Data rows
-        self.assertIsNotNone(query_response.data["rows"])
-        self.assertEqual(len(query_response.data["rows"]), 4)
-        self.assertEqual(len(query_response.data["rows"][0]), 1)
-        self.assertIsInstance(query_response.data["rows"][0][0], six.string_types)
+        # Data
+        self.assertIsNotNone(query_response.data)
+        self.assertEqual(len(query_response.data), 4)
+        self.assertEqual(len(query_response.data[0]), 1)
+        self.assertIsInstance(query_response.data[0]['id'], six.string_types)
 
     def test_resources_facet_query(self):
         facet_expression0 = 'location'
@@ -148,8 +142,8 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
         query_response = self.resourcegraph_client.resources(query)
 
         # Top-level response fields
-        self.assertEqual(query_response.count, 8)
-        self.assertEqual(query_response.total_records, 8)
+        self.assertEqual(query_response.count, 10)
+        self.assertEqual(query_response.total_records, 10)
         self.assertIsNone(query_response.skip_token)
         self.assertEqual(query_response.result_truncated, ResultTruncated.false)
         self.assertIsNotNone(query_response.data)
@@ -162,20 +156,11 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
         self.assertGreaterEqual(query_response.facets[0].total_records, 1)
         self.assertEqual(query_response.facets[0].count, 1)
 
-        # Successful facet columns
-        self.assertIsNotNone(query_response.facets[0].data["columns"])
-        self.assertEqual(len(query_response.facets[0].data["columns"]), 2)
-        self.assertIsNotNone(query_response.facets[0].data["columns"][0]["name"])
-        self.assertIsNotNone(query_response.facets[0].data["columns"][1]["name"])
-        self.assertEqual(query_response.facets[0].data["columns"][0]["type"], ColumnDataType.string)
-        self.assertEqual(query_response.facets[0].data["columns"][1]["type"], ColumnDataType.integer)
-
-        # Successful facet rows
-        self.assertIsNotNone(query_response.facets[0].data["rows"])
-        self.assertEqual(len(query_response.facets[0].data["rows"]), 1)
-        self.assertEqual(len(query_response.facets[0].data["rows"][0]), 2)
-        self.assertIsInstance(query_response.facets[0].data["rows"][0][0], six.string_types)
-        self.assertIsInstance(query_response.facets[0].data["rows"][0][1], six.integer_types)
+        self.assertIsNotNone(query_response.facets[0].data)
+        self.assertEqual(len(query_response.facets[0].data), 1)
+        self.assertEqual(len(query_response.facets[0].data[0]), 2)
+        self.assertIsInstance(query_response.facets[0].data[0]['location'], six.string_types)
+        self.assertIsInstance(query_response.facets[0].data[0]['count'], six.integer_types)
 
         # Failed facet
         self.assertIsInstance(query_response.facets[1], FacetError)
@@ -194,7 +179,7 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
         with self.assertRaises(Exception) as cm:
             self.resourcegraph_client.resources(query)
 
-        error = cm.exception.error.error
+        error = cm.exception.error
         self.assertIsNotNone(error.code)
         self.assertIsNotNone(error.message)
         self.assertIsNotNone(error.details)
@@ -204,6 +189,82 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
         #self.assertIsNotNone(error.details[0].additional_properties)
         #self.assertEqual(len(error.details[0].additional_properties), 4)
 
+    def test_resources_tenant_query(self):
+        query = QueryRequest(
+            query='project id, tags, properties | limit 2'
+        )
+
+        query_response = self.resourcegraph_client.resources(query)
+
+        # Top-level response fields
+        self.assertEqual(query_response.count, 2)
+        self.assertEqual(query_response.total_records, 2)
+        self.assertIsNone(query_response.skip_token)
+        self.assertEqual(query_response.result_truncated, ResultTruncated.false)
+        self.assertIsNotNone(query_response.data)
+        self.assertIsNotNone(query_response.facets)
+        self.assertEqual(len(query_response.facets), 0)
+
+        # Data
+        self.assertIsNotNone(query_response.data)
+        self.assertEqual(len(query_response.data), 2)
+        self.assertEqual(len(query_response.data[0]), 3)
+        self.assertIsInstance(query_response.data[0]['id'], six.string_types)
+        if query_response.data[0]['tags']:
+            self.assertIsInstance(query_response.data[0]['tags'], dict)
+        self.assertIsInstance(query_response.data[0]['properties'], dict)
+
+    def test_resources_single_management_group_query(self):
+        query = QueryRequest(
+            query='project id, tags, properties | limit 2',
+            managementgroups = ['d12984f0-19bf-4e3a-8d8b-18dcd401d227']
+        )
+
+        query_response = self.resourcegraph_client.resources(query)
+
+        # Top-level response fields
+        self.assertEqual(query_response.count, 2)
+        self.assertEqual(query_response.total_records, 2)
+        self.assertIsNone(query_response.skip_token)
+        self.assertEqual(query_response.result_truncated, ResultTruncated.false)
+        self.assertIsNotNone(query_response.data)
+        self.assertIsNotNone(query_response.facets)
+        self.assertEqual(len(query_response.facets), 0)
+
+        # Data
+        self.assertIsNotNone(query_response.data)
+        self.assertEqual(len(query_response.data), 2)
+        self.assertEqual(len(query_response.data[0]), 3)
+        self.assertIsInstance(query_response.data[0]['id'], six.string_types)
+        if query_response.data[0]['tags']:
+            self.assertIsInstance(query_response.data[0]['tags'], dict)
+        self.assertIsInstance(query_response.data[0]['properties'], dict)
+
+    def test_resources_multiple_management_groups_query(self):
+        query = QueryRequest(
+            query='project id, tags, properties | limit 2',
+            managementgroups = ['d12984f0-19bf-4e3a-8d8b-18dcd401d227', '72f988bf-86f1-41af-91ab-2d7cd011db47', 'PolicyUIMG']
+        )
+
+        query_response = self.resourcegraph_client.resources(query)
+
+        # Top-level response fields
+        self.assertEqual(query_response.count, 2)
+        self.assertEqual(query_response.total_records, 2)
+        self.assertIsNone(query_response.skip_token)
+        self.assertEqual(query_response.result_truncated, ResultTruncated.false)
+        self.assertIsNotNone(query_response.data)
+        self.assertIsNotNone(query_response.facets)
+        self.assertEqual(len(query_response.facets), 0)
+
+        # Data
+        self.assertIsNotNone(query_response.data)
+        self.assertEqual(len(query_response.data), 2)
+        self.assertEqual(len(query_response.data[0]), 3)
+        self.assertIsInstance(query_response.data[0]['id'], six.string_types)
+        if query_response.data[0]['tags']:
+            self.assertIsInstance(query_response.data[0]['tags'], dict)
+        self.assertIsInstance(query_response.data[0]['properties'], dict)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

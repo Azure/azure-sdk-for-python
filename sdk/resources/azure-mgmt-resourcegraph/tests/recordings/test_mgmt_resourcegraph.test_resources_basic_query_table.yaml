@@ -1,0 +1,58 @@
+interactions:
+- request:
+    body: '{"subscriptions": ["00000000-0000-0000-0000-000000000000"], "query": "project
+      id, tags, properties | limit 2", "options": {"resultFormat": "table", "allowPartialScopes":
+      false}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '177'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-resourcegraph/8.0.0 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01
+  response:
+    body:
+      string: '{"totalRecords":2,"count":2,"data":{"columns":[{"name":"id","type":"string"},{"name":"tags","type":"object"},{"name":"properties","type":"object"}],"rows":[["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzureResourcesTopologyDfStorage/providers/Microsoft.Storage/storageAccounts/18chgblobsdf",{},{"provisioningState":"Succeeded","encryption":{"keySource":"Microsoft.Storage","services":{"blob":{"enabled":true,"lastEnabledTime":"2021-01-21T22:03:17.0570000Z","keyType":"Account"},"file":{"enabled":true,"lastEnabledTime":"2021-01-21T22:03:17.0570000Z","keyType":"Account"}}},"privateEndpointConnections":[],"supportsHttpsTrafficOnly":true,"creationTime":"2021-01-21T22:03:16.9320000Z","primaryEndpoints":{"table":"https://18chgblobsdf.table.core.windows.net/","blob":"https://18chgblobsdf.blob.core.windows.net/","file":"https://18chgblobsdf.file.core.windows.net/","queue":"https://18chgblobsdf.queue.core.windows.net/","web":"https://18chgblobsdf.z13.web.core.windows.net/","dfs":"https://18chgblobsdf.dfs.core.windows.net/"},"statusOfPrimary":"available","primaryLocation":"eastus","networkAcls":{"virtualNetworkRules":[],"defaultAction":"Allow","ipRules":[],"bypass":"AzureServices"},"accessTier":"Hot"}],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzureResourcesCacheProvider-TM-DF/providers/Microsoft.Network/trafficmanagerprofiles/gov-art-df-rp",{"LastKnownGoodStampName":"gov-art-df-rp-b"},{"endpoints":[{"type":"Microsoft.Network/trafficManagerProfiles/azureEndpoints","properties":{"priority":1,"endpointMonitorStatus":"Disabled","targetResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzureResourcesTopologyDF-a/providers/Microsoft.Network/publicIPAddresses/LBIP-gov-art-df-rp-a-3","endpointLocation":"East
+        US","endpointStatus":"Disabled","NestedProfile":null,"target":"gov-art-df-rp-a.eastus.cloudapp.azure.com","weight":50},"name":"gov-art-df-rp-a","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azureresourcescacheprovider-tm-df/providers/Microsoft.Network/trafficManagerProfiles/gov-art-df-rp/azureEndpoints/gov-art-df-rp-a"},{"type":"Microsoft.Network/trafficManagerProfiles/azureEndpoints","properties":{"priority":2,"endpointMonitorStatus":"Online","targetResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzureResourcesTopologyDF-b/providers/Microsoft.Network/publicIPAddresses/LBIP-gov-art-df-rp-b-3","endpointLocation":"East
+        US","endpointStatus":"Enabled","NestedProfile":null,"target":"gov-art-df-rp-b.eastus.cloudapp.azure.com","weight":50},"name":"gov-art-df-rp-b","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azureresourcescacheprovider-tm-df/providers/Microsoft.Network/trafficManagerProfiles/gov-art-df-rp/azureEndpoints/gov-art-df-rp-b"}],"trafficViewEnrollmentStatus":"Disabled","trafficRoutingMethod":"Weighted","profileStatus":"Enabled","monitorConfig":{"protocol":"TCP","intervalInSeconds":10,"port":443,"path":null,"toleratedNumberOfFailures":2,"profileMonitorStatus":"Online","timeoutInSeconds":5},"dnsConfig":{"fqdn":"gov-art-df-rp.trafficmanager.net","relativeName":"gov-art-df-rp","ttl":150}}]]},"facets":[],"resultTruncated":"false"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '3233'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 16 Mar 2021 07:12:04 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-tenant-resource-requests:
+      - '13'
+      x-ms-user-quota-remaining:
+      - '13'
+      x-ms-user-quota-resets-after:
+      - 00:00:05
+    status:
+      code: 200
+      message: OK
+version: 1
