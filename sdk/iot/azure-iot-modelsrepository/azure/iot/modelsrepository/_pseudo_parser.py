@@ -13,15 +13,12 @@ parser implementation would necessarily look like from an API perspective
 """
 from ._chainable_exception import ChainableException
 
-class ParsingError(ChainableException):
-    pass
-
 
 class PseudoParser(object):
     def __init__(self, resolver):
         """
         :param resolver: The resolver for the parser to use to resolve model dependencies
-        :type resolver: :class:`azure.iot.modelsrepository.resolver.DtmiResolver`
+        :type resolver: :class:`azure.iot.modelsrepository._resolver.DtmiResolver`
         """
         self.resolver = resolver
 
@@ -77,9 +74,5 @@ def _get_dependency_list(model):
                 elif isinstance(item, dict):
                     # This is a nested model. Now go get its dependencies and add them
                     dependencies += _get_dependency_list(item)
-                else:
-                    raise ParsingError("Invalid DTDL")
-        else:
-            raise ParsingError("Invalid DTDL")
 
     return dependencies

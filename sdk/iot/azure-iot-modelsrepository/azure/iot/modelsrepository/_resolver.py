@@ -22,7 +22,7 @@ class DtmiResolver(object):
     def __init__(self, fetcher):
         """
         :param fetcher: A Fetcher configured to an endpoint to resolve DTMIs from
-        :type fetcher: :class:`azure.iot.modelsrepository.resolver.Fetcher`
+        :type fetcher: :class:`azure.iot.modelsrepository._resolver.Fetcher`
         """
         self.fetcher = fetcher
 
