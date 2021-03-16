@@ -59,17 +59,12 @@ class DocumentTranslationClient(object):
         :rtype: JobStatusDetail
         """
 
-        await self._client.document_translation.begin_submit_batch_request(
-            inputs=batch,
-            polling=True,
-            **kwargs
-        )
-
         # submit translation job
         response_headers = await self._client.document_translation._submit_batch_request_initial(
             # pylint: disable=protected-access
-            inputs = BatchDocumentInput.to_generated_list(batch),
+            inputs = BatchDocumentInput._to_generated_list(batch),
             cls = lambda pipeline_response, _, response_headers: response_headers,
+            polling=True,
             **kwargs
         )
 
@@ -95,7 +90,9 @@ class DocumentTranslationClient(object):
         :rtype: ~azure.ai.documenttranslation.JobStatusDetail
         """
 
-        return await self._client.document_translation.get_operation_status(job_id, **kwargs)
+        job_status = await self._client.document_translation.get_operation_status(job_id, **kwargs)
+        # pylint: disable=protected-access
+        return JobStatusDetail._from_generated(job_status)
 
     @distributed_trace_async
     async def cancel_job(self, job_id, **kwargs):
