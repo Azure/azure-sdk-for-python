@@ -115,6 +115,7 @@ class DocumentTranslationClient(object):
         :return: JobStatusDetail
         :rtype: JobStatusDetail
         """
+
         pipeline_response = self.get_job_status(
             job_id,
             cls=lambda pipeline_response, _, response_headers: pipeline_response

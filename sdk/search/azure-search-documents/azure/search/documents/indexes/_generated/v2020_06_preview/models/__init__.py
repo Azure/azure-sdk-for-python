@@ -26,6 +26,7 @@ try:
     from ._models_py3 import CustomEntity
     from ._models_py3 import CustomEntityAlias
     from ._models_py3 import CustomEntityLookupSkill
+    from ._models_py3 import CustomNormalizer
     from ._models_py3 import DataChangeDetectionPolicy
     from ._models_py3 import DataDeletionDetectionPolicy
     from ._models_py3 import DataSourceCredentials
@@ -59,6 +60,7 @@ try:
     from ._models_py3 import LanguageDetectionSkill
     from ._models_py3 import LengthTokenFilter
     from ._models_py3 import LexicalAnalyzer
+    from ._models_py3 import LexicalNormalizer
     from ._models_py3 import LexicalTokenizer
     from ._models_py3 import LimitTokenFilter
     from ._models_py3 import ListDataSourcesResult
@@ -152,6 +154,7 @@ except (SyntaxError, ImportError):
     from ._models import CustomEntity  # type: ignore
     from ._models import CustomEntityAlias  # type: ignore
     from ._models import CustomEntityLookupSkill  # type: ignore
+    from ._models import CustomNormalizer  # type: ignore
     from ._models import DataChangeDetectionPolicy  # type: ignore
     from ._models import DataDeletionDetectionPolicy  # type: ignore
     from ._models import DataSourceCredentials  # type: ignore
@@ -185,6 +188,7 @@ except (SyntaxError, ImportError):
     from ._models import LanguageDetectionSkill  # type: ignore
     from ._models import LengthTokenFilter  # type: ignore
     from ._models import LexicalAnalyzer  # type: ignore
+    from ._models import LexicalNormalizer  # type: ignore
     from ._models import LexicalTokenizer  # type: ignore
     from ._models import LimitTokenFilter  # type: ignore
     from ._models import ListDataSourcesResult  # type: ignore
@@ -277,6 +281,7 @@ from ._search_client_enums import (
     IndexerStatus,
     KeyPhraseExtractionSkillLanguage,
     LexicalAnalyzerName,
+    LexicalNormalizerName,
     LexicalTokenizerName,
     MicrosoftStemmingTokenizerLanguage,
     MicrosoftTokenizerLanguage,
@@ -319,6 +324,7 @@ __all__ = [
     'CustomEntity',
     'CustomEntityAlias',
     'CustomEntityLookupSkill',
+    'CustomNormalizer',
     'DataChangeDetectionPolicy',
     'DataDeletionDetectionPolicy',
     'DataSourceCredentials',
@@ -352,6 +358,7 @@ __all__ = [
     'LanguageDetectionSkill',
     'LengthTokenFilter',
     'LexicalAnalyzer',
+    'LexicalNormalizer',
     'LexicalTokenizer',
     'LimitTokenFilter',
     'ListDataSourcesResult',
@@ -442,6 +449,7 @@ __all__ = [
     'IndexerStatus',
     'KeyPhraseExtractionSkillLanguage',
     'LexicalAnalyzerName',
+    'LexicalNormalizerName',
     'LexicalTokenizerName',
     'MicrosoftStemmingTokenizerLanguage',
     'MicrosoftTokenizerLanguage',

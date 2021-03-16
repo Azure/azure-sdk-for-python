@@ -1,7 +1,8 @@
 # Release History
 
 ## 1.6.0b3 (Unreleased)
-
+### Fixed
+- ManagedIdentityCredential caches tokens correctly
 
 ## 1.6.0b2 (2021-03-09)
 ### Breaking Changes

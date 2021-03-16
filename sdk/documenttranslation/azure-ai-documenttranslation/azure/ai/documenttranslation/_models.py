@@ -157,7 +157,7 @@ class BatchDocumentInput(object):
 
 
 
-class JobStatusDetail(object):
+class JobStatusDetail(object):  # pylint: disable=too-many-instance-attributes
     """Job status response.
 
     :ivar id: Required. Id of the job.

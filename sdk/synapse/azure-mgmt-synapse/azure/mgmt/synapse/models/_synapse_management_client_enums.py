@@ -121,6 +121,22 @@ class DataWarehouseUserActivityName(with_metaclass(_CaseInsensitiveEnumMeta, str
 
     CURRENT = "current"
 
+class DayOfWeek(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Day of maintenance window.
+    """
+
+    SUNDAY = "Sunday"
+    MONDAY = "Monday"
+    TUESDAY = "Tuesday"
+    WEDNESDAY = "Wednesday"
+    THURSDAY = "Thursday"
+    FRIDAY = "Friday"
+    SATURDAY = "Saturday"
+
+class EncryptionProtectorName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    CURRENT = "current"
+
 class GeoBackupPolicyName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     DEFAULT = "Default"
@@ -328,6 +344,11 @@ class QueryObservedMetricType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     DURATION = "duration"
     EXECUTION_COUNT = "executionCount"
 
+class RecommendedSensitivityLabelUpdateKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    ENABLE = "enable"
+    DISABLE = "disable"
+
 class ReplicationRole(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The role of the Sql pool in the replication link.
     """
@@ -390,10 +411,30 @@ class SelfHostedIntegrationRuntimeNodeStatus(with_metaclass(_CaseInsensitiveEnum
     INITIALIZING = "Initializing"
     INITIALIZE_FAILED = "InitializeFailed"
 
+class SensitivityLabelRank(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    NONE = "None"
+    LOW = "Low"
+    MEDIUM = "Medium"
+    HIGH = "High"
+    CRITICAL = "Critical"
+
 class SensitivityLabelSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     CURRENT = "current"
     RECOMMENDED = "recommended"
+
+class SensitivityLabelUpdateKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    SET = "set"
+    REMOVE = "remove"
+
+class ServerKeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The encryption protector type like 'ServiceManaged', 'AzureKeyVault'.
+    """
+
+    SERVICE_MANAGED = "ServiceManaged"
+    AZURE_KEY_VAULT = "AzureKeyVault"
 
 class SsisObjectMetadataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of SSIS object metadata.
@@ -403,6 +444,14 @@ class SsisObjectMetadataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     PROJECT = "Project"
     PACKAGE = "Package"
     ENVIRONMENT = "Environment"
+
+class StorageAccountType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The storage account type used to store backups for this sql pool.
+    """
+
+    GRS = "GRS"
+    LRS = "LRS"
+    ZRS = "ZRS"
 
 class TransparentDataEncryptionName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -439,3 +488,10 @@ class VulnerabilityAssessmentScanTriggerType(with_metaclass(_CaseInsensitiveEnum
 
     ON_DEMAND = "OnDemand"
     RECURRING = "Recurring"
+
+class WorkspacePublicNetworkAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Enable or Disable pubic network access to workspace
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"

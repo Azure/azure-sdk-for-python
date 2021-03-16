@@ -4,24 +4,28 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
+    - feature/*
     - release/*
-    - restapi*
   paths:
     include:
-    - sdk/template/
+    - sdk/documenttranslation/
+    - sdk/core/
 
 pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
     - restapi*
   paths:
     include:
-    - sdk/template/
+    - sdk/documenttranslation/
+    - sdk/core/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
