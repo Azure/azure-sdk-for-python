@@ -101,17 +101,16 @@ class DocumentTranslationTest(AzureTestCase):
 
     def generate_sas_url(self, container_name, permission):
 
-        sas_token = generate_container_sas(
-            self.storage_name,
-            container_name,
+        sas_token = self.generate_sas(
+            generate_container_sas,
+            account_name=self.storage_name,
+            container_name=container_name,
             account_key=self.storage_key,
             permission=permission,
             expiry=datetime.datetime.utcnow() + datetime.timedelta(hours=2)
         )
+
         container_sas_url = self.storage_endpoint + container_name + "?" + sas_token
-        self.scrubber.register_name_pair(
-            sas_token, "container_sas_url"
-        )
         return container_sas_url
 
     def wait(self):

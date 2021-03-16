@@ -33,12 +33,9 @@ class DocumentTranslationClientPreparer(AzureMgmtPreparer):
         self.client_cls = client_cls
 
     def create_resource(self, name, **kwargs):
-        if self.is_live:
-            doctranslation_test_endpoint = os.environ["DOCUMENTTRANSLATION_TEST_ENDPOINT"]
-            doctranslation_test_api_key = os.environ["DOCUMENTTRANSLATION_TEST_API_KEY"]
-        else:
-            doctranslation_test_endpoint = "https://redacted.cognitiveservices.azure.com/"
-            doctranslation_test_api_key = "fakeZmFrZV9hY29jdW50X2tleQ=="
+        doctranslation_test_endpoint = kwargs.get("documenttranslation_test_endpoint")
+        doctranslation_test_api_key = kwargs.get("documenttranslation_test_api_key")
+
 
         client = self.client_cls(
             doctranslation_test_endpoint,
