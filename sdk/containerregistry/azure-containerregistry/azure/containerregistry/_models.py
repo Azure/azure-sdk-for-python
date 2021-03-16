@@ -42,17 +42,31 @@ class DeletedRepositoryResult(DeletedRepository):
 
 class RegistryArtifactProperties(object):
     def __init__(self, **kwargs):
-        self.cpu_arch = kwargs.get("arch", None)
-        self.created_on = kwargs.get("created_on", None)
-        self.digest = kwargs.get("digest", None)
-        self.last_updated = kwargs.get("last_updated", None)
-        self.manifest_properties = kwargs.get("manifest_properties", None)
-        self.operating_system = kwargs.get("operating_system", None)
+        self.created_time = kwargs.get("created_time", None)
+        self.image_name = kwargs.get("image_name", None)
         self.registry = kwargs.get("registry", None)
-        self.registry_artifacts = kwargs.get("registry_artifacts", None)
-        self.repository = kwargs.get("repository", None)
-        self.size = kwargs.get("size", None)
-        self.tags = kwargs.get("tags", None)
+        self.manifest_properties = ManifestProperties.from_generated(kwargs.get("manifest_attributes"))
+
+        # self.cpu_arch = kwargs.get("arch", None)
+        # self.digest = kwargs.get("digest", None)
+        # self.last_updated = kwargs.get("last_updated", None)
+        # self.manifest_properties = kwargs.get("manifest_properties", None)
+        # self.operating_system = kwargs.get("operating_system", None)
+        # self.registry = kwargs.get("registry", None)
+        # self.registry_artifacts = kwargs.get("registry_artifacts", None)
+        # self.repository = kwargs.get("repository", None)
+        # self.size = kwargs.get("size", None)
+        # self.tags = kwargs.get("tags", None)
+
+    @classmethod
+    def from_generated(cls, generated):
+        # type: (azure.containerregistry._generated.models.ManfiestAttributestBase) -> RegistryArtifactProperties
+        cls(
+            created_time=generated.created_time,
+            image_name=generated.image_name,
+            registry=generated.registry,
+            manifest_attributes=generated.manifest_attributes,
+        )
 
 
 class RepositoryProperties(object):
@@ -82,10 +96,10 @@ class RepositoryProperties(object):
         self.modifiable_properties = kwargs.get("modifiable_properties", None)
         self.name = kwargs.get("name", None)
         self.registry = kwargs.get("registry", None)
-        self.repository = kwargs.get("repository", None)
-        self.digest = kwargs.get("digest", None)
         self.tag_count = kwargs.get("tag_count", None)
         self.manifest_count = kwargs.get("manifest_count", None)
+        # self.repository = kwargs.get("repository", None)
+        # self.digest = kwargs.get("digest", None)
 
     @classmethod
     def from_generated(cls, generated):
