@@ -64,16 +64,31 @@ class DocumentTranslationTest(AzureTestCase):
             self.storage_key, "fakeZmFrZV9hY29jdW50X2tleQ=="
         )
 
-    def create_source_container(self, data):
+    def _setup(self, data=None, blob_prefix=""):
+        """Creates a source and target container.
+
+        Pass data in as bytes (or as a list[bytes] to create more than one blob) in the source container.
+        """
+        if self.is_live:
+            self.source_container_sas_url = self.create_source_container(
+                data=data or b'This is written in english.',
+                blob_prefix=blob_prefix
+            )
+            self.target_container_sas_url = self.create_target_container()
+        else:
+            self.source_container_sas_url = "source_container_sas_url"
+            self.target_container_sas_url = "target_container_sas_url"
+
+    def create_source_container(self, data, blob_prefix=""):
         container_name = "src" + str(uuid.uuid4())
         container_client = ContainerClient(self.storage_endpoint, container_name,
                                            self.storage_key)
         container_client.create_container()
         if isinstance(data, list):
             for blob in data:
-                container_client.upload_blob(name=str(uuid.uuid4()) + ".txt", data=blob)
+                container_client.upload_blob(name=blob_prefix+str(uuid.uuid4()) + ".txt", data=blob)
         else:
-            container_client.upload_blob(name=str(uuid.uuid4())+".txt", data=data)
+            container_client.upload_blob(name=blob_prefix+str(uuid.uuid4())+".txt", data=data)
         return self.generate_sas_url(container_name, "rl")
 
     def create_target_container(self):

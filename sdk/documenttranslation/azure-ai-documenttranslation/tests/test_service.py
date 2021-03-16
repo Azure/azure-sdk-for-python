@@ -13,18 +13,6 @@ DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClient
 
 class TestTranslation(DocumentTranslationTest):
 
-    def _setup(self, data=None):
-        """Creates a source and target container.
-
-        Pass data in as bytes (or as a list[bytes] to create more than one blob) in the source container.
-        """
-        if self.is_live:
-            self.source_container_sas_url = self.create_source_container(data=data or b'This is written in english.')
-            self.target_container_sas_url = self.create_target_container()
-        else:
-            self.source_container_sas_url = "source_container_sas_url"
-            self.target_container_sas_url = "target_container_sas_url"
-
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_translate(self, client):
