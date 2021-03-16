@@ -14,7 +14,7 @@ from azure.containerregistry import (
 class ContainerRegistryTestClass(object):
     def create_registry_client(self, endpoint):
         return ContainerRegistryClient(
-            endpoint=containerregistry_baseurl,
+            endpoint=endpoint,
             credential=ContainerRegistryUserCredential(
                 username=os.environ["CONTAINERREGISTRY_USERNAME"],
                 password=os.environ["CONTAINERREGISTRY_PASSWORD"],

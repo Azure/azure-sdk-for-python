@@ -58,12 +58,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         repos = self._client.repository.get_list(
             last=kwargs.get("last", None), n=kwargs.get("max", None)
         )
-        return RepositoryProperties.from_generated(repos)
-        # return ItemPaged(
-        #     command,
-        #     page_iterator_class=RepositoryPropertiesPaged
-        # )
-        # pass
+        return ItemPaged(
+
+        )
 
     def get_repository_client(self, repository, **kwargs):
         # type: (str) -> ContainerRepositoryClient
