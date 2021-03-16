@@ -6,45 +6,33 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING
+from typing import Any
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
-from .._version import VERSION
+VERSION = "unknown"
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials_async import AsyncTokenCredential
-
-
-class AzureContainerRegistryConfiguration(Configuration):
-    """Configuration for AzureContainerRegistry.
+class ContainerRegistryConfiguration(Configuration):
+    """Configuration for ContainerRegistry.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param url: Registry login URL.
     :type url: str
     """
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
         url: str,
         **kwargs: Any
     ) -> None:
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
-        super(AzureContainerRegistryConfiguration, self).__init__(**kwargs)
+        super(ContainerRegistryConfiguration, self).__init__(**kwargs)
 
-        self.credential = credential
         self.url = url
-        self.credential_scopes = kwargs.pop('credential_scopes', [])
         kwargs.setdefault('sdk_moniker', 'containerregistry/{}'.format(VERSION))
         self._configure(**kwargs)
 
@@ -61,7 +49,3 @@ class AzureContainerRegistryConfiguration(Configuration):
         self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
-        if not self.credential_scopes and not self.authentication_policy:
-            raise ValueError("You must provide either credential_scopes or authentication_policy as kwargs")
-        if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)

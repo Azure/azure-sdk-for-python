@@ -11,7 +11,7 @@ from azure.core.pipeline.policies import (
 )
 
 from ._authentication_policy import ContainerRegistryUserCredentialPolicy
-from ._generated import AzureContainerRegistry
+from ._generated import ContainerRegistry
 from ._helpers import get_authentication_policy
 from ._user_agent import USER_AGENT
 
@@ -27,7 +27,7 @@ class ContainerRegistryBaseClient(object):
         auth_policy = ContainerRegistryUserCredentialPolicy(
             credential=credential
         )
-        self._client = AzureContainerRegistry(
+        self._client = ContainerRegistry(
             credential=credential,
             url=endpoint,
             sdk_moniker=USER_AGENT,

@@ -41,7 +41,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        pass
+        raise NotImplementedError("Not implemented")
 
     def list_repositories(self, **kwargs):
         # type: (...) -> ItemPaged[str]
@@ -54,7 +54,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: ~azure.core.paging.ItemPaged[str]
         :raises: None
         """
-        # command = functools.partial(self._client.repository.get_list, **kwargs)
+        raise NotImplementedError("Not implemented")
         repos = self._client.repository.get_list(
             last=kwargs.get("last", None), n=kwargs.get("max", None)
         )
@@ -74,4 +74,3 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             repository,
             credential=self.credential,
         )
-        pass

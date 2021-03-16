@@ -15,7 +15,7 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/hello-world
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","createdTime":"2021-03-03T13:06:08.1190646Z","lastUpdateTime":"2021-03-03T13:06:08.2369442Z","manifestCount":1,"tagCount":1,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}
+      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","createdTime":"2021-03-16T15:14:35.1042371Z","lastUpdateTime":"2021-03-16T15:16:49.2531522Z","manifestCount":1,"tagCount":2,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}
 
         '
     headers:
@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 16 Mar 2021 12:30:22 GMT
+      - Tue, 16 Mar 2021 17:05:14 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

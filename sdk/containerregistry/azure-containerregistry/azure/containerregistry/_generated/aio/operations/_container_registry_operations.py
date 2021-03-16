@@ -17,8 +17,8 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class TagOperations:
-    """TagOperations async operations.
+class ContainerRegistryOperations:
+    """ContainerRegistryOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -39,34 +39,18 @@ class TagOperations:
         self._deserialize = deserializer
         self._config = config
 
-    async def get_list(
+    async def check_docker_v2_support(
         self,
-        name: str,
-        last: Optional[str] = None,
-        n: Optional[int] = None,
-        orderby: Optional[str] = None,
-        digest: Optional[str] = None,
         **kwargs
-    ) -> "_models.TagList":
-        """List tags of a repository.
+    ) -> None:
+        """Tells whether this Docker Registry instance supports Docker Registry HTTP API v2.
 
-        :param name: Name of the image (including the namespace).
-        :type name: str
-        :param last: Query parameter for the last item in previous query. Result set will include
-         values lexically after last.
-        :type last: str
-        :param n: query parameter for max number of items.
-        :type n: int
-        :param orderby: orderby query parameter.
-        :type orderby: str
-        :param digest: filter by digest.
-        :type digest: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TagList, or the result of cls(response)
-        :rtype: ~azure.containerregistry.models.TagList
+        :return: None, or the result of cls(response)
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -74,10 +58,62 @@ class TagOperations:
         accept = "application/json"
 
         # Construct URL
-        url = self.get_list.metadata['url']  # type: ignore
+        url = self.check_docker_v2_support.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'name': self._serialize.url("name", name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    check_docker_v2_support.metadata = {'url': '/v2/'}  # type: ignore
+
+    async def get_repositories(
+        self,
+        last: Optional[str] = None,
+        n: Optional[int] = None,
+        **kwargs
+    ) -> "_models.Repositories":
+        """List repositories.
+
+        :param last: Query parameter for the last item in previous query. Result set will include
+         values lexically after last.
+        :type last: str
+        :param n: query parameter for max number of items.
+        :type n: int
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: Repositories, or the result of cls(response)
+        :rtype: ~azure.containerregistry.models.Repositories
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Repositories"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_repositories.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -87,10 +123,6 @@ class TagOperations:
             query_parameters['last'] = self._serialize.query("last", last, 'str')
         if n is not None:
             query_parameters['n'] = self._serialize.query("n", n, 'int')
-        if orderby is not None:
-            query_parameters['orderby'] = self._serialize.query("orderby", orderby, 'str')
-        if digest is not None:
-            query_parameters['digest'] = self._serialize.query("digest", digest, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -105,32 +137,31 @@ class TagOperations:
             error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('TagList', pipeline_response)
+        response_headers = {}
+        response_headers['Link']=self._deserialize('str', response.headers.get('Link'))
+        deserialized = self._deserialize('Repositories', pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    get_list.metadata = {'url': '/acr/v1/{name}/_tags'}  # type: ignore
+    get_repositories.metadata = {'url': '/acr/v1/_catalog'}  # type: ignore
 
-    async def get_attributes(
+    async def get_repository_attributes(
         self,
         name: str,
-        reference: str,
         **kwargs
-    ) -> "_models.TagAttributes":
-        """Get tag attributes by tag.
+    ) -> "_models.RepositoryAttributes":
+        """Get repository attributes.
 
         :param name: Name of the image (including the namespace).
         :type name: str
-        :param reference: Tag name.
-        :type reference: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TagAttributes, or the result of cls(response)
-        :rtype: ~azure.containerregistry.models.TagAttributes
+        :return: RepositoryAttributes, or the result of cls(response)
+        :rtype: ~azure.containerregistry.models.RepositoryAttributes
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagAttributes"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RepositoryAttributes"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -138,11 +169,10 @@ class TagOperations:
         accept = "application/json"
 
         # Construct URL
-        url = self.get_attributes.metadata['url']  # type: ignore
+        url = self.get_repository_attributes.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
             'name': self._serialize.url("name", name, 'str'),
-            'reference': self._serialize.url("reference", reference, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -162,27 +192,77 @@ class TagOperations:
             error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('TagAttributes', pipeline_response)
+        deserialized = self._deserialize('RepositoryAttributes', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_attributes.metadata = {'url': '/acr/v1/{name}/_tags/{reference}'}  # type: ignore
+    get_repository_attributes.metadata = {'url': '/acr/v1/{name}'}  # type: ignore
 
-    async def update_attributes(
+    async def delete_repository(
         self,
         name: str,
-        reference: str,
-        value: Optional["_models.ChangeableAttributes"] = None,
         **kwargs
-    ) -> None:
-        """Update tag attributes.
+    ) -> "_models.DeletedRepository":
+        """Delete the repository identified by ``name``.
 
         :param name: Name of the image (including the namespace).
         :type name: str
-        :param reference: Tag name.
-        :type reference: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: DeletedRepository, or the result of cls(response)
+        :rtype: ~azure.containerregistry.models.DeletedRepository
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedRepository"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/json"
+
+        # Construct URL
+        url = self.delete_repository.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.delete(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('DeletedRepository', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    delete_repository.metadata = {'url': '/acr/v1/{name}'}  # type: ignore
+
+    async def update_repository_attributes(
+        self,
+        name: str,
+        value: Optional["_models.ChangeableAttributes"] = None,
+        **kwargs
+    ) -> None:
+        """Update the attribute identified by ``name`` where ``reference`` is the name of the repository.
+
+        :param name: Name of the image (including the namespace).
+        :type name: str
         :param value: Repository attribute value.
         :type value: ~azure.containerregistry.models.ChangeableAttributes
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -199,11 +279,10 @@ class TagOperations:
         accept = "application/json"
 
         # Construct URL
-        url = self.update_attributes.metadata['url']  # type: ignore
+        url = self.update_repository_attributes.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
             'name': self._serialize.url("name", name, 'str'),
-            'reference': self._serialize.url("reference", reference, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -233,58 +312,4 @@ class TagOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    update_attributes.metadata = {'url': '/acr/v1/{name}/_tags/{reference}'}  # type: ignore
-
-    async def delete(
-        self,
-        name: str,
-        reference: str,
-        **kwargs
-    ) -> None:
-        """Delete tag.
-
-        :param name: Name of the image (including the namespace).
-        :type name: str
-        :param reference: Tag name.
-        :type reference: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        accept = "application/json"
-
-        # Construct URL
-        url = self.delete.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'name': self._serialize.url("name", name, 'str'),
-            'reference': self._serialize.url("reference", reference, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {'url': '/acr/v1/{name}/_tags/{reference}'}  # type: ignore
+    update_repository_attributes.metadata = {'url': '/acr/v1/{name}'}  # type: ignore

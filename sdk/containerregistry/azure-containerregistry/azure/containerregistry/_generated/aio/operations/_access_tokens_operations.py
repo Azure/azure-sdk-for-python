@@ -111,7 +111,7 @@ class AccessTokensOperations:
         scope: str,
         **kwargs
     ) -> "_models.AccessToken":
-        """Exchange Username, Password, and Scope for an ACR Access Token.
+        """Exchange Username, Password and Scope an ACR Access Token.
 
         :param service: Indicates the name of your Azure container registry.
         :type service: str

@@ -11,8 +11,9 @@ from devtools_testutils import AzureTestCase, PowerShellPreparer
 from azure.containerregistry import (
     ContainerRepositoryClient,
     ContainerRegistryClient,
+    RepositoryProperties,
+    ContentPermissions
 )
-from azure.identity import DefaultAzureCredential
 
 from _shared.testcase import ContainerRegistryTestClass
 
@@ -39,6 +40,17 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
             repo_count += 1
 
         assert repo_count == 0
+
+    @acr_preparer()
+    def test_get_properties(self, containerregistry_baseurl):
+        reg_client = self.create_repository_client(containerregistry_baseurl, "hello-world")
+
+        properties = reg_client.get_properties()
+
+        assert isinstance(properties, RepositoryProperties)
+        assert properties.name == "hello-world"
+        assert properties.registry == containerregistry_baseurl
+        assert isinstance(properties.content_permissions, ContentPermissions)
 
     @acr_preparer()
     def test_list_tags(self, containerregistry_baseurl):

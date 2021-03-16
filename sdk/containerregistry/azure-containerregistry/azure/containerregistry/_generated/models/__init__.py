@@ -83,7 +83,7 @@ except (SyntaxError, ImportError):
     from ._models import V1Manifest  # type: ignore
     from ._models import V2Manifest  # type: ignore
 
-from ._azure_container_registry_enums import (
+from ._container_registry_enums import (
     PostContentSchemaGrantType,
 )
 

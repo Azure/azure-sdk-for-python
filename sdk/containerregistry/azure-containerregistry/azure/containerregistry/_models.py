@@ -14,19 +14,19 @@ from ._generated.models import (
 
 class ContentPermissions(object):
     def __init__(self, **kwargs):
-        self.delete = kwargs.get("delete")
-        self.list = kwargs.get("list")
-        self.read = kwargs.get("read")
-        self.write = kwargs.get("write")
+        self.can_delete = kwargs.get("can_delete")
+        self.can_list = kwargs.get("can_list")
+        self.can_read = kwargs.get("can_read")
+        self.can_write = kwargs.get("can_write")
 
     @classmethod
     def from_generated(cls, generated):
         # type: (azure.containerregistry._generated.models.ChangeableAttributes) -> ContentPermissions
         return cls(
-            delete=generated.delete_enabled,
-            list=generated.list_enabled,
-            read=generated.read_enabled,
-            write=generated.write_enabled
+            delete=generated.can_delete,
+            list=generated.can_list,
+            read=generated.can_read,
+            write=generated.can_write
         )
 
 
@@ -42,7 +42,7 @@ class DeletedRepositoryResult(DeletedRepository):
 
 class RegistryArtifactProperties(object):
     def __init__(self, **kwargs):
-        self.created_time = kwargs.get("created_time", None)
+        self.created_on = kwargs.get("created_on", None)
         self.image_name = kwargs.get("image_name", None)
         self.registry = kwargs.get("registry", None)
         self.manifest_properties = ManifestProperties.from_generated(kwargs.get("manifest_attributes"))
@@ -62,7 +62,7 @@ class RegistryArtifactProperties(object):
     def from_generated(cls, generated):
         # type: (azure.containerregistry._generated.models.ManfiestAttributestBase) -> RegistryArtifactProperties
         cls(
-            created_time=generated.created_time,
+            created_on=generated.created_on,
             image_name=generated.image_name,
             registry=generated.registry,
             manifest_attributes=generated.manifest_attributes,
@@ -72,10 +72,10 @@ class RegistryArtifactProperties(object):
 class RepositoryProperties(object):
     """Model for storing properties of a single repository
 
-    :ivar created_time: Time the repository was created
-    :vartype created_time: str
-    :ivar last_updated_time: Time the repository was last updated
-    :vartype last_updated_time: str
+    :ivar created_on: Time the repository was created
+    :vartype created_on: str
+    :ivar last_updated_on: Time the repository was last updated
+    :vartype last_updated_on: str
     :ivar modifiable_properties: Read/Write/Update/Delete permissions for the repository
     :vartype modifiable_properties: ContentPermissions
     :ivar name: Name of the repository
@@ -91,27 +91,28 @@ class RepositoryProperties(object):
     """
 
     def __init__(self, **kwargs):
-        self.created_time = kwargs.get("created_time", None)
-        self.last_updated_time = kwargs.get("last_updated_time", None)
+        self.created_on = kwargs.get("created_on", None)
+        self.last_updated_on = kwargs.get("last_updated_on", None)
         self.modifiable_properties = kwargs.get("modifiable_properties", None)
         self.name = kwargs.get("name", None)
         self.registry = kwargs.get("registry", None)
         self.tag_count = kwargs.get("tag_count", None)
         self.manifest_count = kwargs.get("manifest_count", None)
-        # self.repository = kwargs.get("repository", None)
-        # self.digest = kwargs.get("digest", None)
+        self.content_permissions = kwargs.get('content_permissions', None)
+        if self.content_permissions:
+            self.content_permissions = ContentPermissions.from_generated(self.content_permissions)
 
     @classmethod
     def from_generated(cls, generated):
         # type: (azure.containerregistry._generated.models.RepositoryAttributes) -> RepositoryProperties
         return cls(
-            created_time=generated.created_time,
-            name=generated.image_name,
-            last_updated_time=generated.last_updated_time,
+            created_on=generated.created_on,
+            last_updated_on=generated.last_updated_on,
+            name=generated.name,
             registry=generated.registry,
-            manifest_count=generated.manifest_count,
+            manifest_count=generated.registry_artifact_count,
             tag_count=generated.tag_count,
-            content_permissions=generated.changeable_attributes
+            content_permissions=generated.writeable_properties
         )
         return cls(generated)
 

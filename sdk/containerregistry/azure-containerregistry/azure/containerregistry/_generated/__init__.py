@@ -6,11 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_container_registry import AzureContainerRegistry
-from ._version import VERSION
-
-__version__ = VERSION
-__all__ = ['AzureContainerRegistry']
+from ._container_registry import ContainerRegistry
+__all__ = ['ContainerRegistry']
 
 try:
     from ._patch import patch_sdk  # type: ignore

@@ -6,20 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._v2_support_operations import V2SupportOperations
-from ._manifests_operations import ManifestsOperations
-from ._blob_operations import BlobOperations
-from ._repository_operations import RepositoryOperations
-from ._tag_operations import TagOperations
+from ._container_registry_operations import ContainerRegistryOperations
+from ._container_registry_repository_operations import ContainerRegistryRepositoryOperations
+from ._container_registry_blob_operations import ContainerRegistryBlobOperations
 from ._refresh_tokens_operations import RefreshTokensOperations
 from ._access_tokens_operations import AccessTokensOperations
 
 __all__ = [
-    'V2SupportOperations',
-    'ManifestsOperations',
-    'BlobOperations',
-    'RepositoryOperations',
-    'TagOperations',
+    'ContainerRegistryOperations',
+    'ContainerRegistryRepositoryOperations',
+    'ContainerRegistryBlobOperations',
     'RefreshTokensOperations',
     'AccessTokensOperations',
 ]

@@ -38,8 +38,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        self._client.repository.delete(self.repository, **kwargs)
-        # raise NotImplementedError("Has not been implemented")
+        self._client.container_registry.delete(self.repository, **kwargs)
 
     def delete_registry_artifact(self, digest):
         # type: (str) -> None
@@ -70,7 +69,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: :class:~azure.containerregistry.RepositoryProperties
         :raises: None
         """
-        resp = self._client.repository.get_attributes(self.repository)
+        resp = self._client.container_registry.get_repository_attributes(self.repository)
         return RepositoryProperties.from_generated(resp)
 
     def get_registry_artifact_properties(self, tag_or_digest, **kwargs):
@@ -108,6 +107,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: ~azure.core.paging.ItemPaged[RegistryArtifactProperties]
         :raises: None
         """
+        raise NotImplementedError("Not implemented")
         # TODO: turn this into an ItemPaged
         artifacts = self._client.manifests.get_list(
             self.repository,
@@ -125,7 +125,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: ~azure.core.paging.ItemPaged[TagProperties]
         :raises: None
         """
-        tags = self._client.repository.get_attributes(
+        raise NotImplementedError("Not implemented")
+        tags = self._client.container_registry.get_attributes(
             self.repository, **kwargs
         )
         return tags

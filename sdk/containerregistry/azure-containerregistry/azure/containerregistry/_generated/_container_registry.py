@@ -15,51 +15,42 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
-    from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from ._configuration import AzureContainerRegistryConfiguration
-from .operations import V2SupportOperations
-from .operations import ManifestsOperations
-from .operations import BlobOperations
-from .operations import RepositoryOperations
-from .operations import TagOperations
+from ._configuration import ContainerRegistryConfiguration
+from .operations import ContainerRegistryOperations
+from .operations import ContainerRegistryRepositoryOperations
+from .operations import ContainerRegistryBlobOperations
 from .operations import RefreshTokensOperations
 from .operations import AccessTokensOperations
 from . import models
 
 
-class AzureContainerRegistry(object):
+class ContainerRegistry(object):
     """Metadata API definition for the Azure Container Registry runtime.
 
-    :ivar v2_support: V2SupportOperations operations
-    :vartype v2_support: azure.containerregistry.operations.V2SupportOperations
-    :ivar manifests: ManifestsOperations operations
-    :vartype manifests: azure.containerregistry.operations.ManifestsOperations
-    :ivar blob: BlobOperations operations
-    :vartype blob: azure.containerregistry.operations.BlobOperations
-    :ivar repository: RepositoryOperations operations
-    :vartype repository: azure.containerregistry.operations.RepositoryOperations
-    :ivar tag: TagOperations operations
-    :vartype tag: azure.containerregistry.operations.TagOperations
+    :ivar container_registry: ContainerRegistryOperations operations
+    :vartype container_registry: azure.containerregistry.operations.ContainerRegistryOperations
+    :ivar container_registry_repository: ContainerRegistryRepositoryOperations operations
+    :vartype container_registry_repository: azure.containerregistry.operations.ContainerRegistryRepositoryOperations
+    :ivar container_registry_blob: ContainerRegistryBlobOperations operations
+    :vartype container_registry_blob: azure.containerregistry.operations.ContainerRegistryBlobOperations
     :ivar refresh_tokens: RefreshTokensOperations operations
     :vartype refresh_tokens: azure.containerregistry.operations.RefreshTokensOperations
     :ivar access_tokens: AccessTokensOperations operations
     :vartype access_tokens: azure.containerregistry.operations.AccessTokensOperations
-    :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
     :param url: Registry login URL.
     :type url: str
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
         url,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         base_url = '{url}'
-        self._config = AzureContainerRegistryConfiguration(credential, url, **kwargs)
+        self._config = ContainerRegistryConfiguration(url, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -67,27 +58,41 @@ class AzureContainerRegistry(object):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.v2_support = V2SupportOperations(
+        self.container_registry = ContainerRegistryOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.manifests = ManifestsOperations(
+        self.container_registry_repository = ContainerRegistryRepositoryOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.blob = BlobOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.repository = RepositoryOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.tag = TagOperations(
+        self.container_registry_blob = ContainerRegistryBlobOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.refresh_tokens = RefreshTokensOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.access_tokens = AccessTokensOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        """
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
+
     def close(self):
         # type: () -> None
         self._client.close()
 
     def __enter__(self):
-        # type: () -> AzureContainerRegistry
+        # type: () -> ContainerRegistry
         self._client.__enter__()
         return self
 
