@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import asyncio
 import codecs
 from datetime import datetime
 import functools
@@ -55,6 +56,26 @@ class CryptoClientTests(KeyVaultTestCase):
         credential = self.get_credential(CryptographyClient, is_async=True)
         return self.create_client_from_credential(CryptographyClient, credential=credential, key=key, **kwargs)
 
+    async def _create_rsa_key(self, client, key_name, **kwargs):
+        key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
+        hsm = kwargs.get("hardware_protected") or False
+        if self.is_live:
+            await asyncio.sleep(2)  # to avoid throttling by the service
+        created_key = await client.create_rsa_key(key_name, **kwargs)
+        key_type = "RSA-HSM" if hsm else "RSA"
+        self._validate_rsa_key_bundle(created_key, client.vault_url, key_name, key_type, key_ops)
+        return created_key
+
+    async def _create_ec_key(self, client, key_name, **kwargs):
+        key_curve = kwargs.get("curve") or "P-256"
+        hsm = kwargs.get("hardware_protected") or False
+        if self.is_live:
+            await asyncio.sleep(2)  # to avoid throttling by the service
+        created_key = await client.create_ec_key(key_name, **kwargs)
+        key_type = "EC-HSM" if hsm else "EC"
+        self._validate_ec_key_bundle(key_curve, created_key, client.vault_url, key_name, key_type)
+        return created_key
+
     def _validate_rsa_key_bundle(self, key_attributes, vault, key_name, kty, key_ops):
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
         key = key_attributes.key
@@ -63,6 +84,18 @@ class CryptoClientTests(KeyVaultTestCase):
         self.assertEqual(key.kty, kty, "kty should by '{}', but is '{}'".format(key, key.kty))
         self.assertTrue(key.n and key.e, "Bad RSA public material.")
         self.assertEqual(key_ops, key.key_ops, "keyOps should be '{}', but is '{}'".format(key_ops, key.key_ops))
+        self.assertTrue(
+            key_attributes.properties.created_on and key_attributes.properties.updated_on,
+            "Missing required date attributes.",
+        )
+
+    def _validate_ec_key_bundle(self, key_curve, key_attributes, vault, key_name, kty):
+        prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
+        key = key_attributes.key
+        kid = key_attributes.id
+        self.assertEqual(key_curve, key.crv)
+        self.assertTrue(kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid))
+        self.assertEqual(key.kty, kty, "kty should by '{}', but is '{}'".format(key, key.kty))
         self.assertTrue(
             key_attributes.properties.created_on and key_attributes.properties.updated_on,
             "Missing required date attributes.",
@@ -117,7 +150,7 @@ class CryptoClientTests(KeyVaultTestCase):
     async def test_ec_key_id(self, azure_keyvault_url, **kwargs):
         """When initialized with a key ID, the client should retrieve the key and perform public operations locally"""
         key_client = self.create_key_client(azure_keyvault_url)
-        key = await key_client.create_ec_key(self.get_resource_name("eckey"))
+        key = await self._create_ec_key(key_client, self.get_resource_name("eckey"))
 
         crypto_client = self.create_crypto_client(key.id)
         await crypto_client._initialize()
@@ -132,7 +165,7 @@ class CryptoClientTests(KeyVaultTestCase):
     async def test_rsa_key_id(self, azure_keyvault_url, **kwargs):
         """When initialized with a key ID, the client should retrieve the key and perform public operations locally"""
         key_client = self.create_key_client(azure_keyvault_url)
-        key = await key_client.create_rsa_key(self.get_resource_name("rsakey"))
+        key = await self._create_rsa_key(key_client, self.get_resource_name("rsakey"))
 
         crypto_client = self.create_crypto_client(key.id)
         await crypto_client._initialize()
@@ -186,7 +219,7 @@ class CryptoClientTests(KeyVaultTestCase):
         key_client = self.create_key_client(azure_keyvault_url, permissions=NO_GET)
         key_name = self.get_resource_name("keywrap")
 
-        created_key = await key_client.create_key(key_name, "RSA")
+        created_key = await self._create_rsa_key(key_client, key_name)
         self.assertIsNotNone(created_key)
         crypto_client = self.create_crypto_client(created_key.id)
 
@@ -262,7 +295,7 @@ class CryptoClientTests(KeyVaultTestCase):
         """Encrypt locally, decrypt with Key Vault"""
         key_client = self.create_key_client(azure_keyvault_url)
         key_name = self.get_resource_name("encrypt-local")
-        key = await key_client.create_rsa_key(key_name, size=4096)
+        key = await self._create_rsa_key(key_client, key_name, size=4096)
         crypto_client = self.create_crypto_client(key)
 
         rsa_encrypt_algorithms = [algo for algo in EncryptionAlgorithm if algo.startswith("RSA")]
@@ -278,7 +311,7 @@ class CryptoClientTests(KeyVaultTestCase):
         """Encrypt locally, decrypt with Key Vault"""
         key_client = self.create_key_client(azure_keyvault_url)
         key_name = self.get_resource_name("encrypt-local")
-        key = await key_client.create_rsa_key(key_name, size=4096)
+        key = await self._create_rsa_key(key_client, key_name, size=4096)
         crypto_client = self.create_crypto_client(key)
         local_client = CryptographyClient.from_jwk(key.key)
 
@@ -295,7 +328,7 @@ class CryptoClientTests(KeyVaultTestCase):
         """Wrap locally, unwrap with Key Vault"""
         key_client = self.create_key_client(azure_keyvault_url)
         key_name = self.get_resource_name("wrap-local")
-        key = await key_client.create_rsa_key(key_name, size=4096)
+        key = await self._create_rsa_key(key_client, key_name, size=4096)
         crypto_client = self.create_crypto_client(key)
 
         for wrap_algorithm in (algo for algo in KeyWrapAlgorithm if algo.startswith("RSA")):
@@ -310,7 +343,7 @@ class CryptoClientTests(KeyVaultTestCase):
         """Wrap locally, unwrap with Key Vault"""
         key_client = self.create_key_client(azure_keyvault_url)
         key_name = self.get_resource_name("wrap-local")
-        key = await key_client.create_rsa_key(key_name, size=4096)
+        key = await self._create_rsa_key(key_client, key_name, size=4096)
         crypto_client = self.create_crypto_client(key)
         local_client = CryptographyClient.from_jwk(key.key)
 
@@ -327,7 +360,7 @@ class CryptoClientTests(KeyVaultTestCase):
         key_client = self.create_key_client(azure_keyvault_url)
         for size in (2048, 3072, 4096):
             key_name = self.get_resource_name("rsa-verify-{}".format(size))
-            key = await key_client.create_rsa_key(key_name, size=size)
+            key = await self._create_rsa_key(key_client, key_name, size=size)
             crypto_client = self.create_crypto_client(key)
             for signature_algorithm, hash_function in (
                 (SignatureAlgorithm.ps256, hashlib.sha256),
@@ -351,7 +384,7 @@ class CryptoClientTests(KeyVaultTestCase):
         key_client = self.create_key_client(azure_keyvault_url)
         for size in (2048, 3072, 4096):
             key_name = self.get_resource_name("rsa-verify-{}".format(size))
-            key = await key_client.create_rsa_key(key_name, size=size)
+            key = await self._create_rsa_key(key_client, key_name, size=size)
             crypto_client = self.create_crypto_client(key)
             local_client = CryptographyClient.from_jwk(key.key)
             for signature_algorithm, hash_function in (
@@ -383,7 +416,7 @@ class CryptoClientTests(KeyVaultTestCase):
 
         for curve, (signature_algorithm, hash_function) in sorted(matrix.items()):
             key_name = self.get_resource_name("ec-verify-{}".format(curve.value))
-            key = await key_client.create_ec_key(key_name, curve=curve)
+            key = await self._create_ec_key(key_client, key_name, curve=curve)
             crypto_client = self.create_crypto_client(key)
 
             digest = hash_function(self.plaintext).digest()
@@ -407,7 +440,7 @@ class CryptoClientTests(KeyVaultTestCase):
 
         for curve, (signature_algorithm, hash_function) in sorted(matrix.items()):
             key_name = self.get_resource_name("ec-verify-{}".format(curve.value))
-            key = await key_client.create_ec_key(key_name, curve=curve)
+            key = await self._create_ec_key(key_client, key_name, curve=curve)
             crypto_client = self.create_crypto_client(key)
             local_client = CryptographyClient.from_jwk(key.key)
 
@@ -442,21 +475,21 @@ class CryptoClientTests(KeyVaultTestCase):
         rsa_wrap_algorithms = [algo for algo in KeyWrapAlgorithm if algo.startswith("RSA")]
         rsa_encryption_algorithms = [algo for algo in EncryptionAlgorithm if algo.startswith("RSA")]
         key_name = self.get_resource_name("rsa-not-yet-valid")
-        not_yet_valid_key = await key_client.create_rsa_key(key_name, not_before=the_year_3000)
+        not_yet_valid_key = await self._create_rsa_key(key_client, key_name, not_before=the_year_3000)
         await test_operations(not_yet_valid_key, [str(the_year_3000)], rsa_encryption_algorithms, rsa_wrap_algorithms)
 
         # nor should they succeed with a key whose exp has passed
         the_year_2000 = datetime(2000, 1, 1, tzinfo=_UTC)
 
         key_name = self.get_resource_name("rsa-expired")
-        expired_key = await key_client.create_rsa_key(key_name, expires_on=the_year_2000)
+        expired_key = await self._create_rsa_key(key_client, key_name, expires_on=the_year_2000)
         await test_operations(expired_key, [str(the_year_2000)], rsa_encryption_algorithms, rsa_wrap_algorithms)
 
         # when exp and nbf are set, error messages should contain both
         the_year_3001 = datetime(3001, 1, 1, tzinfo=_UTC)
 
         key_name = self.get_resource_name("rsa-valid")
-        valid_key = await key_client.create_rsa_key(key_name, not_before=the_year_3000, expires_on=the_year_3001)
+        valid_key = await self._create_rsa_key(key_client, key_name, not_before=the_year_3000, expires_on=the_year_3001)
         await test_operations(
             valid_key, (str(the_year_3000), str(the_year_3001)), rsa_encryption_algorithms, rsa_wrap_algorithms
         )
