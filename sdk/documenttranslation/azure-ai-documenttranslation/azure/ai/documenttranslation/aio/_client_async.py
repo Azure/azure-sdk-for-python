@@ -16,7 +16,8 @@ from .._models import (
     JobStatusDetail,
     BatchDocumentInput,
     BatchStatusDetail as _BatchStatusDetail,
-    FileFormat
+    FileFormat,
+    DocumentStatusDetail
 )
 from .._helpers import get_authentication_policy
 from .._polling import TranslationPolling
@@ -182,7 +183,10 @@ class DocumentTranslationClient(object):
         :type document_id: str
         :rtype: ~azure.ai.documenttranslation.DocumentStatusDetail
         """
-        return await self._client.document_translation.get_document_status(job_id, document_id, **kwargs)
+        document_status = await self._client.document_translation.get_document_status(job_id, document_id, **kwargs)
+        # pylint: disable=protected-access
+        return DocumentStatusDetail._from_generated(document_status)
+
 
     @distributed_trace_async
     async def get_supported_glossary_formats(self, **kwargs):
@@ -191,7 +195,7 @@ class DocumentTranslationClient(object):
 
         :rtype: list[FileFormat]
         """
-        glossary_formats = self._client.document_translation.get_glossary_formats(**kwargs)
+        glossary_formats = await self._client.document_translation.get_glossary_formats(**kwargs)
         # pylint: disable=protected-access
         return FileFormat._from_generated_list(glossary_formats.value)
 
