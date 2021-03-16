@@ -51,7 +51,7 @@ class DocumentTranslationTest(AzureTestCase):
         super(DocumentTranslationTest, self).__init__(method_name)
         self.vcr.match_on = ["path", "method", "query"]
         self.recording_processors.append(OperationLocationReplacer())
-        self.storage_name = os.getenv("DOCUMENTTRANSLATION_STORAGE_NAME")
+        self.storage_name = os.getenv("DOCUMENTTRANSLATION_STORAGE_NAME", "redacted")
         self.storage_endpoint = "https://" + self.storage_name + ".blob.core.windows.net/"
         self.storage_key = os.getenv("DOCUMENTTRANSLATION_STORAGE_KEY")
         self.scrubber.register_name_pair(
