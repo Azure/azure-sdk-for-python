@@ -33,7 +33,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
 
   foreach ($line in $allPkgPropLines)
   {
-    $pkgInfo = ($line -Split ",").Trim("()' ")
+    $pkgInfo = ($line -Split " ")
     $packageName = $pkgInfo[0]
     $packageVersion = $pkgInfo[1]
     $isNewSdk = ($pkgInfo[2] -eq "True")

@@ -63,7 +63,8 @@ class PhoneNumbersClientTest(CommunicationTestCase):
             PhoneNumberCapabilityType.INBOUND,
             polling = True
         )
-        assert poller.result()
+        poller.result()
+        assert poller.status() == 'Succeeded'
 
     @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
     def test_purchase_phone_numbers(self):
@@ -82,4 +83,4 @@ class PhoneNumbersClientTest(CommunicationTestCase):
         purchase_poller = self.phone_number_client.begin_purchase_phone_numbers(phone_number_to_buy.search_id, polling=True)
         purchase_poller.result()
         release_poller = self.phone_number_client.begin_release_phone_number(phone_number_to_buy.phone_numbers[0])
-        assert release_poller.status() == 'succeeded'
+        assert release_poller.status() == 'Succeeded'

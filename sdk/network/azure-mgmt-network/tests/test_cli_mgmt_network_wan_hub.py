@@ -406,7 +406,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         #     "vpnUser1",
         #     "vpnUser2"
         #   ],
-        #   "output_blob_sas_url": "https://blobcortextesturl.blob.core.windows.net/folderforconfig/p2sconnectionhealths?sp=rw&se=2018-01-10T03%3A42%3A04Z&sv=2017-04-17&sig=WvXrT5bDmDFfgHs%2Brz%2BjAu123eRCNE9BO0eQYcPDT7pY%3D&sr=b"
+        #   "output_blob_sas_url": "fakeuri"
         # }
         # result = self.mgmt_client.p2s_vpn_gateways.begin_get_p2s_vpn_connection_health_detailed(resource_group.name, P2SVPN_GATEWAY_NAME, BODY)
         # result = result.result()
@@ -458,7 +458,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         #   "vpn_sites": [
         #     "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/vpnSites/abc"
         #   ],
-        #   "output_blob_sas_url": "https://blobcortextesturl.blob.core.windows.net/folderforconfig/vpnFile?sp=rw&se=2018-01-10T03%3A42%3A04Z&sv=2017-04-17&sig=WvXrT5bDmDFfgHs%2Brz%2BjAu123eRCNE9BO0eQYcPDT7pY%3D&sr=b"
+        #   "output_blob_sas_url": "fakeuri"
         # }
         # result = self.mgmt_client.vpn_sites_configuration.begin_download(resource_group.name, VIRTUAL_WAN_NAME, BODY)
         # result = result.result()
