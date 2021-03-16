@@ -210,16 +210,6 @@ class DocumentTranslationClient(object):
         return DocumentStatusDetail._from_generated(document_status)
 
     @distributed_trace
-    def get_supported_storage_sources(self, **kwargs):
-        # type: (**Any) -> List[str]
-        """
-
-        :rtype: List[str]
-        """
-        storage_sources_response = self._client.document_translation.get_document_storage_source(**kwargs)
-        return [storage_source for storage_source in storage_sources_response.value]
-
-    @distributed_trace
     def get_supported_glossary_formats(self, **kwargs):
         # type: (**Any) -> List[FileFormat]
         """
