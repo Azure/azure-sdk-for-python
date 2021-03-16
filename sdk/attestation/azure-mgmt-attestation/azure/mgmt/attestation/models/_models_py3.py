@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import datetime
 from typing import Dict, List, Optional, Union
 
 import msrest.serialization
@@ -117,13 +118,19 @@ class AttestationProvider(TrackedResource):
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives.
     :type location: str
-    :param trust_model: Trust model for the attestation service instance.
+    :ivar system_data: The system metadata relating to this resource.
+    :vartype system_data: ~azure.mgmt.attestation.models.SystemData
+    :param trust_model: Trust model for the attestation provider.
     :type trust_model: str
     :param status: Status of attestation service. Possible values include: "Ready", "NotReady",
      "Error".
     :type status: str or ~azure.mgmt.attestation.models.AttestationServiceStatus
     :param attest_uri: Gets the uri of attestation service.
     :type attest_uri: str
+    :ivar private_endpoint_connections: List of private endpoint connections associated with the
+     attestation provider.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.attestation.models.PrivateEndpointConnection]
     """
 
     _validation = {
@@ -131,6 +138,8 @@ class AttestationProvider(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'system_data': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -139,9 +148,11 @@ class AttestationProvider(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'trust_model': {'key': 'properties.trustModel', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'attest_uri': {'key': 'properties.attestUri', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
     }
 
     def __init__(
@@ -155,19 +166,30 @@ class AttestationProvider(TrackedResource):
         **kwargs
     ):
         super(AttestationProvider, self).__init__(tags=tags, location=location, **kwargs)
+        self.system_data = None
         self.trust_model = trust_model
         self.status = status
         self.attest_uri = attest_uri
+        self.private_endpoint_connections = None
 
 
 class AttestationProviderListResult(msrest.serialization.Model):
     """Attestation Providers List.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar system_data: The system metadata relating to this resource.
+    :vartype system_data: ~azure.mgmt.attestation.models.SystemData
     :param value: Attestation Provider array.
     :type value: list[~azure.mgmt.attestation.models.AttestationProvider]
     """
 
+    _validation = {
+        'system_data': {'readonly': True},
+    }
+
     _attribute_map = {
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'value': {'key': 'value', 'type': '[AttestationProvider]'},
     }
 
@@ -178,20 +200,21 @@ class AttestationProviderListResult(msrest.serialization.Model):
         **kwargs
     ):
         super(AttestationProviderListResult, self).__init__(**kwargs)
+        self.system_data = None
         self.value = value
 
 
 class AttestationServiceCreationParams(msrest.serialization.Model):
-    """Parameters for creating an attestation service instance.
+    """Parameters for creating an attestation provider.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. The supported Azure location where the attestation service instance
-     should be created.
+    :param location: Required. The supported Azure location where the attestation provider should
+     be created.
     :type location: str
-    :param tags: A set of tags. The tags that will be assigned to the attestation service instance.
+    :param tags: A set of tags. The tags that will be assigned to the attestation provider.
     :type tags: dict[str, str]
-    :param properties: Required. Properties of the attestation service instance.
+    :param properties: Required. Properties of the attestation provider.
     :type properties: ~azure.mgmt.attestation.models.AttestationServiceCreationSpecificParams
     """
 
@@ -221,36 +244,31 @@ class AttestationServiceCreationParams(msrest.serialization.Model):
 
 
 class AttestationServiceCreationSpecificParams(msrest.serialization.Model):
-    """Client supplied parameters used to create a new attestation service instance.
+    """Client supplied parameters used to create a new attestation provider.
 
-    :param attestation_policy: Name of attestation policy.
-    :type attestation_policy: str
     :param policy_signing_certificates: JSON Web Key Set defining a set of X.509 Certificates that
      will represent the parent certificate for the signing certificate used for policy operations.
     :type policy_signing_certificates: ~azure.mgmt.attestation.models.JSONWebKeySet
     """
 
     _attribute_map = {
-        'attestation_policy': {'key': 'attestationPolicy', 'type': 'str'},
         'policy_signing_certificates': {'key': 'policySigningCertificates', 'type': 'JSONWebKeySet'},
     }
 
     def __init__(
         self,
         *,
-        attestation_policy: Optional[str] = None,
         policy_signing_certificates: Optional["JSONWebKeySet"] = None,
         **kwargs
     ):
         super(AttestationServiceCreationSpecificParams, self).__init__(**kwargs)
-        self.attestation_policy = attestation_policy
         self.policy_signing_certificates = policy_signing_certificates
 
 
 class AttestationServicePatchParams(msrest.serialization.Model):
-    """Parameters for patching an attestation service instance.
+    """Parameters for patching an attestation provider.
 
-    :param tags: A set of tags. The tags that will be assigned to the attestation service instance.
+    :param tags: A set of tags. The tags that will be assigned to the attestation provider.
     :type tags: dict[str, str]
     """
 
@@ -301,7 +319,7 @@ class JSONWebKey(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param alg: Required. The "alg" (algorithm) parameter identifies the algorithm intended for
+    :param alg: The "alg" (algorithm) parameter identifies the algorithm intended for
      use with the key.  The values used should either be registered in the
      IANA "JSON Web Signature and Encryption Algorithms" registry
      established by [JWA] or be a value that contains a Collision-
@@ -319,7 +337,7 @@ class JSONWebKey(msrest.serialization.Model):
     :type e: str
     :param k: Symmetric key.
     :type k: str
-    :param kid: Required. The "kid" (key ID) parameter is used to match a specific key.  This
+    :param kid: The "kid" (key ID) parameter is used to match a specific key.  This
      is used, for instance, to choose among a set of keys within a JWK Set
      during key rollover.  The structure of the "kid" value is
      unspecified.  When "kid" values are used within a JWK Set, different
@@ -343,7 +361,7 @@ class JSONWebKey(msrest.serialization.Model):
     :type q: str
     :param qi: RSA Private Key Parameter.
     :type qi: str
-    :param use: Required. Use ("public key use") identifies the intended use of
+    :param use: Use ("public key use") identifies the intended use of
      the public key. The "use" parameter is employed to indicate whether
      a public key is used for encrypting data or verifying the signature
      on data. Values are commonly "sig" (signature) or "enc" (encryption).
@@ -363,10 +381,7 @@ class JSONWebKey(msrest.serialization.Model):
     """
 
     _validation = {
-        'alg': {'required': True},
-        'kid': {'required': True},
         'kty': {'required': True},
-        'use': {'required': True},
     }
 
     _attribute_map = {
@@ -392,20 +407,20 @@ class JSONWebKey(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        alg: str,
-        kid: str,
         kty: str,
-        use: str,
+        alg: Optional[str] = None,
         crv: Optional[str] = None,
         d: Optional[str] = None,
         dp: Optional[str] = None,
         dq: Optional[str] = None,
         e: Optional[str] = None,
         k: Optional[str] = None,
+        kid: Optional[str] = None,
         n: Optional[str] = None,
         p: Optional[str] = None,
         q: Optional[str] = None,
         qi: Optional[str] = None,
+        use: Optional[str] = None,
         x: Optional[str] = None,
         x5_c: Optional[List[str]] = None,
         y: Optional[str] = None,
@@ -459,11 +474,20 @@ class JSONWebKeySet(msrest.serialization.Model):
 class OperationList(msrest.serialization.Model):
     """List of supported operations.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar system_data: The system metadata relating to this resource.
+    :vartype system_data: ~azure.mgmt.attestation.models.SystemData
     :param value: List of supported operations.
     :type value: list[~azure.mgmt.attestation.models.OperationsDefinition]
     """
 
+    _validation = {
+        'system_data': {'readonly': True},
+    }
+
     _attribute_map = {
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'value': {'key': 'value', 'type': '[OperationsDefinition]'},
     }
 
@@ -474,6 +498,7 @@ class OperationList(msrest.serialization.Model):
         **kwargs
     ):
         super(OperationList, self).__init__(**kwargs)
+        self.system_data = None
         self.value = value
 
 
@@ -537,3 +562,211 @@ class OperationsDisplayDefinition(msrest.serialization.Model):
         self.resource = resource
         self.operation = operation
         self.description = description
+
+
+class PrivateEndpoint(msrest.serialization.Model):
+    """The Private Endpoint resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The ARM identifier for Private Endpoint.
+    :vartype id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = None
+
+
+class PrivateEndpointConnection(Resource):
+    """The Private Endpoint Connection resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :param private_endpoint: The resource of private end point.
+    :type private_endpoint: ~azure.mgmt.attestation.models.PrivateEndpoint
+    :param private_link_service_connection_state: A collection of information about the state of
+     the connection between service consumer and provider.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.attestation.models.PrivateLinkServiceConnectionState
+    :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
+     Possible values include: "Succeeded", "Creating", "Deleting", "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.attestation.models.PrivateEndpointConnectionProvisioningState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        private_endpoint: Optional["PrivateEndpoint"] = None,
+        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
+        **kwargs
+    ):
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.private_endpoint = private_endpoint
+        self.private_link_service_connection_state = private_link_service_connection_state
+        self.provisioning_state = None
+
+
+class PrivateEndpointConnectionListResult(msrest.serialization.Model):
+    """List of private endpoint connection associated with the specified storage account.
+
+    :param value: Array of private endpoint connections.
+    :type value: list[~azure.mgmt.attestation.models.PrivateEndpointConnection]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["PrivateEndpointConnection"]] = None,
+        **kwargs
+    ):
+        super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
+        self.value = value
+
+
+class PrivateEndpointConnectionProperties(msrest.serialization.Model):
+    """Properties of the private endpoint connection resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provisioning_state: Provisioning state of the private endpoint connection. Possible
+     values include: "Succeeded", "Creating", "Deleting", "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.attestation.models.PrivateEndpointConnectionProvisioningState
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateEndpointConnectionProperties, self).__init__(**kwargs)
+        self.provisioning_state = None
+
+
+class PrivateLinkServiceConnectionState(msrest.serialization.Model):
+    """A collection of information about the state of the connection between service consumer and provider.
+
+    :param status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
+     of the service. Possible values include: "Pending", "Approved", "Rejected".
+    :type status: str or ~azure.mgmt.attestation.models.PrivateEndpointServiceConnectionStatus
+    :param description: The reason for approval/rejection of the connection.
+    :type description: str
+    :param actions_required: A message indicating if changes on the service provider require any
+     updates on the consumer.
+    :type actions_required: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "PrivateEndpointServiceConnectionStatus"]] = None,
+        description: Optional[str] = None,
+        actions_required: Optional[str] = None,
+        **kwargs
+    ):
+        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        self.status = status
+        self.description = description
+        self.actions_required = actions_required
+
+
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource. Possible values
+     include: "User", "Application", "ManagedIdentity", "Key".
+    :type created_by_type: str or ~azure.mgmt.attestation.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :type last_modified_by_type: str or ~azure.mgmt.attestation.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at

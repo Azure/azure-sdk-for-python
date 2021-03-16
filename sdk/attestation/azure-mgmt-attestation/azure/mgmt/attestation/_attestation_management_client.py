@@ -20,16 +20,19 @@ if TYPE_CHECKING:
 from ._configuration import AttestationManagementClientConfiguration
 from .operations import Operations
 from .operations import AttestationProvidersOperations
+from .operations import PrivateEndpointConnectionsOperations
 from . import models
 
 
 class AttestationManagementClient(object):
-    """Various APIs for managing resources in attestation service. This primarily encompasses per-tenant instance management.
+    """Various APIs for managing resources in attestation service. This primarily encompasses per-provider management.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.attestation.operations.Operations
     :ivar attestation_providers: AttestationProvidersOperations operations
     :vartype attestation_providers: azure.mgmt.attestation.operations.AttestationProvidersOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
+    :vartype private_endpoint_connections: azure.mgmt.attestation.operations.PrivateEndpointConnectionsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
@@ -52,12 +55,13 @@ class AttestationManagementClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
         self.attestation_providers = AttestationProvidersOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def close(self):
