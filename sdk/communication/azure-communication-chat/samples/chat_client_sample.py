@@ -44,33 +44,34 @@ class ChatClientSamples(object):
     _thread_id = None
 
     def create_chat_client(self):
+        token = self.token
+        endpoint = self.endpoint
         # [START create_chat_client]
-        from azure.communication.chat import ChatClient
-        from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
-        from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
-        refresh_options = CommunicationTokenRefreshOptions(self.token)
-        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
+        from azure.communication.chat import ChatClient, CommunicationTokenCredential
+
+        chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
         # [END create_chat_client]
 
     def create_thread(self):
+        token = self.token
+        endpoint = self.endpoint
+        user = self.user
         # [START create_thread]
         from datetime import datetime
 
         from azure.communication.identity import CommunicationUserIdentifier
-        from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
-        from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
 
         from azure.communication.chat import(
             ChatClient,
-            ChatThreadParticipant
+            ChatThreadParticipant,
+            CommunicationTokenCredential
         )
 
-        refresh_options = CommunicationTokenRefreshOptions(self.token)
-        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
+        chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
 
         topic = "test topic"
         participants = [ChatThreadParticipant(
-            user=self.user,
+            user=user,
             display_name='name',
             share_history_time=datetime.utcnow()
         )]
@@ -91,41 +92,42 @@ class ChatClientSamples(object):
         print("thread created, id: " + self._thread_id)
 
     def get_chat_thread_client(self):
-        # [START get_chat_thread_client]
-        from azure.communication.chat import ChatClient
-        from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
-        from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
+        token = self.token
+        endpoint = self.endpoint
+        thread_id = self._thread_id
 
-        refresh_options = CommunicationTokenRefreshOptions(self.token)
-        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
-        chat_thread_client = chat_client.get_chat_thread_client(self._thread_id)
+        # [START get_chat_thread_client]
+        from azure.communication.chat import ChatClient, CommunicationTokenCredential
+
+        chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
+        chat_thread_client = chat_client.get_chat_thread_client(thread_id)
         # [END get_chat_thread_client]
 
-        print("chat_thread_client created with thread id: ", chat_thread_client.thread_id)
+        print("get_chat_thread_client succeeded with thread id: ", chat_thread_client.thread_id)
 
     def get_thread(self):
-        # [START get_thread]
-        from azure.communication.chat import ChatClient
-        from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
-        from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
+        token = self.token
+        endpoint = self.endpoint
 
-        refresh_options = CommunicationTokenRefreshOptions(self.token)
-        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
+        # [START get_thread]
+        from azure.communication.chat import ChatClient, CommunicationTokenCredential
+
+        chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
         chat_thread = chat_client.get_chat_thread(self._thread_id)
         # [END get_thread]
 
         print("get_thread succeeded, thread id: " + chat_thread.id + ", thread topic: " + chat_thread.topic)
 
     def list_threads(self):
+        token = self.token
+        endpoint = self.endpoint
+
         # [START list_threads]
-        from azure.communication.chat import ChatClient
-        from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
-        from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
+        from azure.communication.chat import ChatClient, CommunicationTokenCredential
         from datetime import datetime, timedelta
         import pytz
 
-        refresh_options = CommunicationTokenRefreshOptions(self.token)
-        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
+        chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
         start_time = datetime.utcnow() - timedelta(days=2)
         start_time = start_time.replace(tzinfo=pytz.utc)
         chat_thread_infos = chat_client.list_chat_threads(results_per_page=5, start_time=start_time)
@@ -137,14 +139,14 @@ class ChatClientSamples(object):
         # [END list_threads]
 
     def delete_thread(self):
+        token = self.token
+        endpoint = self.endpoint
+        thread_id = self._thread_id
         # [START delete_thread]
-        from azure.communication.chat import ChatClient
-        from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
-        from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
+        from azure.communication.chat import ChatClient, CommunicationTokenCredential
 
-        refresh_options = CommunicationTokenRefreshOptions(self.token)
-        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
-        chat_client.delete_chat_thread(self._thread_id)
+        chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
+        chat_client.delete_chat_thread(thread_id)
         # [END delete_thread]
 
         print("delete_thread succeeded")

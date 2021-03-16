@@ -11,12 +11,11 @@ from devtools_testutils import AzureTestCase
 from msrest.serialization import TZ_UTC
 
 from azure.communication.identity import CommunicationIdentityClient
-from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
-from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
 from azure.communication.chat import (
     ChatClient,
     ChatThreadParticipant,
-    ChatMessageType
+    ChatMessageType,
+    CommunicationTokenCredential
 )
 from azure.communication.chat._shared.utils import parse_connection_str
 
@@ -54,10 +53,8 @@ class ChatThreadClientTest(CommunicationTestCase):
         self.token_new_user = tokenresponse.token
 
         # create ChatClient
-        refresh_options = CommunicationTokenRefreshOptions(self.token)
-        refresh_options_new_user = CommunicationTokenRefreshOptions(self.token_new_user)
-        self.chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
-        self.chat_client_new_user = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options_new_user))
+        self.chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(self.token))
+        self.chat_client_new_user = ChatClient(self.endpoint, CommunicationTokenCredential(self.token_new_user))
 
     def tearDown(self):
         super(ChatThreadClientTest, self).tearDown()

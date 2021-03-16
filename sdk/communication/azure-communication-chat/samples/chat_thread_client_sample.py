@@ -28,10 +28,9 @@ import os
 
 class ChatThreadClientSamples(object):
     from azure.communication.identity import CommunicationIdentityClient
-    from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
-    from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
     from azure.communication.chat import (
-        ChatClient
+        ChatClient,
+        CommunicationTokenCredential
     )
     connection_string = os.environ.get("AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING", None)
     if not connection_string:
@@ -50,8 +49,7 @@ class ChatThreadClientSamples(object):
     _message_id = None
     new_user = identity_client.create_user()
 
-    refresh_options = CommunicationTokenRefreshOptions(token)
-    _chat_client = ChatClient(endpoint, CommunicationTokenCredential(refresh_options))
+    _chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
 
     def create_chat_thread_client(self):
         token = self.token
@@ -60,18 +58,16 @@ class ChatThreadClientSamples(object):
         # [START create_chat_thread_client]
         from datetime import datetime
         from azure.communication.identity import CommunicationUserIdentifier
-        from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
-        from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
         from azure.communication.chat import (
             ChatClient,
-            ChatThreadParticipant
+            ChatThreadParticipant,
+            CommunicationTokenCredential
         )
         # retrieve `token` using CommunicationIdentityClient.get_token method
         # set `endpoint` to ACS service endpoint
         # create `user` using CommunicationIdentityClient.create_user method for new users;
         # else for existing users set `user` = CommunicationUserIdentifier(some_user_id)
-        refresh_options = CommunicationTokenRefreshOptions(token)
-        chat_client = ChatClient(endpoint, CommunicationTokenCredential(refresh_options))
+        chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
         topic = "test topic"
         participants = [ChatThreadParticipant(
             user=user,
