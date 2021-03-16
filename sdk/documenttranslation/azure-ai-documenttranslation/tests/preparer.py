@@ -17,15 +17,10 @@ DocumentTranslationPreparer = functools.partial(
     'documenttranslation',
     documenttranslation_test_endpoint="https://redacted.cognitiveservices.azure.com/",
     documenttranslation_test_api_key="fakeZmFrZV9hY29jdW50X2tleQ==",
-    documenttranslation_source_container_url="source_container_url",
-    documenttranslation_target_container_url="source_container_url",
-    documenttranslation_source_storage_name="source_storage_name",
-    documenttranslation_source_storage_key="fakeZmFrZV9hY29jdW50X2tleQ==",
-    documenttranslation_source_container_name="source_storage_container_name",
-    documenttranslation_target_storage_name="target_storage_name",
-    documenttranslation_target_storage_key="fakeZmFrZV9hY29jdW50X2tleQ==",
-    documenttranslation_target_container_name="target_storage_container_name",
-
+    documenttranslation_name="redacted",
+    documenttranslation_storage_name="redacted",
+    documenttranslation_storage_key="fakeZmFrZV9hY29jdW50X2tleQ==",
+    documenttranslation_storage_endpoint="https://redacted.blob.core.windows.net/"
 )
 
 

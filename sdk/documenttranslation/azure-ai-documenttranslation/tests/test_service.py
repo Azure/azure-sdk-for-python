@@ -13,11 +13,20 @@ DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClient
 
 class TestTranslation(DocumentTranslationTest):
 
+    def _setup(self):
+        if self.is_live:
+            self.source_container_sas_url = self.create_source_container(data=b'This is written in english.')
+            self.target_container_sas_url = self.create_target_container()
+        else:
+            self.source_container_sas_url = "source_container_sas_url"
+            self.target_container_sas_url = "target_container_sas_url"
+
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_translate(self, client):
         # this uses generated code and should be deleted. Using it to test live tests pending our code in master
         from azure.ai.documenttranslation._generated.models import BatchRequest, SourceInput, TargetInput
+        self._setup()  # set up test resources
 
         response_headers = client._client.document_translation._submit_batch_request_initial(
             inputs=[

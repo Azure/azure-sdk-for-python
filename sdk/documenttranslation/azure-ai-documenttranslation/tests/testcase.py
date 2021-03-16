@@ -7,6 +7,7 @@
 import os
 import time
 import datetime
+import uuid
 from devtools_testutils import (
     AzureTestCase,
 )
@@ -14,7 +15,7 @@ from azure_devtools.scenario_tests import (
     RecordingProcessor,
     ReplayableTest
 )
-from azure.storage.blob import generate_container_sas
+from azure.storage.blob import generate_container_sas, ContainerClient
 
 
 class OperationLocationReplacer(RecordingProcessor):
@@ -50,48 +51,49 @@ class DocumentTranslationTest(AzureTestCase):
         super(DocumentTranslationTest, self).__init__(method_name)
         self.vcr.match_on = ["path", "method", "query"]
         self.recording_processors.append(OperationLocationReplacer())
-        if self.is_live:
-            self.generate_sas()
-        else:
-            self.source_container_sas_url = "source_container_sas_url"
-            self.target_container_sas_url = "target_container_sas_url"
-
-    def generate_sas(self):
-        source_url = os.getenv("DOCUMENTTRANSLATION_SOURCE_CONTAINER_URL")
-        source_storage_name = os.getenv("DOCUMENTTRANSLATION_SOURCE_STORAGE_NAME")
-        source_storage_key = os.getenv("DOCUMENTTRANSLATION_SOURCE_STORAGE_KEY")
-        source_container_name = os.getenv("DOCUMENTTRANSLATION_SOURCE_CONTAINER_NAME")
-
-        source_sas = generate_container_sas(
-            source_storage_name,
-            source_container_name,
-            account_key=source_storage_key,
-            permission="rl",
-            expiry=datetime.datetime.utcnow() + datetime.timedelta(hours=2)
-        )
-
-        target_url = os.getenv("DOCUMENTTRANSLATION_TARGET_CONTAINER_URL")
-        target_storage_name = os.getenv("DOCUMENTTRANSLATION_TARGET_STORAGE_NAME")
-        target_storage_key = os.getenv("DOCUMENTTRANSLATION_TARGET_STORAGE_KEY")
-        target_container_name = os.getenv("DOCUMENTTRANSLATION_TARGET_CONTAINER_NAME")
-
-        target_sas = generate_container_sas(
-            target_storage_name,
-            target_container_name,
-            account_key=target_storage_key,
-            permission="racwdl",
-            expiry=datetime.datetime.utcnow() + datetime.timedelta(hours=2)
-        )
-
-        self.source_container_sas_url = source_url + "?" + source_sas
-        self.target_container_sas_url = target_url + "?" + target_sas
-
+        self.storage_endpoint = os.getenv("DOCUMENTTRANSLATION_STORAGE_ENDPOINT")
+        self.storage_name = os.getenv("DOCUMENTTRANSLATION_STORAGE_NAME")
+        self.storage_key = os.getenv("DOCUMENTTRANSLATION_STORAGE_KEY")
         self.scrubber.register_name_pair(
-            self.source_container_sas_url, "source_container_sas_url"
+            self.storage_endpoint, "https://redacted.blob.core.windows.net/"
         )
         self.scrubber.register_name_pair(
-            self.target_container_sas_url, "target_container_sas_url"
+            self.storage_name, "storage_name"
         )
+        self.scrubber.register_name_pair(
+            self.storage_key, "fakeZmFrZV9hY29jdW50X2tleQ=="
+        )
+
+    def create_source_container(self, data):
+        container_name = "src" + str(uuid.uuid4())
+        container_client = ContainerClient(self.storage_endpoint, container_name,
+                                           self.storage_key)
+        container_client.create_container()
+        container_client.upload_blob(name=str(uuid.uuid4())+".txt", data=data)
+        return self.generate_sas_url(container_name, "rl")
+
+    def create_target_container(self):
+        container_name = "target" + str(uuid.uuid4())
+        container_client = ContainerClient(self.storage_endpoint, container_name,
+                                           self.storage_key)
+        container_client.create_container()
+
+        return self.generate_sas_url(container_name, "racwdl")
+
+    def generate_sas_url(self, container_name, permission):
+
+        sas_token = generate_container_sas(
+            self.storage_name,
+            container_name,
+            account_key=self.storage_key,
+            permission=permission,
+            expiry=datetime.datetime.utcnow() + datetime.timedelta(hours=2)
+        )
+        container_sas_url = self.storage_endpoint + "/" + container_name + "?" + sas_token
+        self.scrubber.register_name_pair(
+            sas_token, "container_sas_url"
+        )
+        return container_sas_url
 
     def wait(self):
         if self.is_live:

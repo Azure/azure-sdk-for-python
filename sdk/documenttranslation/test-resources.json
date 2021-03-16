@@ -46,47 +46,13 @@
             "defaultValue": ".cognitiveservices.azure.com/",
             "type": "string"
         },
-        "sourceBlobStorageAccount": {
+        "storageEndpointSuffix": {
+            "defaultValue": ".blob.core.windows.net/",
+            "type": "string"
+        },
+        "blobStorageAccount": {
             "type": "string",
-            "defaultValue": "doctranslationsource"
-        },
-        "sourceBlobResourceId": {
-            "type": "string",
-            "defaultValue": "[resourceId('2cd617ea-1866-46b1-90e3-fffb087ebf9b', 'krpratic-rg2', 'Microsoft.Storage/storageAccounts', parameters('sourceBlobStorageAccount'))]"
-        },
-        "sourceTranslationContainer": {
-            "type": "string",
-            "defaultValue": "sourcedocuments"
-        },
-        "sourceTranslationContainerProperties": {
-            "type": "object",
-            "defaultValue": {
-                "canonicalizedResource": "[concat('/blob/', parameters('sourceBlobStorageAccount'), '/', parameters('sourceTranslationContainer'))]",
-                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT2H')]",
-                "signedPermission": "rl",
-                "signedResource": "c"
-            }
-        },
-        "targetBlobStorageAccount": {
-            "type": "string",
-            "defaultValue": "[concat(parameters('baseName'), 'target')]"
-        },
-        "targetBlobResourceId": {
-            "type": "string",
-            "defaultValue": "[resourceId('2cd617ea-1866-46b1-90e3-fffb087ebf9b', concat('rg-documenttranslation-', parameters('baseName')), 'Microsoft.Storage/storageAccounts', parameters('targetBlobStorageAccount'))]"
-        },
-        "targetTranslationContainer": {
-            "type": "string",
-            "defaultValue": "[concat(parameters('baseName'), 'container')]"
-        },
-        "targetTranslationContainerProperties": {
-            "type": "object",
-            "defaultValue": {
-                "canonicalizedResource": "[concat('/blob/', parameters('targetBlobStorageAccount'), '/', parameters('targetTranslationContainer'))]",
-                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT2H')]",
-                "signedPermission": "rlwd",
-                "signedResource": "c"
-            }
+            "defaultValue": "[concat(parameters('baseName'), 'prim')]"
         }
     },
     "variables": {
@@ -94,10 +60,10 @@
         "docTranslationBaseName": "[parameters('baseName')]",
         "docTranslationApiVersion": "2017-04-18",
         "storageMgmtApiVersion": "2019-04-01",
-        "storageAccountName": "[concat(parameters('baseName'), 'target')]",
-        "containerName": "[concat(parameters('baseName'), 'container')]",
+        "storageAccountName": "[concat(parameters('baseName'), 'prim')]",
         "location": "[resourceGroup().location]",
         "azureDocTranslationUrl": "[concat('https://', variables('docTranslationBaseName'), parameters('docTranslationEndpointSuffix'))]",
+        "storageAccountUrl": "[concat('https://', parameters('blobStorageAccount'), parameters('storageEndpointSuffix'))]",
         "cognitiveServiceUserRoleId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
         "encryption": {
             "services": {
@@ -156,14 +122,6 @@
                 "encryption": "[variables('encryption')]",
                 "accessTier": "Cool"
             }
-        },
-        {
-            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-            "apiVersion": "[variables('storageMgmtApiVersion')]",
-            "name": "[concat(variables('storageAccountName'), '/default/', variables('containerName'))]",
-            "dependsOn": [
-                "[variables('storageAccountName')]"
-            ]
         }
     ],
     "outputs": {
@@ -191,45 +149,17 @@
             "type": "string",
             "value": "[variables('azureDocTranslationUrl')]"
         },
-        "DOCUMENTTRANSLATION_SOURCE_CONTAINER_URL": {
+        "DOCUMENTTRANSLATION_STORAGE_ENDPOINT": {
             "type": "string",
-            "value": "[concat(reference(parameters('sourceblobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('sourceTranslationContainer'))]"
+            "value": "[variables('storageAccountUrl')]"
         },
-        "DOCUMENTTRANSLATION_SOURCE_STORAGE_NAME": {
+        "DOCUMENTTRANSLATION_STORAGE_NAME": {
             "type": "string",
-            "value": "[parameters('sourceBlobStorageAccount')]"
+            "value": "[parameters('blobStorageAccount')]"
         },
-        "DOCUMENTTRANSLATION_SOURCE_CONTAINER_NAME": {
+        "DOCUMENTTRANSLATION_STORAGE_KEY": {
             "type": "string",
-            "value": "[parameters('sourceTranslationContainer')]"
-        },
-        "DOCUMENTTRANSLATION_SOURCE_STORAGE_KEY": {
-            "type": "string",
-            "value": "[listKeys(parameters('sourceBlobResourceId'), variables('storageMgmtApiVersion')).keys[0].value]"
-        },
-        "DOCUMENTTRANSLATION_TARGET_CONTAINER_URL": {
-            "type": "string",
-            "value": "[concat(reference(parameters('targetblobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetTranslationContainer'))]"
-        },
-        "DOCUMENTTRANSLATION_TARGET_STORAGE_NAME": {
-            "type": "string",
-            "value": "[parameters('targetBlobStorageAccount')]"
-        },
-        "DOCUMENTTRANSLATION_TARGET_CONTAINER_NAME": {
-            "type": "string",
-            "value": "[parameters('targetTranslationContainer')]"
-        },
-        "DOCUMENTTRANSLATION_TARGET_STORAGE_KEY": {
-            "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('targetBlobStorageAccount')), variables('storageMgmtApiVersion')).keys[0].value]"
-        },
-        "DOCUMENTTRANSLATION_SOURCE_CONTAINER_SAS_URL": {
-            "type": "string",
-            "value": "[concat(reference(parameters('sourceblobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('sourceTranslationContainer'), '?', listServiceSas(parameters('sourceblobResourceId'), '2019-06-01', parameters('sourceTranslationContainerProperties')).serviceSasToken)]"
-        },
-        "DOCUMENTTRANSLATION_TARGET_CONTAINER_SAS_URL": {
-            "type": "string",
-            "value": "[concat(reference(parameters('targetblobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetTranslationContainer'), '?', listServiceSas(parameters('targetblobResourceId'), '2019-06-01', parameters('targetTranslationContainerProperties')).serviceSasToken)]"
+            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), variables('storageMgmtApiVersion')).keys[0].value]"
         }
     }
 }
