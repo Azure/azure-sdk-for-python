@@ -2,6 +2,7 @@
 
 The Azure Identity library provides a set of credential classes for use with
 Azure SDK clients which support Azure Active Directory (AAD) token authentication.
+This library does not support Azure Active Directory B2C.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity)
 | [Package (PyPI)](https://pypi.org/project/azure-identity/)
@@ -224,7 +225,7 @@ client = SecretClient("https://my-vault.vault.azure.net", default_credential)
 |-|-
 |[InteractiveBrowserCredential][interactive_cred_ref]|interactively authenticate a user with the default web browser
 |[DeviceCodeCredential][device_code_cred_ref]| interactively authenticate a user on a device with limited UI
-|[UsernamePasswordCredential][userpass_cred_ref]| authenticate a user with a username and password
+|[UsernamePasswordCredential][userpass_cred_ref]| authenticate a user with a username and password (does not support multi-factor authentication)
 
 ### Authenticating via Development Tools
 

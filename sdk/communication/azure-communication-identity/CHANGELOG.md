@@ -10,6 +10,7 @@
 ### Breaking
 - CommunicationIdentityClient's (synchronous and asynchronous) `issue_token` function is now renamed to `get_token`.
 - The CommunicationIdentityClient constructor uses type `TokenCredential` and `AsyncTokenCredential` for the credential parameter.
+- Dropped support for 3.5
 
 ## 1.0.0b4 (2021-02-09)
 
