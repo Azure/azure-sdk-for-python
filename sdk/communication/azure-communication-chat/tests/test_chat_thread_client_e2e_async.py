@@ -10,10 +10,9 @@ from datetime import datetime
 from msrest.serialization import TZ_UTC
 
 from azure.communication.identity import CommunicationIdentityClient
-from azure.communication.identity._shared.user_credential_async import CommunicationTokenCredential
-from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
 from azure.communication.chat.aio import (
-    ChatClient
+    ChatClient,
+    CommunicationTokenCredential
 )
 from azure.communication.chat import (
     ChatThreadParticipant,
@@ -57,10 +56,8 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
         self.token_new_user = token_response.token
 
         # create ChatClient
-        refresh_option = CommunicationTokenRefreshOptions(self.token)
-        refresh_option_new_user = CommunicationTokenRefreshOptions(self.token_new_user)
-        self.chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_option))
-        self.chat_client_new_user = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_option_new_user))
+        self.chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(self.token))
+        self.chat_client_new_user = ChatClient(self.endpoint, CommunicationTokenCredential(self.token_new_user))
 
     def tearDown(self):
         super(ChatThreadClientTestAsync, self).tearDown()

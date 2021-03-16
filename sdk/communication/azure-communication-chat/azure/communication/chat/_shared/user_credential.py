@@ -12,17 +12,23 @@ from typing import ( # pylint: disable=unused-import
 
 from msrest.serialization import TZ_UTC
 
+from .user_token_refresh_options import CommunicationTokenRefreshOptions
+
 class CommunicationTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service.
-    :param communication_token_refresh_options: The token used to authenticate to an Azure Communication service
-    :type communication_token_refresh_options: ~azure.communication.chat.CommunicationTokenRefreshOptions
+    :param str token: The token used to authenticate to an Azure Communication service
+    :param token_refresher: The token refresher to provide capacity to fetch fresh token
+    :raises: TypeError
     """
 
     ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
 
     def __init__(self,
-            communication_token_refresh_options
-        ):
+                 token,  # type: str
+                 token_refresher=None
+                 ):
+        communication_token_refresh_options = CommunicationTokenRefreshOptions(token=token,
+                                                                               token_refresher=token_refresher)
         self._token = communication_token_refresh_options.get_token()
         self._token_refresher = communication_token_refresh_options.get_token_refresher()
         self._lock = Condition(Lock())
