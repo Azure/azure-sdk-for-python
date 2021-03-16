@@ -36,7 +36,9 @@ except ImportError:
     pass
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
+with open(os.path.join(package_folder_path, 'version.py')
+          if os.path.exists(os.path.join(package_folder_path, 'version.py'))
+          else os.path.join(package_folder_path, '_version.py'), 'r') as fd:
     version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
@@ -59,7 +61,7 @@ setup(
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -68,6 +70,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -78,9 +81,11 @@ setup(
         'azure.mgmt',
     ]),
     install_requires=[
-        'msrest>=0.5.0',
+        'msrest>=0.6.21',
+        'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
-        'azure-mgmt-core>=1.2.0,<2.0.0'
+        "azure-mgmt-core<2.0.0,>=1.2.1",
+        "azure-core<2.0.0,>=1.8.2"
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-mgmt-nspkg'],

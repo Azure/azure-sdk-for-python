@@ -2,5 +2,5 @@
 package_name = "azure-mgmt-resourcegraph"
 package_pprint_name = "Resource Graph"
 package_doc_id = "resourcegraph"
-is_stable = false
+is_stable = true
 is_arm = true
