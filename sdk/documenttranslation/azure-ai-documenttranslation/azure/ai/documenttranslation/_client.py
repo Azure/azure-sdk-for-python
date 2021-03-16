@@ -62,7 +62,7 @@ class DocumentTranslationClient(object):
         # submit translation job
         response_headers = self._client.document_translation._submit_batch_request_initial(
             # pylint: disable=protected-access
-            inputs = BatchDocumentInput.to_generated_list(batch),
+            inputs = BatchDocumentInput._to_generated_list(batch),
             cls = lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
