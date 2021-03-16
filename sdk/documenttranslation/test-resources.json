@@ -63,7 +63,6 @@
         "storageAccountName": "[concat(parameters('baseName'), 'prim')]",
         "location": "[resourceGroup().location]",
         "azureDocTranslationUrl": "[concat('https://', variables('docTranslationBaseName'), parameters('docTranslationEndpointSuffix'))]",
-        "storageAccountUrl": "[concat('https://', parameters('blobStorageAccount'), parameters('storageEndpointSuffix'))]",
         "cognitiveServiceUserRoleId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
         "encryption": {
             "services": {
@@ -148,10 +147,6 @@
         "DOCUMENTTRANSLATION_TEST_ENDPOINT": {
             "type": "string",
             "value": "[variables('azureDocTranslationUrl')]"
-        },
-        "DOCUMENTTRANSLATION_STORAGE_ENDPOINT": {
-            "type": "string",
-            "value": "[variables('storageAccountUrl')]"
         },
         "DOCUMENTTRANSLATION_STORAGE_NAME": {
             "type": "string",

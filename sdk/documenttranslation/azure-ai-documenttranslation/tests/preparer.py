@@ -19,8 +19,7 @@ DocumentTranslationPreparer = functools.partial(
     documenttranslation_test_api_key="fakeZmFrZV9hY29jdW50X2tleQ==",
     documenttranslation_name="redacted",
     documenttranslation_storage_name="redacted",
-    documenttranslation_storage_key="fakeZmFrZV9hY29jdW50X2tleQ==",
-    documenttranslation_storage_endpoint="https://redacted.blob.core.windows.net/"
+    documenttranslation_storage_key="fakeZmFrZV9hY29jdW50X2tleQ=="
 )
 
 

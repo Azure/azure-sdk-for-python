@@ -51,14 +51,14 @@ class DocumentTranslationTest(AzureTestCase):
         super(DocumentTranslationTest, self).__init__(method_name)
         self.vcr.match_on = ["path", "method", "query"]
         self.recording_processors.append(OperationLocationReplacer())
-        self.storage_endpoint = os.getenv("DOCUMENTTRANSLATION_STORAGE_ENDPOINT")
         self.storage_name = os.getenv("DOCUMENTTRANSLATION_STORAGE_NAME")
+        self.storage_endpoint = "https://" + self.storage_name + ".blob.core.windows.net/"
         self.storage_key = os.getenv("DOCUMENTTRANSLATION_STORAGE_KEY")
         self.scrubber.register_name_pair(
             self.storage_endpoint, "https://redacted.blob.core.windows.net/"
         )
         self.scrubber.register_name_pair(
-            self.storage_name, "storage_name"
+            self.storage_name, "redacted"
         )
         self.scrubber.register_name_pair(
             self.storage_key, "fakeZmFrZV9hY29jdW50X2tleQ=="
@@ -89,7 +89,7 @@ class DocumentTranslationTest(AzureTestCase):
             permission=permission,
             expiry=datetime.datetime.utcnow() + datetime.timedelta(hours=2)
         )
-        container_sas_url = self.storage_endpoint + "/" + container_name + "?" + sas_token
+        container_sas_url = self.storage_endpoint + container_name + "?" + sas_token
         self.scrubber.register_name_pair(
             sas_token, "container_sas_url"
         )
