@@ -75,10 +75,10 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
     async def test_update_phone_number_capabilities(self):
         async with self.phone_number_client:
             poller = await self.phone_number_client.begin_update_phone_number_capabilities(
-            "+18332408820",
-            PhoneNumberCapabilityType.INBOUND_OUTBOUND,
-            PhoneNumberCapabilityType.INBOUND,
-            polling = True
+                self.phone_number,
+                PhoneNumberCapabilityType.INBOUND_OUTBOUND,
+                PhoneNumberCapabilityType.INBOUND,
+                polling = True
             )
         assert poller.result()
         
@@ -101,4 +101,4 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
             purchase_poller = await self.phone_number_client.begin_purchase_phone_numbers(phone_number_to_buy.search_id, polling=True)
             await purchase_poller.result()
             release_poller = await self.phone_number_client.begin_release_phone_number(phone_number_to_buy.phone_numbers[0])
-        assert release_poller.status() == 'succeeded'
+        assert release_poller.status() == 'Succeeded'
