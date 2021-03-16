@@ -62,7 +62,7 @@ class TranslationPolling(LongRunningOperation):
             body = _as_json(response)
             status = body.get("status")
             if status:
-                return status
+                return self._map_nonstandard_statuses(status)
             else:
                 raise BadResponse("No status found in body")
         raise BadResponse("The response from long running operation does not contain a body.")
@@ -74,3 +74,18 @@ class TranslationPolling(LongRunningOperation):
         :rtype: str
         """
         return None
+
+    def _map_nonstandard_statuses(status):
+        # type: (str) -> str
+        """Map non-standard statuses.
+        all statuses here: https://docs.microsoft.com/en-us/rest/api/cognitiveservices/translator/documenttranslation/getoperationstatus#status
+
+        :param str status: lro process status.
+        """
+        if status in ["ValidationFailed"]:
+            return "Failed"
+        elif status in ["Cancelled", "Cancelling"]:
+            return "Canceled"
+        return status
+
+	
