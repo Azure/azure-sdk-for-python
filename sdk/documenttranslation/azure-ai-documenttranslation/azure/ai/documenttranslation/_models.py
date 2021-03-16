@@ -34,17 +34,17 @@ class TranslationGlossary(object):
             **kwargs
     ):
         # type: (str, **Any) -> None
-        self.glossary_url = glossary_url
-        self.format = kwargs.get("format", None)
-        self.format_version = kwargs.get("format_version", None)
-        self.storage_source = kwargs.get("storage_source", None)
+        self.glossary_url=glossary_url
+        self.format=kwargs.get("format", None)
+        self.format_version=kwargs.get("format_version", None)
+        self.storage_source=kwargs.get("storage_source", None)
 
     def _to_generated(self):
         return _Glossary(
-                glossary_url = self.glossary_url,
-                format = self.format,
-                version = self.format_version,
-                storage_source = self.storage_source
+                glossary_url=self.glossary_url,
+                format=self.format,
+                version=self.format_version,
+                storage_source=self.storage_source
             )
 
     def _to_generated_unknown_type(glossary):
@@ -52,7 +52,7 @@ class TranslationGlossary(object):
             return glossary._to_generated()
         elif isinstance(glossary, six.string_types):
             return _Glossary(
-                    glossary_url = glossary,
+                    glossary_url=glossary,
                 )
 
     def _to_generated_list(glossaries):
@@ -80,20 +80,20 @@ class StorageTarget(object):
         **kwargs
     ):
         # type: (str, str, **Any) -> None
-        self.target_url = target_url
-        self.language = language
-        self.category_id = kwargs.get("category_id", None)
-        self.glossaries = kwargs.get("glossaries", None)
-        self.storage_source = kwargs.get("storage_source", None)
+        self.target_url=target_url
+        self.language=language
+        self.category_id=kwargs.get("category_id", None)
+        self.glossaries=kwargs.get("glossaries", None)
+        self.storage_source=kwargs.get("storage_source", None)
 
     def _to_generated(self):
         return _TargetInput(
-            target_url = self.target_url,
-            category = self.category_id,
-            language = self.language,
-            storage_source = self.storage_source,
+            target_url=self.target_url,
+            category=self.category_id,
+            language=self.language,
+            storage_source=self.storage_source,
             # pylint: disable=protected-access
-            glossaries = TranslationGlossary._to_generated_list(self.glossaries)
+            glossaries=TranslationGlossary._to_generated_list(self.glossaries)
         )
 
     def _to_generated_list(targets):
@@ -128,28 +128,28 @@ class BatchDocumentInput(object):
         **kwargs
     ):
         # type: (str, List[StorageTarget], **Any) -> None
-        self.source_url = source_url
-        self.targets = targets
-        self.source_language = kwargs.get("source_language", None)
-        self.storage_type = kwargs.get("storage_type", None)
-        self.storage_source = kwargs.get("storage_source", None)
-        self.prefix = kwargs.get("prefix", None)
-        self.suffix = kwargs.get("suffix", None)
+        self.source_url=source_url
+        self.targets=targets
+        self.source_language=kwargs.get("source_language", None)
+        self.storage_type=kwargs.get("storage_type", None)
+        self.storage_source=kwargs.get("storage_source", None)
+        self.prefix=kwargs.get("prefix", None)
+        self.suffix=kwargs.get("suffix", None)
 
     def _to_generated(self):
         return _BatchRequest(
-            source = _SourceInput(
-                source_url = self.source_url,
-                filter = _DocumentFilter(
-                    prefix = self.prefix,
-                    suffix = self.suffix
+            source=_SourceInput(
+                source_url=self.source_url,
+                filter=_DocumentFilter(
+                    prefix=self.prefix,
+                    suffix=self.suffix
                 ),
-                language = self.source_language,
-                storage_source = self.storage_source
+                language=self.source_language,
+                storage_source=self.storage_source
             ),
             # pylint: disable=protected-access
-            targets = StorageTarget._to_generated_list(self.targets),
-            storage_type = self.storage_type
+            targets=StorageTarget._to_generated_list(self.targets),
+            storage_type=self.storage_type
         )
 
     def _to_generated_list(batch_document_inputs):
@@ -189,35 +189,35 @@ class JobStatusDetail(object):  # pylint: disable=too-many-instance-attributes
         **kwargs
     ):
         # type: (**Any) -> None
-        self.id = kwargs['id']
-        self.created_on = kwargs['created_on']
-        self.last_updated_on = kwargs['last_updated_on']
-        self.status = kwargs.get('status', None)
-        self.error = kwargs.get("error", None)
-        self.documents_total_count = kwargs.get('documents_total_count', None)
-        self.documents_failed_count = kwargs.get('documents_failed_count', None)
-        self.documents_succeeded_count = kwargs.get('documents_succeeded_count', None)
-        self.documents_in_progress_count = kwargs.get('documents_in_progress_count', None)
-        self.documents_not_yet_started_count = kwargs.get('documents_not_yet_started_count', None)
-        self.documents_cancelled_count = kwargs.get('documents_cancelled_count', None)
-        self.total_characters_charged = kwargs.get('total_characters_charged', None)
+        self.id=kwargs['id']
+        self.created_on=kwargs['created_on']
+        self.last_updated_on=kwargs['last_updated_on']
+        self.status=kwargs.get('status', None)
+        self.error=kwargs.get("error", None)
+        self.documents_total_count=kwargs.get('documents_total_count', None)
+        self.documents_failed_count=kwargs.get('documents_failed_count', None)
+        self.documents_succeeded_count=kwargs.get('documents_succeeded_count', None)
+        self.documents_in_progress_count=kwargs.get('documents_in_progress_count', None)
+        self.documents_not_yet_started_count=kwargs.get('documents_not_yet_started_count', None)
+        self.documents_cancelled_count=kwargs.get('documents_cancelled_count', None)
+        self.total_characters_charged=kwargs.get('total_characters_charged', None)
 
     @classmethod
     def _from_generated(cls, batch_status_details):
         return cls(
-            id = batch_status_details.id,
-            created_on = batch_status_details.created_date_time_utc,
-            last_updated_on = batch_status_details.last_action_date_time_utc,
-            status = batch_status_details.status,
+            id=batch_status_details.id,
+            created_on=batch_status_details.created_date_time_utc,
+            last_updated_on=batch_status_details.last_action_date_time_utc,
+            status=batch_status_details.status,
             # pylint: disable=protected-access
-            error = DocumentTranslationError._from_generated(batch_status_details.error) if batch_status_details.error else None,
-            documents_total_count = batch_status_details.summary.total,
-            documents_failed_count = batch_status_details.summary.failed,
-            documents_succeeded_count = batch_status_details.summary.success,
-            documents_in_progress_count = batch_status_details.summary.in_progress,
-            documents_not_yet_started_count = batch_status_details.summary.not_yet_started,
-            documents_cancelled_count = batch_status_details.summary.cancelled,
-            total_characters_charged = batch_status_details.summary.total_character_charged
+            error=DocumentTranslationError._from_generated(batch_status_details.error) if batch_status_details.error else None,
+            documents_total_count=batch_status_details.summary.total,
+            documents_failed_count=batch_status_details.summary.failed,
+            documents_succeeded_count=batch_status_details.summary.success,
+            documents_in_progress_count=batch_status_details.summary.in_progress,
+            documents_not_yet_started_count=batch_status_details.summary.not_yet_started,
+            documents_cancelled_count=batch_status_details.summary.cancelled,
+            total_characters_charged=batch_status_details.summary.total_character_charged
         )
 
 
@@ -252,30 +252,30 @@ class DocumentStatusDetail(object):
         **kwargs
     ):
         # type: (**Any) -> None
-        self.url = kwargs['url']
-        self.created_on = kwargs['created_on']
-        self.last_updated_on = kwargs['last_updated_on']
-        self.status = kwargs['status']
-        self.translate_to = kwargs['translate_to']
-        self.error = kwargs.get('error', None)
-        self.translation_progress = kwargs.get('translation_progress', None)
-        self.id = kwargs.get('id', None)
-        self.characters_charged = kwargs.get('characters_charged', None)
+        self.url=kwargs['url']
+        self.created_on=kwargs['created_on']
+        self.last_updated_on=kwargs['last_updated_on']
+        self.status=kwargs['status']
+        self.translate_to=kwargs['translate_to']
+        self.error=kwargs.get('error', None)
+        self.translation_progress=kwargs.get('translation_progress', None)
+        self.id=kwargs.get('id', None)
+        self.characters_charged=kwargs.get('characters_charged', None)
 
 
     @classmethod
     def _from_generated(cls, doc_status):
         return cls(
-            url = doc_status.path,
-            created_on = doc_status.created_date_time_utc,
-            last_updated_on = doc_status.last_action_date_time_utc,
-            status = doc_status.status,
-            translate_to = doc_status.to,
+            url=doc_status.path,
+            created_on=doc_status.created_date_time_utc,
+            last_updated_on=doc_status.last_action_date_time_utc,
+            status=doc_status.status,
+            translate_to=doc_status.to,
             # pylint: disable=protected-access
-            error = DocumentTranslationError._from_generated(doc_status.error) if doc_status.error else None,
-            translation_progress = doc_status.progress,
-            id = doc_status.id,
-            characters_charged = doc_status.character_charged
+            error=DocumentTranslationError._from_generated(doc_status.error) if doc_status.error else None,
+            translation_progress=doc_status.progress,
+            id=doc_status.id,
+            characters_charged=doc_status.character_charged
         )
 
 
@@ -299,9 +299,9 @@ class DocumentTranslationError(object):
         **kwargs
     ):
         # type: (**Any) -> None
-        self.code = kwargs.get('code', None)
-        self.message = None
-        self.target = None
+        self.code=kwargs.get('code', None)
+        self.message=None
+        self.target=None
 
     @classmethod
     def _from_generated(cls, error):
@@ -330,10 +330,10 @@ class FileFormat(object):
         **kwargs
     ):
         # type: (**Any) -> None
-        self.format = kwargs.get('format', None)
-        self.file_extensions = kwargs.get('file_extensions', None)
-        self.content_types = kwargs.get('content_types', None)
-        self.versions = kwargs.get('versions', None)
+        self.format=kwargs.get('format', None)
+        self.file_extensions=kwargs.get('file_extensions', None)
+        self.content_types=kwargs.get('content_types', None)
+        self.versions=kwargs.get('versions', None)
 
     @classmethod
     def _from_generated(cls, file_format):
