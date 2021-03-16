@@ -69,7 +69,11 @@ class DocumentTranslationTest(AzureTestCase):
         container_client = ContainerClient(self.storage_endpoint, container_name,
                                            self.storage_key)
         container_client.create_container()
-        container_client.upload_blob(name=str(uuid.uuid4())+".txt", data=data)
+        if isinstance(data, list):
+            for blob in data:
+                container_client.upload_blob(name=str(uuid.uuid4()) + ".txt", data=blob)
+        else:
+            container_client.upload_blob(name=str(uuid.uuid4())+".txt", data=data)
         return self.generate_sas_url(container_name, "rl")
 
     def create_target_container(self):
@@ -97,4 +101,4 @@ class DocumentTranslationTest(AzureTestCase):
 
     def wait(self):
         if self.is_live:
-            time.sleep(10)
+            time.sleep(30)
