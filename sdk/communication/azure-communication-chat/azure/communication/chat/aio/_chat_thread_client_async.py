@@ -9,7 +9,7 @@ except ImportError:
     from urlparse import urlparse # type: ignore
 
 # pylint: disable=unused-import,ungrouped-imports
-from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
+from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
 from datetime import datetime
 
 import six
@@ -123,11 +123,11 @@ class ChatThreadClient(object):
         **kwargs
     ) -> ChatThreadProperties: # type: (...) -> ChatThreadProperties
 
-        """Gets a chat thread properties.
+        """Gets the properties of the chat thread.
 
         :return: ChatThreadProperties
         :rtype: ~azure.communication.chat.ChatThreadProperties
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
 
@@ -487,9 +487,9 @@ class ChatThreadClient(object):
         self,
         thread_participants: List[ChatThreadParticipant],
         **kwargs
-    ) -> list((ChatThreadParticipant, ChatError)):
+    ) -> List[Tuple[ChatThreadParticipant, ChatError]]:
 
-        # type: (...) -> list[(ChatThreadParticipant, ChatError)]
+        # type: (...) -> List[Tuple[ChatThreadParticipant, ChatError]]
         """Adds thread participants to a thread. If participants already exist, no change occurs.
 
         If all participants are added successfully, then an empty list is returned;
@@ -498,9 +498,9 @@ class ChatThreadClient(object):
 
         :param thread_participants: Required. Thread participants to be added to the thread.
         :type thread_participants: list[~azure.communication.chat.ChatThreadParticipant]
-        :return: List[(ChatThreadParticipant, ChatError)]
-        :rtype: list((~azure.communication.chat.ChatThreadParticipant, ~azure.communication.chat.ChatError))
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        :return: List[Tuple(ChatThreadParticipant, ChatError)]
+        :rtype: List[Tuple[~azure.communication.chat.ChatThreadParticipant, ~azure.communication.chat.ChatError]]
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
 
@@ -511,24 +511,23 @@ class ChatThreadClient(object):
                 :dedent: 12
                 :caption: Adding participants to chat thread.
         """
-        if not thread_participants:
-            raise ValueError("thread_participants cannot be None.")
-
-        participants = [m._to_generated() for m in thread_participants]  # pylint:disable=protected-access
-        add_thread_participants_request = AddChatParticipantsRequest(participants=participants)
-
-        add_chat_participants_result = await self._client.chat_thread.add_chat_participants(
-            chat_thread_id=self._thread_id,
-            add_chat_participants_request=add_thread_participants_request,
-            **kwargs)
-
         response = []
-        if hasattr(add_chat_participants_result, 'invalid_participants') and \
-                add_chat_participants_result.invalid_participants is not None:
-            response = CommunicationErrorResponseConverter._convert(  # pylint:disable=protected-access
-                participants=thread_participants,
-                chat_errors=add_chat_participants_result.invalid_participants
-            )
+        if thread_participants:
+            participants = [m._to_generated() for m in thread_participants]  # pylint:disable=protected-access
+            add_thread_participants_request = AddChatParticipantsRequest(participants=participants)
+
+            add_chat_participants_result = await self._client.chat_thread.add_chat_participants(
+                chat_thread_id=self._thread_id,
+                add_chat_participants_request=add_thread_participants_request,
+                **kwargs)
+
+
+            if hasattr(add_chat_participants_result, 'invalid_participants') and \
+                    add_chat_participants_result.invalid_participants is not None:
+                response = CommunicationErrorResponseConverter._convert(  # pylint:disable=protected-access
+                    participants=thread_participants,
+                    chat_errors=add_chat_participants_result.invalid_participants
+                )
 
         return response
 

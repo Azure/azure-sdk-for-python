@@ -125,11 +125,9 @@ class ChatClientSamples(object):
         # [START list_threads]
         from azure.communication.chat import ChatClient, CommunicationTokenCredential
         from datetime import datetime, timedelta
-        import pytz
 
         chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
         start_time = datetime.utcnow() - timedelta(days=2)
-        start_time = start_time.replace(tzinfo=pytz.utc)
         chat_threads = chat_client.list_chat_threads(results_per_page=5, start_time=start_time)
 
         print("list_threads succeeded with results_per_page is 5, and were created since 2 days ago.")
