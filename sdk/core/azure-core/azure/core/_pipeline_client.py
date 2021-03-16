@@ -69,10 +69,10 @@ class PipelineClient(PipelineClientBase):
     :keyword ~azure.core.configuration.Configuration config: If omitted, the standard configuration is used.
     :keyword Pipeline pipeline: If omitted, a Pipeline object is created and returned.
     :keyword list[HTTPPolicy] policies: If omitted, the standard policies of the configuration object is used.
-    :keyword non_retriable_policies: If specified, the policies will be added into the policy list before RetryPolicy
-    :paramtype non_retriable_policies: Union[HTTPPolicy, SansIOHTTPPolicy, list[HTTPPolicy], list[SansIOHTTPPolicy]]
-    :keyword retriable_policies: If specified, the policies will be added into the policy list after RetryPolicy
-    :paramtype retriable_policies: Union[HTTPPolicy, SansIOHTTPPolicy, list[HTTPPolicy], list[SansIOHTTPPolicy]]
+    :keyword per_call_policies: If specified, the policies will be added into the policy list before RetryPolicy
+    :paramtype per_call_policies: Union[HTTPPolicy, SansIOHTTPPolicy, list[HTTPPolicy], list[SansIOHTTPPolicy]]
+    :keyword per_retry_policies: If specified, the policies will be added into the policy list after RetryPolicy
+    :paramtype per_retry_policies: Union[HTTPPolicy, SansIOHTTPPolicy, list[HTTPPolicy], list[SansIOHTTPPolicy]]
     :keyword HttpTransport transport: If omitted, RequestsTransport is used for synchronous transport.
     :return: A pipeline object.
     :rtype: ~azure.core.pipeline.Pipeline
@@ -111,8 +111,8 @@ class PipelineClient(PipelineClientBase):
         policies = kwargs.get('policies')
 
         if policies is None:  # [] is a valid policy list
-            non_retriable_policies = kwargs.get('non_retriable_policies')
-            retriable_policies = kwargs.get('retriable_policies')
+            per_call_policies = kwargs.get('per_call_policies')
+            per_retry_policies = kwargs.get('per_retry_policies')
             policies = [
                 RequestIdPolicy(**kwargs),
                 config.headers_policy,
@@ -120,21 +120,21 @@ class PipelineClient(PipelineClientBase):
                 config.proxy_policy,
                 ContentDecodePolicy(**kwargs)
             ]
-            if non_retriable_policies:
-                if isinstance(non_retriable_policies, (HTTPPolicy, SansIOHTTPPolicy)):
-                    policies.append(non_retriable_policies)
+            if per_call_policies:
+                if isinstance(per_call_policies, (HTTPPolicy, SansIOHTTPPolicy)):
+                    policies.append(per_call_policies)
                 else:
-                    for policy in non_retriable_policies:
+                    for policy in per_call_policies:
                         policies.append(policy)
             policies = policies + [config.redirect_policy,
                                config.retry_policy,
                                config.authentication_policy,
                                config.custom_hook_policy]
-            if retriable_policies:
-                if isinstance(retriable_policies, (HTTPPolicy, SansIOHTTPPolicy)):
-                    policies.append(retriable_policies)
+            if per_retry_policies:
+                if isinstance(per_retry_policies, (HTTPPolicy, SansIOHTTPPolicy)):
+                    policies.append(per_retry_policies)
                 else:
-                    for policy in retriable_policies:
+                    for policy in per_retry_policies:
                         policies.append(policy)
             policies = policies + [config.logging_policy,
                                DistributedTracingPolicy(**kwargs),

@@ -345,28 +345,28 @@ class TestClientRequest(unittest.TestCase):
 
         boo_policy = BooPolicy()
         foo_policy = FooPolicy()
-        client = PipelineClient(base_url="test", non_retriable_policies=boo_policy)
+        client = PipelineClient(base_url="test", per_call_policies=boo_policy)
         policies = client._pipeline._impl_policies
         assert boo_policy in policies
 
-        client = PipelineClient(base_url="test", non_retriable_policies=[boo_policy])
+        client = PipelineClient(base_url="test", per_call_policies=[boo_policy])
         policies = client._pipeline._impl_policies
         assert boo_policy in policies
 
-        client = PipelineClient(base_url="test", retriable_policies=boo_policy)
+        client = PipelineClient(base_url="test", per_retry_policies=boo_policy)
         policies = client._pipeline._impl_policies
         assert boo_policy in policies
-        client = PipelineClient(base_url="test", retriable_policies=[boo_policy])
+        client = PipelineClient(base_url="test", per_retry_policies=[boo_policy])
         policies = client._pipeline._impl_policies
         assert boo_policy in policies
 
-        client = PipelineClient(base_url="test", non_retriable_policies=boo_policy, retriable_policies=foo_policy)
+        client = PipelineClient(base_url="test", per_call_policies=boo_policy, per_retry_policies=foo_policy)
         policies = client._pipeline._impl_policies
         assert boo_policy in policies
         assert foo_policy in policies
 
-        client = PipelineClient(base_url="test", non_retriable_policies=[boo_policy],
-                                retriable_policies=[foo_policy])
+        client = PipelineClient(base_url="test", per_call_policies=[boo_policy],
+                                per_retry_policies=[foo_policy])
         policies = client._pipeline._impl_policies
         assert boo_policy in policies
         assert foo_policy in policies
