@@ -174,7 +174,7 @@ def filter_track2_versions(package_name, versions):
         'azure-mgmt-subscription': '1.0.0b1',
         'azure-mgmt-operationsmanagement': '1.0.0b1',
         'azure-mgmt-datafactory': '1.0.0b1',
-        'azure-mgmt-rdbms': '8.0.0b1',
+        'azure-mgmt-rdbms': '7.0.0b1',
         'azure-mgmt-loganalytics': '7.0.0b1',
         'azure-mgmt-automation': '1.0.0b1',
         'azure-mgmt-recoveryservices': '1.0.0b1',
