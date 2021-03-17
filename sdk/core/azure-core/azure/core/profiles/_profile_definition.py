@@ -6,7 +6,7 @@
 from enum import Enum
 
 def convert_profile(profile):
-    if isinstance(profile, (DefaultProfile, KnownProfiles, ProfileDefinition)):
+    if isinstance(profile, (KnownProfiles, ProfileDefinition)):
         return profile
     try:
         if profile.name == 'default':
