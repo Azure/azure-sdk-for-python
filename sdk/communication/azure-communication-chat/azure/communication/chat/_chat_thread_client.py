@@ -499,7 +499,7 @@ class ChatThreadClient(object):
     @distributed_trace
     def add_participants(
         self,
-        thread_participants,  # type: list[ChatThreadParticipant]
+        thread_participants,  # type: List[ChatThreadParticipant]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Tuple[ChatThreadParticipant, ChatError]]
@@ -509,9 +509,9 @@ class ChatThreadClient(object):
         otherwise, a list of tuple(chat_thread_participant, chat_error) is returned,
         of failed participants and its respective error
 
-        :param thread_participants: Required. Thread participants to be added to the thread.
-        :type thread_participants: list[~azure.communication.chat.ChatThreadParticipant]
-        :return: List[Tuple(ChatThreadParticipant, ChatError)]
+        :param thread_participants: Thread participants to be added to the thread.
+        :type thread_participants: List[~azure.communication.chat.ChatThreadParticipant]
+        :return: List[Tuple[ChatThreadParticipant, ChatError]]
         :rtype: List[Tuple[~azure.communication.chat.ChatThreadParticipant, ~azure.communication.chat.ChatError]]
         :raises: ~azure.core.exceptions.HttpResponseError
 

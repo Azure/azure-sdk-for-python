@@ -17,16 +17,17 @@ from .user_token_refresh_options import CommunicationTokenRefreshOptions
 class CommunicationTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service.
     :param str token: The token used to authenticate to an Azure Communication service
-    :param token_refresher: The token refresher to provide capacity to fetch fresh token
+    :keyword token_refresher: The token refresher to provide capacity to fetch fresh token
     :raises: TypeError
     """
 
-    ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
+    _ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
 
     def __init__(self,
                  token,  # type: str
-                 token_refresher=None
+                 **kwargs
                  ):
+        token_refresher = kwargs.pop('token_refresher', None)
         communication_token_refresh_options = CommunicationTokenRefreshOptions(token=token,
                                                                                token_refresher=token_refresher)
         self._token = communication_token_refresh_options.get_token()
@@ -34,7 +35,7 @@ class CommunicationTokenCredential(object):
         self._lock = Condition(Lock())
         self._some_thread_refreshing = False
 
-    def get_token(self):
+    def get_token(self, **kwargs):
         # type () -> ~azure.core.credentials.AccessToken
         """The value of the configured token.
         :rtype: ~azure.core.credentials.AccessToken
@@ -79,7 +80,7 @@ class CommunicationTokenCredential(object):
 
     def _token_expiring(self):
         return self._token.expires_on - self._get_utc_now() <\
-            timedelta(minutes=self.ON_DEMAND_REFRESHING_INTERVAL_MINUTES)
+            timedelta(minutes=self._ON_DEMAND_REFRESHING_INTERVAL_MINUTES)
 
     def _is_currenttoken_valid(self):
         return self._get_utc_now() < self._token.expires_on

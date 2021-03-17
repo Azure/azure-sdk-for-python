@@ -121,7 +121,7 @@ class ChatThreadClient(object):
     async def get_properties(
         self,
         **kwargs
-    ) -> ChatThreadProperties: # type: (...) -> ChatThreadProperties
+    ): # type: (...) -> ChatThreadProperties
 
         """Gets the properties of the chat thread.
 
@@ -496,9 +496,9 @@ class ChatThreadClient(object):
         otherwise, a list of tuple(chat_thread_participant, chat_error) is returned,
         of failed participants and its respective error
 
-        :param thread_participants: Required. Thread participants to be added to the thread.
-        :type thread_participants: list[~azure.communication.chat.ChatThreadParticipant]
-        :return: List[Tuple(ChatThreadParticipant, ChatError)]
+        :param thread_participants: Thread participants to be added to the thread.
+        :type thread_participants: List[~azure.communication.chat.ChatThreadParticipant]
+        :return: List[Tuple[ChatThreadParticipant, ChatError]]
         :rtype: List[Tuple[~azure.communication.chat.ChatThreadParticipant, ~azure.communication.chat.ChatError]]
         :raises: ~azure.core.exceptions.HttpResponseError
 

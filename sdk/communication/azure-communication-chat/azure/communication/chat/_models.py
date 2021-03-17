@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from typing import TYPE_CHECKING
 
 from ._generated.models import ChatParticipant as ChatParticipantAutorest
 from ._generated.models import ChatMessageType
@@ -10,6 +11,10 @@ from ._utils import CommunicationUserIdentifierConverter
 
 # pylint: disable=unused-import,ungrouped-imports
 from ._shared.models import CommunicationUserIdentifier
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
 
 class ChatThreadParticipant(object):
     """A participant of the chat thread.
@@ -140,7 +145,7 @@ class ChatMessageContent(object):
     :type topic: str
     :ivar participants: Chat message content for messages of types participantAdded or
      participantRemoved.
-    :type participants: list[~azure.communication.chat.models.ChatParticipant]
+    :type participants: List[~azure.communication.chat.models.ChatParticipant]
     :ivar initiator: Chat message content for messages of types participantAdded or
      participantRemoved.
     :type initiator: Union[CommunicationUserIdentifier, MicrosoftTeamsUserIdentifier]
@@ -270,7 +275,7 @@ class CreateChatThreadResult(object):
     :ivar chat_thread: Chat thread.
     :type chat_thread: ~azure.communication.chat.ChatThreadProperties
     :ivar errors: Errors encountered during the creation of the chat thread.
-    :type errors: list((~azure.communication.chat.ChatThreadParticipant, ~azure.communication.chat.ChatError))
+    :type errors: List[Tuple[~azure.communication.chat.ChatThreadParticipant, ~azure.communication.chat.ChatError]]
     """
 
     def __init__(
