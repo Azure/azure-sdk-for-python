@@ -23,36 +23,22 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
+import xml.etree.ElementTree as ET
 from typing import TYPE_CHECKING
 
-from ..pipeline.transport._base import (
+from ..pipeline.transport import (
     HttpRequest as _PipelineTransportHttpRequest,
-    _case_insensitive_dict
-)
-from ._handle_request_body import (
-    handle_request_body,
-    set_content_length_header
 )
 
 if TYPE_CHECKING:
-    from typing import Any, Optional, Union
+    from typing import Any, Optional
     from ._types import QueryTypes
-    try:
-        from multidict import CIMultiDict
-        from requests.structures import CaseInsensitiveDict
-    except ImportError:
-        pass
 
-def _format_parameters(url, query=None):
-    # type: (str, Optional[QueryTypes]) -> str
-    """Placeholder code using current implementation in pipeline.transport
-    Johan is working on new code that accepts list of tuples etc.
-    """
-    dummy_request = _PipelineTransportHttpRequest(method="dummy", url=url)
-    if query:
-        dummy_request.format_parameters(query)
-    return dummy_request.url
+
+def _is_stream(content):
+    return isinstance(content, (str, bytes)) or any(
+        hasattr(content, attr) for attr in ["read", "__iter__", "__aiter__"]
+    )
 
 class HttpRequest(object):
     """Represents an HTTP request.
@@ -82,21 +68,70 @@ class HttpRequest(object):
 
     def __init__(self, method, url, **kwargs):
         # type: (str, str, Any) -> None
-        self.method = method
-        self.url = _format_parameters(url, kwargs.pop("params", None))
-        self.headers = _case_insensitive_dict(kwargs.pop("headers", None))  # type: Union[CIMultiDict, CaseInsensitiveDict]
-        self._multipart_mixed_info = None  # keeping for now, hacking multipart code
 
-        self._body = handle_request_body(
-            content=kwargs.pop("content", None),
-            json=kwargs.pop("json", None),
-            files=kwargs.pop("files", None),
-            data=kwargs.pop("data", None),
-            headers=self.headers,
-            **kwargs
+        data = kwargs.pop("data", None)
+        content = kwargs.pop("content", None)
+        json = kwargs.pop("json", None)
+        files = kwargs.pop("files", None)
+
+        self._internal_request = _PipelineTransportHttpRequest(
+            method=method,
+            url=url,
+            headers=kwargs.pop("headers", None),
         )
-        if self._body:
-            set_content_length_header(self._body, self.headers)
+        params = kwargs.pop("params", None)
+
+        if params:
+            self._internal_request.format_parameters(params)
+        if data is not None:
+            self._internal_request.set_formdata_body(data)
+        if content is not None:
+            content_type = self._internal_request.headers.get("Content-Type")
+            if _is_stream(content):
+                self._internal_request.set_streamed_data_body(content)
+            elif isinstance(content, ET.Element):
+                self._internal_request.set_xml_body(content)
+            elif content_type and content_type.startswith("text/"):
+                self._internal_request.set_text_body(content)
+            else:
+                self._internal_request.data = content
+        if json is not None:
+            self._internal_request.set_json_body(json)
+            if not self._internal_request.headers.get("Content-Type"):
+                self._internal_request.headers["Content-Type"] = "application/json"
+        if files is not None:
+            self._internal_request.set_formdata_body(files)
+
+        if not self._internal_request.headers.get("Content-Length"):
+            try:
+                # set content length header if possible
+                self._internal_request.headers["Content-Length"] = str(len(self._internal_request.data))  # type: ignore
+            except TypeError:
+                pass
+        self.method = self._internal_request.method
+        if kwargs:
+            raise TypeError(
+                "You have passed in kwargs '{}' that are not valid kwargs.".format(
+                    "', '".join(list(kwargs.keys()))
+                )
+            )
+
+    @property
+    def url(self) -> str:
+        return self._internal_request.url
+
+    @url.setter
+    def url(self, val: str) -> None:
+        self._internal_request.url = val
+
+    @property
+    def method(self) -> str:
+        return self._internal_request.method
+
+    @method.setter
+    def method(self, val: str) -> None:
+        self._internal_request.method = val
+
 
     def __repr__(self):
         return "<HttpRequest [{}], url: '{}'>".format(
