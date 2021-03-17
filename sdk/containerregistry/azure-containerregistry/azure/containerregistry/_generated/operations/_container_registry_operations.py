@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
@@ -16,7 +17,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -96,7 +97,7 @@ class ContainerRegistryOperations(object):
         n=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.Repositories"
+        # type: (...) -> Iterable["_models.Repositories"]
         """List repositories.
 
         :param last: Query parameter for the last item in previous query. Result set will include
@@ -105,8 +106,8 @@ class ContainerRegistryOperations(object):
         :param n: query parameter for max number of items.
         :type n: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Repositories, or the result of cls(response)
-        :rtype: ~azure.containerregistry.models.Repositories
+        :return: An iterator like instance of either Repositories or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.containerregistry.models.Repositories]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Repositories"]
@@ -116,41 +117,59 @@ class ContainerRegistryOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
         accept = "application/json"
 
-        # Construct URL
-        url = self.get_repositories.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if last is not None:
-            query_parameters['last'] = self._serialize.query("last", last, 'str')
-        if n is not None:
-            query_parameters['n'] = self._serialize.query("n", n, 'int')
+            if not next_link:
+                # Construct URL
+                url = self.get_repositories.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                if last is not None:
+                    query_parameters['last'] = self._serialize.query("last", last, 'str')
+                if n is not None:
+                    query_parameters['n'] = self._serialize.query("n", n, 'int')
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+                request = self._client.get(url, query_parameters, header_parameters)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                path_format_arguments = {
+                    'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                request = self._client.get(url, query_parameters, header_parameters)
+            return request
 
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize('Repositories', pipeline_response)
+            list_of_elem = deserialized.repositories
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.link or None, iter(list_of_elem)
 
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
-            raise HttpResponseError(response=response, model=error)
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
 
-        response_headers = {}
-        response_headers['Link']=self._deserialize('str', response.headers.get('Link'))
-        deserialized = self._deserialize('Repositories', pipeline_response)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, model=error)
 
-        return deserialized
+            return pipeline_response
+
+        return ItemPaged(
+            get_next, extract_data
+        )
     get_repositories.metadata = {'url': '/acr/v1/_catalog'}  # type: ignore
 
     def get_repository_attributes(
@@ -158,17 +177,17 @@ class ContainerRegistryOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.RepositoryAttributes"
+        # type: (...) -> "_models.RepositoryProperties"
         """Get repository attributes.
 
         :param name: Name of the image (including the namespace).
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RepositoryAttributes, or the result of cls(response)
-        :rtype: ~azure.containerregistry.models.RepositoryAttributes
+        :return: RepositoryProperties, or the result of cls(response)
+        :rtype: ~azure.containerregistry.models.RepositoryProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RepositoryAttributes"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RepositoryProperties"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -199,7 +218,7 @@ class ContainerRegistryOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('RepositoryAttributes', pipeline_response)
+        deserialized = self._deserialize('RepositoryProperties', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -212,17 +231,17 @@ class ContainerRegistryOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.DeletedRepository"
+        # type: (...) -> "_models.DeletedRepositoryResult"
         """Delete the repository identified by ``name``.
 
         :param name: Name of the image (including the namespace).
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DeletedRepository, or the result of cls(response)
-        :rtype: ~azure.containerregistry.models.DeletedRepository
+        :return: DeletedRepositoryResult, or the result of cls(response)
+        :rtype: ~azure.containerregistry.models.DeletedRepositoryResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedRepository"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedRepositoryResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -253,7 +272,7 @@ class ContainerRegistryOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('DeletedRepository', pipeline_response)
+        deserialized = self._deserialize('DeletedRepositoryResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -264,7 +283,7 @@ class ContainerRegistryOperations(object):
     def update_repository_attributes(
         self,
         name,  # type: str
-        value=None,  # type: Optional["_models.ChangeableAttributes"]
+        value=None,  # type: Optional["_models.ContentProperties"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -273,7 +292,7 @@ class ContainerRegistryOperations(object):
         :param name: Name of the image (including the namespace).
         :type name: str
         :param value: Repository attribute value.
-        :type value: ~azure.containerregistry.models.ChangeableAttributes
+        :type value: ~azure.containerregistry.models.ContentProperties
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -305,7 +324,7 @@ class ContainerRegistryOperations(object):
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if value is not None:
-            body_content = self._serialize.body(value, 'ChangeableAttributes')
+            body_content = self._serialize.body(value, 'ContentProperties')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
