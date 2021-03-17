@@ -7,15 +7,17 @@
 from typing import Union, Any, List, TYPE_CHECKING
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.polling import LROPoller
-from azure.core.polling.base_polling import LROBasePolling
+from azure.core.polling import AsyncLROPoller
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.async_paging import AsyncItemPaged
 from .._generated.aio import BatchDocumentTranslationClient as _BatchDocumentTranslationClient
 from .._user_agent import USER_AGENT
+from .._generated.models import (
+    BatchStatusDetail as _BatchStatusDetail,
+)
 from .._models import (
     JobStatusDetail,
     BatchDocumentInput,
-    BatchStatusDetail as _BatchStatusDetail,
     FileFormat,
     DocumentStatusDetail
 )
@@ -132,14 +134,13 @@ class DocumentTranslationClient(object):
 
         def callback(raw_response):
             detail = self._client._deserialize(_BatchStatusDetail, raw_response)
-            # pylint: disable=protected-access
-            return JobStatusDetail._from_generated(detail)
+            return JobStatusDetail._from_generated(detail)  # pylint: disable=protected-access
 
-        poller = LROPoller(
+        poller = AsyncLROPoller(
             client=self._client._client,
             initial_response=pipeline_response,
             deserialization_callback=callback,
-            polling_method=LROBasePolling(
+            polling_method=AsyncLROBasePolling(
                 timeout=30,
                 lro_algorithms=[TranslationPolling()],
                 **kwargs
