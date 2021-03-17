@@ -2,33 +2,27 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.core.pipeline.policies import RetryPolicy
+from azure.core.exceptions import ServiceRequestError
 from azure.identity._internal.msal_client import MsalClient
 
-from helpers import mock, mock_response
+import pytest
+
+from helpers import mock
 
 
-def test_retries_posts():
-    """The client should configure its pipeline to retry its token requests"""
+def test_retries_requests():
+    """The client should retry token requests"""
 
-    pipeline = mock.Mock(
-        run=mock.Mock(
-            return_value=mock.Mock(
-                http_response=mock_response(json_payload={"access_token": "*", "expires_in": 42, "resource": "..."})
-            )
-        )
-    )
+    message = "can't connect"
+    transport = mock.Mock(send=mock.Mock(side_effect=ServiceRequestError(message)))
+    client = MsalClient(transport=transport)
 
-    def get_pipeline(*_, **kwargs):
-        for policy in kwargs.get("policies") or []:
-            if isinstance(policy, RetryPolicy):
-                return pipeline
-        raise Exception("client should use RetryPolicy")
+    with pytest.raises(ServiceRequestError, match=message):
+        client.post("https://localhost")
+    assert transport.send.call_count > 1
+    transport.send.reset_mock()
 
-    with mock.patch(MsalClient.__module__ + ".Pipeline", get_pipeline):
-        client = MsalClient()
-
-    client.post("https://localhost")
-
-    _, kwargs = pipeline.run.call_args
-    assert "POST" in kwargs["retry_on_methods"]
+    with pytest.raises(ServiceRequestError, match=message):
+        client.get("https://localhost")
+    assert transport.send.call_count > 1
+    transport.send.reset_mock()
