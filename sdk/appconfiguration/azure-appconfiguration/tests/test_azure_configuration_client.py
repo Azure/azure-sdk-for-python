@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.core import MatchConditions
+from azure.core.exceptions import HttpResponseError
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 from azure.core.exceptions import (
     ResourceModifiedError,
@@ -16,6 +17,7 @@ from azure.appconfiguration import (
     AzureAppConfigurationClient,
     ConfigurationSetting,
 )
+from azure.identity import DefaultAzureCredential
 
 from consts import (
     KEY,
@@ -35,6 +37,12 @@ import logging
 import re
 import functools
 
+try:
+    from unittest import mock
+except ImportError:
+    import mock
+
+
 class AppConfigurationClientTest(AzureTestCase):
     def __init__(self, method_name):
         super(AppConfigurationClientTest, self).__init__(method_name)
@@ -45,6 +53,43 @@ class AppConfigurationClientTest(AzureTestCase):
 
     def tearDown(self):
         super(AppConfigurationClientTest, self).tearDown()
+
+    @app_config_decorator
+    def test_mock_policies(self, client):
+        from azure.core.pipeline.transport import HttpRequest, HttpResponse, HttpTransport
+        from azure.core.pipeline.policies import RetryPolicy
+        from azure.core.pipeline import Pipeline, PipelineResponse
+
+        class MockTransport(HttpTransport):
+            def __init__(self):
+                self._count = 0
+                self.auth_headers = []
+            def __exit__(self, exc_type, exc_val, exc_tb):
+                pass
+            def close(self):
+                pass
+            def open(self):
+                pass
+
+            def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+                self._count += 1
+                self.auth_headers.append(
+                    request.headers['Authorization']
+                )
+                response = HttpResponse(request, None)
+                response.status_code = 429
+                return response
+
+        http_request = HttpRequest('GET', 'http://aka.ms/')
+        transport = MockTransport()
+
+        pipeline = Pipeline(transport, client._policies)
+        pipeline.run(http_request)
+        auth_headers = transport.auth_headers
+        assert len(auth_headers) > 2
+        for i in range(1, len(auth_headers)-1):
+            for j in range(i+1, len(auth_headers)):
+                assert auth_headers[i] != auth_headers[j]
 
     # method: add_configuration_setting
     @app_config_decorator
@@ -417,3 +462,4 @@ class AppConfigurationClientTest(AzureTestCase):
         set_kv.etag = "bad"
         with pytest.raises(ResourceModifiedError):
             client.set_read_only(set_kv, True, match_condition=MatchConditions.IfNotModified)
+

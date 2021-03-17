@@ -145,6 +145,8 @@ class AzureAppConfigurationClient:
                 HttpLoggingPolicy(**kwargs)
             ]
 
+        self._policies = policies
+
         if not transport:
             transport = RequestsTransport(**kwargs)
 
