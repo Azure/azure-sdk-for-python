@@ -12,7 +12,7 @@ def convert_profile(profile):
         if profile.name == 'default':
             return KnownProfiles.default
         return KnownProfiles.from_name(profile.value.label)
-    except (ValueError, TypeError, AttributeError):
+    except AttributeError:
         return profile
 
 
