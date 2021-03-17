@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+# pylint: disable=unused-import
 from typing import Any, List
 import six
 from ._generated.models import (
@@ -12,9 +13,9 @@ from ._generated.models import (
     DocumentFilter as _DocumentFilter,
     TargetInput as _TargetInput,
     Glossary as _Glossary
-) 
+)
 
-class TranslationGlossary(object):
+class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
     """Glossary / translation memory for the request.
 
     :param glossary_url: Required. Location of the glossary.
@@ -47,19 +48,22 @@ class TranslationGlossary(object):
                 storage_source=self.storage_source
             )
 
+    @staticmethod
     def _to_generated_unknown_type(glossary):
         if isinstance(glossary, TranslationGlossary):
-            return glossary._to_generated()
-        elif isinstance(glossary, six.string_types):
+            return glossary._to_generated()  # pylint: disable=protected-access
+        if isinstance(glossary, six.string_types):
             return _Glossary(
                     glossary_url=glossary,
                 )
+        return None
 
+    @staticmethod
     def _to_generated_list(glossaries):
         return [TranslationGlossary._to_generated_unknown_type(glossary) for glossary in glossaries]
 
 
-class StorageTarget(object):
+class StorageTarget(object):  # pylint: disable=useless-object-inheritance
     """Destination for the finished translated documents.
 
     :param target_url: Required. Location of the folder / container with your documents.
@@ -92,15 +96,15 @@ class StorageTarget(object):
             category=self.category_id,
             language=self.language,
             storage_source=self.storage_source,
-            # pylint: disable=protected-access
-            glossaries=TranslationGlossary._to_generated_list(self.glossaries)
+            glossaries=TranslationGlossary._to_generated_list(self.glossaries)  # pylint: disable=protected-access
         )
 
+    @staticmethod
     def _to_generated_list(targets):
         return [ target._to_generated() for target in targets]
 
 
-class BatchDocumentInput(object):
+class BatchDocumentInput(object):  # pylint: disable=useless-object-inheritance
     """Definition for the input batch translation request.
 
     :param source_url: Required. Location of the folder / container or single file with your
@@ -147,17 +151,17 @@ class BatchDocumentInput(object):
                 language=self.source_language,
                 storage_source=self.storage_source
             ),
-            # pylint: disable=protected-access
-            targets=StorageTarget._to_generated_list(self.targets),
+            targets=StorageTarget._to_generated_list(self.targets),  # pylint: disable=protected-access
             storage_type=self.storage_type
         )
 
+    @staticmethod
     def _to_generated_list(batch_document_inputs):
         return [ batch_document_input._to_generated() for batch_document_input in batch_document_inputs ]
 
 
 
-class JobStatusDetail(object):  # pylint: disable=too-many-instance-attributes
+class JobStatusDetail(object):  # pylint: disable=useless-object-inheritance
     """Job status response.
 
     :ivar id: Required. Id of the job.
@@ -209,8 +213,7 @@ class JobStatusDetail(object):  # pylint: disable=too-many-instance-attributes
             created_on=batch_status_details.created_date_time_utc,
             last_updated_on=batch_status_details.last_action_date_time_utc,
             status=batch_status_details.status,
-            # pylint: disable=protected-access
-            error=DocumentTranslationError._from_generated(batch_status_details.error) if batch_status_details.error else None,
+            error=DocumentTranslationError._from_generated(batch_status_details.error) if batch_status_details.error else None,  # pylint: disable=protected-access
             documents_total_count=batch_status_details.summary.total,
             documents_failed_count=batch_status_details.summary.failed,
             documents_succeeded_count=batch_status_details.summary.success,
@@ -221,7 +224,7 @@ class JobStatusDetail(object):  # pylint: disable=too-many-instance-attributes
         )
 
 
-class DocumentStatusDetail(object):
+class DocumentStatusDetail(object):  # pylint: disable=useless-object-inheritance
     """DocumentStatusDetail.
 
     :ivar url: Required. Location of the document or folder.
@@ -271,15 +274,14 @@ class DocumentStatusDetail(object):
             last_updated_on=doc_status.last_action_date_time_utc,
             status=doc_status.status,
             translate_to=doc_status.to,
-            # pylint: disable=protected-access
-            error=DocumentTranslationError._from_generated(doc_status.error) if doc_status.error else None,
+            error=DocumentTranslationError._from_generated(doc_status.error) if doc_status.error else None,  # pylint: disable=protected-access
             translation_progress=doc_status.progress,
             id=doc_status.id,
             characters_charged=doc_status.character_charged
         )
 
 
-class DocumentTranslationError(object):
+class DocumentTranslationError(object):  # pylint: disable=useless-object-inheritance
     """This contains an outer error with error code, message, details, target and an
     inner error with more descriptive details.
 
@@ -312,7 +314,7 @@ class DocumentTranslationError(object):
         )
 
 
-class FileFormat(object):
+class FileFormat(object):  # pylint: disable=useless-object-inheritance
     """FileFormat.
 
     :ivar format: Name of the format.
@@ -344,5 +346,6 @@ class FileFormat(object):
             versions=file_format.versions
         )
 
+    @staticmethod
     def _from_generated_list(file_formats):
-        return list( [ FileFormat._from_generated(file_formats) for file_formats in file_formats ] ) 
+        return list( [ FileFormat._from_generated(file_formats) for file_formats in file_formats ] )
