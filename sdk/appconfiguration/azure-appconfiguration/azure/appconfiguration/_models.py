@@ -111,7 +111,7 @@ class FeatureFlagConfigurationSetting(
     :param enabled:
     :type enabled: bool
     :param filters:
-    :type filters: list[FeatureFilter]
+    :type filters: list[dict[str, Any]]
     :param label:
     :type label: str
     :param content_type:
@@ -143,7 +143,7 @@ class FeatureFlagConfigurationSetting(
     kind = "FeatureFlag"
 
     def __init__(self, key, enabled, filters=None, **kwargs):
-        # type: (str, bool, Optional[List[FeatureFilter]]) -> None
+        # type: (str, bool, Optional[List[Dict[str, Any]]]) -> None
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
         self.key = key
         if not key.startswith(self.key_prefix):
@@ -170,19 +170,7 @@ class FeatureFlagConfigurationSetting(
             except json.decoder.JSONDecodeError:
                 pass
 
-        filters = None
-        try:
-            filters = key_value.value["conditions"]["client_filters"]
-            if filters == [None]:
-                key_value.value["conditions"]["client_filters"] = []
-            if len(filters) > 0 and filters != [None]:
-                filters = [
-                    FeatureFilter._from_generated(f)  # pylint: disable=protected-access
-                    for f in filters
-                ]
-                key_value.value["conditions"]["client_filters"] = filters
-        except KeyError:
-            pass
+        filters = key_value.value["conditions"]["client_filters"]
 
         return cls(
             key=key_value.key,
@@ -203,10 +191,7 @@ class FeatureFlagConfigurationSetting(
             u"description": self.description,
             u"enabled": self.enabled,
             u"conditions": {
-                u"client_filters": [
-                    f._to_generated() if isinstance(f, FeatureFilter) else f  # pylint:disable=protected-access
-                    for f in self.filters
-                ]
+                u"client_filters": self.filters
             },
         }
         value = json.dumps(value)
@@ -309,30 +294,3 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
             locked=self.read_only,
             etag=self.etag,
         )
-
-
-class FeatureFilter(object):
-    """Feature filters for FeatureFlagConfigurationSetting
-
-    :param name: Name of the filter
-    :type name: str
-    :param parameters: Values of the filter
-    :type parameters: dict[str, Any]
-
-    """
-
-    def __init__(self, name, parameters):
-        # type: (str, dict[str, Any]) -> None
-        self.name = name
-        self.parameters = parameters
-
-    @classmethod
-    def _from_generated(cls, feature_filter):
-        try:
-            return cls(feature_filter["name"], feature_filter["parameters"])
-        except KeyError:
-            return feature_filter
-
-    def _to_generated(self):
-        # type: (...) -> Dict[str, Any]
-        return {"name": self.name, "parameters": self.parameters}
