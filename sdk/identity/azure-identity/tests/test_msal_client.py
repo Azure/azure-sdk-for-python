@@ -25,4 +25,3 @@ def test_retries_requests():
     with pytest.raises(ServiceRequestError, match=message):
         client.get("https://localhost")
     assert transport.send.call_count > 1
-    transport.send.reset_mock()
