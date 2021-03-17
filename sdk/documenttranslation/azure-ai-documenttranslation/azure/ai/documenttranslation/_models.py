@@ -105,6 +105,7 @@ class StorageTarget(object):  # pylint: disable=useless-object-inheritance
 
 
 class BatchDocumentInput(object):  # pylint: disable=useless-object-inheritance
+    # pylint: disable=C0301
     """Definition for the input batch translation request.
 
     :param source_url: Required. Location of the folder / container or single file with your
@@ -157,7 +158,7 @@ class BatchDocumentInput(object):  # pylint: disable=useless-object-inheritance
 
     @staticmethod
     def _to_generated_list(batch_document_inputs):
-        return [ batch_document_input._to_generated() for batch_document_input in batch_document_inputs ]
+        return [ batch_document_input._to_generated() for batch_document_input in batch_document_inputs ]  # pylint: disable=C0301
 
 
 
@@ -224,7 +225,7 @@ class JobStatusDetail(object):  # pylint: disable=useless-object-inheritance
         )
 
 
-class DocumentStatusDetail(object):  # pylint: disable=useless-object-inheritance
+class DocumentStatusDetail(object):  # pylint: disable=useless-object-inheritance, R0903
     """DocumentStatusDetail.
 
     :ivar url: Required. Location of the document or folder.
@@ -281,7 +282,7 @@ class DocumentStatusDetail(object):  # pylint: disable=useless-object-inheritanc
         )
 
 
-class DocumentTranslationError(object):  # pylint: disable=useless-object-inheritance
+class DocumentTranslationError(object):  # pylint: disable=useless-object-inheritance, R0903
     """This contains an outer error with error code, message, details, target and an
     inner error with more descriptive details.
 
@@ -314,7 +315,7 @@ class DocumentTranslationError(object):  # pylint: disable=useless-object-inheri
         )
 
 
-class FileFormat(object):  # pylint: disable=useless-object-inheritance
+class FileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
     """FileFormat.
 
     :ivar format: Name of the format.
@@ -348,4 +349,4 @@ class FileFormat(object):  # pylint: disable=useless-object-inheritance
 
     @staticmethod
     def _from_generated_list(file_formats):
-        return list( [ FileFormat._from_generated(file_formats) for file_formats in file_formats ] )
+        return [ FileFormat._from_generated(file_formats) for file_formats in file_formats ]
