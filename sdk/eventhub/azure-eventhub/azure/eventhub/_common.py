@@ -21,7 +21,8 @@ from typing import (
 
 import six
 
-from uamqp import BatchMessage, Message, constants
+from uamqp import BatchMessage, Message, constants, errors
+import uamqp
 from uamqp.message import MessageProperties, MessageHeader
 
 from ._utils import set_message_partition_key, trace_message, utc_from_timestamp
@@ -156,6 +157,8 @@ class EventData(object):
         return event_str
 
     def __getstate__(self):
+        # TODO: all the properties don't get instantiated unless the below line is called? why?
+        self.offset
         state = self.__dict__.copy()
         message_state = state["message"].__dict__.copy()
 
@@ -201,6 +204,10 @@ class EventData(object):
         # remove _message to serialize
         del message_state["_message"]
 
+        # get message response class name to serialize, if exists
+        if message_state["_response"]:
+            message_state["_response"] = message_state["_response"].__class__
+
         # TODO:check whether saving _message and _settler is needed/can be done
 
         # reset message property to serializable message state
@@ -233,6 +240,9 @@ class EventData(object):
             header = MessageHeader(**message_state["_header"])
             del message_state["_header"]
 
+        if message_state["_response"]:
+            message_state["_response"] = message_state["_response"]()
+        
         # TODO:deserialize _message and _settler if they are saved
 
         if body and isinstance(body, list):
@@ -254,10 +264,10 @@ class EventData(object):
                 message=message,
                 settler=settler,
             )
-
+        
         for prop, value in message_state.items():
             setattr(self.message, prop, value)
-
+        
     @classmethod
     def _from_message(cls, message):
         # type: (Message) -> EventData
