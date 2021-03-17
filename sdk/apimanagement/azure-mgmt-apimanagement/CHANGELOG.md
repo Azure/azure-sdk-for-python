@@ -1,5 +1,106 @@
 # Release History
 
+## 0.3.0 (2021-03-17)
+
+**Features**
+
+  - Model BackendCredentialsContract has a new parameter certificate_ids
+  - Model AdditionalLocation has a new parameter zones
+  - Model AdditionalLocation has a new parameter public_ip_address_id
+  - Model ParameterContract has a new parameter type_name
+  - Model ParameterContract has a new parameter schema_id
+  - Model ApiContract has a new parameter license
+  - Model ApiContract has a new parameter terms_of_service_url
+  - Model ApiContract has a new parameter contact
+  - Model DiagnosticContract has a new parameter operation_name_format
+  - Model ApiManagementServiceBaseProperties has a new parameter restore
+  - Model ApiManagementServiceBaseProperties has a new parameter public_ip_address_id
+  - Model ApiCreateOrUpdateParameter has a new parameter license
+  - Model ApiCreateOrUpdateParameter has a new parameter terms_of_service_url
+  - Model ApiCreateOrUpdateParameter has a new parameter contact
+  - Model HttpMessageDiagnostic has a new parameter data_masking
+  - Model NamedValueUpdateParameters has a new parameter key_vault
+  - Model NamedValueCreateContract has a new parameter key_vault
+  - Model GatewayHostnameConfigurationContract has a new parameter tls10_enabled
+  - Model GatewayHostnameConfigurationContract has a new parameter tls11_enabled
+  - Model GatewayHostnameConfigurationContract has a new parameter http2_enabled
+  - Model ApiManagementServiceResource has a new parameter zones
+  - Model ApiManagementServiceResource has a new parameter restore
+  - Model ApiManagementServiceResource has a new parameter public_ip_address_id
+  - Model RecipientEmailCollection has a new parameter count
+  - Model NamedValueContract has a new parameter key_vault
+  - Model BackendServiceFabricClusterProperties has a new parameter client_certificate_id
+  - Model ApiManagementServiceUpdateParameters has a new parameter restore
+  - Model ApiManagementServiceUpdateParameters has a new parameter public_ip_address_id
+  - Model RecipientUserCollection has a new parameter count
+  - Model HostnameConfiguration has a new parameter identity_client_id
+  - Model HostnameConfiguration has a new parameter certificate_source
+  - Model HostnameConfiguration has a new parameter certificate_status
+  - Model ApiEntityBaseContract has a new parameter license
+  - Model ApiEntityBaseContract has a new parameter terms_of_service_url
+  - Model ApiEntityBaseContract has a new parameter contact
+  - Model CertificateContract has a new parameter key_vault
+  - Model CacheUpdateParameters has a new parameter use_from_location
+  - Model ApiTagResourceContractProperties has a new parameter license
+  - Model ApiTagResourceContractProperties has a new parameter terms_of_service_url
+  - Model ApiTagResourceContractProperties has a new parameter contact
+  - Model ApiUpdateContract has a new parameter license
+  - Model ApiUpdateContract has a new parameter terms_of_service_url
+  - Model ApiUpdateContract has a new parameter contact
+  - Model ApiContractProperties has a new parameter license
+  - Model ApiContractProperties has a new parameter terms_of_service_url
+  - Model ApiContractProperties has a new parameter contact
+  - Model PolicyCollection has a new parameter count
+  - Added operation CertificateOperations.refresh_secret
+  - Added operation UserSubscriptionOperations.get
+  - Added operation ApiManagementServiceOperations.get_domain_ownership_identifier
+  - Added operation TenantAccessOperations.create
+  - Added operation TenantAccessOperations.list_by_service
+  - Added operation NamedValueOperations.refresh_secret
+  - Added operation group GatewayCertificateAuthorityOperations
+  - Added operation group PortalRevisionOperations
+  - Added operation group DeletedServicesOperations
+  - Added operation group TenantSettingsOperations
+  - Added operation group ContentItemOperations
+  - Added operation group ApiManagementSkusOperations
+  - Added operation group PortalSettingsOperations
+  - Added operation group ContentTypeOperations
+
+**Breaking changes**
+
+  - Operation CertificateOperations.create_or_update has a new signature
+  - Operation CertificateOperations.list_by_service has a new signature
+  - Operation EmailTemplateOperations.update has a new signature
+  - Operation GatewayHostnameConfigurationOperations.create_or_update has a new signature
+  - Operation GatewayHostnameConfigurationOperations.delete has a new signature
+  - Operation NamedValueOperations.list_by_service has a new signature
+  - Operation SubscriptionOperations.create_or_update has a new signature
+  - Operation SubscriptionOperations.update has a new signature
+  - Operation TenantAccessGitOperations.regenerate_primary_key has a new signature
+  - Operation TenantAccessGitOperations.regenerate_secondary_key has a new signature
+  - Operation TenantAccessOperations.get has a new signature
+  - Operation TenantAccessOperations.get_entity_tag has a new signature
+  - Operation TenantAccessOperations.list_secrets has a new signature
+  - Operation TenantAccessOperations.regenerate_primary_key has a new signature
+  - Operation TenantAccessOperations.regenerate_secondary_key has a new signature
+  - Operation UserConfirmationPasswordOperations.send has a new signature
+  - Operation UserOperations.delete has a new signature
+  - Operation LoggerOperations.delete has a new signature
+  - Operation EmailTemplateOperations.update has a new signature
+  - Operation CertificateOperations.create_or_update has a new signature
+  - Operation GatewayApiOperations.list_by_service has a new signature
+  - Operation GatewayHostnameConfigurationOperations.list_by_service has a new signature
+  - Operation GatewayOperations.list_by_service has a new signature
+  - Operation TenantAccessOperations.update has a new signature
+  - Operation UserOperations.create_or_update has a new signature
+  - Model CacheContract has a new required parameter use_from_location
+  - Model ConnectivityStatusContract has a new required parameter is_optional
+  - Model ConnectivityStatusContract has a new required parameter resource_type
+  - Removed operation TenantAccessGitOperations.get
+  - Removed operation TenantAccessGitOperations.list_secrets
+  - Model CertificateCreateOrUpdateParameters has a new signature
+  - Model AccessInformationContract has a new signature
+
 ## 0.2.0 (2020-03-25)
 
 **Features**
