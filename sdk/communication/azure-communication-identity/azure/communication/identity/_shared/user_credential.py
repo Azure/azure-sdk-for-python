@@ -35,7 +35,7 @@ class CommunicationTokenCredential(object):
         self._lock = Condition(Lock())
         self._some_thread_refreshing = False
 
-    def get_token(self, **kwargs):
+    def get_token(self):
         # type () -> ~azure.core.credentials.AccessToken
         """The value of the configured token.
         :rtype: ~azure.core.credentials.AccessToken
