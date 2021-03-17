@@ -145,7 +145,7 @@ class ChatMessageContent(object):
     :type topic: str
     :ivar participants: Chat message content for messages of types participantAdded or
      participantRemoved.
-    :type participants: List[~azure.communication.chat.models.ChatParticipant]
+    :type participants: List[~azure.communication.chat.models.ChatThreadParticipant]
     :ivar initiator: Chat message content for messages of types participantAdded or
      participantRemoved.
     :type initiator: Union[CommunicationUserIdentifier, MicrosoftTeamsUserIdentifier]
