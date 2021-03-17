@@ -73,9 +73,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
             def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
                 self._count += 1
-                self.auth_headers.append(
-                    request.headers['Authorization']
-                )
+                self.auth_headers.append(request.headers['Authorization'])
                 response = HttpResponse(request, None)
                 response.status_code = 429
                 return response
@@ -83,7 +81,8 @@ class AppConfigurationClientTest(AzureTestCase):
         http_request = HttpRequest('GET', 'http://aka.ms/')
         transport = MockTransport()
 
-        pipeline = Pipeline(transport, client._policies)
+        policies = client._impl._client._pipeline._impl_policies
+        pipeline = Pipeline(transport, policies)
         pipeline.run(http_request)
         auth_headers = transport.auth_headers
         assert len(auth_headers) > 2

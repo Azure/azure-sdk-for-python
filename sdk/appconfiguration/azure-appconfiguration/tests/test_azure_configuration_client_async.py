@@ -408,3 +408,47 @@ class AppConfigurationClientTest(AzureTestCase):
         set_kv.etag = "bad"
         with pytest.raises(ResourceModifiedError):
             client.set_read_only(set_kv, True, match_condition=MatchConditions.IfNotModified)
+
+
+class TestAppConfig(object):
+
+    @pytest.mark.live_test_only
+    @pytest.mark.asyncio
+    async def test_mock_policies(self):
+        from azure.core.pipeline.transport import HttpRequest, HttpResponse, AsyncHttpTransport
+        from azure.core.pipeline.policies import RetryPolicy
+        from azure.core.pipeline import AsyncPipeline
+
+        class MockTransport(AsyncHttpTransport):
+            def __init__(self):
+                self._count = 0
+                self.auth_headers = []
+            async def __aexit__(self, exc_type, exc_val, exc_tb):
+                pass
+            async def close(self):
+                pass
+            async def open(self):
+                pass
+
+            async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+                self._count += 1
+                self.auth_headers.append(request.headers['Authorization'])
+                response = HttpResponse(request, None)
+                response.status_code = 429
+                return response
+
+        http_request = HttpRequest('GET', 'http://aka.ms/')
+        transport = MockTransport()
+
+        client = AzureAppConfigurationClient.from_connection_string(
+            os.environ["APPCONFIGURATION_CONNECTION_STRING"]
+        )
+
+        policies = client._impl._client._pipeline._impl_policies
+        pipeline = AsyncPipeline(transport, policies)
+        await pipeline.run(http_request)
+        auth_headers = transport.auth_headers
+        assert len(auth_headers) > 2
+        for i in range(1, len(auth_headers)-1):
+            for j in range(i+1, len(auth_headers)):
+                assert auth_headers[i] != auth_headers[j]
