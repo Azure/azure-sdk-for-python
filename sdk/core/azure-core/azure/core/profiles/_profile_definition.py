@@ -5,6 +5,16 @@
 #--------------------------------------------------------------------------
 from enum import Enum
 
+def convert_profile(profile):
+    if isinstance(profile, (DefaultProfile, KnownProfiles, ProfileDefinition)):
+        return profile
+    try:
+        if profile.name == 'default':
+            return KnownProfiles.default
+        return KnownProfiles.from_name(profile.value.label)
+    except (ValueError, TypeError, AttributeError):
+        return profile
+
 
 class ProfileDefinition(object):
     """Allow to define a custom Profile definition.
@@ -47,6 +57,7 @@ class DefaultProfile(object):
 
     def use(self, profile):
         """Define a new default profile."""
+        profile = convert_profile(profile)
         if not isinstance(profile, (KnownProfiles, ProfileDefinition)):
             raise ValueError("Can only set as default a ProfileDefinition or a KnownProfiles")
         type(self).profile = profile
@@ -208,6 +219,7 @@ class KnownProfiles(Enum):
         self._profile_definition = profile_definition
 
     def use(self, profile):
+        profile = convert_profile(profile)
         if self is not type(self).default:
             raise ValueError("use can only be used for `default` profile")
         self.value.use(profile) # pylint: disable=maybe-no-member
@@ -222,6 +234,9 @@ class KnownProfiles(Enum):
         if profile_name == "default":
             return cls.default
         for profile in cls:
+            if isinstance(profile.value, ProfileDefinition):
+                value = profile.value.label
+                bo = profile.value.label == profile_name
             if isinstance(profile.value, ProfileDefinition) and profile.value.label == profile_name:
                 return profile
         raise ValueError("No profile called {}".format(profile_name))

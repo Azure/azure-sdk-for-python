@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-from ._profile_definition import KnownProfiles, ProfileDefinition
+from ._profile_definition import KnownProfiles, ProfileDefinition, convert_profile
 from ..exceptions import InvalidMultiApiClientError
 
 
@@ -58,7 +58,7 @@ class MultiApiClientMixin(object):
             self.profile = profile
 
     def _get_api_version(self, operation_group_name):
-        current_profile = self.profile
+        current_profile = convert_profile(self.profile)
         if self.profile is KnownProfiles.default:
             current_profile = KnownProfiles.default.value.definition()
 

@@ -4,6 +4,7 @@
 # license information.
 #--------------------------------------------------------------------------
 from azure.core.profiles import ProfileDefinition, KnownProfiles, MultiApiClientMixin
+from azure.profiles import ProfileDefinition as _ProfileDefinition, KnownProfiles as _KnownProfiles
 
 import pytest
 
@@ -46,15 +47,23 @@ def test_multiapi_client():
     KnownProfiles.default.use(KnownProfiles.v2017_03_09_profile)
     assert client.operations() == "2016-03-30"
 
+    KnownProfiles.default.use(_KnownProfiles.v2017_03_09_profile)
+    assert client.operations() == "2016-03-30"
+
     # I ask explicitly latest, where the default is not that
     client = TestClient(profile=KnownProfiles.latest)
+    assert client.operations() == TestClient.DEFAULT_API_VERSION
+
+    client = TestClient(profile=_KnownProfiles.latest)
     assert client.operations() == TestClient.DEFAULT_API_VERSION
 
     # Bring back default to latest for next tests
     KnownProfiles.default.use(KnownProfiles.latest)
 
+    KnownProfiles.default.use(_KnownProfiles.latest)
+
     # I asked explicily a specific profile, must not be latest
-    client = TestClient(profile=KnownProfiles.v2017_03_09_profile)
+    client = TestClient(profile=_KnownProfiles.v2017_03_09_profile)
     assert client.operations() == "2016-03-30"
 
     # I refuse api_version and profile at the same time
