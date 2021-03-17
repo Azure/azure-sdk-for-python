@@ -11,6 +11,8 @@ class ConfigurationSetting(Model):
     """A configuration value.
     Variables are only populated by the server, and will be ignored when
     sending a request.
+    :ivar value: The value of the configuration setting
+    :vartype value: str
     :ivar etag: Entity tag (etag) of the object
     :vartype etag: str
     :param key:
@@ -106,18 +108,16 @@ class FeatureFlagConfigurationSetting(
     sending a request.
     :ivar etag: Entity tag (etag) of the object
     :vartype etag: str
-    :param key:
-    :type key: str
-    :param enabled:
-    :type enabled: bool
+    :ivar key:
+    :vartype key: str
+    :ivar enabled:
+    :vartype enabled: bool
     :param filters:
     :type filters: list[dict[str, Any]]
     :param label:
     :type label: str
     :param content_type:
     :type content_type: str
-    :param value:
-    :type value: str
     :ivar last_modified:
     :vartype last_modified: datetime
     :ivar read_only:
@@ -137,7 +137,7 @@ class FeatureFlagConfigurationSetting(
         "tags": {"key": "tags", "type": "{str}"},
     }
     key_prefix = ".appconfig.featureflag/"
-    feature_flag_content_type = (
+    _feature_flag_content_type = (
         "application/vnd.microsoft.appconfig.ff+json;charset=utf-8"
     )
     kind = "FeatureFlag"
@@ -214,8 +214,8 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     :vartype etag: str
     :ivar key:
     :vartype key: str
-    :param secret_uri:
-    :type secret_uri: str
+    :ivar secret_uri:
+    :vartype secret_uri: str
     :param label:
     :type label: str
     :param content_type:
