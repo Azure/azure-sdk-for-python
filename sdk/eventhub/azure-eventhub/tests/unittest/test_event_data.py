@@ -116,20 +116,21 @@ def test_pickle_event_data(test_input, expected_result):
     else:
         event_data = EventData(test_input)
         pickled_event_data = pickle.loads(pickle.dumps(event_data))
+        repickled_event_data = pickle.loads(pickle.dumps(pickled_event_data))
         # check that, even if test_input is changed, pickled_event_data doesn't change
         event_data.properties["a"] = "b"
         assert len(event_data.properties) == 1
 
-        # check that pickled event data produces expected result
-        assert pickled_event_data.body_as_str() == expected_result
-        assert pickled_event_data.partition_key is None
-        assert len(pickled_event_data.properties) == 0
-        assert pickled_event_data.enqueued_time is None
-        assert pickled_event_data.offset is None
-        assert pickled_event_data.sequence_number is None
-        assert len(pickled_event_data.system_properties) == 0
-        assert str(pickled_event_data) == "{{ body: '{}', properties: {{}} }}".format(expected_result)
-        assert repr(pickled_event_data) == "EventData(body='{}', properties={{}}, offset=None, sequence_number=None, partition_key=None, enqueued_time=None)".format(expected_result)
+        # check that repickled event data produces expected result
+        assert repickled_event_data.body_as_str() == expected_result
+        assert repickled_event_data.partition_key is None
+        assert len(repickled_event_data.properties) == 0
+        assert repickled_event_data.enqueued_time is None
+        assert repickled_event_data.offset is None
+        assert repickled_event_data.sequence_number is None
+        assert len(repickled_event_data.system_properties) == 0
+        assert str(repickled_event_data) == "{{ body: '{}', properties: {{}} }}".format(expected_result)
+        assert repr(repickled_event_data) == "EventData(body='{}', properties={{}}, offset=None, sequence_number=None, partition_key=None, enqueued_time=None)".format(expected_result)
 
         with pytest.raises(TypeError):
             pickled_event_data.body_as_json()
