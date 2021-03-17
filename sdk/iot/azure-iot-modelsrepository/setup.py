@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 from setuptools import setup, find_packages
+import re
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
@@ -22,12 +23,22 @@ try:
 except ImportError:
     pass
 
+
+# Fetch description
 with open("README.md", "r") as fh:
     _long_description = fh.read()
 
+
+# Fetch version
+with open("azure/iot/modelsrepository/_constants.py", "r") as fh:
+    VERSION = re.search(r"^VERSION\s=\s*[\"']([^\"']*)", fh.read(), re.MULTILINE).group(1)
+if not VERSION:
+    raise RuntimeError("Cannot find version information")
+
+
 setup(
     name="azure-iot-modelsrepository",
-    version="0.0.0-preview",
+    version=VERSION,
     description="Microsoft Azure IoT Models Repository Library",
     license="MIT License",
     author="Microsoft Corporation",

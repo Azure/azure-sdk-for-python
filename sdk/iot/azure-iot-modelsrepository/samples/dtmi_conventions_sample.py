@@ -26,7 +26,6 @@ def sample_get_model_uri():
     print(dtmi_conventions.get_model_uri(dtmi, repo_uri, expanded=True))
     # Prints: "file:///path/to/repository/dtmi/com/example/thermostat-1.expanded.json"
 
-
     # Remote repository example
     repo_uri = "https://contoso.com/models/"
     print(dtmi_conventions.get_model_uri(dtmi, repo_uri))

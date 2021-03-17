@@ -21,6 +21,7 @@ from azure.core.pipeline.policies import (
 from . import (
     _resolver,
     _pseudo_parser,
+    _constants,
 )
 
 
@@ -32,7 +33,6 @@ DEPENDENCY_MODE_ENABLED = "enabled"
 
 # Convention-private constants
 _DEFAULT_LOCATION = "https://devicemodels.azure.com"
-_DEFAULT_API_VERSION = "2021-02-11"
 _REMOTE_PROTOCOLS = ["http", "https"]
 _TRACE_NAMESPACE = "modelsrepository"
 
@@ -86,7 +86,6 @@ class ModelsRepositoryClient(object):
             self.resolution_mode = dependency_resolution
 
         # TODO: Should api_version be a kwarg in the API surface?
-        # api_version = _DEFAULT_API_VERSION if api_version is None else api_version
         kwargs.setdefault("api_verison", api_version)
 
         # NOTE: depending on how this class develops over time, may need to adjust relationship
@@ -153,7 +152,7 @@ class ModelsRepositoryClientConfiguration(Configuration):
         # the default repository's api version stored. Keep this in mind when expanding the
         # scope of the client in the future - perhaps there may need to eventually be unique
         # configs for default repository vs. custom repository endpoints
-        self._api_version = kwargs.get("api_version", _DEFAULT_API_VERSION)
+        self._api_version = kwargs.get("api_version", _constants.DEFAULT_API_VERSION)
 
 
 def _create_fetcher(location, **kwargs):
@@ -203,11 +202,9 @@ def _create_pipeline_client(base_url, **kwargs):
 def _create_config(**kwargs):
     """Creates and returns a ModelsRepositoryConfiguration object"""
     config = ModelsRepositoryClientConfiguration(**kwargs)
-    config.headers_policy = kwargs.get(
-        "headers_policy", HeadersPolicy({"CustomHeader": "Value"}, **kwargs)
-    )
+    config.headers_policy = kwargs.get("headers_policy", HeadersPolicy(**kwargs))
     config.user_agent_policy = kwargs.get(
-        "user_agent_policy", UserAgentPolicy("ServiceUserAgentValue", **kwargs)
+        "user_agent_policy", UserAgentPolicy(_constants.USER_AGENT, **kwargs)
     )
     config.authentication_policy = kwargs.get("authentication_policy")
     config.retry_policy = kwargs.get("retry_policy", RetryPolicy(**kwargs))
