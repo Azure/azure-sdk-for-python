@@ -853,9 +853,9 @@ class JobDetails(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param expected_data_size_in_terabytes: The expected size of the data, which needs to be
+    :param expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
      transferred in this job, in terabytes.
-    :type expected_data_size_in_terabytes: int
+    :type expected_data_size_in_tera_bytes: int
     :ivar job_stages: List of stages that run in the job.
     :vartype job_stages: list[~azure.mgmt.databox.models.JobStages]
     :param contact_details: Required. Contact details for notification and shipping.
@@ -898,7 +898,7 @@ class JobDetails(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
+        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
         'job_stages': {'key': 'jobStages', 'type': '[JobStages]'},
         'contact_details': {'key': 'contactDetails', 'type': 'ContactDetails'},
         'shipping_address': {'key': 'shippingAddress', 'type': 'ShippingAddress'},
@@ -922,7 +922,7 @@ class JobDetails(msrest.serialization.Model):
         **kwargs
     ):
         super(JobDetails, self).__init__(**kwargs)
-        self.expected_data_size_in_terabytes = kwargs.get('expected_data_size_in_terabytes', None)
+        self.expected_data_size_in_tera_bytes = kwargs.get('expected_data_size_in_tera_bytes', None)
         self.job_stages = None
         self.contact_details = kwargs['contact_details']
         self.shipping_address = kwargs['shipping_address']
@@ -944,9 +944,9 @@ class DataBoxDiskJobDetails(JobDetails):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param expected_data_size_in_terabytes: The expected size of the data, which needs to be
+    :param expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
      transferred in this job, in terabytes.
-    :type expected_data_size_in_terabytes: int
+    :type expected_data_size_in_tera_bytes: int
     :ivar job_stages: List of stages that run in the job.
     :vartype job_stages: list[~azure.mgmt.databox.models.JobStages]
     :param contact_details: Required. Contact details for notification and shipping.
@@ -1002,7 +1002,7 @@ class DataBoxDiskJobDetails(JobDetails):
     }
 
     _attribute_map = {
-        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
+        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
         'job_stages': {'key': 'jobStages', 'type': '[JobStages]'},
         'contact_details': {'key': 'contactDetails', 'type': 'ContactDetails'},
         'shipping_address': {'key': 'shippingAddress', 'type': 'ShippingAddress'},
@@ -1161,9 +1161,9 @@ class DataBoxHeavyJobDetails(JobDetails):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param expected_data_size_in_terabytes: The expected size of the data, which needs to be
+    :param expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
      transferred in this job, in terabytes.
-    :type expected_data_size_in_terabytes: int
+    :type expected_data_size_in_tera_bytes: int
     :ivar job_stages: List of stages that run in the job.
     :vartype job_stages: list[~azure.mgmt.databox.models.JobStages]
     :param contact_details: Required. Contact details for notification and shipping.
@@ -1211,7 +1211,7 @@ class DataBoxHeavyJobDetails(JobDetails):
     }
 
     _attribute_map = {
-        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
+        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
         'job_stages': {'key': 'jobStages', 'type': '[JobStages]'},
         'contact_details': {'key': 'contactDetails', 'type': 'ContactDetails'},
         'shipping_address': {'key': 'shippingAddress', 'type': 'ShippingAddress'},
@@ -1327,9 +1327,9 @@ class DataBoxJobDetails(JobDetails):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param expected_data_size_in_terabytes: The expected size of the data, which needs to be
+    :param expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
      transferred in this job, in terabytes.
-    :type expected_data_size_in_terabytes: int
+    :type expected_data_size_in_tera_bytes: int
     :ivar job_stages: List of stages that run in the job.
     :vartype job_stages: list[~azure.mgmt.databox.models.JobStages]
     :param contact_details: Required. Contact details for notification and shipping.
@@ -1377,7 +1377,7 @@ class DataBoxJobDetails(JobDetails):
     }
 
     _attribute_map = {
-        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
+        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
         'job_stages': {'key': 'jobStages', 'type': '[JobStages]'},
         'contact_details': {'key': 'contactDetails', 'type': 'ContactDetails'},
         'shipping_address': {'key': 'shippingAddress', 'type': 'ShippingAddress'},
@@ -1643,8 +1643,8 @@ class DcAccessSecurityCode(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'forward_dc_access_code': {'key': 'forwardDcAccessCode', 'type': 'str'},
-        'reverse_dc_access_code': {'key': 'reverseDcAccessCode', 'type': 'str'},
+        'forward_dc_access_code': {'key': 'forwardDCAccessCode', 'type': 'str'},
+        'reverse_dc_access_code': {'key': 'reverseDCAccessCode', 'type': 'str'},
     }
 
     def __init__(
@@ -1820,21 +1820,21 @@ class DiskScheduleAvailabilityRequest(ScheduleAvailabilityRequest):
     :param sku_name: Required. Sku Name for which the order is to be scheduled.Constant filled by
      server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
     :type sku_name: str or ~azure.mgmt.databox.models.SkuName
-    :param expected_data_size_in_terabytes: Required. The expected size of the data, which needs to
-     be transferred in this job, in terabytes.
-    :type expected_data_size_in_terabytes: int
+    :param expected_data_size_in_tera_bytes: Required. The expected size of the data, which needs
+     to be transferred in this job, in terabytes.
+    :type expected_data_size_in_tera_bytes: int
     """
 
     _validation = {
         'storage_location': {'required': True},
         'sku_name': {'required': True},
-        'expected_data_size_in_terabytes': {'required': True},
+        'expected_data_size_in_tera_bytes': {'required': True},
     }
 
     _attribute_map = {
         'storage_location': {'key': 'storageLocation', 'type': 'str'},
         'sku_name': {'key': 'skuName', 'type': 'str'},
-        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
+        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
     }
 
     def __init__(
@@ -1843,7 +1843,7 @@ class DiskScheduleAvailabilityRequest(ScheduleAvailabilityRequest):
     ):
         super(DiskScheduleAvailabilityRequest, self).__init__(**kwargs)
         self.sku_name = 'DataBoxDisk'  # type: str
-        self.expected_data_size_in_terabytes = kwargs['expected_data_size_in_terabytes']
+        self.expected_data_size_in_tera_bytes = kwargs['expected_data_size_in_tera_bytes']
 
 
 class DiskSecret(msrest.serialization.Model):
@@ -2080,7 +2080,7 @@ class JobResource(Resource):
     :ivar cancellation_reason: Reason for cancellation.
     :vartype cancellation_reason: str
     :param delivery_type: Delivery type of Job. Possible values include: "NonScheduled",
-     "Scheduled".
+     "Scheduled". Default value: "NonScheduled".
     :type delivery_type: str or ~azure.mgmt.databox.models.JobDeliveryType
     :param delivery_info: Delivery Info of Job.
     :type delivery_info: ~azure.mgmt.databox.models.JobDeliveryInfo
@@ -2140,7 +2140,7 @@ class JobResource(Resource):
         self.error = None
         self.details = kwargs.get('details', None)
         self.cancellation_reason = None
-        self.delivery_type = kwargs.get('delivery_type', None)
+        self.delivery_type = kwargs.get('delivery_type', "NonScheduled")
         self.delivery_info = kwargs.get('delivery_info', None)
         self.is_cancellable_without_fee = None
 
@@ -2279,7 +2279,7 @@ class NotificationPreference(msrest.serialization.Model):
     ):
         super(NotificationPreference, self).__init__(**kwargs)
         self.stage_name = kwargs['stage_name']
-        self.send_notification = kwargs['send_notification']
+        self.send_notification = kwargs.get('send_notification', True)
 
 
 class Operation(msrest.serialization.Model):
@@ -2739,7 +2739,7 @@ class ShippingAddress(msrest.serialization.Model):
     :param company_name: Name of the company.
     :type company_name: str
     :param address_type: Type of address. Possible values include: "None", "Residential",
-     "Commercial".
+     "Commercial". Default value: "None".
     :type address_type: str or ~azure.mgmt.databox.models.AddressType
     """
 
@@ -2776,7 +2776,7 @@ class ShippingAddress(msrest.serialization.Model):
         self.postal_code = kwargs['postal_code']
         self.zip_extended_code = kwargs.get('zip_extended_code', None)
         self.company_name = kwargs.get('company_name', None)
-        self.address_type = kwargs.get('address_type', None)
+        self.address_type = kwargs.get('address_type', "None")
 
 
 class Sku(msrest.serialization.Model):

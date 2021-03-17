@@ -142,7 +142,6 @@ class ShareDestinationFormatType(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     PAGE_BLOB = "PageBlob"  #: Azure storage page blob format.
     AZURE_FILE = "AzureFile"  #: Azure storage file format.
     MANAGED_DISK = "ManagedDisk"  #: Azure Compute Disk.
-    AZURE_PREMIUM_FILES = "AzurePremiumFiles"  #: Azure storage Premium Files format.
 
 class SkuDisabledReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Reason why the Sku is disabled.

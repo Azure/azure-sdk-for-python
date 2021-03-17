@@ -1054,11 +1054,11 @@ class JobDetails(msrest.serialization.Model):
     :vartype reverse_shipment_label_sas_key: str
     :ivar chain_of_custody_sas_key: Shared access key to download the chain of custody logs.
     :vartype chain_of_custody_sas_key: str
-    :ivar key_encryption_key: Details about which key encryption type is being used.
-    :vartype key_encryption_key: ~azure.mgmt.databox.models.KeyEncryptionKey
-    :param expected_data_size_in_terabytes: The expected size of the data, which needs to be
+    :param key_encryption_key: Details about which key encryption type is being used.
+    :type key_encryption_key: ~azure.mgmt.databox.models.KeyEncryptionKey
+    :param expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
      transferred in this job, in terabytes.
-    :type expected_data_size_in_terabytes: int
+    :type expected_data_size_in_tera_bytes: int
     """
 
     _validation = {
@@ -1070,7 +1070,6 @@ class JobDetails(msrest.serialization.Model):
         'copy_log_details': {'readonly': True},
         'reverse_shipment_label_sas_key': {'readonly': True},
         'chain_of_custody_sas_key': {'readonly': True},
-        'key_encryption_key': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1087,7 +1086,7 @@ class JobDetails(msrest.serialization.Model):
         'reverse_shipment_label_sas_key': {'key': 'reverseShipmentLabelSasKey', 'type': 'str'},
         'chain_of_custody_sas_key': {'key': 'chainOfCustodySasKey', 'type': 'str'},
         'key_encryption_key': {'key': 'keyEncryptionKey', 'type': 'KeyEncryptionKey'},
-        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
+        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
     }
 
     _subtype_map = {
@@ -1111,8 +1110,8 @@ class JobDetails(msrest.serialization.Model):
         self.copy_log_details = None
         self.reverse_shipment_label_sas_key = None
         self.chain_of_custody_sas_key = None
-        self.key_encryption_key = None
-        self.expected_data_size_in_terabytes = kwargs.get('expected_data_size_in_terabytes', None)
+        self.key_encryption_key = kwargs.get('key_encryption_key', None)
+        self.expected_data_size_in_tera_bytes = kwargs.get('expected_data_size_in_tera_bytes', None)
 
 
 class DataBoxDiskJobDetails(JobDetails):
@@ -1147,11 +1146,11 @@ class DataBoxDiskJobDetails(JobDetails):
     :vartype reverse_shipment_label_sas_key: str
     :ivar chain_of_custody_sas_key: Shared access key to download the chain of custody logs.
     :vartype chain_of_custody_sas_key: str
-    :ivar key_encryption_key: Details about which key encryption type is being used.
-    :vartype key_encryption_key: ~azure.mgmt.databox.models.KeyEncryptionKey
-    :param expected_data_size_in_terabytes: The expected size of the data, which needs to be
+    :param key_encryption_key: Details about which key encryption type is being used.
+    :type key_encryption_key: ~azure.mgmt.databox.models.KeyEncryptionKey
+    :param expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
      transferred in this job, in terabytes.
-    :type expected_data_size_in_terabytes: int
+    :type expected_data_size_in_tera_bytes: int
     :param preferred_disks: User preference on what size disks are needed for the job. The map is
      from the disk size in TB to the count. Eg. {2,5} means 5 disks of 2 TB size. Key is string but
      will be checked against an int.
@@ -1174,7 +1173,6 @@ class DataBoxDiskJobDetails(JobDetails):
         'copy_log_details': {'readonly': True},
         'reverse_shipment_label_sas_key': {'readonly': True},
         'chain_of_custody_sas_key': {'readonly': True},
-        'key_encryption_key': {'readonly': True},
         'copy_progress': {'readonly': True},
         'disks_and_size_details': {'readonly': True},
     }
@@ -1193,7 +1191,7 @@ class DataBoxDiskJobDetails(JobDetails):
         'reverse_shipment_label_sas_key': {'key': 'reverseShipmentLabelSasKey', 'type': 'str'},
         'chain_of_custody_sas_key': {'key': 'chainOfCustodySasKey', 'type': 'str'},
         'key_encryption_key': {'key': 'keyEncryptionKey', 'type': 'KeyEncryptionKey'},
-        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
+        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
         'preferred_disks': {'key': 'preferredDisks', 'type': '{int}'},
         'copy_progress': {'key': 'copyProgress', 'type': '[DataBoxDiskCopyProgress]'},
         'disks_and_size_details': {'key': 'disksAndSizeDetails', 'type': '{int}'},
@@ -1384,11 +1382,11 @@ class DataBoxHeavyJobDetails(JobDetails):
     :vartype reverse_shipment_label_sas_key: str
     :ivar chain_of_custody_sas_key: Shared access key to download the chain of custody logs.
     :vartype chain_of_custody_sas_key: str
-    :ivar key_encryption_key: Details about which key encryption type is being used.
-    :vartype key_encryption_key: ~azure.mgmt.databox.models.KeyEncryptionKey
-    :param expected_data_size_in_terabytes: The expected size of the data, which needs to be
+    :param key_encryption_key: Details about which key encryption type is being used.
+    :type key_encryption_key: ~azure.mgmt.databox.models.KeyEncryptionKey
+    :param expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
      transferred in this job, in terabytes.
-    :type expected_data_size_in_terabytes: int
+    :type expected_data_size_in_tera_bytes: int
     :ivar copy_progress: Copy progress per account.
     :vartype copy_progress: list[~azure.mgmt.databox.models.CopyProgress]
     :param device_password: Set Device password for unlocking Databox Heavy. Should not be passed
@@ -1409,7 +1407,6 @@ class DataBoxHeavyJobDetails(JobDetails):
         'copy_log_details': {'readonly': True},
         'reverse_shipment_label_sas_key': {'readonly': True},
         'chain_of_custody_sas_key': {'readonly': True},
-        'key_encryption_key': {'readonly': True},
         'copy_progress': {'readonly': True},
     }
 
@@ -1427,7 +1424,7 @@ class DataBoxHeavyJobDetails(JobDetails):
         'reverse_shipment_label_sas_key': {'key': 'reverseShipmentLabelSasKey', 'type': 'str'},
         'chain_of_custody_sas_key': {'key': 'chainOfCustodySasKey', 'type': 'str'},
         'key_encryption_key': {'key': 'keyEncryptionKey', 'type': 'KeyEncryptionKey'},
-        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
+        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
         'copy_progress': {'key': 'copyProgress', 'type': '[CopyProgress]'},
         'device_password': {'key': 'devicePassword', 'type': 'str'},
     }
@@ -1561,11 +1558,11 @@ class DataBoxJobDetails(JobDetails):
     :vartype reverse_shipment_label_sas_key: str
     :ivar chain_of_custody_sas_key: Shared access key to download the chain of custody logs.
     :vartype chain_of_custody_sas_key: str
-    :ivar key_encryption_key: Details about which key encryption type is being used.
-    :vartype key_encryption_key: ~azure.mgmt.databox.models.KeyEncryptionKey
-    :param expected_data_size_in_terabytes: The expected size of the data, which needs to be
+    :param key_encryption_key: Details about which key encryption type is being used.
+    :type key_encryption_key: ~azure.mgmt.databox.models.KeyEncryptionKey
+    :param expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
      transferred in this job, in terabytes.
-    :type expected_data_size_in_terabytes: int
+    :type expected_data_size_in_tera_bytes: int
     :ivar copy_progress: Copy progress per storage account.
     :vartype copy_progress: list[~azure.mgmt.databox.models.CopyProgress]
     :param device_password: Set Device password for unlocking Databox. Should not be passed for
@@ -1586,7 +1583,6 @@ class DataBoxJobDetails(JobDetails):
         'copy_log_details': {'readonly': True},
         'reverse_shipment_label_sas_key': {'readonly': True},
         'chain_of_custody_sas_key': {'readonly': True},
-        'key_encryption_key': {'readonly': True},
         'copy_progress': {'readonly': True},
     }
 
@@ -1604,7 +1600,7 @@ class DataBoxJobDetails(JobDetails):
         'reverse_shipment_label_sas_key': {'key': 'reverseShipmentLabelSasKey', 'type': 'str'},
         'chain_of_custody_sas_key': {'key': 'chainOfCustodySasKey', 'type': 'str'},
         'key_encryption_key': {'key': 'keyEncryptionKey', 'type': 'KeyEncryptionKey'},
-        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
+        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
         'copy_progress': {'key': 'copyProgress', 'type': '[CopyProgress]'},
         'device_password': {'key': 'devicePassword', 'type': 'str'},
     }
@@ -1790,7 +1786,7 @@ class DataExportDetails(msrest.serialization.Model):
     :param transfer_configuration: Required. Configuration for the data transfer.
     :type transfer_configuration: ~azure.mgmt.databox.models.TransferConfiguration
     :param log_collection_level: Level of the logs to be collected. Possible values include:
-     "Error", "Verbose".
+     "Error", "Verbose". Default value: "Error".
     :type log_collection_level: str or ~azure.mgmt.databox.models.LogCollectionLevel
     :param account_details: Required. Account details of the data to be transferred.
     :type account_details: ~azure.mgmt.databox.models.DataAccountDetails
@@ -1813,7 +1809,7 @@ class DataExportDetails(msrest.serialization.Model):
     ):
         super(DataExportDetails, self).__init__(**kwargs)
         self.transfer_configuration = kwargs['transfer_configuration']
-        self.log_collection_level = kwargs.get('log_collection_level', None)
+        self.log_collection_level = kwargs.get('log_collection_level', "Error")
         self.account_details = kwargs['account_details']
 
 
@@ -1970,8 +1966,8 @@ class DcAccessSecurityCode(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'reverse_dc_access_code': {'key': 'reverseDcAccessCode', 'type': 'str'},
-        'forward_dc_access_code': {'key': 'forwardDcAccessCode', 'type': 'str'},
+        'reverse_dc_access_code': {'key': 'reverseDCAccessCode', 'type': 'str'},
+        'forward_dc_access_code': {'key': 'forwardDCAccessCode', 'type': 'str'},
     }
 
     def __init__(
@@ -2026,22 +2022,22 @@ class DiskScheduleAvailabilityRequest(ScheduleAvailabilityRequest):
     :type sku_name: str or ~azure.mgmt.databox.models.SkuName
     :param country: Country in which storage location should be supported.
     :type country: str
-    :param expected_data_size_in_terabytes: Required. The expected size of the data, which needs to
-     be transferred in this job, in terabytes.
-    :type expected_data_size_in_terabytes: int
+    :param expected_data_size_in_tera_bytes: Required. The expected size of the data, which needs
+     to be transferred in this job, in terabytes.
+    :type expected_data_size_in_tera_bytes: int
     """
 
     _validation = {
         'storage_location': {'required': True},
         'sku_name': {'required': True},
-        'expected_data_size_in_terabytes': {'required': True},
+        'expected_data_size_in_tera_bytes': {'required': True},
     }
 
     _attribute_map = {
         'storage_location': {'key': 'storageLocation', 'type': 'str'},
         'sku_name': {'key': 'skuName', 'type': 'str'},
         'country': {'key': 'country', 'type': 'str'},
-        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
+        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
     }
 
     def __init__(
@@ -2050,7 +2046,7 @@ class DiskScheduleAvailabilityRequest(ScheduleAvailabilityRequest):
     ):
         super(DiskScheduleAvailabilityRequest, self).__init__(**kwargs)
         self.sku_name = 'DataBoxDisk'  # type: str
-        self.expected_data_size_in_terabytes = kwargs['expected_data_size_in_terabytes']
+        self.expected_data_size_in_tera_bytes = kwargs['expected_data_size_in_tera_bytes']
 
 
 class DiskSecret(msrest.serialization.Model):
@@ -2088,7 +2084,7 @@ class EncryptionPreferences(msrest.serialization.Model):
     """Preferences related to the Encryption.
 
     :param double_encryption: Defines secondary layer of software-based encryption enablement.
-     Possible values include: "Enabled", "Disabled".
+     Possible values include: "Enabled", "Disabled". Default value: "Disabled".
     :type double_encryption: str or ~azure.mgmt.databox.models.DoubleEncryption
     """
 
@@ -2101,7 +2097,7 @@ class EncryptionPreferences(msrest.serialization.Model):
         **kwargs
     ):
         super(EncryptionPreferences, self).__init__(**kwargs)
-        self.double_encryption = kwargs.get('double_encryption', None)
+        self.double_encryption = kwargs.get('double_encryption', "Disabled")
 
 
 class ErrorDetail(msrest.serialization.Model):
@@ -2317,6 +2313,8 @@ class JobResource(Resource):
     :vartype id: str
     :ivar type: Type of the object.
     :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.databox.models.SystemData
     :param transfer_type: Required. Type of the data transfer. Possible values include:
      "ImportToAzure", "ExportFromAzure".
     :type transfer_type: str or ~azure.mgmt.databox.models.TransferType
@@ -2343,7 +2341,7 @@ class JobResource(Resource):
     :ivar cancellation_reason: Reason for cancellation.
     :vartype cancellation_reason: str
     :param delivery_type: Delivery type of Job. Possible values include: "NonScheduled",
-     "Scheduled".
+     "Scheduled". Default value: "NonScheduled".
     :type delivery_type: str or ~azure.mgmt.databox.models.JobDeliveryType
     :param delivery_info: Delivery Info of Job.
     :type delivery_info: ~azure.mgmt.databox.models.JobDeliveryInfo
@@ -2357,6 +2355,7 @@ class JobResource(Resource):
         'name': {'readonly': True},
         'id': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'transfer_type': {'required': True},
         'is_cancellable': {'readonly': True},
         'is_deletable': {'readonly': True},
@@ -2377,6 +2376,7 @@ class JobResource(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'transfer_type': {'key': 'properties.transferType', 'type': 'str'},
         'is_cancellable': {'key': 'properties.isCancellable', 'type': 'bool'},
         'is_deletable': {'key': 'properties.isDeletable', 'type': 'bool'},
@@ -2400,6 +2400,7 @@ class JobResource(Resource):
         self.name = None
         self.id = None
         self.type = None
+        self.system_data = None
         self.transfer_type = kwargs['transfer_type']
         self.is_cancellable = None
         self.is_deletable = None
@@ -2410,7 +2411,7 @@ class JobResource(Resource):
         self.error = None
         self.details = kwargs.get('details', None)
         self.cancellation_reason = None
-        self.delivery_type = kwargs.get('delivery_type', None)
+        self.delivery_type = kwargs.get('delivery_type', "NonScheduled")
         self.delivery_info = kwargs.get('delivery_info', None)
         self.is_cancellable_without_fee = None
 
@@ -2523,7 +2524,7 @@ class KeyEncryptionKey(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param kek_type: Required. Type of encryption key used for key encryption. Possible values
-     include: "MicrosoftManaged", "CustomerManaged".
+     include: "MicrosoftManaged", "CustomerManaged". Default value: "MicrosoftManaged".
     :type kek_type: str or ~azure.mgmt.databox.models.KekType
     :param identity_properties: Managed identity properties used for key encryption.
     :type identity_properties: ~azure.mgmt.databox.models.IdentityProperties
@@ -2550,7 +2551,7 @@ class KeyEncryptionKey(msrest.serialization.Model):
         **kwargs
     ):
         super(KeyEncryptionKey, self).__init__(**kwargs)
-        self.kek_type = kwargs['kek_type']
+        self.kek_type = kwargs.get('kek_type', "MicrosoftManaged")
         self.identity_properties = kwargs.get('identity_properties', None)
         self.kek_url = kwargs.get('kek_url', None)
         self.kek_vault_resource_id = kwargs.get('kek_vault_resource_id', None)
@@ -2629,7 +2630,7 @@ class NotificationPreference(msrest.serialization.Model):
     ):
         super(NotificationPreference, self).__init__(**kwargs)
         self.stage_name = kwargs['stage_name']
-        self.send_notification = kwargs['send_notification']
+        self.send_notification = kwargs.get('send_notification', True)
 
 
 class Operation(msrest.serialization.Model):
@@ -2966,7 +2967,7 @@ class ResourceIdentity(msrest.serialization.Model):
         **kwargs
     ):
         super(ResourceIdentity, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
+        self.type = kwargs.get('type', "None")
         self.principal_id = None
         self.tenant_id = None
         self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
@@ -3005,7 +3006,7 @@ class ShareCredentialDetails(msrest.serialization.Model):
     :ivar share_name: Name of the share.
     :vartype share_name: str
     :ivar share_type: Type of the share. Possible values include: "UnknownType", "HCS",
-     "BlockBlob", "PageBlob", "AzureFile", "ManagedDisk", "AzurePremiumFiles".
+     "BlockBlob", "PageBlob", "AzureFile", "ManagedDisk".
     :vartype share_type: str or ~azure.mgmt.databox.models.ShareDestinationFormatType
     :ivar user_name: User name for the share.
     :vartype user_name: str
@@ -3135,7 +3136,7 @@ class ShippingAddress(msrest.serialization.Model):
     :param company_name: Name of the company.
     :type company_name: str
     :param address_type: Type of address. Possible values include: "None", "Residential",
-     "Commercial".
+     "Commercial". Default value: "None".
     :type address_type: str or ~azure.mgmt.databox.models.AddressType
     """
 
@@ -3171,7 +3172,7 @@ class ShippingAddress(msrest.serialization.Model):
         self.postal_code = kwargs.get('postal_code', None)
         self.zip_extended_code = kwargs.get('zip_extended_code', None)
         self.company_name = kwargs.get('company_name', None)
-        self.address_type = kwargs.get('address_type', None)
+        self.address_type = kwargs.get('address_type', "None")
 
 
 class Sku(msrest.serialization.Model):
@@ -3539,6 +3540,58 @@ class SubscriptionIsAllowedToCreateJobValidationResponseProperties(ValidationInp
         super(SubscriptionIsAllowedToCreateJobValidationResponseProperties, self).__init__(**kwargs)
         self.validation_type = 'ValidateSubscriptionIsAllowedToCreateJob'  # type: str
         self.status = None
+
+
+class SystemData(msrest.serialization.Model):
+    """Provides details about resource creation and update time.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar created_by: A string identifier for the identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource: user, application,
+     managedIdentity.
+    :vartype created_by_type: str
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: A string identifier for the identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource: user,
+     application, managedIdentity.
+    :vartype last_modified_by_type: str
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _validation = {
+        'created_by': {'readonly': True},
+        'created_by_type': {'readonly': True},
+        'created_at': {'readonly': True},
+        'last_modified_by': {'readonly': True},
+        'last_modified_by_type': {'readonly': True},
+        'last_modified_at': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = None
+        self.created_by_type = None
+        self.created_at = None
+        self.last_modified_by = None
+        self.last_modified_by_type = None
+        self.last_modified_at = None
 
 
 class TransferAllDetails(msrest.serialization.Model):

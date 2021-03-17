@@ -292,15 +292,15 @@ class CopyLogDetails(msrest.serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: DataBoxAccountCopyLogDetails, DataBoxDiskCopyLogDetails, DataBoxHeavyAccountCopyLogDetails.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar copy_log_details_type: Indicates the type of job details.Constant filled by server.
-     Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :vartype copy_log_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    :param copy_log_details_type: Required. Indicates the type of job details.Constant filled by
+     server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
+    :type copy_log_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
     """
 
     _validation = {
-        'copy_log_details_type': {'readonly': True},
+        'copy_log_details_type': {'required': True},
     }
 
     _attribute_map = {
@@ -374,9 +374,11 @@ class DataBoxAccountCopyLogDetails(CopyLogDetails):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar copy_log_details_type: Indicates the type of job details.Constant filled by server.
-     Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :vartype copy_log_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :param copy_log_details_type: Required. Indicates the type of job details.Constant filled by
+     server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
+    :type copy_log_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
     :ivar account_name: Destination account name.
     :vartype account_name: str
     :ivar copy_log_link: Link for copy logs.
@@ -384,7 +386,7 @@ class DataBoxAccountCopyLogDetails(CopyLogDetails):
     """
 
     _validation = {
-        'copy_log_details_type': {'readonly': True},
+        'copy_log_details_type': {'required': True},
         'account_name': {'readonly': True},
         'copy_log_link': {'readonly': True},
     }
@@ -410,9 +412,11 @@ class DataBoxDiskCopyLogDetails(CopyLogDetails):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar copy_log_details_type: Indicates the type of job details.Constant filled by server.
-     Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :vartype copy_log_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :param copy_log_details_type: Required. Indicates the type of job details.Constant filled by
+     server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
+    :type copy_log_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
     :ivar disk_serial_number: Disk Serial Number.
     :vartype disk_serial_number: str
     :ivar error_log_link: Link for copy error logs.
@@ -422,7 +426,7 @@ class DataBoxDiskCopyLogDetails(CopyLogDetails):
     """
 
     _validation = {
-        'copy_log_details_type': {'readonly': True},
+        'copy_log_details_type': {'required': True},
         'disk_serial_number': {'readonly': True},
         'error_log_link': {'readonly': True},
         'verbose_log_link': {'readonly': True},
@@ -683,15 +687,15 @@ class JobSecrets(msrest.serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: DataboxJobSecrets, DataBoxDiskJobSecrets, DataBoxHeavyJobSecrets.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar job_secrets_type: Used to indicate what type of job secrets object.Constant filled by
-     server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :vartype job_secrets_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    :param job_secrets_type: Required. Used to indicate what type of job secrets object.Constant
+     filled by server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
+    :type job_secrets_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
     """
 
     _validation = {
-        'job_secrets_type': {'readonly': True},
+        'job_secrets_type': {'required': True},
     }
 
     _attribute_map = {
@@ -715,9 +719,11 @@ class DataBoxDiskJobSecrets(JobSecrets):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar job_secrets_type: Used to indicate what type of job secrets object.Constant filled by
-     server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :vartype job_secrets_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :param job_secrets_type: Required. Used to indicate what type of job secrets object.Constant
+     filled by server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
+    :type job_secrets_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
     :ivar disk_secrets: Contains the list of secrets object for that device.
     :vartype disk_secrets: list[~azure.mgmt.databox.models.DiskSecret]
     :ivar pass_key: PassKey for the disk Job.
@@ -727,7 +733,7 @@ class DataBoxDiskJobSecrets(JobSecrets):
     """
 
     _validation = {
-        'job_secrets_type': {'readonly': True},
+        'job_secrets_type': {'required': True},
         'disk_secrets': {'readonly': True},
         'pass_key': {'readonly': True},
         'is_passkey_user_defined': {'readonly': True},
@@ -756,9 +762,11 @@ class DataBoxHeavyAccountCopyLogDetails(CopyLogDetails):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar copy_log_details_type: Indicates the type of job details.Constant filled by server.
-     Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :vartype copy_log_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :param copy_log_details_type: Required. Indicates the type of job details.Constant filled by
+     server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
+    :type copy_log_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
     :ivar account_name: Destination account name.
     :vartype account_name: str
     :ivar copy_log_link: Link for copy logs.
@@ -766,7 +774,7 @@ class DataBoxHeavyAccountCopyLogDetails(CopyLogDetails):
     """
 
     _validation = {
-        'copy_log_details_type': {'readonly': True},
+        'copy_log_details_type': {'required': True},
         'account_name': {'readonly': True},
         'copy_log_link': {'readonly': True},
     }
@@ -872,15 +880,17 @@ class DataBoxHeavyJobSecrets(JobSecrets):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar job_secrets_type: Used to indicate what type of job secrets object.Constant filled by
-     server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :vartype job_secrets_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :param job_secrets_type: Required. Used to indicate what type of job secrets object.Constant
+     filled by server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
+    :type job_secrets_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
     :ivar cabinet_pod_secrets: Contains the list of secret objects for a DataBoxHeavy job.
     :vartype cabinet_pod_secrets: list[~azure.mgmt.databox.models.DataBoxHeavySecret]
     """
 
     _validation = {
-        'job_secrets_type': {'readonly': True},
+        'job_secrets_type': {'required': True},
         'cabinet_pod_secrets': {'readonly': True},
     }
 
@@ -1027,17 +1037,17 @@ class DataBoxJobDetails(JobDetails):
 class DataboxJobSecrets(JobSecrets):
     """The secrets related to a DataBox job.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar job_secrets_type: Used to indicate what type of job secrets object.Constant filled by
-     server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :vartype job_secrets_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    :param job_secrets_type: Required. Used to indicate what type of job secrets object.Constant
+     filled by server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
+    :type job_secrets_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
     :param pod_secrets: Contains the list of secret objects for a job.
     :type pod_secrets: list[~azure.mgmt.databox.models.DataBoxSecret]
     """
 
     _validation = {
-        'job_secrets_type': {'readonly': True},
+        'job_secrets_type': {'required': True},
     }
 
     _attribute_map = {
@@ -1608,7 +1618,7 @@ class NotificationPreference(msrest.serialization.Model):
     ):
         super(NotificationPreference, self).__init__(**kwargs)
         self.stage_name = kwargs['stage_name']
-        self.send_notification = kwargs['send_notification']
+        self.send_notification = kwargs.get('send_notification', True)
 
 
 class Operation(msrest.serialization.Model):
@@ -1904,7 +1914,7 @@ class ShippingAddress(msrest.serialization.Model):
     :param company_name: Name of the company.
     :type company_name: str
     :param address_type: Type of address. Possible values include: "None", "Residential",
-     "Commercial".
+     "Commercial". Default value: "None".
     :type address_type: str or ~azure.mgmt.databox.models.AddressType
     """
 
@@ -1941,7 +1951,7 @@ class ShippingAddress(msrest.serialization.Model):
         self.postal_code = kwargs['postal_code']
         self.zip_extended_code = kwargs.get('zip_extended_code', None)
         self.company_name = kwargs.get('company_name', None)
-        self.address_type = kwargs.get('address_type', None)
+        self.address_type = kwargs.get('address_type', "None")
 
 
 class Sku(msrest.serialization.Model):

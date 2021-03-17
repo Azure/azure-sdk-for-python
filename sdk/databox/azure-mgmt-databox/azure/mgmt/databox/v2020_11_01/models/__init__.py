@@ -90,6 +90,7 @@ try:
     from ._models_py3 import StorageAccountDetails
     from ._models_py3 import SubscriptionIsAllowedToCreateJobValidationRequest
     from ._models_py3 import SubscriptionIsAllowedToCreateJobValidationResponseProperties
+    from ._models_py3 import SystemData
     from ._models_py3 import TransferAllDetails
     from ._models_py3 import TransferConfiguration
     from ._models_py3 import TransferConfigurationTransferAllDetails
@@ -193,6 +194,7 @@ except (SyntaxError, ImportError):
     from ._models import StorageAccountDetails  # type: ignore
     from ._models import SubscriptionIsAllowedToCreateJobValidationRequest  # type: ignore
     from ._models import SubscriptionIsAllowedToCreateJobValidationResponseProperties  # type: ignore
+    from ._models import SystemData  # type: ignore
     from ._models import TransferAllDetails  # type: ignore
     from ._models import TransferConfiguration  # type: ignore
     from ._models import TransferConfigurationTransferAllDetails  # type: ignore
@@ -323,6 +325,7 @@ __all__ = [
     'StorageAccountDetails',
     'SubscriptionIsAllowedToCreateJobValidationRequest',
     'SubscriptionIsAllowedToCreateJobValidationResponseProperties',
+    'SystemData',
     'TransferAllDetails',
     'TransferConfiguration',
     'TransferConfigurationTransferAllDetails',

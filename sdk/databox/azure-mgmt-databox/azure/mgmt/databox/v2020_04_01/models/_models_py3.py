@@ -1102,9 +1102,9 @@ class JobDetails(msrest.serialization.Model):
     :vartype chain_of_custody_sas_key: str
     :ivar key_encryption_key: Details about which key encryption type is being used.
     :vartype key_encryption_key: ~azure.mgmt.databox.models.KeyEncryptionKey
-    :param expected_data_size_in_terabytes: The expected size of the data, which needs to be
+    :param expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
      transferred in this job, in terabytes.
-    :type expected_data_size_in_terabytes: int
+    :type expected_data_size_in_tera_bytes: int
     """
 
     _validation = {
@@ -1133,7 +1133,7 @@ class JobDetails(msrest.serialization.Model):
         'reverse_shipment_label_sas_key': {'key': 'reverseShipmentLabelSasKey', 'type': 'str'},
         'chain_of_custody_sas_key': {'key': 'chainOfCustodySasKey', 'type': 'str'},
         'key_encryption_key': {'key': 'keyEncryptionKey', 'type': 'KeyEncryptionKey'},
-        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
+        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
     }
 
     _subtype_map = {
@@ -1148,7 +1148,7 @@ class JobDetails(msrest.serialization.Model):
         data_import_details: Optional[List["DataImportDetails"]] = None,
         data_export_details: Optional[List["DataExportDetails"]] = None,
         preferences: Optional["Preferences"] = None,
-        expected_data_size_in_terabytes: Optional[int] = None,
+        expected_data_size_in_tera_bytes: Optional[int] = None,
         **kwargs
     ):
         super(JobDetails, self).__init__(**kwargs)
@@ -1165,7 +1165,7 @@ class JobDetails(msrest.serialization.Model):
         self.reverse_shipment_label_sas_key = None
         self.chain_of_custody_sas_key = None
         self.key_encryption_key = None
-        self.expected_data_size_in_terabytes = expected_data_size_in_terabytes
+        self.expected_data_size_in_tera_bytes = expected_data_size_in_tera_bytes
 
 
 class DataBoxDiskJobDetails(JobDetails):
@@ -1202,9 +1202,9 @@ class DataBoxDiskJobDetails(JobDetails):
     :vartype chain_of_custody_sas_key: str
     :ivar key_encryption_key: Details about which key encryption type is being used.
     :vartype key_encryption_key: ~azure.mgmt.databox.models.KeyEncryptionKey
-    :param expected_data_size_in_terabytes: The expected size of the data, which needs to be
+    :param expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
      transferred in this job, in terabytes.
-    :type expected_data_size_in_terabytes: int
+    :type expected_data_size_in_tera_bytes: int
     :param preferred_disks: User preference on what size disks are needed for the job. The map is
      from the disk size in TB to the count. Eg. {2,5} means 5 disks of 2 TB size. Key is string but
      will be checked against an int.
@@ -1246,7 +1246,7 @@ class DataBoxDiskJobDetails(JobDetails):
         'reverse_shipment_label_sas_key': {'key': 'reverseShipmentLabelSasKey', 'type': 'str'},
         'chain_of_custody_sas_key': {'key': 'chainOfCustodySasKey', 'type': 'str'},
         'key_encryption_key': {'key': 'keyEncryptionKey', 'type': 'KeyEncryptionKey'},
-        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
+        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
         'preferred_disks': {'key': 'preferredDisks', 'type': '{int}'},
         'copy_progress': {'key': 'copyProgress', 'type': '[DataBoxDiskCopyProgress]'},
         'disks_and_size_details': {'key': 'disksAndSizeDetails', 'type': '{int}'},
@@ -1261,12 +1261,12 @@ class DataBoxDiskJobDetails(JobDetails):
         data_import_details: Optional[List["DataImportDetails"]] = None,
         data_export_details: Optional[List["DataExportDetails"]] = None,
         preferences: Optional["Preferences"] = None,
-        expected_data_size_in_terabytes: Optional[int] = None,
+        expected_data_size_in_tera_bytes: Optional[int] = None,
         preferred_disks: Optional[Dict[str, int]] = None,
         passkey: Optional[str] = None,
         **kwargs
     ):
-        super(DataBoxDiskJobDetails, self).__init__(contact_details=contact_details, shipping_address=shipping_address, data_import_details=data_import_details, data_export_details=data_export_details, preferences=preferences, expected_data_size_in_terabytes=expected_data_size_in_terabytes, **kwargs)
+        super(DataBoxDiskJobDetails, self).__init__(contact_details=contact_details, shipping_address=shipping_address, data_import_details=data_import_details, data_export_details=data_export_details, preferences=preferences, expected_data_size_in_tera_bytes=expected_data_size_in_tera_bytes, **kwargs)
         self.job_details_type = 'DataBoxDisk'  # type: str
         self.preferred_disks = preferred_disks
         self.copy_progress = None
@@ -1448,9 +1448,9 @@ class DataBoxHeavyJobDetails(JobDetails):
     :vartype chain_of_custody_sas_key: str
     :ivar key_encryption_key: Details about which key encryption type is being used.
     :vartype key_encryption_key: ~azure.mgmt.databox.models.KeyEncryptionKey
-    :param expected_data_size_in_terabytes: The expected size of the data, which needs to be
+    :param expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
      transferred in this job, in terabytes.
-    :type expected_data_size_in_terabytes: int
+    :type expected_data_size_in_tera_bytes: int
     :ivar copy_progress: Copy progress per account.
     :vartype copy_progress: list[~azure.mgmt.databox.models.CopyProgress]
     :param device_password: Set Device password for unlocking Databox Heavy. Should not be passed
@@ -1489,7 +1489,7 @@ class DataBoxHeavyJobDetails(JobDetails):
         'reverse_shipment_label_sas_key': {'key': 'reverseShipmentLabelSasKey', 'type': 'str'},
         'chain_of_custody_sas_key': {'key': 'chainOfCustodySasKey', 'type': 'str'},
         'key_encryption_key': {'key': 'keyEncryptionKey', 'type': 'KeyEncryptionKey'},
-        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
+        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
         'copy_progress': {'key': 'copyProgress', 'type': '[CopyProgress]'},
         'device_password': {'key': 'devicePassword', 'type': 'str'},
     }
@@ -1502,11 +1502,11 @@ class DataBoxHeavyJobDetails(JobDetails):
         data_import_details: Optional[List["DataImportDetails"]] = None,
         data_export_details: Optional[List["DataExportDetails"]] = None,
         preferences: Optional["Preferences"] = None,
-        expected_data_size_in_terabytes: Optional[int] = None,
+        expected_data_size_in_tera_bytes: Optional[int] = None,
         device_password: Optional[str] = None,
         **kwargs
     ):
-        super(DataBoxHeavyJobDetails, self).__init__(contact_details=contact_details, shipping_address=shipping_address, data_import_details=data_import_details, data_export_details=data_export_details, preferences=preferences, expected_data_size_in_terabytes=expected_data_size_in_terabytes, **kwargs)
+        super(DataBoxHeavyJobDetails, self).__init__(contact_details=contact_details, shipping_address=shipping_address, data_import_details=data_import_details, data_export_details=data_export_details, preferences=preferences, expected_data_size_in_tera_bytes=expected_data_size_in_tera_bytes, **kwargs)
         self.job_details_type = 'DataBoxHeavy'  # type: str
         self.copy_progress = None
         self.device_password = device_password
@@ -1633,9 +1633,9 @@ class DataBoxJobDetails(JobDetails):
     :vartype chain_of_custody_sas_key: str
     :ivar key_encryption_key: Details about which key encryption type is being used.
     :vartype key_encryption_key: ~azure.mgmt.databox.models.KeyEncryptionKey
-    :param expected_data_size_in_terabytes: The expected size of the data, which needs to be
+    :param expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
      transferred in this job, in terabytes.
-    :type expected_data_size_in_terabytes: int
+    :type expected_data_size_in_tera_bytes: int
     :ivar copy_progress: Copy progress per storage account.
     :vartype copy_progress: list[~azure.mgmt.databox.models.CopyProgress]
     :param device_password: Set Device password for unlocking Databox. Should not be passed for
@@ -1674,7 +1674,7 @@ class DataBoxJobDetails(JobDetails):
         'reverse_shipment_label_sas_key': {'key': 'reverseShipmentLabelSasKey', 'type': 'str'},
         'chain_of_custody_sas_key': {'key': 'chainOfCustodySasKey', 'type': 'str'},
         'key_encryption_key': {'key': 'keyEncryptionKey', 'type': 'KeyEncryptionKey'},
-        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
+        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
         'copy_progress': {'key': 'copyProgress', 'type': '[CopyProgress]'},
         'device_password': {'key': 'devicePassword', 'type': 'str'},
     }
@@ -1687,11 +1687,11 @@ class DataBoxJobDetails(JobDetails):
         data_import_details: Optional[List["DataImportDetails"]] = None,
         data_export_details: Optional[List["DataExportDetails"]] = None,
         preferences: Optional["Preferences"] = None,
-        expected_data_size_in_terabytes: Optional[int] = None,
+        expected_data_size_in_tera_bytes: Optional[int] = None,
         device_password: Optional[str] = None,
         **kwargs
     ):
-        super(DataBoxJobDetails, self).__init__(contact_details=contact_details, shipping_address=shipping_address, data_import_details=data_import_details, data_export_details=data_export_details, preferences=preferences, expected_data_size_in_terabytes=expected_data_size_in_terabytes, **kwargs)
+        super(DataBoxJobDetails, self).__init__(contact_details=contact_details, shipping_address=shipping_address, data_import_details=data_import_details, data_export_details=data_export_details, preferences=preferences, expected_data_size_in_tera_bytes=expected_data_size_in_tera_bytes, **kwargs)
         self.job_details_type = 'DataBox'  # type: str
         self.copy_progress = None
         self.device_password = device_password
@@ -1876,7 +1876,7 @@ class DataExportDetails(msrest.serialization.Model):
     :param transfer_configuration: Required. Configuration for the data transfer.
     :type transfer_configuration: ~azure.mgmt.databox.models.TransferConfiguration
     :param log_collection_level: Level of the logs to be collected. Possible values include:
-     "Error", "Verbose".
+     "Error", "Verbose". Default value: "Error".
     :type log_collection_level: str or ~azure.mgmt.databox.models.LogCollectionLevel
     :param account_details: Required. Account details of the data to be transferred.
     :type account_details: ~azure.mgmt.databox.models.DataAccountDetails
@@ -1898,7 +1898,7 @@ class DataExportDetails(msrest.serialization.Model):
         *,
         transfer_configuration: "TransferConfiguration",
         account_details: "DataAccountDetails",
-        log_collection_level: Optional[Union[str, "LogCollectionLevel"]] = None,
+        log_collection_level: Optional[Union[str, "LogCollectionLevel"]] = "Error",
         **kwargs
     ):
         super(DataExportDetails, self).__init__(**kwargs)
@@ -2067,8 +2067,8 @@ class DcAccessSecurityCode(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'reverse_dc_access_code': {'key': 'reverseDcAccessCode', 'type': 'str'},
-        'forward_dc_access_code': {'key': 'forwardDcAccessCode', 'type': 'str'},
+        'reverse_dc_access_code': {'key': 'reverseDCAccessCode', 'type': 'str'},
+        'forward_dc_access_code': {'key': 'forwardDCAccessCode', 'type': 'str'},
     }
 
     def __init__(
@@ -2129,35 +2129,35 @@ class DiskScheduleAvailabilityRequest(ScheduleAvailabilityRequest):
     :type sku_name: str or ~azure.mgmt.databox.models.SkuName
     :param country: Country in which storage location should be supported.
     :type country: str
-    :param expected_data_size_in_terabytes: Required. The expected size of the data, which needs to
-     be transferred in this job, in terabytes.
-    :type expected_data_size_in_terabytes: int
+    :param expected_data_size_in_tera_bytes: Required. The expected size of the data, which needs
+     to be transferred in this job, in terabytes.
+    :type expected_data_size_in_tera_bytes: int
     """
 
     _validation = {
         'storage_location': {'required': True},
         'sku_name': {'required': True},
-        'expected_data_size_in_terabytes': {'required': True},
+        'expected_data_size_in_tera_bytes': {'required': True},
     }
 
     _attribute_map = {
         'storage_location': {'key': 'storageLocation', 'type': 'str'},
         'sku_name': {'key': 'skuName', 'type': 'str'},
         'country': {'key': 'country', 'type': 'str'},
-        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
+        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
     }
 
     def __init__(
         self,
         *,
         storage_location: str,
-        expected_data_size_in_terabytes: int,
+        expected_data_size_in_tera_bytes: int,
         country: Optional[str] = None,
         **kwargs
     ):
         super(DiskScheduleAvailabilityRequest, self).__init__(storage_location=storage_location, country=country, **kwargs)
         self.sku_name = 'DataBoxDisk'  # type: str
-        self.expected_data_size_in_terabytes = expected_data_size_in_terabytes
+        self.expected_data_size_in_tera_bytes = expected_data_size_in_tera_bytes
 
 
 class DiskSecret(msrest.serialization.Model):
@@ -2425,7 +2425,7 @@ class JobResource(Resource):
     :ivar cancellation_reason: Reason for cancellation.
     :vartype cancellation_reason: str
     :param delivery_type: Delivery type of Job. Possible values include: "NonScheduled",
-     "Scheduled".
+     "Scheduled". Default value: "NonScheduled".
     :type delivery_type: str or ~azure.mgmt.databox.models.JobDeliveryType
     :param delivery_info: Delivery Info of Job.
     :type delivery_info: ~azure.mgmt.databox.models.JobDeliveryInfo
@@ -2483,7 +2483,7 @@ class JobResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         identity: Optional["ResourceIdentity"] = None,
         details: Optional["JobDetails"] = None,
-        delivery_type: Optional[Union[str, "JobDeliveryType"]] = None,
+        delivery_type: Optional[Union[str, "JobDeliveryType"]] = "NonScheduled",
         delivery_info: Optional["JobDeliveryInfo"] = None,
         **kwargs
     ):
@@ -2621,7 +2621,7 @@ class KeyEncryptionKey(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param kek_type: Required. Type of encryption key used for key encryption. Possible values
-     include: "MicrosoftManaged", "CustomerManaged".
+     include: "MicrosoftManaged", "CustomerManaged". Default value: "MicrosoftManaged".
     :type kek_type: str or ~azure.mgmt.databox.models.KekType
     :param kek_url: Key encryption key. It is required in case of Customer managed KekType.
     :type kek_url: str
@@ -2643,7 +2643,7 @@ class KeyEncryptionKey(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        kek_type: Union[str, "KekType"],
+        kek_type: Union[str, "KekType"] = "MicrosoftManaged",
         kek_url: Optional[str] = None,
         kek_vault_resource_id: Optional[str] = None,
         **kwargs
@@ -2729,7 +2729,7 @@ class NotificationPreference(msrest.serialization.Model):
         self,
         *,
         stage_name: Union[str, "NotificationStageName"],
-        send_notification: bool,
+        send_notification: bool = True,
         **kwargs
     ):
         super(NotificationPreference, self).__init__(**kwargs)
@@ -3256,7 +3256,7 @@ class ShippingAddress(msrest.serialization.Model):
     :param company_name: Name of the company.
     :type company_name: str
     :param address_type: Type of address. Possible values include: "None", "Residential",
-     "Commercial".
+     "Commercial". Default value: "None".
     :type address_type: str or ~azure.mgmt.databox.models.AddressType
     """
 
@@ -3291,7 +3291,7 @@ class ShippingAddress(msrest.serialization.Model):
         state_or_province: Optional[str] = None,
         zip_extended_code: Optional[str] = None,
         company_name: Optional[str] = None,
-        address_type: Optional[Union[str, "AddressType"]] = None,
+        address_type: Optional[Union[str, "AddressType"]] = "None",
         **kwargs
     ):
         super(ShippingAddress, self).__init__(**kwargs)
