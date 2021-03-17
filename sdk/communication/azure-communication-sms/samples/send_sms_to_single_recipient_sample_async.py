@@ -7,65 +7,52 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sms_sample_async.py
+FILE: send_sms_to_single_recipient_sample_async.py
 DESCRIPTION:
-    These samples demonstrate sending mutiple sms messages and resending 
-    any failed messages.
-    
-    ///authenticating a client via a connection string
+    This sample demonstrates sending an SMS message to a single recipient. The SMS client is 
+    authenticated a client using a connection string.
 USAGE:
-    python sms_sample_async.py
+    python send_sms_to_single_recipient_sample_async.py
+    Set the environment variable with your own value before running the sample:
+    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - the connection string in your ACS account
 """
 
+import os
 import sys
 import asyncio
 from azure.communication.sms.aio import SmsClient
 
 sys.path.append("..")
 
-class SmsSamples(object):
+class SmsSingleRecipientSampleAsync(object):
 
-    async def send_sms_async(self):
-        connection_string = "COMMUNICATION_SERVICES_CONNECTION_STRING"
-        sms_client = SmsClient.from_connection_string(connection_string)
+    connection_string = os.getenv("AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING")
+    
+    async def send_sms_to_single_recipient_async(self):
+        sms_client = SmsClient.from_connection_string(self.connection_string)
 
         async with sms_client:
             try:
                 # calling send() with sms values 
                 sms_responses = await sms_client.send(
                     from_="<leased-phone-number>",
-                    to=["<to-phone-number-1>", "<to-phone-number-2>", "<to-phone-number-3>"],
+                    to="<to-phone-number>",
                     message="Hello World via SMS",
                     enable_delivery_report=True, # optional property
                     tag="custom-tag") # optional property
-            except Exception:
-                print(Exception)
-                pass
-
-            failed_recipients = []
-            for sms_response in sms_responses:
+                sms_response = sms_responses[0]
+        
                 if (sms_response.successful):
                     print("Message with message id {} was successful sent to {}"
                     .format(sms_response.message_id, sms_response.to))
                 else:
                     print("Message failed to send to {} with the status code {} and error: {}"
                     .format(sms_response.to, sms_response.http_status_code, sms_response.error_message))
-                    if (sms_response.http_status_code != 400):
-                        failed_recipients.append(sms_response.to)
-            
-            try:
-                # calling send() with failed recipients
-                sms_responses = await sms_client.send(
-                    from_="<leased-phone-number>",
-                    to=failed_recipients,
-                    message="Hello World via SMS",
-                    enable_delivery_report=True, # optional property
-                    tag="custom-tag") # optional property
             except Exception:
                 print(Exception)
                 pass
 
 if __name__ == '__main__':
-    sample = SmsSamples()
+    sample = SmsSingleRecipientSampleAsync()
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(sample.send_sms_async())
+    loop.run_until_complete(sample.send_sms_to_single_recipient_async())

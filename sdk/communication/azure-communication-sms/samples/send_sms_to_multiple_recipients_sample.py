@@ -7,27 +7,28 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sms_sample.py
+FILE: send_sms_to_multiple_recipients_sample.py
 DESCRIPTION:
-    These samples demonstrate sending mutiple sms messages and resending 
-    any failed messages.
-    
-    ///authenticating a client via a connection string
+    This sample demonstrates sending an SMS message to multiple recipients. The SMS client is 
+    authenticated a client using a connection string.
 USAGE:
-    python sms_sample.py
+    python send_sms_to_multiple_recipients_sample.py
+    Set the environment variable with your own value before running the sample:
+    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - the connection string in your ACS account
 """
 
+import os
 import sys
 from azure.communication.sms import SmsClient
 
 sys.path.append("..")
 
-class SmsSamples(object):
+class SmsMultipleRecipientsSample(object):
 
-    def send_sms(self):
-        connection_string = "COMMUNICATION_SERVICES_CONNECTION_STRING"
-
-        sms_client = SmsClient.from_connection_string(connection_string)
+    connection_string = os.getenv("AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING")
+        
+    def send_sms_to_multiple_recipients(self):
+        sms_client = SmsClient.from_connection_string(self.connection_string)
 
         # calling send() with sms values
         sms_responses = sms_client.send(
@@ -37,7 +38,6 @@ class SmsSamples(object):
             enable_delivery_report=True, # optional property
             tag="custom-tag") # optional property
         
-        failed_recipients = []
         for sms_response in sms_responses:
             if (sms_response.successful):
                 print("Message with message id {} was successful sent to {}"
@@ -45,17 +45,7 @@ class SmsSamples(object):
             else:
                 print("Message failed to send to {} with the status code {} and error: {}"
                 .format(sms_response.to, sms_response.http_status_code, sms_response.error_message))
-                if (sms_response.http_status_code != 400):
-                    failed_recipients.append(sms_response.to)
-        
-        # calling send() with failed recipients
-        sms_responses = sms_client.send(
-            from_="<leased-phone-number>",
-            to=failed_recipients,
-            message="Hello World via SMS",
-            enable_delivery_report=True, # optional property
-            tag="custom-tag") # optional property
 
 if __name__ == '__main__':
-    sample = SmsSamples()
-    sample.send_sms()
+    sample = SmsMultipleRecipientsSample()
+    sample.send_sms_to_multiple_recipients()
