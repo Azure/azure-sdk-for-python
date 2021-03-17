@@ -190,9 +190,7 @@ class FeatureFlagConfigurationSetting(
             u"id": self.key,
             u"description": self.description,
             u"enabled": self.enabled,
-            u"conditions": {
-                u"client_filters": self.filters
-            },
+            u"conditions": {u"client_filters": self.filters},
         }
         value = json.dumps(value)
 
