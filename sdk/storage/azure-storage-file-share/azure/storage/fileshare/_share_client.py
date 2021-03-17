@@ -31,7 +31,7 @@ from ._generated.models import (
     DeleteSnapshotsOptionType,
     SharePermission)
 from ._deserialize import deserialize_share_properties, deserialize_permission_key, deserialize_permission
-from ._serialize import get_api_version
+from ._serialize import get_api_version, get_access_conditions
 from ._directory_client import ShareDirectoryClient
 from ._file_client import ShareFileClient
 from ._lease import ShareLeaseClient
@@ -265,14 +265,14 @@ class ShareClient(StorageAccountHostsMixin):
             _pipeline=_pipeline, _location_mode=self._location_mode)
 
     @distributed_trace
-    def _acquire_lease(self, lease_duration=-1, lease_id=None, **kwargs):
+    def acquire_lease(self, lease_duration=-1, lease_id=None, **kwargs):
         # type: (int, Optional[str], **Any) -> ShareLeaseClient
         """Requests a new lease.
 
         If the share does not have an active lease, the Share
         Service creates a lease on the share and returns a new lease.
 
-        .. versionadded:: 12.6.0
+        .. versionadded:: 12.5.0
 
         :param int lease_duration:
             Specifies the duration of the lease, in seconds, or negative one
@@ -317,7 +317,7 @@ class ShareClient(StorageAccountHostsMixin):
             Possible values: 'TransactionOptimized', 'Hot', 'Cool'
         :paramtype access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
 
-            .. versionadded:: 12.6.0
+            .. versionadded:: 12.4.0
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -423,6 +423,13 @@ class ShareClient(StorageAccountHostsMixin):
 
         :param bool delete_snapshots:
             Indicates if snapshots are to be deleted.
+        :keyword lease:
+            Required if the share has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+
+            .. versionadded:: 12.5.0
+            This keyword argument was introduced in API version '2020-08-04'.
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
 
@@ -435,6 +442,7 @@ class ShareClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Deletes the share and any snapshots.
         """
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         delete_include = None
         if delete_snapshots:
@@ -443,6 +451,7 @@ class ShareClient(StorageAccountHostsMixin):
             self._client.share.delete(
                 timeout=timeout,
                 sharesnapshot=self.snapshot,
+                lease_access_conditions=access_conditions,
                 delete_snapshots=delete_include,
                 **kwargs)
         except HttpResponseError as error:
@@ -457,6 +466,13 @@ class ShareClient(StorageAccountHostsMixin):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword lease:
+            Required if the share has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+
+            .. versionadded:: 12.5.0
+            This keyword argument was introduced in API version '2020-08-04'.
+
         :returns: The share properties.
         :rtype: ~azure.storage.fileshare.ShareProperties
 
@@ -469,12 +485,14 @@ class ShareClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Gets the share properties.
         """
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         try:
             props = self._client.share.get_properties(
                 timeout=timeout,
                 sharesnapshot=self.snapshot,
                 cls=deserialize_share_properties,
+                lease_access_conditions=access_conditions,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -492,6 +510,13 @@ class ShareClient(StorageAccountHostsMixin):
             Must be greater than 0, and less than or equal to 5TB.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword lease:
+            Required if the share has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+
+            .. versionadded:: 12.5.0
+            This keyword argument was introduced in API version '2020-08-04'.
+
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -504,12 +529,14 @@ class ShareClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Sets the share quota.
         """
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         try:
             return self._client.share.set_properties( # type: ignore
                 timeout=timeout,
                 quota=quota,
                 access_tier=None,
+                lease_access_conditions=access_conditions,
                 cls=return_response_headers,
                 **kwargs)
         except HttpResponseError as error:
@@ -520,7 +547,7 @@ class ShareClient(StorageAccountHostsMixin):
         # type: (Any) ->  Dict[str, Any]
         """Sets the share properties.
 
-        .. versionadded:: 12.6.0
+        .. versionadded:: 12.4.0
 
         :keyword access_tier:
             Specifies the access tier of the share.
@@ -535,6 +562,9 @@ class ShareClient(StorageAccountHostsMixin):
             Root squash to set on the share.
             Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
         :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
+        :keyword lease:
+            Required if the share has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -547,6 +577,7 @@ class ShareClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Sets the share properties.
         """
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         access_tier = kwargs.pop('access_tier', None)
         quota = kwargs.pop('quota', None)
@@ -559,6 +590,7 @@ class ShareClient(StorageAccountHostsMixin):
                 quota=quota,
                 access_tier=access_tier,
                 root_squash=root_squash,
+                lease_access_conditions=access_conditions,
                 cls=return_response_headers,
                 **kwargs)
         except HttpResponseError as error:
@@ -578,6 +610,13 @@ class ShareClient(StorageAccountHostsMixin):
         :type metadata: dict(str, str)
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword lease:
+            Required if the share has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+
+            .. versionadded:: 12.5.0
+            This keyword argument was introduced in API version '2020-08-04'.
+
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -590,6 +629,7 @@ class ShareClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Sets the share metadata.
         """
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
@@ -598,6 +638,7 @@ class ShareClient(StorageAccountHostsMixin):
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
+                lease_access_conditions=access_conditions,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -610,14 +651,23 @@ class ShareClient(StorageAccountHostsMixin):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword lease:
+            Required if the share has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+
+            .. versionadded:: 12.5.0
+            This keyword argument was introduced in API version '2020-08-04'.
+
         :returns: Access policy information in a dict.
         :rtype: dict[str, Any]
         """
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         try:
             response, identifiers = self._client.share.get_access_policy(
                 timeout=timeout,
                 cls=return_headers_and_deserialized,
+                lease_access_conditions=access_conditions,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -640,9 +690,17 @@ class ShareClient(StorageAccountHostsMixin):
         :type signed_identifiers: dict(str, :class:`~azure.storage.fileshare.AccessPolicy`)
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword lease:
+            Required if the share has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+
+            .. versionadded:: 12.5.0
+            This keyword argument was introduced in API version '2020-08-04'.
+
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         if len(signed_identifiers) > 5:
             raise ValueError(
@@ -660,6 +718,7 @@ class ShareClient(StorageAccountHostsMixin):
                 share_acl=signed_identifiers or None,
                 timeout=timeout,
                 cls=return_response_headers,
+                lease_access_conditions=access_conditions,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -674,13 +733,22 @@ class ShareClient(StorageAccountHostsMixin):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword lease:
+            Required if the share has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+
+            .. versionadded:: 12.5.0
+            This keyword argument was introduced in API version '2020-08-04'.
+
         :return: The approximate size of the data (in bytes) stored on the share.
         :rtype: int
         """
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         try:
             stats = self._client.share.get_statistics(
                 timeout=timeout,
+                lease_access_conditions=access_conditions,
                 **kwargs)
             return stats.share_usage_bytes # type: ignore
         except HttpResponseError as error:
