@@ -1,5 +1,9 @@
 # Release History
 
+## 0.3.0 (2021-03-17)
+
+change_log.py: error: the following arguments are required: latest
+
 ## 0.2.0 (2020-03-25)
 
 **Features**
