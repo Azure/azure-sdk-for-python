@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 16 Mar 2021 18:02:17 GMT
+      - Wed, 17 Mar 2021 15:00:58 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
