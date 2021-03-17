@@ -100,9 +100,31 @@ sms_responses = sms_client.send(
 
 
 ## Troubleshooting
-The Azure Communication Service SMS client will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md).
+SMS operations will throw an exception if the request to the server fails. The SMS client will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md). Exceptions will not be thrown if the error is caused by an individual message, only if something fails with the overall request. Please use the successful flag to validate each individual result to verify if the message was sent.
+
+```Python
+try:
+    sms_responses = sms_client.send(
+        from_="<leased-phone-number>",
+        to=["<to-phone-number-1>", "<to-phone-number-2>", "<to-phone-number-3>"],
+        message="Hello World via SMS")
+        
+    for sms_response in sms_responses:
+        if (sms_response.successful):
+            print("Message with message id {} was successful sent to {}"
+            .format(sms_response.message_id, sms_response.to))
+        else:
+            print("Message failed to send to {} with the status code {} and error: {}"
+            .format(sms_response.to, sms_response.http_status_code, sms_response.error_message))
+except Exception as ex:
+    print('Exception:')
+    print(ex)
+```
 
 ## Next steps
+- [Read more about SMS in Azure Communication Services][next_steps]
+- For a basic guide on how to configure Delivery Reporting for your SMS messages please refer to the [Handle SMS Events quickstart][handle_sms_events].
+
 ### More sample code
 
 Please take a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/communication/azure-communication-sms/samples) directory for detailed examples of how to use this library to send an sms.
@@ -124,3 +146,5 @@ For more information see the [Code of Conduct FAQ](https://opensource.microsoft.
 
 <!-- LINKS -->
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
+[handle_sms_events]: https://docs.microsoft.com/azure/communication-services/quickstarts/telephony-sms/handle-sms-events
+[next_steps]:https://docs.microsoft.com/azure/communication-services/quickstarts/telephony-sms/send?pivots=programming-language-python
