@@ -198,6 +198,12 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         :return: The PipelineResponse object
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
+        try:
+            # if users used a protocol layer HttpRequest
+            # we switch to it's wrapped pipeline transport HttpRequest
+            request = request._internal_request  # type: ignore
+        except AttributeError:
+            pass
         self._prepare_multipart(request)
         context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(
