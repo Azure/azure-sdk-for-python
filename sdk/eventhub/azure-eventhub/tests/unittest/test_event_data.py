@@ -153,7 +153,7 @@ def test_pickle_app_properties():
     assert repr(pickled_event_data) == "EventData(body='', properties={'a': 'b'}, offset=None, sequence_number=None, partition_key=None, enqueued_time=None)"
     assert pickled_event_data.properties["a"] == "b"
 
-def test_pickle_sys_properties():
+def test_pickled_twice_sys_properties():
     properties = uamqp.message.MessageProperties()
     properties.message_id = "message_id"
     properties.user_id = "user_id"
@@ -172,18 +172,19 @@ def test_pickle_sys_properties():
     message.annotations = {_common.PROP_OFFSET: "@latest"}
     ed = EventData._from_message(message)  # type: EventData
     pickle_ed = pickle.loads(pickle.dumps(ed))
+    repickle_ed = pickle.loads(pickle.dumps(pickle_ed))
 
-    assert pickle_ed.system_properties[_common.PROP_OFFSET] == "@latest"
-    assert pickle_ed.system_properties[_common.PROP_CORRELATION_ID] == properties.correlation_id
-    assert pickle_ed.system_properties[_common.PROP_MESSAGE_ID] == properties.message_id
-    assert pickle_ed.system_properties[_common.PROP_CONTENT_ENCODING] == properties.content_encoding
-    assert pickle_ed.system_properties[_common.PROP_CONTENT_TYPE] == properties.content_type
-    assert pickle_ed.system_properties[_common.PROP_USER_ID] == properties.user_id
-    assert pickle_ed.system_properties[_common.PROP_TO] == properties.to
-    assert pickle_ed.system_properties[_common.PROP_SUBJECT] == properties.subject
-    assert pickle_ed.system_properties[_common.PROP_REPLY_TO] == properties.reply_to
-    assert pickle_ed.system_properties[_common.PROP_ABSOLUTE_EXPIRY_TIME] == properties.absolute_expiry_time
-    assert pickle_ed.system_properties[_common.PROP_CREATION_TIME] == properties.creation_time
-    assert pickle_ed.system_properties[_common.PROP_GROUP_ID] == properties.group_id
-    assert pickle_ed.system_properties[_common.PROP_GROUP_SEQUENCE] == properties.group_sequence
-    assert pickle_ed.system_properties[_common.PROP_REPLY_TO_GROUP_ID] == properties.reply_to_group_id
+    assert repickle_ed.system_properties[_common.PROP_OFFSET] == "@latest"
+    assert repickle_ed.system_properties[_common.PROP_CORRELATION_ID] == properties.correlation_id
+    assert repickle_ed.system_properties[_common.PROP_MESSAGE_ID] == properties.message_id
+    assert repickle_ed.system_properties[_common.PROP_CONTENT_ENCODING] == properties.content_encoding
+    assert repickle_ed.system_properties[_common.PROP_CONTENT_TYPE] == properties.content_type
+    assert repickle_ed.system_properties[_common.PROP_USER_ID] == properties.user_id
+    assert repickle_ed.system_properties[_common.PROP_TO] == properties.to
+    assert repickle_ed.system_properties[_common.PROP_SUBJECT] == properties.subject
+    assert repickle_ed.system_properties[_common.PROP_REPLY_TO] == properties.reply_to
+    assert repickle_ed.system_properties[_common.PROP_ABSOLUTE_EXPIRY_TIME] == properties.absolute_expiry_time
+    assert repickle_ed.system_properties[_common.PROP_CREATION_TIME] == properties.creation_time
+    assert repickle_ed.system_properties[_common.PROP_GROUP_ID] == properties.group_id
+    assert repickle_ed.system_properties[_common.PROP_GROUP_SEQUENCE] == properties.group_sequence
+    assert repickle_ed.system_properties[_common.PROP_REPLY_TO_GROUP_ID] == properties.reply_to_group_id
