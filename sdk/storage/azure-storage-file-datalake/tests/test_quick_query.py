@@ -17,7 +17,6 @@ from azure.storage.filedatalake import (
 
 from testcase import (
     StorageTestCase,
-    TestMode,
     DataLakePreparer)
 # ------------------------------------------------------------------------------
 from azure.storage.filedatalake import DataLakeServiceClient

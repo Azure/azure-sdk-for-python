@@ -17,7 +17,6 @@ from azure.storage.blob._shared.base_client import _format_shared_key_credential
 from azure.storage.filedatalake import DataLakeServiceClient
 from testcase import (
     StorageTestCase,
-    TestMode,
     DataLakePreparer)
 
 # ------------------------------------------------------------------------------

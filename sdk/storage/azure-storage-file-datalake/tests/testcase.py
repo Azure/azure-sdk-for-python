@@ -52,24 +52,6 @@ DataLakePreparer = functools.partial(
     datalake_storage_account_key="NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg=="
 )
 
-class TestMode(object):
-    none = 'None'.lower() # this will be for unit test, no need for any recordings
-    playback = 'Playback'.lower() # run against stored recordings
-    record = 'Record'.lower() # run tests against live storage and update recordings
-    run_live_no_record = 'RunLiveNoRecord'.lower() # run tests against live storage without altering recordings
-
-    @staticmethod
-    def is_playback(mode):
-        return mode == TestMode.playback
-
-    @staticmethod
-    def need_recording_file(mode):
-        return mode == TestMode.playback or mode == TestMode.record
-
-    @staticmethod
-    def need_real_credentials(mode):
-        return mode == TestMode.run_live_no_record or mode == TestMode.record
-
 
 class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
@@ -97,33 +79,16 @@ class XMSRequestIDBody(RecordingProcessor):
 
         return response
 
-class StorageTestCase(AzureTestCase):
 
+class StorageTestCase(AzureTestCase):
     def __init__(self, *args, **kwargs):
         super(StorageTestCase, self).__init__(*args, **kwargs)
         self.replay_processors.append(XMSRequestIDBody())
         self.logger = logging.getLogger('azure.storage')
         self.configure_logging()
 
-    # def setUp(self):
-    #     self.working_folder = os.path.dirname(__file__)
-    #     self.test_mode = TestMode.record if self.is_live else TestMode.playback
-    #
-    #     # example of qualified test name:
-    #     # test_mgmt_network.test_public_ip_addresses
-    #     _, filename = os.path.split(inspect.getsourcefile(type(self)))
-    #     name, _ = os.path.splitext(filename)
-    #     self.qualified_test_name = '{0}.{1}'.format(
-    #         name,
-    #         self._testMethodName,
-    #     )
-    #
-    #     self.logger = logging.getLogger('azure.storage')
-    #     # enable logging if desired
-    #     self.configure_logging()
-
     def configure_logging(self):
-        self.enable_logging() if True else self.disable_logging()
+        self.enable_logging() if os.environ.get('ENABLE_LOGGING', False) else self.disable_logging()
 
     def enable_logging(self):
         handler = logging.StreamHandler()
@@ -141,9 +106,6 @@ class StorageTestCase(AzureTestCase):
     def sleep(self, seconds):
         if not self.is_playback():
             time.sleep(seconds)
-
-    # def is_playback(self):
-    #     return not self.is_live
 
     def get_resource_name(self, prefix=''):
         # Append a suffix to the name, based on the fully qualified test name
@@ -227,143 +189,12 @@ class StorageTestCase(AzureTestCase):
                     repr(item_name), repr(container))
                 self.fail(self._formatMessage(msg, standardMsg))
 
-    # def recording(self):
-    #     if TestMode.need_recording_file(self.test_mode):
-    #         cassette_name = '{0}.yaml'.format(self.qualified_test_name)
-    #
-    #         my_vcr = vcr.VCR(
-    #             before_record_request = self._scrub_sensitive_request_info,
-    #             before_record_response = self._scrub_sensitive_response_info,
-    #             record_mode = 'none' if TestMode.is_playback(self.test_mode) else 'all'
-    #         )
-    #
-    #         self.assertIsNotNone(self.working_folder)
-    #         return my_vcr.use_cassette(
-    #             os.path.join(self.working_folder, 'recordings', cassette_name),
-    #             filter_headers=['authorization'],
-    #         )
-    #     else:
-    #         @contextmanager
-    #         def _nop_context_manager():
-    #             yield
-    #         return _nop_context_manager()
-    def assert_upload_progress(self, size, max_chunk_size, progress, unknown_size=False):
-        '''Validates that the progress chunks align with our chunking procedure.'''
-        index = 0
-        total = None if unknown_size else size
-        small_chunk_size = size % max_chunk_size
-        self.assertEqual(len(progress), math.ceil(size / max_chunk_size))
-        for i in progress:
-            self.assertTrue(i[0] % max_chunk_size == 0 or i[0] % max_chunk_size == small_chunk_size)
-            self.assertEqual(i[1], total)
-
-    def assert_download_progress(self, size, max_chunk_size, max_get_size, progress):
-        '''Validates that the progress chunks align with our chunking procedure.'''
-        if size <= max_get_size:
-            self.assertEqual(len(progress), 1)
-            self.assertTrue(progress[0][0], size)
-            self.assertTrue(progress[0][1], size)
-        else:
-            small_chunk_size = (size - max_get_size) % max_chunk_size
-            self.assertEqual(len(progress), 1 + math.ceil((size - max_get_size) / max_chunk_size))
-
-            self.assertTrue(progress[0][0], max_get_size)
-            self.assertTrue(progress[0][1], size)
-            for i in progress[1:]:
-                self.assertTrue(i[0] % max_chunk_size == 0 or i[0] % max_chunk_size == small_chunk_size)
-                self.assertEqual(i[1], size)
-
-    def is_file_encryption_enabled(self):
-        return self.settings.IS_SERVER_SIDE_FILE_ENCRYPTION_ENABLED
-
     def generate_oauth_token(self):
         if self.is_live:
             from azure.identity import ClientSecretCredential
-            self.logger.debug("tenant_id, %r, client_id, %r, client_sec, %r",
-                self.get_settings_value("TENANT_ID"),
-                self.get_settings_value("CLIENT_ID"),
-                self.get_settings_value("CLIENT_SECRET"),)
             return ClientSecretCredential(
                 self.get_settings_value("TENANT_ID"),
                 self.get_settings_value("CLIENT_ID"),
                 self.get_settings_value("CLIENT_SECRET"),
             )
         return self.generate_fake_token()
-
-    def generate_fake_token(self):
-        return FakeTokenCredential()
-
-
-# def record(test):
-#     def recording_test(self):
-#         with self.recording():
-#             test(self)
-#     recording_test.__name__ = test.__name__
-#     return recording_test
-
-
-def not_for_emulator(test):
-    def skip_test_if_targeting_emulator(self):
-        test(self)
-    return skip_test_if_targeting_emulator
-
-
-class RetryCounter(object):
-    def __init__(self):
-        self.count = 0
-
-    def simple_count(self, retry_context):
-        self.count += 1
-
-
-class ResponseCallback(object):
-    def __init__(self, status=None, new_status=None):
-        self.status = status
-        self.new_status = new_status
-        self.first = True
-        self.count = 0
-
-    def override_first_status(self, response):
-        if self.first and response.http_response.status_code == self.status:
-            response.http_response.status_code = self.new_status
-            self.first = False
-        self.count += 1
-
-    def override_status(self, response):
-        if response.http_response.status_code == self.status:
-            response.http_response.status_code = self.new_status
-        self.count += 1
-
-
-class LogCaptured(object):
-    def __init__(self, test_case=None):
-        # accept the test case so that we may reset logging after capturing logs
-        self.test_case = test_case
-
-    def __enter__(self):
-        # enable logging
-        # it is possible that the global logging flag is turned off
-        self.test_case.enable_logging()
-
-        # create a string stream to send the logs to
-        self.log_stream = StringIO()
-
-        # the handler needs to be stored so that we can remove it later
-        self.handler = logging.StreamHandler(self.log_stream)
-        self.handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
-
-        # get and enable the logger to send the outputs to the string stream
-        self.logger = logging.getLogger('azure.storage.blob')
-        self.logger.level = logging.DEBUG
-        self.logger.addHandler(self.handler)
-
-        # the stream is returned to the user so that the capture logs can be retrieved
-        return self.log_stream
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        # stop the handler, and close the stream to exit
-        self.logger.removeHandler(self.handler)
-        self.log_stream.close()
-
-        # reset logging since we messed with the setting
-        self.test_case.configure_logging()

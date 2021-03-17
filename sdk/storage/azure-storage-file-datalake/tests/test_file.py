@@ -21,7 +21,6 @@ from azure.storage.filedatalake import ContentSettings, generate_account_sas, ge
 from azure.storage.filedatalake import DataLakeServiceClient
 from testcase import (
     StorageTestCase,
-    TestMode,
     DataLakePreparer)
 
 # ------------------------------------------------------------------------------
