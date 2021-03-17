@@ -63,13 +63,13 @@ class ConfigurationSetting(Model):
             return None
         if key_value.content_type is not None:
             if key_value.content_type.startswith(
-                FeatureFlagConfigurationSetting.feature_flag_content_type
+                FeatureFlagConfigurationSetting._feature_flag_content_type
             ):
                 return FeatureFlagConfigurationSetting._from_generated(  # pylint: disable=protected-access
                     key_value
                 )
             if key_value.content_type.startswith(
-                SecretReferenceConfigurationSetting.secret_reference_content_type
+                SecretReferenceConfigurationSetting._secret_reference_content_type
             ):
                 return SecretReferenceConfigurationSetting._from_generated(  # pylint: disable=protected-access
                     key_value
@@ -150,7 +150,7 @@ class FeatureFlagConfigurationSetting(
             self.key = self.key_prefix + key
         self.enabled = enabled
         self.label = kwargs.get("label", None)
-        self.content_type = kwargs.get("content_type", self.feature_flag_content_type)
+        self.content_type = kwargs.get("content_type", self._feature_flag_content_type)
         self.last_modified = kwargs.get("last_modified", None)
         self.tags = kwargs.get("tags", {})
         self.read_only = kwargs.get("read_only", None)
@@ -162,27 +162,30 @@ class FeatureFlagConfigurationSetting(
     @classmethod
     def _from_generated(cls, key_value):
         # type: (KeyValue) -> FeatureFlagConfigurationSetting
-        if key_value is None:
-            return None
-        if key_value.value:
-            try:
-                key_value.value = json.loads(key_value.value)
-            except json.decoder.JSONDecodeError:
-                pass
+        try:
+            if key_value is None:
+                return None
+            if key_value.value:
+                try:
+                    key_value.value = json.loads(key_value.value)
+                except json.decoder.JSONDecodeError:
+                    pass
 
-        filters = key_value.value["conditions"]["client_filters"]
+            filters = key_value.value["conditions"]["client_filters"]
 
-        return cls(
-            key=key_value.key,
-            enabled=key_value.value["enabled"],
-            label=key_value.label,
-            content_type=key_value.content_type,
-            last_modified=key_value.last_modified,
-            tags=key_value.tags,
-            read_only=key_value.locked,
-            etag=key_value.etag,
-            filters=filters,
-        )
+            return cls(
+                key=key_value.key,
+                enabled=key_value.value["enabled"],
+                label=key_value.label,
+                content_type=key_value.content_type,
+                last_modified=key_value.last_modified,
+                tags=key_value.tags,
+                read_only=key_value.locked,
+                etag=key_value.etag,
+                filters=filters,
+            )
+        except (KeyError, AttributeError):
+            return ConfigurationSetting._from_generated(key_value)
 
     def _to_generated(self):
         # type: (...) -> KeyValue
@@ -240,7 +243,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         "read_only": {"key": "read_only", "type": "bool"},
         "tags": {"key": "tags", "type": "{str}"},
     }
-    secret_reference_content_type = (
+    _secret_reference_content_type = (
         "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
     )
     kind = "SecretReference"
@@ -252,7 +255,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         self.label = label
         self.secret_uri = secret_uri
         self.content_type = kwargs.get(
-            "content_type", self.secret_reference_content_type
+            "content_type", self._secret_reference_content_type
         )
         self.etag = kwargs.get("etag", None)
         self.last_modified = kwargs.get("last_modified", None)
@@ -262,23 +265,26 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     @classmethod
     def _from_generated(cls, key_value):
         # type: (KeyValue) -> SecretReferenceConfigurationSetting
-        if key_value is None:
-            return None
-        if key_value.value:
-            try:
-                key_value.value = json.loads(key_value.value)
-            except json.decoder.JSONDecodeError:
-                pass
-        return cls(
-            key=key_value.key,
-            secret_uri=key_value.value[u"secret_uri"],
-            label=key_value.label,
-            secret_id=key_value.value,
-            last_modified=key_value.last_modified,
-            tags=key_value.tags,
-            read_only=key_value.locked,
-            etag=key_value.etag,
-        )
+        try:
+            if key_value is None:
+                return None
+            if key_value.value:
+                try:
+                    key_value.value = json.loads(key_value.value)
+                except json.decoder.JSONDecodeError:
+                    pass
+            return cls(
+                key=key_value.key,
+                secret_uri=key_value.value[u"secret_uri"],
+                label=key_value.label,
+                secret_id=key_value.value,
+                last_modified=key_value.last_modified,
+                tags=key_value.tags,
+                read_only=key_value.locked,
+                etag=key_value.etag,
+            )
+        except (KeyError, AttributeError):
+            return ConfigurationSetting._from_generated(key_value)
 
     def _to_generated(self):
         # type: (...) -> KeyValue
