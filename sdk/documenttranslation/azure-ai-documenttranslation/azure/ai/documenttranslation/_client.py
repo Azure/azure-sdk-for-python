@@ -22,7 +22,7 @@ from ._polling import TranslationPolling
 if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
     from azure.core.credentials import AzureKeyCredential, TokenCredential
-    from ._models import JobStatusDetail, DocumentStatusDetail, BatchDocumentInput, FileFormat  # pylint: disable=w0404
+    from ._models import JobStatusDetail, DocumentStatusDetail, BatchDocumentInput, FileFormat
 
 
 class DocumentTranslationClient(object):  # pylint: disable=r0205
@@ -66,10 +66,8 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         """
 
         # submit translation job
-        # pylint: disable=protected-access
-        response_headers = self._client.document_translation._submit_batch_request_initial(
-            # pylint: disable=protected-access
-            inputs = BatchDocumentInput._to_generated_list(batch),
+        response_headers = self._client.document_translation._submit_batch_request_initial(  # pylint: disable=protected-access
+            inputs = BatchDocumentInput._to_generated_list(batch),  # pylint: disable=protected-access
             cls = lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
@@ -96,8 +94,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         """
 
         job_status = self._client.document_translation.get_operation_status(job_id, **kwargs)
-        # pylint: disable=protected-access
-        return JobStatusDetail._from_generated(job_status)
+        return JobStatusDetail._from_generated(job_status)  # pylint: disable=protected-access
 
     @distributed_trace
     def cancel_job(self, job_id, **kwargs):
@@ -128,14 +125,11 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         )
 
         def callback(raw_response):
-            # pylint: disable=protected-access
-            detail = self._client._deserialize(_BatchStatusDetail, raw_response)
-            # pylint: disable=protected-access
-            return JobStatusDetail._from_generated(detail)
+            detail = self._client._deserialize(_BatchStatusDetail, raw_response)  # pylint: disable=protected-access
+            return JobStatusDetail._from_generated(detail)  # pylint: disable=protected-access
 
         poller = LROPoller(
-            # pylint: disable=protected-access
-            client=self._client._client,
+            client=self._client._client,  # pylint: disable=protected-access
             initial_response=pipeline_response,
             deserialization_callback=callback,
             polling_method=LROBasePolling(
@@ -159,9 +153,8 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         skip = kwargs.pop('skip', None)
         results_per_page  = kwargs.pop('results_per_page', None)
 
-        def _convert_from_generated_model(generated_model):
-            # pylint: disable=protected-access
-            return JobStatusDetail._from_generated(generated_model)
+        def _convert_from_generated_model(generated_model):  # pylint: disable=protected-access
+            return JobStatusDetail._from_generated(generated_model)  # pylint: disable=protected-access
 
         model_conversion_function = kwargs.pop(
             "cls",
@@ -192,8 +185,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         results_per_page = kwargs.pop('results_per_page', None)
 
         def _convert_from_generated_model(generated_model):
-            # pylint: disable=protected-access
-            return DocumentStatusDetail._from_generated(generated_model)
+            return DocumentStatusDetail._from_generated(generated_model)  # pylint: disable=protected-access
 
         model_conversion_function = kwargs.pop(
             "cls",
@@ -226,8 +218,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             job_id,
             document_id,
             **kwargs)
-        # pylint: disable=protected-access
-        return DocumentStatusDetail._from_generated(document_status)
+        return DocumentStatusDetail._from_generated(document_status)  # pylint: disable=protected-access
 
     @distributed_trace
     def get_supported_glossary_formats(self, **kwargs):
@@ -238,8 +229,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         """
 
         glossary_formats = self._client.document_translation.get_glossary_formats(**kwargs)
-        # pylint: disable=protected-access
-        return FileFormat._from_generated_list(glossary_formats.value)
+        return FileFormat._from_generated_list(glossary_formats.value)  # pylint: disable=protected-access
 
     @distributed_trace
     def get_supported_document_formats(self, **kwargs):
@@ -250,5 +240,4 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         """
 
         document_formats = self._client.document_translation.get_document_formats(**kwargs)
-        # pylint: disable=protected-access
-        return FileFormat._from_generated_list(document_formats.value)
+        return FileFormat._from_generated_list(document_formats.value)  # pylint: disable=protected-access
