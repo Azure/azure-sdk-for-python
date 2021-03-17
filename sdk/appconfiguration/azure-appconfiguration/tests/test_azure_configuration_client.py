@@ -36,6 +36,7 @@ import os
 import logging
 import re
 import functools
+from uuid import uuid4
 
 try:
     from unittest import mock
@@ -63,7 +64,7 @@ class AppConfigurationClientTest(AzureTestCase):
         class MockTransport(HttpTransport):
             def __init__(self):
                 self._count = 0
-                self.auth_headers = []
+                self.auth_headers = None
             def __exit__(self, exc_type, exc_val, exc_tb):
                 pass
             def close(self):
@@ -72,11 +73,17 @@ class AppConfigurationClientTest(AzureTestCase):
                 pass
 
             def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
-                self._count += 1
-                self.auth_headers.append(request.headers['Authorization'])
+                assert request.headers['Authorization'] != self.auth_headers
+                self.auth_headers = request.headers['Authorization']
                 response = HttpResponse(request, None)
                 response.status_code = 429
                 return response
+
+        def new_method(self, request):
+            request.http_request.headers["Authorization"] = uuid4()
+
+        from azure.appconfiguration._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
+        AppConfigRequestsCredentialsPolicy._signed_request = new_method
 
         http_request = HttpRequest('GET', 'http://aka.ms/')
         transport = MockTransport()
@@ -84,11 +91,6 @@ class AppConfigurationClientTest(AzureTestCase):
         policies = client._impl._client._pipeline._impl_policies
         pipeline = Pipeline(transport, policies)
         pipeline.run(http_request)
-        auth_headers = transport.auth_headers
-        assert len(auth_headers) > 2
-        for i in range(1, len(auth_headers)-1):
-            for j in range(i+1, len(auth_headers)):
-                assert auth_headers[i] != auth_headers[j]
 
     # method: add_configuration_setting
     @app_config_decorator
