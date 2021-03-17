@@ -56,7 +56,7 @@ class AppConfigurationClientTest(AzureTestCase):
         super(AppConfigurationClientTest, self).tearDown()
 
     @app_config_decorator
-    def test_mock_policies(self, client):
+    def test_mock_policies(self, client, appconfiguration_connection_string):
         from azure.core.pipeline.transport import HttpRequest, HttpResponse, HttpTransport
         from azure.core.pipeline.policies import RetryPolicy
         from azure.core.pipeline import Pipeline, PipelineResponse
@@ -83,7 +83,10 @@ class AppConfigurationClientTest(AzureTestCase):
             request.http_request.headers["Authorization"] = uuid4()
 
         from azure.appconfiguration._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
+        temp = AppConfigRequestsCredentialsPolicy._signed_request
         AppConfigRequestsCredentialsPolicy._signed_request = new_method
+
+        client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
 
         http_request = HttpRequest('GET', 'http://aka.ms/')
         transport = MockTransport()
@@ -91,6 +94,8 @@ class AppConfigurationClientTest(AzureTestCase):
         policies = client._impl._client._pipeline._impl_policies
         pipeline = Pipeline(transport, policies)
         pipeline.run(http_request)
+
+        AppConfigRequestsCredentialsPolicy._signed_request = temp
 
     # method: add_configuration_setting
     @app_config_decorator

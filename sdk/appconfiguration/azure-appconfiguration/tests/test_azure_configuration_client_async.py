@@ -442,6 +442,8 @@ class TestAppConfig(object):
             request.http_request.headers["Authorization"] = uuid4()
 
         from azure.appconfiguration._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
+        # Store the method to restore later
+        temp = AppConfigRequestsCredentialsPolicy._signed_request
         AppConfigRequestsCredentialsPolicy._signed_request = new_method
 
         http_request = HttpRequest('GET', 'http://aka.ms/')
@@ -454,3 +456,6 @@ class TestAppConfig(object):
         policies = client._impl._client._pipeline._impl_policies
         pipeline = AsyncPipeline(transport, policies)
         await pipeline.run(http_request)
+
+        # Reset the actual method
+        AppConfigRequestsCredentialsPolicy._signed_request = temp
