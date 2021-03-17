@@ -79,11 +79,6 @@ from .._tools import await_result as _await_result
 if TYPE_CHECKING:
     from ..policies import SansIOHTTPPolicy
     from collections.abc import MutableMapping
-    try:
-        from multidict import CIMultiDict
-        from requests.structures import CaseInsensitiveDict
-    except ImportError:
-        pass
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -91,28 +86,8 @@ PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
 
-def _format_data(data):
-    # type: (Union[str, IO]) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]
-    """Format field data according to whether it is a stream or
-    a string for a form-data request.
-
-    :param data: The request field data.
-    :type data: str or file-like object.
-    """
-    if hasattr(data, "read"):
-        data = cast(IO, data)
-        data_name = None
-        try:
-            if data.name[0] != "<" and data.name[-1] != ">":
-                data_name = os.path.basename(data.name)
-        except (AttributeError, TypeError):
-            pass
-        return (data_name, data, "application/octet-stream")
-    return (None, cast(str, data))
-
 
 def _case_insensitive_dict(*args, **kwargs):
-    # type: (...) -> Union[CIMultiDict, CaseInsensitiveDict]
     """Return a case-insensitive dict from a structure that a dict would have accepted.
 
     Rational is I don't want to re-implement this, but I don't want
@@ -294,6 +269,25 @@ class HttpRequest(object):
     def body(self, value):
         self.data = value
 
+    @staticmethod
+    def _format_data(data):
+        # type: (Union[str, IO]) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]
+        """Format field data according to whether it is a stream or
+        a string for a form-data request.
+
+        :param data: The request field data.
+        :type data: str or file-like object.
+        """
+        if hasattr(data, "read"):
+            data = cast(IO, data)
+            data_name = None
+            try:
+                if data.name[0] != "<" and data.name[-1] != ">":
+                    data_name = os.path.basename(data.name)
+            except (AttributeError, TypeError):
+                pass
+            return (data_name, data, "application/octet-stream")
+        return (None, cast(str, data))
 
     def format_parameters(self, params):
         # type: (Dict[str, str]) -> None
@@ -393,7 +387,7 @@ class HttpRequest(object):
             self.files = None
         else:  # Assume "multipart/form-data"
             self.files = {
-                f: _format_data(d) for f, d in data.items() if d is not None
+                f: self._format_data(d) for f, d in data.items() if d is not None
             }
             self.data = None
 
