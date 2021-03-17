@@ -6,6 +6,7 @@
 import six.moves.urllib as urllib
 import re
 from azure.core import PipelineClient
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.configuration import Configuration
 from azure.core.pipeline.policies import (
@@ -17,8 +18,10 @@ from azure.core.pipeline.policies import (
     NetworkTraceLoggingPolicy,
     ProxyPolicy,
 )
-from . import _resolver
-from . import _pseudo_parser
+from . import (
+    _resolver,
+    _pseudo_parser,
+)
 
 
 # Public constants exposed to consumers
@@ -31,12 +34,15 @@ DEPENDENCY_MODE_ENABLED = "enabled"
 _DEFAULT_LOCATION = "https://devicemodels.azure.com"
 _DEFAULT_API_VERSION = "2021-02-11"
 _REMOTE_PROTOCOLS = ["http", "https"]
+_TRACE_NAMESPACE = "modelsrepository"
 
 
 class ModelsRepositoryClient(object):
     """Client providing APIs for Models Repository operations"""
 
-    def __init__(self, repository_location=None, dependency_resolution=None, api_version=None, **kwargs):
+    def __init__(
+        self, repository_location=None, dependency_resolution=None, api_version=None, **kwargs
+    ):
         """
         :param str repository_location: Location of the Models Repository you wish to access.
             This location can be a remote HTTP/HTTPS URL, or a local filesystem path.
@@ -69,8 +75,14 @@ class ModelsRepositoryClient(object):
             else:
                 self.resolution_mode = DEPENDENCY_MODE_ENABLED
         else:
-            if dependency_resolution not in [DEPENDENCY_MODE_ENABLED, DEPENDENCY_MODE_DISABLED, DEPENDENCY_MODE_TRY_FROM_EXPANDED]:
-                raise ValueError("Invalid dependency resolution mode: {}".format(dependency_resolution))
+            if dependency_resolution not in [
+                DEPENDENCY_MODE_ENABLED,
+                DEPENDENCY_MODE_DISABLED,
+                DEPENDENCY_MODE_TRY_FROM_EXPANDED,
+            ]:
+                raise ValueError(
+                    "Invalid dependency resolution mode: {}".format(dependency_resolution)
+                )
             self.resolution_mode = dependency_resolution
 
         # TODO: Should api_version be a kwarg in the API surface?
@@ -85,6 +97,7 @@ class ModelsRepositoryClient(object):
         self.resolver = _resolver.DtmiResolver(self.fetcher)
         self._psuedo_parser = _pseudo_parser.PseudoParser(self.resolver)
 
+    @distributed_trace(name_of_span=_TRACE_NAMESPACE + "/get_models")
     def get_models(self, dtmis, dependency_resolution=None):
         """Retrieve a model from the Models Repository.
 

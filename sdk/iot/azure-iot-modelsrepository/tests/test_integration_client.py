@@ -9,9 +9,9 @@ from azure.iot.modelsrepository import ModelsRepositoryClient
 
 logging.basicConfig(level=logging.DEBUG)
 
+
 @pytest.mark.describe("ModelsRepositoryClient - .get_models() [INTEGRATION]")
 class TestModelsRepositoryClientGetModels(object):
-    
     @pytest.mark.it("test recordings")
     def test_simple(self):
         c = ModelsRepositoryClient()
