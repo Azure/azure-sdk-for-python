@@ -117,19 +117,23 @@ class HttpRequest(object):
             )
 
     @property
-    def url(self) -> str:
+    def url(self):
+        # type: (...) -> str
         return self._internal_request.url
 
     @url.setter
-    def url(self, val: str) -> None:
+    def url(self, val):
+        # type: (str) -> None
         self._internal_request.url = val
 
     @property
-    def method(self) -> str:
+    def method(self):
+        # type: (...) -> str
         return self._internal_request.method
 
     @method.setter
-    def method(self, val: str) -> None:
+    def method(self, val):
+        # type: (str) -> None
         self._internal_request.method = val
 
 
