@@ -775,6 +775,15 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         include_field_elements = kwargs.pop("include_field_elements", False)
 
+        def analyze_callback(
+            raw_response, _, headers
+        ):  # pylint: disable=unused-argument
+            analyze_result = self._deserialize(
+                self._generated_models.AnalyzeOperationResult, raw_response
+            )
+            return prepare_form_result(analyze_result, model_id)
+
+        callback = kwargs.pop("cls", analyze_callback)
         polling = LROBasePolling(
             timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
         )
@@ -789,20 +798,12 @@ class FormRecognizerClient(FormRecognizerClientBase):
                     "'pages' is only available for API version V2_1_PREVIEW and up"
                 )
 
-        def analyze_callback(
-            raw_response, _, headers
-        ):  # pylint: disable=unused-argument
-            analyze_result = self._deserialize(
-                self._generated_models.AnalyzeOperationResult, raw_response
-            )
-            return prepare_form_result(analyze_result, model_id)
-
         return self._client.begin_analyze_with_custom_model(  # type: ignore
             file_stream=form,
             model_id=model_id,
             include_text_details=include_field_elements,
             content_type=content_type,
-            cls=kwargs.pop("cls", analyze_callback),
+            cls=callback,
             polling=polling,
             continuation_token=continuation_token,
             **kwargs
@@ -843,6 +844,15 @@ class FormRecognizerClient(FormRecognizerClientBase):
             "polling_interval", self._client._config.polling_interval
         )
 
+        def analyze_callback(
+            raw_response, _, headers
+        ):  # pylint: disable=unused-argument
+            analyze_result = self._deserialize(
+                self._generated_models.AnalyzeOperationResult, raw_response
+            )
+            return prepare_form_result(analyze_result, model_id)
+
+        callback = kwargs.pop("cls", analyze_callback)
         polling = LROBasePolling(
             timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
         )
@@ -857,19 +867,11 @@ class FormRecognizerClient(FormRecognizerClientBase):
                     "'pages' is only available for API version V2_1_PREVIEW and up"
                 )
 
-        def analyze_callback(
-            raw_response, _, headers
-        ):  # pylint: disable=unused-argument
-            analyze_result = self._deserialize(
-                self._generated_models.AnalyzeOperationResult, raw_response
-            )
-            return prepare_form_result(analyze_result, model_id)
-
         return self._client.begin_analyze_with_custom_model(  # type: ignore
             file_stream={"source": form_url},
             model_id=model_id,
             include_text_details=include_field_elements,
-            cls=kwargs.pop("cls", analyze_callback),
+            cls=callback,
             polling=polling,
             continuation_token=continuation_token,
             **kwargs
