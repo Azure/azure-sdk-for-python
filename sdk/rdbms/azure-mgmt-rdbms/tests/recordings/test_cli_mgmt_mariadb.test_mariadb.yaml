@@ -17,27 +17,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBForMariaDB/servers/testserver21827?api-version=2018-06-01
   response:
     body:
-      string: '{"operation":"UpsertElasticServer","startTime":"2020-12-28T09:46:08.51Z"}'
+      string: '{"operation":"UpsertElasticServer","startTime":"2021-03-17T06:14:36.043Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/c886b7f9-fdae-4ad4-8144-c3dbd6385600?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/0dc85f77-b974-40d4-84db-627e75e6b53c?api-version=2018-06-01
       cache-control:
       - no-cache
       content-length:
-      - '73'
+      - '74'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:46:09 GMT
+      - Wed, 17 Mar 2021 06:14:36 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/operationResults/c886b7f9-fdae-4ad4-8144-c3dbd6385600?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/operationResults/0dc85f77-b974-40d4-84db-627e75e6b53c?api-version=2018-06-01
       pragma:
       - no-cache
       server:
@@ -61,12 +62,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/c886b7f9-fdae-4ad4-8144-c3dbd6385600?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/0dc85f77-b974-40d4-84db-627e75e6b53c?api-version=2018-06-01
   response:
     body:
-      string: '{"name":"c886b7f9-fdae-4ad4-8144-c3dbd6385600","status":"InProgress","startTime":"2020-12-28T09:46:08.51Z"}'
+      string: '{"name":"0dc85f77-b974-40d4-84db-627e75e6b53c","status":"Succeeded","startTime":"2021-03-17T06:14:36.043Z"}'
     headers:
       cache-control:
       - no-cache
@@ -75,7 +77,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:47:09 GMT
+      - Wed, 17 Mar 2021 06:15:36 GMT
       expires:
       - '-1'
       pragma:
@@ -103,63 +105,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/c886b7f9-fdae-4ad4-8144-c3dbd6385600?api-version=2018-06-01
-  response:
-    body:
-      string: '{"name":"c886b7f9-fdae-4ad4-8144-c3dbd6385600","status":"Succeeded","startTime":"2020-12-28T09:46:08.51Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '106'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 28 Dec 2020 09:48:11 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBForMariaDB/servers/testserver21827?api-version=2018-06-01
   response:
     body:
-      string: '{"sku":{"name":"GP_Gen5_2","tier":"GeneralPurpose","family":"Gen5","capacity":2},"properties":{"administratorLogin":"cloudsa","storageProfile":{"storageMB":128000,"backupRetentionDays":7,"geoRedundantBackup":"Enabled","storageAutogrow":"Disabled"},"version":"10.2","sslEnforcement":"Enabled","minimalTlsVersion":"TLSEnforcementDisabled","userVisibleState":"Ready","fullyQualifiedDomainName":"testserver21827.mariadb.database.azure.com","earliestRestoreDate":"2020-12-28T09:56:09.01+00:00","replicationRole":"None","masterServerId":"","replicaCapacity":5,"byokEnforcement":"Disabled","infrastructureEncryption":"Disabled","privateEndpointConnections":[],"publicNetworkAccess":"Enabled"},"location":"eastus","tags":{"elastic_server":"1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBforMariaDB/servers/testserver21827","name":"testserver21827","type":"Microsoft.DBforMariaDB/servers"}'
+      string: '{"sku":{"name":"GP_Gen5_2","tier":"GeneralPurpose","family":"Gen5","capacity":2},"properties":{"administratorLogin":"cloudsa","storageProfile":{"storageMB":128000,"backupRetentionDays":7,"geoRedundantBackup":"Enabled","storageAutogrow":"Disabled"},"version":"10.2","sslEnforcement":"Enabled","minimalTlsVersion":"TLSEnforcementDisabled","userVisibleState":"Ready","fullyQualifiedDomainName":"testserver21827.mariadb.database.azure.com","earliestRestoreDate":"2021-03-17T06:24:36.277+00:00","replicationRole":"None","masterServerId":"","replicaCapacity":5,"byokEnforcement":"Disabled","infrastructureEncryption":"Disabled","privateEndpointConnections":[],"publicNetworkAccess":"Enabled"},"location":"eastus","tags":{"elastic_server":"1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBforMariaDB/servers/testserver21827","name":"testserver21827","type":"Microsoft.DBforMariaDB/servers"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '975'
+      - '976'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:48:11 GMT
+      - Wed, 17 Mar 2021 06:15:36 GMT
       expires:
       - '-1'
       pragma:
@@ -192,27 +153,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBForMariaDB/servers/serverreplica21827?api-version=2018-06-01
   response:
     body:
-      string: '{"operation":"CreateElasticServerContinuousCopy","startTime":"2020-12-28T09:48:16.45Z"}'
+      string: '{"operation":"CreateElasticServerContinuousCopy","startTime":"2021-03-17T06:15:37.997Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/714708a3-d546-44b7-ae6b-d458017fd572?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/e3392539-b0ca-4e46-835b-87cc65c45861?api-version=2018-06-01
       cache-control:
       - no-cache
       content-length:
-      - '87'
+      - '88'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:48:16 GMT
+      - Wed, 17 Mar 2021 06:15:37 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/operationResults/714708a3-d546-44b7-ae6b-d458017fd572?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/operationResults/e3392539-b0ca-4e46-835b-87cc65c45861?api-version=2018-06-01
       pragma:
       - no-cache
       server:
@@ -236,12 +198,701 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/714708a3-d546-44b7-ae6b-d458017fd572?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/e3392539-b0ca-4e46-835b-87cc65c45861?api-version=2018-06-01
   response:
     body:
-      string: '{"name":"714708a3-d546-44b7-ae6b-d458017fd572","status":"InProgress","startTime":"2020-12-28T09:48:16.45Z"}'
+      string: '{"name":"e3392539-b0ca-4e46-835b-87cc65c45861","status":"InProgress","startTime":"2021-03-17T06:15:37.997Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 17 Mar 2021 06:16:07 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/e3392539-b0ca-4e46-835b-87cc65c45861?api-version=2018-06-01
+  response:
+    body:
+      string: '{"name":"e3392539-b0ca-4e46-835b-87cc65c45861","status":"InProgress","startTime":"2021-03-17T06:15:37.997Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 17 Mar 2021 06:16:38 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/e3392539-b0ca-4e46-835b-87cc65c45861?api-version=2018-06-01
+  response:
+    body:
+      string: '{"name":"e3392539-b0ca-4e46-835b-87cc65c45861","status":"InProgress","startTime":"2021-03-17T06:15:37.997Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 17 Mar 2021 06:17:07 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/e3392539-b0ca-4e46-835b-87cc65c45861?api-version=2018-06-01
+  response:
+    body:
+      string: '{"name":"e3392539-b0ca-4e46-835b-87cc65c45861","status":"InProgress","startTime":"2021-03-17T06:15:37.997Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 17 Mar 2021 06:17:37 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/e3392539-b0ca-4e46-835b-87cc65c45861?api-version=2018-06-01
+  response:
+    body:
+      string: '{"name":"e3392539-b0ca-4e46-835b-87cc65c45861","status":"InProgress","startTime":"2021-03-17T06:15:37.997Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 17 Mar 2021 06:18:08 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/e3392539-b0ca-4e46-835b-87cc65c45861?api-version=2018-06-01
+  response:
+    body:
+      string: '{"name":"e3392539-b0ca-4e46-835b-87cc65c45861","status":"InProgress","startTime":"2021-03-17T06:15:37.997Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 17 Mar 2021 06:18:38 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/e3392539-b0ca-4e46-835b-87cc65c45861?api-version=2018-06-01
+  response:
+    body:
+      string: '{"name":"e3392539-b0ca-4e46-835b-87cc65c45861","status":"InProgress","startTime":"2021-03-17T06:15:37.997Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 17 Mar 2021 06:19:08 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/e3392539-b0ca-4e46-835b-87cc65c45861?api-version=2018-06-01
+  response:
+    body:
+      string: '{"name":"e3392539-b0ca-4e46-835b-87cc65c45861","status":"InProgress","startTime":"2021-03-17T06:15:37.997Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 17 Mar 2021 06:19:38 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/e3392539-b0ca-4e46-835b-87cc65c45861?api-version=2018-06-01
+  response:
+    body:
+      string: '{"name":"e3392539-b0ca-4e46-835b-87cc65c45861","status":"InProgress","startTime":"2021-03-17T06:15:37.997Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 17 Mar 2021 06:20:08 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/e3392539-b0ca-4e46-835b-87cc65c45861?api-version=2018-06-01
+  response:
+    body:
+      string: '{"name":"e3392539-b0ca-4e46-835b-87cc65c45861","status":"InProgress","startTime":"2021-03-17T06:15:37.997Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 17 Mar 2021 06:20:38 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/e3392539-b0ca-4e46-835b-87cc65c45861?api-version=2018-06-01
+  response:
+    body:
+      string: '{"name":"e3392539-b0ca-4e46-835b-87cc65c45861","status":"InProgress","startTime":"2021-03-17T06:15:37.997Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 17 Mar 2021 06:21:08 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/e3392539-b0ca-4e46-835b-87cc65c45861?api-version=2018-06-01
+  response:
+    body:
+      string: '{"name":"e3392539-b0ca-4e46-835b-87cc65c45861","status":"InProgress","startTime":"2021-03-17T06:15:37.997Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 17 Mar 2021 06:21:38 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/e3392539-b0ca-4e46-835b-87cc65c45861?api-version=2018-06-01
+  response:
+    body:
+      string: '{"name":"e3392539-b0ca-4e46-835b-87cc65c45861","status":"InProgress","startTime":"2021-03-17T06:15:37.997Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 17 Mar 2021 06:22:08 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/e3392539-b0ca-4e46-835b-87cc65c45861?api-version=2018-06-01
+  response:
+    body:
+      string: '{"name":"e3392539-b0ca-4e46-835b-87cc65c45861","status":"InProgress","startTime":"2021-03-17T06:15:37.997Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 17 Mar 2021 06:22:38 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/e3392539-b0ca-4e46-835b-87cc65c45861?api-version=2018-06-01
+  response:
+    body:
+      string: '{"name":"e3392539-b0ca-4e46-835b-87cc65c45861","status":"InProgress","startTime":"2021-03-17T06:15:37.997Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 17 Mar 2021 06:23:08 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/e3392539-b0ca-4e46-835b-87cc65c45861?api-version=2018-06-01
+  response:
+    body:
+      string: '{"name":"e3392539-b0ca-4e46-835b-87cc65c45861","status":"InProgress","startTime":"2021-03-17T06:15:37.997Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 17 Mar 2021 06:23:39 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/e3392539-b0ca-4e46-835b-87cc65c45861?api-version=2018-06-01
+  response:
+    body:
+      string: '{"name":"e3392539-b0ca-4e46-835b-87cc65c45861","status":"Succeeded","startTime":"2021-03-17T06:15:37.997Z"}'
     headers:
       cache-control:
       - no-cache
@@ -250,7 +901,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:48:46 GMT
+      - Wed, 17 Mar 2021 06:24:08 GMT
       expires:
       - '-1'
       pragma:
@@ -278,777 +929,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/714708a3-d546-44b7-ae6b-d458017fd572?api-version=2018-06-01
-  response:
-    body:
-      string: '{"name":"714708a3-d546-44b7-ae6b-d458017fd572","status":"InProgress","startTime":"2020-12-28T09:48:16.45Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '107'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 28 Dec 2020 09:49:16 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/714708a3-d546-44b7-ae6b-d458017fd572?api-version=2018-06-01
-  response:
-    body:
-      string: '{"name":"714708a3-d546-44b7-ae6b-d458017fd572","status":"InProgress","startTime":"2020-12-28T09:48:16.45Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '107'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 28 Dec 2020 09:49:46 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/714708a3-d546-44b7-ae6b-d458017fd572?api-version=2018-06-01
-  response:
-    body:
-      string: '{"name":"714708a3-d546-44b7-ae6b-d458017fd572","status":"InProgress","startTime":"2020-12-28T09:48:16.45Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '107'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 28 Dec 2020 09:50:18 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/714708a3-d546-44b7-ae6b-d458017fd572?api-version=2018-06-01
-  response:
-    body:
-      string: '{"name":"714708a3-d546-44b7-ae6b-d458017fd572","status":"InProgress","startTime":"2020-12-28T09:48:16.45Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '107'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 28 Dec 2020 09:50:48 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/714708a3-d546-44b7-ae6b-d458017fd572?api-version=2018-06-01
-  response:
-    body:
-      string: '{"name":"714708a3-d546-44b7-ae6b-d458017fd572","status":"InProgress","startTime":"2020-12-28T09:48:16.45Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '107'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 28 Dec 2020 09:51:18 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/714708a3-d546-44b7-ae6b-d458017fd572?api-version=2018-06-01
-  response:
-    body:
-      string: '{"name":"714708a3-d546-44b7-ae6b-d458017fd572","status":"InProgress","startTime":"2020-12-28T09:48:16.45Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '107'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 28 Dec 2020 09:51:48 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/714708a3-d546-44b7-ae6b-d458017fd572?api-version=2018-06-01
-  response:
-    body:
-      string: '{"name":"714708a3-d546-44b7-ae6b-d458017fd572","status":"InProgress","startTime":"2020-12-28T09:48:16.45Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '107'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 28 Dec 2020 09:52:19 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/714708a3-d546-44b7-ae6b-d458017fd572?api-version=2018-06-01
-  response:
-    body:
-      string: '{"name":"714708a3-d546-44b7-ae6b-d458017fd572","status":"InProgress","startTime":"2020-12-28T09:48:16.45Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '107'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 28 Dec 2020 09:52:49 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/714708a3-d546-44b7-ae6b-d458017fd572?api-version=2018-06-01
-  response:
-    body:
-      string: '{"name":"714708a3-d546-44b7-ae6b-d458017fd572","status":"InProgress","startTime":"2020-12-28T09:48:16.45Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '107'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 28 Dec 2020 09:53:19 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/714708a3-d546-44b7-ae6b-d458017fd572?api-version=2018-06-01
-  response:
-    body:
-      string: '{"name":"714708a3-d546-44b7-ae6b-d458017fd572","status":"InProgress","startTime":"2020-12-28T09:48:16.45Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '107'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 28 Dec 2020 09:53:50 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/714708a3-d546-44b7-ae6b-d458017fd572?api-version=2018-06-01
-  response:
-    body:
-      string: '{"name":"714708a3-d546-44b7-ae6b-d458017fd572","status":"InProgress","startTime":"2020-12-28T09:48:16.45Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '107'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 28 Dec 2020 09:54:20 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/714708a3-d546-44b7-ae6b-d458017fd572?api-version=2018-06-01
-  response:
-    body:
-      string: '{"name":"714708a3-d546-44b7-ae6b-d458017fd572","status":"InProgress","startTime":"2020-12-28T09:48:16.45Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '107'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 28 Dec 2020 09:54:51 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/714708a3-d546-44b7-ae6b-d458017fd572?api-version=2018-06-01
-  response:
-    body:
-      string: '{"name":"714708a3-d546-44b7-ae6b-d458017fd572","status":"InProgress","startTime":"2020-12-28T09:48:16.45Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '107'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 28 Dec 2020 09:55:21 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/714708a3-d546-44b7-ae6b-d458017fd572?api-version=2018-06-01
-  response:
-    body:
-      string: '{"name":"714708a3-d546-44b7-ae6b-d458017fd572","status":"InProgress","startTime":"2020-12-28T09:48:16.45Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '107'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 28 Dec 2020 09:55:51 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/714708a3-d546-44b7-ae6b-d458017fd572?api-version=2018-06-01
-  response:
-    body:
-      string: '{"name":"714708a3-d546-44b7-ae6b-d458017fd572","status":"InProgress","startTime":"2020-12-28T09:48:16.45Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '107'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 28 Dec 2020 09:56:22 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/714708a3-d546-44b7-ae6b-d458017fd572?api-version=2018-06-01
-  response:
-    body:
-      string: '{"name":"714708a3-d546-44b7-ae6b-d458017fd572","status":"InProgress","startTime":"2020-12-28T09:48:16.45Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '107'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 28 Dec 2020 09:56:53 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/714708a3-d546-44b7-ae6b-d458017fd572?api-version=2018-06-01
-  response:
-    body:
-      string: '{"name":"714708a3-d546-44b7-ae6b-d458017fd572","status":"InProgress","startTime":"2020-12-28T09:48:16.45Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '107'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 28 Dec 2020 09:57:23 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/714708a3-d546-44b7-ae6b-d458017fd572?api-version=2018-06-01
-  response:
-    body:
-      string: '{"name":"714708a3-d546-44b7-ae6b-d458017fd572","status":"Succeeded","startTime":"2020-12-28T09:48:16.45Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '106'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 28 Dec 2020 09:57:53 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBForMariaDB/servers/serverreplica21827?api-version=2018-06-01
   response:
     body:
-      string: '{"sku":{"name":"GP_Gen5_2","tier":"GeneralPurpose","family":"Gen5","capacity":2},"properties":{"administratorLogin":"cloudsa","storageProfile":{"storageMB":128000,"backupRetentionDays":7,"geoRedundantBackup":"Enabled","storageAutogrow":"Enabled"},"version":"10.2","sslEnforcement":"Enabled","minimalTlsVersion":"TLSEnforcementDisabled","userVisibleState":"Ready","fullyQualifiedDomainName":"serverreplica21827.mariadb.database.azure.com","earliestRestoreDate":"2020-12-28T10:00:19.2+00:00","replicationRole":"Replica","masterServerId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBforMariaDB/servers/testserver21827","replicaCapacity":0,"byokEnforcement":"Disabled","infrastructureEncryption":"Disabled","privateEndpointConnections":[],"publicNetworkAccess":"Enabled"},"location":"eastus","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBforMariaDB/servers/serverreplica21827","name":"serverreplica21827","type":"Microsoft.DBforMariaDB/servers"}'
+      string: '{"sku":{"name":"GP_Gen5_2","tier":"GeneralPurpose","family":"Gen5","capacity":2},"properties":{"administratorLogin":"cloudsa","storageProfile":{"storageMB":128000,"backupRetentionDays":7,"geoRedundantBackup":"Enabled","storageAutogrow":"Enabled"},"version":"10.2","sslEnforcement":"Enabled","minimalTlsVersion":"TLSEnforcementDisabled","userVisibleState":"Ready","fullyQualifiedDomainName":"serverreplica21827.mariadb.database.azure.com","earliestRestoreDate":"2021-03-17T06:26:51.247+00:00","replicationRole":"Replica","masterServerId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBforMariaDB/servers/testserver21827","replicaCapacity":0,"byokEnforcement":"Disabled","infrastructureEncryption":"Disabled","privateEndpointConnections":[],"publicNetworkAccess":"Enabled"},"location":"eastus","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBforMariaDB/servers/serverreplica21827","name":"serverreplica21827","type":"Microsoft.DBforMariaDB/servers"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1121'
+      - '1123'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:57:54 GMT
+      - Wed, 17 Mar 2021 06:24:08 GMT
       expires:
       - '-1'
       pragma:
@@ -1080,15 +976,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBForMariaDB/servers/testserver21827/databases/testdatabase21827?api-version=2018-06-01
   response:
     body:
-      string: '{"operation":"UpsertElasticServerDatabase","startTime":"2020-12-28T09:57:55.143Z"}'
+      string: '{"operation":"UpsertElasticServerDatabase","startTime":"2021-03-17T06:24:09.697Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/c37a071d-7a77-4fb2-b618-68924a14b312?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/8969c74e-f7df-4508-954d-a1ad4f7e2336?api-version=2018-06-01
       cache-control:
       - no-cache
       content-length:
@@ -1096,11 +993,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:57:54 GMT
+      - Wed, 17 Mar 2021 06:24:09 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/operationResults/c37a071d-7a77-4fb2-b618-68924a14b312?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/operationResults/8969c74e-f7df-4508-954d-a1ad4f7e2336?api-version=2018-06-01
       pragma:
       - no-cache
       server:
@@ -1124,12 +1021,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/c37a071d-7a77-4fb2-b618-68924a14b312?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/8969c74e-f7df-4508-954d-a1ad4f7e2336?api-version=2018-06-01
   response:
     body:
-      string: '{"name":"c37a071d-7a77-4fb2-b618-68924a14b312","status":"Succeeded","startTime":"2020-12-28T09:57:55.143Z"}'
+      string: '{"name":"8969c74e-f7df-4508-954d-a1ad4f7e2336","status":"Succeeded","startTime":"2021-03-17T06:24:09.697Z"}'
     headers:
       cache-control:
       - no-cache
@@ -1138,7 +1036,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:58:10 GMT
+      - Wed, 17 Mar 2021 06:24:24 GMT
       expires:
       - '-1'
       pragma:
@@ -1166,7 +1064,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBForMariaDB/servers/testserver21827/databases/testdatabase21827?api-version=2018-06-01
   response:
@@ -1180,7 +1079,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:58:10 GMT
+      - Wed, 17 Mar 2021 06:24:25 GMT
       expires:
       - '-1'
       pragma:
@@ -1212,15 +1111,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBForMariaDB/servers/testserver21827/firewallRules/firewallrule?api-version=2018-06-01
   response:
     body:
-      string: '{"operation":"UpsertElasticServerFirewallRules","startTime":"2020-12-28T09:58:11.52Z"}'
+      string: '{"operation":"UpsertElasticServerFirewallRules","startTime":"2021-03-17T06:24:25.29Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/25a381cd-e359-4545-a32a-1300c2cb3e1d?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/2410e22f-e4fa-41de-88c5-6f8d9332d2a4?api-version=2018-06-01
       cache-control:
       - no-cache
       content-length:
@@ -1228,11 +1128,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:58:11 GMT
+      - Wed, 17 Mar 2021 06:24:25 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/operationResults/25a381cd-e359-4545-a32a-1300c2cb3e1d?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/operationResults/2410e22f-e4fa-41de-88c5-6f8d9332d2a4?api-version=2018-06-01
       pragma:
       - no-cache
       server:
@@ -1256,12 +1156,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/25a381cd-e359-4545-a32a-1300c2cb3e1d?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/2410e22f-e4fa-41de-88c5-6f8d9332d2a4?api-version=2018-06-01
   response:
     body:
-      string: '{"name":"25a381cd-e359-4545-a32a-1300c2cb3e1d","status":"Succeeded","startTime":"2020-12-28T09:58:11.52Z"}'
+      string: '{"name":"2410e22f-e4fa-41de-88c5-6f8d9332d2a4","status":"Succeeded","startTime":"2021-03-17T06:24:25.29Z"}'
     headers:
       cache-control:
       - no-cache
@@ -1270,7 +1171,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:58:26 GMT
+      - Wed, 17 Mar 2021 06:24:39 GMT
       expires:
       - '-1'
       pragma:
@@ -1298,7 +1199,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBForMariaDB/servers/testserver21827/firewallRules/firewallrule?api-version=2018-06-01
   response:
@@ -1312,7 +1214,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:58:26 GMT
+      - Wed, 17 Mar 2021 06:24:40 GMT
       expires:
       - '-1'
       pragma:
@@ -1344,27 +1246,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBforMariaDB/servers/testserver21827/securityAlertPolicies/securityalertpolicy?api-version=2018-06-01
   response:
     body:
-      string: '{"operation":"UpsertServerThreatDetectionPolicy","startTime":"2020-12-28T09:58:27.927Z"}'
+      string: '{"operation":"UpsertServerThreatDetectionPolicy","startTime":"2021-03-17T06:24:40.68Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/East%20US/securityAlertPoliciesAzureAsyncOperation/47b61f21-5dcc-4d52-84f5-3dd4b8108d94?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/East%20US/securityAlertPoliciesAzureAsyncOperation/81ad73f0-c0ac-4e97-8b2f-f5a2462faa75?api-version=2018-06-01
       cache-control:
       - no-cache
       content-length:
-      - '88'
+      - '87'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:58:27 GMT
+      - Wed, 17 Mar 2021 06:24:40 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/East%20US/securityAlertPoliciesOperationResults/47b61f21-5dcc-4d52-84f5-3dd4b8108d94?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/East%20US/securityAlertPoliciesOperationResults/81ad73f0-c0ac-4e97-8b2f-f5a2462faa75?api-version=2018-06-01
       pragma:
       - no-cache
       server:
@@ -1388,21 +1291,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/East%20US/securityAlertPoliciesAzureAsyncOperation/47b61f21-5dcc-4d52-84f5-3dd4b8108d94?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/East%20US/securityAlertPoliciesAzureAsyncOperation/81ad73f0-c0ac-4e97-8b2f-f5a2462faa75?api-version=2018-06-01
   response:
     body:
-      string: '{"name":"47b61f21-5dcc-4d52-84f5-3dd4b8108d94","status":"Succeeded","startTime":"2020-12-28T09:58:27.927Z"}'
+      string: '{"name":"81ad73f0-c0ac-4e97-8b2f-f5a2462faa75","status":"Succeeded","startTime":"2021-03-17T06:24:40.68Z"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '107'
+      - '106'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:58:30 GMT
+      - Wed, 17 Mar 2021 06:24:43 GMT
       expires:
       - '-1'
       pragma:
@@ -1430,21 +1334,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBforMariaDB/servers/testserver21827/securityAlertPolicies/securityalertpolicy?api-version=2018-06-01
   response:
     body:
-      string: '{"properties":{"state":"Enabled","disabledAlerts":[""],"emailAddresses":[""],"emailAccountAdmins":false,"storageEndpoint":"","storageAccountAccessKey":"","retentionDays":0,"creationTime":"2020-12-28T09:58:28.037Z"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBforMariaDB/servers/testserver21827/securityAlertPolicies/securityalertpolicy","name":"securityalertpolicy","type":"Microsoft.DBforMariaDB/servers/securityAlertPolicies"}'
+      string: '{"properties":{"state":"Enabled","disabledAlerts":[""],"emailAddresses":[""],"emailAccountAdmins":false,"storageEndpoint":"","storageAccountAccessKey":"","retentionDays":0,"creationTime":"2021-03-17T06:24:40.79Z"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBforMariaDB/servers/testserver21827/securityAlertPolicies/securityalertpolicy","name":"securityalertpolicy","type":"Microsoft.DBforMariaDB/servers/securityAlertPolicies"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '522'
+      - '521'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:58:30 GMT
+      - Wed, 17 Mar 2021 06:24:43 GMT
       expires:
       - '-1'
       pragma:
@@ -1476,27 +1381,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBforMariaDB/servers/testserver21827/securityAlertPolicies/securityalertpolicy?api-version=2018-06-01
   response:
     body:
-      string: '{"operation":"UpsertServerThreatDetectionPolicy","startTime":"2020-12-28T09:58:32.13Z"}'
+      string: '{"operation":"UpsertServerThreatDetectionPolicy","startTime":"2021-03-17T06:24:43.947Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/East%20US/securityAlertPoliciesAzureAsyncOperation/e4939c0e-9a09-422b-a632-0402e070f72a?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/East%20US/securityAlertPoliciesAzureAsyncOperation/4ae5bab8-74d3-4a1a-98ef-c80be6ee9f2c?api-version=2018-06-01
       cache-control:
       - no-cache
       content-length:
-      - '87'
+      - '88'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:58:31 GMT
+      - Wed, 17 Mar 2021 06:24:43 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/East%20US/securityAlertPoliciesOperationResults/e4939c0e-9a09-422b-a632-0402e070f72a?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/East%20US/securityAlertPoliciesOperationResults/4ae5bab8-74d3-4a1a-98ef-c80be6ee9f2c?api-version=2018-06-01
       pragma:
       - no-cache
       server:
@@ -1520,21 +1426,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/East%20US/securityAlertPoliciesAzureAsyncOperation/e4939c0e-9a09-422b-a632-0402e070f72a?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/East%20US/securityAlertPoliciesAzureAsyncOperation/4ae5bab8-74d3-4a1a-98ef-c80be6ee9f2c?api-version=2018-06-01
   response:
     body:
-      string: '{"name":"e4939c0e-9a09-422b-a632-0402e070f72a","status":"Succeeded","startTime":"2020-12-28T09:58:32.13Z"}'
+      string: '{"name":"4ae5bab8-74d3-4a1a-98ef-c80be6ee9f2c","status":"Succeeded","startTime":"2021-03-17T06:24:43.947Z"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '106'
+      - '107'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:58:34 GMT
+      - Wed, 17 Mar 2021 06:24:46 GMT
       expires:
       - '-1'
       pragma:
@@ -1562,21 +1469,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBforMariaDB/servers/testserver21827/securityAlertPolicies/securityalertpolicy?api-version=2018-06-01
   response:
     body:
-      string: '{"properties":{"state":"Disabled","disabledAlerts":[""],"emailAddresses":[""],"emailAccountAdmins":false,"storageEndpoint":"","storageAccountAccessKey":"","retentionDays":0,"creationTime":"2020-12-28T09:58:28.037Z"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBforMariaDB/servers/testserver21827/securityAlertPolicies/securityalertpolicy","name":"securityalertpolicy","type":"Microsoft.DBforMariaDB/servers/securityAlertPolicies"}'
+      string: '{"properties":{"state":"Disabled","disabledAlerts":[""],"emailAddresses":[""],"emailAccountAdmins":false,"storageEndpoint":"","storageAccountAccessKey":"","retentionDays":0,"creationTime":"2021-03-17T06:24:40.79Z"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBforMariaDB/servers/testserver21827/securityAlertPolicies/securityalertpolicy","name":"securityalertpolicy","type":"Microsoft.DBforMariaDB/servers/securityAlertPolicies"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '523'
+      - '522'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:58:35 GMT
+      - Wed, 17 Mar 2021 06:24:46 GMT
       expires:
       - '-1'
       pragma:
@@ -1604,21 +1512,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBforMariaDB/servers/testserver21827/securityAlertPolicies/securityalertpolicy?api-version=2018-06-01
   response:
     body:
-      string: '{"properties":{"state":"Disabled","disabledAlerts":[""],"emailAddresses":[""],"emailAccountAdmins":false,"storageEndpoint":"","storageAccountAccessKey":"","retentionDays":0,"creationTime":"2020-12-28T09:58:28.037Z"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBforMariaDB/servers/testserver21827/securityAlertPolicies/securityalertpolicy","name":"securityalertpolicy","type":"Microsoft.DBforMariaDB/servers/securityAlertPolicies"}'
+      string: '{"properties":{"state":"Disabled","disabledAlerts":[""],"emailAddresses":[""],"emailAccountAdmins":false,"storageEndpoint":"","storageAccountAccessKey":"","retentionDays":0,"creationTime":"2021-03-17T06:24:40.79Z"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBforMariaDB/servers/testserver21827/securityAlertPolicies/securityalertpolicy","name":"securityalertpolicy","type":"Microsoft.DBforMariaDB/servers/securityAlertPolicies"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '523'
+      - '522'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:58:35 GMT
+      - Wed, 17 Mar 2021 06:24:46 GMT
       expires:
       - '-1'
       pragma:
@@ -1646,7 +1555,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBForMariaDB/servers/testserver21827/firewallRules/firewallrule?api-version=2018-06-01
   response:
@@ -1660,7 +1570,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:58:36 GMT
+      - Wed, 17 Mar 2021 06:24:46 GMT
       expires:
       - '-1'
       pragma:
@@ -1688,7 +1598,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBForMariaDB/servers/testserver21827/databases/testdatabase21827?api-version=2018-06-01
   response:
@@ -1702,7 +1613,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:58:36 GMT
+      - Wed, 17 Mar 2021 06:24:46 GMT
       expires:
       - '-1'
       pragma:
@@ -1730,21 +1641,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBForMariaDB/servers/testserver21827?api-version=2018-06-01
   response:
     body:
-      string: '{"sku":{"name":"GP_Gen5_2","tier":"GeneralPurpose","family":"Gen5","capacity":2},"properties":{"administratorLogin":"cloudsa","storageProfile":{"storageMB":128000,"backupRetentionDays":7,"geoRedundantBackup":"Enabled","storageAutogrow":"Disabled"},"version":"10.2","sslEnforcement":"Enabled","minimalTlsVersion":"TLSEnforcementDisabled","userVisibleState":"Ready","fullyQualifiedDomainName":"testserver21827.mariadb.database.azure.com","earliestRestoreDate":"2020-12-28T09:56:09.01+00:00","replicationRole":"Master","masterServerId":"","replicaCapacity":5,"byokEnforcement":"Disabled","infrastructureEncryption":"Disabled","privateEndpointConnections":[],"publicNetworkAccess":"Enabled"},"location":"eastus","tags":{"elastic_server":"1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBforMariaDB/servers/testserver21827","name":"testserver21827","type":"Microsoft.DBforMariaDB/servers"}'
+      string: '{"sku":{"name":"GP_Gen5_2","tier":"GeneralPurpose","family":"Gen5","capacity":2},"properties":{"administratorLogin":"cloudsa","storageProfile":{"storageMB":128000,"backupRetentionDays":7,"geoRedundantBackup":"Enabled","storageAutogrow":"Disabled"},"version":"10.2","sslEnforcement":"Enabled","minimalTlsVersion":"TLSEnforcementDisabled","userVisibleState":"Ready","fullyQualifiedDomainName":"testserver21827.mariadb.database.azure.com","earliestRestoreDate":"2021-03-17T06:24:36.277+00:00","replicationRole":"Master","masterServerId":"","replicaCapacity":5,"byokEnforcement":"Disabled","infrastructureEncryption":"Disabled","privateEndpointConnections":[],"publicNetworkAccess":"Enabled"},"location":"eastus","tags":{"elastic_server":"1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBforMariaDB/servers/testserver21827","name":"testserver21827","type":"Microsoft.DBforMariaDB/servers"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '977'
+      - '978'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:58:36 GMT
+      - Wed, 17 Mar 2021 06:24:46 GMT
       expires:
       - '-1'
       pragma:
@@ -1772,7 +1684,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/providers/Microsoft.DBForMariaDB/operations?api-version=2018-06-01
   response:
@@ -1918,7 +1831,9 @@ interactions:
         Server","description":"Creates a server with the specified parameters or update
         the properties or tags for the specified server."}},{"name":"Microsoft.DBforMariaDB/servers/delete","display":{"provider":"Microsoft
         DB for MariaDB","resource":"MariaDB Server","operation":"Delete MariaDB Server","description":"Deletes
-        an existing server."}},{"name":"Microsoft.DBforMariaDB/locations/operationResults/read","display":{"provider":"Microsoft
+        an existing server."}},{"name":"Microsoft.DBforMariaDB/servers/performanceTiers/read","display":{"provider":"Microsoft
+        DB for MariaDB","resource":"Performance Tiers","operation":"List Performance
+        Tiers","description":"Returns the list of Performance Tiers available."}},{"name":"Microsoft.DBforMariaDB/locations/operationResults/read","display":{"provider":"Microsoft
         DB for MariaDB","resource":"MariaDB Server Operation Results","operation":"Get
         MariaDB Server Operation Results","description":"Return MariaDB Server Operation
         Results"}},{"name":"Microsoft.DBforMariaDB/servers/restart/action","display":{"provider":"Microsoft
@@ -2004,11 +1919,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '25913'
+      - '26160'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:58:37 GMT
+      - Wed, 17 Mar 2021 06:24:47 GMT
       expires:
       - '-1'
       pragma:
@@ -2038,15 +1953,16 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBForMariaDB/servers/testserver21827/restart?api-version=2018-06-01
   response:
     body:
-      string: '{"operation":"RestartElasticServer","startTime":"2020-12-28T09:58:38.973Z"}'
+      string: '{"operation":"RestartElasticServer","startTime":"2021-03-17T06:24:48.053Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/9bdad7a7-10a4-4fef-ac36-6d38e61c846a?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/33654d7a-a62e-45bb-9bca-88ce9210c7ae?api-version=2018-06-01
       cache-control:
       - no-cache
       content-length:
@@ -2054,11 +1970,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:58:38 GMT
+      - Wed, 17 Mar 2021 06:24:47 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/operationResults/9bdad7a7-10a4-4fef-ac36-6d38e61c846a?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/operationResults/33654d7a-a62e-45bb-9bca-88ce9210c7ae?api-version=2018-06-01
       pragma:
       - no-cache
       server:
@@ -2082,12 +1998,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/9bdad7a7-10a4-4fef-ac36-6d38e61c846a?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/33654d7a-a62e-45bb-9bca-88ce9210c7ae?api-version=2018-06-01
   response:
     body:
-      string: '{"name":"9bdad7a7-10a4-4fef-ac36-6d38e61c846a","status":"InProgress","startTime":"2020-12-28T09:58:38.973Z"}'
+      string: '{"name":"33654d7a-a62e-45bb-9bca-88ce9210c7ae","status":"InProgress","startTime":"2021-03-17T06:24:48.053Z"}'
     headers:
       cache-control:
       - no-cache
@@ -2096,7 +2013,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:58:54 GMT
+      - Wed, 17 Mar 2021 06:25:03 GMT
       expires:
       - '-1'
       pragma:
@@ -2124,12 +2041,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/9bdad7a7-10a4-4fef-ac36-6d38e61c846a?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/33654d7a-a62e-45bb-9bca-88ce9210c7ae?api-version=2018-06-01
   response:
     body:
-      string: '{"name":"9bdad7a7-10a4-4fef-ac36-6d38e61c846a","status":"InProgress","startTime":"2020-12-28T09:58:38.973Z"}'
+      string: '{"name":"33654d7a-a62e-45bb-9bca-88ce9210c7ae","status":"InProgress","startTime":"2021-03-17T06:24:48.053Z"}'
     headers:
       cache-control:
       - no-cache
@@ -2138,7 +2056,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:59:09 GMT
+      - Wed, 17 Mar 2021 06:25:17 GMT
       expires:
       - '-1'
       pragma:
@@ -2166,12 +2084,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/9bdad7a7-10a4-4fef-ac36-6d38e61c846a?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/33654d7a-a62e-45bb-9bca-88ce9210c7ae?api-version=2018-06-01
   response:
     body:
-      string: '{"name":"9bdad7a7-10a4-4fef-ac36-6d38e61c846a","status":"InProgress","startTime":"2020-12-28T09:58:38.973Z"}'
+      string: '{"name":"33654d7a-a62e-45bb-9bca-88ce9210c7ae","status":"InProgress","startTime":"2021-03-17T06:24:48.053Z"}'
     headers:
       cache-control:
       - no-cache
@@ -2180,7 +2099,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:59:24 GMT
+      - Wed, 17 Mar 2021 06:25:32 GMT
       expires:
       - '-1'
       pragma:
@@ -2208,12 +2127,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/9bdad7a7-10a4-4fef-ac36-6d38e61c846a?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/33654d7a-a62e-45bb-9bca-88ce9210c7ae?api-version=2018-06-01
   response:
     body:
-      string: '{"name":"9bdad7a7-10a4-4fef-ac36-6d38e61c846a","status":"Succeeded","startTime":"2020-12-28T09:58:38.973Z"}'
+      string: '{"name":"33654d7a-a62e-45bb-9bca-88ce9210c7ae","status":"Succeeded","startTime":"2021-03-17T06:24:48.053Z"}'
     headers:
       cache-control:
       - no-cache
@@ -2222,7 +2142,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:59:40 GMT
+      - Wed, 17 Mar 2021 06:25:48 GMT
       expires:
       - '-1'
       pragma:
@@ -2250,9 +2170,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/operationResults/9bdad7a7-10a4-4fef-ac36-6d38e61c846a?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/operationResults/33654d7a-a62e-45bb-9bca-88ce9210c7ae?api-version=2018-06-01
   response:
     body:
       string: ''
@@ -2262,7 +2183,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 28 Dec 2020 09:59:40 GMT
+      - Wed, 17 Mar 2021 06:25:48 GMT
       expires:
       - '-1'
       pragma:
@@ -2290,27 +2211,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBForMariaDB/servers/testserver21827?api-version=2018-06-01
   response:
     body:
-      string: '{"operation":"UpsertElasticServer","startTime":"2020-12-28T09:59:41.207Z"}'
+      string: '{"operation":"UpsertElasticServer","startTime":"2021-03-17T06:25:48.82Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/83d26a4d-7f73-4a59-a901-e9cb4b544fcf?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/50a0df09-8c4b-4ba9-a45c-fb2a978b4588?api-version=2018-06-01
       cache-control:
       - no-cache
       content-length:
-      - '74'
+      - '73'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 09:59:42 GMT
+      - Wed, 17 Mar 2021 06:25:49 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/operationResults/83d26a4d-7f73-4a59-a901-e9cb4b544fcf?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/operationResults/50a0df09-8c4b-4ba9-a45c-fb2a978b4588?api-version=2018-06-01
       pragma:
       - no-cache
       server:
@@ -2334,21 +2256,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/83d26a4d-7f73-4a59-a901-e9cb4b544fcf?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/50a0df09-8c4b-4ba9-a45c-fb2a978b4588?api-version=2018-06-01
   response:
     body:
-      string: '{"name":"83d26a4d-7f73-4a59-a901-e9cb4b544fcf","status":"Succeeded","startTime":"2020-12-28T09:59:41.207Z"}'
+      string: '{"name":"50a0df09-8c4b-4ba9-a45c-fb2a978b4588","status":"Succeeded","startTime":"2021-03-17T06:25:48.82Z"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '107'
+      - '106'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 10:00:42 GMT
+      - Wed, 17 Mar 2021 06:26:48 GMT
       expires:
       - '-1'
       pragma:
@@ -2376,21 +2299,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBForMariaDB/servers/testserver21827?api-version=2018-06-01
   response:
     body:
-      string: '{"sku":{"name":"GP_Gen5_2","tier":"GeneralPurpose","family":"Gen5","capacity":2},"properties":{"administratorLogin":"cloudsa","storageProfile":{"storageMB":128000,"backupRetentionDays":7,"geoRedundantBackup":"Enabled","storageAutogrow":"Disabled"},"version":"10.2","sslEnforcement":"Enabled","minimalTlsVersion":"TLSEnforcementDisabled","userVisibleState":"Ready","fullyQualifiedDomainName":"testserver21827.mariadb.database.azure.com","earliestRestoreDate":"2020-12-28T09:56:09.01+00:00","replicationRole":"Master","masterServerId":"","replicaCapacity":5,"byokEnforcement":"Disabled","infrastructureEncryption":"Disabled","privateEndpointConnections":[],"publicNetworkAccess":"Enabled"},"location":"eastus","tags":{"elastic_server":"1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBforMariaDB/servers/testserver21827","name":"testserver21827","type":"Microsoft.DBforMariaDB/servers"}'
+      string: '{"sku":{"name":"GP_Gen5_2","tier":"GeneralPurpose","family":"Gen5","capacity":2},"properties":{"administratorLogin":"cloudsa","storageProfile":{"storageMB":128000,"backupRetentionDays":7,"geoRedundantBackup":"Enabled","storageAutogrow":"Disabled"},"version":"10.2","sslEnforcement":"Enabled","minimalTlsVersion":"TLSEnforcementDisabled","userVisibleState":"Ready","fullyQualifiedDomainName":"testserver21827.mariadb.database.azure.com","earliestRestoreDate":"2021-03-17T06:24:36.277+00:00","replicationRole":"Master","masterServerId":"","replicaCapacity":5,"byokEnforcement":"Disabled","infrastructureEncryption":"Disabled","privateEndpointConnections":[],"publicNetworkAccess":"Enabled"},"location":"eastus","tags":{"elastic_server":"1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBforMariaDB/servers/testserver21827","name":"testserver21827","type":"Microsoft.DBforMariaDB/servers"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '977'
+      - '978'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 10:00:43 GMT
+      - Wed, 17 Mar 2021 06:26:49 GMT
       expires:
       - '-1'
       pragma:
@@ -2422,7 +2346,8 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBForMariaDB/checkNameAvailability?api-version=2018-06-01
   response:
@@ -2436,7 +2361,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 10:00:44 GMT
+      - Wed, 17 Mar 2021 06:26:51 GMT
       expires:
       - '-1'
       pragma:
@@ -2468,27 +2393,28 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBForMariaDB/servers/testserver21827/firewallRules/firewallrule?api-version=2018-06-01
   response:
     body:
-      string: '{"operation":"DropElasticServerFirewallRule","startTime":"2020-12-28T10:00:45.36Z"}'
+      string: '{"operation":"DropElasticServerFirewallRule","startTime":"2021-03-17T06:26:51.413Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/5a11c273-daa2-4a09-b438-35ae901a5fbb?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/35cecd77-90cc-41bf-8f4d-e3f329d3c159?api-version=2018-06-01
       cache-control:
       - no-cache
       content-length:
-      - '83'
+      - '84'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 10:00:45 GMT
+      - Wed, 17 Mar 2021 06:26:53 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/operationResults/5a11c273-daa2-4a09-b438-35ae901a5fbb?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/operationResults/35cecd77-90cc-41bf-8f4d-e3f329d3c159?api-version=2018-06-01
       pragma:
       - no-cache
       server:
@@ -2512,21 +2438,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/5a11c273-daa2-4a09-b438-35ae901a5fbb?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/35cecd77-90cc-41bf-8f4d-e3f329d3c159?api-version=2018-06-01
   response:
     body:
-      string: '{"name":"5a11c273-daa2-4a09-b438-35ae901a5fbb","status":"Succeeded","startTime":"2020-12-28T10:00:45.36Z"}'
+      string: '{"name":"35cecd77-90cc-41bf-8f4d-e3f329d3c159","status":"Succeeded","startTime":"2021-03-17T06:26:51.413Z"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '106'
+      - '107'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 10:01:01 GMT
+      - Wed, 17 Mar 2021 06:27:08 GMT
       expires:
       - '-1'
       pragma:
@@ -2556,15 +2483,16 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBForMariaDB/servers/testserver21827/databases/testdatabase21827?api-version=2018-06-01
   response:
     body:
-      string: '{"operation":"DropElasticServerDatabase","startTime":"2020-12-28T10:01:02.127Z"}'
+      string: '{"operation":"DropElasticServerDatabase","startTime":"2021-03-17T06:27:08.647Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/2c98f15e-5782-448e-b22c-154dfdf76c16?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/07180c2f-971c-4bea-ba6e-11868fce892d?api-version=2018-06-01
       cache-control:
       - no-cache
       content-length:
@@ -2572,11 +2500,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 10:01:01 GMT
+      - Wed, 17 Mar 2021 06:27:08 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/operationResults/2c98f15e-5782-448e-b22c-154dfdf76c16?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/operationResults/07180c2f-971c-4bea-ba6e-11868fce892d?api-version=2018-06-01
       pragma:
       - no-cache
       server:
@@ -2600,12 +2528,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/2c98f15e-5782-448e-b22c-154dfdf76c16?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/07180c2f-971c-4bea-ba6e-11868fce892d?api-version=2018-06-01
   response:
     body:
-      string: '{"name":"2c98f15e-5782-448e-b22c-154dfdf76c16","status":"Succeeded","startTime":"2020-12-28T10:01:02.127Z"}'
+      string: '{"name":"07180c2f-971c-4bea-ba6e-11868fce892d","status":"Succeeded","startTime":"2021-03-17T06:27:08.647Z"}'
     headers:
       cache-control:
       - no-cache
@@ -2614,7 +2543,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 10:01:16 GMT
+      - Wed, 17 Mar 2021 06:27:23 GMT
       expires:
       - '-1'
       pragma:
@@ -2644,15 +2573,16 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mariadb_test_mariadbf2c70db8/providers/Microsoft.DBForMariaDB/servers/testserver21827?api-version=2018-06-01
   response:
     body:
-      string: '{"operation":"DropElasticServer","startTime":"2020-12-28T10:01:18.207Z"}'
+      string: '{"operation":"DropElasticServer","startTime":"2021-03-17T06:27:23.993Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/e41a7a14-cbab-4b4f-8276-7f5fe356936d?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/d972b200-627d-432f-af44-71dcff3a1833?api-version=2018-06-01
       cache-control:
       - no-cache
       content-length:
@@ -2660,11 +2590,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 10:01:17 GMT
+      - Wed, 17 Mar 2021 06:27:23 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/operationResults/e41a7a14-cbab-4b4f-8276-7f5fe356936d?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/operationResults/d972b200-627d-432f-af44-71dcff3a1833?api-version=2018-06-01
       pragma:
       - no-cache
       server:
@@ -2688,12 +2618,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/e41a7a14-cbab-4b4f-8276-7f5fe356936d?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMariaDB/locations/eastus/azureAsyncOperation/d972b200-627d-432f-af44-71dcff3a1833?api-version=2018-06-01
   response:
     body:
-      string: '{"name":"e41a7a14-cbab-4b4f-8276-7f5fe356936d","status":"Succeeded","startTime":"2020-12-28T10:01:18.207Z"}'
+      string: '{"name":"d972b200-627d-432f-af44-71dcff3a1833","status":"Succeeded","startTime":"2021-03-17T06:27:23.993Z"}'
     headers:
       cache-control:
       - no-cache
@@ -2702,7 +2633,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Dec 2020 10:01:33 GMT
+      - Wed, 17 Mar 2021 06:27:38 GMT
       expires:
       - '-1'
       pragma:
