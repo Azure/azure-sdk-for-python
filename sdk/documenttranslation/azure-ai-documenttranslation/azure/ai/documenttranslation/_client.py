@@ -123,7 +123,7 @@ class DocumentTranslationClient(object):
         :rtype: JobStatusDetail
         """
 
-        pipeline_response = self.get_job_status(
+        pipeline_response = self._client.document_translation.get_operation_status(
             job_id,
             cls=lambda pipeline_response, _, response_headers: pipeline_response
         )
