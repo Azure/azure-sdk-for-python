@@ -10,7 +10,7 @@
 FILE: send_sms_to_single_recipient_sample_async.py
 DESCRIPTION:
     This sample demonstrates sending an SMS message to a single recipient. The SMS client is 
-    authenticated a client using a connection string.
+    authenticated using a connection string.
 USAGE:
     python send_sms_to_single_recipient_sample_async.py
     Set the environment variable with your own value before running the sample:
