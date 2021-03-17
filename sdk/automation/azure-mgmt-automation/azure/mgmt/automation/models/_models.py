@@ -755,31 +755,6 @@ class CertificateUpdateParameters(msrest.serialization.Model):
         self.description = kwargs.get('description', None)
 
 
-class CollectionItemUpdateConfiguration(msrest.serialization.Model):
-    """object returned when requesting a collection of software update configuration.
-
-    :param azure_virtual_machines: List of azure resource Ids for azure virtual machines targeted
-     by the software update configuration.
-    :type azure_virtual_machines: list[str]
-    :param duration: Maximum time allowed for the software update configuration run. Duration needs
-     to be specified using the format PT[n]H[n]M[n]S as per ISO8601.
-    :type duration: ~datetime.timedelta
-    """
-
-    _attribute_map = {
-        'azure_virtual_machines': {'key': 'azureVirtualMachines', 'type': '[str]'},
-        'duration': {'key': 'duration', 'type': 'duration'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CollectionItemUpdateConfiguration, self).__init__(**kwargs)
-        self.azure_virtual_machines = kwargs.get('azure_virtual_machines', None)
-        self.duration = kwargs.get('duration', None)
-
-
 class Connection(Resource):
     """Definition of the connection.
 
@@ -4070,84 +4045,6 @@ class ScheduleListResult(msrest.serialization.Model):
         self.next_link = kwargs.get('next_link', None)
 
 
-class ScheduleProperties(msrest.serialization.Model):
-    """Definition of schedule parameters.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param start_time: Gets or sets the start time of the schedule.
-    :type start_time: ~datetime.datetime
-    :ivar start_time_offset_minutes: Gets the start time's offset in minutes.
-    :vartype start_time_offset_minutes: float
-    :param expiry_time: Gets or sets the end time of the schedule.
-    :type expiry_time: ~datetime.datetime
-    :param expiry_time_offset_minutes: Gets or sets the expiry time's offset in minutes.
-    :type expiry_time_offset_minutes: float
-    :param is_enabled: Gets or sets a value indicating whether this schedule is enabled.
-    :type is_enabled: bool
-    :param next_run: Gets or sets the next run time of the schedule.
-    :type next_run: ~datetime.datetime
-    :param next_run_offset_minutes: Gets or sets the next run time's offset in minutes.
-    :type next_run_offset_minutes: float
-    :param interval: Gets or sets the interval of the schedule.
-    :type interval: int
-    :param frequency: Gets or sets the frequency of the schedule. Possible values include:
-     "OneTime", "Day", "Hour", "Week", "Month", "Minute".
-    :type frequency: str or ~azure.mgmt.automation.models.ScheduleFrequency
-    :param time_zone: Gets or sets the time zone of the schedule.
-    :type time_zone: str
-    :param advanced_schedule: Gets or sets the advanced schedule.
-    :type advanced_schedule: ~azure.mgmt.automation.models.AdvancedSchedule
-    :param creation_time: Gets or sets the creation time.
-    :type creation_time: ~datetime.datetime
-    :param last_modified_time: Gets or sets the last modified time.
-    :type last_modified_time: ~datetime.datetime
-    :param description: Gets or sets the description.
-    :type description: str
-    """
-
-    _validation = {
-        'start_time_offset_minutes': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'start_time_offset_minutes': {'key': 'startTimeOffsetMinutes', 'type': 'float'},
-        'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
-        'expiry_time_offset_minutes': {'key': 'expiryTimeOffsetMinutes', 'type': 'float'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'next_run': {'key': 'nextRun', 'type': 'iso-8601'},
-        'next_run_offset_minutes': {'key': 'nextRunOffsetMinutes', 'type': 'float'},
-        'interval': {'key': 'interval', 'type': 'int'},
-        'frequency': {'key': 'frequency', 'type': 'str'},
-        'time_zone': {'key': 'timeZone', 'type': 'str'},
-        'advanced_schedule': {'key': 'advancedSchedule', 'type': 'AdvancedSchedule'},
-        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
-        'description': {'key': 'description', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ScheduleProperties, self).__init__(**kwargs)
-        self.start_time = kwargs.get('start_time', None)
-        self.start_time_offset_minutes = None
-        self.expiry_time = kwargs.get('expiry_time', None)
-        self.expiry_time_offset_minutes = kwargs.get('expiry_time_offset_minutes', None)
-        self.is_enabled = kwargs.get('is_enabled', False)
-        self.next_run = kwargs.get('next_run', None)
-        self.next_run_offset_minutes = kwargs.get('next_run_offset_minutes', None)
-        self.interval = kwargs.get('interval', None)
-        self.frequency = kwargs.get('frequency', None)
-        self.time_zone = kwargs.get('time_zone', None)
-        self.advanced_schedule = kwargs.get('advanced_schedule', None)
-        self.creation_time = kwargs.get('creation_time', None)
-        self.last_modified_time = kwargs.get('last_modified_time', None)
-        self.description = kwargs.get('description', None)
-
-
 class ScheduleUpdateParameters(msrest.serialization.Model):
     """The parameters supplied to the update schedule operation.
 
@@ -4209,56 +4106,6 @@ class Sku(msrest.serialization.Model):
         self.capacity = kwargs.get('capacity', None)
 
 
-class SoftareUpdateConfigurationRunTaskProperties(msrest.serialization.Model):
-    """Task properties of the software update configuration.
-
-    :param status: The status of the task.
-    :type status: str
-    :param source: The name of the source of the task.
-    :type source: str
-    :param job_id: The job id of the task.
-    :type job_id: str
-    """
-
-    _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'str'},
-        'job_id': {'key': 'jobId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SoftareUpdateConfigurationRunTaskProperties, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
-        self.source = kwargs.get('source', None)
-        self.job_id = kwargs.get('job_id', None)
-
-
-class SoftareUpdateConfigurationRunTasks(msrest.serialization.Model):
-    """Software update configuration run tasks model.
-
-    :param pre_task: Pre task properties.
-    :type pre_task: ~azure.mgmt.automation.models.SoftareUpdateConfigurationRunTaskProperties
-    :param post_task: Post task properties.
-    :type post_task: ~azure.mgmt.automation.models.SoftareUpdateConfigurationRunTaskProperties
-    """
-
-    _attribute_map = {
-        'pre_task': {'key': 'preTask', 'type': 'SoftareUpdateConfigurationRunTaskProperties'},
-        'post_task': {'key': 'postTask', 'type': 'SoftareUpdateConfigurationRunTaskProperties'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SoftareUpdateConfigurationRunTasks, self).__init__(**kwargs)
-        self.pre_task = kwargs.get('pre_task', None)
-        self.post_task = kwargs.get('post_task', None)
-
-
 class SoftwareUpdateConfiguration(msrest.serialization.Model):
     """Software update configuration properties.
 
@@ -4276,7 +4123,7 @@ class SoftwareUpdateConfiguration(msrest.serialization.Model):
      configuration.
     :type update_configuration: ~azure.mgmt.automation.models.UpdateConfiguration
     :param schedule_info: Required. Schedule information for the Software update configuration.
-    :type schedule_info: ~azure.mgmt.automation.models.ScheduleProperties
+    :type schedule_info: ~azure.mgmt.automation.models.SUCScheduleProperties
     :ivar provisioning_state: Provisioning state for the software update configuration, which only
      appears in the response.
     :vartype provisioning_state: str
@@ -4312,7 +4159,7 @@ class SoftwareUpdateConfiguration(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'update_configuration': {'key': 'properties.updateConfiguration', 'type': 'UpdateConfiguration'},
-        'schedule_info': {'key': 'properties.scheduleInfo', 'type': 'ScheduleProperties'},
+        'schedule_info': {'key': 'properties.scheduleInfo', 'type': 'SUCScheduleProperties'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'error': {'key': 'properties.error', 'type': 'ErrorResponse'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
@@ -4351,7 +4198,9 @@ class SoftwareUpdateConfigurationCollectionItem(msrest.serialization.Model):
     :ivar id: Resource Id of the software update configuration.
     :vartype id: str
     :param update_configuration: Update specific properties of the software update configuration.
-    :type update_configuration: ~azure.mgmt.automation.models.CollectionItemUpdateConfiguration
+    :type update_configuration: ~azure.mgmt.automation.models.UpdateConfiguration
+    :param tasks: Pre and Post Tasks defined.
+    :type tasks: ~azure.mgmt.automation.models.SoftwareUpdateConfigurationTasks
     :param frequency: execution frequency of the schedule associated with the software update
      configuration. Possible values include: "OneTime", "Day", "Hour", "Week", "Month", "Minute".
     :type frequency: str or ~azure.mgmt.automation.models.ScheduleFrequency
@@ -4381,7 +4230,8 @@ class SoftwareUpdateConfigurationCollectionItem(msrest.serialization.Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
-        'update_configuration': {'key': 'properties.updateConfiguration', 'type': 'CollectionItemUpdateConfiguration'},
+        'update_configuration': {'key': 'properties.updateConfiguration', 'type': 'UpdateConfiguration'},
+        'tasks': {'key': 'properties.tasks', 'type': 'SoftwareUpdateConfigurationTasks'},
         'frequency': {'key': 'properties.frequency', 'type': 'str'},
         'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
@@ -4398,6 +4248,7 @@ class SoftwareUpdateConfigurationCollectionItem(msrest.serialization.Model):
         self.name = None
         self.id = None
         self.update_configuration = kwargs.get('update_configuration', None)
+        self.tasks = kwargs.get('tasks', None)
         self.frequency = kwargs.get('frequency', None)
         self.start_time = kwargs.get('start_time', None)
         self.creation_time = None
@@ -4592,7 +4443,7 @@ class SoftwareUpdateConfigurationRun(msrest.serialization.Model):
     :ivar last_modified_by: LastModifiedBy property, which only appears in the response.
     :vartype last_modified_by: str
     :param tasks: Software update configuration tasks triggered in this run.
-    :type tasks: ~azure.mgmt.automation.models.SoftareUpdateConfigurationRunTasks
+    :type tasks: ~azure.mgmt.automation.models.SoftwareUpdateConfigurationRunTasks
     """
 
     _validation = {
@@ -4626,7 +4477,7 @@ class SoftwareUpdateConfigurationRun(msrest.serialization.Model):
         'created_by': {'key': 'properties.createdBy', 'type': 'str'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
-        'tasks': {'key': 'properties.tasks', 'type': 'SoftareUpdateConfigurationRunTasks'},
+        'tasks': {'key': 'properties.tasks', 'type': 'SoftwareUpdateConfigurationRunTasks'},
     }
 
     def __init__(
@@ -4672,6 +4523,56 @@ class SoftwareUpdateConfigurationRunListResult(msrest.serialization.Model):
         super(SoftwareUpdateConfigurationRunListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = kwargs.get('next_link', None)
+
+
+class SoftwareUpdateConfigurationRunTaskProperties(msrest.serialization.Model):
+    """Task properties of the software update configuration.
+
+    :param status: The status of the task.
+    :type status: str
+    :param source: The name of the source of the task.
+    :type source: str
+    :param job_id: The job id of the task.
+    :type job_id: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'source': {'key': 'source', 'type': 'str'},
+        'job_id': {'key': 'jobId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SoftwareUpdateConfigurationRunTaskProperties, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.source = kwargs.get('source', None)
+        self.job_id = kwargs.get('job_id', None)
+
+
+class SoftwareUpdateConfigurationRunTasks(msrest.serialization.Model):
+    """Software update configuration run tasks model.
+
+    :param pre_task: Pre task properties.
+    :type pre_task: ~azure.mgmt.automation.models.SoftwareUpdateConfigurationRunTaskProperties
+    :param post_task: Post task properties.
+    :type post_task: ~azure.mgmt.automation.models.SoftwareUpdateConfigurationRunTaskProperties
+    """
+
+    _attribute_map = {
+        'pre_task': {'key': 'preTask', 'type': 'SoftwareUpdateConfigurationRunTaskProperties'},
+        'post_task': {'key': 'postTask', 'type': 'SoftwareUpdateConfigurationRunTaskProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SoftwareUpdateConfigurationRunTasks, self).__init__(**kwargs)
+        self.pre_task = kwargs.get('pre_task', None)
+        self.post_task = kwargs.get('post_task', None)
 
 
 class SoftwareUpdateConfigurationTasks(msrest.serialization.Model):
@@ -5273,6 +5174,84 @@ class StatisticsListResult(msrest.serialization.Model):
         self.value = kwargs.get('value', None)
 
 
+class SUCScheduleProperties(msrest.serialization.Model):
+    """Definition of schedule parameters.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param start_time: Gets or sets the start time of the schedule.
+    :type start_time: ~datetime.datetime
+    :ivar start_time_offset_minutes: Gets the start time's offset in minutes.
+    :vartype start_time_offset_minutes: float
+    :param expiry_time: Gets or sets the end time of the schedule.
+    :type expiry_time: ~datetime.datetime
+    :param expiry_time_offset_minutes: Gets or sets the expiry time's offset in minutes.
+    :type expiry_time_offset_minutes: float
+    :param is_enabled: Gets or sets a value indicating whether this schedule is enabled.
+    :type is_enabled: bool
+    :param next_run: Gets or sets the next run time of the schedule.
+    :type next_run: ~datetime.datetime
+    :param next_run_offset_minutes: Gets or sets the next run time's offset in minutes.
+    :type next_run_offset_minutes: float
+    :param interval: Gets or sets the interval of the schedule.
+    :type interval: long
+    :param frequency: Gets or sets the frequency of the schedule. Possible values include:
+     "OneTime", "Day", "Hour", "Week", "Month", "Minute".
+    :type frequency: str or ~azure.mgmt.automation.models.ScheduleFrequency
+    :param time_zone: Gets or sets the time zone of the schedule.
+    :type time_zone: str
+    :param advanced_schedule: Gets or sets the advanced schedule.
+    :type advanced_schedule: ~azure.mgmt.automation.models.AdvancedSchedule
+    :param creation_time: Gets or sets the creation time.
+    :type creation_time: ~datetime.datetime
+    :param last_modified_time: Gets or sets the last modified time.
+    :type last_modified_time: ~datetime.datetime
+    :param description: Gets or sets the description.
+    :type description: str
+    """
+
+    _validation = {
+        'start_time_offset_minutes': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'start_time_offset_minutes': {'key': 'startTimeOffsetMinutes', 'type': 'float'},
+        'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'expiry_time_offset_minutes': {'key': 'expiryTimeOffsetMinutes', 'type': 'float'},
+        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
+        'next_run': {'key': 'nextRun', 'type': 'iso-8601'},
+        'next_run_offset_minutes': {'key': 'nextRunOffsetMinutes', 'type': 'float'},
+        'interval': {'key': 'interval', 'type': 'long'},
+        'frequency': {'key': 'frequency', 'type': 'str'},
+        'time_zone': {'key': 'timeZone', 'type': 'str'},
+        'advanced_schedule': {'key': 'advancedSchedule', 'type': 'AdvancedSchedule'},
+        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
+        'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
+        'description': {'key': 'description', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SUCScheduleProperties, self).__init__(**kwargs)
+        self.start_time = kwargs.get('start_time', None)
+        self.start_time_offset_minutes = None
+        self.expiry_time = kwargs.get('expiry_time', None)
+        self.expiry_time_offset_minutes = kwargs.get('expiry_time_offset_minutes', None)
+        self.is_enabled = kwargs.get('is_enabled', False)
+        self.next_run = kwargs.get('next_run', None)
+        self.next_run_offset_minutes = kwargs.get('next_run_offset_minutes', None)
+        self.interval = kwargs.get('interval', None)
+        self.frequency = kwargs.get('frequency', None)
+        self.time_zone = kwargs.get('time_zone', None)
+        self.advanced_schedule = kwargs.get('advanced_schedule', None)
+        self.creation_time = kwargs.get('creation_time', None)
+        self.last_modified_time = kwargs.get('last_modified_time', None)
+        self.description = kwargs.get('description', None)
+
+
 class TagSettingsProperties(msrest.serialization.Model):
     """Tag filter information for the VM.
 
@@ -5768,7 +5747,7 @@ class VariableUpdateParameters(msrest.serialization.Model):
         self.description = kwargs.get('description', None)
 
 
-class Watcher(TrackedResource):
+class Watcher(Resource):
     """Definition of the watcher type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5779,12 +5758,12 @@ class Watcher(TrackedResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: The Azure Region where the resource lives.
-    :type location: str
     :param etag: Gets or sets the etag of the resource.
     :type etag: str
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    :param location: The geo-location where the resource lives.
+    :type location: str
     :param execution_frequency_in_seconds: Gets or sets the frequency at which the watcher is
      invoked.
     :type execution_frequency_in_seconds: long
@@ -5821,9 +5800,9 @@ class Watcher(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
         'execution_frequency_in_seconds': {'key': 'properties.executionFrequencyInSeconds', 'type': 'long'},
         'script_name': {'key': 'properties.scriptName', 'type': 'str'},
         'script_parameters': {'key': 'properties.scriptParameters', 'type': '{str}'},
@@ -5841,6 +5820,8 @@ class Watcher(TrackedResource):
     ):
         super(Watcher, self).__init__(**kwargs)
         self.etag = kwargs.get('etag', None)
+        self.tags = kwargs.get('tags', None)
+        self.location = kwargs.get('location', None)
         self.execution_frequency_in_seconds = kwargs.get('execution_frequency_in_seconds', None)
         self.script_name = kwargs.get('script_name', None)
         self.script_parameters = kwargs.get('script_parameters', None)

@@ -18,7 +18,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, IO, Iterable, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -71,7 +71,7 @@ class DscConfigurationOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2019-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -132,7 +132,7 @@ class DscConfigurationOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2019-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -201,7 +201,7 @@ class DscConfigurationOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2019-06-01"
         content_type = kwargs.pop("content_type", "text/plain; charset=utf-8")
         accept = "application/json"
 
@@ -288,7 +288,7 @@ class DscConfigurationOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2019-06-01"
         content_type = kwargs.pop("content_type", "text/plain; charset=utf-8")
         accept = "application/json"
 
@@ -350,7 +350,7 @@ class DscConfigurationOperations(object):
         configuration_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> IO
+        # type: (...) -> str
         """Retrieve the configuration script identified by configuration name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -360,16 +360,16 @@ class DscConfigurationOperations(object):
         :param configuration_name: The configuration name.
         :type configuration_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: IO, or the result of cls(response)
-        :rtype: IO
+        :return: str, or the result of cls(response)
+        :rtype: str
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
+        cls = kwargs.pop('cls', None)  # type: ClsType[str]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2019-06-01"
         accept = "text/powershell"
 
         # Construct URL
@@ -398,7 +398,7 @@ class DscConfigurationOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('IO', pipeline_response)
+        deserialized = self._deserialize('str', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -441,7 +441,7 @@ class DscConfigurationOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-10-31"
+        api_version = "2019-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
