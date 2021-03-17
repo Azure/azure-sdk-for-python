@@ -82,13 +82,12 @@ class ChatThreadClientSamples(object):
 
     def get_chat_thread_properties(self):
         thread_id = self._thread_id
+        token = self.token
+        endpoint = self.endpoint
         # [START get_thread]
-        from azure.communication.chat import ChatClient
-        from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
-        from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
+        from azure.communication.chat import ChatClient, CommunicationTokenCredential
 
-        refresh_options = CommunicationTokenRefreshOptions(self.token)
-        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
+        chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
         chat_thread_client = chat_client.get_chat_thread_client(thread_id)
         chat_thread_properties = chat_thread_client.get_properties()
         print('Expected Thread Id: ', thread_id, ' Actual Value: ', chat_thread_properties.id)

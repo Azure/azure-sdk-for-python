@@ -61,7 +61,7 @@ class CommunicationTokenCredential(object):
 
         if should_this_thread_refresh:
             try:
-                newtoken = self._token_refresher()
+                newtoken = self._token_refresher()  # pylint:disable=not-callable
 
                 with self._lock:
                     self._token = newtoken

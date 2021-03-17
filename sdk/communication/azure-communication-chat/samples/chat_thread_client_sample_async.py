@@ -77,13 +77,11 @@ class ChatThreadClientSamplesAsync(object):
 
     async def get_chat_thread_properties_async(self):
         thread_id = self._thread_id
+        token = self.token
         # [START get_thread]
-        from azure.communication.chat.aio import ChatClient
-        from azure.communication.identity._shared.user_credential_async import CommunicationTokenCredential
-        from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
+        from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential
 
-        refresh_options = CommunicationTokenRefreshOptions(self.token)
-        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(token))
         async with chat_client:
             chat_thread_client = chat_client.get_chat_thread_client(thread_id)
 
