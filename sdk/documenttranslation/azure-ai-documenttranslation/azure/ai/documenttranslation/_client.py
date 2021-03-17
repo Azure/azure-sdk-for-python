@@ -11,7 +11,6 @@ from azure.core.polling.base_polling import LROBasePolling
 from ._generated import BatchDocumentTranslationClient as _BatchDocumentTranslationClient
 from ._generated.models import BatchStatusDetail as _BatchStatusDetail
 from ._models import (
-    BatchDocumentInput,
     JobStatusDetail,
     DocumentStatusDetail,
     BatchDocumentInput,
@@ -23,10 +22,10 @@ from ._polling import TranslationPolling
 if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
     from azure.core.credentials import AzureKeyCredential, TokenCredential
-    from ._models import JobStatusDetail, DocumentStatusDetail, BatchDocumentInput, FileFormat
+    from ._models import JobStatusDetail, DocumentStatusDetail, BatchDocumentInput, FileFormat  # pylint: disable=w0404
 
 
-class DocumentTranslationClient(object):
+class DocumentTranslationClient(object):  # pylint: disable=r0205
     """DocumentTranslationClient
 
     """
