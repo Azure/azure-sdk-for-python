@@ -22,7 +22,6 @@ from ._polling import TranslationPolling
 if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
     from azure.core.credentials import AzureKeyCredential, TokenCredential
-    from ._models import JobStatusDetail, DocumentStatusDetail, BatchDocumentInput, FileFormat
 
 
 class DocumentTranslationClient(object):  # pylint: disable=r0205

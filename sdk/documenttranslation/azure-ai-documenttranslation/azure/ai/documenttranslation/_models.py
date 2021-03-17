@@ -35,10 +35,10 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
             **kwargs
     ):
         # type: (str, **Any) -> None
-        self.glossary_url=glossary_url
-        self.format=kwargs.get("format", None)
-        self.format_version=kwargs.get("format_version", None)
-        self.storage_source=kwargs.get("storage_source", None)
+        self.glossary_url = glossary_url
+        self.format = kwargs.get("format", None)
+        self.format_version = kwargs.get("format_version", None)
+        self.storage_source = kwargs.get("storage_source", None)
 
     def _to_generated(self):
         return _Glossary(
@@ -84,11 +84,11 @@ class StorageTarget(object):  # pylint: disable=useless-object-inheritance
         **kwargs
     ):
         # type: (str, str, **Any) -> None
-        self.target_url=target_url
-        self.language=language
-        self.category_id=kwargs.get("category_id", None)
-        self.glossaries=kwargs.get("glossaries", None)
-        self.storage_source=kwargs.get("storage_source", None)
+        self.target_url = target_url
+        self.language = language
+        self.category_id = kwargs.get("category_id", None)
+        self.glossaries = kwargs.get("glossaries", None)
+        self.storage_source = kwargs.get("storage_source", None)
 
     def _to_generated(self):
         return _TargetInput(
@@ -133,13 +133,13 @@ class BatchDocumentInput(object):  # pylint: disable=useless-object-inheritance
         **kwargs
     ):
         # type: (str, List[StorageTarget], **Any) -> None
-        self.source_url=source_url
-        self.targets=targets
-        self.source_language=kwargs.get("source_language", None)
-        self.storage_type=kwargs.get("storage_type", None)
-        self.storage_source=kwargs.get("storage_source", None)
-        self.prefix=kwargs.get("prefix", None)
-        self.suffix=kwargs.get("suffix", None)
+        self.source_url = source_url
+        self.targets = targets
+        self.source_language = kwargs.get("source_language", None)
+        self.storage_type = kwargs.get("storage_type", None)
+        self.storage_source = kwargs.get("storage_source", None)
+        self.prefix = kwargs.get("prefix", None)
+        self.suffix = kwargs.get("suffix", None)
 
     def _to_generated(self):
         return _BatchRequest(
@@ -194,18 +194,18 @@ class JobStatusDetail(object):  # pylint: disable=useless-object-inheritance
         **kwargs
     ):
         # type: (**Any) -> None
-        self.id=kwargs['id']
-        self.created_on=kwargs['created_on']
-        self.last_updated_on=kwargs['last_updated_on']
-        self.status=kwargs.get('status', None)
-        self.error=kwargs.get("error", None)
-        self.documents_total_count=kwargs.get('documents_total_count', None)
-        self.documents_failed_count=kwargs.get('documents_failed_count', None)
-        self.documents_succeeded_count=kwargs.get('documents_succeeded_count', None)
-        self.documents_in_progress_count=kwargs.get('documents_in_progress_count', None)
-        self.documents_not_yet_started_count=kwargs.get('documents_not_yet_started_count', None)
-        self.documents_cancelled_count=kwargs.get('documents_cancelled_count', None)
-        self.total_characters_charged=kwargs.get('total_characters_charged', None)
+        self.id = kwargs['id']
+        self.created_on = kwargs['created_on']
+        self.last_updated_on = kwargs['last_updated_on']
+        self.status = kwargs.get('status', None)
+        self.error = kwargs.get("error", None)
+        self.documents_total_count = kwargs.get('documents_total_count', None)
+        self.documents_failed_count = kwargs.get('documents_failed_count', None)
+        self.documents_succeeded_count = kwargs.get('documents_succeeded_count', None)
+        self.documents_in_progress_count = kwargs.get('documents_in_progress_count', None)
+        self.documents_not_yet_started_count = kwargs.get('documents_not_yet_started_count', None)
+        self.documents_cancelled_count = kwargs.get('documents_cancelled_count', None)
+        self.total_characters_charged = kwargs.get('total_characters_charged', None)
 
     @classmethod
     def _from_generated(cls, batch_status_details):
@@ -256,15 +256,15 @@ class DocumentStatusDetail(object):  # pylint: disable=useless-object-inheritanc
         **kwargs
     ):
         # type: (**Any) -> None
-        self.url=kwargs['url']
-        self.created_on=kwargs['created_on']
-        self.last_updated_on=kwargs['last_updated_on']
-        self.status=kwargs['status']
-        self.translate_to=kwargs['translate_to']
-        self.error=kwargs.get('error', None)
-        self.translation_progress=kwargs.get('translation_progress', None)
-        self.id=kwargs.get('id', None)
-        self.characters_charged=kwargs.get('characters_charged', None)
+        self.url = kwargs['url']
+        self.created_on = kwargs['created_on']
+        self.last_updated_on = kwargs['last_updated_on']
+        self.status = kwargs['status']
+        self.translate_to = kwargs['translate_to']
+        self.error = kwargs.get('error', None)
+        self.translation_progress = kwargs.get('translation_progress', None)
+        self.id = kwargs.get('id', None)
+        self.characters_charged = kwargs.get('characters_charged', None)
 
 
     @classmethod
@@ -302,9 +302,9 @@ class DocumentTranslationError(object):  # pylint: disable=useless-object-inheri
         **kwargs
     ):
         # type: (**Any) -> None
-        self.code=kwargs.get('code', None)
-        self.message=None
-        self.target=None
+        self.code = kwargs.get('code', None)
+        self.message = None
+        self.target = None
 
     @classmethod
     def _from_generated(cls, error):
@@ -333,10 +333,10 @@ class FileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
         **kwargs
     ):
         # type: (**Any) -> None
-        self.format=kwargs.get('format', None)
-        self.file_extensions=kwargs.get('file_extensions', None)
-        self.content_types=kwargs.get('content_types', None)
-        self.versions=kwargs.get('versions', None)
+        self.format = kwargs.get('format', None)
+        self.file_extensions = kwargs.get('file_extensions', None)
+        self.content_types = kwargs.get('content_types', None)
+        self.versions = kwargs.get('versions', None)
 
     @classmethod
     def _from_generated(cls, file_format):
