@@ -150,7 +150,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         """
 
         skip = kwargs.pop('skip', None)
-        results_per_page  = kwargs.pop('results_per_page', None)
+        results_per_page = kwargs.pop('results_per_page', None)
 
         def _convert_from_generated_model(generated_model):  # pylint: disable=protected-access
             return JobStatusDetail._from_generated(generated_model)  # pylint: disable=protected-access
