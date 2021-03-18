@@ -20,7 +20,8 @@ from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
-    ServiceBusNamespacePreparer
+    ServiceBusNamespacePreparer,
+    CachedServiceBusTopicPreparer
 )
 
 from mgmt_test_utilities import (
@@ -229,7 +230,8 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_queue_create_with_queue_description(self, servicebus_namespace_connection_string, **kwargs):
+    @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
+    def test_mgmt_queue_create_with_queue_description(self, servicebus_namespace_connection_string, servicebus_topic, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_queues(mgmt_service)
         queue_name = "iweidk"
@@ -245,6 +247,8 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
             enable_batched_operations=True,
             enable_express=True,
             enable_partitioning=True,
+            forward_dead_lettered_messages_to=servicebus_topic.name,
+            forward_to=servicebus_topic.name,
             lock_duration=datetime.timedelta(seconds=13),
             max_delivery_count=14,
             max_size_in_megabytes=3072,
@@ -261,6 +265,8 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
             assert queue.enable_batched_operations == True
             assert queue.enable_express == True
             assert queue.enable_partitioning == True
+            assert queue.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(servicebus_topic.name))
+            assert queue.forward_to.endswith(".servicebus.windows.net/{}".format(servicebus_topic.name))
             assert queue.lock_duration == datetime.timedelta(seconds=13)
             assert queue.max_delivery_count == 14
             assert queue.max_size_in_megabytes % 3072 == 0  # TODO: In my local test, I don't see a multiple of the input number. To confirm

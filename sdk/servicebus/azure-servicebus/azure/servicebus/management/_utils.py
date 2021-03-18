@@ -331,7 +331,7 @@ def _validate_topic_subscription_and_rule_types(
         )
 
 
-def _prepend_fqn_to_forward_to_if_needed(forward_to, fully_qualified_namespace):
+def _normalize_forward_to_address(forward_to, fully_qualified_namespace):
     # type: (str, str) -> str
     parsed = urlparse.urlparse(forward_to)
     forward_to = (

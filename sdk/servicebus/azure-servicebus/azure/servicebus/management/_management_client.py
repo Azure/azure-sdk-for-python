@@ -47,7 +47,7 @@ from ._utils import (
     serialize_rule_key_values,
     extract_rule_data_template,
     create_properties_from_dict_if_needed,
-    _prepend_fqn_to_forward_to_if_needed,
+    _normalize_forward_to_address,
     _validate_entity_name_type,
     _validate_topic_and_subscription_types,
     _validate_topic_subscription_and_rule_types,
@@ -336,10 +336,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         :rtype: ~azure.servicebus.management.QueueProperties
         """
-        forward_to = _prepend_fqn_to_forward_to_if_needed(
+        forward_to = _normalize_forward_to_address(
             kwargs.pop("forward_to", None), self.fully_qualified_namespace
         )
-        forward_dead_lettered_messages_to = _prepend_fqn_to_forward_to_if_needed(
+        forward_dead_lettered_messages_to = _normalize_forward_to_address(
             kwargs.pop("forward_dead_lettered_messages_to", None),
             self.fully_qualified_namespace,
         )
@@ -829,10 +829,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype:  ~azure.servicebus.management.SubscriptionProperties
         """
         _validate_entity_name_type(topic_name, display_name="topic_name")
-        forward_to = _prepend_fqn_to_forward_to_if_needed(
+        forward_to = _normalize_forward_to_address(
             kwargs.pop("forward_to", None), self.fully_qualified_namespace
         )
-        forward_dead_lettered_messages_to = _prepend_fqn_to_forward_to_if_needed(
+        forward_dead_lettered_messages_to = _normalize_forward_to_address(
             kwargs.pop("forward_dead_lettered_messages_to", None),
             self.fully_qualified_namespace,
         )

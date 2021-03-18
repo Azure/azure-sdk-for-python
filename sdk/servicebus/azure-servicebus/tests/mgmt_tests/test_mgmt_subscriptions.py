@@ -15,7 +15,8 @@ from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
-    ServiceBusNamespacePreparer
+    ServiceBusNamespacePreparer,
+    CachedServiceBusQueuePreparer
 )
 
 from mgmt_test_utilities import clear_topics
@@ -75,6 +76,33 @@ class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
         finally:
             mgmt_service.delete_subscription(topic_name, subscription_name)
             mgmt_service.delete_topic(topic_name)
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    def test_mgmt_subscription_create_with_forward_to(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_topics(mgmt_service)
+        topic_name = "iweidkforward"
+        subscription_name = "kdosakoforward"
+        try:
+            mgmt_service.create_topic(topic_name)
+            mgmt_service.create_subscription(
+                topic_name,
+                subscription_name=subscription_name,
+                forward_dead_lettered_messages_to=servicebus_queue.name,
+                forward_to=servicebus_queue.name,
+            )
+            subscription = mgmt_service.get_subscription(topic_name, subscription_name)
+            # Test forward_to (separately, as it changes auto_delete_on_idle when you enable it.)
+            # Note: We endswith to avoid the fact that the servicebus_namespace_name is replacered locally but not in the properties bag, and still test this.
+            assert subscription.forward_to.endswith(".servicebus.windows.net/{}".format(servicebus_queue.name))
+            assert subscription.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(servicebus_queue.name))
+
+        finally:
+            mgmt_service.delete_subscription(topic_name, subscription_name)
+            mgmt_service.delete_topic(topic_name)
+
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
