@@ -112,8 +112,8 @@ class AsyncPipelineClient(PipelineClientBase):
         policies = kwargs.get('policies')
 
         if policies is None:  # [] is a valid policy list
-            per_call_policies = kwargs.get('per_call_policies')
-            per_retry_policies = kwargs.get('per_retry_policies')
+            per_call_policies = kwargs.get('per_call_policies', [])
+            per_retry_policies = kwargs.get('per_retry_policies', [])
             policies = [
                 RequestIdPolicy(**kwargs),
                 config.headers_policy,
@@ -121,24 +121,22 @@ class AsyncPipelineClient(PipelineClientBase):
                 config.proxy_policy,
                 ContentDecodePolicy(**kwargs)
             ]
-            if per_call_policies:
-                if isinstance(per_call_policies, (AsyncHTTPPolicy, SansIOHTTPPolicy)):
-                    policies.append(per_call_policies)
-                else:
-                    for policy in per_call_policies:
-                        policies.append(policy)
+            if isinstance(per_call_policies, (AsyncHTTPPolicy, SansIOHTTPPolicy)):
+                policies.append(per_call_policies)
+            else:
+                for policy in per_call_policies:
+                    policies.append(policy)
             policies = policies + [
                 config.redirect_policy,
                 config.retry_policy,
                 config.authentication_policy,
                 config.custom_hook_policy
             ]
-            if per_retry_policies:
-                if isinstance(per_retry_policies, (AsyncHTTPPolicy, SansIOHTTPPolicy)):
-                    policies.append(per_retry_policies)
-                else:
-                    for policy in per_retry_policies:
-                        policies.append(policy)
+            if isinstance(per_retry_policies, (AsyncHTTPPolicy, SansIOHTTPPolicy)):
+                policies.append(per_retry_policies)
+            else:
+                for policy in per_retry_policies:
+                    policies.append(policy)
             policies = policies + [
                 config.logging_policy,
                 DistributedTracingPolicy(**kwargs),
