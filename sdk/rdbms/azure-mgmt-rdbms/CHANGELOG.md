@@ -1,5 +1,11 @@
 # Release History
 
+## 8.1.0b1 (2021-03-17)
+
+**Features**
+
+  - Added operation ServerSecurityAlertPoliciesOperations.list_by_server
+
 ## 8.0.0 (2020-12-28)
 
 - GA release

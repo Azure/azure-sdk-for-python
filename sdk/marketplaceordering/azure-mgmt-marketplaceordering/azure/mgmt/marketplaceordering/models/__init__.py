@@ -14,6 +14,7 @@ try:
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
     from ._models_py3 import Resource
+    from ._models_py3 import SystemData
 except (SyntaxError, ImportError):
     from ._models import AgreementTerms  # type: ignore
     from ._models import ErrorResponse  # type: ignore
@@ -22,8 +23,10 @@ except (SyntaxError, ImportError):
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
     from ._models import Resource  # type: ignore
+    from ._models import SystemData  # type: ignore
 
 from ._marketplace_ordering_agreements_enums import (
+    CreatedByType,
     OfferType,
 )
 
@@ -35,5 +38,7 @@ __all__ = [
     'OperationDisplay',
     'OperationListResult',
     'Resource',
+    'SystemData',
+    'CreatedByType',
     'OfferType',
 ]

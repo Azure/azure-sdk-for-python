@@ -6,10 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional
+import datetime
+from typing import List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+from ._marketplace_ordering_agreements_enums import *
 
 
 class Resource(msrest.serialization.Model):
@@ -58,6 +61,8 @@ class AgreementTerms(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~azure.mgmt.marketplaceordering.models.SystemData
     :param publisher: Publisher identifier string of image being deployed.
     :type publisher: str
     :param product: Offer identifier string of image being deployed.
@@ -68,6 +73,8 @@ class AgreementTerms(Resource):
     :type license_text_link: str
     :param privacy_policy_link: Link to the privacy policy of the publisher.
     :type privacy_policy_link: str
+    :param marketplace_terms_link: Link to HTML with Azure Marketplace terms.
+    :type marketplace_terms_link: str
     :param retrieve_datetime: Date and time in UTC of when the terms were accepted. This is empty
      if Accepted is false.
     :type retrieve_datetime: str
@@ -81,17 +88,20 @@ class AgreementTerms(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'publisher': {'key': 'properties.publisher', 'type': 'str'},
         'product': {'key': 'properties.product', 'type': 'str'},
         'plan': {'key': 'properties.plan', 'type': 'str'},
         'license_text_link': {'key': 'properties.licenseTextLink', 'type': 'str'},
         'privacy_policy_link': {'key': 'properties.privacyPolicyLink', 'type': 'str'},
+        'marketplace_terms_link': {'key': 'properties.marketplaceTermsLink', 'type': 'str'},
         'retrieve_datetime': {'key': 'properties.retrieveDatetime', 'type': 'str'},
         'signature': {'key': 'properties.signature', 'type': 'str'},
         'accepted': {'key': 'properties.accepted', 'type': 'bool'},
@@ -105,17 +115,20 @@ class AgreementTerms(Resource):
         plan: Optional[str] = None,
         license_text_link: Optional[str] = None,
         privacy_policy_link: Optional[str] = None,
+        marketplace_terms_link: Optional[str] = None,
         retrieve_datetime: Optional[str] = None,
         signature: Optional[str] = None,
         accepted: Optional[bool] = None,
         **kwargs
     ):
         super(AgreementTerms, self).__init__(**kwargs)
+        self.system_data = None
         self.publisher = publisher
         self.product = product
         self.plan = plan
         self.license_text_link = license_text_link
         self.privacy_policy_link = privacy_policy_link
+        self.marketplace_terms_link = marketplace_terms_link
         self.retrieve_datetime = retrieve_datetime
         self.signature = signature
         self.accepted = accepted
@@ -259,3 +272,51 @@ class OperationListResult(msrest.serialization.Model):
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
+
+
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource. Possible values
+     include: "User", "Application", "ManagedIdentity", "Key".
+    :type created_by_type: str or ~azure.mgmt.marketplaceordering.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :type last_modified_by_type: str or ~azure.mgmt.marketplaceordering.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
