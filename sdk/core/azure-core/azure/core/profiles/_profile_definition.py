@@ -234,9 +234,6 @@ class KnownProfiles(Enum):
         if profile_name == "default":
             return cls.default
         for profile in cls:
-            if isinstance(profile.value, ProfileDefinition):
-                value = profile.value.label
-                bo = profile.value.label == profile_name
             if isinstance(profile.value, ProfileDefinition) and profile.value.label == profile_name:
                 return profile
         raise ValueError("No profile called {}".format(profile_name))
