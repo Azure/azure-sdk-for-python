@@ -162,7 +162,7 @@ class BatchDocumentInput(object):  # pylint: disable=useless-object-inheritance
 
 
 
-class JobStatusDetail(object):  # pylint: disable=useless-object-inheritance
+class JobStatusDetail(object):  # pylint: disable=useless-object-inheritance, too-many-instance-attributes
     """Job status response.
 
     :ivar id: Required. Id of the job.
