@@ -13,24 +13,24 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Sat, 13 Mar 2021 00:26:20 GMT
+      - Thu, 18 Mar 2021 23:55:23 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0b6 Python/3.7.9 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.int.communication.azure.net/identities?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
   response:
-    body: '{"identity": {"id": "8:acs:46849534-eb08-4ab7-bde7-c36928cd1547_00000008-c8db-b3ca-1655-373a0d00d7e6"}}'
+    body: '{"identity": {"id": "8:acs:fac4607d-d2d0-40e5-84df-6f32ebd1251a_00000008-e7a5-6b46-99c6-593a0d009e63"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 13 Mar 2021 00:26:19 GMT
+      - Thu, 18 Mar 2021 23:55:15 GMT
       ms-cv:
-      - zrzk+eoxXUuPE4xNPihtbw.0
+      - VArM2XN0kk+NgAPXGdGeOA.0
       request-context:
       - appId=
       strict-transport-security:
@@ -38,7 +38,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 87ms
+      - 11ms
     status:
       code: 201
       message: Created
@@ -56,24 +56,24 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Sat, 13 Mar 2021 00:26:20 GMT
+      - Thu, 18 Mar 2021 23:55:23 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0b6 Python/3.7.9 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.int.communication.azure.net/identities/sanitized/:issueAccessToken?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
   response:
-    body: '{"token": "sanitized", "expiresOn": "2021-03-14T00:26:19.1232966+00:00"}'
+    body: '{"token": "sanitized", "expiresOn": "2021-03-19T23:55:15.2420845+00:00"}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 13 Mar 2021 00:26:19 GMT
+      - Thu, 18 Mar 2021 23:55:15 GMT
       ms-cv:
-      - 7fePJArrhUa0/+LFANssgg.0
+      - w8JQIuqnvEOIqBqruieG3w.0
       request-context:
       - appId=
       strict-transport-security:
@@ -81,7 +81,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 86ms
+      - 26ms
     status:
       code: 200
       message: OK
@@ -101,29 +101,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-chat/1.0.0b6 Python/3.7.9 (Windows-10-10.0.19041-SP0)
       idempotency-token:
-      - 19ae7e67-626c-4e0b-858f-f90e2253e8a3
+      - ebd52e59-068d-4d95-b491-e5f17f043350
     method: POST
-    uri: https://sanitized.int.communication.azure.net/chat/threads?api-version=2021-03-01-preview5
+    uri: https://sanitized.communication.azure.com/chat/threads?api-version=2021-03-01-preview5
   response:
-    body: '{"chatThread": {"id": "19:WqdwshSZQi2XfQdl2j02jKldCudx7qXqX-MMMXDH3Ug1@thread.v2",
-      "topic": "test topic", "createdOn": "2021-03-13T00:26:20Z", "createdByCommunicationIdentifier":
-      {"rawId": "8:acs:46849534-eb08-4ab7-bde7-c36928cd1547_00000008-c8db-b3ca-1655-373a0d00d7e6",
-      "communicationUser": {"id": "8:acs:46849534-eb08-4ab7-bde7-c36928cd1547_00000008-c8db-b3ca-1655-373a0d00d7e6"}}}}'
+    body: '{"chatThread": {"id": "19:kPoxJDxmyvwSh624gpo1oAT6W9MMSqyuyW9Ydgpq1EY1@thread.v2",
+      "topic": "test topic", "createdOn": "2021-03-18T23:55:16Z", "createdByCommunicationIdentifier":
+      {"rawId": "8:acs:fac4607d-d2d0-40e5-84df-6f32ebd1251a_00000008-e7a5-6b46-99c6-593a0d009e63",
+      "communicationUser": {"id": "8:acs:fac4607d-d2d0-40e5-84df-6f32ebd1251a_00000008-e7a5-6b46-99c6-593a0d009e63"}}}}'
     headers:
       api-supported-versions:
       - 2020-09-21-preview2, 2020-11-01-preview3, 2021-01-27-preview4, 2021-03-01-preview5
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 13 Mar 2021 00:26:20 GMT
+      - Thu, 18 Mar 2021 23:55:16 GMT
       ms-cv:
-      - 6SnXjFSr1kuvOSvU9G2+Zw.0
+      - iiFm57X7Pk22qoIdIPAiyg.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 850ms
+      - 904ms
     status:
       code: 201
       message: Created
@@ -137,35 +137,35 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '258'
+      - '257'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-communication-chat/1.0.0b6 Python/3.7.9 (Windows-10-10.0.19041-SP0)
       idempotency-token:
-      - 19ae7e67-626c-4e0b-858f-f90e2253e8a3
+      - ebd52e59-068d-4d95-b491-e5f17f043350
     method: POST
-    uri: https://sanitized.int.communication.azure.net/chat/threads?api-version=2021-03-01-preview5
+    uri: https://sanitized.communication.azure.com/chat/threads?api-version=2021-03-01-preview5
   response:
-    body: '{"chatThread": {"id": "19:WqdwshSZQi2XfQdl2j02jKldCudx7qXqX-MMMXDH3Ug1@thread.v2",
-      "topic": "test topic", "createdOn": "2021-03-13T00:26:20Z", "createdByCommunicationIdentifier":
-      {"rawId": "8:acs:46849534-eb08-4ab7-bde7-c36928cd1547_00000008-c8db-b3ca-1655-373a0d00d7e6",
-      "communicationUser": {"id": "8:acs:46849534-eb08-4ab7-bde7-c36928cd1547_00000008-c8db-b3ca-1655-373a0d00d7e6"}}}}'
+    body: '{"chatThread": {"id": "19:kPoxJDxmyvwSh624gpo1oAT6W9MMSqyuyW9Ydgpq1EY1@thread.v2",
+      "topic": "test topic", "createdOn": "2021-03-18T23:55:16Z", "createdByCommunicationIdentifier":
+      {"rawId": "8:acs:fac4607d-d2d0-40e5-84df-6f32ebd1251a_00000008-e7a5-6b46-99c6-593a0d009e63",
+      "communicationUser": {"id": "8:acs:fac4607d-d2d0-40e5-84df-6f32ebd1251a_00000008-e7a5-6b46-99c6-593a0d009e63"}}}}'
     headers:
       api-supported-versions:
       - 2020-09-21-preview2, 2020-11-01-preview3, 2021-01-27-preview4, 2021-03-01-preview5
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 13 Mar 2021 00:26:21 GMT
+      - Thu, 18 Mar 2021 23:55:16 GMT
       ms-cv:
-      - 7flwle6Bb0ian/GJQkiTEw.0
+      - uns8287/IEu6oHZ73qCLgA.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 698ms
+      - 285ms
     status:
       code: 201
       message: Created
@@ -181,13 +181,13 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 13 Mar 2021 00:26:22 GMT
+      - Thu, 18 Mar 2021 23:55:25 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0b6 Python/3.7.9 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/identities/sanitized?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/identities/sanitized?api-version=2021-03-07
   response:
     body:
       string: ''
@@ -195,15 +195,15 @@ interactions:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-03-07
       date:
-      - Sat, 13 Mar 2021 00:26:37 GMT
+      - Thu, 18 Mar 2021 23:55:17 GMT
       ms-cv:
-      - u0VsBFgEsESrohj31KLs9w.0
+      - EEWsp/bBiEi3lNKOJfjYlw.0
       request-context:
       - appId=
       strict-transport-security:
       - max-age=2592000
       x-processing-time:
-      - 16308ms
+      - 884ms
     status:
       code: 204
       message: No Content
@@ -221,7 +221,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-chat/1.0.0b6 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/chat/threads/sanitized?api-version=2021-03-01-preview5
+    uri: https://sanitized.communication.azure.com/chat/threads/sanitized?api-version=2021-03-01-preview5
   response:
     body:
       string: ''
@@ -229,13 +229,13 @@ interactions:
       api-supported-versions:
       - 2020-09-21-preview2, 2020-11-01-preview3, 2021-01-27-preview4, 2021-03-01-preview5
       date:
-      - Sat, 13 Mar 2021 00:26:37 GMT
+      - Thu, 18 Mar 2021 23:55:18 GMT
       ms-cv:
-      - trHA+O7lL02Ea37pqYQOEA.0
+      - 7Mj5+lOImE2PqREQ3nxD5Q.0
       strict-transport-security:
       - max-age=2592000
       x-processing-time:
-      - 333ms
+      - 178ms
     status:
       code: 204
       message: No Content
