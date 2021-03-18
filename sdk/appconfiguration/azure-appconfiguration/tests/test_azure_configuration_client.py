@@ -86,14 +86,9 @@ class AppConfigurationClientTest(AzureTestCase):
         temp = AppConfigRequestsCredentialsPolicy._signed_request
         AppConfigRequestsCredentialsPolicy._signed_request = new_method
 
-        client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
+        client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string, transport=MockTransport())
 
-        http_request = HttpRequest('GET', 'http://aka.ms/')
-        transport = MockTransport()
-
-        policies = client._impl._client._pipeline._impl_policies
-        pipeline = Pipeline(transport, policies)
-        pipeline.run(http_request)
+        client.list_configuration_settings()
 
         AppConfigRequestsCredentialsPolicy._signed_request = temp
 

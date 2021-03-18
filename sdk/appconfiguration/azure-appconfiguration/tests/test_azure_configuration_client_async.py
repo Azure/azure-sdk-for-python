@@ -446,16 +446,20 @@ class TestAppConfig(object):
         temp = AppConfigRequestsCredentialsPolicy._signed_request
         AppConfigRequestsCredentialsPolicy._signed_request = new_method
 
-        http_request = HttpRequest('GET', 'http://aka.ms/')
-        transport = MockTransport()
-
         client = AzureAppConfigurationClient.from_connection_string(
-            os.environ["APPCONFIGURATION_CONNECTION_STRING"]
+            os.environ["APPCONFIGURATION_CONNECTION_STRING"],
+            transport=MockTransport()
         )
+        client.list_configuration_settings()
 
-        policies = client._impl._client._pipeline._impl_policies
-        pipeline = AsyncPipeline(transport, policies)
-        await pipeline.run(http_request)
+        # http_request = HttpRequest('GET', 'http://aka.ms/')
+        # transport = MockTransport()
+
+
+
+        # policies = client._impl._client._pipeline._impl_policies
+        # pipeline = AsyncPipeline(transport, policies)
+        # await pipeline.run(http_request)
 
         # Reset the actual method
         AppConfigRequestsCredentialsPolicy._signed_request = temp
