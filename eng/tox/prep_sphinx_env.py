@@ -222,6 +222,5 @@ if __name__ == "__main__":
         write_version(site_folder, package_version)
 
         download_cached_content(site_folder, package_name, package_version)
-
     else:
         logging.info("Skipping sphinx prep for {}".format(package_name))
