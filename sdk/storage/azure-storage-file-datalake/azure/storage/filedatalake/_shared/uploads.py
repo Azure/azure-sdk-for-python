@@ -77,13 +77,13 @@ def upload_data_chunks(
         validate_content=validate_content,
         **kwargs)
     if parallel:
-        executor = futures.ThreadPoolExecutor(max_concurrency)
-        upload_tasks = uploader.get_chunk_streams()
-        running_futures = [
-            executor.submit(with_current_context(uploader.process_chunk), u)
-            for u in islice(upload_tasks, 0, max_concurrency)
-        ]
-        range_ids = _parallel_uploads(executor, uploader.process_chunk, upload_tasks, running_futures)
+        with futures.ThreadPoolExecutor(max_concurrency) as executor:
+            upload_tasks = uploader.get_chunk_streams()
+            running_futures = [
+                executor.submit(with_current_context(uploader.process_chunk), u)
+                for u in islice(upload_tasks, 0, max_concurrency)
+            ]
+            range_ids = _parallel_uploads(executor, uploader.process_chunk, upload_tasks, running_futures)
     else:
         range_ids = [uploader.process_chunk(result) for result in uploader.get_chunk_streams()]
     if any(range_ids):
@@ -112,13 +112,13 @@ def upload_substream_blocks(
         **kwargs)
 
     if parallel:
-        executor = futures.ThreadPoolExecutor(max_concurrency)
-        upload_tasks = uploader.get_substream_blocks()
-        running_futures = [
-            executor.submit(with_current_context(uploader.process_substream_block), u)
-            for u in islice(upload_tasks, 0, max_concurrency)
-        ]
-        range_ids = _parallel_uploads(executor, uploader.process_substream_block, upload_tasks, running_futures)
+        with futures.ThreadPoolExecutor(max_concurrency) as executor:
+            upload_tasks = uploader.get_substream_blocks()
+            running_futures = [
+                executor.submit(with_current_context(uploader.process_substream_block), u)
+                for u in islice(upload_tasks, 0, max_concurrency)
+            ]
+            range_ids = _parallel_uploads(executor, uploader.process_substream_block, upload_tasks, running_futures)
     else:
         range_ids = [uploader.process_substream_block(b) for b in uploader.get_substream_blocks()]
     return sorted(range_ids)

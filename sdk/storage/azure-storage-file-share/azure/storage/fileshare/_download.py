@@ -493,11 +493,11 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         )
         if parallel:
             import concurrent.futures
-            executor = concurrent.futures.ThreadPoolExecutor(self._max_concurrency)
-            list(executor.map(
-                    with_current_context(downloader.process_chunk),
-                    downloader.get_chunk_offsets()
-                ))
+            with concurrent.futures.ThreadPoolExecutor(self._max_concurrency) as executor:
+                list(executor.map(
+                        with_current_context(downloader.process_chunk),
+                        downloader.get_chunk_offsets()
+                    ))
         else:
             for chunk in downloader.get_chunk_offsets():
                 downloader.process_chunk(chunk)
