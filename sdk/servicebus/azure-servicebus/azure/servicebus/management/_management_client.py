@@ -336,7 +336,13 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         :rtype: ~azure.servicebus.management.QueueProperties
         """
-        forward_to = _prepend_fqn_to_forward_to_if_needed(kwargs.pop("forward_to", None), self.fully_qualified_namespace)
+        forward_to = _prepend_fqn_to_forward_to_if_needed(
+            kwargs.pop("forward_to", None), self.fully_qualified_namespace
+        )
+        forward_dead_lettered_messages_to = _prepend_fqn_to_forward_to_if_needed(
+            kwargs.pop("forward_dead_lettered_messages_to", None),
+            self.fully_qualified_namespace,
+        )
         queue = QueueProperties(
             queue_name,
             authorization_rules=kwargs.pop("authorization_rules", None),
@@ -363,9 +369,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             requires_session=kwargs.pop("requires_session", None),
             status=kwargs.pop("status", None),
             forward_to=forward_to,
-            forward_dead_lettered_messages_to=kwargs.pop(
-                "forward_dead_lettered_messages_to", None
-            ),
+            forward_dead_lettered_messages_to=forward_dead_lettered_messages_to,
             user_metadata=kwargs.pop("user_metadata", None),
         )
         to_create = queue._to_internal_entity()
@@ -825,7 +829,13 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype:  ~azure.servicebus.management.SubscriptionProperties
         """
         _validate_entity_name_type(topic_name, display_name="topic_name")
-        forward_to = _prepend_fqn_to_forward_to_if_needed(kwargs.pop("forward_to", None), self.fully_qualified_namespace)
+        forward_to = _prepend_fqn_to_forward_to_if_needed(
+            kwargs.pop("forward_to", None), self.fully_qualified_namespace
+        )
+        forward_dead_lettered_messages_to = _prepend_fqn_to_forward_to_if_needed(
+            kwargs.pop("forward_dead_lettered_messages_to", None),
+            self.fully_qualified_namespace,
+        )
 
         subscription = SubscriptionProperties(
             subscription_name,
@@ -845,9 +855,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             status=kwargs.pop("status", None),
             forward_to=forward_to,
             user_metadata=kwargs.pop("user_metadata", None),
-            forward_dead_lettered_messages_to=kwargs.pop(
-                "forward_dead_lettered_messages_to", None
-            ),
+            forward_dead_lettered_messages_to=forward_dead_lettered_messages_to,
             auto_delete_on_idle=kwargs.pop("auto_delete_on_idle", None),
             availability_status=None,
         )
