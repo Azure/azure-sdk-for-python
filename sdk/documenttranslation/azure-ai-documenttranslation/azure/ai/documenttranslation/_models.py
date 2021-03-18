@@ -96,7 +96,8 @@ class StorageTarget(object):  # pylint: disable=useless-object-inheritance
             category=self.category_id,
             language=self.language,
             storage_source=self.storage_source,
-            glossaries=TranslationGlossary._to_generated_list(self.glossaries) if self.glossaries else None # pylint: disable=protected-access, line-too-long
+            glossaries=TranslationGlossary._to_generated_list(self.glossaries)  # pylint: disable=protected-access
+            if self.glossaries else None
         )
 
     @staticmethod
@@ -158,8 +159,10 @@ class BatchDocumentInput(object):  # pylint: disable=useless-object-inheritance
 
     @staticmethod
     def _to_generated_list(batch_document_inputs):
-        return [batch_document_input._to_generated() for batch_document_input in batch_document_inputs]  # pylint: disable=C0301, protected-access
-
+        return [
+            batch_document_input._to_generated()  # pylint: disable=protected-access
+            for batch_document_input in batch_document_inputs
+        ]
 
 
 class JobStatusDetail(object):  # pylint: disable=useless-object-inheritance, too-many-instance-attributes
@@ -214,7 +217,8 @@ class JobStatusDetail(object):  # pylint: disable=useless-object-inheritance, to
             created_on=batch_status_details.created_date_time_utc,
             last_updated_on=batch_status_details.last_action_date_time_utc,
             status=batch_status_details.status,
-            error=DocumentTranslationError._from_generated(batch_status_details.error) if batch_status_details.error else None,  # pylint: disable=protected-access, line-too-long
+            error=DocumentTranslationError._from_generated(batch_status_details.error)  # pylint: disable=protected-access
+            if batch_status_details.error else None,
             documents_total_count=batch_status_details.summary.total,
             documents_failed_count=batch_status_details.summary.failed,
             documents_succeeded_count=batch_status_details.summary.success,
