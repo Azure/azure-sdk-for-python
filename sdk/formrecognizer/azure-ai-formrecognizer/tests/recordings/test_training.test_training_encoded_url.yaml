@@ -14,68 +14,137 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/custom/models
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models
   response:
     body:
-      string: ''
+      string: upstream request timeout
     headers:
       apim-request-id:
-      - cf29a0dd-ecbc-448a-8a11-e3a6319687df
+      - 0ac2f518-334f-4e7f-92d7-118e0d43a5e9
       content-length:
-      - '0'
+      - '24'
+      content-type:
+      - text/plain
       date:
-      - Fri, 30 Oct 2020 17:42:53 GMT
-      location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/64143258-cdcd-47d8-a9f1-6aa5e2011bc6
+      - Thu, 18 Mar 2021 16:02:39 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
-      x-envoy-upstream-service-time:
-      - '37'
     status:
-      code: 201
-      message: Created
+      code: 504
+      message: Gateway Timeout
 - request:
-    body: null
+    body: 'b''{"source": "https://fakeuri.com/blank%20space", "sourceFilter": {"prefix":
+      "", "includeSubFolders": false}, "useLabelFile": false}'''
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '130'
+      Content-Type:
+      - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/64143258-cdcd-47d8-a9f1-6aa5e2011bc6?includeKeys=true
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models
   response:
     body:
-      string: '{"modelInfo": {"modelId": "64143258-cdcd-47d8-a9f1-6aa5e2011bc6", "status":
-        "invalid", "createdDateTime": "2020-10-30T17:42:54Z", "lastUpdatedDateTime":
-        "2020-10-30T17:42:54Z"}, "keys": {"clusters": {}}, "trainResult": {"trainingDocuments":
-        [], "errors": [{"code": "2012", "message": "Unable to list blobs on the Azure
-        blob storage account."}]}}'
+      string: upstream request timeout
     headers:
       apim-request-id:
-      - 1b01ac43-8d4a-4f00-8883-98759ae73552
+      - ccc52d39-9d3a-4161-a9f4-7b78695df774
+      content-length:
+      - '24'
       content-type:
-      - application/json; charset=utf-8
+      - text/plain
       date:
-      - Fri, 30 Oct 2020 17:42:59 GMT
+      - Thu, 18 Mar 2021 16:03:03 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
       x-content-type-options:
       - nosniff
-      x-envoy-upstream-service-time:
-      - '17'
-      x-ms-cs-error-code:
-      - '2012'
     status:
-      code: 200
-      message: OK
+      code: 504
+      message: Gateway Timeout
+- request:
+    body: 'b''{"source": "https://fakeuri.com/blank%20space", "sourceFilter": {"prefix":
+      "", "includeSubFolders": false}, "useLabelFile": false}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '130'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models
+  response:
+    body:
+      string: upstream request timeout
+    headers:
+      apim-request-id:
+      - 285d553e-5638-43a4-838f-a16c9d0f32df
+      content-length:
+      - '24'
+      content-type:
+      - text/plain
+      date:
+      - Thu, 18 Mar 2021 16:03:27 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 504
+      message: Gateway Timeout
+- request:
+    body: 'b''{"source": "https://fakeuri.com/blank%20space", "sourceFilter": {"prefix":
+      "", "includeSubFolders": false}, "useLabelFile": false}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '130'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models
+  response:
+    body:
+      string: upstream request timeout
+    headers:
+      apim-request-id:
+      - 8482375f-8276-4b36-bcf7-0d2a3995c6e6
+      content-length:
+      - '24'
+      content-type:
+      - text/plain
+      date:
+      - Thu, 18 Mar 2021 16:03:53 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 504
+      message: Gateway Timeout
 version: 1

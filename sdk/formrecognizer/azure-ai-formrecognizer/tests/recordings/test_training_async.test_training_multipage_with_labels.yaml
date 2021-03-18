@@ -1,72 +1,64 @@
 interactions:
 - request:
-    body: 'b''{"source": "containersasurl", "sourceFilter": {"prefix": "", "includeSubFolders":
+    body: 'b''{"source": "container_sas_url", "sourceFilter": {"prefix": "", "includeSubFolders":
       false}, "useLabelFile": true}'''
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '300'
+      - '307'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/custom/models
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 5e0c9d1d-6783-446b-b350-e6b9af5462c3
+      apim-request-id: bf20ec4c-478f-45a2-a732-a2051deb44d5
       content-length: '0'
-      date: Fri, 30 Oct 2020 17:52:13 GMT
-      location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/bc05aaae-8d23-4d47-aef6-a89bf8c9e290
+      date: Thu, 18 Mar 2021 15:58:52 GMT
+      location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/2d72380c-9dac-475a-a4da-24f4cf110adc
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '39'
+      x-envoy-upstream-service-time: '218'
     status:
       code: 201
       message: Created
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.2/custom/models
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/bc05aaae-8d23-4d47-aef6-a89bf8c9e290?includeKeys=true
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/2d72380c-9dac-475a-a4da-24f4cf110adc?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "bc05aaae-8d23-4d47-aef6-a89bf8c9e290", "attributes":
-        {"isComposed": false}, "status": "ready", "createdDateTime": "2020-10-30T17:52:13Z",
-        "lastUpdatedDateTime": "2020-10-30T17:52:17Z"}, "trainResult": {"averageModelAccuracy":
-        0.889, "trainingDocuments": [{"documentName": "multipage_invoice1.pdf", "pages":
-        3, "status": "succeeded"}, {"documentName": "multipage_invoice2.pdf", "pages":
-        3, "status": "succeeded"}, {"documentName": "multipage_invoice3.pdf", "pages":
-        3, "status": "succeeded"}, {"documentName": "multipage_invoice4.pdf", "pages":
-        3, "status": "succeeded"}, {"documentName": "multipage_invoice5.pdf", "pages":
-        3, "status": "succeeded"}], "fields": [{"fieldName": "Customer2", "accuracy":
-        1.0}, {"fieldName": "CustomerAddress", "accuracy": 1.0}, {"fieldName": "CustomerName",
-        "accuracy": 1.0}, {"fieldName": "CustomerPhoneNumber", "accuracy": 1.0}, {"fieldName":
-        "FirstItem", "accuracy": 1.0}, {"fieldName": "FirstPrice", "accuracy": 1.0},
-        {"fieldName": "FirstQuantity", "accuracy": 1.0}, {"fieldName": "Merchant",
-        "accuracy": 0.0}, {"fieldName": "Merchant2", "accuracy": 0.0}, {"fieldName":
-        "MerchantAddress", "accuracy": 1.0}, {"fieldName": "MerchantPhoneNumber",
-        "accuracy": 1.0}, {"fieldName": "Signature", "accuracy": 1.0}, {"fieldName":
-        "Signature2", "accuracy": 1.0}, {"fieldName": "Subtotal", "accuracy": 1.0},
-        {"fieldName": "Tax", "accuracy": 1.0}, {"fieldName": "Tip", "accuracy": 1.0},
-        {"fieldName": "Total", "accuracy": 1.0}, {"fieldName": "Total2", "accuracy":
-        1.0}], "errors": []}}'
+      string: '{"modelInfo": {"modelId": "2d72380c-9dac-475a-a4da-24f4cf110adc", "attributes":
+        {"isComposed": false}, "status": "ready", "createdDateTime": "2021-03-18T15:58:52Z",
+        "lastUpdatedDateTime": "2021-03-18T15:58:56Z"}, "trainResult": {"averageModelAccuracy":
+        0.971, "trainingDocuments": [{"documentName": "multi1.pdf", "pages": 2, "status":
+        "succeeded"}, {"documentName": "multi2.pdf", "pages": 2, "status": "succeeded"},
+        {"documentName": "multi3.pdf", "pages": 2, "status": "succeeded"}, {"documentName":
+        "multi4.pdf", "pages": 2, "status": "succeeded"}, {"documentName": "multi5.pdf",
+        "pages": 2, "status": "succeeded"}], "fields": [{"fieldName": "Bronze", "accuracy":
+        0.995}, {"fieldName": "CompanyName", "accuracy": 0.8}, {"fieldName": "Contact",
+        "accuracy": 0.995}, {"fieldName": "Full", "accuracy": 0.995}, {"fieldName":
+        "Gold", "accuracy": 0.995}, {"fieldName": "Half", "accuracy": 0.995}, {"fieldName":
+        "Silver", "accuracy": 0.995}], "errors": []}}'
     headers:
-      apim-request-id: edd60a18-f2cd-47c0-8281-84bb3afe11be
+      apim-request-id: 5f167c23-a47a-4fbd-b616-df8aca837c8b
+      content-length: '874'
       content-type: application/json; charset=utf-8
-      date: Fri, 30 Oct 2020 17:52:18 GMT
+      date: Thu, 18 Mar 2021 15:58:58 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '14'
+      x-envoy-upstream-service-time: '29'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/bc05aaae-8d23-4d47-aef6-a89bf8c9e290?includeKeys=true
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/2d72380c-9dac-475a-a4da-24f4cf110adc?includeKeys=true
 version: 1
