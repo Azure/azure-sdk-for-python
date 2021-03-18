@@ -75,7 +75,8 @@ class TranslationPolling(LongRunningOperation):
         """
         return None
 
-    def _map_nonstandard_statuses(self, status):  #pylint disable=no-self-use
+    # pylint: disable=R0201
+    def _map_nonstandard_statuses(self, status):
         # type: (str) -> str
         """Map non-standard statuses.
 
