@@ -104,8 +104,11 @@ def app_config_decorator(func, **kwargs):
         func(*args, **trimmed_kwargs)
 
         for item in to_delete:
-            client.delete_configuration_setting(
-                key=item.key, label=item.label
-            )
+            try:
+                client.delete_configuration_setting(
+                    key=item.key, label=item.label
+                )
+            except:
+                print("Issue deleting item with key {} and label {}".format(item.key, item.label))
 
     return wrapper
