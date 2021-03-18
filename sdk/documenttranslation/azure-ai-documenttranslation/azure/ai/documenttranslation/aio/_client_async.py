@@ -71,7 +71,7 @@ class DocumentTranslationClient(object):
         """
 
         # submit translation job
-        response_headers = await self._client.document_translation._submit_batch_request_initial(
+        response_headers = await self._client.document_translation._submit_batch_request_initial(  # pylint: disable=protected-access
             # pylint: disable=protected-access
             inputs=BatchDocumentInput._to_generated_list(batch),
             cls=lambda pipeline_response, _, response_headers: response_headers,
@@ -80,7 +80,7 @@ class DocumentTranslationClient(object):
         )
 
         def get_job_id(response_headers):
-            # extract job id. ex: https://document-translator.cognitiveservices.azure.com/translator/text/batch/v1.0-preview.1/batches/cd0asdd0-2ce6-asd4-abd4-9asd7698c26a
+            # extract job id.
             operation_location_header = response_headers['Operation-Location']
             return operation_location_header.split('/')[-1]
 
@@ -133,11 +133,11 @@ class DocumentTranslationClient(object):
         )
 
         def callback(raw_response):
-            detail = self._client._deserialize(_BatchStatusDetail, raw_response)
+            detail = self._client._deserialize(_BatchStatusDetail, raw_response)  # pylint: disable=protected-access
             return JobStatusDetail._from_generated(detail)  # pylint: disable=protected-access
 
         poller = AsyncLROPoller(
-            client=self._client._client,
+            client=self._client._client,  # pylint: disable=protected-access
             initial_response=pipeline_response,
             deserialization_callback=callback,
             polling_method=AsyncLROBasePolling(
@@ -158,13 +158,16 @@ class DocumentTranslationClient(object):
         :rtype: ~azure.core.polling.AsyncItemPaged[JobStatusDetail]
         """
         skip = kwargs.pop('skip', None)
-        results_per_page  = kwargs.pop('results_per_page', None)
+        results_per_page = kwargs.pop('results_per_page', None)
 
         def _convert_from_generated_model(generated_model):
             # pylint: disable=protected-access
             return JobStatusDetail._from_generated(generated_model)
 
-        model_conversion_function = kwargs.pop("cls", lambda job_statuses: [_convert_from_generated_model(job_status) for job_status in job_statuses])
+        model_conversion_function = kwargs.pop(
+            "cls",
+            lambda job_statuses: [_convert_from_generated_model(job_status) for job_status in job_statuses]
+        )
 
         return self._client.document_translation.get_operations(
             top=results_per_page,
@@ -191,7 +194,10 @@ class DocumentTranslationClient(object):
             # pylint: disable=protected-access
             return DocumentStatusDetail._from_generated(generated_model)
 
-        model_conversion_function = kwargs.pop("cls", lambda doc_statuses: [_convert_from_generated_model(doc_status) for doc_status in doc_statuses])
+        model_conversion_function = kwargs.pop(
+            "cls",
+            lambda doc_statuses: [_convert_from_generated_model(doc_status) for doc_status in doc_statuses]
+        )
 
         return self._client.document_translation.get_operation_documents_status(
             id=job_id,
