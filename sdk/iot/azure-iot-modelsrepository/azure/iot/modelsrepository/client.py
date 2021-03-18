@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import six.moves.urllib as urllib
 import re
+import logging
 from azure.core import PipelineClient
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.transport import RequestsTransport
@@ -23,6 +24,8 @@ from . import (
     _pseudo_parser,
     _constants,
 )
+
+_LOGGER = logging.getLogger(__name__)
 
 
 # Public constants exposed to consumers
@@ -66,6 +69,7 @@ class ModelsRepositoryClient(object):
         repository_location = (
             _DEFAULT_LOCATION if repository_location is None else repository_location
         )
+        _LOGGER.debug("Client configured for respository location %s", repository_location)
 
         if dependency_resolution is None:
             # If using the default repository location, the resolution mode should default to
@@ -84,6 +88,7 @@ class ModelsRepositoryClient(object):
                     "Invalid dependency resolution mode: {}".format(dependency_resolution)
                 )
             self.resolution_mode = dependency_resolution
+        _LOGGER.debug("Client configured for dependency mode %s", self.resolution_mode)
 
         # TODO: Should api_version be a kwarg in the API surface?
         kwargs.setdefault("api_verison", api_version)
@@ -96,7 +101,7 @@ class ModelsRepositoryClient(object):
         self.resolver = _resolver.DtmiResolver(self.fetcher)
         self._psuedo_parser = _pseudo_parser.PseudoParser(self.resolver)
 
-    @distributed_trace(name_of_span=_TRACE_NAMESPACE + "/get_models")
+    @distributed_trace
     def get_models(self, dtmis, dependency_resolution=None):
         """Retrieve a model from the Models Repository.
 
@@ -122,20 +127,30 @@ class ModelsRepositoryClient(object):
 
         if dependency_resolution == DEPENDENCY_MODE_DISABLED:
             # Simply retrieve the model(s)
+            _LOGGER.debug("Getting models w/ dependency resolution mode: disabled")
+            _LOGGER.debug("Retreiving model(s): %s...", dtmis)
             model_map = self.resolver.resolve(dtmis)
         elif dependency_resolution == DEPENDENCY_MODE_ENABLED:
             # Manually resolve dependencies using pseudo-parser
+            _LOGGER.debug("Getting models w/ dependency resolution mode: enabled")
+            _LOGGER.debug("Retreiving model(s): %s...", dtmis)
             base_model_map = self.resolver.resolve(dtmis)
             base_model_list = list(base_model_map.values())
+            _LOGGER.debug("Retreiving model dependencies for %s...", dtmis)
             model_map = self._psuedo_parser.expand(base_model_list)
         elif dependency_resolution == DEPENDENCY_MODE_TRY_FROM_EXPANDED:
+            _LOGGER.debug("Getting models w/ dependency resolution mode: tryFromExpanded")
             # Try to use an expanded DTDL to resolve dependencies
             try:
+                _LOGGER.debug("Retreiving expanded model(s): %s...", dtmis)
                 model_map = self.resolver.resolve(dtmis, expanded_model=True)
             except _resolver.ResolverError:
                 # Fallback to manual dependency resolution
+                _LOGGER.debug("Could not retreive model(s) from expanded DTDL - fallback to manual dependency resolution mode")
+                _LOGGER.debug("Retreiving model(s): %s...", dtmis)
                 base_model_map = self.resolver.resolve(dtmis)
                 base_model_list = list(base_model_map.items())
+                _LOGGER.debug("Retreiving model dependencies for %s...", dtmis)
                 model_map = self._psuedo_parser.expand(base_model_list)
         else:
             raise ValueError("Invalid dependency resolution mode: {}".format(dependency_resolution))
@@ -160,22 +175,27 @@ def _create_fetcher(location, **kwargs):
     scheme = urllib.parse.urlparse(location).scheme
     if scheme in _REMOTE_PROTOCOLS:
         # HTTP/HTTPS URL
+        _LOGGER.debug("Repository Location identified as HTTP/HTTPS endpoint - using HttpFetcher")
         client = _create_pipeline_client(base_url=location, **kwargs)
         fetcher = _resolver.HttpFetcher(client)
     elif scheme == "file":
         # Filesystem URI
+        _LOGGER.debug("Repository Location identified as filesystem URI - using FilesystemFetcher")
         location = location[len("file://") :]
         fetcher = _resolver.FilesystemFetcher(location)
     elif scheme == "" and location.startswith("/"):
         # POSIX filesystem path
+        _LOGGER.debug("Repository Location identified as POSIX fileystem path - using FilesystemFetcher")
         fetcher = _resolver.FilesystemFetcher(location)
     elif scheme == "" and re.search(r"\.[a-zA-z]{2,63}$", location[: location.find("/")]):
         # Web URL with protocol unspecified - default to HTTPS
+        _LOGGER.debug("Repository Location identified as remote endpoint without protocol specified - using HttpFetcher")
         location = "https://" + location
         client = _create_pipeline_client(base_url=location, **kwargs)
         fetcher = _resolver.HttpFetcher(client)
     elif scheme != "" and len(scheme) == 1 and scheme.isalpha():
         # Filesystem path using drive letters (e.g. "C:", "D:", etc.)
+        _LOGGER.debug("Repository Location identified as drive letter fileystem path - using FilesystemFetcher")
         fetcher = _resolver.FilesystemFetcher(location)
     else:
         raise ValueError("Unable to identify location: {}".format(location))

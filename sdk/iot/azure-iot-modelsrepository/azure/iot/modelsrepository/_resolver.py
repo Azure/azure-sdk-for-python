@@ -11,7 +11,7 @@ import six
 from . import dtmi_conventions
 from ._chainable_exception import ChainableException
 
-logger = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 class ResolverError(ChainableException):
@@ -43,6 +43,7 @@ class DtmiResolver(object):
             dtdl_path = dtmi_conventions._convert_dtmi_to_path(dtmi)
             if expanded_model:
                 dtdl_path = dtdl_path.replace(".json", ".expanded.json")
+            _LOGGER.debug("Model %s located in repository at %s", dtmi, dtdl_path)
 
             try:
                 dtdl = self.fetcher.fetch(dtdl_path)
@@ -58,6 +59,7 @@ class DtmiResolver(object):
                 for model in dtdl:
                     model_map[model["@id"]] = model
             else:
+                model = dtdl
                 # Verify that the DTMI of the fetched model matches the DTMI of the request
                 if model["@id"] != dtmi:
                     raise ResolverError(
@@ -101,6 +103,7 @@ class HttpFetcher(Fetcher):
         :returns: JSON data at the path
         :rtype: JSON object
         """
+        _LOGGER.debug("Fetching %s from remote endpoint", path)
         request = self.client.get(url=path)
         response = self.client._pipeline.run(request).http_response
         if response.status_code != 200:
@@ -127,6 +130,7 @@ class FilesystemFetcher(Fetcher):
         :returns: JSON data at the path
         :rtype: JSON object
         """
+        _LOGGER.debug("Fetching %s from local filesystem", path)
         # Format path
         path = os.path.join(self.base_path, path)
         path = os.path.normcase(path)
@@ -137,6 +141,7 @@ class FilesystemFetcher(Fetcher):
 
         # Fetch
         try:
+            _LOGGER.debug("File open on %s", path)
             with open(path) as f:
                 file_str = f.read()
         except Exception as e:

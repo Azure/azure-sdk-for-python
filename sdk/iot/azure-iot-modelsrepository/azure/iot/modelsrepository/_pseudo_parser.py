@@ -11,8 +11,10 @@ of truth for the DTDL model specifications.
 Note that this implementation is not representative of what an eventual full
 parser implementation would necessarily look like from an API perspective
 """
+import logging
 from ._chainable_exception import ChainableException
 
+_LOGGER = logging.getLogger(__name__)
 
 class PseudoParser(object):
     def __init__(self, resolver):
@@ -38,16 +40,20 @@ class PseudoParser(object):
         return expanded_map
 
     def _expand(self, model, model_map):
+        _LOGGER.debug("Expanding model: %s", model["@id"])
         dependencies = _get_dependency_list(model)
         dependencies_to_resolve = [
             dependency for dependency in dependencies if dependency not in model_map
         ]
 
         if dependencies_to_resolve:
+            _LOGGER.debug("Outstanding dependencies found: %s", dependencies_to_resolve)
             resolved_dependency_map = self.resolver.resolve(dependencies_to_resolve)
             model_map.update(resolved_dependency_map)
-            for dependency_model in resolved_dependency_map.items():
+            for dependency_model in resolved_dependency_map.values():
                 self._expand(dependency_model, model_map)
+        else:
+            _LOGGER.debug("No outstanding dependencies found")
 
 
 def _get_dependency_list(model):
@@ -75,4 +81,6 @@ def _get_dependency_list(model):
                     # This is a nested model. Now go get its dependencies and add them
                     dependencies += _get_dependency_list(item)
 
+    # Remove duplicate dependencies
+    dependencies = list(set(dependencies))
     return dependencies
