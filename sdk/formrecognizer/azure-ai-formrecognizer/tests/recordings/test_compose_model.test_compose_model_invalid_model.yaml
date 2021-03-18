@@ -13,28 +13,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/custom/models/compose
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/compose
   response:
     body:
       string: '{"error": {"code": "1001", "message": "Parameter ''ModelIds'' is either
         null or has less than two unique models."}}'
     headers:
       apim-request-id:
-      - 4a520ba0-c96a-488e-ab93-a90538a8cc7c
+      - 6f3185f7-e3e6-446c-a2b2-802f157f4a1a
+      content-length:
+      - '109'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 29 Oct 2020 21:19:43 GMT
+      - Thu, 18 Mar 2021 14:54:35 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '3'
+      - '29'
     status:
       code: 400
       message: Bad Request
