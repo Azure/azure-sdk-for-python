@@ -9,12 +9,13 @@
 # an package sdist and prepping for a sphinx execution.
 
 from m2r import parse_from_file
+from azure.storage.blob import BlobServiceClient, ContainerClient
 
 import glob
 import logging
 import shutil
 import argparse
-from pkg_resources import Requirement
+from pkg_resources import Requirement, parse_version
 import ast
 import os
 import textwrap
@@ -22,11 +23,14 @@ import io
 from tox_helper_tasks import (
     get_package_details,
     unzip_sdist_to_directory,
-    move_and_rename
+    move_and_rename,
+    safe_write_to_file_b,
 )
 
 logging.getLogger().setLevel(logging.INFO)
 
+SPHINX_CACHE_CONNSTR = "DefaultEndpointsProtocol=https;AccountName=azuresdkdocs;EndpointSuffix=core.windows.net"
+SPHINX_CACHE_PREFIX = "python/{}"
 RST_EXTENSION_FOR_INDEX = """
 
 Indices and tables
@@ -49,7 +53,19 @@ sphinx_conf = os.path.join(root_dir, "doc", "sphinx", "individual_build_conf.py"
 
 
 def should_build_docs(package_name):
-    return not ("nspkg" in package_name or package_name in ["azure", "azure-mgmt", "azure-keyvault", "azure-documentdb", "azure-mgmt-documentdb", "azure-servicemanagement-legacy"])
+    return not (
+        "nspkg" in package_name
+        or package_name
+        in [
+            "azure",
+            "azure-mgmt",
+            "azure-keyvault",
+            "azure-documentdb",
+            "azure-mgmt-documentdb",
+            "azure-servicemanagement-legacy",
+        ]
+    )
+
 
 def create_index_file(readme_location, package_rst):
     readme_ext = os.path.splitext(readme_location)[1]
@@ -75,7 +91,7 @@ def copy_conf(doc_folder):
     if not os.path.exists(doc_folder):
         os.mkdir(doc_folder)
 
-    shutil.copy(sphinx_conf, os.path.join(doc_folder, 'conf.py'))
+    shutil.copy(sphinx_conf, os.path.join(doc_folder, "conf.py"))
 
 
 def create_index(doc_folder, source_location, namespace):
@@ -103,6 +119,60 @@ def create_index(doc_folder, source_location, namespace):
     # write index
     with open(content_destination, "w+") as f:
         f.write(index_content)
+
+
+import pdb
+
+
+def get_version(key):
+    return parse_version(key)
+
+
+# find the previous version released for this package
+def find_previous_cached_content(client, package_name):
+    pkg_prefix = SPHINX_CACHE_PREFIX.format(package_name)
+    versioning_blob_name = "{}/versioning/versions".format(pkg_prefix)
+    blob_client = client.get_blob_client(versioning_blob_name)
+    versioning_blob = blob_client.download_blob()
+
+    versions = versioning_blob.content_as_text()
+
+    versions = sorted(
+        [x.strip() for x in versions.split("\n")], key=get_version, reverse=True
+    )
+
+    if len(versions) >= 1:
+        return "{}/{}/".format(pkg_prefix, versions[0])
+    else:
+        return None
+
+
+# this step is mostly optional. it is extremely important for super heavy packages like azure-mgmt-network,
+# but technically it is NOT required to completely generate the package's documentation. The impact of not caching
+# previous sphinix results will mean generating the WHOLE package, versus an incremental build of it.
+def download_cached_content(site_folder, package_name, package_version):
+    container_client = ContainerClient.from_connection_string(
+        conn_str=SPHINX_CACHE_CONNSTR, container_name="$web"
+    )
+    download_target_prefix = find_previous_cached_content(
+        container_client, package_name
+    )
+
+    if download_target_prefix:
+        blobs_for_download = container_client.list_blobs(
+            name_starts_with=download_target_prefix
+        )
+
+        # todo, parallelize this?
+        for blob in blobs_for_download:
+            blob_client = container_client.get_blob_client(blob=blob)
+            local_path = os.path.join(
+                site_folder, blob.name.replace(download_target_prefix, "")
+            )
+
+            with safe_write_to_file_b(local_path) as local_file:
+                download_stream = blob_client.download_blob()
+                local_file.write(download_stream.readall())
 
 
 def write_version(site_folder, version):
@@ -150,5 +220,8 @@ if __name__ == "__main__":
 
         site_folder = os.path.join(args.dist_dir, "site")
         write_version(site_folder, package_version)
+
+        download_cached_content(site_folder, package_name, package_version)
+
     else:
         logging.info("Skipping sphinx prep for {}".format(package_name))

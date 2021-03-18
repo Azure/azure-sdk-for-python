@@ -46,12 +46,17 @@ def sphinx_build(target_dir, output_dir):
                 "-A",
                 "include_index_link=True",
                 "-j",
-                "2",
+                "auto",
                 "-c",
                 sphinx_conf_dir,
                 target_dir,
                 output_dir
             ]
+
+    cached_doc_trees = os.path.join(output_dir, ".doctrees")
+
+    if os.path.exists(cached_doc_trees):
+        command_array += ['-d', cached_doc_trees]
 
     try:
         logging.info("Sphinx build command: {}".format(command_array))

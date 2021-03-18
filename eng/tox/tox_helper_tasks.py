@@ -105,6 +105,19 @@ def find_sdist(dist_dir, pkg_name, pkg_version):
         return
     return packages[0]
 
+def safe_write_to_file_b(file):
+    containing_directory = os.path.dirname(file);
+    if not os.path.exists(containing_directory):
+        os.makedirs(containing_directory)
+
+    return open(file, 'wb')
+
+def safe_write_to_file(file):
+    containing_directory = os.path.dirname(file);
+    if not os.path.exists(containing_directory):
+        os.makedirs(containing_directory)
+
+    return open(file, 'w')
 
 def find_whl(whl_dir, pkg_name, pkg_version):
     # This function will find a whl for given package name

@@ -148,12 +148,10 @@ autoclass_content = 'both'
 html_theme = 'sphinx_rtd_theme'
 
 html_theme_options = {
-    'collapsiblesidebar': True
-    'collapse_navigation': True
+    'collapsiblesidebar': True,
+    'collapse_navigation': True,
     'navigation_depth': 2
 }
-
-html_copy_source = False
 
 # Activate the theme.
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
