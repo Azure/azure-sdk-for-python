@@ -11,7 +11,7 @@ import re
 # up from python 2.7. Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
 
 PACKAGE_NAME = "azure-containerregistry"
-PACKAGE_PPRINT_NAME = "Template Package"
+PACKAGE_PPRINT_NAME = "Azure Container Registry"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
@@ -20,9 +20,7 @@ namespace_name = PACKAGE_NAME.replace("-", ".")
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
-    version = re.search(
-        r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE
-    ).group(1)
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
 if not version:
     raise RuntimeError("Cannot find version information")
 
@@ -32,9 +30,7 @@ with open("README.md", encoding="utf-8") as f:
 setup(
     name=PACKAGE_NAME,
     version=version,
-    description="Microsoft Azure {} Client Library for Python".format(
-        PACKAGE_PPRINT_NAME
-    ),
+    description="Microsoft Azure {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
     # ensure that these are updated to reflect the package owners' information
     long_description=long_description,
     url="https://github.com/Azure/azure-sdk-for-python",
