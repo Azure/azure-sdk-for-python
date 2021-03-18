@@ -6,8 +6,6 @@
 
 from enum import Enum
 
-from azure.core.paging import PageIterator
-
 
 class ContentPermissions(object):
     def __init__(self, **kwargs):
@@ -123,8 +121,6 @@ class RepositoryProperties(object):
             tag_count=generated.tag_count,
             content_permissions=generated.writeable_properties,
         )
-        return cls(generated)
-
 
 class RegistryArtifactOrderBy(int, Enum):
 

@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._artifact_storage_client import ArtifactStorageClient
-from ._container_registry_authentication import ContainerRegistryStsClient
 from ._container_registry_client import ContainerRegistryClient
 from ._container_repository_client import ContainerRepositoryClient
 from ._models import (
@@ -19,29 +17,6 @@ from ._models import (
     TagOrderBy,
     TagProperties,
 )
-from ._storage_models import (
-    ArtifactManifest,
-    CompleteUploadResult,
-    ConfigMediaType,
-    ContentDescriptor,
-    CreateManifestResult,
-    CreateUploadResult,
-    DockerManifestList,
-    DockerManifestV1,
-    DockerManifestV1FsLayer,
-    DockerManifestV1History,
-    DockerManifestV1ImageHistory,
-    DockerManifestV1Jwk,
-    DockerManifestV1JwkHeader,
-    DockerManifestV2,
-    ManifestListAttributes,
-    ManifestMediaType,
-    OCIIndex,
-    OCIManifest,
-    OCIManifestAnnotations,
-    RuntimePlatform,
-    UploadStatus,
-)
 from ._authentication_policy import (
     ContainerRegistryUserCredential,
     ContainerRegistryUserCredentialPolicy,
@@ -51,8 +26,6 @@ from ._version import VERSION
 __version__ = VERSION
 
 __all__ = [
-    "ArtifactStorageClient",
-    "ContainerRegistryStsClient",
     "ContainerRegistryClient",
     "ContainerRepositoryClient",
     "ContentPermissions",
@@ -62,27 +35,6 @@ __all__ = [
     "RepositoryProperties",
     "TagOrderBy",
     "TagProperties",
-    "ArtifactManifest",
-    "CompleteUploadResult",
-    "ConfigMediaType",
-    "ContentDescriptor",
-    "CreateManifestResult",
-    "CreateUploadResult",
-    "DockerManifestList",
-    "DockerManifestV1",
-    "DockerManifestV1FsLayer",
-    "DockerManifestV1History",
-    "DockerManifestV1ImageHistory",
-    "DockerManifestV1Jwk",
-    "DockerManifestV1JwkHeader",
-    "DockerManifestV2",
-    "ManifestListAttributes",
-    "ManifestMediaType",
-    "OCIIndex",
-    "OCIManifest",
-    "OCIManifestAnnotations",
-    "RuntimePlatform",
-    "UploadStatus",
     "ContainerRegistryUserCredential",
     "ContainerRegistryUserCredentialPolicy",
 ]

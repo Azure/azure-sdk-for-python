@@ -3,12 +3,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import functools
-
 from azure.core.paging import ItemPaged
 
 from ._base_client import ContainerRegistryBaseClient
-from ._models import RepositoryProperties, DeletedRepositoryResult
+from ._container_repository_client import ContainerRepositoryClient
+from ._models import DeletedRepositoryResult
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
@@ -41,7 +40,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         # NOTE: DELETE `/acr/v1/{name}`
         deleted_repository = self._client.container_registry.delete_repository(
-            repository
+            repository, **kwargs
         )
         return DeletedRepositoryResult.from_generated(deleted_repository)
 
@@ -57,7 +56,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises: None
         """
         return self._client.container_registry.get_repositories(
-            last=kwargs.get("last", None), n=kwargs.get("max", None)
+            last=kwargs.pop("last", None), n=kwargs.pop("max", None), **kwargs
         )
 
 
@@ -72,4 +71,5 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return ContainerRepositoryClient(
             repository,
             credential=self.credential,
+            **kwargs
         )

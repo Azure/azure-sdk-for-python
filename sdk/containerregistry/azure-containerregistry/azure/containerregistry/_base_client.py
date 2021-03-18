@@ -6,13 +6,8 @@
 
 from enum import Enum
 
-from azure.core.pipeline.policies import (
-    BearerTokenCredentialPolicy,
-)
-
 from ._authentication_policy import ContainerRegistryUserCredentialPolicy
 from ._generated import ContainerRegistry
-from ._helpers import get_authentication_policy
 from ._user_agent import USER_AGENT
 
 
@@ -23,7 +18,15 @@ class ContainerRegistryApiVersion(str, Enum):
 
 
 class ContainerRegistryBaseClient(object):
-    def __init__(self, endpoint, credential, **kwargs):
+    """ Base class for ContainerRegistryClient and ContainerRepositoryClient
+
+    :param endpoint: Azure Container Registry endpoint
+    :type endpoint: str
+    :param credential: AAD Token for authenticating requests with Azure
+    :type credential: :class:`azure.identity.DefaultTokenCredential`
+
+    """
+    def __init__(self, endpoint, credential, **kwargs):  # pylint:disable=client-method-missing-type-annotations
         auth_policy = ContainerRegistryUserCredentialPolicy(credential=credential)
         self._client = ContainerRegistry(
             credential=credential,
@@ -50,6 +53,6 @@ class ContainerRegistryBaseClient(object):
         """
         self._client.close()
 
-    def _is_tag(self, tag_or_digest):
+    def _is_tag(self, tag_or_digest):  # pylint: disable=no-self-use
         tag = tag_or_digest.split(":")
         return len(tag) == 2 and tag[0] == u"sha"

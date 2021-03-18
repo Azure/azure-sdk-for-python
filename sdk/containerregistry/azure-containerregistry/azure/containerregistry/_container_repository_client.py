@@ -37,7 +37,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        self._client.container_registry.delete(self.repository, **kwargs)
+        self._client.container_registry.delete_repository(self.repository, **kwargs)
 
     def delete_registry_artifact(self, digest):
         # type: (str) -> None
@@ -66,6 +66,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         for t in self.list_tags():
             if t.tag == tag:
                 return t.digest
+        return ""
 
     def get_properties(self):
         # type: (...) -> RepositoryProperties
@@ -88,13 +89,14 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: :class:~azure.containerregistry.RegistryArtifactProperties
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        # TODO: If `tag_or_digest` is a tag, need to do a get_tags to find the appropriate digest, generated code only takes a digest
+        # TODO: If `tag_or_digest` is a tag, need to do a get_tags to find the appropriate digest,
+        # generated code only takes a digest
         if self._is_tag(tag_or_digest):
             tag_or_digest = self.get_digest_from_tag(tag_or_digest)
         # TODO: The returned object from the generated code is not being deserialized properly
         return RegistryArtifactProperties.from_generated(
             self._client.container_registry_repository.get_manifest_attributes(
-                self.repository, tag_or_digest
+                self.repository, tag_or_digest, **kwargs
             )
         )
 
@@ -109,7 +111,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         return TagProperties.from_generated(
             self._client.container_registry_repository.get_tag_attributes(
-                self.repository, tag
+                self.repository, tag, **kwargs
             )
         )
 
@@ -128,15 +130,15 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         raise NotImplementedError("Not implemented")
         # TODO: turn this into an ItemPaged
-        artifacts = self._client.manifests.get_list(
-            self.repository,
-            last=kwargs.get("last", None),
-            n=kwargs.get("n", None),
-            orderby=kwargs.get("orderby"),
-        )  # ,
-        # cls=lambda objs: [RegistryArtifacts.from_generated(x) for x in objs])
+        # artifacts = self._client.manifests.get_list(
+        #     self.repository,
+        #     last=kwargs.get("last", None),
+        #     n=kwargs.get("n", None),
+        #     orderby=kwargs.get("orderby"),
+        # )  # ,
+        # # cls=lambda objs: [RegistryArtifacts.from_generated(x) for x in objs])
 
-        return RegistryArtifactProperties.from_generated(artifacts)
+        # return RegistryArtifactProperties.from_generated(artifacts)
 
     def list_tags(self, **kwargs):
         # type: (...) -> ItemPaged[TagProperties]
