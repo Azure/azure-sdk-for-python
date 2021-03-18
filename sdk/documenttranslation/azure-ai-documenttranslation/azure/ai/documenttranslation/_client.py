@@ -66,8 +66,8 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
         # submit translation job
         response_headers = self._client.document_translation._submit_batch_request_initial(  # pylint: disable=protected-access
-            inputs = BatchDocumentInput._to_generated_list(batch),  # pylint: disable=protected-access
-            cls = lambda pipeline_response, _, response_headers: response_headers,
+            inputs=BatchDocumentInput._to_generated_list(batch),  # pylint: disable=protected-access
+            cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
 
@@ -162,9 +162,9 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             ])
 
         return self._client.document_translation.get_operations(
-            top = results_per_page,
-            skip = skip,
-            cls = model_conversion_function,
+            top=results_per_page,
+            skip=skip,
+            cls=model_conversion_function,
             **kwargs
         )
 
@@ -193,10 +193,10 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             ])
 
         return self._client.document_translation.get_operation_documents_status(
-            id = job_id,
-            top = results_per_page,
-            skip = skip,
-            cls = model_conversion_function,
+            id=job_id,
+            top=results_per_page,
+            skip=skip,
+            cls=model_conversion_function,
             **kwargs
         )
 

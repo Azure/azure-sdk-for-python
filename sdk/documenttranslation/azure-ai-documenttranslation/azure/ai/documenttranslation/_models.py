@@ -101,7 +101,7 @@ class StorageTarget(object):  # pylint: disable=useless-object-inheritance
 
     @staticmethod
     def _to_generated_list(targets):
-        return [ target._to_generated() for target in targets]
+        return [target._to_generated() for target in targets]
 
 
 class BatchDocumentInput(object):  # pylint: disable=useless-object-inheritance
@@ -158,7 +158,7 @@ class BatchDocumentInput(object):  # pylint: disable=useless-object-inheritance
 
     @staticmethod
     def _to_generated_list(batch_document_inputs):
-        return [ batch_document_input._to_generated() for batch_document_input in batch_document_inputs ]  # pylint: disable=C0301
+        return [batch_document_input._to_generated() for batch_document_input in batch_document_inputs]  # pylint: disable=C0301
 
 
 
@@ -349,4 +349,4 @@ class FileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
 
     @staticmethod
     def _from_generated_list(file_formats):
-        return [ FileFormat._from_generated(file_formats) for file_formats in file_formats ]
+        return [FileFormat._from_generated(file_formats) for file_formats in file_formats]
