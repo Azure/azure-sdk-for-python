@@ -18,7 +18,7 @@ from .. import models
 
 
 class PhoneNumbersClient(object):
-    """The phone numbers client uses Azure Communication Services to acquire and manage phone numbers.
+    """The phone numbers client uses Azure Communication Services to purchase and manage phone numbers.
 
     :ivar phone_numbers: PhoneNumbersOperations operations
     :vartype phone_numbers: azure.communication.phonenumbers.aio.operations.PhoneNumbersOperations

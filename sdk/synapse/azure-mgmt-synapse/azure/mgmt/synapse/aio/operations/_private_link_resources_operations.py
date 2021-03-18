@@ -65,7 +65,7 @@ class PrivateLinkResourcesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -107,7 +107,7 @@ class PrivateLinkResourcesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorContract, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -145,7 +145,7 @@ class PrivateLinkResourcesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         # Construct URL
@@ -172,7 +172,7 @@ class PrivateLinkResourcesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorContract, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateLinkResource', pipeline_response)
