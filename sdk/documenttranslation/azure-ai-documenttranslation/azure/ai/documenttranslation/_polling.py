@@ -28,7 +28,8 @@ class TranslationPolling(LongRunningOperation):
         if not _is_empty(response):
             body = _as_json(response)
             status = body.get("status")
-            return True if status else False
+            if status:
+                return True
         return False
 
     def get_polling_url(self):
@@ -63,8 +64,7 @@ class TranslationPolling(LongRunningOperation):
             status = body.get("status")
             if status:
                 return self._map_nonstandard_statuses(status)
-            else:
-                raise BadResponse("No status found in body")
+            raise BadResponse("No status found in body")
         raise BadResponse("The response from long running operation does not contain a body.")
 
     def get_final_get_url(self, pipeline_response):
@@ -75,17 +75,14 @@ class TranslationPolling(LongRunningOperation):
         """
         return None
 
-    def _map_nonstandard_statuses(status):
+    def _map_nonstandard_statuses(self, status):
         # type: (str) -> str
         """Map non-standard statuses.
-        all statuses here: https://docs.microsoft.com/en-us/rest/api/cognitiveservices/translator/documenttranslation/getoperationstatus#status
 
         :param str status: lro process status.
         """
         if status in ["ValidationFailed"]:
             return "Failed"
-        elif status in ["Cancelled", "Cancelling"]:
+        if status in ["Cancelled", "Cancelling"]:
             return "Canceled"
         return status
-
-	

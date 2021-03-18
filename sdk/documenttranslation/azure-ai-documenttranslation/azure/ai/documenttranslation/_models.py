@@ -101,7 +101,7 @@ class StorageTarget(object):  # pylint: disable=useless-object-inheritance
 
     @staticmethod
     def _to_generated_list(targets):
-        return [target._to_generated() for target in targets]
+        return [target._to_generated() for target in targets]  # pylint: disable=protected-access
 
 
 class BatchDocumentInput(object):  # pylint: disable=useless-object-inheritance
@@ -158,7 +158,7 @@ class BatchDocumentInput(object):  # pylint: disable=useless-object-inheritance
 
     @staticmethod
     def _to_generated_list(batch_document_inputs):
-        return [batch_document_input._to_generated() for batch_document_input in batch_document_inputs]  # pylint: disable=C0301
+        return [batch_document_input._to_generated() for batch_document_input in batch_document_inputs]  # pylint: disable=C0301, protected-access
 
 
 
@@ -214,7 +214,7 @@ class JobStatusDetail(object):  # pylint: disable=useless-object-inheritance
             created_on=batch_status_details.created_date_time_utc,
             last_updated_on=batch_status_details.last_action_date_time_utc,
             status=batch_status_details.status,
-            error=DocumentTranslationError._from_generated(batch_status_details.error) if batch_status_details.error else None,  # pylint: disable=protected-access
+            error=DocumentTranslationError._from_generated(batch_status_details.error) if batch_status_details.error else None,  # pylint: disable=protected-access, line-too-long
             documents_total_count=batch_status_details.summary.total,
             documents_failed_count=batch_status_details.summary.failed,
             documents_succeeded_count=batch_status_details.summary.success,
