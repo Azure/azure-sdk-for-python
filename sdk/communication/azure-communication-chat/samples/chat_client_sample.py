@@ -105,18 +105,6 @@ class ChatClientSamples(object):
 
         print("get_chat_thread_client succeeded with thread id: ", chat_thread_client.thread_id)
 
-    def get_thread(self):
-        token = self.token
-        endpoint = self.endpoint
-
-        # [START get_thread]
-        from azure.communication.chat import ChatClient, CommunicationTokenCredential
-
-        chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
-        chat_thread = chat_client.get_chat_thread(self._thread_id)
-        # [END get_thread]
-
-        print("get_thread succeeded, thread id: " + chat_thread.id + ", thread topic: " + chat_thread.topic)
 
     def list_threads(self):
         token = self.token
@@ -159,7 +147,6 @@ if __name__ == '__main__':
     sample.create_chat_client()
     sample.create_thread()
     sample.get_chat_thread_client()
-    sample.get_thread()
     sample.list_threads()
     sample.delete_thread()
     sample.clean_up()

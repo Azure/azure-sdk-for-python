@@ -102,20 +102,6 @@ class ChatClientSamplesAsync(object):
 
         print("chat_thread_client created with thread id: ", chat_thread_client.thread_id)
 
-    async def get_thread_async(self):
-        token = self.token
-        endpoint = self.endpoint
-        thread_id = self._thread_id
-
-        # [START get_thread]
-        from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential
-
-        chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
-        async with chat_client:
-            chat_thread = await chat_client.get_chat_thread(thread_id)
-            print("Chat thread id: " + chat_thread.id + ", thread topic: " + chat_thread.topic)
-        # [END get_thread]
-            print("get_thread succeeded, thread id: " + chat_thread.id + ", thread topic: " + chat_thread.topic)
 
     async def list_threads_async(self):
         token = self.token
@@ -162,7 +148,6 @@ async def main():
     sample.create_chat_client()
     await sample.create_thread_async()
     sample.get_chat_thread_client()
-    await sample.get_thread_async()
     await sample.list_threads_async()
     await sample.delete_thread_async()
     sample.clean_up()
