@@ -333,12 +333,9 @@ def _validate_topic_subscription_and_rule_types(
 
 def _normalize_forward_to_address(forward_to, fully_qualified_namespace):
     # type: (str, str) -> str
-    parsed = urlparse.urlparse(forward_to)
-    forward_to = (
-        "sb://" + fully_qualified_namespace + "/" + forward_to
-        if forward_to and not parsed.netloc
-        else forward_to
-    )
+    if forward_to:  # for python 2.7, cannot urlparse None
+        parsed = urlparse.urlparse(forward_to)
+        forward_to = "sb://" + fully_qualified_namespace + "/" + forward_to if not parsed.netloc else forward_to
     return forward_to
 
 
