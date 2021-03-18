@@ -11,6 +11,10 @@
 from m2r import parse_from_file
 from azure.storage.blob import BlobServiceClient, ContainerClient
 
+import logging
+logger = logging.getLogger('azure.storage')
+logger.setLevel(logging.ERROR)
+
 import glob
 import logging
 import shutil
@@ -121,13 +125,6 @@ def create_index(doc_folder, source_location, namespace):
         f.write(index_content)
 
 
-import pdb
-
-
-def get_version(key):
-    return parse_version(key)
-
-
 # find the previous version released for this package
 def find_previous_cached_content(client, package_name):
     pkg_prefix = SPHINX_CACHE_PREFIX.format(package_name)
@@ -138,7 +135,7 @@ def find_previous_cached_content(client, package_name):
     versions = versioning_blob.content_as_text()
 
     versions = sorted(
-        [x.strip() for x in versions.split("\n")], key=get_version, reverse=True
+        [x.strip() for x in versions.split("\n")], key=parse_version, reverse=True
     )
 
     if len(versions) >= 1:

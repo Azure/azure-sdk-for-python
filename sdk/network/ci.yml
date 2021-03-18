@@ -28,6 +28,7 @@ pr:
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
+    BuildTargetingString: 'azure-mgmt-network'
     ServiceDirectory: network
     Artifacts:
     - name: azure-mgmt-dns
