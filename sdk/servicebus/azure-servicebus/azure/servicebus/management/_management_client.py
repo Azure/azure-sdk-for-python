@@ -47,6 +47,7 @@ from ._utils import (
     serialize_rule_key_values,
     extract_rule_data_template,
     create_properties_from_dict_if_needed,
+    _prepend_fqn_to_forward_to_if_needed,
     _validate_entity_name_type,
     _validate_topic_and_subscription_types,
     _validate_topic_subscription_and_rule_types,
@@ -335,6 +336,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         :rtype: ~azure.servicebus.management.QueueProperties
         """
+        forward_to = _prepend_fqn_to_forward_to_if_needed(kwargs.pop("forward_to", None), self.fully_qualified_namespace)
         queue = QueueProperties(
             queue_name,
             authorization_rules=kwargs.pop("authorization_rules", None),
@@ -360,7 +362,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             ),
             requires_session=kwargs.pop("requires_session", None),
             status=kwargs.pop("status", None),
-            forward_to=kwargs.pop("forward_to", None),
+            forward_to=forward_to,
             forward_dead_lettered_messages_to=kwargs.pop(
                 "forward_dead_lettered_messages_to", None
             ),
@@ -823,6 +825,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype:  ~azure.servicebus.management.SubscriptionProperties
         """
         _validate_entity_name_type(topic_name, display_name="topic_name")
+        forward_to = _prepend_fqn_to_forward_to_if_needed(kwargs.pop("forward_to", None), self.fully_qualified_namespace)
 
         subscription = SubscriptionProperties(
             subscription_name,
@@ -840,7 +843,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             max_delivery_count=kwargs.pop("max_delivery_count", None),
             enable_batched_operations=kwargs.pop("enable_batched_operations", None),
             status=kwargs.pop("status", None),
-            forward_to=kwargs.pop("forward_to", None),
+            forward_to=forward_to,
             user_metadata=kwargs.pop("user_metadata", None),
             forward_dead_lettered_messages_to=kwargs.pop(
                 "forward_dead_lettered_messages_to", None
