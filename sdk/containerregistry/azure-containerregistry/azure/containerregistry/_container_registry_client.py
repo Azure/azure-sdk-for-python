@@ -30,8 +30,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             endpoint=endpoint, credential=credential, **kwargs
         )
 
-        pass
-
     def delete_repository(self, repository, **kwargs):
         # type: (str) -> DeletedRepositoryResult
         """Delete a repository
@@ -58,12 +56,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: ~azure.core.paging.ItemPaged[str]
         :raises: None
         """
-        # NOTE: `/acr/v1/_catalog`
-        raise NotImplementedError("Not implemented")
-        repos = self._client.repository.get_list(
+        return self._client.container_registry.get_repositories(
             last=kwargs.get("last", None), n=kwargs.get("max", None)
         )
-        return ItemPaged()
+
 
     def get_repository_client(self, repository, **kwargs):
         # type: (str) -> ContainerRepositoryClient
