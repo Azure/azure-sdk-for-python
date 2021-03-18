@@ -357,7 +357,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
 
         See fields found on an ID document here:
-        https://aka.ms/formrecognizer/TODO
+        https://aka.ms/formrecognizer/iddocumentfields
 
         :param id_document: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
         :type id_document: bytes or IO[bytes]
@@ -426,7 +426,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         The input document must be the location (URL) of the ID document to be analyzed.
 
         See fields found on an ID document here:
-        https://aka.ms/formrecognizer/TODO
+        https://aka.ms/formrecognizer/iddocumentfields
 
         :param str id_document_url: The URL of the ID document to analyze. The input must be a valid, encoded URL
             of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.

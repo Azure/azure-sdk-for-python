@@ -13,7 +13,7 @@ DESCRIPTION:
     This sample demonstrates how to recognize fields from an identity document.
 
     See fields found on an ID document here:
-    https://aka.ms/formrecognizer/TODO
+    https://aka.ms/formrecognizer/iddocumentfields
 
 USAGE:
     python sample_recognize_id_documents.py

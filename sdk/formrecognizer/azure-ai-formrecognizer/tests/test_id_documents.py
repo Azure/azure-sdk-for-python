@@ -173,17 +173,17 @@ class TestIdDocument(FormRecognizerTest):
         self.assertEqual(len(result), 1)
         id_document = result[0]
         # check dict values
-        self.assertEqual(id_document.fields.get("LastName").value, "SAMPLE")
-        self.assertEqual(id_document.fields.get("FirstName").value, "CONNOR")
-        self.assertEqual(id_document.fields.get("DocumentNumber").value, "S99988801")
-        self.assertEqual(id_document.fields.get("DateOfBirth").value, date(1959,1,12))
-        self.assertEqual(id_document.fields.get("DateOfExpiration").value, date(2021,1,12))
+        self.assertEqual(id_document.fields.get("LastName").value, "TALBOT")
+        self.assertEqual(id_document.fields.get("FirstName").value, "LIAM R.")
+        # self.assertEqual(id_document.fields.get("DocumentNumber").value, "WDLABCD456DG") # service error when reading the license number returns 'LICWDLACD5DG'
+        self.assertEqual(id_document.fields.get("DateOfBirth").value, date(1958,1,6))
+        self.assertEqual(id_document.fields.get("DateOfExpiration").value, date(2020,8,12))
         # FIXME: this is different than the other field values
         self.assertEqual(id_document.fields.get("Sex").value_data.text, "M")
-        self.assertEqual(id_document.fields.get("Address").value, "123 NORTH MAIN STREET APT. 1 NORTH QUINCY, MA 02171-1748")
-        # FIXME: this is different than the other field values
-        # self.assertEqual(field.value_data.text, "United States")
-        self.assertEqual(id_document.fields.get("Region").value, "Massachusetts")
+        self.assertEqual(id_document.fields.get("Address").value, "123 STREET ADDRESS YOUR CITY WA 99999-1234")
+        # FIXME: country is not returning a value
+        # self.assertEqual(id_document.fields.get("Country").value_data.text, "United States")
+        self.assertEqual(id_document.fields.get("Region").value, "Washington")
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -204,7 +204,7 @@ class TestIdDocument(FormRecognizerTest):
                 # self.assertEqual(field.value_data.text, "United States")
                 continue
             elif field.name == "Region":
-                self.assertEqual(field.value, "Massachusetts")
+                self.assertEqual(field.value, "Washington")
             else: 
                 self.assertFieldElementsHasValues(field.value_data.field_elements, id_document.page_range.first_page_number)
 
