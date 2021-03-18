@@ -45,14 +45,11 @@ Optional keyword arguments can be passed in at the client and per-operation leve
 
 Use the following keyword arguments when instantiating a client to configure the retry policy:
 
-* __retry_total__ (int): Total number of retries to allow. Takes precedence over other counts.
-Pass in `retry_total=0` if you do not want to retry on requests. Defaults to 10.
+* __retry_total__ (int): Total number of retries to allow. Takes precedence over other counts. Pass in `retry_total=0` if you do not want to retry on requests. Defaults to 10.
 * __retry_connect__ (int): How many connection-related errors to retry on. Defaults to 3.
 * __retry_read__ (int): How many times to retry on read errors. Defaults to 3.
 * __retry_status__ (int): How many times to retry on bad status codes. Defaults to 3.
-* __retry_to_secondary__ (bool): Whether the request should be retried to secondary, if able.
-This should only be enabled of RA-GRS accounts are used and potentially stale data can be handled.
-Defaults to `False`.
+* __retry_to_secondary__ (bool): Whether the request should be retried to secondary, if able. This should only be enabled of RA-GRS accounts are used and potentially stale data can be handled. Defaults to `False`.
 
 ### Other client / per-operation configuration
 
