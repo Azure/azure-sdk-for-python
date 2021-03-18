@@ -105,4 +105,3 @@ def get_authentication_policy(
 def _convert_expires_on_datetime_to_utc_int(expires_on):
     epoch = time.mktime(datetime(1970, 1, 1).timetuple())
     return epoch-time.mktime(expires_on.timetuple())
-    
