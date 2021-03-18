@@ -32,6 +32,7 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
 
     repository = "hello-world"
 
+    @pytest.mark.live_test_only
     @acr_preparer()
     def test_get_attributes(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
@@ -41,6 +42,7 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
         assert repo_attribs is not None
         assert repo_attribs.content_permissions is not None
 
+    @pytest.mark.live_test_only
     @acr_preparer()
     def test_get_properties(self, containerregistry_baseurl):
         reg_client = self.create_repository_client(containerregistry_baseurl, "hello-world")
@@ -67,6 +69,7 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
         self.assert_registry_artifact(properties, digest)
         self.assert_registry_artifact(first_properties, tag)
 
+    @pytest.mark.live_test_only
     @acr_preparer()
     def test_get_tag(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
@@ -75,6 +78,7 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
 
         self.assert_tag(tag)
 
+    @pytest.mark.live_test_only
     @acr_preparer()
     def test_list_tags(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
@@ -88,6 +92,7 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
 
         assert count > 0
 
+    @pytest.mark.live_test_only
     @acr_preparer()
     def test_list_tags_descending(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
@@ -115,7 +120,6 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
         repo_attribs = client.list_registry_artifacts()
 
         print(repo_attribs)
-
 
     @pytest.mark.skip("Don't want to delete right now")
     @acr_preparer()
