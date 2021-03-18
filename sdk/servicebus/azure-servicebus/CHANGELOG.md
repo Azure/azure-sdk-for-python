@@ -2,6 +2,9 @@
 
 ## 7.1.1 (Unreleased)
 
+**New Features**
+
+* Updated `forward_to` parameter in `create_queue` and `create_subscription` methods on `ServiceBusAdministrationClient` to accept entities as well, rather than only full paths. In the case that an entity is passed in, it is assumed that the entity exists within the namespace specified by the `fully_qualified_namespace` property of the `ServiceBusAdministrationClient`.
 
 ## 7.1.0 (2021-03-09)
 
