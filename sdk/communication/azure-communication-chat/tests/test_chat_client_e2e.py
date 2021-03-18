@@ -109,7 +109,7 @@ class ChatClientTest(CommunicationTestCase):
         except:
            raised = True
 
-        assert raised is True
+        assert raised is False
 
     @pytest.mark.live_test_only
     def test_create_chat_thread(self):
