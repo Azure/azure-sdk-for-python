@@ -11,10 +11,8 @@ from azure.core.pipeline.policies import HTTPPolicy
 from ._utils import get_current_utc_time
 
 
-
 class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
-    """Implementation of request-oauthlib except and retry logic.
-    """
+    """Implementation of request-oauthlib except and retry logic."""
 
     def __init__(self, credentials):
         super(AppConfigRequestsCredentialsPolicy, self).__init__()
