@@ -20,8 +20,7 @@ from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
-    ServiceBusNamespacePreparer,
-    CachedServiceBusTopicPreparer
+    ServiceBusNamespacePreparer
 )
 
 from mgmt_test_utilities import (
@@ -230,14 +229,15 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
-    def test_mgmt_queue_create_with_queue_description(self, servicebus_namespace_connection_string, servicebus_topic, **kwargs):
+    def test_mgmt_queue_create_with_queue_description(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_queues(mgmt_service)
         queue_name = "iweidk"
+        topic_name = "aghadh"
 
         #TODO: Why don't we have an input model (queueOptions? as superclass of QueueProperties?) and output model to not show these params?
         #TODO: This fails with the following: E           msrest.exceptions.DeserializationError: Find several XML 'prefix:DeadLetteringOnMessageExpiration' where it was not expected .tox\whl\lib\site-packages\msrest\serialization.py:1262: DeserializationError
+        mgmt_service.create_topic(topic_name)
         mgmt_service.create_queue(
             queue_name,
             auto_delete_on_idle=datetime.timedelta(minutes=10),
@@ -247,8 +247,8 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
             enable_batched_operations=True,
             enable_express=True,
             enable_partitioning=True,
-            forward_dead_lettered_messages_to=servicebus_topic.name,
-            forward_to=servicebus_topic.name,
+            forward_dead_lettered_messages_to=topic_name,
+            forward_to=topic_name,
             lock_duration=datetime.timedelta(seconds=13),
             max_delivery_count=14,
             max_size_in_megabytes=3072,
@@ -265,8 +265,8 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
             assert queue.enable_batched_operations == True
             assert queue.enable_express == True
             assert queue.enable_partitioning == True
-            assert queue.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(servicebus_topic.name))
-            assert queue.forward_to.endswith(".servicebus.windows.net/{}".format(servicebus_topic.name))
+            assert queue.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(topic_name))
+            assert queue.forward_to.endswith(".servicebus.windows.net/{}".format(topic_name))
             assert queue.lock_duration == datetime.timedelta(seconds=13)
             assert queue.max_delivery_count == 14
             assert queue.max_size_in_megabytes % 3072 == 0  # TODO: In my local test, I don't see a multiple of the input number. To confirm
@@ -277,6 +277,7 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
             assert queue.requires_session == True
         finally:
             mgmt_service.delete_queue(queue_name)
+            mgmt_service.delete_topic(topic_name)
 
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
