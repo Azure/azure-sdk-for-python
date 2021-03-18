@@ -96,7 +96,7 @@ class StorageTarget(object):  # pylint: disable=useless-object-inheritance
             category=self.category_id,
             language=self.language,
             storage_source=self.storage_source,
-            glossaries=TranslationGlossary._to_generated_list(self.glossaries)  # pylint: disable=protected-access
+            glossaries=TranslationGlossary._to_generated_list(self.glossaries) if self.glossaries else None # pylint: disable=protected-access, line-too-long
         )
 
     @staticmethod
