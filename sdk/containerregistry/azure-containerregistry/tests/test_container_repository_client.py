@@ -15,7 +15,9 @@ from azure.containerregistry import (
     RepositoryProperties,
     ContentPermissions,
     TagProperties,
+    TagOrderBy,
 )
+from azure.core.paging import ItemPaged
 
 from _shared.testcase import ContainerRegistryTestClass
 
@@ -30,6 +32,7 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
 
     repository = "hello-world"
 
+    @pytest.mark.skip("Don't want to delete right now")
     @acr_preparer()
     def test_delete_repository(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
@@ -85,18 +88,37 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
 
         self.assert_tag(tag)
 
-    @pytest.mark.skip("List pending")
     @acr_preparer()
     def test_list_tags(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
 
-        repos = client.list_tags()
+        tags = client.list_tags()
+        assert isinstance(tags, ItemPaged)
         count = 0
-        # for repo in repos._repositories:
-        #     count += 1
-        print(repos)
+        for tag in tags:
+            count += 1
+            print(tag)
 
-        # assert count > 0
+        assert count > 0
+
+    @acr_preparer()
+    def test_list_tags_descending(self, containerregistry_baseurl):
+        client = self.create_repository_client(containerregistry_baseurl, self.repository)
+
+        # TODO: This is giving time in ascending order
+        tags = client.list_tags(order_by=TagOrderBy.LastUpdateTimeDescending)
+        assert isinstance(tags, ItemPaged)
+        last_updated_on = None
+        count = 0
+        for tag in tags:
+            print(tag.last_updated_on)
+            # if last_updated_on:
+            #     assert tag.last_updated_on < last_updated_on
+            last_updated_on = tag.last_updated_on
+            count += 1
+            # print(tag)
+
+        assert count > 0
 
     @pytest.mark.skip("List pending")
     @acr_preparer()

@@ -142,12 +142,23 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         # type: (...) -> ItemPaged[TagProperties]
         """List the tags for a repository
 
+        :param last: Query parameter for the last item in the previous call. Ensuing
+            call will return values after last lexically
+        :type last: str
+        :param order_by: Query paramter for ordering by time ascending or descending
         :returns: ~azure.core.paging.ItemPaged[TagProperties]
         :raises: None
         """
-        raise NotImplementedError("Not implemented")
-        tags = self._client.container_registry.get_attributes(self.repository, **kwargs)
-        return tags
+        return self._client.container_registry_repository.get_tags(
+            self.repository,
+            last=kwargs.pop("last", None),
+            n=kwargs.pop("top", None),
+            orderby=kwargs.pop("order_by", None),
+            digest=kwargs.pop("digest", None),
+            cls=lambda objs: [TagProperties.from_generated(o) for o in objs],
+            **kwargs
+        )
+
 
     def set_manifest_properties(self, digest, value):
         # type: (str, ContentPermissions) -> None

@@ -167,8 +167,8 @@ class TagProperties(object):
                 self.content_permissions
             )
         self.name = kwargs.get("name", None)
-        self.registry = kwargs.get("registry", None)
-        self.repository = kwargs.get("repository", None)
+        self.signed = kwargs.get('signed', None)
+        self.quarantine_state = kwargs.get('quarantine_state', None)
 
     @classmethod
     def from_generated(cls, generated):
@@ -178,6 +178,6 @@ class TagProperties(object):
             last_updated_on=generated.last_updated_on,
             content_permissions=generated.modifiable_properties,
             name=generated.name,
-            registry=generated.registry,
-            repository=generated.repository,
+            signed=generated.additional_properties.get("signed", None),
+            quarantine_state=generated.additional_properties.get("quarantineState", None),
         )
