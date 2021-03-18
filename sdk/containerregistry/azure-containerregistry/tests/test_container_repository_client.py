@@ -32,20 +32,6 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
 
     repository = "hello-world"
 
-    @pytest.mark.skip("Don't want to delete right now")
-    @acr_preparer()
-    def test_delete_repository(self, containerregistry_baseurl):
-        client = self.create_repository_client(containerregistry_baseurl, self.repository)
-        client.delete()
-
-        reg_client = self.create_registry_client(containerregistry_baseurl)
-
-        repo_count = 0
-        for repo in reg_client.list_repositories():
-            repo_count += 1
-
-        assert repo_count == 0
-
     @acr_preparer()
     def test_get_attributes(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
@@ -67,6 +53,7 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
         assert properties.content_permissions is not None
         assert isinstance(properties.content_permissions, ContentPermissions)
 
+    @pytest.mark.skip("Pending")
     @acr_preparer()
     def test_get_registry_artifact_properties(self, containerregistry_baseurl):
         reg_client = self.create_repository_client(containerregistry_baseurl, "hello-world")
@@ -128,3 +115,18 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
         repo_attribs = client.list_registry_artifacts()
 
         print(repo_attribs)
+
+
+    @pytest.mark.skip("Don't want to delete right now")
+    @acr_preparer()
+    def test_delete_repository(self, containerregistry_baseurl):
+        client = self.create_repository_client(containerregistry_baseurl, self.repository)
+        client.delete()
+
+        reg_client = self.create_registry_client(containerregistry_baseurl)
+
+        repo_count = 0
+        for repo in reg_client.list_repositories():
+            repo_count += 1
+
+        assert repo_count == 0
