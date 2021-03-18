@@ -66,10 +66,10 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     :type name: str
     """
 
-    def __init__(self, span=None, name="span"):
-        # type: (Optional[Span], Optional[str]) -> None
+    def __init__(self, span=None, name="span", **kwargs):
+        # type: (Optional[Span], Optional[str], Any) -> None
         current_tracer = self.get_current_tracer()
-        self._span_instance = span or current_tracer.start_span(name=name)
+        self._span_instance = span or current_tracer.start_span(name=name, **kwargs)
         self._current_ctxt_manager = None
 
     @property
@@ -80,7 +80,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         """
         return self._span_instance
 
-    def span(self, name="span"):
+    def span(self, name="span", **kwargs):
         # type: (Optional[str]) -> OpenTelemetrySpan
         """
         Create a child span for the current span and append it to the child spans list in the span instance.
@@ -88,7 +88,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         :type name: str
         :return: The OpenTelemetrySpan that is wrapping the child span instance
         """
-        return self.__class__(name=name)
+        return self.__class__(name=name, **kwargs)
 
     @property
     def kind(self):
@@ -206,7 +206,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         ctx = extract(DictGetter(), headers)
         span_ctx = get_span_from_context(ctx).get_span_context()
         current_span = cls.get_current_span()
-        current_span._links.append(Link(span_ctx, attributes))        
+        current_span._links.append(Link(span_ctx, attributes))
 
     @classmethod
     def get_current_span(cls):
