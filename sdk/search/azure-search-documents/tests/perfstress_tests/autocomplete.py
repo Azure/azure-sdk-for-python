@@ -7,8 +7,8 @@ import os
 from azure_devtools.perfstress_tests import PerfStressTest
 
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchClient as SyncAppConfigClient
-from azure.search.documents.aio import SearchClient as AsyncAppConfigClient
+from azure.search.documents import SearchClient as SyncClient
+from azure.search.documents.aio import SearchClient as AsyncClient
 
 
 class AutoCompleteTest(PerfStressTest):
@@ -18,8 +18,8 @@ class AutoCompleteTest(PerfStressTest):
         service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
         index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
         key = os.getenv("AZURE_SEARCH_API_KEY")
-        self.service_client = SyncAppConfigClient(service_endpoint, index_name, AzureKeyCredential(api_key))
-        self.async_service_client = AsyncAppConfigClient(service_endpoint, index_name, AzureKeyCredential(api_key))
+        self.service_client = SyncClient(service_endpoint, index_name, AzureKeyCredential(api_key))
+        self.async_service_client = AsyncClient(service_endpoint, index_name, AzureKeyCredential(api_key))
 
     async def close(self):
         await self.async_service_client.close()
