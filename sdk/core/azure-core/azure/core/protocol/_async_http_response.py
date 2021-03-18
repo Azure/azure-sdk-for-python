@@ -23,14 +23,10 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from ._enums import HttpVerbs
-from ._http_request import HttpRequest
-from ._http_response import HttpResponse
-from ._async_http_response import AsyncHttpResponse
+from ._http_response import _HttpResponseBase
 
-__all__ = [
-    "HttpVerbs",
-    "HttpRequest",
-    "HttpResponse",
-    "AsyncHttpResponse",
-]
+class AsyncHttpResponse(_HttpResponseBase):
+    @property
+    def content(self):
+        # type: (...) -> bytes
+        return self._internal_response.body()
