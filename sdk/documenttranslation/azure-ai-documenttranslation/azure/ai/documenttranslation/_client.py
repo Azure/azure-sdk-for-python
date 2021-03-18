@@ -49,7 +49,6 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             api_version=self._api_version,
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
-            polling_interval=5,  # TODO what is appropriate polling interval
             **kwargs
         )
 
