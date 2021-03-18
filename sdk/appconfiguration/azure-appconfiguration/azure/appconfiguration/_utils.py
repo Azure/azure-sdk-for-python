@@ -66,4 +66,4 @@ def parse_connection_string(connection_string):
 
 
 def get_current_utc_time():
-    return str(datetime.utcnow().strftime("%b, %d %Y %H:%M:%S ")) + "GMT"
+    return str(datetime.utcnow().strftime("%b, %d %Y %H:%M:%S.%f ")) + "GMT"

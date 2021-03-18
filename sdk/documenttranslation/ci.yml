@@ -32,5 +32,5 @@ extends:
   parameters:
     ServiceDirectory: documenttranslation
     Artifacts:
-    - name: azure_ai_documenttranslation
+    - name: azure-ai-documenttranslation
       safeName: azureaidocumenttranslation
