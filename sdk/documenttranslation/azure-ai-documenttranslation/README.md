@@ -90,9 +90,19 @@ document_translation_client = DocumentTranslationClient(endpoint, credential)
 
 ## Key concepts
 
-Interaction with the Document Translation client library begins with an instance of the `DocumentTranslationClient`.
+The Document Translation service requires that you upload your files to an Azure Blob Storage source container and provide
+a target container where the translated documents can be written. SAS tokens to the containers (or files) are used to
+access the documents and write the translated documents. Additional information about setting this up can be found in
+the service documentation:
+
+- [Set up Azure Blob Storage containers][source_containers] with your documents
+- Optionally apply [glossaries][glossary] or a [custom model for translation][custom_model]
+- Generate [SAS tokens][sas_token] to your containers (or files) with the appropriate [permissions][sas_token_permissions]
+
 
 ### DocumentTranslationClient
+
+Interaction with the Document Translation client library begins with an instance of the `DocumentTranslationClient`.
 `DocumentTranslationClient` provides operations for:
 
  - Creating a translation job to translate documents in your source container(s) and write results to you target container(s)
@@ -100,7 +110,58 @@ Interaction with the Document Translation client library begins with an instance
  - Enumerating all past and current translation jobs with the option to wait until the job(s) finish
  - Identifying supported glossary and document formats
 
-See the service documentation for [supported languages][supported_languages].
+### BatchDocumentInput
+
+Input to starting a translation job begins with the creation of a list of `BatchDocumentInput`. A single source can
+be translated to many different languages or targets:
+
+```python
+from azure.ai.documenttranslation import BatchDocumentInput, StorageTarget
+
+my_input = [
+    BatchDocumentInput(
+        source_url="<container_sas_url_to_source>",
+        targets=[
+            StorageTarget(target_url="<container_sas_url_to_target_fr>", language="fr"),
+            StorageTarget(target_url="<container_sas_url_to_target_de>", language="de")
+        ]
+    )
+]
+```
+
+Or multiple different sources can be provided each with their own targets.
+
+```python
+from azure.ai.documenttranslation import BatchDocumentInput, StorageTarget
+
+my_input = [
+    BatchDocumentInput(
+        source_url="<container_sas_url_to_source>",
+        targets=[
+            StorageTarget(target_url="<container_sas_url_to_target_fr>", language="fr"),
+            StorageTarget(target_url="<container_sas_url_to_target_de>", language="de")
+        ]
+    ),
+    BatchDocumentInput(
+        source_url="<container_sas_url_to_source>",
+        targets=[
+            StorageTarget(target_url="<container_sas_url_to_target_fr>", language="fr"),
+            StorageTarget(target_url="<container_sas_url_to_target_de>", language="de")
+        ]
+    ),
+    BatchDocumentInput(
+        source_url="<container_sas_url_to_source>",
+        targets=[
+            StorageTarget(target_url="<container_sas_url_to_target_fr>", language="fr"),
+            StorageTarget(target_url="<container_sas_url_to_target_de>", language="de")
+        ]
+    )
+]
+```
+
+> Note: the target_url for each target language must be unique.
+
+See the service documentation for all [supported languages][supported_languages].
 
 ## Examples
 
@@ -111,7 +172,7 @@ The following section provides several code snippets covering some of the most c
 * [List translation jobs](#list-translation-jobs "List Translation Jobs")
 
 ### Translate your documents
-TODO
+Translate the documents in your source container to the target containers, using a custom glossaries.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -125,13 +186,15 @@ target_container_sas_url_fr = "<container-sas-url-fr>"
 
 document_translation_client = DocumentTranslationClient(endpoint, credential)
 
+glossaries = ["<glossary-url-A>", "<glossary-url-B>"]
+
 job = document_translation_client.create_translation_job(
     [
         BatchDocumentInput(
             source_url=source_container_sas_url_en,
             targets=[
-                StorageTarget(target_url=target_container_sas_url_es, language="es"),
-                StorageTarget(target_url=target_container_sas_url_fr, language="fr"),
+                StorageTarget(target_url=target_container_sas_url_es, glossaries=glossaries, language="es"),
+                StorageTarget(target_url=target_container_sas_url_fr, glossaries=glossaries, language="fr"),
             ],
         )
     ]
@@ -160,7 +223,7 @@ if job_detail.status == "Failed":
 ```
 
 ### Check status on individual documents
-TODO
+Check status and translation progress of each document.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -173,10 +236,17 @@ job_id = "<job-id>"
 document_translation_client = DocumentTranslationClient(endpoint, credential)
 
 docs_to_retry = []
-for doc in document_translation_client.list_documents_statuses(job_id):
+
+documents =  document_translation_client.list_documents_statuses(job_id)  # type: ItemPaged[DocumentStatusDetail]
+
+for doc in documents:
     if doc.status == "Succeeded":
         print("Document at {} was translated to {} language".format(
             doc.url, doc.translate_to
+        ))
+    if doc.status == "Running":
+        print("Document ID: {}, translation progress is {} percent".format(
+            doc.id, doc.translation_progress*100
         ))
     if doc.status == "Failed":
         print("Document ID: {}, Error Code: {}, Message: {}".format(
@@ -188,7 +258,7 @@ for doc in document_translation_client.list_documents_statuses(job_id):
 ```
 
 ### List translation jobs
-TODO
+Enumerate over the translation jobs submitted for the resource.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -298,6 +368,11 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_cli_create_DT_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows
 [azure-key-credential]: https://aka.ms/azsdk/python/core/azurekeycredential
 [supported_languages]: https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
+[source_containers]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/get-started-with-document-translation?tabs=csharp#create-your-azure-blob-storage-containers
+[custom_model]: https://docs.microsoft.com/azure/cognitive-services/translator/custom-translator/quickstart-build-deploy-custom-model
+[glossary]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview#supported-glossary-formats
+[sas_token]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/create-sas-tokens?tabs=Containers#create-your-sas-tokens-with-azure-storage-explorer
+[sas_token_permissions]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/get-started-with-document-translation?tabs=csharp#create-sas-access-tokens-for-document-translation
 
 [azure_core_ref_docs]: https://aka.ms/azsdk/python/core/docs
 [azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
