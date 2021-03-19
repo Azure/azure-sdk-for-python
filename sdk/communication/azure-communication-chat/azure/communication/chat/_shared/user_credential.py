@@ -88,6 +88,6 @@ class CommunicationTokenCredential(object):
 
     @classmethod
     def _get_utc_now_as_int(cls):
-        current_datetime = datetime.now().replace(tzinfo=TZ_UTC)
-        current_datetime_as_int = _convert_datetime_to_utc_int(current_datetime)
-        return current_datetime_as_int
+        current_utc_datetime = datetime.utcnow().replace(tzinfo=TZ_UTC)
+        current_utc_datetime_as_int = _convert_datetime_to_utc_int(current_utc_datetime)
+        return current_utc_datetime_as_int
