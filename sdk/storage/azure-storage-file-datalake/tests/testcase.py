@@ -7,24 +7,14 @@
 from __future__ import division
 
 import functools
-from contextlib import contextmanager
-import copy
-import inspect
+import logging
 import os
 import os.path
-import re
-import time
-from unittest import SkipTest
-
-import adal
-import vcr
-import zlib
-import math
-import uuid
-import unittest
-import sys
 import random
-import logging
+import re
+import sys
+import time
+import zlib
 
 from azure_devtools.scenario_tests import RecordingProcessor
 from devtools_testutils import AzureTestCase, PowerShellPreparer
@@ -36,7 +26,6 @@ except ImportError:
 
 from azure.core.credentials import AccessToken
 
-import data_lake_settings_fake as fake_settings
 try:
     import settings_real as settings
 except ImportError:
@@ -198,3 +187,6 @@ class StorageTestCase(AzureTestCase):
                 self.get_settings_value("CLIENT_SECRET"),
             )
         return self.generate_fake_token()
+
+    def generate_fake_token(self):
+        return FakeTokenCredential()
