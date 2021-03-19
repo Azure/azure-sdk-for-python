@@ -43,7 +43,7 @@ class WebPubSubOperations:
         payload_message: Union[IO, str, IO],
         excluded: Optional[List[str]] = None,
         api_version: Optional[str] = "2020-10-01",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Broadcast content inside request body to all the connected client connections.
 
@@ -99,7 +99,7 @@ class WebPubSubOperations:
         hub: str,
         connection_id: str,
         api_version: Optional[str] = "2020-10-01",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Check if the connection with the given connectionId exists.
 
@@ -151,7 +151,7 @@ class WebPubSubOperations:
         connection_id: str,
         reason: Optional[str] = None,
         api_version: Optional[str] = "2020-10-01",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Close the client connection.
 
@@ -206,7 +206,7 @@ class WebPubSubOperations:
         connection_id: str,
         payload_message: Union[IO, str, IO],
         api_version: Optional[str] = "2020-10-01",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific connection.
 
@@ -262,7 +262,7 @@ class WebPubSubOperations:
         hub: str,
         group: str,
         api_version: Optional[str] = "2020-10-01",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Check if there are any client connections inside the given group.
 
@@ -315,7 +315,7 @@ class WebPubSubOperations:
         payload_message: Union[IO, str, IO],
         excluded: Optional[List[str]] = None,
         api_version: Optional[str] = "2020-10-01",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Send content inside request body to a group of connections.
 
@@ -375,7 +375,7 @@ class WebPubSubOperations:
         group: str,
         connection_id: str,
         api_version: Optional[str] = "2020-10-01",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Add a connection to the target group.
 
@@ -430,7 +430,7 @@ class WebPubSubOperations:
         group: str,
         connection_id: str,
         api_version: Optional[str] = "2020-10-01",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Remove a connection from the target group.
 
@@ -484,7 +484,7 @@ class WebPubSubOperations:
         hub: str,
         user_id: str,
         api_version: Optional[str] = "2020-10-01",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Check if there are any client connections connected for the given user.
 
@@ -536,7 +536,7 @@ class WebPubSubOperations:
         user_id: str,
         payload_message: Union[IO, str, IO],
         api_version: Optional[str] = "2020-10-01",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific user.
 
@@ -593,7 +593,7 @@ class WebPubSubOperations:
         group: str,
         user_id: str,
         api_version: Optional[str] = "2020-10-01",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Check whether a user exists in the target group.
 
@@ -648,7 +648,7 @@ class WebPubSubOperations:
         group: str,
         user_id: str,
         api_version: Optional[str] = "2020-10-01",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Add a user to the target group.
 
@@ -703,7 +703,7 @@ class WebPubSubOperations:
         group: str,
         user_id: str,
         api_version: Optional[str] = "2020-10-01",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Remove a user from the target group.
 
@@ -757,7 +757,7 @@ class WebPubSubOperations:
         hub: str,
         user_id: str,
         api_version: Optional[str] = "2020-10-01",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Remove a user from all groups.
 
@@ -810,7 +810,7 @@ class WebPubSubOperations:
         connection_id: str,
         target_name: Optional[str] = None,
         api_version: Optional[str] = "2020-10-01",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Grant permission to the connection.
 
@@ -872,7 +872,7 @@ class WebPubSubOperations:
         connection_id: str,
         target_name: Optional[str] = None,
         api_version: Optional[str] = "2020-10-01",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Revoke permission for the connection.
 
@@ -934,7 +934,7 @@ class WebPubSubOperations:
         connection_id: str,
         target_name: Optional[str] = None,
         api_version: Optional[str] = "2020-10-01",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Check if a connection have permission to the specific action.
 

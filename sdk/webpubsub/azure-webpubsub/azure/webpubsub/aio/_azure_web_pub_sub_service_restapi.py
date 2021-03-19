@@ -28,7 +28,6 @@ class AzureWebPubSubServiceRESTAPI(object):
     :vartype health_api: azure.webpubsub.aio.operations.HealthApiOperations
     :ivar web_pub_sub: WebPubSubOperations operations
     :vartype web_pub_sub: azure.webpubsub.aio.operations.WebPubSubOperations
-    :param str base_url: Service URL
     """
 
     def __init__(

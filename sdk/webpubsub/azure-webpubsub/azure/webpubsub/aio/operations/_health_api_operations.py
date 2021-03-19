@@ -40,7 +40,7 @@ class HealthApiOperations:
     async def get_health_status(
         self,
         api_version: Optional[str] = "2020-10-01",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Get service health status.
 

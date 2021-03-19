@@ -13,16 +13,16 @@ from msrest import Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import IO, List, Optional, Union
+    from typing import Any, IO, List, Optional, Union
 
 _SERIALIZER = Serializer()
 
 
 def prepare_healthapi_get_health_status(
-    api_version="2020-10-01",  # type: Optional[str]
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/health')
@@ -32,10 +32,6 @@ def prepare_healthapi_get_health_status(
     if api_version is not None:
         query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
-    # Construct headers
-    header_parameters = {}  # type: Dict[str, Any]
-
-    
     return HttpRequest(
         method="HEAD",
         url=url,
@@ -45,12 +41,12 @@ def prepare_healthapi_get_health_status(
 
 def prepare_webpubsub_send_to_all(
     hub,  # type: str
-    body,  # type: Union[IO, str, IO]
-    excluded=None,  # type: Optional[List[str]]
-    api_version="2020-10-01",  # type: Optional[str]
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    body = kwargs.pop('body')  # type: Union[IO, str, IO]
+    excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
+    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
     content_type = kwargs.pop("content_type", "application/octet-stream")
 
     # Construct URL
@@ -71,22 +67,15 @@ def prepare_webpubsub_send_to_all(
     header_parameters = {}  # type: Dict[str, Any]
     header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
 
+    body_content_kwargs = {}  # type: Dict[str, Any]
     if header_parameters['Content-Type'].split(";")[0] in ['application/octet-stream']:
-        body_content_kwargs = {}  # type: Dict[str, Any]
         body_content_kwargs['content'] = body
 
     elif header_parameters['Content-Type'].split(";")[0] in ['text/plain']:
-        body_content_kwargs = {}  # type: Dict[str, Any]
         body_content_kwargs['content'] = body
     elif header_parameters['Content-Type'].split(";")[0] in ['application/json']:
-        body_content_kwargs = {}  # type: Dict[str, Any]
         body_content_kwargs['content'] = body
 
-    else:
-        raise ValueError(
-            "The content_type '{}' is not one of the allowed values: "
-            "['application/octet-stream', 'text/plain', 'application/json']".format(header_parameters['Content-Type'])
-        )
 
     return HttpRequest(
         method="POST",
@@ -100,10 +89,10 @@ def prepare_webpubsub_send_to_all(
 def prepare_webpubsub_check_connection_existence(
     hub,  # type: str
     connection_id,  # type: str
-    api_version="2020-10-01",  # type: Optional[str]
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/connections/{connectionId}')
@@ -118,10 +107,6 @@ def prepare_webpubsub_check_connection_existence(
     if api_version is not None:
         query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
-    # Construct headers
-    header_parameters = {}  # type: Dict[str, Any]
-
-    
     return HttpRequest(
         method="HEAD",
         url=url,
@@ -132,11 +117,11 @@ def prepare_webpubsub_check_connection_existence(
 def prepare_webpubsub_close_client_connection(
     hub,  # type: str
     connection_id,  # type: str
-    reason=None,  # type: Optional[str]
-    api_version="2020-10-01",  # type: Optional[str]
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    reason = kwargs.pop('reason', None)  # type: Optional[str]
+    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/connections/{connectionId}')
@@ -153,10 +138,6 @@ def prepare_webpubsub_close_client_connection(
     if api_version is not None:
         query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
-    # Construct headers
-    header_parameters = {}  # type: Dict[str, Any]
-
-    
     return HttpRequest(
         method="DELETE",
         url=url,
@@ -167,11 +148,11 @@ def prepare_webpubsub_close_client_connection(
 def prepare_webpubsub_send_to_connection(
     hub,  # type: str
     connection_id,  # type: str
-    body,  # type: Union[IO, str, IO]
-    api_version="2020-10-01",  # type: Optional[str]
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    body = kwargs.pop('body')  # type: Union[IO, str, IO]
+    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
     content_type = kwargs.pop("content_type", "application/octet-stream")
 
     # Construct URL
@@ -191,22 +172,15 @@ def prepare_webpubsub_send_to_connection(
     header_parameters = {}  # type: Dict[str, Any]
     header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
 
+    body_content_kwargs = {}  # type: Dict[str, Any]
     if header_parameters['Content-Type'].split(";")[0] in ['application/octet-stream']:
-        body_content_kwargs = {}  # type: Dict[str, Any]
         body_content_kwargs['content'] = body
 
     elif header_parameters['Content-Type'].split(";")[0] in ['text/plain']:
-        body_content_kwargs = {}  # type: Dict[str, Any]
         body_content_kwargs['content'] = body
     elif header_parameters['Content-Type'].split(";")[0] in ['application/json']:
-        body_content_kwargs = {}  # type: Dict[str, Any]
         body_content_kwargs['content'] = body
 
-    else:
-        raise ValueError(
-            "The content_type '{}' is not one of the allowed values: "
-            "['application/octet-stream', 'text/plain', 'application/json']".format(header_parameters['Content-Type'])
-        )
 
     return HttpRequest(
         method="POST",
@@ -220,10 +194,10 @@ def prepare_webpubsub_send_to_connection(
 def prepare_webpubsub_check_group_existence(
     hub,  # type: str
     group,  # type: str
-    api_version="2020-10-01",  # type: Optional[str]
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/groups/{group}')
@@ -238,10 +212,6 @@ def prepare_webpubsub_check_group_existence(
     if api_version is not None:
         query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
-    # Construct headers
-    header_parameters = {}  # type: Dict[str, Any]
-
-    
     return HttpRequest(
         method="HEAD",
         url=url,
@@ -252,12 +222,12 @@ def prepare_webpubsub_check_group_existence(
 def prepare_webpubsub_send_to_group(
     hub,  # type: str
     group,  # type: str
-    body,  # type: Union[IO, str, IO]
-    excluded=None,  # type: Optional[List[str]]
-    api_version="2020-10-01",  # type: Optional[str]
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    body = kwargs.pop('body')  # type: Union[IO, str, IO]
+    excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
+    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
     content_type = kwargs.pop("content_type", "application/octet-stream")
 
     # Construct URL
@@ -279,22 +249,15 @@ def prepare_webpubsub_send_to_group(
     header_parameters = {}  # type: Dict[str, Any]
     header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
 
+    body_content_kwargs = {}  # type: Dict[str, Any]
     if header_parameters['Content-Type'].split(";")[0] in ['application/octet-stream']:
-        body_content_kwargs = {}  # type: Dict[str, Any]
         body_content_kwargs['content'] = body
 
     elif header_parameters['Content-Type'].split(";")[0] in ['text/plain']:
-        body_content_kwargs = {}  # type: Dict[str, Any]
         body_content_kwargs['content'] = body
     elif header_parameters['Content-Type'].split(";")[0] in ['application/json']:
-        body_content_kwargs = {}  # type: Dict[str, Any]
         body_content_kwargs['content'] = body
 
-    else:
-        raise ValueError(
-            "The content_type '{}' is not one of the allowed values: "
-            "['application/octet-stream', 'text/plain', 'application/json']".format(header_parameters['Content-Type'])
-        )
 
     return HttpRequest(
         method="POST",
@@ -309,10 +272,10 @@ def prepare_webpubsub_add_connection_to_group(
     hub,  # type: str
     group,  # type: str
     connection_id,  # type: str
-    api_version="2020-10-01",  # type: Optional[str]
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/groups/{group}/connections/{connectionId}')
@@ -328,10 +291,6 @@ def prepare_webpubsub_add_connection_to_group(
     if api_version is not None:
         query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
-    # Construct headers
-    header_parameters = {}  # type: Dict[str, Any]
-
-    
     return HttpRequest(
         method="PUT",
         url=url,
@@ -343,10 +302,10 @@ def prepare_webpubsub_remove_connection_from_group(
     hub,  # type: str
     group,  # type: str
     connection_id,  # type: str
-    api_version="2020-10-01",  # type: Optional[str]
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/groups/{group}/connections/{connectionId}')
@@ -362,10 +321,6 @@ def prepare_webpubsub_remove_connection_from_group(
     if api_version is not None:
         query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
-    # Construct headers
-    header_parameters = {}  # type: Dict[str, Any]
-
-    
     return HttpRequest(
         method="DELETE",
         url=url,
@@ -376,10 +331,10 @@ def prepare_webpubsub_remove_connection_from_group(
 def prepare_webpubsub_check_user_existence(
     hub,  # type: str
     user_id,  # type: str
-    api_version="2020-10-01",  # type: Optional[str]
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}')
@@ -394,10 +349,6 @@ def prepare_webpubsub_check_user_existence(
     if api_version is not None:
         query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
-    # Construct headers
-    header_parameters = {}  # type: Dict[str, Any]
-
-    
     return HttpRequest(
         method="HEAD",
         url=url,
@@ -408,11 +359,11 @@ def prepare_webpubsub_check_user_existence(
 def prepare_webpubsub_send_to_user(
     hub,  # type: str
     user_id,  # type: str
-    body,  # type: Union[IO, str, IO]
-    api_version="2020-10-01",  # type: Optional[str]
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    body = kwargs.pop('body')  # type: Union[IO, str, IO]
+    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
     content_type = kwargs.pop("content_type", "application/octet-stream")
 
     # Construct URL
@@ -432,22 +383,15 @@ def prepare_webpubsub_send_to_user(
     header_parameters = {}  # type: Dict[str, Any]
     header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
 
+    body_content_kwargs = {}  # type: Dict[str, Any]
     if header_parameters['Content-Type'].split(";")[0] in ['application/octet-stream']:
-        body_content_kwargs = {}  # type: Dict[str, Any]
         body_content_kwargs['content'] = body
 
     elif header_parameters['Content-Type'].split(";")[0] in ['text/plain']:
-        body_content_kwargs = {}  # type: Dict[str, Any]
         body_content_kwargs['content'] = body
     elif header_parameters['Content-Type'].split(";")[0] in ['application/json']:
-        body_content_kwargs = {}  # type: Dict[str, Any]
         body_content_kwargs['content'] = body
 
-    else:
-        raise ValueError(
-            "The content_type '{}' is not one of the allowed values: "
-            "['application/octet-stream', 'text/plain', 'application/json']".format(header_parameters['Content-Type'])
-        )
 
     return HttpRequest(
         method="POST",
@@ -462,10 +406,10 @@ def prepare_webpubsub_check_user_existence_in_group(
     hub,  # type: str
     group,  # type: str
     user_id,  # type: str
-    api_version="2020-10-01",  # type: Optional[str]
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/groups/{group}')
@@ -481,10 +425,6 @@ def prepare_webpubsub_check_user_existence_in_group(
     if api_version is not None:
         query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
-    # Construct headers
-    header_parameters = {}  # type: Dict[str, Any]
-
-    
     return HttpRequest(
         method="HEAD",
         url=url,
@@ -496,10 +436,10 @@ def prepare_webpubsub_add_user_to_group(
     hub,  # type: str
     group,  # type: str
     user_id,  # type: str
-    api_version="2020-10-01",  # type: Optional[str]
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/groups/{group}')
@@ -515,10 +455,6 @@ def prepare_webpubsub_add_user_to_group(
     if api_version is not None:
         query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
-    # Construct headers
-    header_parameters = {}  # type: Dict[str, Any]
-
-    
     return HttpRequest(
         method="PUT",
         url=url,
@@ -530,10 +466,10 @@ def prepare_webpubsub_remove_user_from_group(
     hub,  # type: str
     group,  # type: str
     user_id,  # type: str
-    api_version="2020-10-01",  # type: Optional[str]
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/groups/{group}')
@@ -549,10 +485,6 @@ def prepare_webpubsub_remove_user_from_group(
     if api_version is not None:
         query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
-    # Construct headers
-    header_parameters = {}  # type: Dict[str, Any]
-
-    
     return HttpRequest(
         method="DELETE",
         url=url,
@@ -563,10 +495,10 @@ def prepare_webpubsub_remove_user_from_group(
 def prepare_webpubsub_remove_user_from_all_groups(
     hub,  # type: str
     user_id,  # type: str
-    api_version="2020-10-01",  # type: Optional[str]
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/groups')
@@ -581,10 +513,6 @@ def prepare_webpubsub_remove_user_from_all_groups(
     if api_version is not None:
         query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
-    # Construct headers
-    header_parameters = {}  # type: Dict[str, Any]
-
-    
     return HttpRequest(
         method="DELETE",
         url=url,
@@ -596,11 +524,11 @@ def prepare_webpubsub_grant_permission(
     hub,  # type: str
     permission,  # type: Union[str, "_models.Enum0"]
     connection_id,  # type: str
-    target_name=None,  # type: Optional[str]
-    api_version="2020-10-01",  # type: Optional[str]
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    target_name = kwargs.pop('target_name', None)  # type: Optional[str]
+    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}')
@@ -618,10 +546,6 @@ def prepare_webpubsub_grant_permission(
     if api_version is not None:
         query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
-    # Construct headers
-    header_parameters = {}  # type: Dict[str, Any]
-
-    
     return HttpRequest(
         method="PUT",
         url=url,
@@ -633,11 +557,11 @@ def prepare_webpubsub_revoke_permission(
     hub,  # type: str
     permission,  # type: Union[str, "_models.Enum1"]
     connection_id,  # type: str
-    target_name=None,  # type: Optional[str]
-    api_version="2020-10-01",  # type: Optional[str]
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    target_name = kwargs.pop('target_name', None)  # type: Optional[str]
+    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}')
@@ -655,10 +579,6 @@ def prepare_webpubsub_revoke_permission(
     if api_version is not None:
         query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
-    # Construct headers
-    header_parameters = {}  # type: Dict[str, Any]
-
-    
     return HttpRequest(
         method="DELETE",
         url=url,
@@ -670,11 +590,11 @@ def prepare_webpubsub_check_permission(
     hub,  # type: str
     permission,  # type: Union[str, "_models.Enum2"]
     connection_id,  # type: str
-    target_name=None,  # type: Optional[str]
-    api_version="2020-10-01",  # type: Optional[str]
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    target_name = kwargs.pop('target_name', None)  # type: Optional[str]
+    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}')
@@ -692,10 +612,6 @@ def prepare_webpubsub_check_permission(
     if api_version is not None:
         query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
-    # Construct headers
-    header_parameters = {}  # type: Dict[str, Any]
-
-    
     return HttpRequest(
         method="HEAD",
         url=url,

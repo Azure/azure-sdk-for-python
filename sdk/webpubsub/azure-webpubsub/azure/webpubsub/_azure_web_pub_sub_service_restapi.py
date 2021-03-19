@@ -9,13 +9,14 @@
 from typing import TYPE_CHECKING
 
 from azure.core import PipelineClient
+from azure.core.protocol import HttpResponse
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Dict, Optional
 
-    from azure.core.protocol import HttpRequest, HttpResponse
+    from azure.core.protocol import HttpRequest
 
 from ._configuration import AzureWebPubSubServiceRESTAPIConfiguration
 from .operations import HealthApiOperations
@@ -29,7 +30,6 @@ class AzureWebPubSubServiceRESTAPI(object):
     :vartype health_api: azure.webpubsub.operations.HealthApiOperations
     :ivar web_pub_sub: WebPubSubOperations operations
     :vartype web_pub_sub: azure.webpubsub.operations.WebPubSubOperations
-    :param str base_url: Service URL
     """
 
     def __init__(
