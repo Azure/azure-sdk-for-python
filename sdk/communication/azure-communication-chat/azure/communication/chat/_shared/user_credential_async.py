@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from asyncio import Condition, Lock
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import (  # pylint: disable=unused-import
     cast,
     Tuple,
@@ -33,7 +33,7 @@ class CommunicationTokenCredential(object):
         self._lock = Condition(Lock())
         self._some_thread_refreshing = False
 
-    async def get_token(self, *scopes, **kwargs):
+    async def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
         # type (*str, **Any) -> AccessToken
         """The value of the configured token.
         :rtype: ~azure.core.credentials.AccessToken
@@ -84,7 +84,7 @@ class CommunicationTokenCredential(object):
 
     def _is_currenttoken_valid(self):
         return get_current_utc_with_tz() < self._token.expires_on
-    
+
     async def close(self) -> None:
         pass
 

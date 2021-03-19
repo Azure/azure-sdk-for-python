@@ -18,14 +18,14 @@ from unittest_helpers import mock_response
 from azure.core.exceptions import HttpResponseError
 
 try:
-    from unittest.mock import Mock, patch
+    from unittest.mock import Mock, AsyncMock, patch
 except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
 
 import pytest
 
 credential = Mock()
-credential.get_token = Mock(return_value=AccessToken("some_token", datetime.now().replace(tzinfo=TZ_UTC)))
+credential.get_token = AsyncMock(return_value=AccessToken("some_token", datetime.now().replace(tzinfo=TZ_UTC)))
 
 @pytest.mark.asyncio
 async def test_update_topic():
