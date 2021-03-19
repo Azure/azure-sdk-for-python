@@ -69,28 +69,10 @@ Other optional configuration keyword arguments that can be specified on the clie
 * __logging_enable__ (bool): Enables logging at the DEBUG level. Defaults to False. Can also be passed in at the client level to enable it for all requests.
 * __headers__ (dict): Pass in custom headers as key, value pairs. E.g. `headers={'CustomValue': value}`
 
-
 ## Troubleshooting
 
 ### General
-Azure Container Registry clients raise exceptions defined in [Azure Core][azure_core_readme]. When you interact with the Azure table library using the Python SDK, errors returned by the service respond ot the same HTTP status codes for [REST API][tables_rest] requests. The Table service operations will throw a `HttpResponseError` on failure with helpful [error codes][tables_error_codes].
 
-For examples, if you try to create a table that already exists, a `409` error is returned indicating "Conflict".
-```python
-from azure.data.tables import TableServiceClient
-from azure.core.exceptions import HttpResponseError
-table_name = 'YourTableName'
-
-service_client = TableServiceClient.from_connection_string(connection_string)
-
-# Create the table if it does not already exist
-tc = service_client.create_table_if_not_exists(table_name)
-
-try:
-    service_client.create_table(table_name)
-except HttpResponseError:
-    print("Table with name {} already exists".format(table_name))
-```
 
 ### Logging
 This library uses the standard
