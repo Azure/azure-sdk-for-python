@@ -34,7 +34,6 @@ TIMEOUT_SAMPLES = {
 """
 TIMEOUT_SAMPLES = {
     "azure-eventhub": {
-        "authenticate_with_sas_token.py": (10),
         "receive_batch_with_checkpoint.py": (10),
         "recv.py": (10),
         "recv_track_last_enqueued_event_prop.py": (10),
@@ -43,7 +42,6 @@ TIMEOUT_SAMPLES = {
         "recv_with_checkpoint_store.py": (10),
         "recv_with_custom_starting_position.py": (10),
         "sample_code_eventhub.py": (10),
-        "authenticate_with_sas_token_async.py": (10),
         "receive_batch_with_checkpoint_async.py": (10),
         "recv_async.py": (10),
         "recv_track_last_enqueued_event_prop_async.py": (10),
