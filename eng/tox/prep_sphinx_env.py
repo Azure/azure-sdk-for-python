@@ -221,6 +221,6 @@ if __name__ == "__main__":
         site_folder = os.path.join(args.dist_dir, "site")
         write_version(site_folder, package_version)
 
-        download_cached_content(site_folder, package_name, package_version)
+        # download_cached_content(site_folder, package_name, package_version)
     else:
         logging.info("Skipping sphinx prep for {}".format(package_name))
