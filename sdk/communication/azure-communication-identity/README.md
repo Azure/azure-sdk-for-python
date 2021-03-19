@@ -49,6 +49,12 @@ identity_client = CommunicationIdentityClient.from_connection_string(connection_
 ## Examples
 The following section provides several code snippets covering some of the most common Azure Communication Services tasks, including:
 
+- [Creating a new user](#creating-a-new-user)
+- [Issuing or Refreshing an access token for a user](#issuing-or-refreshing-an-access-token-for-a-user)
+- [Creating a user and a token in a single request](#creating-a-user-and-a-token-in-a-single-request)
+- [Revoking a user's access tokens](#revoking-a-users-access-tokens)
+- [Deleting a user](#deleting-a-user)
+
 ### Creating a new user
 
 Use the `create_user` method to create a new user.
