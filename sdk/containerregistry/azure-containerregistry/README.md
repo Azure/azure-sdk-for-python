@@ -66,8 +66,7 @@ Other optional configuration keyword arguments that can be specified on the clie
 * __raw_request_hook__ (callable): The given callback uses the request before being sent to service.
 * __client_request_id__ (str): Optional user specified identification of the request.
 * __user_agent__ (str): Appends the custom value to the user-agent header to be sent with the request.
-* __logging_enable__ (bool): Enables logging at the DEBUG level. Defaults to False. Can also be passed in at
-the client level to enable it for all requests.
+* __logging_enable__ (bool): Enables logging at the DEBUG level. Defaults to False. Can also be passed in at the client level to enable it for all requests.
 * __headers__ (dict): Pass in custom headers as key, value pairs. E.g. `headers={'CustomValue': value}`
 
 
