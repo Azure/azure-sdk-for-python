@@ -1,103 +1,35 @@
-# Azure Container Registry client library for Python
+<!-- [![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/azure-sdk-for-python.client?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=46?branchName=master) -->
 
-Azure Container Registry is a NoSQL data storage service that can be accessed from anywhere in the world via authenticated calls using HTTP or HTTPS.
-Tables scales as needed to support the amount of data inserted, and allow for the storing of data with non-complex accessing.
-The Azure Container Registry client can be used to access Azure Storage or Cosmos accounts.
+# Azure Template Package client library for Python
 
-[Source code][source_code] | [Package (PyPI)][Tables_pypi] | [API reference documentation][Tables_ref_docs] | [Samples][Tables_samples]
+This template package matches necessary patterns that the development team has established to create a unified sdk functional from Python 2.7 onwards. The packages contained herein can be installed singly or as part of the `azure` namespace. Any other introductory text should go here.
 
-## Getting started
-The Azure Container Registry SDK can access an Azure Container Registry account.
+This package has been tested with Python 2.7, 3.5, 3.6, 3.7 and 3.8
 
-### Prerequisites
-* Python 2.7, or 3.6 or later is required to use this package.
-* You must have an [Azure subscription][azure_subscription] and an ACR account.
+For a more complete set of Azure libraries, see https://aka.ms/azsdk/python/all
 
-#### Create account
+# Getting started
 
-### Install the package
-Install the Azure Container Registry client library for Python with [pip][pip_link]:
-```bash
-pip install --pre azure-containerregistry
-```
+For a rich example of a well formatted readme, please check [here.](https://github.com/Azure/azure-sdk/blob/master/docs/policies/README-TEMPLATE.md) In addition, this is an [example readme](https://github.com/Azure/azure-sdk/blob/master/docs/policies/README-EXAMPLE.md) that should be emulated. Note that the top-level sections in this template align with that of the [template.](https://github.com/Azure/azure-sdk/blob/master/docs/policies/README-TEMPLATE.md)
 
-#### Create the client
+# Key concepts
 
+Bullet point list of your library's main concepts.
 
-## Key concepts
-Common uses of the ACR include:
+# Examples
 
-### Clients
-Two different clients are provided to interact with the various components of the Table Service:
+Examples of some of the key concepts for your library.
 
+# Troubleshooting
 
-## Examples
+Running into issues? This section should contain details as to what to do there.
 
-The following sections provide several code snippets covering some of the most common Table tasks, including:
+# Next steps
 
+More sample code should go here, along with links out to the appropriate example tests.
 
+# Contributing
 
-## Optional Configuration
-Optional keyword arguments can be passed in at the client and per-operation level. The azure-core [reference documentation][azure_core_ref_docs] describes available configurations for retries, logging, transport protocols, and more.
+If you encounter any bugs or have suggestions, please file an issue in the [Issues](<https://github.com/Azure/azure-sdk-for-python/issues>) section of the project.
 
-
-### Retry Policy configuration
-
-Use the following keyword arguments when instantiating a client to configure the retry policy:
-
-* __retry_total__ (int): Total number of retries to allow. Takes precedence over other counts. Pass in `retry_total=0` if you do not want to retry on requests. Defaults to 10.
-* __retry_connect__ (int): How many connection-related errors to retry on. Defaults to 3.
-* __retry_read__ (int): How many times to retry on read errors. Defaults to 3.
-* __retry_status__ (int): How many times to retry on bad status codes. Defaults to 3.
-* __retry_to_secondary__ (bool): Whether the request should be retried to secondary, if able. This should only be enabled of RA-GRS accounts are used and potentially stale data can be handled. Defaults to `False`.
-
-### Other client / per-operation configuration
-
-Other optional configuration keyword arguments that can be specified on the client or per-operation.
-
-**Client keyword arguments:**
-
-* __connection_timeout__ (int): Optionally sets the connect and read timeout value, in seconds.
-* __transport__ (Any): User-provided transport to send the HTTP request.
-
-**Per-operation keyword arguments:**
-
-* __raw_response_hook__ (callable): The given callback uses the response returned from the service.
-* __raw_request_hook__ (callable): The given callback uses the request before being sent to service.
-* __client_request_id__ (str): Optional user specified identification of the request.
-* __user_agent__ (str): Appends the custom value to the user-agent header to be sent with the request.
-* __logging_enable__ (bool): Enables logging at the DEBUG level. Defaults to False. Can also be passed in at the client level to enable it for all requests.
-* __headers__ (dict): Pass in custom headers as key, value pairs. E.g. `headers={'CustomValue': value}`
-
-## Troubleshooting
-
-### General
-
-
-### Logging
-This library uses the standard [logging][python_logging] library for logging. Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO level.
-
-
-## Next steps
-
-Several Azure Container Registry Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Tables.
-
-
-## Contributing
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
-
-When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
-
-This project has adopted the [Microsoft Open Source Code of Conduct][msft_oss_coc]. For more information see the [Code of Conduct FAQ][msft_oss_coc_faq] or contact [opencode@microsoft.com][contact_msft_oss] with any additional questions or comments.
-
-<!-- LINKS -->
-[pip_link]:https://pypi.org/project/pip/
-[azure_core_ref_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html
-[azure_core_readme]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
-[python_logging]: https://docs.python.org/3/library/logging.html
-[msft_oss_coc]:https://opensource.microsoft.com/codeofconduct/
-[msft_oss_coc_faq]:https://opensource.microsoft.com/codeofconduct/faq/
-[contact_msft_oss]:mailto:opencode@microsoft.com
-
-
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/tables/azure-data-tables/README.png)
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Ftemplate%2Fazure-template%2FREADME.png)
