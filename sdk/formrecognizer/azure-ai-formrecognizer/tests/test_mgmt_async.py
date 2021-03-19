@@ -20,7 +20,6 @@ GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClie
 
 class TestManagementAsync(AsyncFormRecognizerTest):
 
-    @pytest.mark.skip
     @FormRecognizerPreparer()
     @pytest.mark.live_test_only
     async def test_active_directory_auth_async(self):
