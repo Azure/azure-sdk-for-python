@@ -61,7 +61,7 @@ class TestTraining(FormRecognizerTest):
         model = poller.result()
 
         self.assertIsNotNone(model.model_id)
-        # self.assertEqual(model.model_name, "my unlabeled model")  # FIXME: bug in service
+        self.assertEqual(model.model_name, "my unlabeled model")
         self.assertIsNotNone(model.training_started_on)
         self.assertIsNotNone(model.training_completed_on)
         self.assertEqual(model.errors, [])

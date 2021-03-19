@@ -10,11 +10,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '307'
+      - '290'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models
   response:
@@ -22,19 +22,19 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - bcf364d1-2b40-492f-900e-ced6c28ca37d
+      - 252d5a98-de6d-4f8a-9b01-b6832469829a
       content-length:
       - '0'
       date:
-      - Thu, 18 Mar 2021 16:04:47 GMT
+      - Fri, 19 Mar 2021 18:00:47 GMT
       location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/1d5931a0-97e5-4cf1-a984-c8655ac1b7df
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/5904459e-37d4-4f13-baa5-d698a5eed464
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '521'
+      - '72'
     status:
       code: 201
       message: Created
@@ -48,38 +48,46 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/1d5931a0-97e5-4cf1-a984-c8655ac1b7df?includeKeys=true
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/5904459e-37d4-4f13-baa5-d698a5eed464?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "1d5931a0-97e5-4cf1-a984-c8655ac1b7df", "attributes":
-        {"isComposed": false}, "status": "ready", "createdDateTime": "2021-03-18T16:04:48Z",
-        "lastUpdatedDateTime": "2021-03-18T16:04:51Z"}, "trainResult": {"averageModelAccuracy":
-        0.971, "trainingDocuments": [{"documentName": "multi1.pdf", "pages": 2, "status":
-        "succeeded"}, {"documentName": "multi2.pdf", "pages": 2, "status": "succeeded"},
-        {"documentName": "multi3.pdf", "pages": 2, "status": "succeeded"}, {"documentName":
-        "multi4.pdf", "pages": 2, "status": "succeeded"}, {"documentName": "multi5.pdf",
-        "pages": 2, "status": "succeeded"}], "fields": [{"fieldName": "Bronze", "accuracy":
-        0.995}, {"fieldName": "CompanyName", "accuracy": 0.8}, {"fieldName": "Contact",
-        "accuracy": 0.995}, {"fieldName": "Full", "accuracy": 0.995}, {"fieldName":
-        "Gold", "accuracy": 0.995}, {"fieldName": "Half", "accuracy": 0.995}, {"fieldName":
-        "Silver", "accuracy": 0.995}], "errors": []}}'
+      string: '{"modelInfo": {"modelId": "5904459e-37d4-4f13-baa5-d698a5eed464", "attributes":
+        {"isComposed": false}, "status": "ready", "createdDateTime": "2021-03-19T18:00:47Z",
+        "lastUpdatedDateTime": "2021-03-19T18:00:51Z"}, "trainResult": {"averageModelAccuracy":
+        0.889, "trainingDocuments": [{"documentName": "multipage_invoice1.pdf", "pages":
+        3, "status": "succeeded"}, {"documentName": "multipage_invoice2.pdf", "pages":
+        3, "status": "succeeded"}, {"documentName": "multipage_invoice3.pdf", "pages":
+        3, "status": "succeeded"}, {"documentName": "multipage_invoice4.pdf", "pages":
+        3, "status": "succeeded"}, {"documentName": "multipage_invoice5.pdf", "pages":
+        3, "status": "succeeded"}], "fields": [{"fieldName": "Customer2", "accuracy":
+        0.995}, {"fieldName": "CustomerAddress", "accuracy": 0.995}, {"fieldName":
+        "CustomerName", "accuracy": 0.995}, {"fieldName": "CustomerPhoneNumber", "accuracy":
+        0.995}, {"fieldName": "FirstItem", "accuracy": 0.995}, {"fieldName": "FirstPrice",
+        "accuracy": 0.995}, {"fieldName": "FirstQuantity", "accuracy": 0.995}, {"fieldName":
+        "Merchant", "accuracy": 0.0}, {"fieldName": "Merchant2", "accuracy": 0.0},
+        {"fieldName": "MerchantAddress", "accuracy": 0.995}, {"fieldName": "MerchantPhoneNumber",
+        "accuracy": 0.995}, {"fieldName": "Signature", "accuracy": 0.995}, {"fieldName":
+        "Signature2", "accuracy": 0.995}, {"fieldName": "Subtotal", "accuracy": 0.995},
+        {"fieldName": "Tax", "accuracy": 0.995}, {"fieldName": "Tip", "accuracy":
+        0.995}, {"fieldName": "Total", "accuracy": 0.995}, {"fieldName": "Total2",
+        "accuracy": 0.995}], "errors": []}}'
     headers:
       apim-request-id:
-      - 572161a6-bc14-4d2d-8f24-1398e2e6f27e
+      - 965adaba-a419-4ffe-8261-e80c3e5f1782
       content-length:
-      - '874'
+      - '1446'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 18 Mar 2021 16:04:53 GMT
+      - Fri, 19 Mar 2021 18:00:52 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '15'
+      - '19'
     status:
       code: 200
       message: OK
