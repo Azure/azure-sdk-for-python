@@ -75,34 +75,8 @@ Other optional configuration keyword arguments that can be specified on the clie
 
 
 ### Logging
-This library uses the standard
-[logging][python_logging] library for logging.
-Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
-level.
+This library uses the standard [logging][python_logging] library for logging. Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO level.
 
-Detailed DEBUG level logging, including request/response bodies and unredacted
-headers, can be enabled on a client with the `logging_enable` argument:
-```python
-import sys
-import logging
-from azure.data.tables import TableServiceClient
-# Create a logger for the 'azure' SDK
-logger = logging.getLogger('azure')
-logger.setLevel(logging.DEBUG)
-
-# Configure a console output
-handler = logging.StreamHandler(stream=sys.stdout)
-logger.addHandler(handler)
-
-# This client will log detailed information about its HTTP sessions, at DEBUG level
-service_client = TableServiceClient.from_connection_string("your_connection_string", logging_enable=True)
-```
-
-Similarly, `logging_enable` can enable detailed logging for a single operation,
-even when it is not enabled for the client:
-```python
-service_client.create_entity(entity=my_entity, logging_enable=True)
-```
 
 ## Next steps
 
