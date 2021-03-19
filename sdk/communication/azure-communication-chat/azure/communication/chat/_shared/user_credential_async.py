@@ -84,7 +84,7 @@ class CommunicationTokenCredential(object):
 
     def _token_expiring(self):
         return self._token.expires_on - self._get_utc_now_as_int() <\
-               timedelta(minutes=self._ON_DEMAND_REFRESHING_INTERVAL_MINUTES)
+               timedelta(minutes=self._ON_DEMAND_REFRESHING_INTERVAL_MINUTES).total_seconds()
 
     def _is_currenttoken_valid(self):
         return self._get_utc_now_as_int() < self._token.expires_on
