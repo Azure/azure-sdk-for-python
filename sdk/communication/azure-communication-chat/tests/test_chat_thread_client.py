@@ -60,9 +60,10 @@ class TestChatThreadClient(unittest.TestCase):
         try:
             content='hello world'
             sender_display_name='sender name'
-            create_message_result_id = chat_thread_client.send_message(
+            create_message_result = chat_thread_client.send_message(
                 content=content,
                 sender_display_name=sender_display_name)
+            create_message_result_id = create_message_result.id
         except:
             raised = True
 
@@ -108,10 +109,11 @@ class TestChatThreadClient(unittest.TestCase):
             try:
                 content='hello world'
                 sender_display_name='sender name'
-                create_message_result_id = chat_thread_client.send_message(
+                create_message_result = chat_thread_client.send_message(
                     content=content,
                     chat_message_type=chat_message_type,
                     sender_display_name=sender_display_name)
+                create_message_result_id = create_message_result.id
             except:
                 raised = True
 
@@ -142,7 +144,7 @@ class TestChatThreadClient(unittest.TestCase):
             try:
                 content='hello world'
                 sender_display_name='sender name'
-                create_message_result_id = chat_thread_client.send_message(
+                create_message_result = chat_thread_client.send_message(
                     content=content,
                     chat_message_type=chat_message_type,
                     sender_display_name=sender_display_name)
@@ -433,59 +435,6 @@ class TestChatThreadClient(unittest.TestCase):
             l = list(chat_thread_participant_page)
             assert len(l) == 2
 
-    def test_add_participant(self):
-        thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
-        new_participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
-        raised = False
-
-        def mock_send(*_, **__):
-            return mock_response(status_code=201)
-        chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
-
-        new_participant = ChatThreadParticipant(
-                user=CommunicationUserIdentifier(new_participant_id),
-                display_name='name',
-                share_history_time=datetime.utcnow())
-
-        try:
-            chat_thread_client.add_participant(new_participant)
-        except:
-            raised = True
-
-        self.assertFalse(raised, 'Expected is no excpetion raised')
-
-    def test_add_participant_w_failed_participants(self):
-        thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
-        new_participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
-        raised = False
-        error_message = "some error message"
-
-        def mock_send(*_, **__):
-            return mock_response(status_code=201, json_payload={
-                "errors": {
-                    "invalidParticipants": [
-                        {
-                            "code": "string",
-                            "message": error_message,
-                            "target": new_participant_id,
-                            "details": []
-                        }
-                    ]
-                }
-            })
-        chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
-
-        new_participant = ChatThreadParticipant(
-                user=CommunicationUserIdentifier(new_participant_id),
-                display_name='name',
-                share_history_time=datetime.utcnow())
-
-        try:
-            chat_thread_client.add_participant(new_participant)
-        except:
-            raised = True
-
-        self.assertTrue(raised, 'Expected is no excpetion raised')
 
     def test_add_participants(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
@@ -518,16 +467,14 @@ class TestChatThreadClient(unittest.TestCase):
 
         def mock_send(*_, **__):
             return mock_response(status_code=201,json_payload={
-                "errors": {
-                    "invalidParticipants": [
-                        {
-                            "code": "string",
-                            "message": error_message,
-                            "target": new_participant_id,
-                            "details": []
-                        }
-                    ]
-                }
+                "invalidParticipants": [
+                    {
+                        "code": "string",
+                        "message": error_message,
+                        "target": new_participant_id,
+                        "details": []
+                    }
+                ]
             })
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
@@ -673,6 +620,29 @@ class TestChatThreadClient(unittest.TestCase):
         for read_receipt_page in read_receipts.by_page():
             l = list(read_receipt_page)
             assert len(l) == 2
+
+    def test_get_properties(self):
+        thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
+        raised = False
+
+        def mock_send(*_, **__):
+            return mock_response(status_code=200, json_payload={
+                "id": thread_id,
+                "topic": "Lunch Chat thread",
+                "createdOn": "2020-10-30T10:50:50Z",
+                "deletedOn": "2020-10-30T10:50:50Z",
+                "createdByCommunicationIdentifier": {"rawId": "string", "communicationUser": {"id": "string"}}
+                })
+        chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
+
+        get_thread_result = None
+        try:
+            get_thread_result = chat_thread_client.get_properties()
+        except:
+            raised = True
+
+        self.assertFalse(raised, 'Expected is no excpetion raised')
+        assert get_thread_result.id == thread_id
 
 
 if __name__ == '__main__':
