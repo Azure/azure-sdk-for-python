@@ -12,21 +12,21 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error": {"code": "InvalidImage", "innerError": {"requestId": "170fc92d-7dea-4c81-ba2b-26d690fe974d"},
+      string: '{"error": {"code": "InvalidImage", "innerError": {"requestId": "0eec1a41-3a01-4fd8-8430-b08059d7327d"},
         "message": "The input data is not a valid image or password protected."}}'
     headers:
-      apim-request-id: 170fc92d-7dea-4c81-ba2b-26d690fe974d
+      apim-request-id: 0eec1a41-3a01-4fd8-8430-b08059d7327d
       content-length: '170'
       content-type: application/json; charset=utf-8
-      date: Wed, 03 Mar 2021 19:36:43 GMT
+      date: Fri, 19 Mar 2021 21:39:47 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '3'
+      x-envoy-upstream-service-time: '4'
     status:
       code: 400
       message: Bad Request
