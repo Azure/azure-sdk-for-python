@@ -12,7 +12,7 @@ from m2r import parse_from_file
 from azure.storage.blob import BlobServiceClient, ContainerClient
 
 import logging
-logger = logging.getLogger('azure.storage')
+logger = logging.getLogger('azure.core')
 logger.setLevel(logging.ERROR)
 
 import glob
@@ -160,7 +160,10 @@ def download_cached_content(site_folder, package_name, package_version):
             name_starts_with=download_target_prefix
         )
 
-        # todo, parallelize this?
+        blobs_for_download = [x for x in blobs_for_download]
+
+        logging.info("Downloading {} cached files from previous sphinx output at {}".format(len(blobs_for_download), download_target_prefix))
+
         for blob in blobs_for_download:
             blob_client = container_client.get_blob_client(blob=blob)
             local_path = os.path.join(

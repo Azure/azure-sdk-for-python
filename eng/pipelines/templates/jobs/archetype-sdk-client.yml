@@ -86,7 +86,7 @@ parameters:
 
 jobs:
   - job: 'Build'
-    timeoutInMinutes: 90
+    timeoutInMinutes: 240
     variables:
     - template: ../variables/globals.yml
 
