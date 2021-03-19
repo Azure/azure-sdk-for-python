@@ -3,7 +3,7 @@ trigger: none
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      AllocateResourceGroup: 'false'
+      AllocateResourceGroup: false
       BuildTargetingString: azure-containerregistry
       ServiceDirectory: containerregistry
       TestSamples: false

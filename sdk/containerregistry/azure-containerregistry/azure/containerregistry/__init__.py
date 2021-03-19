@@ -17,7 +17,7 @@ from ._models import (
     TagOrderBy,
     TagProperties,
 )
-from ._authentication_policy import (
+from .authentication._authentication_policy import (
     ContainerRegistryUserCredential,
     ContainerRegistryUserCredentialPolicy,
 )

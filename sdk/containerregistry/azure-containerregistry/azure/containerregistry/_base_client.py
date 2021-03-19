@@ -6,7 +6,7 @@
 
 from enum import Enum
 
-from ._authentication_policy import ContainerRegistryUserCredentialPolicy
+from .authentication._authentication_policy import ContainerRegistryUserCredentialPolicy
 from ._generated import ContainerRegistry
 from ._user_agent import USER_AGENT
 
