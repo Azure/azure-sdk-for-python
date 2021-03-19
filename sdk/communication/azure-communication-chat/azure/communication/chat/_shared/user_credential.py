@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from threading import Lock, Condition
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import ( # pylint: disable=unused-import
     cast,
     Tuple,
