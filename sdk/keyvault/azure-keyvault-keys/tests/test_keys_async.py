@@ -3,11 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
-import functools
 import codecs
-import logging
-import json
 from dateutil import parser as date_parse
+import functools
+import json
+import logging
+import os
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -15,6 +16,9 @@ from azure.keyvault.keys import JsonWebKey, KeyCurveName
 from azure.keyvault.keys.aio import KeyClient
 from azure.keyvault.keys._shared import HttpChallengeCache
 from devtools_testutils import PowerShellPreparer
+from six.moves.urllib_parse import urlparse
+from parameterized import parameterized, param
+import pytest
 
 from _shared.test_case_async import KeyVaultTestCase
 
@@ -23,6 +27,10 @@ KeyVaultPreparer = functools.partial(
     "keyvault",
     azure_keyvault_url="https://vaultname.vault.azure.net"
 )
+
+def suffixed_test_name(testcase_func, param_num, param):
+    suffix = "mhsm" if param.kwargs.get("is_hsm") else "vault"
+    return "{}_{}".format(testcase_func.__name__, parameterized.to_safe_name(suffix))
 
 # used for logging tests
 class MockHandler(logging.Handler):
@@ -35,6 +43,19 @@ class MockHandler(logging.Handler):
 
 
 class KeyVaultKeyTest(KeyVaultTestCase):
+    def setUp(self, *args, **kwargs):
+        self.managed_hsm_url = None
+        playback_url = "https://managedhsmname.managedhsm.azure.net"
+        if self.is_live:
+            self.managed_hsm_url = os.environ.get("AZURE_MANAGEDHSM_URL")
+            if self.managed_hsm_url:
+                real = urlparse(self.managed_hsm_url)
+                playback = urlparse(playback_url)
+                self.scrubber.register_name_pair(real.netloc, playback.netloc)
+        else:
+            self.managed_hsm_url = playback_url
+        super(KeyVaultKeyTest, self).setUp(*args, **kwargs)
+
     def tearDown(self):
         HttpChallengeCache.clear()
         assert len(HttpChallengeCache._cache) == 0
@@ -44,10 +65,15 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         credential = self.get_credential(KeyClient, is_async=True)
         return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
 
+    def _should_skip_test(self, is_hsm):
+        if self.is_live and is_hsm:
+            return self.managed_hsm_url is None  # skip live HSM tests if there's no HSM endpoint
+        return False
+
     def _assert_jwks_equal(self, jwk1, jwk2):
         assert jwk1.kid == jwk2.kid
         assert jwk1.kty == jwk2.kty
-        assert jwk1.key_ops == jwk2.key_ops
+        assert jwk1.key_ops.sort() == jwk2.key_ops.sort()
         assert jwk1.n == jwk2.n
         assert jwk1.e == jwk2.e
         assert jwk1.d == jwk2.d
@@ -112,7 +138,9 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         self.assertTrue(kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid))
         self.assertEqual(key.kty, kty, "kty should by '{}', but is '{}'".format(key, key.kty))
         self.assertTrue(key.n and key.e, "Bad RSA public material.")
-        self.assertEqual(key_ops, key.key_ops, "keyOps should be '{}', but is '{}'".format(key_ops, key.key_ops))
+        self.assertEqual(
+            key_ops.sort(), key.key_ops.sort(), "keyOps should be '{}', but is '{}'".format(key_ops, key.key_ops)
+        )
         self.assertTrue(
             key_attributes.properties.created_on and key_attributes.properties.updated_on,
             "Missing required date attributes.",
@@ -134,14 +162,14 @@ class KeyVaultKeyTest(KeyVaultTestCase):
                 del expected[key.name]
         self.assertEqual(len(expected), 0)
 
-    async def _import_test_key(self, client, name):
+    async def _import_test_key(self, client, name, hardware_protected=False):
         def _to_bytes(hex):
             if len(hex) % 2:
                 hex = "0{}".format(hex)
             return codecs.decode(hex, "hex_codec")
 
         key = JsonWebKey(
-            kty="RSA",
+            kty="RSA-HSM" if hardware_protected else "RSA",
             key_ops=["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"],
             n=_to_bytes(
                 "00a0914d00234ac683b21b4c15d5bed887bdc959c2e57af54ae734e8f00720d775d275e455207e3784ceeb60a50a4655dd72a7a94d271e8ee8f7959a669ca6e775bf0e23badae991b4529d978528b4bd90521d32dd2656796ba82b6bbfc7668c8f5eeb5053747fd199319d29a8440d08f4412d527ff9311eda71825920b47b1c46b11ab3e91d7316407e89c7f340f7b85a34042ce51743b27d4718403d34c7b438af6181be05e4d11eb985d38253d7fe9bf53fc2f1b002d22d2d793fa79a504b6ab42d0492804d7071d727a06cf3a8893aa542b1503f832b296371b6707d4dc6e372f8fe67d8ded1c908fde45ce03bc086a71487fa75e43aa0e0679aa0d20efe35"
@@ -167,11 +195,17 @@ class KeyVaultKeyTest(KeyVaultTestCase):
             ),
         )
         imported_key = await client.import_key(name, key)
-        self._validate_rsa_key_bundle(imported_key, client.vault_url, name, "RSA", key.key_ops)
+        self._validate_rsa_key_bundle(imported_key, client.vault_url, name, key.kty, key.key_ops)
         return imported_key
 
+    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_key_crud_operations(self, azure_keyvault_url, **kwargs):
+        is_hsm = kwargs.pop("is_hsm")
+        if self._should_skip_test(is_hsm):
+            pytest.skip()
+        azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
+
         client = self.create_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
@@ -185,19 +219,21 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         assert tags == ec_key.properties.tags
         # create ec with curve
         ec_key_curve_name = self.get_resource_name("crud-P-256-ec-key")
-        created_ec_key_curve = await self._create_ec_key(client, key_name=ec_key_curve_name, curve="P-256")
+        created_ec_key_curve = await self._create_ec_key(
+            client, key_name=ec_key_curve_name, curve="P-256", hardware_protected=is_hsm
+        )
         self.assertEqual("P-256", created_ec_key_curve.key.crv)
 
         # import key
         import_test_key_name = self.get_resource_name("import-test-key")
-        await self._import_test_key(client, import_test_key_name)
+        await self._import_test_key(client, import_test_key_name, hardware_protected=is_hsm)
 
         # create rsa key
         rsa_key_name = self.get_resource_name("crud-rsa-key")
         tags = {"purpose": "unit test", "test name ": "CreateRSAKeyTest"}
         key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
         rsa_key = await self._create_rsa_key(
-            client, key_name=rsa_key_name, key_operations=key_ops, size=2048, tags=tags
+            client, key_name=rsa_key_name, key_operations=key_ops, size=2048, tags=tags, hardware_protected=is_hsm
         )
         assert tags == rsa_key.properties.tags
 
@@ -233,15 +269,21 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         self.assertIsNotNone(deleted_key)
         self.assertEqual(rsa_key.id, deleted_key.id)
 
+    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_backup_restore(self, azure_keyvault_url, **kwargs):
+        is_hsm = kwargs.pop("is_hsm")
+        if self._should_skip_test(is_hsm):
+            pytest.skip()
+        azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
+
         client = self.create_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
         key_name = self.get_resource_name("keybak")
 
         # create key
-        created_bundle = await self._create_rsa_key(client, key_name)
+        created_bundle = await self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
 
         # backup key
         key_backup = await client.backup_key(created_bundle.name)
@@ -258,8 +300,14 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         restored_key = await self._poll_until_no_exception(restore_function, expected_exception=ResourceExistsError)
         self._assert_key_attributes_equal(created_bundle.properties, restored_key.properties)
 
+    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_key_list(self, azure_keyvault_url, **kwargs):
+        is_hsm = kwargs.pop("is_hsm")
+        if self._should_skip_test(is_hsm):
+            pytest.skip()
+        azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
+
         client = self.create_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
@@ -269,7 +317,7 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         # create many keys
         for x in range(max_keys):
             key_name = self.get_resource_name("key{}".format(x))
-            key = await self._create_rsa_key(client, key_name)
+            key = await self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
             expected[key.name] = key
 
         # list keys
@@ -280,8 +328,14 @@ class KeyVaultKeyTest(KeyVaultTestCase):
                 del expected[key.name]
         self.assertEqual(len(expected), 0)
 
+    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_list_versions(self, azure_keyvault_url, **kwargs):
+        is_hsm = kwargs.pop("is_hsm")
+        if self._should_skip_test(is_hsm):
+            pytest.skip()
+        azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
+
         client = self.create_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
@@ -292,7 +346,7 @@ class KeyVaultKeyTest(KeyVaultTestCase):
 
         # create many key versions
         for _ in range(max_keys):
-            key = await self._create_rsa_key(client, key_name)
+            key = await self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
             expected[key.id] = key
 
         result = client.list_properties_of_key_versions(key_name, max_page_size=max_keys - 1)
@@ -305,8 +359,14 @@ class KeyVaultKeyTest(KeyVaultTestCase):
                 self._assert_key_attributes_equal(expected_key.properties, key)
         self.assertEqual(0, len(expected))
 
+    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_list_deleted_keys(self, azure_keyvault_url, **kwargs):
+        is_hsm = kwargs.pop("is_hsm")
+        if self._should_skip_test(is_hsm):
+            pytest.skip()
+        azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
+
         client = self.create_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
@@ -315,7 +375,7 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         # create keys to delete
         for i in range(self.list_test_size):
             key_name = self.get_resource_name("key{}".format(i))
-            expected[key_name] = await self._create_rsa_key(client, key_name)
+            expected[key_name] = await self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
 
         # delete all keys
         for key_name in expected.keys():
@@ -335,8 +395,14 @@ class KeyVaultKeyTest(KeyVaultTestCase):
                 del expected[key.name]
         self.assertEqual(len(expected), 0)
 
+    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_recover(self, azure_keyvault_url, **kwargs):
+        is_hsm = kwargs.pop("is_hsm")
+        if self._should_skip_test(is_hsm):
+            pytest.skip()
+        azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
+
         client = self.create_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
@@ -344,7 +410,7 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         keys = {}
         for i in range(self.list_test_size):
             key_name = self.get_resource_name("key{}".format(i))
-            keys[key_name] = await self._create_rsa_key(client, key_name)
+            keys[key_name] = await self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
 
         # delete them
         for key_name in keys.keys():
@@ -364,15 +430,21 @@ class KeyVaultKeyTest(KeyVaultTestCase):
 
         self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
 
+    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_purge(self, azure_keyvault_url, **kwargs):
+        is_hsm = kwargs.pop("is_hsm")
+        if self._should_skip_test(is_hsm):
+            pytest.skip()
+        azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
+
         client = self.create_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
         # create keys
         key_names = [self.get_resource_name("key{}".format(i)) for i in range(self.list_test_size)]
         for key_name in key_names:
-            await self._create_rsa_key(client, key_name)
+            await self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
 
         # delete them
         for key_name in key_names:
@@ -390,8 +462,14 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         async for deleted_key in client.list_deleted_keys():
             assert deleted_key.name not in key_names
 
+    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_logging_enabled(self, azure_keyvault_url, **kwargs):
+        is_hsm = kwargs.pop("is_hsm")
+        if self._should_skip_test(is_hsm):
+            pytest.skip()
+        azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
+
         client = self.create_client(azure_keyvault_url, logging_enable=True)
         mock_handler = MockHandler()
 
@@ -400,13 +478,14 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         logger.setLevel(logging.DEBUG)
 
         rsa_key_name = self.get_resource_name("rsa-key-name")
-        await self._create_rsa_key(client, rsa_key_name, size=2048)
+        await self._create_rsa_key(client, rsa_key_name, size=2048, hardware_protected=is_hsm)
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
                 try:
                     body = json.loads(message.message)
-                    if body["kty"] == "RSA":
+                    expected_kty = "RSA-HSM" if is_hsm else "RSA"
+                    if body["kty"] == expected_kty:
                         return
                 except (ValueError, KeyError):
                     # this means the message is not JSON or has no kty property
@@ -414,8 +493,14 @@ class KeyVaultKeyTest(KeyVaultTestCase):
 
         assert False, "Expected request body wasn't logged"
 
+    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_logging_disabled(self, azure_keyvault_url, **kwargs):
+        is_hsm = kwargs.pop("is_hsm")
+        if self._should_skip_test(is_hsm):
+            pytest.skip()
+        azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
+
         client = self.create_client(azure_keyvault_url, logging_enable=False)
         mock_handler = MockHandler()
 
@@ -424,13 +509,14 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         logger.setLevel(logging.DEBUG)
 
         rsa_key_name = self.get_resource_name("rsa-key-name")
-        await self._create_rsa_key(client, rsa_key_name, size=2048)
+        await self._create_rsa_key(client, rsa_key_name, size=2048, hardware_protected=is_hsm)
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
                 try:
                     body = json.loads(message.message)
-                    assert body["kty"] != "RSA", "Client request body was logged"
+                    expected_kty = "RSA-HSM" if is_hsm else "RSA"
+                    assert body["kty"] != expected_kty, "Client request body was logged"
                 except (ValueError, KeyError):
                     # this means the message is not JSON or has no kty property
                     pass

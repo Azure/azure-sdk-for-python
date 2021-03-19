@@ -6,6 +6,7 @@ import codecs
 from datetime import datetime
 import functools
 import hashlib
+import os
 import time
 
 try:
@@ -21,6 +22,8 @@ from azure.keyvault.keys.crypto._key_validity import _UTC
 from azure.keyvault.keys._shared import HttpChallengeCache
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
 from devtools_testutils import PowerShellPreparer
+from six.moves.urllib_parse import urlparse
+from parameterized import parameterized, param
 import pytest
 
 from _shared.json_attribute_matcher import json_attribute_matcher
@@ -35,12 +38,29 @@ KeyVaultPreparer = functools.partial(
 # without keys/get, a CryptographyClient created with a key ID performs all ops remotely
 NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
 
+def suffixed_test_name(testcase_func, param_num, param):
+    suffix = "mhsm" if param.kwargs.get("is_hsm") else "vault"
+    return "{}_{}".format(testcase_func.__name__, parameterized.to_safe_name(suffix))
+
 
 class CryptoClientTests(KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
         kwargs["match_body"] = False
         kwargs["custom_request_matchers"] = [json_attribute_matcher]
         super(CryptoClientTests, self).__init__(*args, **kwargs)
+
+    def setUp(self, *args, **kwargs):
+        self.managed_hsm_url = None
+        playback_url = "https://managedhsmname.managedhsm.azure.net"
+        if self.is_live:
+            self.managed_hsm_url = os.environ.get("AZURE_MANAGEDHSM_URL")
+            if self.managed_hsm_url:
+                real = urlparse(self.managed_hsm_url)
+                playback = urlparse(playback_url)
+                self.scrubber.register_name_pair(real.netloc, playback.netloc)
+        else:
+            self.managed_hsm_url = playback_url
+        super(CryptoClientTests, self).setUp(*args, **kwargs)
 
     def tearDown(self):
         HttpChallengeCache.clear()
@@ -58,6 +78,11 @@ class CryptoClientTests(KeyVaultTestCase):
     def create_crypto_client(self, key, **kwargs):
         credential = self.get_credential(CryptographyClient)
         return self.create_client_from_credential(CryptographyClient, credential=credential, key=key, **kwargs)
+
+    def _should_skip_test(self, is_hsm):
+        if self.is_live and is_hsm:
+            return self.managed_hsm_url is None  # skip live HSM tests if there's no HSM endpoint
+        return False
 
     def _create_rsa_key(self, client, key_name, **kwargs):
         key_ops = kwargs.get("key_operations") or ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
