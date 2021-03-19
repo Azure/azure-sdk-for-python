@@ -292,12 +292,8 @@ for job in jobs:
 
 
 To see how to use the Document Translation client library with Azure Storage Blob to upload documents, create SAS tokens
-for your containers, and download the finished translated documents, see this [sample](). Note that you will need to install
-the azure-storage-blob library to run this sample:
-
-```bash
-pip install azure-storage-blob
-```
+for your containers, and download the finished translated documents, see this [sample][sample_batch_translation_with_storage.py]. 
+Note that you will need to install the [azure-storage-blob][azure_storage_blob] library to run this sample.
 
 
 ## Troubleshooting
@@ -355,7 +351,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 <!-- LINKS -->
 
 [python-dt-src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/documenttranslation/azure-ai-documenttranslation/azure/ai/documenttranslation
-[python-dt-pypi]: https://pypi.org/project/azure-ai-documenttranslation/
+[python-dt-pypi]: http://aka.ms/azsdk/python/texttranslation/pypi
 [python-dt-product-docs]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
 [python-dt-ref-docs]: https://aka.ms/azsdk/python/documenttranslation/docs
 [python-dt-samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/documenttranslation/azure-ai-documenttranslation/samples
@@ -373,6 +369,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [glossary]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview#supported-glossary-formats
 [sas_token]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/create-sas-tokens?tabs=Containers#create-your-sas-tokens-with-azure-storage-explorer
 [sas_token_permissions]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/get-started-with-document-translation?tabs=csharp#create-sas-access-tokens-for-document-translation
+[azure_storage_blob]: https://pypi.org/project/azure-storage-blob/
 
 [azure_core_ref_docs]: https://aka.ms/azsdk/python/core/docs
 [azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
@@ -382,6 +379,10 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [cognitive_authentication_api_key]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
 
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
+
+
+[sample_batch_translation_with_storage.py]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/documenttranslation/azure-ai-documenttranslation/samples/sample_batch_translation_with_storage.py
+
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
