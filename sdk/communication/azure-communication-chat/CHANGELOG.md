@@ -1,7 +1,16 @@
 # Release History
 
 ## 1.0.0b6 (Unreleased)
-
+### Breaking Changes
+- Renamed `ChatThread` to `ChatThreadProperties`.
+- Renamed `get_chat_thread` to `get_properties`.
+- Moved `get_properties` under `ChatThreadClient`.
+- Renamed `ChatThreadInfo` to `ChatThreadItem`.
+- Removed `ChatThreadClient.add_participant` method.
+- Renamed `repeatability_request_id` to `idempotency_token`.
+- Changed return type of `send_message` to `SendChatMessageResult`.
+- Replaced `CommunicationError` with `ChatError`.
+- Refactored `CommunicationTokenCredential` constructor to accept `token` instead of `CommunicationTokenRefreshOptions`.
 
 ## 1.0.0b5 (2021-03-09)
 ### Breaking Changes

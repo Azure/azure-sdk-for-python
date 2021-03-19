@@ -59,9 +59,10 @@ async def test_send_message():
         content='hello world'
         sender_display_name='sender name'
 
-        create_message_result_id = await chat_thread_client.send_message(
+        create_message_result = await chat_thread_client.send_message(
             content,
             sender_display_name=sender_display_name)
+        create_message_result_id = create_message_result.id
     except:
         raised = True
 
@@ -110,10 +111,11 @@ async def test_send_message_w_type():
             content='hello world'
             sender_display_name='sender name'
 
-            create_message_result_id = await chat_thread_client.send_message(
+            create_message_result = await chat_thread_client.send_message(
                 content,
                 chat_message_type=chat_message_type,
                 sender_display_name=sender_display_name)
+            create_message_result_id = create_message_result.id
         except:
             raised = True
 
@@ -144,7 +146,7 @@ async def test_send_message_w_invalid_type_throws_error():
             content='hello world'
             sender_display_name='sender name'
 
-            create_message_result_id = await chat_thread_client.send_message(
+            create_message_result = await chat_thread_client.send_message(
                 content,
                 chat_message_type=chat_message_type,
                 sender_display_name=sender_display_name)
@@ -450,62 +452,6 @@ async def test_list_participants_with_results_per_page():
 
 
 @pytest.mark.asyncio
-async def test_add_participant():
-    thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
-    new_participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
-    raised = False
-
-    async def mock_send(*_, **__):
-        return mock_response(status_code=201)
-    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
-
-    new_participant = ChatThreadParticipant(
-            user=CommunicationUserIdentifier(new_participant_id),
-            display_name='name',
-            share_history_time=datetime.utcnow())
-
-    try:
-        await chat_thread_client.add_participant(new_participant)
-    except:
-        raised = True
-
-    assert raised == False
-
-@pytest.mark.asyncio
-async def test_add_participant_w_failed_participants():
-    thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
-    new_participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
-    raised = False
-    error_message = "some error message"
-
-    async def mock_send(*_, **__):
-        return mock_response(status_code=201, json_payload={
-            "errors": {
-                "invalidParticipants": [
-                    {
-                        "code": "string",
-                        "message": error_message,
-                        "target": new_participant_id,
-                        "details": []
-                    }
-                ]
-            }
-        })
-    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
-
-    new_participant = ChatThreadParticipant(
-            user=CommunicationUserIdentifier(new_participant_id),
-            display_name='name',
-            share_history_time=datetime.utcnow())
-
-    try:
-        await chat_thread_client.add_participant(new_participant)
-    except:
-        raised = True
-
-    assert raised == True
-
-@pytest.mark.asyncio
 async def test_add_participants():
     thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
     new_participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
@@ -537,16 +483,14 @@ async def test_add_participants_w_failed_participants_returns_nonempty_list():
 
     async def mock_send(*_, **__):
         return mock_response(status_code=201, json_payload={
-            "errors": {
-                "invalidParticipants": [
-                    {
-                        "code": "string",
-                        "message": error_message,
-                        "target": new_participant_id,
-                        "details": []
-                    }
-                ]
-            }
+            "invalidParticipants": [
+                {
+                    "code": "string",
+                    "message": error_message,
+                    "target": new_participant_id,
+                    "details": []
+                }
+            ]
         })
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
@@ -735,3 +679,27 @@ async def test_list_read_receipts_with_results_per_page_and_skip():
         items.append(item)
 
     assert len(items) == 1
+
+@pytest.mark.asyncio
+async def test_get_properties():
+    thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
+    raised = False
+
+    async def mock_send(*_, **__):
+        return mock_response(status_code=200, json_payload={
+                "id": thread_id,
+                "topic": "Lunch Chat thread",
+                "createdOn": "2020-10-30T10:50:50Z",
+                "deletedOn": "2020-10-30T10:50:50Z",
+                "createdByCommunicationIdentifier": {"rawId": "string", "communicationUser": {"id": "string"}}
+                })
+    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
+
+    get_thread_result = None
+    try:
+        get_thread_result = await chat_thread_client.get_properties()
+    except:
+        raised = True
+
+    assert raised == False
+    assert get_thread_result.id == thread_id
