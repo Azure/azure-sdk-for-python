@@ -43,6 +43,12 @@ def get_current_utc_time():
     # type: () -> str
     return str(datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S ")) + "GMT"
 
+
+def get_current_utc_with_tz():
+    # type: () -> datetime
+    return datetime.now().replace(tzinfo=TZ_UTC)
+
+
 def create_access_token(token):
     # type: (str) -> azure.core.credentials.AccessToken
     """Creates an instance of azure.core.credentials.AccessToken from a

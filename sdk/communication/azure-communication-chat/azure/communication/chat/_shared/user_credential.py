@@ -10,8 +10,7 @@ from typing import ( # pylint: disable=unused-import
     Tuple,
 )
 
-from msrest.serialization import TZ_UTC
-
+from .utils import get_current_utc_with_tz
 from .user_token_refresh_options import CommunicationTokenRefreshOptions
 
 class CommunicationTokenCredential(object):
@@ -35,8 +34,8 @@ class CommunicationTokenCredential(object):
         self._lock = Condition(Lock())
         self._some_thread_refreshing = False
 
-    def get_token(self):
-        # type () -> ~azure.core.credentials.AccessToken
+    def get_token(self, *scopes, **kwargs):
+        # type (*str, **Any) -> AccessToken
         """The value of the configured token.
         :rtype: ~azure.core.credentials.AccessToken
         """
@@ -79,12 +78,8 @@ class CommunicationTokenCredential(object):
         self._lock.acquire()
 
     def _token_expiring(self):
-        return self._token.expires_on - self._get_utc_now() <\
+        return self._token.expires_on - get_current_utc_with_tz() <\
             timedelta(minutes=self._ON_DEMAND_REFRESHING_INTERVAL_MINUTES)
 
     def _is_currenttoken_valid(self):
-        return self._get_utc_now() < self._token.expires_on
-
-    @classmethod
-    def _get_utc_now(cls):
-        return datetime.now().replace(tzinfo=TZ_UTC)
+        return get_current_utc_with_tz() < self._token.expires_on
