@@ -160,6 +160,9 @@ class HttpRequest(object):
             self.method, self.url
         )
 
+    def __deepcopy__(self, memo=None):
+        return self._internal_request.__deepcopy__(memo)
+
 class _HttpResponseBase(object):
     """Base class for HttpResponse and AsyncHttpResponse.
     :param int status_code: Status code of the response.
