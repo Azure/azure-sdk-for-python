@@ -19,7 +19,7 @@ from preparers import GlobalClientPreparer as _GlobalClientPreparer
 
 GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
-@pytest.mark.skip
+
 class TestCustomFormsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
@@ -93,52 +93,6 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
                         b"\x25\x50\x44\x46\x55\x55\x55",
                     )
                     result = await poller.result()
-
-    @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_custom_form_unlabeled_blank_page(self, client, formrecognizer_storage_container_sas_url):
-        fr_client = client.get_form_recognizer_client()
-        with open(self.blank_pdf, "rb") as fd:
-            blank = fd.read()
-
-        async with client:
-            poller = await client.begin_training(formrecognizer_storage_container_sas_url, use_training_labels=False)
-            model = await poller.result()
-
-            async with fr_client:
-                poller = await fr_client.begin_recognize_custom_forms(
-                    model.model_id,
-                    blank
-                )
-                form = await poller.result()
-
-        self.assertEqual(len(form), 1)
-        self.assertEqual(form[0].page_range.first_page_number, 1)
-        self.assertEqual(form[0].page_range.last_page_number, 1)
-        self.assertIsNotNone(form[0].pages)
-
-    @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_custom_form_labeled_blank_page(self, client, formrecognizer_storage_container_sas_url):
-        fr_client = client.get_form_recognizer_client()
-        with open(self.blank_pdf, "rb") as fd:
-            blank = fd.read()
-
-        async with client:
-            poller = await client.begin_training(formrecognizer_storage_container_sas_url, use_training_labels=True)
-            model = await poller.result()
-
-            async with fr_client:
-                poller = await fr_client.begin_recognize_custom_forms(
-                    model.model_id,
-                    blank
-                )
-                form = await poller.result()
-
-        self.assertEqual(len(form), 1)
-        self.assertEqual(form[0].page_range.first_page_number, 1)
-        self.assertEqual(form[0].page_range.last_page_number, 1)
-        self.assertIsNotNone(form[0].pages)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -351,7 +305,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         self.assertFormPagesTransformCorrect(recognized_form[0].pages, read_results, page_results)
         self.assertEqual(recognized_form[0].page_range.first_page_number, page_results[0].page)
         self.assertEqual(recognized_form[0].page_range.last_page_number, page_results[0].page)
-        self.assertEqual(recognized_form[0].form_type_confidence, 1.0)
+        self.assertIsNotNone(recognized_form[0].form_type_confidence)
         self.assertIsNotNone(recognized_form[0].model_id)
         self.assertFormFieldsTransformCorrect(recognized_form[0].fields, actual_fields, read_results)
 
@@ -395,7 +349,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
             self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
             self.assertEqual(form.form_type, "custom:"+model.model_id)
-            self.assertEqual(form.form_type_confidence, 1.0)
+            self.assertIsNotNone(form.form_type_confidence)
             self.assertEqual(form.model_id, model.model_id)
             self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 
@@ -507,7 +461,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
             self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
             self.assertEqual(form.form_type, "custom:"+model.model_id)
-            self.assertEqual(form.form_type_confidence, 1.0)
+            self.assertIsNotNone(form.form_type_confidence)
             self.assertEqual(form.model_id, model.model_id)
             self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 

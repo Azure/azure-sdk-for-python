@@ -14,7 +14,7 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyze?includeTextDetails=true
   response:
@@ -22,19 +22,19 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 1d97e744-51c2-4b71-995e-e53dbfaf35a0
+      - 44648548-e489-42a1-90b4-0dad143ae1d2
       content-length:
       - '0'
       date:
-      - Mon, 01 Mar 2021 18:58:31 GMT
+      - Fri, 19 Mar 2021 21:38:42 GMT
       operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/1d97e744-51c2-4b71-995e-e53dbfaf35a0
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/44648548-e489-42a1-90b4-0dad143ae1d2
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '225'
+      - '299'
     status:
       code: 202
       message: Accepted
@@ -48,48 +48,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/1d97e744-51c2-4b71-995e-e53dbfaf35a0
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/44648548-e489-42a1-90b4-0dad143ae1d2
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2021-03-01T18:58:31Z", "lastUpdatedDateTime":
-        "2021-03-01T18:58:32Z"}'
-    headers:
-      apim-request-id:
-      - 0b0ac66e-e7e0-4032-8258-f12d1156c278
-      content-length:
-      - '106'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 01 Mar 2021 18:58:37 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '29'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/1d97e744-51c2-4b71-995e-e53dbfaf35a0
-  response:
-    body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-03-01T18:58:31Z",
-        "lastUpdatedDateTime": "2021-03-01T18:58:37Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-03-19T21:38:43Z",
+        "lastUpdatedDateTime": "2021-03-19T21:38:48Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
         "unit": "inch", "lines": [{"text": "Contoso", "boundingBox": [0.5384, 1.1583,
         1.4466, 1.1583, 1.4466, 1.3534, 0.5384, 1.3534], "words": [{"text": "Contoso",
@@ -217,27 +182,43 @@ interactions:
         {"type": "string", "valueString": "1020 Enterprise Way Sunnayvale, CA 87659",
         "text": "1020 Enterprise Way Sunnayvale, CA 87659", "boundingBox": [5.196,
         1.716, 6.6526, 1.716, 6.6526, 2.0359, 5.196, 2.0359], "page": 1, "confidence":
-        0.992, "elements": ["#/readResults/0/lines/4/words/0", "#/readResults/0/lines/4/words/1",
+        0.954, "elements": ["#/readResults/0/lines/4/words/0", "#/readResults/0/lines/4/words/1",
         "#/readResults/0/lines/4/words/2", "#/readResults/0/lines/6/words/0", "#/readResults/0/lines/6/words/1",
         "#/readResults/0/lines/6/words/2"]}, "CustomerAddressRecipient": {"type":
         "string", "valueString": "Microsoft", "text": "Microsoft", "boundingBox":
         [5.2045, 1.5114, 5.8155, 1.5114, 5.8155, 1.6151, 5.2045, 1.6151], "page":
-        1, "confidence": 0.989, "elements": ["#/readResults/0/lines/2/words/2"]},
+        1, "confidence": 0.981, "elements": ["#/readResults/0/lines/2/words/2"]},
         "CustomerName": {"type": "string", "valueString": "Microsoft", "text": "Microsoft",
         "boundingBox": [5.2045, 1.5114, 5.8155, 1.5114, 5.8155, 1.6151, 5.2045, 1.6151],
-        "page": 1, "confidence": 0.989, "elements": ["#/readResults/0/lines/2/words/2"]},
+        "page": 1, "confidence": 0.981, "elements": ["#/readResults/0/lines/2/words/2"]},
         "DueDate": {"type": "date", "valueDate": "2017-06-24", "text": "6/24/2017",
         "boundingBox": [3.346, 3.41, 3.9514, 3.41, 3.9514, 3.5144, 3.346, 3.5144],
-        "page": 1, "confidence": 0.989, "elements": ["#/readResults/0/lines/15/words/0"]},
+        "page": 1, "confidence": 0.981, "elements": ["#/readResults/0/lines/15/words/0"]},
         "InvoiceDate": {"type": "date", "valueDate": "2017-06-18", "text": "6/18/2017",
         "boundingBox": [1.9455, 3.41, 2.551, 3.41, 2.551, 3.5144, 1.9455, 3.5144],
-        "page": 1, "confidence": 0.936, "elements": ["#/readResults/0/lines/14/words/0"]},
+        "page": 1, "confidence": 0.968, "elements": ["#/readResults/0/lines/14/words/0"]},
         "InvoiceId": {"type": "string", "valueString": "34278587", "text": "34278587",
         "boundingBox": [0.5397, 3.411, 1.1457, 3.411, 1.1457, 3.5144, 0.5397, 3.5144],
-        "page": 1, "confidence": 0.842, "elements": ["#/readResults/0/lines/13/words/0"]},
+        "page": 1, "confidence": 0.973, "elements": ["#/readResults/0/lines/13/words/0"]},
         "InvoiceTotal": {"type": "number", "valueNumber": 56651.49, "text": "$56,651.49",
         "boundingBox": [5.3871, 3.4047, 6.0702, 3.4047, 6.0702, 3.5321, 5.3871, 3.5321],
-        "page": 1, "confidence": 0.576, "elements": ["#/readResults/0/lines/16/words/0"]},
+        "page": 1, "confidence": 0.307, "elements": ["#/readResults/0/lines/16/words/0"]},
+        "Items": {"type": "array", "valueArray": [{"type": "object", "valueObject":
+        {"Amount": {"type": "number", "valueNumber": 56651.49, "text": "$56,651.49",
+        "boundingBox": [5.3871, 3.4047, 6.0702, 3.4047, 6.0702, 3.5321, 5.3871, 3.5321],
+        "page": 1, "confidence": 0.782, "elements": ["#/readResults/0/lines/16/words/0"]},
+        "Date": {"type": "date", "valueDate": "2017-06-18", "text": "6/18/2017", "boundingBox":
+        [1.9455, 3.41, 2.551, 3.41, 2.551, 3.5144, 1.9455, 3.5144], "page": 1, "confidence":
+        0.287, "elements": ["#/readResults/0/lines/14/words/0"]}, "ProductCode": {"type":
+        "string", "valueString": "34278587", "text": "34278587", "boundingBox": [0.5397,
+        3.411, 1.1457, 3.411, 1.1457, 3.5144, 0.5397, 3.5144], "page": 1, "confidence":
+        0.657, "elements": ["#/readResults/0/lines/13/words/0"]}, "Tax": {"type":
+        "number", "text": "PT", "boundingBox": [6.2285, 3.4114, 6.3919, 3.4114, 6.3919,
+        3.5119, 6.2285, 3.5119], "page": 1, "confidence": 0.691, "elements": ["#/readResults/0/lines/17/words/0"]}},
+        "text": "34278587 6/18/2017 6/24/2017 $56,651.49 PT", "boundingBox": [0.5397,
+        3.4047, 6.3919, 3.4047, 6.3919, 3.5321, 0.5397, 3.5321], "page": 1, "confidence":
+        0.855, "elements": ["#/readResults/0/lines/13/words/0", "#/readResults/0/lines/14/words/0",
+        "#/readResults/0/lines/15/words/0", "#/readResults/0/lines/16/words/0", "#/readResults/0/lines/17/words/0"]}]},
         "VendorAddress": {"type": "string", "valueString": "1 Redmond way Suite 6000
         Redmond, WA 99243", "text": "1 Redmond way Suite 6000 Redmond, WA 99243",
         "boundingBox": [0.8019, 1.7033, 2.1445, 1.7033, 2.1445, 2.1911, 0.8019, 2.1911],
@@ -246,23 +227,23 @@ interactions:
         "#/readResults/0/lines/5/words/0", "#/readResults/0/lines/5/words/1", "#/readResults/0/lines/5/words/2",
         "#/readResults/0/lines/7/words/0"]}, "VendorName": {"type": "string", "valueString":
         "Contoso", "text": "Contoso", "boundingBox": [0.5384, 1.1583, 1.4466, 1.1583,
-        1.4466, 1.3534, 0.5384, 1.3534], "page": 1, "confidence": 0.979, "elements":
+        1.4466, 1.3534, 0.5384, 1.3534], "page": 1, "confidence": 0.981, "elements":
         ["#/readResults/0/lines/0/words/0"]}}}]}}'
     headers:
       apim-request-id:
-      - 9cc21364-aa9f-4727-81c9-55362d135e4e
+      - bfca1fe4-046e-444a-932d-a8d185dff44b
       content-length:
-      - '11420'
+      - '12666'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 01 Mar 2021 18:58:41 GMT
+      - Fri, 19 Mar 2021 21:38:48 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '46'
+      - '26'
     status:
       code: 200
       message: OK
