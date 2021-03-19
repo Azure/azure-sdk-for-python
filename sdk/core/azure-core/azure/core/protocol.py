@@ -23,16 +23,34 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import json
+from enum import Enum
 import xml.etree.ElementTree as ET
 from typing import TYPE_CHECKING
 
-from ..pipeline.transport import (
+from .pipeline.transport import (
     HttpRequest as _PipelineTransportHttpRequest,
+    HttpResponse as _PipelineTransportHttpResponse
 )
 
 if TYPE_CHECKING:
-    from typing import Any, Optional
-    from ._types import QueryTypes
+    from typing import (
+        Any, Optional, Union, Mapping, Sequence, Tuple
+    )
+
+    HeaderTypes = Union[
+        Mapping[str, str],
+        Sequence[Tuple[str, str]]
+    ]
+
+class HttpVerbs(str, Enum):
+    GET = "GET"
+    PUT = "PUT"
+    POST = "POST"
+    HEAD = "HEAD"
+    PATCH = "PATCH"
+    DELETE = "DELETE"
+    MERGE = "MERGE"
 
 
 def _is_stream(content):
@@ -141,3 +159,116 @@ class HttpRequest(object):
         return "<HttpRequest [{}], url: '{}'>".format(
             self.method, self.url
         )
+
+class _HttpResponseBase(object):
+    """Base class for HttpResponse and AsyncHttpResponse.
+    :param int status_code: Status code of the response.
+    :keyword headers: Response headers
+    :paramtype headers: dict[str, any]
+    :keyword str text: The response content as a string
+    :keyword any json: JSON content
+    :keyword stream: Streamed response
+    :paramtype stream: bytes or iterator of bytes
+    :keyword callable on_close: Any callable you want to cal
+     when closing your HttpResponse
+    :keyword history: If redirection, history of all redirection
+     that resulted in this response.
+    :paramtype history: list[~azure.core.protocol.HttpResponse]
+    """
+
+    def __init__(self, status_code, **kwargs):
+        # type: (int, Any) -> None
+        self._internal_response = kwargs.pop("_internal_response")  # type: _PipelineTransportHttpResponse
+        self.request = kwargs.pop("request")
+        self._encoding = None
+
+    @property
+    def status_code(self):
+        # type: (...) -> int
+        """Returns the status code of the response"""
+        return self._internal_response.status_code
+
+    @status_code.setter
+    def status_code(self, val):
+        # type: (int) -> None
+        """Set the status code of the response"""
+        self._internal_response.status_code = val
+
+    @property
+    def headers(self):
+        # type: (...) -> HeaderTypes
+        """Returns the response headers"""
+        return self._internal_response.headers
+
+    @property
+    def reason(self):
+        # type: (...) -> str
+        """Returns the reason phrase for the response"""
+        return self._internal_response.reason
+
+    @property
+    def content(self):
+        # type: (...) -> bytes
+        """Returns the response content in bytes"""
+        raise NotImplementedError()
+
+    @property
+    def url(self):
+        # type: (...) -> str
+        """Returns the URL that resulted in this response"""
+        return self._internal_response.request.url
+
+    @property
+    def encoding(self):
+        # type: (...) -> Optional[str]
+        """Returns the response encoding. By default, is specified
+        by the response Content-Type header.
+        """
+        return self._encoding
+
+    @encoding.setter
+    def encoding(self, value: str) -> None:
+        """Sets the response encoding"""
+        self._encoding = value
+
+    @property
+    def text(self):
+        # type: (...) -> str
+        """Returns the response body as a string"""
+        return self._internal_response.text(self.encoding)
+
+    def json(self):
+        # type: (...) -> Any
+        """Returns the whole body as a json object.
+
+        :return: The JSON deserialized response body
+        :rtype: any
+        :raises json.decoder.JSONDecodeError or ValueError (in python 2.7) if object is not JSON decodable:
+        """
+        return json.loads(self._internal_response.text(self.encoding))
+
+    def raise_for_status(self):
+        # type: (...) -> None
+        """Raises an HttpResponseError if the response has an error status code.
+
+        If response is good, does nothing.
+        """
+        return self._internal_response.raise_for_status()
+
+    def __repr__(self):
+        # type: (...) -> str
+        return self._internal_response.__repr__()
+
+class HttpResponse(_HttpResponseBase):
+
+    @property
+    def content(self):
+        # type: (...) -> bytes
+        return self._internal_response.body()
+
+class AsyncHttpResponse(_HttpResponseBase):
+
+    @property
+    def content(self):
+        # type: (...) -> bytes
+        return self._internal_response.body()
