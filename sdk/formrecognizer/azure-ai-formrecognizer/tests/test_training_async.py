@@ -39,6 +39,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
+    @pytest.mark.skip("504 Gateway error with canary - fix in progress")
     async def test_training_encoded_url(self, client):
         with self.assertRaises(HttpResponseError):
             async with client:

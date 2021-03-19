@@ -553,7 +553,7 @@ class FormRecognizerTest(AzureTestCase):
             self.assertIsNotNone(field.label_data.text)
 
     def assertLabeledRecognizedFormHasValues(self, form, model):
-        self.assertEqual(form.form_type_confidence, 1.0)
+        self.assertIsNotNone(form.form_type_confidence)
         self.assertEqual(form.model_id, model.model_id)
         self.assertFormPagesHasValues(form.pages)
         for label, field in form.fields.items():
