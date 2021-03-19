@@ -128,8 +128,10 @@ class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
         clear_topics(mgmt_service)
         topic_name = "fjrui"
         subscription_name = "eqkovc"
+        queue_name = "dfkla"
 
         try:
+            mgmt_service.create_queue(queue_name)
             topic_description = mgmt_service.create_topic(topic_name)
             subscription_description = mgmt_service.create_subscription(topic_description.name, subscription_name)
 
@@ -168,9 +170,19 @@ class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
             assert subscription_description.forward_to.endswith(".servicebus.windows.net/{}".format(topic_name))
             assert subscription_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(topic_name))
 
+            # Update forward_to with entity name
+            subscription_description.forward_to = queue_name
+            subscription_description.forward_dead_lettered_messages_to = queue_name
+            mgmt_service.update_subscription(topic_description.name, subscription_description)
+            subscription_description = mgmt_service.get_subscription(topic_description.name, subscription_name)
+            # Note: We endswith to avoid the fact that the servicebus_namespace_name is replacered locally but not in the properties bag, and still test this.
+            assert subscription_description.forward_to.endswith(".servicebus.windows.net/{}".format(queue_name))
+            assert subscription_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(queue_name))
+
         finally:
             mgmt_service.delete_subscription(topic_name, subscription_name)
             mgmt_service.delete_topic(topic_name)
+            mgmt_service.delete_queue(queue_name)
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')

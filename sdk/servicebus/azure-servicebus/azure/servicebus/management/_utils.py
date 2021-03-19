@@ -331,12 +331,19 @@ def _validate_topic_subscription_and_rule_types(
         )
 
 
-def _normalize_forward_to_address(forward_to, fully_qualified_namespace):
+def _normalize_entity_path_to_full_path_if_needed(
+    entity_path, fully_qualified_namespace
+):
     # type: (str, str) -> str
-    if forward_to:  # for python 2.7, cannot urlparse None
-        parsed = urlparse.urlparse(forward_to)
-        forward_to = "sb://" + fully_qualified_namespace + "/" + forward_to if not parsed.netloc else forward_to
-    return forward_to
+    if not entity_path:
+        return entity_path
+    parsed = urlparse.urlparse(entity_path)
+    entity_path = (
+        ("sb://" + fully_qualified_namespace + "/" + entity_path)
+        if not parsed.netloc
+        else entity_path
+    )
+    return entity_path
 
 
 def create_properties_from_dict_if_needed(properties, sb_resource_type):

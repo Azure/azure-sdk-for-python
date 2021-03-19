@@ -47,7 +47,7 @@ from ._utils import (
     serialize_rule_key_values,
     extract_rule_data_template,
     create_properties_from_dict_if_needed,
-    _normalize_forward_to_address,
+    _normalize_entity_path_to_full_path_if_needed,
     _validate_entity_name_type,
     _validate_topic_and_subscription_types,
     _validate_topic_subscription_and_rule_types,
@@ -336,12 +336,14 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         :rtype: ~azure.servicebus.management.QueueProperties
         """
-        forward_to = _normalize_forward_to_address(
+        forward_to = _normalize_entity_path_to_full_path_if_needed(
             kwargs.pop("forward_to", None), self.fully_qualified_namespace
         )
-        forward_dead_lettered_messages_to = _normalize_forward_to_address(
-            kwargs.pop("forward_dead_lettered_messages_to", None),
-            self.fully_qualified_namespace,
+        forward_dead_lettered_messages_to = (
+            _normalize_entity_path_to_full_path_if_needed(
+                kwargs.pop("forward_dead_lettered_messages_to", None),
+                self.fully_qualified_namespace,
+            )
         )
         queue = QueueProperties(
             queue_name,
@@ -410,8 +412,16 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :type queue: ~azure.servicebus.management.QueueProperties
         :rtype: None
         """
-
         queue = create_properties_from_dict_if_needed(queue, QueueProperties)
+        queue.forward_to = _normalize_entity_path_to_full_path_if_needed(
+            queue.forward_to, self.fully_qualified_namespace
+        )
+        queue.forward_dead_lettered_messages_to = (
+            _normalize_entity_path_to_full_path_if_needed(
+                queue.forward_dead_lettered_messages_to,
+                self.fully_qualified_namespace,
+            )
+        )
         to_update = queue._to_internal_entity()
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(
@@ -829,12 +839,14 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype:  ~azure.servicebus.management.SubscriptionProperties
         """
         _validate_entity_name_type(topic_name, display_name="topic_name")
-        forward_to = _normalize_forward_to_address(
+        forward_to = _normalize_entity_path_to_full_path_if_needed(
             kwargs.pop("forward_to", None), self.fully_qualified_namespace
         )
-        forward_dead_lettered_messages_to = _normalize_forward_to_address(
-            kwargs.pop("forward_dead_lettered_messages_to", None),
-            self.fully_qualified_namespace,
+        forward_dead_lettered_messages_to = (
+            _normalize_entity_path_to_full_path_if_needed(
+                kwargs.pop("forward_dead_lettered_messages_to", None),
+                self.fully_qualified_namespace,
+            )
         )
 
         subscription = SubscriptionProperties(
@@ -900,8 +912,16 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """
 
         _validate_entity_name_type(topic_name, display_name="topic_name")
-
         subscription = create_properties_from_dict_if_needed(subscription, SubscriptionProperties)  # type: ignore
+        subscription.forward_to = _normalize_entity_path_to_full_path_if_needed(
+            subscription.forward_to, self.fully_qualified_namespace
+        )
+        subscription.forward_dead_lettered_messages_to = (
+            _normalize_entity_path_to_full_path_if_needed(
+                subscription.forward_dead_lettered_messages_to,
+                self.fully_qualified_namespace,
+            )
+        )
         to_update = subscription._to_internal_entity()
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(
@@ -910,7 +930,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         to_update.auto_delete_on_idle = avoid_timedelta_overflow(
             to_update.auto_delete_on_idle
         )
-
         create_entity_body = CreateSubscriptionBody(
             content=CreateSubscriptionBodyContent(
                 subscription_description=to_update,

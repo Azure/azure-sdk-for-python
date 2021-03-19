@@ -300,7 +300,9 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_queues(mgmt_service)
         queue_name = "fjrui"
+        topic_name = "sagho"
         queue_description = mgmt_service.create_queue(queue_name)
+        mgmt_service.create_topic(topic_name)
         try:
             # Try updating one setting.
             queue_description.lock_duration = datetime.timedelta(minutes=2)
@@ -308,6 +310,15 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
 
             queue_description = mgmt_service.get_queue(queue_name)
             assert queue_description.lock_duration == datetime.timedelta(minutes=2)
+
+            # Update forwarding settings with entity name.
+            queue_description.forward_to = topic_name
+            queue_description.forward_dead_lettered_messages_to = topic_name
+            mgmt_service.update_queue(queue_description)
+
+            queue_description = mgmt_service.get_queue(queue_name)
+            assert queue_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(topic_name))
+            assert queue_description.forward_to.endswith(".servicebus.windows.net/{}".format(topic_name))
 
             # Now try updating all settings.
             queue_description.auto_delete_on_idle = datetime.timedelta(minutes=10)
@@ -345,6 +356,7 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
             #assert queue_description.requires_session == True
         finally:
             mgmt_service.delete_queue(queue_name)
+            mgmt_service.delete_topic(topic_name)
 
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
