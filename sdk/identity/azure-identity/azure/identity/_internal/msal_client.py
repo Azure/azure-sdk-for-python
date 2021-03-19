@@ -36,6 +36,9 @@ if TYPE_CHECKING:
     RequestData = Union[Dict[str, str], str]
 
 
+_POST = ["POST"]
+
+
 class MsalResponse(object):
     """Wraps HttpResponse according to msal.oauth2cli.http"""
 
@@ -94,7 +97,7 @@ class MsalClient(object):
             else:
                 raise ValueError('expected "data" to be text or a dict')
 
-        response = self._pipeline.run(request)
+        response = self._pipeline.run(request, retry_on_methods=_POST)
         return MsalResponse(response)
 
     def get(self, url, params=None, headers=None, **kwargs):  # pylint:disable=unused-argument

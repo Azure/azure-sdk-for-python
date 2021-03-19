@@ -32,6 +32,7 @@ import os
 import logging
 import re
 import functools
+from uuid import uuid4
 
 from async_proxy import AzureAppConfigurationClientProxy
 from async_wrapper import app_config_decorator
@@ -445,3 +446,56 @@ class AppConfigurationClientTest(AzureTestCase):
 
         assert seq_num < seq_num2
         assert seq_num2 < seq_num3
+
+class TestAppConfig(object):
+
+    @pytest.mark.live_test_only
+    @pytest.mark.asyncio
+    async def test_mock_policies(self):
+        from azure.core.pipeline.transport import HttpRequest, HttpResponse, AsyncHttpTransport
+        from azure.core.pipeline.policies import RetryPolicy
+        from azure.core.pipeline import AsyncPipeline
+
+        class MockTransport(AsyncHttpTransport):
+            def __init__(self):
+                self._count = 0
+                self.auth_headers = []
+            async def __aexit__(self, exc_type, exc_val, exc_tb):
+                pass
+            async def close(self):
+                pass
+            async def open(self):
+                pass
+
+            async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+                self._count += 1
+                self.auth_headers.append(request.headers['Authorization'])
+                response = HttpResponse(request, None)
+                response.status_code = 429
+                return response
+
+        def new_method(self, request):
+            request.http_request.headers["Authorization"] = uuid4()
+
+        from azure.appconfiguration._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
+        # Store the method to restore later
+        temp = AppConfigRequestsCredentialsPolicy._signed_request
+        AppConfigRequestsCredentialsPolicy._signed_request = new_method
+
+        client = AzureAppConfigurationClient.from_connection_string(
+            os.environ["APPCONFIGURATION_CONNECTION_STRING"],
+            transport=MockTransport()
+        )
+        client.list_configuration_settings()
+
+        # http_request = HttpRequest('GET', 'http://aka.ms/')
+        # transport = MockTransport()
+
+
+
+        # policies = client._impl._client._pipeline._impl_policies
+        # pipeline = AsyncPipeline(transport, policies)
+        # await pipeline.run(http_request)
+
+        # Reset the actual method
+        AppConfigRequestsCredentialsPolicy._signed_request = temp

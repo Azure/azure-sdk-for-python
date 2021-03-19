@@ -1,5 +1,12 @@
 # Release History
 
+## 8.1.0b2 (2021-03-19)
+
+**Features**
+
+  - Model Server has a new parameter source_subscription_id
+  - Model Server has a new parameter source_resource_group_name
+
 ## 8.1.0b1 (2021-03-17)
 
 **Features**

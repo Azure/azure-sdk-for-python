@@ -142,9 +142,9 @@ class AzureAppConfigurationClient:
             policies = [
                 self._config.headers_policy,
                 self._config.user_agent_policy,
-                credential_policy,
                 self._config.retry_policy,
                 self._sync_token_policy,
+                credential_policy,
                 self._config.logging_policy,  # HTTP request/response log
                 DistributedTracingPolicy(**kwargs),
                 HttpLoggingPolicy(**kwargs),

@@ -109,6 +109,6 @@ def app_config_decorator(func, **kwargs):
                     key=item.key, label=item.label
                 )
             except:
-                print("Issue deleting item with key {} and label {}".format(item.key, item.label))
+                print("Issue deleting config with key {} and label {}".format(item.key, item.label))
 
     return wrapper

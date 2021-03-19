@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from typing import TYPE_CHECKING
 
 from ._generated.models import ChatParticipant as ChatParticipantAutorest
 from ._generated.models import ChatMessageType
@@ -10,6 +11,10 @@ from ._utils import CommunicationUserIdentifierConverter
 
 # pylint: disable=unused-import,ungrouped-imports
 from ._shared.models import CommunicationUserIdentifier
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
 
 class ChatThreadParticipant(object):
     """A participant of the chat thread.
@@ -74,8 +79,8 @@ class ChatMessage(object):
     :ivar created_on: The timestamp when the chat message arrived at the server. The timestamp is
      in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :type created_on: ~datetime.datetime
-    :ivar sender_communication_identifier: The chat message sender.
-    :type sender_communication_identifier: CommunicationUserIdentifier
+    :ivar sender: The chat message sender.
+    :type sender: CommunicationUserIdentifier
     :ivar deleted_on: The timestamp when the chat message was deleted. The timestamp is in RFC3339
      format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :type deleted_on: ~datetime.datetime
@@ -97,7 +102,7 @@ class ChatMessage(object):
         self.content = kwargs['content']
         self.sender_display_name = kwargs['sender_display_name']
         self.created_on = kwargs['created_on']
-        self.sender_communication_identifier = kwargs['sender_communication_identifier']
+        self.sender = kwargs['sender']
         self.deleted_on = kwargs['deleted_on']
         self.edited_on = kwargs['edited_on']
 
@@ -125,7 +130,7 @@ class ChatMessage(object):
             content=ChatMessageContent._from_generated(chat_message.content), # pylint:disable=protected-access
             sender_display_name=chat_message.sender_display_name,
             created_on=chat_message.created_on,
-            sender_communication_identifier=sender_communication_identifier,
+            sender=sender_communication_identifier,
             deleted_on=chat_message.deleted_on,
             edited_on=chat_message.edited_on
         )
@@ -140,10 +145,10 @@ class ChatMessageContent(object):
     :type topic: str
     :ivar participants: Chat message content for messages of types participantAdded or
      participantRemoved.
-    :type participants: list[~azure.communication.chat.models.ChatParticipant]
-    :ivar initiator_communication_identifier: Chat message content for messages of types participantAdded or
+    :type participants: List[~azure.communication.chat.models.ChatThreadParticipant]
+    :ivar initiator: Chat message content for messages of types participantAdded or
      participantRemoved.
-    :type initiator_communication_identifier: CommunicationUserIdentifier
+    :type initiator: Union[CommunicationUserIdentifier, MicrosoftTeamsUserIdentifier]
     """
 
     def __init__(
@@ -182,8 +187,8 @@ class ChatMessageContent(object):
         )
 
 
-class ChatThread(object):
-    """ChatThread.
+class ChatThreadProperties(object):
+    """ChatThreadProperties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -268,9 +273,9 @@ class CreateChatThreadResult(object):
     """Result of the create chat thread operation.
 
     :ivar chat_thread: Chat thread.
-    :type chat_thread: ~azure.communication.chat.ChatThread
+    :type chat_thread: ~azure.communication.chat.ChatThreadProperties
     :ivar errors: Errors encountered during the creation of the chat thread.
-    :type errors: list((~azure.communication.chat.ChatThreadParticipant, ~azure.communication.chat.CommunicationError))
+    :type errors: List[Tuple[~azure.communication.chat.ChatThreadParticipant, ~azure.communication.chat.ChatError]]
     """
 
     def __init__(
