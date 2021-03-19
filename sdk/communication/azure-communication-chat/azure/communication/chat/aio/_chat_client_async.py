@@ -25,10 +25,10 @@ from .._shared.user_credential_async import CommunicationTokenCredential
 from .._generated.aio import AzureCommunicationChatService
 from .._generated.models import (
     CreateChatThreadRequest,
-    ChatThreadInfo
+    ChatThreadItem
 )
 from .._models import (
-    ChatThread,
+    ChatThreadProperties,
     ChatThreadParticipant,
     CreateChatThreadResult
 )
@@ -138,14 +138,14 @@ class ChatClient(object):
         :param topic: Required. The thread topic.
         :type topic: str
         :keyword thread_participants: Optional. Participants to be added to the thread.
-        :paramtype thread_participants: list[~azure.communication.chat.ChatThreadParticipant]
-        :keyword repeatability_request_id: Optional. If specified, the client directs that the request is
+        :paramtype thread_participants: List[~azure.communication.chat.ChatThreadParticipant]
+        :keyword idempotency_token: Optional. If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
          Repeatability-Request-ID and get back an appropriate response without the server executing the
          request multiple times. The value of the Repeatability-Request-ID is an opaque string
          representing a client-generated, globally unique for all time, identifier for the request. If not
          specified, a new unique id would be generated.
-        :paramtype repeatability_request_id: str
+        :paramtype idempotency_token: str
         :return: CreateChatThreadResult
         :rtype: ~azure.communication.chat.CreateChatThreadResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -162,9 +162,9 @@ class ChatClient(object):
         if not topic:
             raise ValueError("topic cannot be None.")
 
-        repeatability_request_id = kwargs.pop('repeatability_request_id', None)
-        if repeatability_request_id is None:
-            repeatability_request_id = str(uuid4())
+        idempotency_token = kwargs.pop('idempotency_token', None)
+        if idempotency_token is None:
+            idempotency_token = str(uuid4())
 
         thread_participants = kwargs.pop('thread_participants', None)
         participants = []
@@ -176,7 +176,7 @@ class ChatClient(object):
 
         create_chat_thread_result = await self._client.chat.create_chat_thread(
             create_chat_thread_request=create_thread_request,
-            repeatability_request_id=repeatability_request_id,
+            idempotency_token=idempotency_token,
             **kwargs)
 
         errors = None
@@ -184,10 +184,10 @@ class ChatClient(object):
                 create_chat_thread_result.errors is not None:
             errors = CommunicationErrorResponseConverter._convert(  # pylint:disable=protected-access
                 participants=[thread_participants],
-                communication_errors=create_chat_thread_result.errors.invalid_participants
+                chat_errors=create_chat_thread_result.invalid_participants
             )
 
-        chat_thread = ChatThread._from_generated( # pylint:disable=protected-access
+        chat_thread = ChatThreadProperties._from_generated( # pylint:disable=protected-access
             create_chat_thread_result.chat_thread)
 
         create_chat_thread_result = CreateChatThreadResult(
@@ -197,46 +197,18 @@ class ChatClient(object):
 
         return create_chat_thread_result
 
-    @distributed_trace_async
-    async def get_chat_thread(
-        self, thread_id: str,
-        **kwargs
-    ) -> ChatThread: # type: (...) -> ChatThread
-
-        """Gets a chat thread.
-
-        :param thread_id: Required. Thread id to get.
-        :type thread_id: str
-        :return: ChatThread
-        :rtype: ~azure.communication.chat.ChatThread
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/chat_client_sample_async.py
-                :start-after: [START get_thread]
-                :end-before: [END get_thread]
-                :language: python
-                :dedent: 12
-                :caption: Getting a chat thread by thread id.
-        """
-        if not thread_id:
-            raise ValueError("thread_id cannot be None.")
-
-        chat_thread = await self._client.chat.get_chat_thread(thread_id, **kwargs)
-        return ChatThread._from_generated(chat_thread)  # pylint:disable=protected-access
 
     @distributed_trace
     def list_chat_threads(
         self,
         **kwargs: Any
-    ): # type: (...) -> AsyncItemPaged[ChatThreadInfo]
+    ): # type: (...) -> AsyncItemPaged[ChatThreadItem]
         """Gets the list of chat threads of a user.
 
         :keyword int results_per_page: The maximum number of chat threads to be returned per page.
         :keyword ~datetime.datetime start_time: The earliest point in time to get chat threads up to.
-        :return: An iterator like instance of ChatThreadInfo
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.chat.ChatThreadInfo]
+        :return: An iterator like instance of ChatThreadItem
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.chat.ChatThreadItem]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:

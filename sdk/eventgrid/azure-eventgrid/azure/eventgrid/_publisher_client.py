@@ -25,7 +25,6 @@ from azure.core.messaging import CloudEvent
 
 from ._models import EventGridEvent
 from ._helpers import (
-    _get_endpoint_only_fqdn,
     _get_authentication_policy,
     _is_cloud_event,
     _is_eventgrid_event,
@@ -83,8 +82,6 @@ class EventGridPublisherClient(object):
 
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, AzureSasCredential], Any) -> None
-        endpoint = _get_endpoint_only_fqdn(endpoint)
-
         self._endpoint = endpoint
         self._client = EventGridPublisherClientImpl(
             policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs
@@ -171,8 +168,8 @@ class EventGridPublisherClient(object):
         a list of events.
 
         :param events: A single instance or a list of dictionaries/CloudEvent/EventGridEvent to be sent.
-        :type events: ~azure.core.messaging.CloudEvent, ~azure.eventgrid.EventGridEvent, Dict,
-         list[~azure.core.messaging.CloudEvent], list[~azure.eventgrid.EventGridEvent] or list[Dict]
+        :type events: ~azure.core.messaging.CloudEvent or ~azure.eventgrid.EventGridEvent or dict or
+         List[~azure.core.messaging.CloudEvent] or List[~azure.eventgrid.EventGridEvent] or List[dict]
         :keyword str content_type: The type of content to be used to send the events.
          Has default value "application/json; charset=utf-8" for EventGridEvents,
          with "cloudevents-batch+json" for CloudEvents

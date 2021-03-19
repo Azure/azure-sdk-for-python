@@ -17,7 +17,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searchd97c184e.search.windows.net/skillsets?api-version=2020-06-30
+    uri: https://searchd97c184e.search.windows.net/skillsets?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://searchd97c184e.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D84B89A8FA031D\"","name":"test-ss","description":"desc","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":null,"description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}'
@@ -37,7 +37,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://searchd97c184e.search.windows.net/skillsets('test-ss')?api-version=2020-06-30
+      - https://searchd97c184e.search.windows.net/skillsets('test-ss')?api-version=2020-06-30-Preview
       odata-version:
       - '4.0'
       pragma:
@@ -63,7 +63,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchd97c184e.search.windows.net/skillsets?api-version=2020-06-30
+    uri: https://searchd97c184e.search.windows.net/skillsets?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://searchd97c184e.search.windows.net/$metadata#skillsets","value":[{"@odata.etag":"\"0x8D84B89A8FA031D\"","name":"test-ss","description":"desc","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":"#1","description":null,"context":"/document","categories":["Person","Quantity","Organization","URL","Email","Location","DateTime"],"defaultLanguageCode":"en","minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}]}'
@@ -109,7 +109,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://searchd97c184e.search.windows.net/skillsets('test-ss')?api-version=2020-06-30
+    uri: https://searchd97c184e.search.windows.net/skillsets('test-ss')?api-version=2020-06-30-Preview
   response:
     body:
       string: ''
@@ -143,7 +143,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchd97c184e.search.windows.net/skillsets?api-version=2020-06-30
+    uri: https://searchd97c184e.search.windows.net/skillsets?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://searchd97c184e.search.windows.net/$metadata#skillsets","value":[]}'

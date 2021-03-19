@@ -33,7 +33,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
 
   foreach ($line in $allPkgPropLines)
   {
-    $pkgInfo = ($line -Split ",").Trim("()' ")
+    $pkgInfo = ($line -Split " ")
     $packageName = $pkgInfo[0]
     $packageVersion = $pkgInfo[1]
     $isNewSdk = ($pkgInfo[2] -eq "True")
@@ -242,20 +242,25 @@ function Update-python-CIConfig($pkgs, $ciRepo, $locationInDocRepo, $monikerId=$
         $existingPackageDef.package_info.version = ">=$($releasingPkg.PackageVersion)"
       }
       else {
-        if ($def.version) {
-          $def.PSObject.Properties.Remove('version')  
+        if ($existingPackageDef.package_info.version) {
+          $existingPackageDef.package_info.PSObject.Properties.Remove('version')
         }
       }
     }
     else {
       $newItem = New-Object PSObject -Property @{ 
-          package_info = New-Object PSObject -Property @{ 
-            prefer_source_distribution = "true"
-            install_type = "pypi"
-            name=$releasingPkg.PackageId
-          }
-          exclude_path = @("test*","example*","sample*","doc*")
+        package_info = New-Object PSObject -Property @{
+          prefer_source_distribution = "true"
+          install_type = "pypi"
+          name=$releasingPkg.PackageId
         }
+        exclude_path = @("test*","example*","sample*","doc*")
+      }
+
+      if ($releasingPkg.IsPrerelease) {
+        $newItem.package_info | Add-Member -NotePropertyName version -NotePropertyValue ">=$($releasingPkg.PackageVersion)"
+      }
+
       $allJson.packages += $newItem
     }
   }

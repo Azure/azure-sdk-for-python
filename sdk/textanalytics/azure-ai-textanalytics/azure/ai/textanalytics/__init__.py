@@ -44,6 +44,9 @@ from ._models import (
     AnalyzeBatchActionsType,
     AnalyzeBatchActionsError,
     HealthcareEntityRelationRoleType,
+    HealthcareRelation,
+    HealthcareRelationRole,
+    HealthcareEntityAssertion,
 )
 from ._paging import AnalyzeHealthcareEntitiesResult
 from ._generated.v3_1_preview_4.models import (
@@ -93,6 +96,9 @@ __all__ = [
     "PiiEntityCategoryType",
     "HealthcareEntityRelationType",
     "HealthcareEntityRelationRoleType",
+    "HealthcareRelation",
+    "HealthcareRelationRole",
+    "HealthcareEntityAssertion",
 ]
 
 __version__ = VERSION

@@ -4,10 +4,18 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+# pylint: disable=unused-import
 from typing import Any, List
+import six
+from ._generated.models import (
+    BatchRequest as _BatchRequest,
+    SourceInput as _SourceInput,
+    DocumentFilter as _DocumentFilter,
+    TargetInput as _TargetInput,
+    Glossary as _Glossary
+)
 
-
-class TranslationGlossary(object):
+class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
     """Glossary / translation memory for the request.
 
     :param glossary_url: Required. Location of the glossary.
@@ -32,8 +40,30 @@ class TranslationGlossary(object):
         self.format_version = kwargs.get("format_version", None)
         self.storage_source = kwargs.get("storage_source", None)
 
+    def _to_generated(self):
+        return _Glossary(
+                glossary_url=self.glossary_url,
+                format=self.format,
+                version=self.format_version,
+                storage_source=self.storage_source
+            )
 
-class StorageTarget(object):
+    @staticmethod
+    def _to_generated_unknown_type(glossary):
+        if isinstance(glossary, TranslationGlossary):
+            return glossary._to_generated()  # pylint: disable=protected-access
+        if isinstance(glossary, six.string_types):
+            return _Glossary(
+                    glossary_url=glossary,
+                )
+        return None
+
+    @staticmethod
+    def _to_generated_list(glossaries):
+        return [TranslationGlossary._to_generated_unknown_type(glossary) for glossary in glossaries]
+
+
+class StorageTarget(object):  # pylint: disable=useless-object-inheritance
     """Destination for the finished translated documents.
 
     :param target_url: Required. Location of the folder / container with your documents.
@@ -60,8 +90,23 @@ class StorageTarget(object):
         self.glossaries = kwargs.get("glossaries", None)
         self.storage_source = kwargs.get("storage_source", None)
 
+    def _to_generated(self):
+        return _TargetInput(
+            target_url=self.target_url,
+            category=self.category_id,
+            language=self.language,
+            storage_source=self.storage_source,
+            glossaries=TranslationGlossary._to_generated_list(self.glossaries)  # pylint: disable=protected-access
+            if self.glossaries else None
+        )
 
-class BatchDocumentInput(object):
+    @staticmethod
+    def _to_generated_list(targets):
+        return [target._to_generated() for target in targets]  # pylint: disable=protected-access
+
+
+class BatchDocumentInput(object):  # pylint: disable=useless-object-inheritance
+    # pylint: disable=C0301
     """Definition for the input batch translation request.
 
     :param source_url: Required. Location of the folder / container or single file with your
@@ -97,8 +142,30 @@ class BatchDocumentInput(object):
         self.prefix = kwargs.get("prefix", None)
         self.suffix = kwargs.get("suffix", None)
 
+    def _to_generated(self):
+        return _BatchRequest(
+            source=_SourceInput(
+                source_url=self.source_url,
+                filter=_DocumentFilter(
+                    prefix=self.prefix,
+                    suffix=self.suffix
+                ),
+                language=self.source_language,
+                storage_source=self.storage_source
+            ),
+            targets=StorageTarget._to_generated_list(self.targets),  # pylint: disable=protected-access
+            storage_type=self.storage_type
+        )
 
-class JobStatusDetail(object):
+    @staticmethod
+    def _to_generated_list(batch_document_inputs):
+        return [
+            batch_document_input._to_generated()  # pylint: disable=protected-access
+            for batch_document_input in batch_document_inputs
+        ]
+
+
+class JobStatusDetail(object):  # pylint: disable=useless-object-inheritance, too-many-instance-attributes
     """Job status response.
 
     :ivar id: Required. Id of the job.
@@ -143,8 +210,26 @@ class JobStatusDetail(object):
         self.documents_cancelled_count = kwargs.get('documents_cancelled_count', None)
         self.total_characters_charged = kwargs.get('total_characters_charged', None)
 
+    @classmethod
+    def _from_generated(cls, batch_status_details):
+        return cls(
+            id=batch_status_details.id,
+            created_on=batch_status_details.created_date_time_utc,
+            last_updated_on=batch_status_details.last_action_date_time_utc,
+            status=batch_status_details.status,
+            error=DocumentTranslationError._from_generated(batch_status_details.error)  # pylint: disable=protected-access
+            if batch_status_details.error else None,
+            documents_total_count=batch_status_details.summary.total,
+            documents_failed_count=batch_status_details.summary.failed,
+            documents_succeeded_count=batch_status_details.summary.success,
+            documents_in_progress_count=batch_status_details.summary.in_progress,
+            documents_not_yet_started_count=batch_status_details.summary.not_yet_started,
+            documents_cancelled_count=batch_status_details.summary.cancelled,
+            total_characters_charged=batch_status_details.summary.total_character_charged
+        )
 
-class DocumentStatusDetail(object):
+
+class DocumentStatusDetail(object):  # pylint: disable=useless-object-inheritance, R0903
     """DocumentStatusDetail.
 
     :ivar url: Required. Location of the document or folder.
@@ -186,7 +271,22 @@ class DocumentStatusDetail(object):
         self.characters_charged = kwargs.get('characters_charged', None)
 
 
-class DocumentTranslationError(object):
+    @classmethod
+    def _from_generated(cls, doc_status):
+        return cls(
+            url=doc_status.path,
+            created_on=doc_status.created_date_time_utc,
+            last_updated_on=doc_status.last_action_date_time_utc,
+            status=doc_status.status,
+            translate_to=doc_status.to,
+            error=DocumentTranslationError._from_generated(doc_status.error) if doc_status.error else None,  # pylint: disable=protected-access
+            translation_progress=doc_status.progress,
+            id=doc_status.id,
+            characters_charged=doc_status.character_charged
+        )
+
+
+class DocumentTranslationError(object):  # pylint: disable=useless-object-inheritance, R0903
     """This contains an outer error with error code, message, details, target and an
     inner error with more descriptive details.
 
@@ -210,8 +310,16 @@ class DocumentTranslationError(object):
         self.message = None
         self.target = None
 
+    @classmethod
+    def _from_generated(cls, error):
+        return cls(
+            code=error.code,
+            message=error.message,
+            target=error.target
+        )
 
-class FileFormat(object):
+
+class FileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
     """FileFormat.
 
     :ivar format: Name of the format.
@@ -233,3 +341,16 @@ class FileFormat(object):
         self.file_extensions = kwargs.get('file_extensions', None)
         self.content_types = kwargs.get('content_types', None)
         self.versions = kwargs.get('versions', None)
+
+    @classmethod
+    def _from_generated(cls, file_format):
+        return cls(
+            format=file_format.format,
+            file_extensions=file_format.file_extensions,
+            content_types=file_format.content_types,
+            versions=file_format.versions
+        )
+
+    @staticmethod
+    def _from_generated_list(file_formats):
+        return [FileFormat._from_generated(file_formats) for file_formats in file_formats]

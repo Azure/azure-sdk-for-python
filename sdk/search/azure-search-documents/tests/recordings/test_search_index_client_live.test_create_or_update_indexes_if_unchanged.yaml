@@ -18,7 +18,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search34391d66.search.windows.net/indexes?api-version=2020-06-30
+    uri: https://search34391d66.search.windows.net/indexes?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search34391d66.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D84B890C218005\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[{"name":"MyProfile","functionAggregation":null,"text":null,"functions":[]}],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":{"@odata.type":"#Microsoft.Azure.Search.BM25Similarity","k1":null,"b":null}}'
@@ -38,7 +38,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://search34391d66.search.windows.net/indexes('hotels')?api-version=2020-06-30
+      - https://search34391d66.search.windows.net/indexes('hotels')?api-version=2020-06-30-Preview
       odata-version:
       - '4.0'
       pragma:
@@ -73,7 +73,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://search34391d66.search.windows.net/indexes('hotels')?api-version=2020-06-30
+    uri: https://search34391d66.search.windows.net/indexes('hotels')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search34391d66.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D84B890C58C6C9\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":{"@odata.type":"#Microsoft.Azure.Search.BM25Similarity","k1":null,"b":null}}'
@@ -130,7 +130,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://search34391d66.search.windows.net/indexes('hotels')?api-version=2020-06-30
+    uri: https://search34391d66.search.windows.net/indexes('hotels')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"error":{"code":"","message":"The precondition given in one of the

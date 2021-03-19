@@ -1616,7 +1616,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.live_test_only
     @TablesPreparer()
     def test_sas_query(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1626,7 +1625,8 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         try:
             # Arrange
             entity, _ = self._insert_random_entity()
-            token = generate_table_sas(
+            token = self.generate_sas(
+                generate_table_sas,
                 tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
@@ -1650,7 +1650,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.live_test_only
     @TablesPreparer()
     def test_sas_add(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1658,7 +1657,8 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
-            token = generate_table_sas(
+            token = self.generate_sas(
+                generate_table_sas,
                 tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
@@ -1684,7 +1684,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.live_test_only
     @TablesPreparer()
     def test_sas_add_inside_range(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1692,7 +1691,8 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
-            token = generate_table_sas(
+            token = self.generate_sas(
+                generate_table_sas,
                 tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
@@ -1717,7 +1717,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.live_test_only
     @TablesPreparer()
     def test_sas_add_outside_range(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1725,7 +1724,8 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
-            token = generate_table_sas(
+            token = self.generate_sas(
+                generate_table_sas,
                 tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
@@ -1749,7 +1749,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.live_test_only
     @TablesPreparer()
     def test_sas_update(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1758,13 +1757,21 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         try:
             # Arrange
             entity, _ = self._insert_random_entity()
-            token = generate_table_sas(
+            token = self.generate_sas(
+                generate_table_sas,
                 tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(update=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
             )
+            # token = generate_table_sas(
+            #     tables_storage_account_name,
+            #     tables_primary_storage_account_key,
+            #     self.table_name,
+            #     permission=TableSasPermissions(update=True),
+            #     expiry=datetime.utcnow() + timedelta(hours=1),
+            # )
 
             # Act
             service = TableServiceClient(
@@ -1782,7 +1789,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.live_test_only
     @TablesPreparer()
     def test_sas_delete(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1791,7 +1797,8 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         try:
             # Arrange
             entity, _ = self._insert_random_entity()
-            token = generate_table_sas(
+            token = self.generate_sas(
+                generate_table_sas,
                 tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
@@ -1813,7 +1820,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.live_test_only
     @TablesPreparer()
     def test_sas_upper_case_table_name(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1823,8 +1829,16 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Arrange
             entity, _ = self._insert_random_entity()
 
-            # Table names are case insensitive, so simply upper case our existing table name to test
-            token = generate_table_sas(
+            access_policy = AccessPolicy()
+            access_policy.start = datetime(2011, 10, 11)
+            access_policy.expiry = datetime(2025, 10, 12)
+            access_policy.permission = TableSasPermissions(read=True)
+            identifiers = {'testid': access_policy}
+
+            self.table.set_table_access_policy(identifiers)
+
+            token = self.generate_sas(
+                generate_table_sas,
                 tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name.upper(),
@@ -1848,7 +1862,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.live_test_only
     @TablesPreparer()
     def test_sas_signed_identifier(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1866,11 +1879,12 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             self.table.set_table_access_policy(identifiers)
 
-            token = generate_table_sas(
+            token = self.generate_sas(
+                generate_table_sas,
                 tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
-                policy_id='testid',
+                policy_id='testid'
             )
 
             # Act

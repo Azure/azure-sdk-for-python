@@ -46,8 +46,6 @@ class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
             + content_hash
         )
 
-        # decode secret
-        # decoded_secret = base64.b64decode(secret, validate=True)
         decoded_secret = base64.b64decode(self._credentials.secret)
         digest = hmac.new(
             decoded_secret, string_to_sign.encode("utf-8"), hashlib.sha256

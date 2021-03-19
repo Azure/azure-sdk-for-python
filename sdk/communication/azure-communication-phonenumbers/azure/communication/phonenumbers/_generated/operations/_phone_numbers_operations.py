@@ -468,25 +468,169 @@ class PhoneNumbersOperations(object):
 
     cancel_operation.metadata = {'url': '/phoneNumbers/operations/{operationId}'}  # type: ignore
 
+    def _update_capabilities_initial(
+        self,
+        phone_number,  # type: str
+        calling=None,  # type: Optional[Union[str, "_models.PhoneNumberCapabilityType"]]
+        sms=None,  # type: Optional[Union[str, "_models.PhoneNumberCapabilityType"]]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.PurchasedPhoneNumber"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PurchasedPhoneNumber"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        _body = _models.PhoneNumberCapabilitiesRequest(calling=calling, sms=sms)
+        api_version = "2021-03-07"
+        content_type = kwargs.pop("content_type", "application/merge-patch+json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self._update_capabilities_initial.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'phoneNumber': self._serialize.url("phone_number", phone_number, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        if _body is not None:
+            body_content = self._serialize.body(_body, 'PhoneNumberCapabilitiesRequest')
+        else:
+            body_content = None
+        body_content_kwargs['content'] = body_content
+        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
+        response_headers['operation-id']=self._deserialize('str', response.headers.get('operation-id'))
+        response_headers['capabilities-id']=self._deserialize('str', response.headers.get('capabilities-id'))
+        deserialized = self._deserialize('PurchasedPhoneNumber', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
+    _update_capabilities_initial.metadata = {'url': '/phoneNumbers/{phoneNumber}/capabilities'}  # type: ignore
+
+    def begin_update_capabilities(
+        self,
+        phone_number,  # type: str
+        calling=None,  # type: Optional[Union[str, "_models.PhoneNumberCapabilityType"]]
+        sms=None,  # type: Optional[Union[str, "_models.PhoneNumberCapabilityType"]]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller["_models.PurchasedPhoneNumber"]
+        """Updates the capabilities of a phone number.
+
+        Updates the capabilities of a phone number.
+
+        :param phone_number: The phone number id in E.164 format. The leading plus can be either + or
+         encoded as %2B, e.g. +11234567890.
+        :type phone_number: str
+        :param calling: Capability value for calling.
+        :type calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
+        :param sms: Capability value for SMS.
+        :type sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of LROPoller that returns either PurchasedPhoneNumber or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PurchasedPhoneNumber"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._update_capabilities_initial(
+                phone_number=phone_number,
+                calling=calling,
+                sms=sms,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
+            response_headers['operation-id']=self._deserialize('str', response.headers.get('operation-id'))
+            response_headers['capabilities-id']=self._deserialize('str', response.headers.get('capabilities-id'))
+            deserialized = self._deserialize('PurchasedPhoneNumber', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)
+            return deserialized
+
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'phoneNumber': self._serialize.url("phone_number", phone_number, 'str'),
+        }
+
+        if polling is True: polling_method = LROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_update_capabilities.metadata = {'url': '/phoneNumbers/{phoneNumber}/capabilities'}  # type: ignore
+
     def get_by_number(
         self,
         phone_number,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.AcquiredPhoneNumber"
-        """Gets the details of the given acquired phone number.
+        # type: (...) -> "_models.PurchasedPhoneNumber"
+        """Gets the details of the given purchased phone number.
 
-        Gets the details of the given acquired phone number.
+        Gets the details of the given purchased phone number.
 
-        :param phone_number: The acquired phone number whose details are to be fetched in E.164 format,
-         e.g. +11234567890.
+        :param phone_number: The purchased phone number whose details are to be fetched in E.164
+         format, e.g. +11234567890.
         :type phone_number: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AcquiredPhoneNumber, or the result of cls(response)
-        :rtype: ~azure.communication.phonenumbers.models.AcquiredPhoneNumber
+        :return: PurchasedPhoneNumber, or the result of cls(response)
+        :rtype: ~azure.communication.phonenumbers.models.PurchasedPhoneNumber
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AcquiredPhoneNumber"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PurchasedPhoneNumber"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -519,7 +663,7 @@ class PhoneNumbersOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('AcquiredPhoneNumber', pipeline_response)
+        deserialized = self._deserialize('PurchasedPhoneNumber', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -582,9 +726,9 @@ class PhoneNumbersOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
-        """Releases an acquired phone number.
+        """Releases a purchased phone number.
 
-        Releases an acquired phone number.
+        Releases a purchased phone number.
 
         :param phone_number: Phone number to be released, e.g. +11234567890.
         :type phone_number: str
@@ -644,10 +788,10 @@ class PhoneNumbersOperations(object):
         top=100,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.AcquiredPhoneNumbers"]
-        """Gets the list of all acquired phone numbers.
+        # type: (...) -> Iterable["_models.PurchasedPhoneNumbers"]
+        """Gets the list of all purchased phone numbers.
 
-        Gets the list of all acquired phone numbers.
+        Gets the list of all purchased phone numbers.
 
         :param skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0.
@@ -656,11 +800,11 @@ class PhoneNumbersOperations(object):
          default value is 100.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either AcquiredPhoneNumbers or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.AcquiredPhoneNumbers]
+        :return: An iterator like instance of either PurchasedPhoneNumbers or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.PurchasedPhoneNumbers]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AcquiredPhoneNumbers"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PurchasedPhoneNumbers"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -700,7 +844,7 @@ class PhoneNumbersOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('AcquiredPhoneNumbers', pipeline_response)
+            deserialized = self._deserialize('PurchasedPhoneNumbers', pipeline_response)
             list_of_elem = deserialized.phone_numbers
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -723,147 +867,3 @@ class PhoneNumbersOperations(object):
             get_next, extract_data
         )
     list_phone_numbers.metadata = {'url': '/phoneNumbers'}  # type: ignore
-
-    def _update_capabilities_initial(
-        self,
-        phone_number,  # type: str
-        calling=None,  # type: Optional[Union[str, "_models.PhoneNumberCapabilityType"]]
-        sms=None,  # type: Optional[Union[str, "_models.PhoneNumberCapabilityType"]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.AcquiredPhoneNumber"
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AcquiredPhoneNumber"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        _body = _models.PhoneNumberCapabilitiesRequest(calling=calling, sms=sms)
-        api_version = "2021-03-07"
-        content_type = kwargs.pop("content_type", "application/merge-patch+json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self._update_capabilities_initial.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'phoneNumber': self._serialize.url("phone_number", phone_number, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        if _body is not None:
-            body_content = self._serialize.body(_body, 'PhoneNumberCapabilitiesRequest')
-        else:
-            body_content = None
-        body_content_kwargs['content'] = body_content
-        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, response)
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-        response_headers['operation-id']=self._deserialize('str', response.headers.get('operation-id'))
-        response_headers['capabilities-id']=self._deserialize('str', response.headers.get('capabilities-id'))
-        deserialized = self._deserialize('AcquiredPhoneNumber', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)
-
-        return deserialized
-    _update_capabilities_initial.metadata = {'url': '/phoneNumbers/{phoneNumber}/capabilities'}  # type: ignore
-
-    def begin_update_capabilities(
-        self,
-        phone_number,  # type: str
-        calling=None,  # type: Optional[Union[str, "_models.PhoneNumberCapabilityType"]]
-        sms=None,  # type: Optional[Union[str, "_models.PhoneNumberCapabilityType"]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.AcquiredPhoneNumber"]
-        """Updates the capabilities of a phone number.
-
-        Updates the capabilities of a phone number.
-
-        :param phone_number: The phone number id in E.164 format. The leading plus can be either + or
-         encoded as %2B, e.g. +11234567890.
-        :type phone_number: str
-        :param calling: Capability value for calling.
-        :type calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
-        :param sms: Capability value for SMS.
-        :type sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either AcquiredPhoneNumber or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.AcquiredPhoneNumber]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AcquiredPhoneNumber"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = self._update_capabilities_initial(
-                phone_number=phone_number,
-                calling=calling,
-                sms=sms,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-
-        kwargs.pop('error_map', None)
-        kwargs.pop('content_type', None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-            response_headers['operation-id']=self._deserialize('str', response.headers.get('operation-id'))
-            response_headers['capabilities-id']=self._deserialize('str', response.headers.get('capabilities-id'))
-            deserialized = self._deserialize('AcquiredPhoneNumber', pipeline_response)
-
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)
-            return deserialized
-
-        path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'phoneNumber': self._serialize.url("phone_number", phone_number, 'str'),
-        }
-
-        if polling is True: polling_method = LROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        else:
-            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_update_capabilities.metadata = {'url': '/phoneNumbers/{phoneNumber}/capabilities'}  # type: ignore

@@ -7,8 +7,6 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import AcquiredPhoneNumber
-    from ._models_py3 import AcquiredPhoneNumbers
     from ._models_py3 import CommunicationError
     from ._models_py3 import CommunicationErrorResponse
     from ._models_py3 import PhoneNumberCapabilities
@@ -18,9 +16,9 @@ try:
     from ._models_py3 import PhoneNumberPurchaseRequest
     from ._models_py3 import PhoneNumberSearchRequest
     from ._models_py3 import PhoneNumberSearchResult
+    from ._models_py3 import PurchasedPhoneNumber
+    from ._models_py3 import PurchasedPhoneNumbers
 except (SyntaxError, ImportError):
-    from ._models import AcquiredPhoneNumber  # type: ignore
-    from ._models import AcquiredPhoneNumbers  # type: ignore
     from ._models import CommunicationError  # type: ignore
     from ._models import CommunicationErrorResponse  # type: ignore
     from ._models import PhoneNumberCapabilities  # type: ignore
@@ -30,6 +28,8 @@ except (SyntaxError, ImportError):
     from ._models import PhoneNumberPurchaseRequest  # type: ignore
     from ._models import PhoneNumberSearchRequest  # type: ignore
     from ._models import PhoneNumberSearchResult  # type: ignore
+    from ._models import PurchasedPhoneNumber  # type: ignore
+    from ._models import PurchasedPhoneNumbers  # type: ignore
 
 from ._phone_numbers_client_enums import (
     BillingFrequency,
@@ -41,8 +41,6 @@ from ._phone_numbers_client_enums import (
 )
 
 __all__ = [
-    'AcquiredPhoneNumber',
-    'AcquiredPhoneNumbers',
     'CommunicationError',
     'CommunicationErrorResponse',
     'PhoneNumberCapabilities',
@@ -52,6 +50,8 @@ __all__ = [
     'PhoneNumberPurchaseRequest',
     'PhoneNumberSearchRequest',
     'PhoneNumberSearchResult',
+    'PurchasedPhoneNumber',
+    'PurchasedPhoneNumbers',
     'BillingFrequency',
     'PhoneNumberAssignmentType',
     'PhoneNumberCapabilityType',

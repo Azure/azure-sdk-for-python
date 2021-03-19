@@ -16,6 +16,7 @@ try:
     from ._models_py3 import BackupPolicy
     from ._models_py3 import BackupPolicyDetails
     from ._models_py3 import BackupPolicyPatch
+    from ._models_py3 import BackupStatus
     from ._models_py3 import BackupsList
     from ._models_py3 import BreakReplicationRequest
     from ._models_py3 import CapacityPool
@@ -41,6 +42,7 @@ try:
     from ._models_py3 import QuotaAvailabilityRequest
     from ._models_py3 import ReplicationObject
     from ._models_py3 import ReplicationStatus
+    from ._models_py3 import ResourceIdentity
     from ._models_py3 import ResourceNameAvailabilityRequest
     from ._models_py3 import ServiceSpecification
     from ._models_py3 import Snapshot
@@ -75,6 +77,7 @@ except (SyntaxError, ImportError):
     from ._models import BackupPolicy  # type: ignore
     from ._models import BackupPolicyDetails  # type: ignore
     from ._models import BackupPolicyPatch  # type: ignore
+    from ._models import BackupStatus  # type: ignore
     from ._models import BackupsList  # type: ignore
     from ._models import BreakReplicationRequest  # type: ignore
     from ._models import CapacityPool  # type: ignore
@@ -100,6 +103,7 @@ except (SyntaxError, ImportError):
     from ._models import QuotaAvailabilityRequest  # type: ignore
     from ._models import ReplicationObject  # type: ignore
     from ._models import ReplicationStatus  # type: ignore
+    from ._models import ResourceIdentity  # type: ignore
     from ._models import ResourceNameAvailabilityRequest  # type: ignore
     from ._models import ServiceSpecification  # type: ignore
     from ._models import Snapshot  # type: ignore
@@ -132,7 +136,6 @@ from ._net_app_management_client_enums import (
     CreatedByType,
     EndpointType,
     InAvailabilityReasonType,
-    KeySource,
     MirrorState,
     QosType,
     RelationshipStatus,
@@ -151,6 +154,7 @@ __all__ = [
     'BackupPolicy',
     'BackupPolicyDetails',
     'BackupPolicyPatch',
+    'BackupStatus',
     'BackupsList',
     'BreakReplicationRequest',
     'CapacityPool',
@@ -176,6 +180,7 @@ __all__ = [
     'QuotaAvailabilityRequest',
     'ReplicationObject',
     'ReplicationStatus',
+    'ResourceIdentity',
     'ResourceNameAvailabilityRequest',
     'ServiceSpecification',
     'Snapshot',
@@ -206,7 +211,6 @@ __all__ = [
     'CreatedByType',
     'EndpointType',
     'InAvailabilityReasonType',
-    'KeySource',
     'MirrorState',
     'QosType',
     'RelationshipStatus',

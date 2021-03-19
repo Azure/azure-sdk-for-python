@@ -26,7 +26,7 @@ def autorest_swagger_to_sdk_conf(readme, output_folder, config):
     )
     execute_simple_command(cmd_line.split())
     conf_path = Path(output_folder, "configuration.json")
-    with conf_path.open() as fd:
+    with conf_path.open(encoding="utf-8") as fd:
         conf_as_json = json.load(fd)
     swagger_to_sdk_conf = [c for c in conf_as_json.get("swagger-to-sdk", []) if c]
     return swagger_to_sdk_conf

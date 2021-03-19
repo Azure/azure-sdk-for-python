@@ -16,6 +16,11 @@ try:
 except ImportError:
     from inspect import getargspec as get_arg_spec
 
+try:
+    from urllib.parse import quote
+except ImportError:
+    from urllib2 import quote  # type: ignore
+
 import pytest
 from dotenv import load_dotenv, find_dotenv
 
@@ -348,3 +353,44 @@ class AzureTestCase(ReplayableTest):
     def sleep(self, seconds):
         if self.is_live:
             time.sleep(seconds)
+
+    def generate_sas(self, *args, **kwargs):
+        sas_func = args[0]
+        sas_func_pos_args = args[1:]
+
+        fake_value = kwargs.pop("fake_value", "fake_token_value")
+        token = sas_func(*sas_func_pos_args, **kwargs)
+
+        fake_token = self._create_fake_token(token, fake_value)
+
+        self._register_encodings(token, fake_token)
+
+        if self.is_live:
+            return token
+        return fake_token
+
+    def _register_encodings(self, token, fake_token):
+        self.scrubber.register_name_pair(token, fake_token)
+        url_safe_token = token.replace("/", u"%2F")
+        self.scrubber.register_name_pair(url_safe_token, fake_token)
+        async_token = token.replace(u"%3A", ":")
+        self.scrubber.register_name_pair(async_token, fake_token)
+
+    def _create_fake_token(self, token, fake_value):
+        parts = token.split("&")
+
+        for idx, part in enumerate(parts):
+            if part.startswith("sig"):
+                key = part.split("=")
+                key[1] = fake_value
+                parts[idx] = "=".join(key)
+            elif part.startswith("st"):
+                key = part.split("=")
+                key[1] = "start"
+                parts[idx] = "=".join(key)
+            elif part.startswith("se"):
+                key = part.split("=")
+                key[1] = "end"
+                parts[idx] = "=".join(key)
+
+        return "&".join(parts)

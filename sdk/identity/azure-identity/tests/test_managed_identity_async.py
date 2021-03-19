@@ -7,15 +7,17 @@ import time
 from unittest import mock
 
 from azure.core.credentials import AccessToken
-from azure.core.exceptions import ClientAuthenticationError
+from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
+from azure.core.pipeline.transport import HttpRequest
 from azure.identity.aio import ManagedIdentityCredential
+from azure.identity.aio._internal.managed_identity_client import AsyncManagedIdentityClient
 from azure.identity._constants import Endpoints, EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 
 import pytest
 
 from helpers import build_aad_response, mock_response, Request
-from helpers_async import async_validating_transport
+from helpers_async import async_validating_transport, get_completed_future
 
 MANAGED_IDENTITY_ENVIRON = "azure.identity.aio._credentials.managed_identity.os.environ"
 
@@ -638,3 +640,21 @@ async def test_azure_arc_client_id():
 
     with pytest.raises(ClientAuthenticationError):
         await credential.get_token("scope")
+
+
+@pytest.mark.asyncio
+async def test_managed_identity_client_retry():
+    """AsyncManagedIdentityClient should retry token requests"""
+
+    message = "can't connect"
+    transport = mock.Mock(send=mock.Mock(side_effect=ServiceRequestError(message)), sleep=get_completed_future)
+    request_factory = mock.Mock()
+
+    client = AsyncManagedIdentityClient(request_factory, transport=transport)
+
+    for method in ("GET", "POST"):
+        request_factory.return_value = HttpRequest(method, "https://localhost")
+        with pytest.raises(ServiceRequestError, match=message):
+            await client.request_token("scope")
+        assert transport.send.call_count > 1
+        transport.send.reset_mock()

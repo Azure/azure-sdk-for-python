@@ -27,7 +27,6 @@ from azure.communication.phonenumbers import (
 )
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
-area_code = os.getenv('AZURE_COMMUNICATION_SERVICE_AREA_CODE')
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
 def search_available_phone_numbers():
@@ -42,8 +41,14 @@ def search_available_phone_numbers():
         capabilities,
         polling = True
     )
-    print('Acquired phone numbers: ' + poller.result())
+    search_result = poller.result()
+    print ('Search id: ' + search_result.search_id)
+    phone_number_list = search_result.phone_numbers
+    print('Reserved phone numbers:')
+    for phone_number in phone_number_list:
+        print(phone_number)
 
 
 if __name__ == '__main__':
-    search_available_phone_numbers()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(search_available_phone_numbers())
