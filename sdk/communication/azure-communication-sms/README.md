@@ -5,7 +5,7 @@
 This package contains a Python SDK for Azure Communication Services for SMS.
 Read more about Azure Communication Services [here](https://docs.microsoft.com/azure/communication-services/overview)
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication/azure-communication-sms) | [Package (Pypi)](https://pypi.org/project/azure-communication-sms/) | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication/azure-communication-sms) | [Product documentation](https://docs.microsoft.com/azure/communication-services/quickstarts/telephony-sms/send?pivots=programming-language-java)
+[Source code](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication/azure-communication-sms) | [Package (Pypi)](https://pypi.org/project/azure-communication-sms/) | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication/azure-communication-sms) | [Product documentation](https://docs.microsoft.com/azure/communication-services/quickstarts/telephony-sms/send?pivots=programming-language-python)
 
 
 
@@ -13,7 +13,7 @@ Read more about Azure Communication Services [here](https://docs.microsoft.com/a
 
 ### Prerequisites
 
-- Python 2.7, or 3.5 or later is required to use this package.
+- Python 2.7, or 3.6 or later is required to use this package.
 - A deployed Communication Services resource. You can use the [Azure Portal](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp) or the [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice) to set it up.
 - You must have a phone number configured that is associated with an Azure subscription
 
@@ -28,14 +28,16 @@ pip install azure-communication-sms
 ## Key concepts
 
 Azure Communication SMS package is used to do following:
-- Send an SMS
+- Send a 1:1 SMS Message
+- Send a 1:N SMS Message
 
 ## Examples
 
 The following section provides several code snippets covering some of the most common Azure Communication Services tasks, including:
 
 - [Client Initialization](#client-initialization)
-- [Sending an SMS](#sending-an-sms)
+- [Send a 1:1 SMS Message](#send-a-11-sms-message)
+- [Send a 1:N SMS Message](#send-a-1n-sms-message)
 
 ### Client Initialization
 
@@ -54,28 +56,75 @@ endpoint = os.getenv('AZURE_COMMUNICATION_SERVICE_ENDPOINT')
 sms_client = SmsClient(endpoint, DefaultAzureCredential())
 ```
 
-### Sending an SMS
+### Send a 1:1 SMS Message
 
-Once the client is initialized, the `.send()` method can be invoked:
+Once the client is initialized, the `send` method can be invoked:
 
 ```Python
-from azure.communication.sms import SendSmsOptions, PhoneNumberIdentifier
+from azure.communication.sms import SendSmsOptions
 
-smsresponse = sms_client.send(
-    from_phone_number=PhoneNumberIdentifier("<leased-phone-number>"),
-    to_phone_number=[PhoneNumberIdentifier("<to-phone-number>")],
+sms_responses = sms_client.send(
+    from_="<from-phone-number>",
+    to="<to-phone-number-1>",
     message="Hello World via SMS",
-    send_sms_options=SendSmsOptions(enable_delivery_report=True)) # optional property
+    enable_delivery_report=True, # optional property
+    tag="custom-tag") # optional property
 ```
 
-- `from-phone-number`: an SMS enabled phone number associated with your communication service
-- `to-phone-number`: the phone number you wish to send a message to
-- `send_sms_options`: an optional parameter that you can use to configure Delivery Reporting. This is useful for scenarios where you want to emit events when SMS messages are delivered.
+- `from_`: An SMS enabled phone number associated with your communication service.
+- `to`: The phone number or list of phone numbers you wish to send a message to.
+- `message`: The message that you want to send.
+- `enable_delivery_report`: An optional parameter that you can use to configure delivery reporting. This is useful for scenarios where you want to emit events when SMS messages are delivered.
+- `tag`: An optional parameter that you can use to configure custom tagging.
+
+### Send a 1:N SMS Message
+
+Once the client is initialized, the `send` method can be invoked:
+
+```Python
+from azure.communication.sms import SendSmsOptions
+
+sms_responses = sms_client.send(
+    from_="<from-phone-number>",
+    to=["<to-phone-number-1>", "<to-phone-number-2>", "<to-phone-number-3>"],
+    message="Hello World via SMS",
+    enable_delivery_report=True, # optional property
+    tag="custom-tag") # optional property
+```
+
+- `from_`: An SMS enabled phone number associated with your communication service.
+- `to`: The phone number or list of phone numbers you wish to send a message to.
+- `message`: The message that you want to send.
+- `enable_delivery_report`: An optional parameter that you can use to configure delivery reporting. This is useful for scenarios where you want to emit events when SMS messages are delivered.
+- `tag`: An optional parameter that you can use to configure custom tagging.
+
 
 ## Troubleshooting
-The Azure Communication Service Identity client will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md).
+SMS operations will throw an exception if the request to the server fails. The SMS client will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md). Exceptions will not be thrown if the error is caused by an individual message, only if something fails with the overall request. Please use the successful flag to validate each individual result to verify if the message was sent.
+
+```Python
+try:
+    sms_responses = sms_client.send(
+        from_="<leased-phone-number>",
+        to=["<to-phone-number-1>", "<to-phone-number-2>", "<to-phone-number-3>"],
+        message="Hello World via SMS")
+        
+    for sms_response in sms_responses:
+        if (sms_response.successful):
+            print("Message with message id {} was successful sent to {}"
+            .format(sms_response.message_id, sms_response.to))
+        else:
+            print("Message failed to send to {} with the status code {} and error: {}"
+            .format(sms_response.to, sms_response.http_status_code, sms_response.error_message))
+except Exception as ex:
+    print('Exception:')
+    print(ex)
+```
 
 ## Next steps
+- [Read more about SMS in Azure Communication Services][next_steps]
+- For a basic guide on how to configure Delivery Reporting for your SMS messages please refer to the [Handle SMS Events quickstart][handle_sms_events].
+
 ### More sample code
 
 Please take a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/communication/azure-communication-sms/samples) directory for detailed examples of how to use this library to send an sms.
@@ -94,3 +143,8 @@ PR appropriately (e.g., label, comment). Simply follow the instructions provided
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+<!-- LINKS -->
+[azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
+[handle_sms_events]: https://docs.microsoft.com/azure/communication-services/quickstarts/telephony-sms/handle-sms-events
+[next_steps]:https://docs.microsoft.com/azure/communication-services/quickstarts/telephony-sms/send?pivots=programming-language-python

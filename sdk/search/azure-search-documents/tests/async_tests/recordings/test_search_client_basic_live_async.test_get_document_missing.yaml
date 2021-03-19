@@ -7,7 +7,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search5c91905.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30
+    uri: https://search5c91905.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30-Preview
   response:
     body:
       string: ''
@@ -23,5 +23,5 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://search5c91905.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30
+    url: https://search5c91905.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30-Preview
 version: 1

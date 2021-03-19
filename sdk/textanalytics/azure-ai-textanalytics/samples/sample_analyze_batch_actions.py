@@ -34,6 +34,7 @@ class AnalyzeSample(object):
         from azure.ai.textanalytics import (
             TextAnalyticsClient,
             RecognizeEntitiesAction,
+            RecognizeLinkedEntitiesAction,
             RecognizePiiEntitiesAction,
             ExtractKeyPhrasesAction,
             PiiEntityDomainType,
@@ -62,7 +63,8 @@ class AnalyzeSample(object):
             actions=[
                 RecognizeEntitiesAction(),
                 RecognizePiiEntitiesAction(domain_filter=PiiEntityDomainType.PROTECTED_HEALTH_INFORMATION),
-                ExtractKeyPhrasesAction()
+                ExtractKeyPhrasesAction(),
+                RecognizeLinkedEntitiesAction()
             ],
         )
 
@@ -80,6 +82,7 @@ class AnalyzeSample(object):
                 print("...Category: {}".format(entity.category))
                 print("...Confidence Score: {}".format(entity.confidence_score))
                 print("...Offset: {}".format(entity.offset))
+                print("...Length: {}".format(entity.length))
             print("------------------------------------------")
 
         second_action_result = action_results[1]
@@ -88,10 +91,13 @@ class AnalyzeSample(object):
 
         for idx, doc in enumerate(docs):
             print("Document text: {}".format(documents[idx]))
+            print("Document text with redactions: {}".format(doc.redacted_text))
             for entity in doc.entities:
                 print("Entity: {}".format(entity.text))
-                print("Category: {}".format(entity.category))
-                print("Confidence Score: {}\n".format(entity.confidence_score))
+                print("...Category: {}".format(entity.category))
+                print("...Confidence Score: {}\n".format(entity.confidence_score))
+                print("...Offset: {}".format(entity.offset))
+                print("...Length: {}".format(entity.length))
             print("------------------------------------------")
 
         third_action_result = action_results[2]
@@ -101,6 +107,26 @@ class AnalyzeSample(object):
         for idx, doc in enumerate(docs):
             print("Document text: {}\n".format(documents[idx]))
             print("Key Phrases: {}\n".format(doc.key_phrases))
+            print("------------------------------------------")
+
+        fourth_action_result = action_results[3]
+        print("Results of Linked Entities Recognition action:")
+        docs = [doc for doc in fourth_action_result.document_results if not doc.is_error]
+
+        for idx, doc in enumerate(docs):
+            print("Document text: {}\n".format(documents[idx]))
+            for linked_entity in doc.entities:
+                print("Entity name: {}".format(linked_entity.name))
+                print("...Data source: {}".format(linked_entity.data_source))
+                print("...Data source language: {}".format(linked_entity.language))
+                print("...Data source entity ID: {}".format(linked_entity.data_source_entity_id))
+                print("...Data source URL: {}".format(linked_entity.url))
+                print("...Document matches:")
+                for match in linked_entity.matches:
+                    print("......Match text: {}".format(match.text))
+                    print(".........Confidence Score: {}".format(match.confidence_score))
+                    print(".........Offset: {}".format(match.offset))
+                    print(".........Length: {}".format(match.length))
             print("------------------------------------------")
 
         # [END analyze]

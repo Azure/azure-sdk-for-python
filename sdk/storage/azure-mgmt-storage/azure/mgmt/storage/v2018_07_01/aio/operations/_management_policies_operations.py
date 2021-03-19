@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class ManagementPoliciesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,9 +44,9 @@ class ManagementPoliciesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        management_policy_name: Union[str, "models.ManagementPolicyName"],
+        management_policy_name: Union[str, "_models.ManagementPolicyName"],
         **kwargs
-    ) -> "models.StorageAccountManagementPolicies":
+    ) -> "_models.StorageAccountManagementPolicies":
         """Gets the data policy rules associated with the specified storage account.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -64,7 +64,7 @@ class ManagementPoliciesOperations:
         :rtype: ~azure.mgmt.storage.v2018_07_01.models.StorageAccountManagementPolicies
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageAccountManagementPolicies"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageAccountManagementPolicies"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -110,10 +110,10 @@ class ManagementPoliciesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        management_policy_name: Union[str, "models.ManagementPolicyName"],
-        properties: "models.ManagementPoliciesRulesSetParameter",
+        management_policy_name: Union[str, "_models.ManagementPolicyName"],
+        properties: "_models.ManagementPoliciesRulesSetParameter",
         **kwargs
-    ) -> "models.StorageAccountManagementPolicies":
+    ) -> "_models.StorageAccountManagementPolicies":
         """Sets the data policy rules associated with the specified storage account.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -133,7 +133,7 @@ class ManagementPoliciesOperations:
         :rtype: ~azure.mgmt.storage.v2018_07_01.models.StorageAccountManagementPolicies
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageAccountManagementPolicies"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageAccountManagementPolicies"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -184,7 +184,7 @@ class ManagementPoliciesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        management_policy_name: Union[str, "models.ManagementPolicyName"],
+        management_policy_name: Union[str, "_models.ManagementPolicyName"],
         **kwargs
     ) -> None:
         """Deletes the data policy rules associated with the specified storage account.

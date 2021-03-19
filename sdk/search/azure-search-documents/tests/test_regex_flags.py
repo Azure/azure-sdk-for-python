@@ -4,11 +4,11 @@
 # ------------------------------------
 
 from azure.search.documents.indexes.models import SearchIndex, RegexFlags, PatternAnalyzer, PatternTokenizer
-from azure.search.documents.indexes._internal._generated.models import (
+from azure.search.documents.indexes._generated.models import (
     PatternAnalyzer as _PatternAnalyzer,
     PatternTokenizer as _PatternTokenizer,
 )
-from azure.search.documents.indexes._internal._utils import unpack_search_index, pack_search_index
+from azure.search.documents.indexes._utils import unpack_search_index, pack_search_index
 
 def test_unpack_search_index():
     pattern_analyzer = _PatternAnalyzer(

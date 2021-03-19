@@ -622,7 +622,7 @@ class ContentSettings(DictMixin):
     :param str cache_control:
         If the cache_control has previously been set for
         the blob, that value is stored.
-    :param str content_md5:
+    :param bytearray content_md5:
         If the content_md5 has been set for the blob, this response
         header is stored so that the client can check for message content
         integrity.

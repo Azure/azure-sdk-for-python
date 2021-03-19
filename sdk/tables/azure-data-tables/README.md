@@ -10,7 +10,7 @@ The Azure Data Tables client can be used to access Azure Storage or Cosmos accou
 The Azure Data Tables SDK can access an Azure Storage or CosmosDB account.
 
 ### Prerequisites
-* Python 2.7, or 3.5 or later is required to use this package.
+* Python 2.7, or 3.6 or later is required to use this package.
 * You must have an [Azure subscription][azure_subscription] and either
     * an [Azure Storage account][azure_storage_account] or
     * an [Azure Cosmos Account][azure_cosmos_account].

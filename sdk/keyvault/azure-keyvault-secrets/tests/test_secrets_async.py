@@ -181,8 +181,9 @@ class KeyVaultSecretTest(KeyVaultTestCase):
             self.assertIsNotNone(deleted_secret.deleted_date)
             self.assertIsNotNone(deleted_secret.scheduled_purge_date)
             self.assertIsNotNone(deleted_secret.recovery_id)
-            expected_secret = expected[deleted_secret.name]
-            self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
+            if deleted_secret.name in expected:
+                expected_secret = expected[deleted_secret.name]
+                self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
 
     @KeyVaultPreparer()
     async def test_list_versions(self, azure_keyvault_url, **kwargs):

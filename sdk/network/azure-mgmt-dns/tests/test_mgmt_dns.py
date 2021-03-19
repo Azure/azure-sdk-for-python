@@ -173,7 +173,7 @@ class MgmtDnsTest(AzureMgmtTestCase):
             'A'
         )
 
-        async_delete = self.dns_client.zones.delete(
+        async_delete = self.dns_client.zones.begin_delete(
             resource_group.name,
             zone.name
         )
@@ -275,7 +275,7 @@ class MgmtDnsTest(AzureMgmtTestCase):
             'A'
         )
 
-        async_delete = self.dns_client.zones.delete(
+        async_delete = self.dns_client.zones.begin_delete(
             resource_group.name,
             zone.name
         )

@@ -30,10 +30,7 @@ import logging
 import asyncio
 import aiohttp
 from multidict import CIMultiDict
-
-from requests.exceptions import (
-    ChunkedEncodingError,
-    StreamConsumedError)
+from requests.exceptions import StreamConsumedError
 
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
@@ -215,41 +212,20 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         return self.content_length
 
     async def __anext__(self):
-        retry_active = True
-        retry_total = 3
-        retry_interval = 1  # 1 second
-        while retry_active:
-            try:
-                chunk = await self.response.internal_response.content.read(self.block_size)
-                if not chunk:
-                    raise _ResponseStopIteration()
-                self.downloaded += self.block_size
-                return chunk
-            except _ResponseStopIteration:
-                self.response.internal_response.close()
-                raise StopAsyncIteration()
-            except (ChunkedEncodingError, ConnectionError):
-                retry_total -= 1
-                if retry_total <= 0:
-                    retry_active = False
-                else:
-                    await asyncio.sleep(retry_interval)
-                    headers = {'range': 'bytes=' + str(self.downloaded) + '-'}
-                    resp = await self.pipeline.run(self.request, stream=True, headers=headers)
-                    if resp.http_response.status_code == 416:
-                        raise
-                    chunk = await self.response.internal_response.content.read(self.block_size)
-                    if not chunk:
-                        raise StopAsyncIteration()
-                    self.downloaded += len(chunk)
-                    return chunk
-                continue
-            except StreamConsumedError:
-                raise
-            except Exception as err:
-                _LOGGER.warning("Unable to stream download: %s", err)
-                self.response.internal_response.close()
-                raise
+        try:
+            chunk = await self.response.internal_response.content.read(self.block_size)
+            if not chunk:
+                raise _ResponseStopIteration()
+            return chunk
+        except _ResponseStopIteration:
+            self.response.internal_response.close()
+            raise StopAsyncIteration()
+        except StreamConsumedError:
+            raise
+        except Exception as err:
+            _LOGGER.warning("Unable to stream download: %s", err)
+            self.response.internal_response.close()
+            raise
 
 class AioHttpTransportResponse(AsyncHttpResponse):
     """Methods for accessing response body data.

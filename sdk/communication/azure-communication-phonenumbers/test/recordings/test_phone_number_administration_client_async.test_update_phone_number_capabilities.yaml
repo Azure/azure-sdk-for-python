@@ -1,0 +1,37 @@
+interactions:
+- request:
+    body: '{"calling": "inbound", "sms": "inbound+outbound"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '49'
+      Content-Type:
+      - application/merge-patch+json
+      Date:
+      - Tue, 16 Mar 2021 16:25:45 GMT
+      User-Agent:
+      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.communication.azure.com/phoneNumbers/sanitized/capabilities?api-version=2021-03-07
+  response:
+    body:
+      string: '{"capabilitiesUpdateId": "7b7a100e-6bfb-4278-843e-e111d21bf294"}'
+    headers:
+      access-control-expose-headers: Operation-Location,Location,operation-id,capabilities-id
+      capabilities-id: 7b7a100e-6bfb-4278-843e-e111d21bf294
+      content-type: application/json; charset=utf-8
+      date: Tue, 16 Mar 2021 16:25:46 GMT
+      ms-cv: XbSeXMzto0anMvW9sh0Nvw.0
+      operation-id: capabilities_7b7a100e-6bfb-4278-843e-e111d21bf294
+      operation-location: /phoneNumbers/operations/capabilities_7b7a100e-6bfb-4278-843e-e111d21bf294?api-version=2021-03-07
+      request-context: appId=
+      transfer-encoding: chunked
+      x-processing-time: 1060ms
+    status:
+      code: 202
+      message: Accepted
+    url: sanitized
+version: 1

@@ -40,7 +40,7 @@ class TestSearchBatchingClientAsync(object):
 
 
     @mock.patch(
-        "azure.search.documents._internal.aio._search_indexing_buffered_sender_async.SearchIndexingBufferedSender._process_if_needed"
+        "azure.search.documents.aio._search_indexing_buffered_sender_async.SearchIndexingBufferedSender._process_if_needed"
     )
     async def test_process_if_needed(self, mock_process_if_needed):
         async with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL) as client:
@@ -50,7 +50,7 @@ class TestSearchBatchingClientAsync(object):
 
 
     @mock.patch(
-        "azure.search.documents._internal.aio._search_indexing_buffered_sender_async.SearchIndexingBufferedSender._cleanup"
+        "azure.search.documents.aio._search_indexing_buffered_sender_async.SearchIndexingBufferedSender._cleanup"
     )
     async def test_context_manager(self, mock_cleanup):
         async with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, auto_flush=False) as client:

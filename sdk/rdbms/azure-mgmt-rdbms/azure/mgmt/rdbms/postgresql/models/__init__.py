@@ -52,6 +52,7 @@ try:
     from ._models_py3 import ServerPropertiesForReplica
     from ._models_py3 import ServerPropertiesForRestore
     from ._models_py3 import ServerSecurityAlertPolicy
+    from ._models_py3 import ServerSecurityAlertPolicyListResult
     from ._models_py3 import ServerUpdateParameters
     from ._models_py3 import Sku
     from ._models_py3 import StorageProfile
@@ -105,6 +106,7 @@ except (SyntaxError, ImportError):
     from ._models import ServerPropertiesForReplica  # type: ignore
     from ._models import ServerPropertiesForRestore  # type: ignore
     from ._models import ServerSecurityAlertPolicy  # type: ignore
+    from ._models import ServerSecurityAlertPolicyListResult  # type: ignore
     from ._models import ServerUpdateParameters  # type: ignore
     from ._models import Sku  # type: ignore
     from ._models import StorageProfile  # type: ignore
@@ -181,6 +183,7 @@ __all__ = [
     'ServerPropertiesForReplica',
     'ServerPropertiesForRestore',
     'ServerSecurityAlertPolicy',
+    'ServerSecurityAlertPolicyListResult',
     'ServerUpdateParameters',
     'Sku',
     'StorageProfile',

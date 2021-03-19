@@ -1,0 +1,34 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/updates/providers/Contoso/names/Virtual-Machine/versions/fakeVersion
+  response:
+    body:
+      string: '{"updateId":{"provider":"Contoso","name":"Virtual-Machine","version":"fakeVersion"},"updateType":"microsoft/swupdate:1","installedCriteria":"1.2.3.4","compatibility":[{"deviceManufacturer":"contoso","deviceModel":"virtual-machine"}],"manifestVersion":"2.0","importedDateTime":"2021-03-02T20:04:47.8946059Z","createdDateTime":"2021-03-02T20:02:49.3084164Z","etag":"\"dffc9614-c1c4-4289-b41f-26ac37101fbe\""}'
+    headers:
+      cache-control:
+      - max-age=60, private
+      content-length:
+      - '411'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Mar 2021 18:10:35 GMT
+      etag:
+      - '"dffc9614-c1c4-4289-b41f-26ac37101fbe"'
+      traceparent:
+      - 00-5c98c753ec0d494cba79df3183408daa-c14cfd32e18c3b4d-00
+    status:
+      code: 200
+      message: OK
+version: 1

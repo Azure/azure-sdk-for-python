@@ -1,20 +1,29 @@
 parameters:
-  BeforePublishSteps: []
-  TestPipeline: false
-  BuildTargetingString: 'azure-*'
-  ServiceDirectory: ''
-  BuildDocs: true
+  - name: BeforePublishSteps
+    type: object
+    default: []
+  - name: TestPipeline
+    type: boolean
+    default: false
+  - name: BuildTargetingString
+    type: string
+    default: 'azure-*'
+  - name: ServiceDirectory
+    type: string
+    default: ''
+  - name: BuildDocs
+    type: boolean
+    default: true
+  - name: Artifacts
+    type: object
+    default: []
 
 steps:
-  - ${{if eq(parameters.TestPipeline, 'true')}}:
-    - task: PowerShell@2
-      displayName: Prep template pipeline for release
-      condition: succeeded()
-      inputs:
-        pwsh: true
-        workingDirectory: $(Build.SourcesDirectory)
-        filePath: eng/scripts/SetTestPipelineVersion.ps1
-        arguments: '-BuildID $(Build.BuildId)'
+  - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+    parameters:
+      PackageName: "azure-template"
+      ServiceDirectory: "template"
+      TestPipeline: ${{ parameters.TestPipeline }}
 
   - script: |
       echo "##vso[build.addbuildtag]Scheduled"
@@ -57,9 +66,13 @@ steps:
       arguments: '-d "$(Build.ArtifactStagingDirectory)" "${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}} --devbuild="$(SetDevVersion)"'
 
   - script: |
-      twine check $(Build.ArtifactStagingDirectory)/*.whl
-      twine check $(Build.ArtifactStagingDirectory)/*.zip
+      twine check $(Build.ArtifactStagingDirectory)/**/*.whl
+      twine check $(Build.ArtifactStagingDirectory)/**/*.zip
     displayName: 'Verify Readme'
+
+  - template: /eng/common/pipelines/templates/steps/create-apireview.yml
+    parameters:
+      Artifacts: ${{ parameters.Artifacts }}
 
   - task: PythonScript@0
     displayName: 'Generate Docs'
@@ -73,21 +86,14 @@ steps:
 
   - ${{ parameters.BeforePublishSteps }}
 
-  - task: PublishPipelineArtifact@0
-    inputs:
-      artifactName: 'artifacts' 
-      targetPath: $(Build.ArtifactStagingDirectory)
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'packages'
 
-  # Duplicating  the task above to introduce a packages artifact for consistency
-  # with the other pipelines. Also using the newer YAML shortcut. Once we get
-  # past release successfully with unified pipelines we'll look at getting rid
-  # of the duplicated "artifacts" artifact.
-  - publish: $(Build.ArtifactStagingDirectory)
-    artifact: packages 
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.SourcesDirectory)/_docs'
+      CustomCondition: ${{ parameters.BuildDocs }}
+      ArtifactName: 'documentation'
 
-  - task: PublishBuildArtifacts@1
-    condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})
-    displayName: 'Publish Artifacts'
-    inputs:
-      artifactName: 'documentation'
-      pathtoPublish: '$(Build.SourcesDirectory)/_docs'

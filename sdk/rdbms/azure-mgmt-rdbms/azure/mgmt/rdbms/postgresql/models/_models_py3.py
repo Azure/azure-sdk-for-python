@@ -2066,6 +2066,36 @@ class ServerSecurityAlertPolicy(Resource):
         self.retention_days = retention_days
 
 
+class ServerSecurityAlertPolicyListResult(msrest.serialization.Model):
+    """A list of the server's security alert policies.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.rdbms.postgresql.models.ServerSecurityAlertPolicy]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ServerSecurityAlertPolicy]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ServerSecurityAlertPolicyListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
 class ServerUpdateParameters(msrest.serialization.Model):
     """Parameters allowed to update for a server.
 

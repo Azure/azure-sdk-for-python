@@ -806,6 +806,12 @@ class Server(TrackedResource):
     :type ha_enabled: str or ~azure.mgmt.rdbms.postgresql_flexibleservers.models.HAEnabledEnum
     :param source_server_name: The source PostgreSQL server name to restore from.
     :type source_server_name: str
+    :param source_subscription_id: The subscription id of source serve PostgreSQL server name to
+     restore from.
+    :type source_subscription_id: str
+    :param source_resource_group_name: The resource group name of source serve PostgreSQL server
+     name to restore from.
+    :type source_resource_group_name: str
     :param point_in_time_utc: Restore point creation time (ISO8601 format), specifying the time to
      restore from.
     :type point_in_time_utc: ~datetime.datetime
@@ -859,6 +865,8 @@ class Server(TrackedResource):
         'maintenance_window': {'key': 'properties.maintenanceWindow', 'type': 'MaintenanceWindow'},
         'ha_enabled': {'key': 'properties.haEnabled', 'type': 'str'},
         'source_server_name': {'key': 'properties.sourceServerName', 'type': 'str'},
+        'source_subscription_id': {'key': 'properties.sourceSubscriptionId', 'type': 'str'},
+        'source_resource_group_name': {'key': 'properties.sourceResourceGroupName', 'type': 'str'},
         'point_in_time_utc': {'key': 'properties.pointInTimeUTC', 'type': 'iso-8601'},
         'availability_zone': {'key': 'properties.availabilityZone', 'type': 'str'},
         'standby_availability_zone': {'key': 'properties.standbyAvailabilityZone', 'type': 'str'},
@@ -887,6 +895,8 @@ class Server(TrackedResource):
         self.maintenance_window = kwargs.get('maintenance_window', None)
         self.ha_enabled = kwargs.get('ha_enabled', None)
         self.source_server_name = kwargs.get('source_server_name', None)
+        self.source_subscription_id = kwargs.get('source_subscription_id', None)
+        self.source_resource_group_name = kwargs.get('source_resource_group_name', None)
         self.point_in_time_utc = kwargs.get('point_in_time_utc', None)
         self.availability_zone = kwargs.get('availability_zone', None)
         self.standby_availability_zone = None

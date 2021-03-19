@@ -48,7 +48,7 @@ class ChatOperations(object):
     def create_chat_thread(
         self,
         create_chat_thread_request,  # type: "_models.CreateChatThreadRequest"
-        repeatability_request_id=None,  # type: Optional[str]
+        idempotency_token=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.CreateChatThreadResult"
@@ -58,13 +58,12 @@ class ChatOperations(object):
 
         :param create_chat_thread_request: Request payload for creating a chat thread.
         :type create_chat_thread_request: ~azure.communication.chat.models.CreateChatThreadRequest
-        :param repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-ID and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-ID is an opaque string
-         representing a client-generated, globally unique for all time, identifier for the request. It
-         is recommended to use version 4 (random) UUIDs.
-        :type repeatability_request_id: str
+        :param idempotency_token: If specified, the client directs that the request is repeatable; that
+         is, that the client can make the request multiple times with the same Idempotency-Token and get
+         back an appropriate response without the server executing the request multiple times. The value
+         of the Idempotency-Token is an opaque string representing a client-generated, globally unique
+         for all time, identifier for the request. It is recommended to use version 4 (random) UUIDs.
+        :type idempotency_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CreateChatThreadResult, or the result of cls(response)
         :rtype: ~azure.communication.chat.models.CreateChatThreadResult
@@ -80,7 +79,7 @@ class ChatOperations(object):
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview3"
+        api_version = "2021-03-01-preview5"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -97,8 +96,8 @@ class ChatOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if repeatability_request_id is not None:
-            header_parameters['repeatability-Request-ID'] = self._serialize.header("repeatability_request_id", repeatability_request_id, 'str')
+        if idempotency_token is not None:
+            header_parameters['idempotency-token'] = self._serialize.header("idempotency_token", idempotency_token, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
@@ -127,7 +126,7 @@ class ChatOperations(object):
         start_time=None,  # type: Optional[datetime.datetime]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.ChatThreadsInfoCollection"]
+        # type: (...) -> Iterable["_models.ChatThreadsItemCollection"]
         """Gets the list of chat threads of a user.
 
         Gets the list of chat threads of a user.
@@ -138,11 +137,11 @@ class ChatOperations(object):
          be in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :type start_time: ~datetime.datetime
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ChatThreadsInfoCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.chat.models.ChatThreadsInfoCollection]
+        :return: An iterator like instance of either ChatThreadsItemCollection or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.chat.models.ChatThreadsItemCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ChatThreadsInfoCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ChatThreadsItemCollection"]
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -152,7 +151,7 @@ class ChatOperations(object):
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview3"
+        api_version = "2021-03-01-preview5"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -187,7 +186,7 @@ class ChatOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('ChatThreadsInfoCollection', pipeline_response)
+            deserialized = self._deserialize('ChatThreadsItemCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -209,68 +208,6 @@ class ChatOperations(object):
             get_next, extract_data
         )
     list_chat_threads.metadata = {'url': '/chat/threads'}  # type: ignore
-
-    def get_chat_thread(
-        self,
-        chat_thread_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.ChatThread"
-        """Gets a chat thread.
-
-        Gets a chat thread.
-
-        :param chat_thread_id: Id of the thread.
-        :type chat_thread_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ChatThread, or the result of cls(response)
-        :rtype: ~azure.communication.chat.models.ChatThread
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ChatThread"]
-        error_map = {
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview3"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.get_chat_thread.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'chatThreadId': self._serialize.url("chat_thread_id", chat_thread_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('ChatThread', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    get_chat_thread.metadata = {'url': '/chat/threads/{chatThreadId}'}  # type: ignore
 
     def delete_chat_thread(
         self,
@@ -299,7 +236,7 @@ class ChatOperations(object):
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview3"
+        api_version = "2021-03-01-preview5"
         accept = "application/json"
 
         # Construct URL

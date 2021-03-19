@@ -58,7 +58,7 @@ def main(generate_input, generate_output):
         md_output = change_log_generate(package_name)
         package["changelog"] = {
             "content": md_output,
-            "hasBreakingChange": "Breaking changes" in md_output or "Initial Release" in md_output
+            "hasBreakingChange": "Breaking changes" in md_output
         }
         _LOGGER.info(f'[PACKAGE]({package_name})[CHANGELOG]:{md_output}')
         # Built package
@@ -74,6 +74,8 @@ def main(generate_input, generate_output):
             "lite": f"pip install {package_name}"
         }
         package["result"]: "success"
+        # to distinguish with track1
+        package['packageName'] = 'track2_' + package['packageName']            
         result['packages'].append(package)
 
     with open(generate_output, "w") as writer:

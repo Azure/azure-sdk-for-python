@@ -49,12 +49,6 @@ class TestInvoiceFromUrl(FormRecognizerTest):
             poller = client.begin_recognize_invoices_from_url(self.invoice_url_pdf)
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    def test_authentication_successful_key(self, client):
-        poller = client.begin_recognize_invoices_from_url(self.invoice_url_pdf)
-        result = poller.result()
-
-    @FormRecognizerPreparer()
     def test_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
@@ -185,26 +179,6 @@ class TestInvoiceFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    def test_invoice_pdf(self, client):
-        poller = client.begin_recognize_invoices_from_url(self.invoice_url_pdf)
-
-        result = poller.result()
-        self.assertEqual(len(result), 1)
-        invoice = result[0]
-
-        # check dict values
-        self.assertEqual(invoice.fields.get("VendorName").value, "Contoso")
-        self.assertEqual(invoice.fields.get("VendorAddress").value, '1 Redmond way Suite 6000 Redmond, WA 99243')
-        self.assertEqual(invoice.fields.get("CustomerAddressRecipient").value, "Microsoft")
-        self.assertEqual(invoice.fields.get("CustomerAddress").value, '1020 Enterprise Way Sunnayvale, CA 87659')
-        self.assertEqual(invoice.fields.get("CustomerName").value, "Microsoft")
-        self.assertEqual(invoice.fields.get("InvoiceId").value, '34278587')
-        self.assertEqual(invoice.fields.get("InvoiceDate").value, date(2017, 6, 18))
-        self.assertEqual(invoice.fields.get("InvoiceTotal").value, 56651.49)
-        self.assertEqual(invoice.fields.get("DueDate").value, date(2017, 6, 24))
-
-    @FormRecognizerPreparer()
-    @GlobalClientPreparer()
     def test_invoice_tiff(self, client):
         poller = client.begin_recognize_invoices_from_url(self.invoice_url_tiff)
 
@@ -264,6 +238,17 @@ class TestInvoiceFromUrl(FormRecognizerTest):
                 continue
             self.assertFieldElementsHasValues(field.value_data.field_elements, invoice.page_range.first_page_number)
         self.assertInvoiceItemsHasValues(invoice.fields["Items"].value, invoice.page_range.first_page_number, True)
+
+        # check dict values
+        self.assertEqual(invoice.fields.get("VendorName").value, "Contoso")
+        self.assertEqual(invoice.fields.get("VendorAddress").value, '1 Redmond way Suite 6000 Redmond, WA 99243')
+        self.assertEqual(invoice.fields.get("CustomerAddressRecipient").value, "Microsoft")
+        self.assertEqual(invoice.fields.get("CustomerAddress").value, '1020 Enterprise Way Sunnayvale, CA 87659')
+        self.assertEqual(invoice.fields.get("CustomerName").value, "Microsoft")
+        self.assertEqual(invoice.fields.get("InvoiceId").value, '34278587')
+        self.assertEqual(invoice.fields.get("InvoiceDate").value, date(2017, 6, 18))
+        self.assertEqual(invoice.fields.get("InvoiceTotal").value, 56651.49)
+        self.assertEqual(invoice.fields.get("DueDate").value, date(2017, 6, 24))
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

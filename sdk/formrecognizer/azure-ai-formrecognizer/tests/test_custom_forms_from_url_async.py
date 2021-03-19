@@ -93,7 +93,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
                         form_url="https://badurl.jpg"
                     )
                     result = await poller.result()
-            self.assertEqual(e.value.error.code, "2003")
+            self.assertEqual(e.value.error.code, "1001")
             self.assertIsNotNone(e.value.error.message)
 
     @FormRecognizerPreparer()

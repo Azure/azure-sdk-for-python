@@ -25,7 +25,7 @@ from sanitize_setup import process_requires
 def build_packages(targeted_packages, distribution_directory, is_dev_build=False):
     # run the build and distribution
     for package_root in targeted_packages:
-        print(package_root)
+        service_hierarchy = os.path.join(os.path.basename(package_root))
         if is_dev_build:
             verify_update_package_requirement(package_root)
         print("Generating Package Using Python {}".format(sys.version))
@@ -34,7 +34,7 @@ def build_packages(targeted_packages, distribution_directory, is_dev_build=False
                 sys.executable,
                 build_packing_script_location,
                 "--dest",
-                distribution_directory,
+                os.path.join(distribution_directory, service_hierarchy),
                 package_root,
             ],
             root_dir,

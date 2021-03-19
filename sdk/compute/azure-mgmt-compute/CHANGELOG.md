@@ -1,5 +1,43 @@
 # Release History
 
+## 19.0.0 (2021-02-20)
+
+**Features**
+
+  - Model VirtualMachineUpdate has a new parameter platform_fault_domain
+  - Model VirtualMachineImage has a new parameter extended_location
+  - Model VirtualMachineImage has a new parameter features
+  - Model VirtualMachineSoftwarePatchProperties has a new parameter kb_id
+  - Model LinuxConfiguration has a new parameter patch_settings
+  - Model PatchSettings has a new parameter enable_hotpatching
+  - Model VirtualMachineAssessPatchesResult has a new parameter available_patches
+  - Model VirtualMachineImageResource has a new parameter extended_location
+  - Model VirtualMachinePatchStatus has a new parameter configuration_statuses
+  - Model RollingUpgradePolicy has a new parameter enable_cross_zone_upgrade
+  - Model RollingUpgradePolicy has a new parameter prioritize_unhealthy_instances
+  - Model DataDisk has a new parameter detach_option
+  - Model Image has a new parameter extended_location
+  - Model VirtualMachine has a new parameter extended_location
+  - Model VirtualMachine has a new parameter platform_fault_domain
+  - Model SecurityProfile has a new parameter uefi_settings
+  - Model SecurityProfile has a new parameter security_type
+  - Model VirtualMachineScaleSet has a new parameter extended_location
+  - Model VirtualMachineScaleSet has a new parameter orchestration_mode
+  - Added operation VirtualMachinesOperations.begin_install_patches
+  - Added operation VirtualMachineScaleSetsOperations.list_by_location
+  - Added operation group VirtualMachineImagesEdgeZoneOperations
+
+**Breaking changes**
+
+  - Operation VirtualMachineScaleSetVMsOperations.begin_delete has a new signature
+  - Operation VirtualMachineScaleSetsOperations.begin_delete has a new signature
+  - Operation VirtualMachineScaleSetsOperations.begin_delete_instances has a new signature
+  - Model VirtualMachineSoftwarePatchProperties no longer has parameter kbid
+  - Model LastPatchInstallationSummary no longer has parameter started_by
+  - Model LastPatchInstallationSummary no longer has parameter reboot_status
+  - Model VirtualMachineAssessPatchesResult no longer has parameter patches
+  - Model PurchasePlan no longer has parameter promotion_code
+
 ## 18.2.0 (2021-02-02)
 
 **Features**

@@ -30,14 +30,6 @@ class TestContentFromStream(FormRecognizerTest):
             poller = client.begin_recognize_content(myfile)
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    def test_content_authentication_successful_key(self, client):
-        with open(self.invoice_pdf, "rb") as fd:
-            myfile = fd.read()
-        poller = client.begin_recognize_content(myfile)
-        result = poller.result()
-
-    @FormRecognizerPreparer()
     def test_content_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):

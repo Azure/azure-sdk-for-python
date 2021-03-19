@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search4cbf15dc.search.windows.net/indexes('drgqefsg')/search.analyze?api-version=2020-06-30
+    uri: https://search4cbf15dc.search.windows.net/indexes('drgqefsg')/search.analyze?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search4cbf15dc.search.windows.net/$metadata#Microsoft.Azure.Search.V2020_06_30.AnalyzeResult","tokens":[{"token":"one''s","startOffset":0,"endOffset":5,"position":0},{"token":"two","startOffset":7,"endOffset":10,"position":1}]}'
@@ -32,5 +32,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search4cbf15dc.search.windows.net/indexes('drgqefsg')/search.analyze?api-version=2020-06-30
+    url: https://search4cbf15dc.search.windows.net/indexes('drgqefsg')/search.analyze?api-version=2020-06-30-Preview
 version: 1

@@ -35,15 +35,6 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
                 result = await poller.result()
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_authentication_successful_key(self, client):
-        with open(self.receipt_jpg, "rb") as fd:
-            myfile = fd.read()
-        async with client:
-            poller = await client.begin_recognize_receipts(myfile)
-            result = await poller.result()
-
-    @FormRecognizerPreparer()
     async def test_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
@@ -237,36 +228,6 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    async def test_receipt_jpg(self, client):
-
-        with open(self.receipt_jpg, "rb") as fd:
-            receipt = fd.read()
-
-        async with client:
-            poller = await client.begin_recognize_receipts(receipt)
-            result = await poller.result()
-
-        self.assertEqual(len(result), 1)
-        receipt = result[0]
-        self.assertEqual(receipt.fields.get("MerchantAddress").value, '123 Main Street Redmond, WA 98052')
-        self.assertEqual(receipt.fields.get("MerchantName").value, 'Contoso')
-        self.assertEqual(receipt.fields.get("MerchantPhoneNumber").value, '+19876543210')
-        self.assertEqual(receipt.fields.get("Subtotal").value, 11.7)
-        self.assertEqual(receipt.fields.get("Tax").value, 1.17)
-        self.assertEqual(receipt.fields.get("Tip").value, 1.63)
-        self.assertEqual(receipt.fields.get("Total").value, 14.5)
-        self.assertEqual(receipt.fields.get("TransactionDate").value, date(year=2019, month=6, day=10))
-        self.assertEqual(receipt.fields.get("TransactionTime").value, time(hour=13, minute=59, second=0))
-        self.assertEqual(receipt.page_range.first_page_number, 1)
-        self.assertEqual(receipt.page_range.last_page_number, 1)
-        self.assertFormPagesHasValues(receipt.pages)
-        receipt_type = receipt.fields.get("ReceiptType")
-        self.assertIsNotNone(receipt_type.confidence)
-        self.assertEqual(receipt_type.value, 'Itemized')
-        self.assertReceiptItemsHasValues(receipt.fields["Items"].value, receipt.page_range.first_page_number, False)
-
-    @FormRecognizerPreparer()
-    @GlobalClientPreparer()
     async def test_receipt_png(self, client):
         with open(self.receipt_png, "rb") as fd:
             receipt = fd.read()
@@ -307,6 +268,22 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         for name, field in receipt.fields.items():
             if field.value_type not in ["list", "dictionary"] and name != "ReceiptType":  # receipt cases where value_data is None
                 self.assertFieldElementsHasValues(field.value_data.field_elements, receipt.page_range.first_page_number)
+
+        self.assertEqual(receipt.fields.get("MerchantAddress").value, '123 Main Street Redmond, WA 98052')
+        self.assertEqual(receipt.fields.get("MerchantName").value, 'Contoso')
+        self.assertEqual(receipt.fields.get("MerchantPhoneNumber").value, '+19876543210')
+        self.assertEqual(receipt.fields.get("Subtotal").value, 11.7)
+        self.assertEqual(receipt.fields.get("Tax").value, 1.17)
+        self.assertEqual(receipt.fields.get("Tip").value, 1.63)
+        self.assertEqual(receipt.fields.get("Total").value, 14.5)
+        self.assertEqual(receipt.fields.get("TransactionDate").value, date(year=2019, month=6, day=10))
+        self.assertEqual(receipt.fields.get("TransactionTime").value, time(hour=13, minute=59, second=0))
+        self.assertEqual(receipt.page_range.first_page_number, 1)
+        self.assertEqual(receipt.page_range.last_page_number, 1)
+        self.assertFormPagesHasValues(receipt.pages)
+        receipt_type = receipt.fields.get("ReceiptType")
+        self.assertIsNotNone(receipt_type.confidence)
+        self.assertEqual(receipt_type.value, 'Itemized')
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

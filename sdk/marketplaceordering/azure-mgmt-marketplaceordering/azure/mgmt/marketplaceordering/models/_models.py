@@ -56,6 +56,8 @@ class AgreementTerms(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~azure.mgmt.marketplaceordering.models.SystemData
     :param publisher: Publisher identifier string of image being deployed.
     :type publisher: str
     :param product: Offer identifier string of image being deployed.
@@ -66,6 +68,8 @@ class AgreementTerms(Resource):
     :type license_text_link: str
     :param privacy_policy_link: Link to the privacy policy of the publisher.
     :type privacy_policy_link: str
+    :param marketplace_terms_link: Link to HTML with Azure Marketplace terms.
+    :type marketplace_terms_link: str
     :param retrieve_datetime: Date and time in UTC of when the terms were accepted. This is empty
      if Accepted is false.
     :type retrieve_datetime: str
@@ -79,17 +83,20 @@ class AgreementTerms(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'publisher': {'key': 'properties.publisher', 'type': 'str'},
         'product': {'key': 'properties.product', 'type': 'str'},
         'plan': {'key': 'properties.plan', 'type': 'str'},
         'license_text_link': {'key': 'properties.licenseTextLink', 'type': 'str'},
         'privacy_policy_link': {'key': 'properties.privacyPolicyLink', 'type': 'str'},
+        'marketplace_terms_link': {'key': 'properties.marketplaceTermsLink', 'type': 'str'},
         'retrieve_datetime': {'key': 'properties.retrieveDatetime', 'type': 'str'},
         'signature': {'key': 'properties.signature', 'type': 'str'},
         'accepted': {'key': 'properties.accepted', 'type': 'bool'},
@@ -100,11 +107,13 @@ class AgreementTerms(Resource):
         **kwargs
     ):
         super(AgreementTerms, self).__init__(**kwargs)
+        self.system_data = None
         self.publisher = kwargs.get('publisher', None)
         self.product = kwargs.get('product', None)
         self.plan = kwargs.get('plan', None)
         self.license_text_link = kwargs.get('license_text_link', None)
         self.privacy_policy_link = kwargs.get('privacy_policy_link', None)
+        self.marketplace_terms_link = kwargs.get('marketplace_terms_link', None)
         self.retrieve_datetime = kwargs.get('retrieve_datetime', None)
         self.signature = kwargs.get('signature', None)
         self.accepted = kwargs.get('accepted', None)
@@ -237,3 +246,44 @@ class OperationListResult(msrest.serialization.Model):
         super(OperationListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = None
+
+
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource. Possible values
+     include: "User", "Application", "ManagedIdentity", "Key".
+    :type created_by_type: str or ~azure.mgmt.marketplaceordering.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :type last_modified_by_type: str or ~azure.mgmt.marketplaceordering.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = kwargs.get('created_by', None)
+        self.created_by_type = kwargs.get('created_by_type', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.last_modified_by = kwargs.get('last_modified_by', None)
+        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
+        self.last_modified_at = kwargs.get('last_modified_at', None)

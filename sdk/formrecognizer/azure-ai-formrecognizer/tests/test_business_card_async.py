@@ -33,15 +33,6 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
                 poller = await client.begin_recognize_business_cards(myfile)
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_authentication_successful_key(self, client):
-        with open(self.business_card_jpg, "rb") as fd:
-            myfile = fd.read()
-        async with client:
-            poller = await client.begin_recognize_business_cards(myfile)
-            result = await poller.result()
-
-    @FormRecognizerPreparer()
     async def test_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
@@ -104,7 +95,6 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_blank_page(self, client):
-
         with open(self.blank_pdf, "rb") as fd:
             blank = fd.read()
         async with client:
@@ -136,7 +126,6 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_auto_detect_unsupported_stream_content(self, client):
-
         with open(self.unsupported_content_py, "rb") as fd:
             myfile = fd.read()
 
@@ -265,54 +254,6 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    async def test_business_card_jpg(self, client):
-
-        with open(self.business_card_jpg, "rb") as fd:
-            business_card = fd.read()
-
-        async with client:
-            poller = await client.begin_recognize_business_cards(business_card)
-            result = await poller.result()
-
-        self.assertEqual(len(result), 1)
-        business_card = result[0]
-        # check dict values
-        self.assertEqual(len(business_card.fields.get("ContactNames").value), 1)
-        self.assertEqual(business_card.fields.get("ContactNames").value[0].value_data.page_number, 1)
-        self.assertEqual(business_card.fields.get("ContactNames").value[0].value['FirstName'].value, 'Avery')
-        self.assertEqual(business_card.fields.get("ContactNames").value[0].value['LastName'].value, 'Smith')
-
-        self.assertEqual(len(business_card.fields.get("JobTitles").value), 1)
-        self.assertEqual(business_card.fields.get("JobTitles").value[0].value, "Senior Researcher")
-
-        self.assertEqual(len(business_card.fields.get("Departments").value), 1)
-        self.assertEqual(business_card.fields.get("Departments").value[0].value, "Cloud & Al Department")
-
-        self.assertEqual(len(business_card.fields.get("Emails").value), 1)
-        self.assertEqual(business_card.fields.get("Emails").value[0].value, "avery.smith@contoso.com")
-
-        self.assertEqual(len(business_card.fields.get("Websites").value), 1)
-        self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com/")
-
-        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
-        # self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
-        # self.assertEqual(business_card.fields.get("MobilePhones").value[0].value, "https://www.contoso.com/")
-
-        # self.assertEqual(len(business_card.fields.get("OtherPhones").value), 1)
-        # self.assertEqual(business_card.fields.get("OtherPhones").value[0].value, "https://www.contoso.com/")
-
-        # self.assertEqual(len(business_card.fields.get("Faxes").value), 1)
-        # self.assertEqual(business_card.fields.get("Faxes").value[0].value, "https://www.contoso.com/")
-
-        self.assertEqual(len(business_card.fields.get("Addresses").value), 1)
-        self.assertEqual(business_card.fields.get("Addresses").value[0].value, "2 Kingdom Street Paddington, London, W2 6BD")
-
-        self.assertEqual(len(business_card.fields.get("CompanyNames").value), 1)
-        self.assertEqual(business_card.fields.get("CompanyNames").value[0].value, "Contoso")
-
-
-    @FormRecognizerPreparer()
-    @GlobalClientPreparer()
     async def test_business_card_png(self, client):
         with open(self.business_card_png, "rb") as fd:
             stream = fd.read()
@@ -360,7 +301,6 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_business_card_multipage_pdf(self, client):
-
         with open(self.business_card_multipage_pdf, "rb") as fd:
             receipt = fd.read()
 
@@ -438,6 +378,40 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         for name, field in business_card.fields.items():
             for f in field.value:
                 self.assertFieldElementsHasValues(f.value_data.field_elements, business_card.page_range.first_page_number)
+
+        # check dict values
+        self.assertEqual(len(business_card.fields.get("ContactNames").value), 1)
+        self.assertEqual(business_card.fields.get("ContactNames").value[0].value_data.page_number, 1)
+        self.assertEqual(business_card.fields.get("ContactNames").value[0].value['FirstName'].value, 'Avery')
+        self.assertEqual(business_card.fields.get("ContactNames").value[0].value['LastName'].value, 'Smith')
+
+        self.assertEqual(len(business_card.fields.get("JobTitles").value), 1)
+        self.assertEqual(business_card.fields.get("JobTitles").value[0].value, "Senior Researcher")
+
+        self.assertEqual(len(business_card.fields.get("Departments").value), 1)
+        self.assertEqual(business_card.fields.get("Departments").value[0].value, "Cloud & Al Department")
+
+        self.assertEqual(len(business_card.fields.get("Emails").value), 1)
+        self.assertEqual(business_card.fields.get("Emails").value[0].value, "avery.smith@contoso.com")
+
+        self.assertEqual(len(business_card.fields.get("Websites").value), 1)
+        self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com/")
+
+        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
+        # self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
+        # self.assertEqual(business_card.fields.get("MobilePhones").value[0].value, "https://www.contoso.com/")
+
+        # self.assertEqual(len(business_card.fields.get("OtherPhones").value), 1)
+        # self.assertEqual(business_card.fields.get("OtherPhones").value[0].value, "https://www.contoso.com/")
+
+        # self.assertEqual(len(business_card.fields.get("Faxes").value), 1)
+        # self.assertEqual(business_card.fields.get("Faxes").value[0].value, "https://www.contoso.com/")
+
+        self.assertEqual(len(business_card.fields.get("Addresses").value), 1)
+        self.assertEqual(business_card.fields.get("Addresses").value[0].value, "2 Kingdom Street Paddington, London, W2 6BD")
+
+        self.assertEqual(len(business_card.fields.get("CompanyNames").value), 1)
+        self.assertEqual(business_card.fields.get("CompanyNames").value[0].value, "Contoso")
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
