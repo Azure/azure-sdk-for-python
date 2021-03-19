@@ -23,9 +23,18 @@ except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
 
 import pytest
+import time
+
+def _convert_datetime_to_utc_int(input):
+    epoch = time.mktime(datetime(1970, 1, 1).timetuple())
+    input_datetime_as_int = epoch - time.mktime(input.timetuple())
+    return input_datetime_as_int
+
 
 credential = Mock()
-credential.get_token = Mock(return_value=AccessToken("some_token", datetime.now().replace(tzinfo=TZ_UTC)))
+credential.get_token = Mock(return_value=AccessToken(
+    "some_token", _convert_datetime_to_utc_int(datetime.now().replace(tzinfo=TZ_UTC))
+))
 
 @pytest.mark.asyncio
 async def test_create_chat_thread():

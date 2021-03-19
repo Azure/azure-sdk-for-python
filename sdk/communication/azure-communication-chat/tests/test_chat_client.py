@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
+import time
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AccessToken
@@ -28,9 +29,17 @@ except ImportError:  # python < 3.3
 
 class TestChatClient(unittest.TestCase):
     @classmethod
+    def _convert_datetime_to_utc_int(cls, input):
+        epoch = time.mktime(datetime(1970, 1, 1).timetuple())
+        input_datetime_as_int = epoch - time.mktime(input.timetuple())
+        return input_datetime_as_int
+
+    @classmethod
     @patch('azure.communication.identity._shared.user_credential.CommunicationTokenCredential')
     def setUpClass(cls, credential):
-        credential.get_token = Mock(return_value=AccessToken("some_token", datetime.now().replace(tzinfo=TZ_UTC)))
+        credential.get_token = Mock(return_value=AccessToken(
+            "some_token", cls._convert_datetime_to_utc_int(datetime.now().replace(tzinfo=TZ_UTC))
+        ))
         TestChatClient.credential = credential
 
     def test_create_chat_thread(self):

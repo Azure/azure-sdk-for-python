@@ -103,5 +103,12 @@ def get_authentication_policy(
                     "or a token credential from azure.identity".format(type(credential)))
 
 def _convert_expires_on_datetime_to_utc_int(expires_on):
+    # type: (...) -> int
+    expires_on_as_int = _convert_datetime_to_utc_int(expires_on)
+    return expires_on_as_int
+
+def _convert_datetime_to_utc_int(input):
+    # type: (...) -> int
     epoch = time.mktime(datetime(1970, 1, 1).timetuple())
-    return epoch-time.mktime(expires_on.timetuple())
+    input_datetime_as_int = epoch - time.mktime(input.timetuple())
+    return input_datetime_as_int
