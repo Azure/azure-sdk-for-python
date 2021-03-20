@@ -1,12 +1,22 @@
 # Table of Contents
-1. [The perfstress framework](#the-perfstress-framework)
-    - [The PerfStressTest base](#the-perfstresstest-base)
-    - [Default command options](#default-command-options)
-2. [Adding performance tests to an SDK](#adding-performance-tests-to-an-sdk)
-    - [Writing a test](#writing-a-test)
-    - [Adding legacy T1 tests](#adding-legacy-t1-tests)
-3. [Running the tests](#running-the-tests)
-4. [Readme](#Readme)
+- [Table of Contents](#table-of-contents)
+- [The perfstress framework](#the-perfstress-framework)
+  - [The PerfStressTest base](#the-perfstresstest-base)
+  - [Default command options](#default-command-options)
+- [Adding performance tests to an SDK](#adding-performance-tests-to-an-sdk)
+  - [Writing a test](#writing-a-test)
+    - [Common test base](#common-test-base)
+    - [Testing with streams](#testing-with-streams)
+      - [Example upload stream test:](#example-upload-stream-test)
+      - [Example download stream test:](#example-download-stream-test)
+  - [Adding legacy T1 tests](#adding-legacy-t1-tests)
+- [Running the tests](#running-the-tests)
+    - [Setup for test resources](#setup-for-test-resources)
+    - [Setup for perf test runs](#setup-for-perf-test-runs)
+    - [Setup for T1 legacy perf test runs](#setup-for-t1-legacy-perf-test-runs)
+    - [Test commands](#test-commands)
+    - [Example test run command](#example-test-run-command)
+- [Readme](#readme)
 
 # The perfstress framework
 
@@ -348,6 +358,7 @@ Using the `perfstress` command alone will list the available perf tests found. N
 ```
 
 # Readme
+
 Please add a `README.md` to the perfstress_tests directory so that others know how to setup and run the perf tests, along with a description of the available tests and any support command line options. README files in a `tests/perfstress_tests` directory should already be filtered from CI validation for SDK readmes.
 Some examples can be found here:
 - [Azure Storage Blob](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-storage-blob/tests/perfstress_tests/README.md)
