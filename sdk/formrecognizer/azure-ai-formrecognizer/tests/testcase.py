@@ -183,7 +183,7 @@ class FormRecognizerTest(AzureTestCase):
         return blob_sas_url
 
     def get_oauth_endpoint(self):
-        return os.getenv("FORM_RECOGNIZER_AAD_ENDPOINT")
+        return os.getenv("FORMRECOGNIZER_TEST_ENDPOINT")
 
     def generate_oauth_token(self):
         if self.is_live:
