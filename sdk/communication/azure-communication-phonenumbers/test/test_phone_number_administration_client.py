@@ -64,7 +64,7 @@ class PhoneNumbersClientTest(CommunicationTestCase):
             polling = True
         )
         poller.result()
-        assert poller.status() == 'Succeeded'
+        assert poller.status() == 'succeeded'
 
     @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
     def test_purchase_phone_numbers(self):
