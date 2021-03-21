@@ -1,10 +1,10 @@
-# Azure Farnbeats API client library for Python
+# Azure Farnbeats API DS client library for Python
 
 TODO
 
 ## Getting started
 
-### Key concepts
+## Key concepts
 
 ### Prerequisites
 
