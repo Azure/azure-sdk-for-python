@@ -21,6 +21,7 @@ Python 3.6 or later.
 >>> client
 <something something>
 ```
+
 ### Sending a request
 
 ```python
