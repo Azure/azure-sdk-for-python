@@ -20,13 +20,13 @@ class JobClient():
     def queue_weather_job(
         self,
         job,
-        x_ms_farm_beats_data_provider_key,
+        x_ms_farm_beats_data_provider_key=None,
         x_ms_farm_beats_data_provider_id=None,
     ):
         return self.client.create_weather_job(
-            x_ms_farm_beats_data_provider_key,
-            x_ms_farm_beats_data_provider_id,
-            job
+            x_ms_farm_beats_data_provider_key=x_ms_farm_beats_data_provider_key,
+            x_ms_farm_beats_data_provider_id=x_ms_farm_beats_data_provider_id,
+            body=job
         )
 
     def get_job(

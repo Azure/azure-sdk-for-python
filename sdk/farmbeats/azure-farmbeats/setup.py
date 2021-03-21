@@ -7,5 +7,10 @@ setup(
     packages=find_packages(),
     author="Microsoft Corporation",
     license="MIT License",
-    install_requires=["azure-identity", "azure-core", "requests", "urllib3"],
+    install_requires=[
+        "azure-identity<2.0.0,>=1.5.0",
+        "azure-core<2.0.0,>=1.12.0",
+        "requests<3.0.0,>=2.23.0",
+        "urllib3<2.0.0,>=1.25.8"
+    ],
 )
