@@ -49,17 +49,17 @@ class QuotaRequestStatusOperations:
         id: str,
         **kwargs
     ) -> "_models.QuotaRequestDetails":
-        """Gets the QuotaRequest details and status by the quota request Id for the resources for the
-        resource provider at a specific location. The requestId is returned as response to the Put
-        requests for serviceLimits.
+        """For the specified Azure region (location), get the details and status of the quota request by
+        the quota request ID for the resources of the resource provider. The PUT request for the quota
+        (service limit) returns a response with the requestId parameter.
 
-        :param subscription_id: Azure subscription id.
+        :param subscription_id: Azure subscription ID.
         :type subscription_id: str
-        :param provider_id: Azure resource provider id.
+        :param provider_id: Azure resource provider ID.
         :type provider_id: str
         :param location: Azure region.
         :type location: str
-        :param id: Quota Request id.
+        :param id: Quota Request ID.
         :type id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: QuotaRequestDetails, or the result of cls(response)
@@ -71,7 +71,7 @@ class QuotaRequestStatusOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-19-preview"
+        api_version = "2020-10-25"
         accept = "application/json"
 
         # Construct URL
@@ -119,13 +119,13 @@ class QuotaRequestStatusOperations:
         skiptoken: Optional[str] = None,
         **kwargs
     ) -> AsyncIterable["_models.QuotaRequestDetailsList"]:
-        """For the specified location and Resource provider gets the current quota requests under the
-        subscription over the time period of one year ago from now to one year back. oData filter can
-        be used to select quota requests.
+        """For the specified Azure region (location), subscription, and resource provider, get the history
+        of the quota requests for the past year. To select specific quota requests, use the oData
+        filter.
 
-        :param subscription_id: Azure subscription id.
+        :param subscription_id: Azure subscription ID.
         :type subscription_id: str
-        :param provider_id: Azure resource provider id.
+        :param provider_id: Azure resource provider ID.
         :type provider_id: str
         :param location: Azure region.
         :type location: str
@@ -142,8 +142,8 @@ class QuotaRequestStatusOperations:
         :param top: Number of records to return.
         :type top: int
         :param skiptoken: Skiptoken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skiptoken parameter that specifies a starting point to use for subsequent calls.
+         a previous response contains a nextLink element, the value of the nextLink element includes a
+         skiptoken parameter that specifies a starting point to use for subsequent calls.
         :type skiptoken: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either QuotaRequestDetailsList or the result of cls(response)
@@ -155,7 +155,7 @@ class QuotaRequestStatusOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-07-19-preview"
+        api_version = "2020-10-25"
         accept = "application/json"
 
         def prepare_request(next_link=None):

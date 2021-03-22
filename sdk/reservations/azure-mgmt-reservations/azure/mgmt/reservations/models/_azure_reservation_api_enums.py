@@ -33,14 +33,6 @@ class AppliedScopeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SINGLE = "Single"
     SHARED = "Shared"
 
-class AqiStateType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The Auto quota increase feature state - enabled: feature is enabled, disabled: feature is
-    disabled.
-    """
-
-    ENABLED = "enabled"
-    DISABLED = "disabled"
-
 class CalculateExchangeOperationResultStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Status of the operation.
     """
@@ -49,14 +41,6 @@ class CalculateExchangeOperationResultStatus(with_metaclass(_CaseInsensitiveEnum
     FAILED = "Failed"
     CANCELLED = "Cancelled"
     PENDING = "Pending"
-
-class ContactMethodType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The contact method - Email: Contact using provided email, Phone: contact using provided phone
-    number.
-    """
-
-    EMAIL = "Email"
-    PHONE = "Phone"
 
 class ErrorResponseCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -222,19 +206,3 @@ class ResourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LOW_PRIORITY = "lowPriority"
     SHARED = "shared"
     SERVICE_SPECIFIC = "serviceSpecific"
-
-class SeverityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The Severity types.
-    """
-
-    CRITICAL = "Critical"
-    MODERATE = "Moderate"
-    MINIMAL = "Minimal"
-
-class SupportContactType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The support contact types.
-    """
-
-    EMAIL = "email"
-    PHONE = "phone"
-    CHAT = "chat"

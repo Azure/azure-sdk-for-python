@@ -18,27 +18,20 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 from ._configuration import AzureReservationAPIConfiguration
-from .operations import QuotaOperations
-from .operations import QuotaRequestStatusOperations
-from .operations import AutoQuotaIncreaseOperations
 from .operations import ReservationOperations
 from .operations import AzureReservationAPIOperationsMixin
 from .operations import ReservationOrderOperations
 from .operations import OperationOperations
 from .operations import CalculateExchangeOperations
 from .operations import ExchangeOperations
+from .operations import QuotaOperations
+from .operations import QuotaRequestStatusOperations
 from . import models
 
 
 class AzureReservationAPI(AzureReservationAPIOperationsMixin):
-    """Microsoft Azure Quota Resource Provider.
+    """This API describe Azure Reservation.
 
-    :ivar quota: QuotaOperations operations
-    :vartype quota: azure.mgmt.reservations.operations.QuotaOperations
-    :ivar quota_request_status: QuotaRequestStatusOperations operations
-    :vartype quota_request_status: azure.mgmt.reservations.operations.QuotaRequestStatusOperations
-    :ivar auto_quota_increase: AutoQuotaIncreaseOperations operations
-    :vartype auto_quota_increase: azure.mgmt.reservations.operations.AutoQuotaIncreaseOperations
     :ivar reservation: ReservationOperations operations
     :vartype reservation: azure.mgmt.reservations.operations.ReservationOperations
     :ivar reservation_order: ReservationOrderOperations operations
@@ -49,6 +42,10 @@ class AzureReservationAPI(AzureReservationAPIOperationsMixin):
     :vartype calculate_exchange: azure.mgmt.reservations.operations.CalculateExchangeOperations
     :ivar exchange: ExchangeOperations operations
     :vartype exchange: azure.mgmt.reservations.operations.ExchangeOperations
+    :ivar quota: QuotaOperations operations
+    :vartype quota: azure.mgmt.reservations.operations.QuotaOperations
+    :ivar quota_request_status: QuotaRequestStatusOperations operations
+    :vartype quota_request_status: azure.mgmt.reservations.operations.QuotaRequestStatusOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param str base_url: Service URL
@@ -69,15 +66,8 @@ class AzureReservationAPI(AzureReservationAPIOperationsMixin):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.quota = QuotaOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.quota_request_status = QuotaRequestStatusOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.auto_quota_increase = AutoQuotaIncreaseOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.reservation = ReservationOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.reservation_order = ReservationOrderOperations(
@@ -87,6 +77,10 @@ class AzureReservationAPI(AzureReservationAPIOperationsMixin):
         self.calculate_exchange = CalculateExchangeOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.exchange = ExchangeOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.quota = QuotaOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.quota_request_status = QuotaRequestStatusOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def close(self):
