@@ -4,12 +4,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Union, Any, List, TYPE_CHECKING
+from typing import Any, List
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import AsyncLROPoller
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.credentials import AzureKeyCredential
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from .._generated.aio import BatchDocumentTranslationClient as _BatchDocumentTranslationClient
 from .._user_agent import USER_AGENT
 from .._generated.models import (
@@ -21,11 +23,8 @@ from .._models import (
     FileFormat,
     DocumentStatusDetail
 )
-from .._helpers import get_authentication_policy
 from .._polling import TranslationPolling
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.credentials import AzureKeyCredential
+COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
 
 
 class DocumentTranslationClient(object):
@@ -34,13 +33,13 @@ class DocumentTranslationClient(object):
     """
 
     def __init__(
-            self, endpoint: str, credential: Union["AzureKeyCredential", "AsyncTokenCredential"], **kwargs: Any
+            self, endpoint: str, credential: "AzureKeyCredential", **kwargs: Any
     ) -> None:
         """
 
         :param str endpoint:
         :param credential:
-        :type credential: Union[AzureKeyCredential, AsyncTokenCredential]
+        :type credential: AzureKeyCredential
         :keyword str api_version:
         :rtype: None
         """
@@ -48,7 +47,11 @@ class DocumentTranslationClient(object):
         self._credential = credential
         self._api_version = kwargs.pop('api_version', None)
 
-        authentication_policy = get_authentication_policy(credential)
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
+        authentication_policy = AzureKeyCredentialPolicy(
+            name=COGNITIVE_KEY_HEADER, credential=credential
+        )
         self._client = _BatchDocumentTranslationClient(
             endpoint=endpoint,
             credential=credential,  # type: ignore
