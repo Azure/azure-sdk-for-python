@@ -17,7 +17,7 @@ from .. import models
 class ComputerVisionClientOperationsMixin(object):
 
     def analyze_image(
-            self, url, visual_features=None, details=None, language="en", description_exclude=None, custom_headers=None, raw=False, **operation_config):
+            self, url, visual_features=None, details=None, language="en", description_exclude=None, model_version="latest", custom_headers=None, raw=False, **operation_config):
         """This operation extracts a rich set of visual features based on the
         image content.
         Two input methods are supported -- (1) Uploading an image or (2)
@@ -66,6 +66,10 @@ class ComputerVisionClientOperationsMixin(object):
          generating the description.
         :type description_exclude: list[str or
          ~azure.cognitiveservices.vision.computervision.models.DescriptionExclude]
+        :param model_version: Optional parameter to specify the version of the
+         AI model. Accepted values are: "latest", "2021-04-01". Defaults to
+         "latest".
+        :type model_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -76,7 +80,7 @@ class ComputerVisionClientOperationsMixin(object):
          ~azure.cognitiveservices.vision.computervision.models.ImageAnalysis or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
+         :class:`ComputerVisionErrorResponseException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorResponseException>`
         """
         image_url = models.ImageUrl(url=url)
 
@@ -97,6 +101,8 @@ class ComputerVisionClientOperationsMixin(object):
             query_parameters['language'] = self._serialize.query("language", language, 'str')
         if description_exclude is not None:
             query_parameters['descriptionExclude'] = self._serialize.query("description_exclude", description_exclude, '[DescriptionExclude]', div=',')
+        if model_version is not None:
+            query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str', pattern=r'^(latest|\d{4}-\d{2}-\d{2})(-preview)?$')
 
         # Construct headers
         header_parameters = {}
@@ -113,7 +119,7 @@ class ComputerVisionClientOperationsMixin(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
+            raise models.ComputerVisionErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -127,7 +133,7 @@ class ComputerVisionClientOperationsMixin(object):
     analyze_image.metadata = {'url': '/analyze'}
 
     def describe_image(
-            self, url, max_candidates=1, language="en", description_exclude=None, custom_headers=None, raw=False, **operation_config):
+            self, url, max_candidates=1, language="en", description_exclude=None, model_version="latest", custom_headers=None, raw=False, **operation_config):
         """This operation generates a description of an image in human readable
         language with complete sentences. The description is based on a
         collection of content tags, which are also returned by the operation.
@@ -155,6 +161,10 @@ class ComputerVisionClientOperationsMixin(object):
          generating the description.
         :type description_exclude: list[str or
          ~azure.cognitiveservices.vision.computervision.models.DescriptionExclude]
+        :param model_version: Optional parameter to specify the version of the
+         AI model. Accepted values are: "latest", "2021-04-01". Defaults to
+         "latest".
+        :type model_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -165,7 +175,7 @@ class ComputerVisionClientOperationsMixin(object):
          ~azure.cognitiveservices.vision.computervision.models.ImageDescription
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
+         :class:`ComputerVisionErrorResponseException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorResponseException>`
         """
         image_url = models.ImageUrl(url=url)
 
@@ -184,6 +194,8 @@ class ComputerVisionClientOperationsMixin(object):
             query_parameters['language'] = self._serialize.query("language", language, 'str')
         if description_exclude is not None:
             query_parameters['descriptionExclude'] = self._serialize.query("description_exclude", description_exclude, '[DescriptionExclude]', div=',')
+        if model_version is not None:
+            query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str', pattern=r'^(latest|\d{4}-\d{2}-\d{2})(-preview)?$')
 
         # Construct headers
         header_parameters = {}
@@ -200,7 +212,7 @@ class ComputerVisionClientOperationsMixin(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
+            raise models.ComputerVisionErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -214,7 +226,7 @@ class ComputerVisionClientOperationsMixin(object):
     describe_image.metadata = {'url': '/describe'}
 
     def detect_objects(
-            self, url, custom_headers=None, raw=False, **operation_config):
+            self, url, model_version="latest", custom_headers=None, raw=False, **operation_config):
         """Performs object detection on the specified image.
         Two input methods are supported -- (1) Uploading an image or (2)
         specifying an image URL.
@@ -224,6 +236,10 @@ class ComputerVisionClientOperationsMixin(object):
 
         :param url: Publicly reachable URL of an image.
         :type url: str
+        :param model_version: Optional parameter to specify the version of the
+         AI model. Accepted values are: "latest", "2021-04-01". Defaults to
+         "latest".
+        :type model_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -234,7 +250,7 @@ class ComputerVisionClientOperationsMixin(object):
          ~azure.cognitiveservices.vision.computervision.models.DetectResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
+         :class:`ComputerVisionErrorResponseException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorResponseException>`
         """
         image_url = models.ImageUrl(url=url)
 
@@ -247,6 +263,8 @@ class ComputerVisionClientOperationsMixin(object):
 
         # Construct parameters
         query_parameters = {}
+        if model_version is not None:
+            query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str', pattern=r'^(latest|\d{4}-\d{2}-\d{2})(-preview)?$')
 
         # Construct headers
         header_parameters = {}
@@ -263,7 +281,7 @@ class ComputerVisionClientOperationsMixin(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
+            raise models.ComputerVisionErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -296,7 +314,7 @@ class ComputerVisionClientOperationsMixin(object):
          ~azure.cognitiveservices.vision.computervision.models.ListModelsResult
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
+         :class:`ComputerVisionErrorResponseException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorResponseException>`
         """
         # Construct URL
         url = self.list_models.metadata['url']
@@ -319,7 +337,7 @@ class ComputerVisionClientOperationsMixin(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
+            raise models.ComputerVisionErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -333,7 +351,7 @@ class ComputerVisionClientOperationsMixin(object):
     list_models.metadata = {'url': '/models'}
 
     def analyze_image_by_domain(
-            self, model, url, language="en", custom_headers=None, raw=False, **operation_config):
+            self, model, url, language="en", model_version="latest", custom_headers=None, raw=False, **operation_config):
         """This operation recognizes content within an image by applying a
         domain-specific model. The list of domain-specific models that are
         supported by the Computer Vision API can be retrieved using the /models
@@ -355,6 +373,10 @@ class ComputerVisionClientOperationsMixin(object):
          Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
          Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
         :type language: str
+        :param model_version: Optional parameter to specify the version of the
+         AI model. Accepted values are: "latest", "2021-04-01". Defaults to
+         "latest".
+        :type model_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -365,7 +387,7 @@ class ComputerVisionClientOperationsMixin(object):
          ~azure.cognitiveservices.vision.computervision.models.DomainModelResults
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
+         :class:`ComputerVisionErrorResponseException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorResponseException>`
         """
         image_url = models.ImageUrl(url=url)
 
@@ -381,6 +403,8 @@ class ComputerVisionClientOperationsMixin(object):
         query_parameters = {}
         if language is not None:
             query_parameters['language'] = self._serialize.query("language", language, 'str')
+        if model_version is not None:
+            query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str', pattern=r'^(latest|\d{4}-\d{2}-\d{2})(-preview)?$')
 
         # Construct headers
         header_parameters = {}
@@ -397,7 +421,7 @@ class ComputerVisionClientOperationsMixin(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
+            raise models.ComputerVisionErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -411,7 +435,7 @@ class ComputerVisionClientOperationsMixin(object):
     analyze_image_by_domain.metadata = {'url': '/models/{model}/analyze'}
 
     def recognize_printed_text(
-            self, url, detect_orientation=True, language="unk", custom_headers=None, raw=False, **operation_config):
+            self, url, detect_orientation=True, language="unk", model_version="latest", custom_headers=None, raw=False, **operation_config):
         """Optical Character Recognition (OCR) detects text in an image and
         extracts the recognized characters into a machine-usable character
         stream.
@@ -435,6 +459,10 @@ class ComputerVisionClientOperationsMixin(object):
          'tr', 'ar', 'ro', 'sr-Cyrl', 'sr-Latn', 'sk'
         :type language: str or
          ~azure.cognitiveservices.vision.computervision.models.OcrLanguages
+        :param model_version: Optional parameter to specify the version of the
+         AI model. Accepted values are: "latest", "2021-04-01". Defaults to
+         "latest".
+        :type model_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -445,7 +473,7 @@ class ComputerVisionClientOperationsMixin(object):
          ~azure.cognitiveservices.vision.computervision.models.OcrResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
+         :class:`ComputerVisionErrorResponseException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorResponseException>`
         """
         image_url = models.ImageUrl(url=url)
 
@@ -461,6 +489,8 @@ class ComputerVisionClientOperationsMixin(object):
         query_parameters['detectOrientation'] = self._serialize.query("detect_orientation", detect_orientation, 'bool')
         if language is not None:
             query_parameters['language'] = self._serialize.query("language", language, 'OcrLanguages')
+        if model_version is not None:
+            query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str', pattern=r'^(latest|\d{4}-\d{2}-\d{2})(-preview)?$')
 
         # Construct headers
         header_parameters = {}
@@ -477,7 +507,7 @@ class ComputerVisionClientOperationsMixin(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
+            raise models.ComputerVisionErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -491,7 +521,7 @@ class ComputerVisionClientOperationsMixin(object):
     recognize_printed_text.metadata = {'url': '/ocr'}
 
     def tag_image(
-            self, url, language="en", custom_headers=None, raw=False, **operation_config):
+            self, url, language="en", model_version="latest", custom_headers=None, raw=False, **operation_config):
         """This operation generates a list of words, or tags, that are relevant to
         the content of the supplied image. The Computer Vision API can return
         tags based on objects, living beings, scenery or actions found in
@@ -513,6 +543,10 @@ class ComputerVisionClientOperationsMixin(object):
          Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
          Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
         :type language: str
+        :param model_version: Optional parameter to specify the version of the
+         AI model. Accepted values are: "latest", "2021-04-01". Defaults to
+         "latest".
+        :type model_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -523,7 +557,7 @@ class ComputerVisionClientOperationsMixin(object):
          ~azure.cognitiveservices.vision.computervision.models.TagResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
+         :class:`ComputerVisionErrorResponseException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorResponseException>`
         """
         image_url = models.ImageUrl(url=url)
 
@@ -538,6 +572,8 @@ class ComputerVisionClientOperationsMixin(object):
         query_parameters = {}
         if language is not None:
             query_parameters['language'] = self._serialize.query("language", language, 'str')
+        if model_version is not None:
+            query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str', pattern=r'^(latest|\d{4}-\d{2}-\d{2})(-preview)?$')
 
         # Construct headers
         header_parameters = {}
@@ -554,7 +590,7 @@ class ComputerVisionClientOperationsMixin(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
+            raise models.ComputerVisionErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -568,7 +604,7 @@ class ComputerVisionClientOperationsMixin(object):
     tag_image.metadata = {'url': '/tag'}
 
     def generate_thumbnail(
-            self, width, height, url, smart_cropping=False, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, width, height, url, smart_cropping=False, model_version="latest", custom_headers=None, raw=False, callback=None, **operation_config):
         """This operation generates a thumbnail image with the user-specified
         width and height. By default, the service analyzes the image,
         identifies the region of interest (ROI), and generates smart cropping
@@ -592,6 +628,10 @@ class ComputerVisionClientOperationsMixin(object):
         :type url: str
         :param smart_cropping: Boolean flag for enabling smart cropping.
         :type smart_cropping: bool
+        :param model_version: Optional parameter to specify the version of the
+         AI model. Accepted values are: "latest", "2021-04-01". Defaults to
+         "latest".
+        :type model_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -622,6 +662,8 @@ class ComputerVisionClientOperationsMixin(object):
         query_parameters['height'] = self._serialize.query("height", height, 'int', maximum=1024, minimum=1)
         if smart_cropping is not None:
             query_parameters['smartCropping'] = self._serialize.query("smart_cropping", smart_cropping, 'bool')
+        if model_version is not None:
+            query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str', pattern=r'^(latest|\d{4}-\d{2}-\d{2})(-preview)?$')
 
         # Construct headers
         header_parameters = {}
@@ -650,7 +692,7 @@ class ComputerVisionClientOperationsMixin(object):
     generate_thumbnail.metadata = {'url': '/generateThumbnail'}
 
     def get_area_of_interest(
-            self, url, custom_headers=None, raw=False, **operation_config):
+            self, url, model_version="latest", custom_headers=None, raw=False, **operation_config):
         """This operation returns a bounding box around the most important area of
         the image.
         A successful response will be returned in JSON. If the request failed,
@@ -663,6 +705,10 @@ class ComputerVisionClientOperationsMixin(object):
 
         :param url: Publicly reachable URL of an image.
         :type url: str
+        :param model_version: Optional parameter to specify the version of the
+         AI model. Accepted values are: "latest", "2021-04-01". Defaults to
+         "latest".
+        :type model_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -673,7 +719,7 @@ class ComputerVisionClientOperationsMixin(object):
          ~azure.cognitiveservices.vision.computervision.models.AreaOfInterestResult
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
+         :class:`ComputerVisionErrorResponseException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorResponseException>`
         """
         image_url = models.ImageUrl(url=url)
 
@@ -686,6 +732,8 @@ class ComputerVisionClientOperationsMixin(object):
 
         # Construct parameters
         query_parameters = {}
+        if model_version is not None:
+            query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str', pattern=r'^(latest|\d{4}-\d{2}-\d{2})(-preview)?$')
 
         # Construct headers
         header_parameters = {}
@@ -702,7 +750,7 @@ class ComputerVisionClientOperationsMixin(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
+            raise models.ComputerVisionErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -715,133 +763,8 @@ class ComputerVisionClientOperationsMixin(object):
         return deserialized
     get_area_of_interest.metadata = {'url': '/areaOfInterest'}
 
-    def read(
-            self, url, language="en", custom_headers=None, raw=False, **operation_config):
-        """Use this interface to get the result of a Read operation, employing the
-        state-of-the-art Optical Character Recognition (OCR) algorithms
-        optimized for text-heavy documents. When you use the Read interface,
-        the response contains a field called 'Operation-Location'. The
-        'Operation-Location' field contains the URL that you must use for your
-        'GetReadResult' operation to access OCR results.​.
-
-        :param url: Publicly reachable URL of an image.
-        :type url: str
-        :param language: The BCP-47 language code of the text in the document.
-         Currently, only English ('en'), Dutch (‘nl’), French (‘fr’), German
-         (‘de’), Italian (‘it’), Portuguese (‘pt), and Spanish ('es') are
-         supported. Read supports auto language identification and
-         multi-language documents, so only provide a language code if you would
-         like to force the documented to be processed as that specific
-         language. Possible values include: 'en', 'es', 'fr', 'de', 'it', 'nl',
-         'pt'
-        :type language: str or
-         ~azure.cognitiveservices.vision.computervision.models.OcrDetectionLanguage
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
-        """
-        image_url = models.ImageUrl(url=url)
-
-        # Construct URL
-        url = self.read.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        if language is not None:
-            query_parameters['language'] = self._serialize.query("language", language, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct body
-        body_content = self._serialize.body(image_url, 'ImageUrl')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [202]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            client_raw_response.add_headers({
-                'Operation-Location': 'str',
-            })
-            return client_raw_response
-    read.metadata = {'url': '/read/analyze'}
-
-    def get_read_result(
-            self, operation_id, custom_headers=None, raw=False, **operation_config):
-        """This interface is used for getting OCR results of Read operation. The
-        URL to this interface should be retrieved from 'Operation-Location'
-        field returned from Read interface.
-
-        :param operation_id: Id of read operation returned in the response of
-         the 'Read' interface.
-        :type operation_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: ReadOperationResult or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.vision.computervision.models.ReadOperationResult
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
-        """
-        # Construct URL
-        url = self.get_read_result.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'operationId': self._serialize.url("operation_id", operation_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('ReadOperationResult', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_read_result.metadata = {'url': '/read/analyzeResults/{operationId}'}
-
     def analyze_image_in_stream(
-            self, image, visual_features=None, details=None, language="en", description_exclude=None, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image, visual_features=None, details=None, language="en", description_exclude=None, model_version="latest", custom_headers=None, raw=False, callback=None, **operation_config):
         """This operation extracts a rich set of visual features based on the
         image content.
         Two input methods are supported -- (1) Uploading an image or (2)
@@ -890,6 +813,10 @@ class ComputerVisionClientOperationsMixin(object):
          generating the description.
         :type description_exclude: list[str or
          ~azure.cognitiveservices.vision.computervision.models.DescriptionExclude]
+        :param model_version: Optional parameter to specify the version of the
+         AI model. Accepted values are: "latest", "2021-04-01". Defaults to
+         "latest".
+        :type model_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -905,7 +832,7 @@ class ComputerVisionClientOperationsMixin(object):
          ~azure.cognitiveservices.vision.computervision.models.ImageAnalysis or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
+         :class:`ComputerVisionErrorResponseException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorResponseException>`
         """
         # Construct URL
         url = self.analyze_image_in_stream.metadata['url']
@@ -924,6 +851,8 @@ class ComputerVisionClientOperationsMixin(object):
             query_parameters['language'] = self._serialize.query("language", language, 'str')
         if description_exclude is not None:
             query_parameters['descriptionExclude'] = self._serialize.query("description_exclude", description_exclude, '[DescriptionExclude]', div=',')
+        if model_version is not None:
+            query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str', pattern=r'^(latest|\d{4}-\d{2}-\d{2})(-preview)?$')
 
         # Construct headers
         header_parameters = {}
@@ -940,7 +869,7 @@ class ComputerVisionClientOperationsMixin(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
+            raise models.ComputerVisionErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -954,7 +883,7 @@ class ComputerVisionClientOperationsMixin(object):
     analyze_image_in_stream.metadata = {'url': '/analyze'}
 
     def get_area_of_interest_in_stream(
-            self, image, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image, model_version="latest", custom_headers=None, raw=False, callback=None, **operation_config):
         """This operation returns a bounding box around the most important area of
         the image.
         A successful response will be returned in JSON. If the request failed,
@@ -967,6 +896,10 @@ class ComputerVisionClientOperationsMixin(object):
 
         :param image: An image stream.
         :type image: Generator
+        :param model_version: Optional parameter to specify the version of the
+         AI model. Accepted values are: "latest", "2021-04-01". Defaults to
+         "latest".
+        :type model_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -982,7 +915,7 @@ class ComputerVisionClientOperationsMixin(object):
          ~azure.cognitiveservices.vision.computervision.models.AreaOfInterestResult
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
+         :class:`ComputerVisionErrorResponseException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorResponseException>`
         """
         # Construct URL
         url = self.get_area_of_interest_in_stream.metadata['url']
@@ -993,6 +926,8 @@ class ComputerVisionClientOperationsMixin(object):
 
         # Construct parameters
         query_parameters = {}
+        if model_version is not None:
+            query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str', pattern=r'^(latest|\d{4}-\d{2}-\d{2})(-preview)?$')
 
         # Construct headers
         header_parameters = {}
@@ -1009,7 +944,7 @@ class ComputerVisionClientOperationsMixin(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
+            raise models.ComputerVisionErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -1023,7 +958,7 @@ class ComputerVisionClientOperationsMixin(object):
     get_area_of_interest_in_stream.metadata = {'url': '/areaOfInterest'}
 
     def describe_image_in_stream(
-            self, image, max_candidates=1, language="en", description_exclude=None, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image, max_candidates=1, language="en", description_exclude=None, model_version="latest", custom_headers=None, raw=False, callback=None, **operation_config):
         """This operation generates a description of an image in human readable
         language with complete sentences. The description is based on a
         collection of content tags, which are also returned by the operation.
@@ -1051,6 +986,10 @@ class ComputerVisionClientOperationsMixin(object):
          generating the description.
         :type description_exclude: list[str or
          ~azure.cognitiveservices.vision.computervision.models.DescriptionExclude]
+        :param model_version: Optional parameter to specify the version of the
+         AI model. Accepted values are: "latest", "2021-04-01". Defaults to
+         "latest".
+        :type model_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1066,7 +1005,7 @@ class ComputerVisionClientOperationsMixin(object):
          ~azure.cognitiveservices.vision.computervision.models.ImageDescription
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
+         :class:`ComputerVisionErrorResponseException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorResponseException>`
         """
         # Construct URL
         url = self.describe_image_in_stream.metadata['url']
@@ -1083,6 +1022,8 @@ class ComputerVisionClientOperationsMixin(object):
             query_parameters['language'] = self._serialize.query("language", language, 'str')
         if description_exclude is not None:
             query_parameters['descriptionExclude'] = self._serialize.query("description_exclude", description_exclude, '[DescriptionExclude]', div=',')
+        if model_version is not None:
+            query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str', pattern=r'^(latest|\d{4}-\d{2}-\d{2})(-preview)?$')
 
         # Construct headers
         header_parameters = {}
@@ -1099,7 +1040,7 @@ class ComputerVisionClientOperationsMixin(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
+            raise models.ComputerVisionErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -1113,7 +1054,7 @@ class ComputerVisionClientOperationsMixin(object):
     describe_image_in_stream.metadata = {'url': '/describe'}
 
     def detect_objects_in_stream(
-            self, image, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image, model_version="latest", custom_headers=None, raw=False, callback=None, **operation_config):
         """Performs object detection on the specified image.
         Two input methods are supported -- (1) Uploading an image or (2)
         specifying an image URL.
@@ -1123,6 +1064,10 @@ class ComputerVisionClientOperationsMixin(object):
 
         :param image: An image stream.
         :type image: Generator
+        :param model_version: Optional parameter to specify the version of the
+         AI model. Accepted values are: "latest", "2021-04-01". Defaults to
+         "latest".
+        :type model_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1138,7 +1083,7 @@ class ComputerVisionClientOperationsMixin(object):
          ~azure.cognitiveservices.vision.computervision.models.DetectResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
+         :class:`ComputerVisionErrorResponseException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorResponseException>`
         """
         # Construct URL
         url = self.detect_objects_in_stream.metadata['url']
@@ -1149,6 +1094,8 @@ class ComputerVisionClientOperationsMixin(object):
 
         # Construct parameters
         query_parameters = {}
+        if model_version is not None:
+            query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str', pattern=r'^(latest|\d{4}-\d{2}-\d{2})(-preview)?$')
 
         # Construct headers
         header_parameters = {}
@@ -1165,7 +1112,7 @@ class ComputerVisionClientOperationsMixin(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
+            raise models.ComputerVisionErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -1179,7 +1126,7 @@ class ComputerVisionClientOperationsMixin(object):
     detect_objects_in_stream.metadata = {'url': '/detect'}
 
     def generate_thumbnail_in_stream(
-            self, width, height, image, smart_cropping=False, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, width, height, image, smart_cropping=False, model_version="latest", custom_headers=None, raw=False, callback=None, **operation_config):
         """This operation generates a thumbnail image with the user-specified
         width and height. By default, the service analyzes the image,
         identifies the region of interest (ROI), and generates smart cropping
@@ -1203,6 +1150,10 @@ class ComputerVisionClientOperationsMixin(object):
         :type image: Generator
         :param smart_cropping: Boolean flag for enabling smart cropping.
         :type smart_cropping: bool
+        :param model_version: Optional parameter to specify the version of the
+         AI model. Accepted values are: "latest", "2021-04-01". Defaults to
+         "latest".
+        :type model_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1231,6 +1182,8 @@ class ComputerVisionClientOperationsMixin(object):
         query_parameters['height'] = self._serialize.query("height", height, 'int', maximum=1024, minimum=1)
         if smart_cropping is not None:
             query_parameters['smartCropping'] = self._serialize.query("smart_cropping", smart_cropping, 'bool')
+        if model_version is not None:
+            query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str', pattern=r'^(latest|\d{4}-\d{2}-\d{2})(-preview)?$')
 
         # Construct headers
         header_parameters = {}
@@ -1259,7 +1212,7 @@ class ComputerVisionClientOperationsMixin(object):
     generate_thumbnail_in_stream.metadata = {'url': '/generateThumbnail'}
 
     def analyze_image_by_domain_in_stream(
-            self, model, image, language="en", custom_headers=None, raw=False, callback=None, **operation_config):
+            self, model, image, language="en", model_version="latest", custom_headers=None, raw=False, callback=None, **operation_config):
         """This operation recognizes content within an image by applying a
         domain-specific model. The list of domain-specific models that are
         supported by the Computer Vision API can be retrieved using the /models
@@ -1281,6 +1234,10 @@ class ComputerVisionClientOperationsMixin(object):
          Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
          Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
         :type language: str
+        :param model_version: Optional parameter to specify the version of the
+         AI model. Accepted values are: "latest", "2021-04-01". Defaults to
+         "latest".
+        :type model_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1296,7 +1253,7 @@ class ComputerVisionClientOperationsMixin(object):
          ~azure.cognitiveservices.vision.computervision.models.DomainModelResults
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
+         :class:`ComputerVisionErrorResponseException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorResponseException>`
         """
         # Construct URL
         url = self.analyze_image_by_domain_in_stream.metadata['url']
@@ -1310,6 +1267,8 @@ class ComputerVisionClientOperationsMixin(object):
         query_parameters = {}
         if language is not None:
             query_parameters['language'] = self._serialize.query("language", language, 'str')
+        if model_version is not None:
+            query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str', pattern=r'^(latest|\d{4}-\d{2}-\d{2})(-preview)?$')
 
         # Construct headers
         header_parameters = {}
@@ -1326,7 +1285,7 @@ class ComputerVisionClientOperationsMixin(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
+            raise models.ComputerVisionErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -1340,7 +1299,7 @@ class ComputerVisionClientOperationsMixin(object):
     analyze_image_by_domain_in_stream.metadata = {'url': '/models/{model}/analyze'}
 
     def recognize_printed_text_in_stream(
-            self, image, detect_orientation=True, language="unk", custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image, detect_orientation=True, language="unk", model_version="latest", custom_headers=None, raw=False, callback=None, **operation_config):
         """Optical Character Recognition (OCR) detects text in an image and
         extracts the recognized characters into a machine-usable character
         stream.
@@ -1364,6 +1323,10 @@ class ComputerVisionClientOperationsMixin(object):
          'tr', 'ar', 'ro', 'sr-Cyrl', 'sr-Latn', 'sk'
         :type language: str or
          ~azure.cognitiveservices.vision.computervision.models.OcrLanguages
+        :param model_version: Optional parameter to specify the version of the
+         AI model. Accepted values are: "latest", "2021-04-01". Defaults to
+         "latest".
+        :type model_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1379,7 +1342,7 @@ class ComputerVisionClientOperationsMixin(object):
          ~azure.cognitiveservices.vision.computervision.models.OcrResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
+         :class:`ComputerVisionErrorResponseException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorResponseException>`
         """
         # Construct URL
         url = self.recognize_printed_text_in_stream.metadata['url']
@@ -1393,6 +1356,8 @@ class ComputerVisionClientOperationsMixin(object):
         query_parameters['detectOrientation'] = self._serialize.query("detect_orientation", detect_orientation, 'bool')
         if language is not None:
             query_parameters['language'] = self._serialize.query("language", language, 'OcrLanguages')
+        if model_version is not None:
+            query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str', pattern=r'^(latest|\d{4}-\d{2}-\d{2})(-preview)?$')
 
         # Construct headers
         header_parameters = {}
@@ -1409,7 +1374,7 @@ class ComputerVisionClientOperationsMixin(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
+            raise models.ComputerVisionErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -1423,7 +1388,7 @@ class ComputerVisionClientOperationsMixin(object):
     recognize_printed_text_in_stream.metadata = {'url': '/ocr'}
 
     def tag_image_in_stream(
-            self, image, language="en", custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image, language="en", model_version="latest", custom_headers=None, raw=False, callback=None, **operation_config):
         """This operation generates a list of words, or tags, that are relevant to
         the content of the supplied image. The Computer Vision API can return
         tags based on objects, living beings, scenery or actions found in
@@ -1445,6 +1410,10 @@ class ComputerVisionClientOperationsMixin(object):
          Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
          Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
         :type language: str
+        :param model_version: Optional parameter to specify the version of the
+         AI model. Accepted values are: "latest", "2021-04-01". Defaults to
+         "latest".
+        :type model_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1460,7 +1429,7 @@ class ComputerVisionClientOperationsMixin(object):
          ~azure.cognitiveservices.vision.computervision.models.TagResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
+         :class:`ComputerVisionErrorResponseException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorResponseException>`
         """
         # Construct URL
         url = self.tag_image_in_stream.metadata['url']
@@ -1473,6 +1442,8 @@ class ComputerVisionClientOperationsMixin(object):
         query_parameters = {}
         if language is not None:
             query_parameters['language'] = self._serialize.query("language", language, 'str')
+        if model_version is not None:
+            query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str', pattern=r'^(latest|\d{4}-\d{2}-\d{2})(-preview)?$')
 
         # Construct headers
         header_parameters = {}
@@ -1489,7 +1460,7 @@ class ComputerVisionClientOperationsMixin(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
+            raise models.ComputerVisionErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -1502,8 +1473,149 @@ class ComputerVisionClientOperationsMixin(object):
         return deserialized
     tag_image_in_stream.metadata = {'url': '/tag'}
 
+    def read(
+            self, url, language=None, pages=None, model_version="latest", custom_headers=None, raw=False, **operation_config):
+        """Use this interface to get the result of a Read operation, employing the
+        state-of-the-art Optical Character Recognition (OCR) algorithms
+        optimized for text-heavy documents. When you use the Read interface,
+        the response contains a field called 'Operation-Location'. The
+        'Operation-Location' field contains the URL that you must use for your
+        'GetReadResult' operation to access OCR results.​.
+
+        :param url: Publicly reachable URL of an image.
+        :type url: str
+        :param language: The BCP-47 language code of the text in the document.
+         Read supports auto language identification and multi-language
+         documents, so only provide a language code if you would like to force
+         the document to be processed in that specific language. See
+         https://aka.ms/ocr-languages for list of supported languages. Possible
+         values include: 'af', 'ast', 'bi', 'br', 'ca', 'ceb', 'ch', 'co',
+         'crh', 'cs', 'csb', 'da', 'de', 'en', 'es', 'et', 'eu', 'fi', 'fil',
+         'fj', 'fr', 'fur', 'fy', 'ga', 'gd', 'gil', 'gl', 'gv', 'hni', 'hsb',
+         'ht', 'hu', 'ia', 'id', 'it', 'iu', 'ja', 'jv', 'kaa', 'kac', 'kea',
+         'kha', 'kl', 'ko', 'ku', 'kw', 'lb', 'ms', 'mww', 'nap', 'nl', 'no',
+         'oc', 'pl', 'pt', 'quc', 'rm', 'sco', 'sl', 'sq', 'sv', 'sw', 'tet',
+         'tr', 'tt', 'uz', 'vo', 'wae', 'yua', 'za', 'zh-Hans', 'zh-Hant', 'zu'
+        :type language: str or
+         ~azure.cognitiveservices.vision.computervision.models.OcrDetectionLanguage
+        :param pages: Custom page numbers for multi-page documents(PDF/TIFF),
+         input the number of the pages you want to get OCR result. For a range
+         of pages, use a hyphen. Separate each page or range with a comma.
+        :type pages: list[str]
+        :param model_version: Optional parameter to specify the version of the
+         OCR model used for text extraction. Accepted values are: "latest",
+         "latest-preview", "2021-04-12". Defaults to "latest".
+        :type model_version: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ComputerVisionOcrErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionOcrErrorException>`
+        """
+        image_url = models.ImageUrl(url=url)
+
+        # Construct URL
+        url = self.read.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if language is not None:
+            query_parameters['language'] = self._serialize.query("language", language, 'str')
+        if pages is not None:
+            query_parameters['pages'] = self._serialize.query("pages", pages, '[str]', div=',')
+        if model_version is not None:
+            query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str', pattern=r'^(latest|\d{4}-\d{2}-\d{2})(-preview)?$')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(image_url, 'ImageUrl')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.ComputerVisionOcrErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response.add_headers({
+                'Operation-Location': 'str',
+            })
+            return client_raw_response
+    read.metadata = {'url': '/read/analyze'}
+
+    def get_read_result(
+            self, operation_id, custom_headers=None, raw=False, **operation_config):
+        """This interface is used for getting OCR results of Read operation. The
+        URL to this interface should be retrieved from 'Operation-Location'
+        field returned from Read interface.
+
+        :param operation_id: Id of read operation returned in the response of
+         the 'Read' interface.
+        :type operation_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ReadOperationResult or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.vision.computervision.models.ReadOperationResult
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ComputerVisionOcrErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionOcrErrorException>`
+        """
+        # Construct URL
+        url = self.get_read_result.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'operationId': self._serialize.url("operation_id", operation_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ComputerVisionOcrErrorException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('ReadOperationResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_read_result.metadata = {'url': '/read/analyzeResults/{operationId}'}
+
     def read_in_stream(
-            self, image, language="en", custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image, language=None, pages=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """Use this interface to get the result of a Read operation, employing the
         state-of-the-art Optical Character Recognition (OCR) algorithms
         optimized for text-heavy documents. When you use the Read interface,
@@ -1514,15 +1626,23 @@ class ComputerVisionClientOperationsMixin(object):
         :param image: An image stream.
         :type image: Generator
         :param language: The BCP-47 language code of the text in the document.
-         Currently, only English ('en'), Dutch (‘nl’), French (‘fr’), German
-         (‘de’), Italian (‘it’), Portuguese (‘pt), and Spanish ('es') are
-         supported. Read supports auto language identification and
-         multi-language documents, so only provide a language code if you would
-         like to force the documented to be processed as that specific
-         language. Possible values include: 'en', 'es', 'fr', 'de', 'it', 'nl',
-         'pt'
+         Read supports auto language identification and multi-language
+         documents, so only provide a language code if you would like to force
+         the document to be processed in that specific language. See
+         https://aka.ms/ocr-languages for list of supported languages. Possible
+         values include: 'af', 'ast', 'bi', 'br', 'ca', 'ceb', 'ch', 'co',
+         'crh', 'cs', 'csb', 'da', 'de', 'en', 'es', 'et', 'eu', 'fi', 'fil',
+         'fj', 'fr', 'fur', 'fy', 'ga', 'gd', 'gil', 'gl', 'gv', 'hni', 'hsb',
+         'ht', 'hu', 'ia', 'id', 'it', 'iu', 'ja', 'jv', 'kaa', 'kac', 'kea',
+         'kha', 'kl', 'ko', 'ku', 'kw', 'lb', 'ms', 'mww', 'nap', 'nl', 'no',
+         'oc', 'pl', 'pt', 'quc', 'rm', 'sco', 'sl', 'sq', 'sv', 'sw', 'tet',
+         'tr', 'tt', 'uz', 'vo', 'wae', 'yua', 'za', 'zh-Hans', 'zh-Hant', 'zu'
         :type language: str or
          ~azure.cognitiveservices.vision.computervision.models.OcrDetectionLanguage
+        :param pages: Custom page numbers for multi-page documents(PDF/TIFF),
+         input the number of the pages you want to get OCR result. For a range
+         of pages, use a hyphen. Separate each page or range with a comma.
+        :type pages: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1536,7 +1656,7 @@ class ComputerVisionClientOperationsMixin(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
+         :class:`ComputerVisionOcrErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionOcrErrorException>`
         """
         # Construct URL
         url = self.read_in_stream.metadata['url']
@@ -1549,6 +1669,8 @@ class ComputerVisionClientOperationsMixin(object):
         query_parameters = {}
         if language is not None:
             query_parameters['language'] = self._serialize.query("language", language, 'str')
+        if pages is not None:
+            query_parameters['pages'] = self._serialize.query("pages", pages, '[str]', div=',')
 
         # Construct headers
         header_parameters = {}
@@ -1564,7 +1686,7 @@ class ComputerVisionClientOperationsMixin(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
+            raise models.ComputerVisionOcrErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)

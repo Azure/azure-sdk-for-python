@@ -60,6 +60,9 @@ class AnalyzeResults(Model):
 
     :param version: Required. Version of schema used for this result.
     :type version: str
+    :param model_version: Required. Version of the OCR model used for text
+     extraction.
+    :type model_version: str
     :param read_results: Required. Text extracted from the input.
     :type read_results:
      list[~azure.cognitiveservices.vision.computervision.models.ReadResult]
@@ -67,18 +70,43 @@ class AnalyzeResults(Model):
 
     _validation = {
         'version': {'required': True},
+        'model_version': {'required': True},
         'read_results': {'required': True},
     }
 
     _attribute_map = {
         'version': {'key': 'version', 'type': 'str'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
         'read_results': {'key': 'readResults', 'type': '[ReadResult]'},
     }
 
-    def __init__(self, *, version: str, read_results, **kwargs) -> None:
+    def __init__(self, *, version: str, model_version: str, read_results, **kwargs) -> None:
         super(AnalyzeResults, self).__init__(**kwargs)
         self.version = version
+        self.model_version = model_version
         self.read_results = read_results
+
+
+class Appearance(Model):
+    """An object representing the appearance of the text line.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param style: Required. An object representing the style of the text line.
+    :type style: ~azure.cognitiveservices.vision.computervision.models.Style
+    """
+
+    _validation = {
+        'style': {'required': True},
+    }
+
+    _attribute_map = {
+        'style': {'key': 'style', 'type': 'Style'},
+    }
+
+    def __init__(self, *, style, **kwargs) -> None:
+        super(Appearance, self).__init__(**kwargs)
+        self.style = style
 
 
 class AreaOfInterestResult(Model):
@@ -96,6 +124,8 @@ class AreaOfInterestResult(Model):
     :param metadata:
     :type metadata:
      ~azure.cognitiveservices.vision.computervision.models.ImageMetadata
+    :param model_version:
+    :type model_version: str
     """
 
     _validation = {
@@ -106,13 +136,15 @@ class AreaOfInterestResult(Model):
         'area_of_interest': {'key': 'areaOfInterest', 'type': 'BoundingRect'},
         'request_id': {'key': 'requestId', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': 'ImageMetadata'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
     }
 
-    def __init__(self, *, request_id: str=None, metadata=None, **kwargs) -> None:
+    def __init__(self, *, request_id: str=None, metadata=None, model_version: str=None, **kwargs) -> None:
         super(AreaOfInterestResult, self).__init__(**kwargs)
         self.area_of_interest = None
         self.request_id = request_id
         self.metadata = metadata
+        self.model_version = model_version
 
 
 class BoundingRect(Model):
@@ -216,32 +248,6 @@ class CelebritiesModel(Model):
         self.face_rectangle = face_rectangle
 
 
-class CelebrityResults(Model):
-    """Result of domain-specific classifications for the domain of celebrities.
-
-    :param celebrities: List of celebrities recognized in the image.
-    :type celebrities:
-     list[~azure.cognitiveservices.vision.computervision.models.CelebritiesModel]
-    :param request_id: Id of the REST API request.
-    :type request_id: str
-    :param metadata:
-    :type metadata:
-     ~azure.cognitiveservices.vision.computervision.models.ImageMetadata
-    """
-
-    _attribute_map = {
-        'celebrities': {'key': 'celebrities', 'type': '[CelebritiesModel]'},
-        'request_id': {'key': 'requestId', 'type': 'str'},
-        'metadata': {'key': 'metadata', 'type': 'ImageMetadata'},
-    }
-
-    def __init__(self, *, celebrities=None, request_id: str=None, metadata=None, **kwargs) -> None:
-        super(CelebrityResults, self).__init__(**kwargs)
-        self.celebrities = celebrities
-        self.request_id = request_id
-        self.metadata = metadata
-
-
 class ColorInfo(Model):
     """An object providing additional metadata describing color attributes.
 
@@ -275,6 +281,112 @@ class ColorInfo(Model):
 
 
 class ComputerVisionError(Model):
+    """The API request error.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. The error code. Possible values include:
+     'InvalidRequest', 'InvalidArgument', 'InternalServerError',
+     'ServiceUnavailable'
+    :type code: str or
+     ~azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorCodes
+    :param message: Required. A message explaining the error reported by the
+     service.
+    :type message: str
+    :param innererror: Inner error contains more specific information.
+    :type innererror:
+     ~azure.cognitiveservices.vision.computervision.models.ComputerVisionInnerError
+    """
+
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'innererror': {'key': 'innererror', 'type': 'ComputerVisionInnerError'},
+    }
+
+    def __init__(self, *, code, message: str, innererror=None, **kwargs) -> None:
+        super(ComputerVisionError, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.innererror = innererror
+
+
+class ComputerVisionErrorResponse(Model):
+    """The API error response.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param error: Required. Error contents.
+    :type error:
+     ~azure.cognitiveservices.vision.computervision.models.ComputerVisionError
+    """
+
+    _validation = {
+        'error': {'required': True},
+    }
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ComputerVisionError'},
+    }
+
+    def __init__(self, *, error, **kwargs) -> None:
+        super(ComputerVisionErrorResponse, self).__init__(**kwargs)
+        self.error = error
+
+
+class ComputerVisionErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'ComputerVisionErrorResponse'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ComputerVisionErrorResponseException, self).__init__(deserialize, response, 'ComputerVisionErrorResponse', *args)
+
+
+class ComputerVisionInnerError(Model):
+    """Details about the API request error.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. The error code. Possible values include:
+     'InvalidImageFormat', 'UnsupportedMediaType', 'InvalidImageUrl',
+     'NotSupportedFeature', 'NotSupportedImage', 'Timeout',
+     'InternalServerError', 'InvalidImageSize', 'BadArgument',
+     'DetectFaceError', 'NotSupportedLanguage', 'InvalidThumbnailSize',
+     'InvalidDetails', 'InvalidModel', 'CancelledRequest',
+     'NotSupportedVisualFeature', 'FailedToProcess', 'Unspecified',
+     'StorageException'
+    :type code: str or
+     ~azure.cognitiveservices.vision.computervision.models.ComputerVisionInnerErrorCodeValue
+    :param message: Required. Error message.
+    :type message: str
+    """
+
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, *, code, message: str, **kwargs) -> None:
+        super(ComputerVisionInnerError, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+
+
+class ComputerVisionOcrError(Model):
     """Details about the API request error.
 
     All required parameters must be populated in order to send to Azure.
@@ -300,14 +412,14 @@ class ComputerVisionError(Model):
     }
 
     def __init__(self, *, code, message: str, request_id: str=None, **kwargs) -> None:
-        super(ComputerVisionError, self).__init__(**kwargs)
+        super(ComputerVisionOcrError, self).__init__(**kwargs)
         self.code = code
         self.message = message
         self.request_id = request_id
 
 
-class ComputerVisionErrorException(HttpOperationError):
-    """Server responsed with exception of type: 'ComputerVisionError'.
+class ComputerVisionOcrErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'ComputerVisionOcrError'.
 
     :param deserialize: A deserializer
     :param response: Server response to be deserialized.
@@ -315,7 +427,7 @@ class ComputerVisionErrorException(HttpOperationError):
 
     def __init__(self, deserialize, response, *args):
 
-        super(ComputerVisionErrorException, self).__init__(deserialize, response, 'ComputerVisionError', *args)
+        super(ComputerVisionOcrErrorException, self).__init__(deserialize, response, 'ComputerVisionOcrError', *args)
 
 
 class DetectedBrand(Model):
@@ -407,6 +519,8 @@ class DetectResult(Model):
     :param metadata:
     :type metadata:
      ~azure.cognitiveservices.vision.computervision.models.ImageMetadata
+    :param model_version:
+    :type model_version: str
     """
 
     _validation = {
@@ -417,13 +531,15 @@ class DetectResult(Model):
         'objects': {'key': 'objects', 'type': '[DetectedObject]'},
         'request_id': {'key': 'requestId', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': 'ImageMetadata'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
     }
 
-    def __init__(self, *, request_id: str=None, metadata=None, **kwargs) -> None:
+    def __init__(self, *, request_id: str=None, metadata=None, model_version: str=None, **kwargs) -> None:
         super(DetectResult, self).__init__(**kwargs)
         self.objects = None
         self.request_id = request_id
         self.metadata = metadata
+        self.model_version = model_version
 
 
 class DomainModelResults(Model):
@@ -437,19 +553,23 @@ class DomainModelResults(Model):
     :param metadata:
     :type metadata:
      ~azure.cognitiveservices.vision.computervision.models.ImageMetadata
+    :param model_version:
+    :type model_version: str
     """
 
     _attribute_map = {
         'result': {'key': 'result', 'type': 'object'},
         'request_id': {'key': 'requestId', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': 'ImageMetadata'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
     }
 
-    def __init__(self, *, result=None, request_id: str=None, metadata=None, **kwargs) -> None:
+    def __init__(self, *, result=None, request_id: str=None, metadata=None, model_version: str=None, **kwargs) -> None:
         super(DomainModelResults, self).__init__(**kwargs)
         self.result = result
         self.request_id = request_id
         self.metadata = metadata
+        self.model_version = model_version
 
 
 class FaceDescription(Model):
@@ -550,6 +670,8 @@ class ImageAnalysis(Model):
     :param metadata:
     :type metadata:
      ~azure.cognitiveservices.vision.computervision.models.ImageMetadata
+    :param model_version:
+    :type model_version: str
     """
 
     _attribute_map = {
@@ -564,9 +686,10 @@ class ImageAnalysis(Model):
         'brands': {'key': 'brands', 'type': '[DetectedBrand]'},
         'request_id': {'key': 'requestId', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': 'ImageMetadata'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
     }
 
-    def __init__(self, *, categories=None, adult=None, color=None, image_type=None, tags=None, description=None, faces=None, objects=None, brands=None, request_id: str=None, metadata=None, **kwargs) -> None:
+    def __init__(self, *, categories=None, adult=None, color=None, image_type=None, tags=None, description=None, faces=None, objects=None, brands=None, request_id: str=None, metadata=None, model_version: str=None, **kwargs) -> None:
         super(ImageAnalysis, self).__init__(**kwargs)
         self.categories = categories
         self.adult = adult
@@ -579,6 +702,7 @@ class ImageAnalysis(Model):
         self.brands = brands
         self.request_id = request_id
         self.metadata = metadata
+        self.model_version = model_version
 
 
 class ImageCaption(Model):
@@ -615,6 +739,8 @@ class ImageDescription(Model):
     :param metadata:
     :type metadata:
      ~azure.cognitiveservices.vision.computervision.models.ImageMetadata
+    :param model_version:
+    :type model_version: str
     """
 
     _attribute_map = {
@@ -622,14 +748,16 @@ class ImageDescription(Model):
         'captions': {'key': 'description.captions', 'type': '[ImageCaption]'},
         'request_id': {'key': 'requestId', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': 'ImageMetadata'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, captions=None, request_id: str=None, metadata=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, captions=None, request_id: str=None, metadata=None, model_version: str=None, **kwargs) -> None:
         super(ImageDescription, self).__init__(**kwargs)
         self.tags = tags
         self.captions = captions
         self.request_id = request_id
         self.metadata = metadata
+        self.model_version = model_version
 
 
 class ImageDescriptionDetails(Model):
@@ -745,32 +873,6 @@ class ImageUrl(Model):
         self.url = url
 
 
-class LandmarkResults(Model):
-    """Result of domain-specific classifications for the domain of landmarks.
-
-    :param landmarks: List of landmarks recognized in the image.
-    :type landmarks:
-     list[~azure.cognitiveservices.vision.computervision.models.LandmarksModel]
-    :param request_id: Id of the REST API request.
-    :type request_id: str
-    :param metadata:
-    :type metadata:
-     ~azure.cognitiveservices.vision.computervision.models.ImageMetadata
-    """
-
-    _attribute_map = {
-        'landmarks': {'key': 'landmarks', 'type': '[LandmarksModel]'},
-        'request_id': {'key': 'requestId', 'type': 'str'},
-        'metadata': {'key': 'metadata', 'type': 'ImageMetadata'},
-    }
-
-    def __init__(self, *, landmarks=None, request_id: str=None, metadata=None, **kwargs) -> None:
-        super(LandmarkResults, self).__init__(**kwargs)
-        self.landmarks = landmarks
-        self.request_id = request_id
-        self.metadata = metadata
-
-
 class LandmarksModel(Model):
     """A landmark recognized in the image.
 
@@ -802,6 +904,9 @@ class Line(Model):
     :type language: str
     :param bounding_box: Required. Bounding box of a recognized line.
     :type bounding_box: list[float]
+    :param appearance: Appearance of the text line.
+    :type appearance:
+     ~azure.cognitiveservices.vision.computervision.models.Appearance
     :param text: Required. The text content of the line.
     :type text: str
     :param words: Required. List of words in the text line.
@@ -818,14 +923,16 @@ class Line(Model):
     _attribute_map = {
         'language': {'key': 'language', 'type': 'str'},
         'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
+        'appearance': {'key': 'appearance', 'type': 'Appearance'},
         'text': {'key': 'text', 'type': 'str'},
         'words': {'key': 'words', 'type': '[Word]'},
     }
 
-    def __init__(self, *, bounding_box, text: str, words, language: str=None, **kwargs) -> None:
+    def __init__(self, *, bounding_box, text: str, words, language: str=None, appearance=None, **kwargs) -> None:
         super(Line, self).__init__(**kwargs)
         self.language = language
         self.bounding_box = bounding_box
+        self.appearance = appearance
         self.text = text
         self.words = words
 
@@ -984,6 +1091,8 @@ class OcrResult(Model):
      of recognized text.
     :type regions:
      list[~azure.cognitiveservices.vision.computervision.models.OcrRegion]
+    :param model_version:
+    :type model_version: str
     """
 
     _attribute_map = {
@@ -991,14 +1100,16 @@ class OcrResult(Model):
         'text_angle': {'key': 'textAngle', 'type': 'float'},
         'orientation': {'key': 'orientation', 'type': 'str'},
         'regions': {'key': 'regions', 'type': '[OcrRegion]'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
     }
 
-    def __init__(self, *, language: str=None, text_angle: float=None, orientation: str=None, regions=None, **kwargs) -> None:
+    def __init__(self, *, language: str=None, text_angle: float=None, orientation: str=None, regions=None, model_version: str=None, **kwargs) -> None:
         super(OcrResult, self).__init__(**kwargs)
         self.language = language
         self.text_angle = text_angle
         self.orientation = orientation
         self.regions = regions
+        self.model_version = model_version
 
 
 class OcrWord(Model):
@@ -1117,6 +1228,35 @@ class ReadResult(Model):
         self.lines = lines
 
 
+class Style(Model):
+    """An object representing the style of the text line.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The text line style name, including handwriting and
+     other. Possible values include: 'other', 'handwriting'
+    :type name: str or
+     ~azure.cognitiveservices.vision.computervision.models.TextStyle
+    :param confidence: Required. The confidence of text line style.
+    :type confidence: float
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'confidence': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'confidence': {'key': 'confidence', 'type': 'float'},
+    }
+
+    def __init__(self, *, name, confidence: float, **kwargs) -> None:
+        super(Style, self).__init__(**kwargs)
+        self.name = name
+        self.confidence = confidence
+
+
 class TagResult(Model):
     """The results of a image tag operation, including any tags and image
     metadata.
@@ -1129,19 +1269,23 @@ class TagResult(Model):
     :param metadata:
     :type metadata:
      ~azure.cognitiveservices.vision.computervision.models.ImageMetadata
+    :param model_version:
+    :type model_version: str
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '[ImageTag]'},
         'request_id': {'key': 'requestId', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': 'ImageMetadata'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, request_id: str=None, metadata=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, request_id: str=None, metadata=None, model_version: str=None, **kwargs) -> None:
         super(TagResult, self).__init__(**kwargs)
         self.tags = tags
         self.request_id = request_id
         self.metadata = metadata
+        self.model_version = model_version
 
 
 class Word(Model):
