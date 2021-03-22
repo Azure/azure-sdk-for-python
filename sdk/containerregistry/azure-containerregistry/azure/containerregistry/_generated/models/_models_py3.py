@@ -481,25 +481,23 @@ class ManifestAttributesBase(msrest.serialization.Model):
     :type created_on: ~datetime.datetime
     :param last_updated_on: Last update time.
     :type last_updated_on: ~datetime.datetime
-    :param cpu_architecture: Required. CPU architecture.
+    :param cpu_architecture: CPU architecture.
     :type cpu_architecture: str
-    :param operating_system: Required. Operating system.
+    :param operating_system: Operating system.
     :type operating_system: str
-    :param manifest_media_type: Media type.
-    :type manifest_media_type: str
-    :param config_media_type: Config blob media type.
-    :type config_media_type: str
+    :param registry_artifacts: List of manifest attributes details.
+    :type registry_artifacts:
+     list[~azure.containerregistry.models.ManifestAttributesManifestReferences]
     :param tags: Required. A set of tags. List of tags.
     :type tags: list[str]
-    :param manifest_properties: Changeable attributes.
+    :param manifest_properties: Required. Changeable attributes.
     :type manifest_properties: ~azure.containerregistry.models.ContentProperties
     """
 
     _validation = {
         'digest': {'required': True},
-        'cpu_architecture': {'required': True},
-        'operating_system': {'required': True},
         'tags': {'required': True},
+        'manifest_properties': {'required': True},
     }
 
     _attribute_map = {
@@ -509,8 +507,7 @@ class ManifestAttributesBase(msrest.serialization.Model):
         'last_updated_on': {'key': 'lastUpdateTime', 'type': 'iso-8601'},
         'cpu_architecture': {'key': 'architecture', 'type': 'str'},
         'operating_system': {'key': 'os', 'type': 'str'},
-        'manifest_media_type': {'key': 'mediaType', 'type': 'str'},
-        'config_media_type': {'key': 'configMediaType', 'type': 'str'},
+        'registry_artifacts': {'key': 'references', 'type': '[ManifestAttributesManifestReferences]'},
         'tags': {'key': 'tags', 'type': '[str]'},
         'manifest_properties': {'key': 'changeableAttributes', 'type': 'ContentProperties'},
     }
@@ -519,15 +516,14 @@ class ManifestAttributesBase(msrest.serialization.Model):
         self,
         *,
         digest: str,
-        cpu_architecture: str,
-        operating_system: str,
         tags: List[str],
+        manifest_properties: "ContentProperties",
         size: Optional[int] = None,
         created_on: Optional[datetime.datetime] = None,
         last_updated_on: Optional[datetime.datetime] = None,
-        manifest_media_type: Optional[str] = None,
-        config_media_type: Optional[str] = None,
-        manifest_properties: Optional["ContentProperties"] = None,
+        cpu_architecture: Optional[str] = None,
+        operating_system: Optional[str] = None,
+        registry_artifacts: Optional[List["ManifestAttributesManifestReferences"]] = None,
         **kwargs
     ):
         super(ManifestAttributesBase, self).__init__(**kwargs)
@@ -537,8 +533,7 @@ class ManifestAttributesBase(msrest.serialization.Model):
         self.last_updated_on = last_updated_on
         self.cpu_architecture = cpu_architecture
         self.operating_system = operating_system
-        self.manifest_media_type = manifest_media_type
-        self.config_media_type = config_media_type
+        self.registry_artifacts = registry_artifacts
         self.tags = tags
         self.manifest_properties = manifest_properties
 
@@ -572,32 +567,40 @@ class ManifestAttributesManifest(msrest.serialization.Model):
 class ManifestAttributesManifestReferences(msrest.serialization.Model):
     """Manifest attributes details.
 
-    :param digest: Manifest digest.
+    All required parameters must be populated in order to send to Azure.
+
+    :param digest: Required. Manifest digest.
     :type digest: str
-    :param architecture: CPU architecture.
-    :type architecture: str
-    :param os: Operating system.
-    :type os: str
+    :param cpu_architecture: Required. CPU architecture.
+    :type cpu_architecture: str
+    :param operating_system: Required. Operating system.
+    :type operating_system: str
     """
+
+    _validation = {
+        'digest': {'required': True},
+        'cpu_architecture': {'required': True},
+        'operating_system': {'required': True},
+    }
 
     _attribute_map = {
         'digest': {'key': 'digest', 'type': 'str'},
-        'architecture': {'key': 'architecture', 'type': 'str'},
-        'os': {'key': 'os', 'type': 'str'},
+        'cpu_architecture': {'key': 'architecture', 'type': 'str'},
+        'operating_system': {'key': 'os', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        digest: Optional[str] = None,
-        architecture: Optional[str] = None,
-        os: Optional[str] = None,
+        digest: str,
+        cpu_architecture: str,
+        operating_system: str,
         **kwargs
     ):
         super(ManifestAttributesManifestReferences, self).__init__(**kwargs)
         self.digest = digest
-        self.architecture = architecture
-        self.os = os
+        self.cpu_architecture = cpu_architecture
+        self.operating_system = operating_system
 
 
 class ManifestChangeableAttributes(msrest.serialization.Model):
@@ -1036,7 +1039,7 @@ class RegistryArtifactProperties(msrest.serialization.Model):
 
     :param repository: Required. Image name.
     :type repository: str
-    :param digest: Manifest.
+    :param digest: Required. Manifest.
     :type digest: str
     :param size: Image size.
     :type size: long
@@ -1048,18 +1051,20 @@ class RegistryArtifactProperties(msrest.serialization.Model):
     :type cpu_architecture: str
     :param operating_system: Operating system.
     :type operating_system: str
-    :param manifest_media_type: Media type.
-    :type manifest_media_type: str
-    :param config_media_type: Config blob media type.
-    :type config_media_type: str
-    :param tags: A set of tags. List of tags.
+    :param registry_artifacts: List of manifest attributes details.
+    :type registry_artifacts:
+     list[~azure.containerregistry.models.ManifestAttributesManifestReferences]
+    :param tags: Required. A set of tags. List of tags.
     :type tags: list[str]
-    :param manifest_properties: Changeable attributes.
+    :param manifest_properties: Required. Changeable attributes.
     :type manifest_properties: ~azure.containerregistry.models.ContentProperties
     """
 
     _validation = {
         'repository': {'required': True},
+        'digest': {'required': True},
+        'tags': {'required': True},
+        'manifest_properties': {'required': True},
     }
 
     _attribute_map = {
@@ -1070,8 +1075,7 @@ class RegistryArtifactProperties(msrest.serialization.Model):
         'last_updated_on': {'key': 'manifest.lastUpdateTime', 'type': 'iso-8601'},
         'cpu_architecture': {'key': 'manifest.architecture', 'type': 'str'},
         'operating_system': {'key': 'manifest.os', 'type': 'str'},
-        'manifest_media_type': {'key': 'manifest.mediaType', 'type': 'str'},
-        'config_media_type': {'key': 'manifest.configMediaType', 'type': 'str'},
+        'registry_artifacts': {'key': 'manifest.references', 'type': '[ManifestAttributesManifestReferences]'},
         'tags': {'key': 'manifest.tags', 'type': '[str]'},
         'manifest_properties': {'key': 'manifest.changeableAttributes', 'type': 'ContentProperties'},
     }
@@ -1080,16 +1084,15 @@ class RegistryArtifactProperties(msrest.serialization.Model):
         self,
         *,
         repository: str,
-        digest: Optional[str] = None,
+        digest: str,
+        tags: List[str],
+        manifest_properties: "ContentProperties",
         size: Optional[int] = None,
         created_on: Optional[datetime.datetime] = None,
         last_updated_on: Optional[datetime.datetime] = None,
         cpu_architecture: Optional[str] = None,
         operating_system: Optional[str] = None,
-        manifest_media_type: Optional[str] = None,
-        config_media_type: Optional[str] = None,
-        tags: Optional[List[str]] = None,
-        manifest_properties: Optional["ContentProperties"] = None,
+        registry_artifacts: Optional[List["ManifestAttributesManifestReferences"]] = None,
         **kwargs
     ):
         super(RegistryArtifactProperties, self).__init__(**kwargs)
@@ -1100,8 +1103,7 @@ class RegistryArtifactProperties(msrest.serialization.Model):
         self.last_updated_on = last_updated_on
         self.cpu_architecture = cpu_architecture
         self.operating_system = operating_system
-        self.manifest_media_type = manifest_media_type
-        self.config_media_type = config_media_type
+        self.registry_artifacts = registry_artifacts
         self.tags = tags
         self.manifest_properties = manifest_properties
 
@@ -1284,13 +1286,19 @@ class TagAttributesTag(msrest.serialization.Model):
 class TagList(msrest.serialization.Model):
     """List of tag details.
 
-    :param repository: Image name.
+    All required parameters must be populated in order to send to Azure.
+
+    :param repository: Required. Image name.
     :type repository: str
     :param tags: A set of tags. List of tag attribute details.
     :type tags: list[~azure.containerregistry.models.TagAttributesBase]
     :param link:
     :type link: str
     """
+
+    _validation = {
+        'repository': {'required': True},
+    }
 
     _attribute_map = {
         'repository': {'key': 'imageName', 'type': 'str'},
@@ -1301,7 +1309,7 @@ class TagList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        repository: Optional[str] = None,
+        repository: str,
         tags: Optional[List["TagAttributesBase"]] = None,
         link: Optional[str] = None,
         **kwargs
@@ -1315,19 +1323,27 @@ class TagList(msrest.serialization.Model):
 class TagProperties(msrest.serialization.Model):
     """Tag attributes.
 
-    :param repository: Image name.
+    All required parameters must be populated in order to send to Azure.
+
+    :param repository: Required. Image name.
     :type repository: str
     :param name: Tag name.
     :type name: str
     :param digest: Tag digest.
     :type digest: str
-    :param created_on: Tag created time.
+    :param created_on: Required. Tag created time.
     :type created_on: ~datetime.datetime
-    :param last_updated_on: Tag last update time.
+    :param last_updated_on: Required. Tag last update time.
     :type last_updated_on: ~datetime.datetime
     :param writeable_properties: Changeable attributes.
     :type writeable_properties: ~azure.containerregistry.models.ContentProperties
     """
+
+    _validation = {
+        'repository': {'required': True},
+        'created_on': {'required': True},
+        'last_updated_on': {'required': True},
+    }
 
     _attribute_map = {
         'repository': {'key': 'imageName', 'type': 'str'},
@@ -1341,11 +1357,11 @@ class TagProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        repository: Optional[str] = None,
+        repository: str,
+        created_on: datetime.datetime,
+        last_updated_on: datetime.datetime,
         name: Optional[str] = None,
         digest: Optional[str] = None,
-        created_on: Optional[datetime.datetime] = None,
-        last_updated_on: Optional[datetime.datetime] = None,
         writeable_properties: Optional["ContentProperties"] = None,
         **kwargs
     ):

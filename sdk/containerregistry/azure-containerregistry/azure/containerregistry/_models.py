@@ -45,33 +45,25 @@ class DeletedRepositoryResult(object):
 
 class RegistryArtifactProperties(object):
     def __init__(self, **kwargs):
+        self.cpu_architecture = kwargs.get("cpu_architecture", None)
         self.created_on = kwargs.get("created_on", None)
-        self.registry = kwargs.get("registry", None)
-        # self.cpu_arch = kwargs.get("arch", None)
-        # self.digest = kwargs.get("digest", None)
-        # self.last_updated = kwargs.get("last_updated", None)
-        # self.manifest_properties = kwargs.get("manifest_properties", None)
-        # self.operating_system = kwargs.get("operating_system", None)
-        # self.registry = kwargs.get("registry", None)
-        # self.registry_artifacts = kwargs.get("registry_artifacts", None)
-        # self.repository = kwargs.get("repository", None)
-        # self.size = kwargs.get("size", None)
-        # self.tags = kwargs.get("tags", None)
+        self.digest = kwargs.get("digest", None)
+        self.last_updated_on = kwargs.get("last_updated_on", None)
+        self.manifest_properties = kwargs.get("manifest_properties", None)
+        self.operating_system = kwargs.get("operating_system", None)
+        self.size = kwargs.get("size", None)
+        self.tags = kwargs.get("tags", None)
 
     @classmethod
     def from_generated(cls, generated):
         # type: (ManifestAttributesBase) -> RegistryArtifactProperties
         return cls(
-            config_media_type=generated.config_media_type,
             cpu_architecture=generated.cpu_architecture,
             created_on=generated.created_on,
             digest=generated.digest,
             last_updated_on=generated.last_updated_on,
-            manifest_media_type=generated.manifest_media_type,
             manifest_properties=generated.manifest_properties,
             operating_system=generated.operating_system,
-            # registry=generated.registry,
-            # repository=generated.repository,
             size=generated.size,
             tags=generated.tags,
         )
