@@ -230,7 +230,7 @@ class JobStatusDetail(object):  # pylint: disable=useless-object-inheritance, to
 
 
 class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritance, R0903
-    """DocumentStatusDetail.
+    """DocumentStatusResult.
 
     :ivar translated_document_url: Required. Location of the translated document or folder.
     :vartype translated_document_url: str

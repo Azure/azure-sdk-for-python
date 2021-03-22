@@ -182,7 +182,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         :type job_id: str
         :keyword int results_per_page:
         :keyword int skip:
-        :rtype: ~azure.core.paging.ItemPaged[DocumentStatusDetail]
+        :rtype: ~azure.core.paging.ItemPaged[DocumentStatusResult]
         """
 
         skip = kwargs.pop('skip', None)
@@ -215,7 +215,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         :type job_id: str
         :param document_id: guid id for document
         :type document_id: str
-        :rtype: ~azure.ai.documenttranslation.DocumentStatusDetail
+        :rtype: ~azure.ai.documenttranslation.DocumentStatusResult
         """
 
         document_status = self._client.document_translation.get_document_status(

@@ -187,7 +187,7 @@ class DocumentTranslationClient(object):
         :type job_id: str
         :keyword int results_per_page:
         :keyword int skip:
-        :rtype: ~azure.core.paging.AsyncItemPaged[DocumentStatusDetail]
+        :rtype: ~azure.core.paging.AsyncItemPaged[DocumentStatusResult]
         """
         skip = kwargs.pop('skip', None)
         results_per_page = kwargs.pop('results_per_page', None)
@@ -219,7 +219,7 @@ class DocumentTranslationClient(object):
         :type job_id: str
         :param document_id: guid id for document
         :type document_id: str
-        :rtype: ~azure.ai.documenttranslation.DocumentStatusDetail
+        :rtype: ~azure.ai.documenttranslation.DocumentStatusResult
         """
         document_status = await self._client.document_translation.get_document_status(job_id, document_id, **kwargs)
         # pylint: disable=protected-access
