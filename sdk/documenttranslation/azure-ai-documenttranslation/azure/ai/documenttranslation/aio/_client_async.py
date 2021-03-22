@@ -227,7 +227,7 @@ class DocumentTranslationClient(object):
 
 
     @distributed_trace_async
-    async def get_supported_glossary_formats(self, **kwargs):
+    async def get_glossary_formats(self, **kwargs):
         # type: (**Any) -> List[FileFormat]
         """
 
@@ -238,7 +238,7 @@ class DocumentTranslationClient(object):
         return FileFormat._from_generated_list(glossary_formats.value)
 
     @distributed_trace_async
-    async def get_supported_document_formats(self, **kwargs):
+    async def get_document_formats(self, **kwargs):
         # type: (**Any) -> List[FileFormat]
         """
 

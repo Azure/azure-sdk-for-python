@@ -225,7 +225,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         return DocumentStatusResult._from_generated(document_status)  # pylint: disable=protected-access
 
     @distributed_trace
-    def get_supported_glossary_formats(self, **kwargs):
+    def get_glossary_formats(self, **kwargs):
         # type: (**Any) -> List[FileFormat]
         """
 
@@ -236,7 +236,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         return FileFormat._from_generated_list(glossary_formats.value)  # pylint: disable=protected-access
 
     @distributed_trace
-    def get_supported_document_formats(self, **kwargs):
+    def get_document_formats(self, **kwargs):
         # type: (**Any) -> List[FileFormat]
         """
 
