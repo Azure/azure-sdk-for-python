@@ -1,5 +1,42 @@
 # Release History
 
+## 0.8.0 (2021-03-22)
+
+**Features**
+
+  - Model Line has a new parameter appearance
+  - Model TagResult has a new parameter model_version
+  - Model DomainModelResults has a new parameter model_version
+  - Model AreaOfInterestResult has a new parameter model_version
+  - Model DetectResult has a new parameter model_version
+  - Model ImageAnalysis has a new parameter model_version
+  - Model ImageDescription has a new parameter model_version
+  - Model OcrResult has a new parameter model_version
+  - Model ComputerVisionError has a new parameter innererror
+
+**Breaking changes**
+
+  - Operation ComputerVisionClientOperationsMixin.analyze_image has a new signature
+  - Operation ComputerVisionClientOperationsMixin.analyze_image_by_domain has a new signature
+  - Operation ComputerVisionClientOperationsMixin.analyze_image_by_domain_in_stream has a new signature
+  - Operation ComputerVisionClientOperationsMixin.analyze_image_in_stream has a new signature
+  - Operation ComputerVisionClientOperationsMixin.describe_image has a new signature
+  - Operation ComputerVisionClientOperationsMixin.describe_image_in_stream has a new signature
+  - Operation ComputerVisionClientOperationsMixin.detect_objects has a new signature
+  - Operation ComputerVisionClientOperationsMixin.detect_objects_in_stream has a new signature
+  - Operation ComputerVisionClientOperationsMixin.generate_thumbnail has a new signature
+  - Operation ComputerVisionClientOperationsMixin.generate_thumbnail_in_stream has a new signature
+  - Operation ComputerVisionClientOperationsMixin.get_area_of_interest has a new signature
+  - Operation ComputerVisionClientOperationsMixin.get_area_of_interest_in_stream has a new signature
+  - Operation ComputerVisionClientOperationsMixin.read_in_stream has a new signature
+  - Operation ComputerVisionClientOperationsMixin.recognize_printed_text has a new signature
+  - Operation ComputerVisionClientOperationsMixin.recognize_printed_text_in_stream has a new signature
+  - Operation ComputerVisionClientOperationsMixin.tag_image has a new signature
+  - Operation ComputerVisionClientOperationsMixin.tag_image_in_stream has a new signature
+  - Operation ComputerVisionClientOperationsMixin.read has a new signature
+  - Model AnalyzeResults has a new required parameter model_version
+  - Model ComputerVisionError no longer has parameter request_id
+
 ## 0.7.0 (2020-10-08)
 
 **Features**
