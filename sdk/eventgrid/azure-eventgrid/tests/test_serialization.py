@@ -114,3 +114,7 @@ class EventGridSerializationTests(AzureMgmtTestCase):
         assert SystemEventNames.KeyVaultKeyNearExpiryEventName == "Microsoft.KeyVault.KeyNearExpiry"
         var = SystemEventNames.ServiceBusActiveMessagesAvailableWithNoListenersEventName
         assert var == "Microsoft.ServiceBus.ActiveMessagesAvailableWithNoListeners"
+        var = SystemEventNames.AcsChatParticipantAddedToThreadEvent
+        assert var == "Microsoft.Communication.ChatThreadParticipantAdded"
+        var = SystemEventNames.AcsChatParticipantRemovedFromThreadEvent
+        assert var == "Microsoft.Communication.ChatThreadParticipantRemoved"
