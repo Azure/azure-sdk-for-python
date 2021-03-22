@@ -62,12 +62,12 @@ class DocumentTranslationClient(object):
         )
 
     @distributed_trace_async
-    async def create_translation_job(self, batch, **kwargs):
+    async def create_translation_job(self, inputs, **kwargs):
         # type: (List[DocumentTranslationInput], **Any) -> JobStatusDetail
         """
 
-        :param batch:
-        :type batch: List[~azure.ai.documenttranslation.DocumentTranslationInput]
+        :param inputs:
+        :type inputs: List[~azure.ai.documenttranslation.DocumentTranslationInput]
         :return: JobStatusDetail
         :rtype: JobStatusDetail
         """
@@ -75,7 +75,7 @@ class DocumentTranslationClient(object):
         # submit translation job
         response_headers = await self._client.document_translation._submit_batch_request_initial(  # pylint: disable=protected-access
             # pylint: disable=protected-access
-            inputs=DocumentTranslationInput._to_generated_list(batch),
+            inputs=DocumentTranslationInput._to_generated_list(inputs),
             cls=lambda pipeline_response, _, response_headers: response_headers,
             polling=True,
             **kwargs

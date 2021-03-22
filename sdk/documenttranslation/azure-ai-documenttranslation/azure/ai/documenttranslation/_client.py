@@ -59,19 +59,19 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         )
 
     @distributed_trace
-    def create_translation_job(self, batch, **kwargs):
+    def create_translation_job(self, inputs, **kwargs):
         # type: (List[DocumentTranslationInput], **Any) -> JobStatusDetail
         """
 
-        :param batch:
-        :type batch: List[~azure.ai.documenttranslation.DocumentTranslationInput]
+        :param inputs:
+        :type inputs: List[~azure.ai.documenttranslation.DocumentTranslationInput]
         :return: JobStatusDetail
         :rtype: JobStatusDetail
         """
 
         # submit translation job
         response_headers = self._client.document_translation._submit_batch_request_initial(  # pylint: disable=protected-access
-            inputs=DocumentTranslationInput._to_generated_list(batch),  # pylint: disable=protected-access
+            inputs=DocumentTranslationInput._to_generated_list(inputs),  # pylint: disable=protected-access
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
