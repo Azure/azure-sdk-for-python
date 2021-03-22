@@ -257,6 +257,12 @@ def run_live_test():
     print_exec(f'python scripts/dev_setup.py -p azure-mgmt-{SERVICE_NAME}')
     # run live test
     try:
+        print_check(f'pytest sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}/  --collect-only')
+    except:
+        my_print('live test run done, do not find any test !!!')
+        return
+
+    try:
         print_check(f'pytest -s sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}/')
     except:
         with open(f'{OUT_PATH}/live_test_fail.txt', 'w') as file_out:
