@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Union, Any, List, TYPE_CHECKING
+from typing import Any, List
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import AsyncLROPoller
@@ -24,9 +24,6 @@ from .._models import (
     DocumentStatusDetail
 )
 from .._polling import TranslationPolling
-if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential
-
 COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
 
 
@@ -42,7 +39,7 @@ class DocumentTranslationClient(object):
 
         :param str endpoint:
         :param credential:
-        :type credential: Union[AzureKeyCredential, AsyncTokenCredential]
+        :type credential: AzureKeyCredential
         :keyword str api_version:
         :rtype: None
         """

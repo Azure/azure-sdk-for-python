@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Union, Any, TYPE_CHECKING, List
+from typing import Any, TYPE_CHECKING, List
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling
@@ -22,7 +22,6 @@ from ._user_agent import USER_AGENT
 from ._polling import TranslationPolling
 if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
-    from azure.core.credentials import AzureKeyCredential
 
 COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
 
