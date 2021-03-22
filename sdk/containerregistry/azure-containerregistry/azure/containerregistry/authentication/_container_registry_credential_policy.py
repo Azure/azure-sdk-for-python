@@ -4,8 +4,16 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import re
+from typing import TYPE_CHECKING
 
-from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.pipeline.policies import ChallengeAuthenticationPolicy
+
+from ._container_registry_token_service import ContainerRegistryTokenService
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
+    from typing import List
+
 
 # Follows challenge based authorization scheme
 
@@ -28,7 +36,7 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 #     Request Header: {Bearer acr acces token}
 
 
-class ContainerRegistryCredentialPolicy(SansIOHTTPPolicy):
+class ContainerRegistryCredentialPolicy(ChallengeAuthenticationPolicy):
     """Challenge based authentication policy for ACR. This policy is used for getting
     the AAD Token, refresh token, and access token before performing a call to service.
 
@@ -44,12 +52,33 @@ class ContainerRegistryCredentialPolicy(SansIOHTTPPolicy):
     AUTHORIZATION = "Authorization"
 
     def __init__(self, credential, url, pipeline):
+        # type: (TokenCredential, str, HttpPipeline) -> None
         self.credential = credential
         self.url = url
         self.pipeline = pipeline
+        self.container_registry_token_service = ContainerRegistryTokenService(
+            credential, url, pipeline
+        )
+
+    @classmethod
+    def from_token_service(cls, token_service):
+        # type: (ContainerRegistryTokenService) -> ContainerRegistryCredentialPolicy
+        return cls(token_service.credential, token_service.url, token_service.pipeline)
 
     def process(self, context, next):
         # type: (HttpPipelineContext, HttpPipelinePolicy) -> HttpResponse
+        if not self.url.startswith("https"):
+            raise ValueError("Token Credentials require a URL using the HTTPS protocol scheme")
+
+    def on_request(self, request):
+        # type: (PipelineRequest) -> None
+        """Called before the policy sends a request"""
+        pass
+
+    def send(self, request):
+        # type: (PipelineRequest) -> PipelineResponse
+        """Authorizes a request with a bearer token, possibly handling an authentication challenge"""
+
         pass
 
     def authorize_request(self, context, token_request_context):
