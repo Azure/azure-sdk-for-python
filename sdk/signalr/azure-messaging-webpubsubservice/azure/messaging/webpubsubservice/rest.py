@@ -35,7 +35,11 @@ from azure.core.pipeline.transport._base import _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, IO, List, Optional, Union, Dict, Literal
+    from typing import Any, IO, List, Optional, Union, Dict
+    try:
+        from typing import Literal
+    except ImportError:
+        from typing_extensions import Literal
     Permissions = Union[Literal['joinLeaveGroup'], Literal['sendToGroup']]
 
 _SERIALIZER = Serializer()
