@@ -4,7 +4,13 @@ from azure.communication.phonenumbers.aio import PhoneNumbersClient
 from _shared.asynctestcase import AsyncCommunicationTestCase
 from _shared.testcase import ResponseReplacerProcessor, BodyReplacerProcessor
 from _shared.utils import create_token_credential
-from azure.communication.phonenumbers import PhoneNumberAssignmentType, PhoneNumberCapabilities, PhoneNumberCapabilityType, PhoneNumberType
+from azure.communication.phonenumbers import (
+    PhoneNumberAssignmentType, 
+    PhoneNumberCapabilities, 
+    PhoneNumberCapabilityType, 
+    PhoneNumberType, 
+    PhoneNumberOperationStatus
+)
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
 from phone_number_helper import PhoneNumberUriReplacer
 
@@ -101,4 +107,4 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
             purchase_poller = await self.phone_number_client.begin_purchase_phone_numbers(phone_number_to_buy.search_id, polling=True)
             await purchase_poller.result()
             release_poller = await self.phone_number_client.begin_release_phone_number(phone_number_to_buy.phone_numbers[0])
-        assert release_poller.status() == 'Succeeded'
+        assert release_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
