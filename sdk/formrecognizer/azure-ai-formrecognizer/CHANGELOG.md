@@ -2,6 +2,16 @@
 
 ## 3.1.0b4 (Unreleased)
 
+**New features**
+
+- New methods `begin_recognize_id_documents` and `begin_recognize_id_documents_from_url` introduced to the SDK. Use these methods to recognize data from identity documents.
+- Content-type `image/bmp` now supported by custom forms and training methods.
+- Added keyword argument `pages` for business cards, receipts, custom forms, and invoices 
+to specify which page to process of the document.
+
+**Dependency Updates**
+
+- Bumped `msrest` requirement from `0.6.12` to `0.6.21`.
 
 ## 3.1.0b3 (2021-02-09)
 

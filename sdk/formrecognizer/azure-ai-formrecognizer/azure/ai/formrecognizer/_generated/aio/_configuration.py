@@ -8,13 +8,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 from .._version import VERSION
 
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
 
 class FormRecognizerClientConfiguration(Configuration):
     """Configuration for FormRecognizerClient.
@@ -30,8 +33,8 @@ class FormRecognizerClientConfiguration(Configuration):
 
     def __init__(
         self,
-        credential,  # type: "AsyncTokenCredential"
-        endpoint,  # type: str
+        credential: "AsyncTokenCredential",
+        endpoint: str,
         **kwargs  # type: Any
     ) -> None:
         if credential is None:
