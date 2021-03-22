@@ -24,6 +24,8 @@ class SystemEventNames(str, Enum):
     AcsChatThreadCreatedWithUserEventName = (
         "Microsoft.Communication.ChatThreadCreatedWithUser"
     )
+    AcsChatThreadParticipantAddedEventName = "Microsoft.Communication.ChatThreadParticipantAdded"
+    AcsChatThreadParticipantRemovedEventName = "Microsoft.Communication.ChatThreadParticipantRemoved"
     AcsChatThreadPropertiesUpdatedPerUserEventName = (
         "Microsoft.Communication.ChatThreadPropertiesUpdatedPerUser"
     )
