@@ -179,7 +179,7 @@ class DocumentTranslationClient(object):
         )
 
     @distributed_trace
-    def list_documents_statuses(self, job_id, **kwargs):
+    def list_all_document_statuses(self, job_id, **kwargs):
         # type: (str, **Any) -> AsyncItemPaged[DocumentStatusResult]
         """
 
