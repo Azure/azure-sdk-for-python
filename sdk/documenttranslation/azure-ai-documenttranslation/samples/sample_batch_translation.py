@@ -10,7 +10,7 @@ def sample_batch_translation():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation import (
         DocumentTranslationClient,
-        BatchDocumentInput,
+        DocumentTranslationInput,
         StorageTarget
     )
 
@@ -24,7 +24,7 @@ def sample_batch_translation():
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
     batch = [
-        BatchDocumentInput(
+        DocumentTranslationInput(
             source_url=source_container_url_en,
             targets=[
                 StorageTarget(
@@ -37,7 +37,7 @@ def sample_batch_translation():
                 )
             ]
         ),
-        BatchDocumentInput(
+        DocumentTranslationInput(
             source_url=source_container_url_de,
             targets=[
                 StorageTarget(

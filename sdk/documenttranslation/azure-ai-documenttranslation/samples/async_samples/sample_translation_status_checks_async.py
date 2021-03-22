@@ -16,7 +16,7 @@ class TranslationStatusChecksSampleAsync(object):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.documenttranslation.aio import DocumentTranslationClient
         from azure.ai.documenttranslation import (
-            BatchDocumentInput,
+            DocumentTranslationInput,
             StorageTarget
         )
 
@@ -29,7 +29,7 @@ class TranslationStatusChecksSampleAsync(object):
 
         # prepare translation input
         batch = [
-            BatchDocumentInput(
+            DocumentTranslationInput(
                 source_url=source_container_url,
                 targets=[
                     StorageTarget(

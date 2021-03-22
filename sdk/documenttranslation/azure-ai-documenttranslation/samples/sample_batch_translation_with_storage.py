@@ -10,7 +10,7 @@ def sample_batch_translation_with_storage():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation import (
         DocumentTranslationClient,
-        BatchDocumentInput,
+        DocumentTranslationInput,
         StorageTarget
     )
     from azure.storage.blob import ContainerClient, generate_container_sas, ContainerSasPermissions
@@ -57,7 +57,7 @@ def sample_batch_translation_with_storage():
     target_container_url = target_storage_endpoint + "/" + target_storage_container_name + "?" + target_container_sas
 
     batch = [
-        BatchDocumentInput(
+        DocumentTranslationInput(
             source_url=source_container_url,
             targets=[
                 StorageTarget(
