@@ -19,7 +19,7 @@ from azure.containerregistry import (
 )
 from azure.core.paging import ItemPaged
 
-from _shared.testcase import ContainerRegistryTestClass
+from testcase import ContainerRegistryTestClass
 
 acr_preparer = functools.partial(
     PowerShellPreparer,

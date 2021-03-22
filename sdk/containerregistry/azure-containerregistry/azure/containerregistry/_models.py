@@ -5,31 +5,34 @@
 # ------------------------------------
 
 from enum import Enum
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ._generated.models import ManifestChangeableAttributes, ManifestAttributesBase
+    from ._generated.models import RepositoryProperties as GeneratedRepositoryProperties
 
 
 class ContentPermissions(object):
     def __init__(self, **kwargs):
-        self.can_delete = kwargs.get("can_delete")
-        self.can_list = kwargs.get("can_list")
-        self.can_read = kwargs.get("can_read")
-        self.can_write = kwargs.get("can_write")
+        self.delete_enabled = kwargs.get("delete_enabled")
+        self.list_enabled = kwargs.get("list_enabled")
+        self.read_enabled = kwargs.get("read_enabled")
+        self.write_enabled = kwargs.get("write_enabled")
 
     @classmethod
     def from_generated(cls, generated):
-        # type: (azure.containerregistry._generated.models.ChangeableAttributes) -> ContentPermissions
+        # type: (ManifestChangeableAttributes) -> ContentPermissions
         return cls(
-            delete=generated.can_delete,
-            list=generated.can_list,
-            read=generated.can_read,
-            write=generated.can_write,
+            delete_enabled=generated.delete_enabled,
+            list_enabled=generated.list_enabled,
+            read_enabled=generated.read_enabled,
+            write_enabled=generated.write_enabled,
         )
 
 
 class DeletedRepositoryResult(object):
     def __init__(self, **kwargs):
-        self.deleted_registry_artifact_digests = kwargs.get(
-            "deleted_registry_artifact_digests", None
-        )
+        self.deleted_registry_artifact_digests = kwargs.get("deleted_registry_artifact_digests", None)
         self.deleted_tags = kwargs.get("deleted_tags", None)
 
     @classmethod
@@ -42,33 +45,25 @@ class DeletedRepositoryResult(object):
 
 class RegistryArtifactProperties(object):
     def __init__(self, **kwargs):
+        self.cpu_architecture = kwargs.get("cpu_architecture", None)
         self.created_on = kwargs.get("created_on", None)
-        self.registry = kwargs.get("registry", None)
-        # self.cpu_arch = kwargs.get("arch", None)
-        # self.digest = kwargs.get("digest", None)
-        # self.last_updated = kwargs.get("last_updated", None)
-        # self.manifest_properties = kwargs.get("manifest_properties", None)
-        # self.operating_system = kwargs.get("operating_system", None)
-        # self.registry = kwargs.get("registry", None)
-        # self.registry_artifacts = kwargs.get("registry_artifacts", None)
-        # self.repository = kwargs.get("repository", None)
-        # self.size = kwargs.get("size", None)
-        # self.tags = kwargs.get("tags", None)
+        self.digest = kwargs.get("digest", None)
+        self.last_updated_on = kwargs.get("last_updated_on", None)
+        self.manifest_properties = kwargs.get("manifest_properties", None)
+        self.operating_system = kwargs.get("operating_system", None)
+        self.size = kwargs.get("size", None)
+        self.tags = kwargs.get("tags", None)
 
     @classmethod
     def from_generated(cls, generated):
-        # type: (azure.containerregistry._generated.models.ManfiestAttributestBase) -> RegistryArtifactProperties
+        # type: (ManifestAttributesBase) -> RegistryArtifactProperties
         return cls(
-            config_media_type=generated.config_media_type,
             cpu_architecture=generated.cpu_architecture,
             created_on=generated.created_on,
             digest=generated.digest,
             last_updated_on=generated.last_updated_on,
-            manifest_media_type=generated.manifest_media_type,
             manifest_properties=generated.manifest_properties,
             operating_system=generated.operating_system,
-            registry=generated.registry,
-            repository=generated.repository,
             size=generated.size,
             tags=generated.tags,
         )
@@ -105,22 +100,21 @@ class RepositoryProperties(object):
         self.manifest_count = kwargs.get("manifest_count", None)
         self.content_permissions = kwargs.get("content_permissions", None)
         if self.content_permissions:
-            self.content_permissions = ContentPermissions.from_generated(
-                self.content_permissions
-            )
+            self.content_permissions = ContentPermissions.from_generated(self.content_permissions)
 
     @classmethod
     def from_generated(cls, generated):
-        # type: (azure.containerregistry._generated.models.RepositoryAttributes) -> RepositoryProperties
+        # type: (GeneratedRepositoryProperties) -> RepositoryProperties
         return cls(
             created_on=generated.created_on,
             last_updated_on=generated.last_updated_on,
             name=generated.name,
-            registry=generated.registry,
+            # registry=generated.registry,
             manifest_count=generated.registry_artifact_count,
             tag_count=generated.tag_count,
             content_permissions=generated.writeable_properties,
         )
+
 
 class RegistryArtifactOrderBy(int, Enum):
 
@@ -159,12 +153,10 @@ class TagProperties(object):
         self.last_updated_on = kwargs.get("last_updated_on", None)
         self.content_permissions = kwargs.get("content_permissions", None)
         if self.content_permissions:
-            self.content_permissions = ContentPermissions.from_generated(
-                self.content_permissions
-            )
+            self.content_permissions = ContentPermissions.from_generated(self.content_permissions)
         self.name = kwargs.get("name", None)
-        self.signed = kwargs.get('signed', None)
-        self.quarantine_state = kwargs.get('quarantine_state', None)
+        self.signed = kwargs.get("signed", None)
+        self.quarantine_state = kwargs.get("quarantine_state", None)
 
     @classmethod
     def from_generated(cls, generated):

@@ -19,7 +19,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.identity import DefaultAzureCredential
 
-from _shared.testcase import ContainerRegistryTestClass
+from testcase import ContainerRegistryTestClass
 
 
 acr_preparer = functools.partial(
@@ -30,7 +30,6 @@ acr_preparer = functools.partial(
 
 
 class TestContainerRegistryClient(AzureTestCase, ContainerRegistryTestClass):
-
     @pytest.mark.live_test_only
     @acr_preparer()
     def test_list_repositories(self, containerregistry_baseurl):

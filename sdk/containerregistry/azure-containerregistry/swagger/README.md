@@ -2,7 +2,7 @@
 
 ### Settings
 ``` yaml
-input-file: https://github.com/Azure/azure-sdk-for-js/blob/3760670d864e3334a800687f5b6deffce9ef78d3/sdk/containerregistry/container-registry/swagger/containerregistry.json
+input-file: https://raw.githubusercontent.com/Azure/azure-sdk-for-js/1138db4e60f389332df553686145356cce0b79ed/sdk/containerregistry/container-registry/swagger/containerregistry.json
 output-folder: "../azure/containerregistry/_generated"
 namespace: azure.containerregistry
 no-namespace-folders: true
