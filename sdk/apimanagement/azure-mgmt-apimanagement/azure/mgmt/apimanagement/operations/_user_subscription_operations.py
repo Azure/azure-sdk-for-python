@@ -89,7 +89,7 @@ class UserSubscriptionOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -148,3 +148,74 @@ class UserSubscriptionOperations(object):
             get_next, extract_data
         )
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{userId}/subscriptions'}  # type: ignore
+
+    def get(
+        self,
+        resource_group_name,  # type: str
+        service_name,  # type: str
+        user_id,  # type: str
+        sid,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.SubscriptionContract"
+        """Gets the specified Subscription entity associated with a particular user.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param service_name: The name of the API Management service.
+        :type service_name: str
+        :param user_id: User identifier. Must be unique in the current API Management service instance.
+        :type user_id: str
+        :param sid: Subscription entity Identifier. The entity represents the association between a
+         user and a product in API Management.
+        :type sid: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: SubscriptionContract, or the result of cls(response)
+        :rtype: ~azure.mgmt.apimanagement.models.SubscriptionContract
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SubscriptionContract"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-01-01-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+            'userId': self._serialize.url("user_id", user_id, 'str', max_length=80, min_length=1),
+            'sid': self._serialize.url("sid", sid, 'str', max_length=256, min_length=0, pattern=r'^[^*#&+:<>?]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        deserialized = self._deserialize('SubscriptionContract', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{userId}/subscriptions/{sid}'}  # type: ignore

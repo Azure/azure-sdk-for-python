@@ -52,6 +52,7 @@ class CertificateOperations(object):
         filter=None,  # type: Optional[str]
         top=None,  # type: Optional[int]
         skip=None,  # type: Optional[int]
+        is_key_vault_refresh_failed=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.CertificateCollection"]
@@ -72,6 +73,9 @@ class CertificateOperations(object):
         :type top: int
         :param skip: Number of records to skip.
         :type skip: int
+        :param is_key_vault_refresh_failed: When set to true, the response contains only certificates
+         entities which failed refresh.
+        :type is_key_vault_refresh_failed: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CertificateCollection or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.CertificateCollection]
@@ -82,7 +86,7 @@ class CertificateOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -107,6 +111,8 @@ class CertificateOperations(object):
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
+                if is_key_vault_refresh_failed is not None:
+                    query_parameters['isKeyVaultRefreshFailed'] = self._serialize.query("is_key_vault_refresh_failed", is_key_vault_refresh_failed, 'bool')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
                 request = self._client.get(url, query_parameters, header_parameters)
@@ -168,7 +174,7 @@ class CertificateOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -234,7 +240,7 @@ class CertificateOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -308,7 +314,7 @@ class CertificateOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2021-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -391,7 +397,7 @@ class CertificateOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01-preview"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -426,3 +432,70 @@ class CertificateOperations(object):
             return cls(pipeline_response, None, {})
 
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/certificates/{certificateId}'}  # type: ignore
+
+    def refresh_secret(
+        self,
+        resource_group_name,  # type: str
+        service_name,  # type: str
+        certificate_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.CertificateContract"
+        """From KeyVault, Refresh the certificate being used for authentication with the backend.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param service_name: The name of the API Management service.
+        :type service_name: str
+        :param certificate_id: Identifier of the certificate entity. Must be unique in the current API
+         Management service instance.
+        :type certificate_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: CertificateContract, or the result of cls(response)
+        :rtype: ~azure.mgmt.apimanagement.models.CertificateContract
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateContract"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-01-01-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.refresh_secret.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+            'certificateId': self._serialize.url("certificate_id", certificate_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.post(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        deserialized = self._deserialize('CertificateContract', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
+    refresh_secret.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/certificates/{certificateId}/refreshSecret'}  # type: ignore
