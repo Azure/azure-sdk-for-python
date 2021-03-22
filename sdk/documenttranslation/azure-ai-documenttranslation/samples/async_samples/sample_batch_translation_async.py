@@ -94,13 +94,13 @@ class BatchTranslationSampleAsync(object):
         async for document in doc_statuses:
             if document.status == "Failed":
                 print("Document at {} failed to be translated to {} language".format(
-                    document.url, document.translate_to
+                    document.translated_document_url, document.translate_to
                 ))
                 print("Document ID: {}, Error Code: {}, Message: {}".format(
                     document.id, document.error.code, document.error.message
                 ))
-                if document.url not in docs_to_retry:
-                    docs_to_retry.append(document.url)
+                if document.translated_document_url not in docs_to_retry:
+                    docs_to_retry.append(document.translated_document_url)
 
 
 async def main():
