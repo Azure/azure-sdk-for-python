@@ -14,7 +14,7 @@ from ._generated import BatchDocumentTranslationClient as _BatchDocumentTranslat
 from ._generated.models import BatchStatusDetail as _BatchStatusDetail
 from ._models import (
     JobStatusDetail,
-    DocumentStatusDetail,
+    DocumentStatusResult,
     BatchDocumentInput,
     FileFormat
 )
@@ -175,7 +175,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
     @distributed_trace
     def list_documents_statuses(self, job_id, **kwargs):
-        # type: (str, **Any) -> ItemPaged[DocumentStatusDetail]
+        # type: (str, **Any) -> ItemPaged[DocumentStatusResult]
         """
 
         :param job_id: guid id for job
@@ -189,7 +189,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         results_per_page = kwargs.pop('results_per_page', None)
 
         def _convert_from_generated_model(generated_model):
-            return DocumentStatusDetail._from_generated(generated_model)  # pylint: disable=protected-access
+            return DocumentStatusResult._from_generated(generated_model)  # pylint: disable=protected-access
 
         model_conversion_function = kwargs.pop(
             "cls",
@@ -208,7 +208,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
     @distributed_trace
     def get_document_status(self, job_id, document_id, **kwargs):
-        # type: (str, str, **Any) -> DocumentStatusDetail
+        # type: (str, str, **Any) -> DocumentStatusResult
         """
 
         :param job_id: guid id for job
@@ -222,7 +222,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             job_id,
             document_id,
             **kwargs)
-        return DocumentStatusDetail._from_generated(document_status)  # pylint: disable=protected-access
+        return DocumentStatusResult._from_generated(document_status)  # pylint: disable=protected-access
 
     @distributed_trace
     def get_supported_glossary_formats(self, **kwargs):

@@ -21,7 +21,7 @@ from .._models import (
     JobStatusDetail,
     BatchDocumentInput,
     FileFormat,
-    DocumentStatusDetail
+    DocumentStatusResult
 )
 from .._polling import TranslationPolling
 COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
@@ -180,7 +180,7 @@ class DocumentTranslationClient(object):
 
     @distributed_trace
     def list_documents_statuses(self, job_id, **kwargs):
-        # type: (str, **Any) -> AsyncItemPaged[DocumentStatusDetail]
+        # type: (str, **Any) -> AsyncItemPaged[DocumentStatusResult]
         """
 
         :param job_id: guid id for job
@@ -194,7 +194,7 @@ class DocumentTranslationClient(object):
 
         def _convert_from_generated_model(generated_model):
             # pylint: disable=protected-access
-            return DocumentStatusDetail._from_generated(generated_model)
+            return DocumentStatusResult._from_generated(generated_model)
 
         model_conversion_function = kwargs.pop(
             "cls",
@@ -212,7 +212,7 @@ class DocumentTranslationClient(object):
 
     @distributed_trace_async
     async def get_document_status(self, job_id, document_id, **kwargs):
-        # type: (str, str, **Any) -> DocumentStatusDetail
+        # type: (str, str, **Any) -> DocumentStatusResult
         """
 
         :param job_id: guid id for job
@@ -223,7 +223,7 @@ class DocumentTranslationClient(object):
         """
         document_status = await self._client.document_translation.get_document_status(job_id, document_id, **kwargs)
         # pylint: disable=protected-access
-        return DocumentStatusDetail._from_generated(document_status)
+        return DocumentStatusResult._from_generated(document_status)
 
 
     @distributed_trace_async

@@ -229,7 +229,7 @@ class JobStatusDetail(object):  # pylint: disable=useless-object-inheritance, to
         )
 
 
-class DocumentStatusDetail(object):  # pylint: disable=useless-object-inheritance, R0903
+class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritance, R0903
     """DocumentStatusDetail.
 
     :ivar url: Required. Location of the document or folder.

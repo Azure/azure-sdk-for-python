@@ -13,7 +13,7 @@ from ._api_version import DocumentTranslationVersion
 from ._models import (
     StorageTarget,
     JobStatusDetail,
-    DocumentStatusDetail,
+    DocumentStatusResult,
     DocumentTranslationError,
     TranslationGlossary,
     BatchDocumentInput,
@@ -32,6 +32,6 @@ __all__ = [
     "FileFormat",
     "StorageTarget",
     "JobStatusDetail",
-    "DocumentStatusDetail",
+    "DocumentStatusResult",
     "DocumentTranslationError",
 ]
