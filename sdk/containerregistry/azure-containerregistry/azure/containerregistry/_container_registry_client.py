@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from typing import Any, Dict
     from azure.core.credentials import TokenCredential
 
+
 class ContainerRegistryClient(ContainerRegistryBaseClient):
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, TokenCredential, Dict[str, Any]) -> None

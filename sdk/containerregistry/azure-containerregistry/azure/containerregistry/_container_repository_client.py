@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from ._models import ContentPermissions
 
+
 class ContainerRepositoryClient(ContainerRegistryBaseClient):
     def __init__(self, endpoint, repository, credential, **kwargs):
         # type: (str, str, TokenCredential, Dict[str, Any]) -> None

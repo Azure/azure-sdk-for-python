@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from ._generated.models import ManifestChangeableAttributes, ManifestAttributesBase
     from ._generated.models import RepositoryProperties as GeneratedRepositoryProperties
 
+
 class ContentPermissions(object):
     def __init__(self, **kwargs):
         self.delete_enabled = kwargs.get("delete_enabled")

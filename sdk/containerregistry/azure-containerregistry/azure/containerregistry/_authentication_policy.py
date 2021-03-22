@@ -13,6 +13,7 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest
 
+
 class ContainerRegistryUserCredential(object):
     """Credential used to authenticate with Container Registry service"""
 
