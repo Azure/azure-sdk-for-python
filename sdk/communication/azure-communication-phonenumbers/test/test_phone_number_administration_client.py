@@ -56,15 +56,15 @@ class PhoneNumbersClientTest(CommunicationTestCase):
         )
         assert poller.result()
 
-    # def test_update_phone_number_capabilities(self):
-    #     poller = self.phone_number_client.begin_update_phone_number_capabilities(
-    #         self.phone_number,
-    #         PhoneNumberCapabilityType.INBOUND_OUTBOUND,
-    #         PhoneNumberCapabilityType.INBOUND,
-    #         polling = True
-    #     )
-    #     poller.result()
-    #     assert poller.status() == 'Succeeded'
+    def test_update_phone_number_capabilities(self):
+        poller = self.phone_number_client.begin_update_phone_number_capabilities(
+            self.phone_number,
+            PhoneNumberCapabilityType.INBOUND_OUTBOUND,
+            PhoneNumberCapabilityType.INBOUND,
+            polling = True
+        )
+        poller.result()
+        assert poller.status() == 'Succeeded'
 
     @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
     def test_purchase_phone_numbers(self):
