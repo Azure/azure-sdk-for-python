@@ -25,7 +25,10 @@
 # --------------------------------------------------------------------------
 
 import logging
-from collections.abc import Iterable
+try:
+    from collections.abc import Iterable
+except ImportError:
+    from collections import Iterable
 from .configuration import Configuration
 from .pipeline import Pipeline
 from .pipeline.transport._base import PipelineClientBase
