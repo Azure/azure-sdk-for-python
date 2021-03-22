@@ -232,7 +232,7 @@ class JobStatusDetail(object):  # pylint: disable=useless-object-inheritance, to
 class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritance, R0903
     """DocumentStatusResult.
 
-    :ivar translated_document_url: Required. Location of the translated document or folder.
+    :ivar translated_document_url: Required. Location of the translated document.
     :vartype translated_document_url: str
     :ivar created_on: Required. Operation created date time.
     :vartype created_on: ~datetime.datetime
@@ -274,7 +274,7 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
     @classmethod
     def _from_generated(cls, doc_status):
         return cls(
-            url=doc_status.path,
+            translated_document_url=doc_status.path,
             created_on=doc_status.created_date_time_utc,
             last_updated_on=doc_status.last_action_date_time_utc,
             status=doc_status.status,
