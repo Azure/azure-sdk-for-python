@@ -64,12 +64,23 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     :type span: ~OpenTelemetry.trace.Span
     :param name: The name of the OpenTelemetry span to create if a new span is needed
     :type name: str
+    :keyword SpanKind kind: The span kind of this span.
     """
 
     def __init__(self, span=None, name="span", **kwargs):
         # type: (Optional[Span], Optional[str], Any) -> None
         current_tracer = self.get_current_tracer()
-        self._span_instance = span or current_tracer.start_span(name=name, **kwargs)
+        value = kwargs.pop('kind', None)
+        kind = (
+            OpenTelemetrySpanKind.CLIENT if value == SpanKind.CLIENT else
+            OpenTelemetrySpanKind.PRODUCER if value == SpanKind.PRODUCER else
+            OpenTelemetrySpanKind.SERVER if value == SpanKind.SERVER else
+            OpenTelemetrySpanKind.CONSUMER if value == SpanKind.CONSUMER else
+            OpenTelemetrySpanKind.INTERNAL if value == SpanKind.INTERNAL else
+            OpenTelemetrySpanKind.INTERNAL if value == SpanKind.UNSPECIFIED else
+            None
+        ) # type: SpanKind
+        self._span_instance = span or current_tracer.start_span(name=name, kind=kind, **kwargs)
         self._current_ctxt_manager = None
 
     @property
@@ -120,7 +131,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         )
         if kind is None:
             raise ValueError("Kind {} is not supported in OpenTelemetry".format(value))
-        self._span_instance._kind = kind
+        self._span_instance._kind = kind # pylint: disable=protected-access
 
     def __enter__(self):
         """Start a span."""
@@ -206,7 +217,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         ctx = extract(DictGetter(), headers)
         span_ctx = get_span_from_context(ctx).get_span_context()
         current_span = cls.get_current_span()
-        current_span._links.append(Link(span_ctx, attributes))
+        current_span._links.append(Link(span_ctx, attributes)) # pylint: disable=protected-access
 
     @classmethod
     def get_current_span(cls):
