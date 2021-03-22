@@ -46,8 +46,8 @@ _config_integration.trace_integrations(['threading'])
 class OpenCensusSpan(HttpSpanMixin, object):
     """Wraps a given OpenCensus Span so that it implements azure.core.tracing.AbstractSpan"""
 
-    def __init__(self, span=None, name="span"):
-        # type: (Optional[Span], Optional[str]) -> None
+    def __init__(self, span=None, name="span", **kwargs):
+        # type: (Optional[Span], Optional[str], Any) -> None
         """
         If a span is not passed in, creates a new tracer. If the instrumentation key for Azure Exporter is given, will
         configure the azure exporter else will just create a new tracer.
@@ -58,7 +58,7 @@ class OpenCensusSpan(HttpSpanMixin, object):
         :type name: str
         """
         tracer = self.get_current_tracer()
-        self._span_instance = span or tracer.start_span(name=name)
+        self._span_instance = span or tracer.start_span(name=name, **kwargs)
 
     @property
     def span_instance(self):
