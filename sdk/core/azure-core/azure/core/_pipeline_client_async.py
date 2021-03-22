@@ -34,8 +34,6 @@ from .pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     RequestIdPolicy,
-    AsyncHTTPPolicy,
-    SansIOHTTPPolicy
 )
 
 try:

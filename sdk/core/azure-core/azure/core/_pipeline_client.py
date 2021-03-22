@@ -37,8 +37,6 @@ from .pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     RequestIdPolicy,
-    HTTPPolicy,
-    SansIOHTTPPolicy
 )
 from .pipeline.transport import RequestsTransport
 
