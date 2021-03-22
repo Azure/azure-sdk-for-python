@@ -69,7 +69,7 @@ class BatchTranslationWithStorageSampleAsync(object):
         source_container_url = source_storage_endpoint + "/" + source_storage_container_name + "?" + source_container_sas
         target_container_url = target_storage_endpoint + "/" + target_storage_container_name + "?" + target_container_sas
 
-        batch = [
+        translation_inputs = [
             DocumentTranslationInput(
                 source_url=source_container_url,
                 targets=[
@@ -84,7 +84,7 @@ class BatchTranslationWithStorageSampleAsync(object):
 
         # run job
         async with translation_client:
-            job_detail = await translation_client.create_translation_job(batch)
+            job_detail = await translation_client.create_translation_job(translation_inputs)
             job_result = await translation_client.wait_until_done(job_detail.id)
 
             # poll status result

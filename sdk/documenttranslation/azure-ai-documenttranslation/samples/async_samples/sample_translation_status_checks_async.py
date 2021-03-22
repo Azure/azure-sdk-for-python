@@ -28,7 +28,7 @@ class TranslationStatusChecksSampleAsync(object):
         target_container_url_fr = os.environ["AZURE_TARGET_CONTAINER_URL_FR"]
 
         # prepare translation input
-        batch = [
+        translation_inputs = [
             DocumentTranslationInput(
                 source_url=source_container_url,
                 targets=[
@@ -51,7 +51,7 @@ class TranslationStatusChecksSampleAsync(object):
 
         # run translation job
         async with client:
-            job_detail = await client.create_translation_job(batch)
+            job_detail = await client.create_translation_job(translation_inputs)
             while True:
                 job_detail = await client.get_job_status(job_detail.id)  # type: JobStatusDetail
                 if job_detail.status in ["NotStarted", "Running"]:

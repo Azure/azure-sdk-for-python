@@ -26,7 +26,7 @@ class CustomTranslationSampleAsync(object):
         category_id = os.environ["AZURE_DOCUMENT_TRANSLATION_MODEL_ID"]
 
         # prepare translation job input
-        batch = [
+        translation_inputs = [
             DocumentTranslationInput(
                 source_url=source_container_url,
                 targets=[
@@ -46,7 +46,7 @@ class CustomTranslationSampleAsync(object):
 
         # run translation job
         async with client:
-            job_detail = await client.create_translation_job(batch)
+            job_detail = await client.create_translation_job(translation_inputs)
 
             print("Job initial status: {}".format(job_detail.status))
             print("Number of translations on documents: {}".format(job_detail.documents_total_count))

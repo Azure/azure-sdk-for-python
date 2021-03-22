@@ -21,7 +21,7 @@ def sample_cancel_translation_job():
 
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
-    batch = [
+    translation_inputs = [
         DocumentTranslationInput(
             source_url=source_container_url,
             targets=[
@@ -34,7 +34,7 @@ def sample_cancel_translation_job():
         )
     ]
 
-    job_detail = client.create_translation_job(batch)  # type: JobStatusDetail
+    job_detail = client.create_translation_job(translation_inputs)  # type: JobStatusDetail
 
     print("Job initial status: {}".format(job_detail.status))
     print("Number of translations on documents: {}".format(job_detail.documents_total_count))

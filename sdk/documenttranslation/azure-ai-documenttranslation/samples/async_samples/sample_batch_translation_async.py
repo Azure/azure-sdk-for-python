@@ -31,7 +31,7 @@ class BatchTranslationSampleAsync(object):
         client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
         # prepare translation job input
-        batch = [
+        translation_inputs = [
             DocumentTranslationInput(
                 source_url=source_container_url_en,
                 targets=[
@@ -62,7 +62,7 @@ class BatchTranslationSampleAsync(object):
 
         # run translation job
         async with client:
-            job_detail = await client.create_translation_job(batch)  # type: JobStatusDetail
+            job_detail = await client.create_translation_job(translation_inputs)  # type: JobStatusDetail
 
             print("Job initial status: {}".format(job_detail.status))
             print("Number of translations on documents: {}".format(job_detail.documents_total_count))

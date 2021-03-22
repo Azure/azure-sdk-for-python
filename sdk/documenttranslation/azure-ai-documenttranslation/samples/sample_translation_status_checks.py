@@ -23,7 +23,7 @@ def sample_translation_status_checks():
 
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
-    batch = [
+    translation_inputs = [
         DocumentTranslationInput(
             source_url=source_container_url,
             targets=[
@@ -41,7 +41,7 @@ def sample_translation_status_checks():
         )
     ]
 
-    job_detail = client.create_translation_job(batch)
+    job_detail = client.create_translation_job(translation_inputs)
 
     while True:
         job_detail = client.get_job_status(job_detail.id)  # type: JobStatusDetail

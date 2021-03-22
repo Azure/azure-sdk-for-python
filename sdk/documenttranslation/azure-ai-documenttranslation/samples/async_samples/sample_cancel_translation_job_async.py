@@ -25,7 +25,7 @@ class CancelTranslationJobSampleAsync(object):
         target_container_url_es = os.environ["AZURE_TARGET_CONTAINER_URL_ES"]
 
         # prepare translation job input
-        batch = [
+        translation_inputs = [
             DocumentTranslationInput(
                 source_url=source_container_url,
                 targets=[
@@ -43,7 +43,7 @@ class CancelTranslationJobSampleAsync(object):
 
         # run job
         async with client:
-            job_detail = await client.create_translation_job(batch)
+            job_detail = await client.create_translation_job(translation_inputs)
 
             print("Job initial status: {}".format(job_detail.status))
             print("Number of translations on documents: {}".format(job_detail.documents_total_count))
