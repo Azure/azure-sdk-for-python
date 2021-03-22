@@ -14,12 +14,12 @@ class ReceiveEventBatchTest(_ReceiveTest):
 
     def _on_event_batch_received(self, partition_context, event_batch):
         self._total_received_cnt += len(event_batch)
-        if self._total_received_cnt > self.args.num_events:
+        if self._total_received_cnt >= self.args.num_events:
             self.consumer.close()
 
     async def _on_event_batch_received_async(self, partition_context, event_batch):
         self._async_total_received_cnt += len(event_batch)
-        if self._async_total_received_cnt > self.args.num_events:
+        if self._async_total_received_cnt >= self.args.num_events:
             await self.async_consumer.close()
 
     def run_sync(self):

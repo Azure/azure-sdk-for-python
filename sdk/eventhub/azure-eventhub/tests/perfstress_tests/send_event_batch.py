@@ -15,24 +15,27 @@ class SendEventBatchTest(_SendTest):
         super().__init__(arguments)
         self.data = get_random_bytes(self.args.event_size)
         self.to_send_event_data_batches = []
-        self._preload_event_data_batches()
 
-    def _preload_event_data_batches(self):
+    def run_sync(self):
         batch = self.producer.create_batch()
         for _ in range(self.args.num_events):
             try:
                 batch.add(EventData(self.data))
             except ValueError:
                 # Batch full
-                self.to_send_event_data_batches.append(batch)
+                self.producer.send_batch(batch)
                 batch = self.producer.create_batch()
                 batch.add(EventData(self.data))
-        self.to_send_event_data_batches.append(batch)
-
-    def run_sync(self):
-        for event_data_batch in self.to_send_event_data_batches:
-            self.producer.send_batch(event_data_batch)
+        self.producer.send_batch(batch)
 
     async def run_async(self):
-        for event_data_batch in self.to_send_event_data_batches:
-            await self.async_producer.send_batch(event_data_batch)
+        batch = await self.async_producer.create_batch()
+        for _ in range(self.args.num_events):
+            try:
+                batch.add(EventData(self.data))
+            except ValueError:
+                # Batch full
+                await self.async_producer.send_batch(batch)
+                batch = await self.async_producer.create_batch()
+                batch.add(EventData(self.data))
+        await self.async_producer.send_batch(batch)

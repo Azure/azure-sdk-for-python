@@ -29,6 +29,14 @@ class _SendTest(_EventHubTest):
         self.producer = EventHubProducerClient.from_connection_string(connection_string, eventhub_name=eventhub_name)
         self.async_producer = AsyncEventHubProducerClient.from_connection_string(connection_string, eventhub_name=eventhub_name)
 
+    async def global_setup(self):
+        await super().global_setup()
+        # First time calling create_batch would communicate with the service to
+        # get the max allowed frame size on the link and the value will be cached.
+        # Explicitly calling the method in global_setup to eliminate overhead in test run methods.
+        self.producer.create_batch()
+        await self.async_producer.create_batch()
+
     async def close(self):
         self.producer.close()
         await self.async_producer.close()
@@ -71,5 +79,5 @@ class _ReceiveTest(_EventHubTest):
     @staticmethod
     def add_arguments(parser):
         super(_ReceiveTest, _ReceiveTest).add_arguments(parser)
-        parser.add_argument('--max-wait-time', nargs='?', type=int, help='Max time to wait for events before closing. Defaults to 0.', default=0)
+        parser.add_argument('--max-wait-time', nargs='?', type=int, help='Max time to wait for events before closing. Defaults to 0.', default=60)
         parser.add_argument('--preload', nargs='?', type=int, help='Number of events to preload. Default is 10000.', default=10000)

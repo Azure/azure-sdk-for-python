@@ -14,12 +14,12 @@ class ReceiveEventTest(_ReceiveTest):
 
     def _on_event_received(self, partition_context, event):
         self._total_received_cnt += 1
-        if self._total_received_cnt > self.args.num_events:
+        if self._total_received_cnt >= self.args.num_events:
             self.consumer.close()
 
     async def _on_event_received_async(self, partition_context, event):
         self._async_total_received_cnt += 1
-        if self._async_total_received_cnt > self.args.num_events:
+        if self._async_total_received_cnt >= self.args.num_events:
             await self.async_consumer.close()
 
     def run_sync(self):
