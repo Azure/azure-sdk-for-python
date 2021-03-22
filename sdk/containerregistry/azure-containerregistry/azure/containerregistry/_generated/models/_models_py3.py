@@ -91,10 +91,8 @@ class AcrErrors(msrest.serialization.Model):
 class AcrManifests(msrest.serialization.Model):
     """Manifest attributes.
 
-    :param registry: Registry name.
-    :type registry: str
-    :param image_name: Image name.
-    :type image_name: str
+    :param repository: Image name.
+    :type repository: str
     :param manifests: List of manifests.
     :type manifests: list[~azure.containerregistry.models.ManifestAttributesBase]
     :param link:
@@ -102,8 +100,7 @@ class AcrManifests(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'registry': {'key': 'registry', 'type': 'str'},
-        'image_name': {'key': 'imageName', 'type': 'str'},
+        'repository': {'key': 'imageName', 'type': 'str'},
         'manifests': {'key': 'manifests', 'type': '[ManifestAttributesBase]'},
         'link': {'key': 'link', 'type': 'str'},
     }
@@ -111,15 +108,13 @@ class AcrManifests(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        registry: Optional[str] = None,
-        image_name: Optional[str] = None,
+        repository: Optional[str] = None,
         manifests: Optional[List["ManifestAttributesBase"]] = None,
         link: Optional[str] = None,
         **kwargs
     ):
         super(AcrManifests, self).__init__(**kwargs)
-        self.registry = registry
-        self.image_name = image_name
+        self.repository = repository
         self.manifests = manifests
         self.link = link
 
@@ -245,7 +240,7 @@ class ContentProperties(msrest.serialization.Model):
         self.can_read = can_read
 
 
-class DeletedRepositoryResult(msrest.serialization.Model):
+class DeleteRepositoryResult(msrest.serialization.Model):
     """Deleted repository.
 
     :param deleted_registry_artifact_digests: SHA of the deleted image.
@@ -266,7 +261,7 @@ class DeletedRepositoryResult(msrest.serialization.Model):
         deleted_tags: Optional[List[str]] = None,
         **kwargs
     ):
-        super(DeletedRepositoryResult, self).__init__(**kwargs)
+        super(DeleteRepositoryResult, self).__init__(**kwargs)
         self.deleted_registry_artifact_digests = deleted_registry_artifact_digests
         self.deleted_tags = deleted_tags
 
@@ -476,7 +471,9 @@ class Manifest(msrest.serialization.Model):
 class ManifestAttributesBase(msrest.serialization.Model):
     """Manifest details.
 
-    :param digest: Manifest.
+    All required parameters must be populated in order to send to Azure.
+
+    :param digest: Required. Manifest.
     :type digest: str
     :param size: Image size.
     :type size: long
@@ -484,19 +481,26 @@ class ManifestAttributesBase(msrest.serialization.Model):
     :type created_on: ~datetime.datetime
     :param last_updated_on: Last update time.
     :type last_updated_on: ~datetime.datetime
-    :param cpu_architecture: CPU architecture.
+    :param cpu_architecture: Required. CPU architecture.
     :type cpu_architecture: str
-    :param operating_system: Operating system.
+    :param operating_system: Required. Operating system.
     :type operating_system: str
     :param manifest_media_type: Media type.
     :type manifest_media_type: str
     :param config_media_type: Config blob media type.
     :type config_media_type: str
-    :param tags: A set of tags. List of tags.
+    :param tags: Required. A set of tags. List of tags.
     :type tags: list[str]
     :param manifest_properties: Changeable attributes.
     :type manifest_properties: ~azure.containerregistry.models.ContentProperties
     """
+
+    _validation = {
+        'digest': {'required': True},
+        'cpu_architecture': {'required': True},
+        'operating_system': {'required': True},
+        'tags': {'required': True},
+    }
 
     _attribute_map = {
         'digest': {'key': 'digest', 'type': 'str'},
@@ -514,15 +518,15 @@ class ManifestAttributesBase(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        digest: Optional[str] = None,
+        digest: str,
+        cpu_architecture: str,
+        operating_system: str,
+        tags: List[str],
         size: Optional[int] = None,
         created_on: Optional[datetime.datetime] = None,
         last_updated_on: Optional[datetime.datetime] = None,
-        cpu_architecture: Optional[str] = None,
-        operating_system: Optional[str] = None,
         manifest_media_type: Optional[str] = None,
         config_media_type: Optional[str] = None,
-        tags: Optional[List[str]] = None,
         manifest_properties: Optional["ContentProperties"] = None,
         **kwargs
     ):
@@ -1028,9 +1032,9 @@ class RefreshToken(msrest.serialization.Model):
 class RegistryArtifactProperties(msrest.serialization.Model):
     """Manifest attributes details.
 
-    :param registry: Registry name.
-    :type registry: str
-    :param repository: Image name.
+    All required parameters must be populated in order to send to Azure.
+
+    :param repository: Required. Image name.
     :type repository: str
     :param digest: Manifest.
     :type digest: str
@@ -1054,8 +1058,11 @@ class RegistryArtifactProperties(msrest.serialization.Model):
     :type manifest_properties: ~azure.containerregistry.models.ContentProperties
     """
 
+    _validation = {
+        'repository': {'required': True},
+    }
+
     _attribute_map = {
-        'registry': {'key': 'registry', 'type': 'str'},
         'repository': {'key': 'imageName', 'type': 'str'},
         'digest': {'key': 'manifest.digest', 'type': 'str'},
         'size': {'key': 'manifest.imageSize', 'type': 'long'},
@@ -1072,8 +1079,7 @@ class RegistryArtifactProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        registry: Optional[str] = None,
-        repository: Optional[str] = None,
+        repository: str,
         digest: Optional[str] = None,
         size: Optional[int] = None,
         created_on: Optional[datetime.datetime] = None,
@@ -1087,7 +1093,6 @@ class RegistryArtifactProperties(msrest.serialization.Model):
         **kwargs
     ):
         super(RegistryArtifactProperties, self).__init__(**kwargs)
-        self.registry = registry
         self.repository = repository
         self.digest = digest
         self.size = size
@@ -1130,24 +1135,29 @@ class Repositories(msrest.serialization.Model):
 class RepositoryProperties(msrest.serialization.Model):
     """Repository attributes.
 
-    :param registry: Registry name.
-    :type registry: str
+    All required parameters must be populated in order to send to Azure.
+
     :param name: Image name.
     :type name: str
-    :param created_on: Image created time.
+    :param created_on: Required. Image created time.
     :type created_on: ~datetime.datetime
     :param last_updated_on: Image last update time.
     :type last_updated_on: ~datetime.datetime
-    :param registry_artifact_count: Number of the manifests.
+    :param registry_artifact_count: Required. Number of the manifests.
     :type registry_artifact_count: int
-    :param tag_count: Number of the tags.
+    :param tag_count: Required. Number of the tags.
     :type tag_count: int
     :param writeable_properties: Changeable attributes.
     :type writeable_properties: ~azure.containerregistry.models.ContentProperties
     """
 
+    _validation = {
+        'created_on': {'required': True},
+        'registry_artifact_count': {'required': True},
+        'tag_count': {'required': True},
+    }
+
     _attribute_map = {
-        'registry': {'key': 'registry', 'type': 'str'},
         'name': {'key': 'imageName', 'type': 'str'},
         'created_on': {'key': 'createdTime', 'type': 'iso-8601'},
         'last_updated_on': {'key': 'lastUpdateTime', 'type': 'iso-8601'},
@@ -1159,17 +1169,15 @@ class RepositoryProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        registry: Optional[str] = None,
+        created_on: datetime.datetime,
+        registry_artifact_count: int,
+        tag_count: int,
         name: Optional[str] = None,
-        created_on: Optional[datetime.datetime] = None,
         last_updated_on: Optional[datetime.datetime] = None,
-        registry_artifact_count: Optional[int] = None,
-        tag_count: Optional[int] = None,
         writeable_properties: Optional["ContentProperties"] = None,
         **kwargs
     ):
         super(RepositoryProperties, self).__init__(**kwargs)
-        self.registry = registry
         self.name = name
         self.created_on = created_on
         self.last_updated_on = last_updated_on
@@ -1207,34 +1215,41 @@ class RepositoryTags(msrest.serialization.Model):
 class TagAttributesBase(msrest.serialization.Model):
     """Tag attribute details.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param name: Tag name.
     :type name: str
     :param digest: Tag digest.
     :type digest: str
-    :param created_on: Tag created time.
+    :param created_on: Required. Tag created time.
     :type created_on: ~datetime.datetime
-    :param last_updated_on: Tag last update time.
+    :param last_updated_on: Required. Tag last update time.
     :type last_updated_on: ~datetime.datetime
-    :param modifiable_properties: Changeable attributes.
-    :type modifiable_properties: ~azure.containerregistry.models.ContentProperties
+    :param writeable_properties: Changeable attributes.
+    :type writeable_properties: ~azure.containerregistry.models.ContentProperties
     """
+
+    _validation = {
+        'created_on': {'required': True},
+        'last_updated_on': {'required': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'digest': {'key': 'digest', 'type': 'str'},
         'created_on': {'key': 'createdTime', 'type': 'iso-8601'},
         'last_updated_on': {'key': 'lastUpdateTime', 'type': 'iso-8601'},
-        'modifiable_properties': {'key': 'changeableAttributes', 'type': 'ContentProperties'},
+        'writeable_properties': {'key': 'changeableAttributes', 'type': 'ContentProperties'},
     }
 
     def __init__(
         self,
         *,
+        created_on: datetime.datetime,
+        last_updated_on: datetime.datetime,
         name: Optional[str] = None,
         digest: Optional[str] = None,
-        created_on: Optional[datetime.datetime] = None,
-        last_updated_on: Optional[datetime.datetime] = None,
-        modifiable_properties: Optional["ContentProperties"] = None,
+        writeable_properties: Optional["ContentProperties"] = None,
         **kwargs
     ):
         super(TagAttributesBase, self).__init__(**kwargs)
@@ -1242,7 +1257,7 @@ class TagAttributesBase(msrest.serialization.Model):
         self.digest = digest
         self.created_on = created_on
         self.last_updated_on = last_updated_on
-        self.modifiable_properties = modifiable_properties
+        self.writeable_properties = writeable_properties
 
 
 class TagAttributesTag(msrest.serialization.Model):
@@ -1269,10 +1284,8 @@ class TagAttributesTag(msrest.serialization.Model):
 class TagList(msrest.serialization.Model):
     """List of tag details.
 
-    :param registry: Registry name.
-    :type registry: str
-    :param image_name: Image name.
-    :type image_name: str
+    :param repository: Image name.
+    :type repository: str
     :param tags: A set of tags. List of tag attribute details.
     :type tags: list[~azure.containerregistry.models.TagAttributesBase]
     :param link:
@@ -1280,8 +1293,7 @@ class TagList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'registry': {'key': 'registry', 'type': 'str'},
-        'image_name': {'key': 'imageName', 'type': 'str'},
+        'repository': {'key': 'imageName', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '[TagAttributesBase]'},
         'link': {'key': 'link', 'type': 'str'},
     }
@@ -1289,15 +1301,13 @@ class TagList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        registry: Optional[str] = None,
-        image_name: Optional[str] = None,
+        repository: Optional[str] = None,
         tags: Optional[List["TagAttributesBase"]] = None,
         link: Optional[str] = None,
         **kwargs
     ):
         super(TagList, self).__init__(**kwargs)
-        self.registry = registry
-        self.image_name = image_name
+        self.repository = repository
         self.tags = tags
         self.link = link
 
@@ -1305,8 +1315,6 @@ class TagList(msrest.serialization.Model):
 class TagProperties(msrest.serialization.Model):
     """Tag attributes.
 
-    :param registry: Registry name.
-    :type registry: str
     :param repository: Image name.
     :type repository: str
     :param name: Tag name.
@@ -1317,40 +1325,37 @@ class TagProperties(msrest.serialization.Model):
     :type created_on: ~datetime.datetime
     :param last_updated_on: Tag last update time.
     :type last_updated_on: ~datetime.datetime
-    :param modifiable_properties: Changeable attributes.
-    :type modifiable_properties: ~azure.containerregistry.models.ContentProperties
+    :param writeable_properties: Changeable attributes.
+    :type writeable_properties: ~azure.containerregistry.models.ContentProperties
     """
 
     _attribute_map = {
-        'registry': {'key': 'registry', 'type': 'str'},
         'repository': {'key': 'imageName', 'type': 'str'},
         'name': {'key': 'tag.name', 'type': 'str'},
         'digest': {'key': 'tag.digest', 'type': 'str'},
         'created_on': {'key': 'tag.createdTime', 'type': 'iso-8601'},
         'last_updated_on': {'key': 'tag.lastUpdateTime', 'type': 'iso-8601'},
-        'modifiable_properties': {'key': 'tag.changeableAttributes', 'type': 'ContentProperties'},
+        'writeable_properties': {'key': 'tag.changeableAttributes', 'type': 'ContentProperties'},
     }
 
     def __init__(
         self,
         *,
-        registry: Optional[str] = None,
         repository: Optional[str] = None,
         name: Optional[str] = None,
         digest: Optional[str] = None,
         created_on: Optional[datetime.datetime] = None,
         last_updated_on: Optional[datetime.datetime] = None,
-        modifiable_properties: Optional["ContentProperties"] = None,
+        writeable_properties: Optional["ContentProperties"] = None,
         **kwargs
     ):
         super(TagProperties, self).__init__(**kwargs)
-        self.registry = registry
         self.repository = repository
         self.name = name
         self.digest = digest
         self.created_on = created_on
         self.last_updated_on = last_updated_on
-        self.modifiable_properties = modifiable_properties
+        self.writeable_properties = writeable_properties
 
 
 class V1Manifest(Manifest):

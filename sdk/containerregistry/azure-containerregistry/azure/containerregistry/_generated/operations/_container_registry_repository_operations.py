@@ -192,7 +192,7 @@ class ContainerRegistryRepositoryOperations(object):
 
         :param name: Name of the image (including the namespace).
         :type name: str
-        :param reference: A tag or a digest, pointing to a specific image.
+        :param reference: Digest of a BLOB.
         :type reference: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -235,6 +235,122 @@ class ContainerRegistryRepositoryOperations(object):
             return cls(pipeline_response, None, {})
 
     delete_manifest.metadata = {'url': '/v2/{name}/manifests/{reference}'}  # type: ignore
+
+    def get_properties(
+        self,
+        name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.RepositoryProperties"
+        """Get repository attributes.
+
+        :param name: Name of the image (including the namespace).
+        :type name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: RepositoryProperties, or the result of cls(response)
+        :rtype: ~azure.containerregistry.models.RepositoryProperties
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RepositoryProperties"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_properties.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('RepositoryProperties', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_properties.metadata = {'url': '/acr/v1/{name}'}  # type: ignore
+
+    def set_properties(
+        self,
+        name,  # type: str
+        value=None,  # type: Optional["_models.ContentProperties"]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Update the attribute identified by ``name`` where ``reference`` is the name of the repository.
+
+        :param name: Name of the image (including the namespace).
+        :type name: str
+        :param value: Repository attribute value.
+        :type value: ~azure.containerregistry.models.ContentProperties
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.set_properties.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        if value is not None:
+            body_content = self._serialize.body(value, 'ContentProperties')
+        else:
+            body_content = None
+        body_content_kwargs['content'] = body_content
+        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    set_properties.metadata = {'url': '/acr/v1/{name}'}  # type: ignore
 
     def get_tags(
         self,
@@ -332,7 +448,7 @@ class ContainerRegistryRepositoryOperations(object):
         )
     get_tags.metadata = {'url': '/acr/v1/{name}/_tags'}  # type: ignore
 
-    def get_tag_attributes(
+    def get_tag_properties(
         self,
         name,  # type: str
         reference,  # type: str
@@ -358,7 +474,7 @@ class ContainerRegistryRepositoryOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.get_tag_attributes.metadata['url']  # type: ignore
+        url = self.get_tag_properties.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
             'name': self._serialize.url("name", name, 'str'),
@@ -388,7 +504,7 @@ class ContainerRegistryRepositoryOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_tag_attributes.metadata = {'url': '/acr/v1/{name}/_tags/{reference}'}  # type: ignore
+    get_tag_properties.metadata = {'url': '/acr/v1/{name}/_tags/{reference}'}  # type: ignore
 
     def update_tag_attributes(
         self,
@@ -602,7 +718,7 @@ class ContainerRegistryRepositoryOperations(object):
         )
     get_manifests.metadata = {'url': '/acr/v1/{name}/_manifests'}  # type: ignore
 
-    def get_manifest_attributes(
+    def get_registry_artifact_properties(
         self,
         name,  # type: str
         digest,  # type: str
@@ -628,7 +744,7 @@ class ContainerRegistryRepositoryOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.get_manifest_attributes.metadata['url']  # type: ignore
+        url = self.get_registry_artifact_properties.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
             'name': self._serialize.url("name", name, 'str'),
@@ -658,7 +774,7 @@ class ContainerRegistryRepositoryOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_manifest_attributes.metadata = {'url': '/acr/v1/{name}/_manifests/{digest}'}  # type: ignore
+    get_registry_artifact_properties.metadata = {'url': '/acr/v1/{name}/_manifests/{digest}'}  # type: ignore
 
     def update_manifest_attributes(
         self,

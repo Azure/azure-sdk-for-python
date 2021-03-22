@@ -13,7 +13,7 @@ try:
     from ._models_py3 import AcrManifests
     from ._models_py3 import Annotations
     from ._models_py3 import ContentProperties
-    from ._models_py3 import DeletedRepositoryResult
+    from ._models_py3 import DeleteRepositoryResult
     from ._models_py3 import Descriptor
     from ._models_py3 import FsLayer
     from ._models_py3 import History
@@ -51,7 +51,7 @@ except (SyntaxError, ImportError):
     from ._models import AcrManifests  # type: ignore
     from ._models import Annotations  # type: ignore
     from ._models import ContentProperties  # type: ignore
-    from ._models import DeletedRepositoryResult  # type: ignore
+    from ._models import DeleteRepositoryResult  # type: ignore
     from ._models import Descriptor  # type: ignore
     from ._models import FsLayer  # type: ignore
     from ._models import History  # type: ignore
@@ -94,7 +94,7 @@ __all__ = [
     'AcrManifests',
     'Annotations',
     'ContentProperties',
-    'DeletedRepositoryResult',
+    'DeleteRepositoryResult',
     'Descriptor',
     'FsLayer',
     'History',

@@ -19,7 +19,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.identity import DefaultAzureCredential
 
-from _shared.testcase import ContainerRegistryTestClass
+from testcase import ContainerRegistryTestClass
 
 
 acr_preparer = functools.partial(

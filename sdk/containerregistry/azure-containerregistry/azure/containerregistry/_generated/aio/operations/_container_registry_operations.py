@@ -166,74 +166,21 @@ class ContainerRegistryOperations:
         )
     get_repositories.metadata = {'url': '/acr/v1/_catalog'}  # type: ignore
 
-    async def get_repository_attributes(
-        self,
-        name: str,
-        **kwargs
-    ) -> "_models.RepositoryProperties":
-        """Get repository attributes.
-
-        :param name: Name of the image (including the namespace).
-        :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RepositoryProperties, or the result of cls(response)
-        :rtype: ~azure.containerregistry.models.RepositoryProperties
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RepositoryProperties"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        accept = "application/json"
-
-        # Construct URL
-        url = self.get_repository_attributes.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'name': self._serialize.url("name", name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('RepositoryProperties', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    get_repository_attributes.metadata = {'url': '/acr/v1/{name}'}  # type: ignore
-
     async def delete_repository(
         self,
         name: str,
         **kwargs
-    ) -> "_models.DeletedRepositoryResult":
+    ) -> "_models.DeleteRepositoryResult":
         """Delete the repository identified by ``name``.
 
         :param name: Name of the image (including the namespace).
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DeletedRepositoryResult, or the result of cls(response)
-        :rtype: ~azure.containerregistry.models.DeletedRepositoryResult
+        :return: DeleteRepositoryResult, or the result of cls(response)
+        :rtype: ~azure.containerregistry.models.DeleteRepositoryResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedRepositoryResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeleteRepositoryResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -264,71 +211,10 @@ class ContainerRegistryOperations:
             error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('DeletedRepositoryResult', pipeline_response)
+        deserialized = self._deserialize('DeleteRepositoryResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
     delete_repository.metadata = {'url': '/acr/v1/{name}'}  # type: ignore
-
-    async def update_repository_attributes(
-        self,
-        name: str,
-        value: Optional["_models.ContentProperties"] = None,
-        **kwargs
-    ) -> None:
-        """Update the attribute identified by ``name`` where ``reference`` is the name of the repository.
-
-        :param name: Name of the image (including the namespace).
-        :type name: str
-        :param value: Repository attribute value.
-        :type value: ~azure.containerregistry.models.ContentProperties
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.update_repository_attributes.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'name': self._serialize.url("name", name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        if value is not None:
-            body_content = self._serialize.body(value, 'ContentProperties')
-        else:
-            body_content = None
-        body_content_kwargs['content'] = body_content
-        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    update_repository_attributes.metadata = {'url': '/acr/v1/{name}'}  # type: ignore
