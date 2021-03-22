@@ -26,8 +26,7 @@
 
 __all__ = ["HttpRequest", "HttpResponse"]
 
-import json
-from enum import Enum
+import json as jsonlib
 import xml.etree.ElementTree as ET
 from typing import TYPE_CHECKING
 
@@ -38,7 +37,6 @@ from azure.core.pipeline.transport import (
 
 if TYPE_CHECKING:
     from typing import Any, Optional, Union, Mapping, Sequence, Tuple
-
     HeaderTypes = Union[Mapping[str, str], Sequence[Tuple[str, str]]]
 
 
@@ -175,8 +173,8 @@ class _HttpResponseBase(object):
     :paramtype history: list[~azure.core.protocol.HttpResponse]
     """
 
-    def __init__(self, status_code, **kwargs):
-        # type: (int, Any) -> None
+    def __init__(self, **kwargs):
+        # type: (Any) -> None
         self._internal_response = kwargs.pop(
             "_internal_response"
         )  # type: _PipelineTransportHttpResponse
@@ -247,7 +245,7 @@ class _HttpResponseBase(object):
         :rtype: any
         :raises json.decoder.JSONDecodeError or ValueError (in python 2.7) if object is not JSON decodable:
         """
-        return json.loads(self._internal_response.text(self.encoding))
+        return jsonlib.loads(self._internal_response.text(self.encoding))
 
     def raise_for_status(self):
         # type: () -> None

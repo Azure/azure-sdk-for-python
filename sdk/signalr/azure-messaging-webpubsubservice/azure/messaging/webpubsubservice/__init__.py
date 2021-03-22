@@ -14,10 +14,6 @@ __all__ = ["WebPubSubServiceClient"]
 from typing import TYPE_CHECKING
 
 
-if TYPE_CHECKING:
-    from typing import Any
-
-import azure.core.credentials as corecredentials
 import azure.core.pipeline as corepipeline
 import azure.core.pipeline.policies as corepolicies
 import azure.core.pipeline.transport as coretransport
@@ -26,16 +22,21 @@ import azure.core.pipeline.transport as coretransport
 from .core import rest as corerest
 from ._policies import JwtCredentialPolicy
 
+if TYPE_CHECKING:
+    import azure.core.credentials as corecredentials
+    from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
+    from typing import Any, List, cast
+
 
 class WebPubSubServiceClient(object):
-    def __init__(self, endpoint, credentials, **kwargs):
+    def __init__(self, endpoint, credential, **kwargs):
         # type: (str, corecredentials.AzureKeyCredential, Any) -> None
         """Create a new WebPubSubServiceClient instance
 
         :param endpoint: Endpoint to connect to.
         :type endpoint: ~str
-        :param credentials: Credentials to use to connect to endpoint.
-        :type credentials: ~azure.core.credentials.AzureKeyCredentials
+        :param credential: Credentials to use to connect to endpoint.
+        :type credential: ~azure.core.credentials.AzureKeyCredentials
         :keyword api_version: Api version to use when communicating with the service.
         :type api_version: str
         :keyword user: User to connect as. Optional.
@@ -52,13 +53,16 @@ class WebPubSubServiceClient(object):
             corepolicies.ProxyPolicy(**kwargs),
             corepolicies.CustomHookPolicy(**kwargs),
             corepolicies.RedirectPolicy(**kwargs),
-            JwtCredentialPolicy(credentials, kwargs.get("user", None)),
+            JwtCredentialPolicy(credential, kwargs.get("user", None)),
             corepolicies.NetworkTraceLoggingPolicy(**kwargs),
-        ]
+        ] # type: Any
         self._pipeline = corepipeline.Pipeline(
             transport,
             policies,
-        )
+        )  # type: corepipeline.Pipeline
+
+    def __repr__(self):
+        return "<WebPubSubServiceClient> endpoint:'{}'".format(self.endpoint)
 
     def _format_url(self, url):
         # type: (str) -> str
@@ -75,13 +79,13 @@ class WebPubSubServiceClient(object):
         :return: The response of your network call.
         :rtype: ~corerest.HttpResponse
         """
-        kwargs.setdefault('stream', False)
+        kwargs.setdefault("stream", False)
         request.url = self._format_url(
             request.url
         )  # BUGBUG - should create new request, not mutate the existing one...
-        pipeline_response = self._pipeline.run(request._internal_request, **kwargs)
+        pipeline_response = self._pipeline.run(
+            request._internal_request, **kwargs)  # pylint: disable=W0212
         return corerest.HttpResponse(
-            status_code=pipeline_response.http_response.status_code,
             request=request,
             _internal_response=pipeline_response.http_response,
         )

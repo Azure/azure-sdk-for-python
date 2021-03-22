@@ -29,9 +29,9 @@ __all__ = [
 
 from typing import TYPE_CHECKING
 
+from msrest import Serializer
 from azure.messaging.webpubsubservice.core.rest import HttpRequest
 from azure.core.pipeline.transport._base import _format_url_section
-from msrest import Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -82,7 +82,9 @@ def prepare_send_to_all(
     # Construct parameters
     query_parameters = {}  # type: Dict[str, Any]
     if excluded is not None:
-        query_parameters['excluded'] = [_SERIALIZER.query("excluded", q, 'str') if q is not None else '' for q in excluded]
+        query_parameters['excluded'] = [
+            _SERIALIZER.query("excluded", q, 'str') if q is not None else '' for q in excluded
+        ]
     if api_version is not None:
         query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
@@ -264,7 +266,9 @@ def prepare_send_to_group(
     # Construct parameters
     query_parameters = {}  # type: Dict[str, Any]
     if excluded is not None:
-        query_parameters['excluded'] = [_SERIALIZER.query("excluded", q, 'str') if q is not None else '' for q in excluded]
+        query_parameters['excluded'] = [
+            _SERIALIZER.query("excluded", q, 'str') if q is not None else '' for q in excluded
+        ]
     if api_version is not None:
         query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
