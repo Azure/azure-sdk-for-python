@@ -1,5 +1,14 @@
 # Release History
 
+## 1.2.0 (2021-03-22)
+
+**Features**
+
+  - Model DatadogMonitorResource has a new parameter system_data
+  - Model MonitoringTagRules has a new parameter system_data
+  - Model DatadogAgreementResource has a new parameter system_data
+  - Model DatadogSingleSignOnResource has a new parameter system_data
+
 ## 1.0.0b3 (2021-03-02)
 
 **Features**
