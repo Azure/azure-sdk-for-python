@@ -26,9 +26,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             endpoint = "https://" + endpoint
         self.endpoint = endpoint
         self.repository = repository
-        super(ContainerRepositoryClient, self).__init__(
-            endpoint=self.endpoint, credential=credential, **kwargs
-        )
+        super(ContainerRepositoryClient, self).__init__(endpoint=self.endpoint, credential=credential, **kwargs)
 
     def delete(self, **kwargs):
         # type: (...) -> None
@@ -75,9 +73,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: :class:~azure.containerregistry.RepositoryProperties
         :raises: None
         """
-        resp = self._client.container_registry.get_repository_attributes(
-            self.repository
-        )
+        resp = self._client.container_registry.get_repository_attributes(self.repository)
         return RepositoryProperties.from_generated(resp)
 
     def get_registry_artifact_properties(self, tag_or_digest, **kwargs):
@@ -95,9 +91,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             tag_or_digest = self.get_digest_from_tag(tag_or_digest)
         # TODO: The returned object from the generated code is not being deserialized properly
         return RegistryArtifactProperties.from_generated(
-            self._client.container_registry_repository.get_manifest_attributes(
-                self.repository, tag_or_digest, **kwargs
-            )
+            self._client.container_registry_repository.get_manifest_attributes(self.repository, tag_or_digest, **kwargs)
         )
 
     def get_tag_properties(self, tag, **kwargs):
@@ -110,9 +104,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
         return TagProperties.from_generated(
-            self._client.container_registry_repository.get_tag_attributes(
-                self.repository, tag, **kwargs
-            )
+            self._client.container_registry_repository.get_tag_attributes(self.repository, tag, **kwargs)
         )
 
     def list_registry_artifacts(self, **kwargs):
@@ -160,7 +152,6 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             cls=lambda objs: [TagProperties.from_generated(o) for o in objs],
             **kwargs
         )
-
 
     def set_manifest_properties(self, digest, value):
         # type: (str, ContentPermissions) -> None

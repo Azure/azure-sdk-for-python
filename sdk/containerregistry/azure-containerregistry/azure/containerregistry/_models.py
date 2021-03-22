@@ -27,9 +27,7 @@ class ContentPermissions(object):
 
 class DeletedRepositoryResult(object):
     def __init__(self, **kwargs):
-        self.deleted_registry_artifact_digests = kwargs.get(
-            "deleted_registry_artifact_digests", None
-        )
+        self.deleted_registry_artifact_digests = kwargs.get("deleted_registry_artifact_digests", None)
         self.deleted_tags = kwargs.get("deleted_tags", None)
 
     @classmethod
@@ -105,9 +103,7 @@ class RepositoryProperties(object):
         self.manifest_count = kwargs.get("manifest_count", None)
         self.content_permissions = kwargs.get("content_permissions", None)
         if self.content_permissions:
-            self.content_permissions = ContentPermissions.from_generated(
-                self.content_permissions
-            )
+            self.content_permissions = ContentPermissions.from_generated(self.content_permissions)
 
     @classmethod
     def from_generated(cls, generated):
@@ -121,6 +117,7 @@ class RepositoryProperties(object):
             tag_count=generated.tag_count,
             content_permissions=generated.writeable_properties,
         )
+
 
 class RegistryArtifactOrderBy(int, Enum):
 
@@ -159,12 +156,10 @@ class TagProperties(object):
         self.last_updated_on = kwargs.get("last_updated_on", None)
         self.content_permissions = kwargs.get("content_permissions", None)
         if self.content_permissions:
-            self.content_permissions = ContentPermissions.from_generated(
-                self.content_permissions
-            )
+            self.content_permissions = ContentPermissions.from_generated(self.content_permissions)
         self.name = kwargs.get("name", None)
-        self.signed = kwargs.get('signed', None)
-        self.quarantine_state = kwargs.get('quarantine_state', None)
+        self.signed = kwargs.get("signed", None)
+        self.quarantine_state = kwargs.get("quarantine_state", None)
 
     @classmethod
     def from_generated(cls, generated):

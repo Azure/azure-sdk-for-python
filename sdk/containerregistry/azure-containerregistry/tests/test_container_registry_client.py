@@ -30,7 +30,6 @@ acr_preparer = functools.partial(
 
 
 class TestContainerRegistryClient(AzureTestCase, ContainerRegistryTestClass):
-
     @pytest.mark.live_test_only
     @acr_preparer()
     def test_list_repositories(self, containerregistry_baseurl):

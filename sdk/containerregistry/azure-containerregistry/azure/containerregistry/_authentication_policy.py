@@ -48,7 +48,7 @@ class ContainerRegistryCredentialPolicy(SansIOHTTPPolicy):
     """
 
     BEARER = "Bearer"
-    AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile("(?:(\\w+)=\"([^\"\"]*)\")+")
+    AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
     WWW_AUTHENTICATE = "WWW-Authenticate"
     SCOPE_PARAMETER = "scope"
     SERVICE_PARAMETER = "service"

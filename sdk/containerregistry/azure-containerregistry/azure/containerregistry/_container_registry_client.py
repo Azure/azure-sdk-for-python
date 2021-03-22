@@ -25,9 +25,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if not endpoint.startswith("https://"):
             endpoint = "https://" + endpoint
         self.credential = credential
-        super(ContainerRegistryClient, self).__init__(
-            endpoint=endpoint, credential=credential, **kwargs
-        )
+        super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, **kwargs)
 
     def delete_repository(self, repository, **kwargs):
         # type: (str) -> DeletedRepositoryResult
@@ -39,9 +37,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
         # NOTE: DELETE `/acr/v1/{name}`
-        deleted_repository = self._client.container_registry.delete_repository(
-            repository, **kwargs
-        )
+        deleted_repository = self._client.container_registry.delete_repository(repository, **kwargs)
         return DeletedRepositoryResult.from_generated(deleted_repository)
 
     def list_repositories(self, **kwargs):
@@ -59,7 +55,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             last=kwargs.pop("last", None), n=kwargs.pop("max", None), **kwargs
         )
 
-
     def get_repository_client(self, repository, **kwargs):
         # type: (str) -> ContainerRepositoryClient
         """Get a repository client
@@ -68,8 +63,4 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :type repository: str
         :returns: :class:~azure.containerregistry.ContainerRepositoryClient
         """
-        return ContainerRepositoryClient(
-            repository,
-            credential=self.credential,
-            **kwargs
-        )
+        return ContainerRepositoryClient(repository, credential=self.credential, **kwargs)

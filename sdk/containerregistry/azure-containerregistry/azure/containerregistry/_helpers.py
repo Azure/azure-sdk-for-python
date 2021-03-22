@@ -19,8 +19,7 @@ def get_authentication_policy(base_url, credential):
         authentication_policy = BearerTokenCredentialPolicy(credential, scope)
     else:
         raise TypeError(
-            "Please provide an instance from azure-identity "
-            "or a class that implement the 'get_token protocol"
+            "Please provide an instance from azure-identity " "or a class that implement the 'get_token protocol"
         )
 
     return authentication_policy

@@ -13,8 +13,11 @@ from .._models import RepositoryProperties
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
+
 class ContainerRegistryClient(object):
-    def __init__(self, base_url: str, credential: "AsyncTokenCredential", **kwargs):  # pylint: disable=client-method-missing-type-annotations
+    def __init__(
+        self, base_url: str, credential: "AsyncTokenCredential", **kwargs
+    ):  # pylint: disable=client-method-missing-type-annotations
         pass
 
     def delete_repository(self, name: str, **kwargs) -> None:

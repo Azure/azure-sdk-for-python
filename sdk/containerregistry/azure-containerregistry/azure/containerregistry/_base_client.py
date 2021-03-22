@@ -18,7 +18,7 @@ class ContainerRegistryApiVersion(str, Enum):
 
 
 class ContainerRegistryBaseClient(object):
-    """ Base class for ContainerRegistryClient and ContainerRepositoryClient
+    """Base class for ContainerRegistryClient and ContainerRepositoryClient
 
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str
@@ -26,6 +26,7 @@ class ContainerRegistryBaseClient(object):
     :type credential: :class:`azure.identity.DefaultTokenCredential`
 
     """
+
     def __init__(self, endpoint, credential, **kwargs):  # pylint:disable=client-method-missing-type-annotations
         auth_policy = ContainerRegistryUserCredentialPolicy(credential=credential)
         self._client = ContainerRegistry(
@@ -33,9 +34,7 @@ class ContainerRegistryBaseClient(object):
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=auth_policy,
-            credential_scopes=kwargs.pop(
-                "credential_scopes", ["https://management.core.windows.net/.default"]
-            ),
+            credential_scopes=kwargs.pop("credential_scopes", ["https://management.core.windows.net/.default"]),
             **kwargs
         )
 
