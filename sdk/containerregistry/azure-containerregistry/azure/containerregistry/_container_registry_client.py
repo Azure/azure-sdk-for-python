@@ -3,16 +3,20 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from typing import TYPE_CHECKING
 from azure.core.paging import ItemPaged
 
 from ._base_client import ContainerRegistryBaseClient
 from ._container_repository_client import ContainerRepositoryClient
 from ._models import DeletedRepositoryResult
 
+if TYPE_CHECKING:
+    from typing import Any, Dict
+    from azure.core.credentials import TokenCredential
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
     def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, TokenCredential) -> None
+        # type: (str, TokenCredential, Dict[str, Any]) -> None
         """Create a ContainerRegistryClient from an ACR endpoint and a credential
 
         :param endpoint: An ACR endpoint
@@ -24,11 +28,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         if not endpoint.startswith("https://"):
             endpoint = "https://" + endpoint
+        self.endpoint = endpoint
         self.credential = credential
         super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, **kwargs)
 
     def delete_repository(self, repository, **kwargs):
-        # type: (str) -> DeletedRepositoryResult
+        # type: (str, Dict[str, Any]) -> DeletedRepositoryResult
         """Delete a repository
 
         :param repository: The repository to delete
@@ -41,7 +46,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return DeletedRepositoryResult.from_generated(deleted_repository)
 
     def list_repositories(self, **kwargs):
-        # type: (...) -> ItemPaged[str]
+        # type: (Dict[str, Any]) -> ItemPaged[str]
         """List all repositories
 
         :keyword max: Maximum number of repositories to return
@@ -56,11 +61,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     def get_repository_client(self, repository, **kwargs):
-        # type: (str) -> ContainerRepositoryClient
+        # type: (str, Dict[str, Any]) -> ContainerRepositoryClient
         """Get a repository client
 
         :param repository: The repository to create a client for
         :type repository: str
         :returns: :class:~azure.containerregistry.ContainerRepositoryClient
         """
-        return ContainerRepositoryClient(repository, credential=self.credential, **kwargs)
+        return ContainerRepositoryClient(self.endpoint, repository, credential=self.credential, **kwargs)

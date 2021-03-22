@@ -3,14 +3,20 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from typing import TYPE_CHECKING
 
 from ._base_client import ContainerRegistryBaseClient
 from ._models import RepositoryProperties, TagProperties, RegistryArtifactProperties
 
+if TYPE_CHECKING:
+    from typing import Any, Dict
+    from azure.core.paging import ItemPaged
+    from azure.core.credentials import TokenCredential
+    from ._models import ContentPermissions
 
 class ContainerRepositoryClient(ContainerRegistryBaseClient):
     def __init__(self, endpoint, repository, credential, **kwargs):
-        # type: (str, str, TokenCredential) -> None
+        # type: (str, str, TokenCredential, Dict[str, Any]) -> None
         """Create a ContainerRepositoryClient from an endpoint, repository name, and credential
 
         :param endpoint: An ACR endpoint
@@ -73,11 +79,12 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: :class:~azure.containerregistry.RepositoryProperties
         :raises: None
         """
-        resp = self._client.container_registry.get_repository_attributes(self.repository)
+        # GET '/acr/v1/{name}'
+        resp = self._client.container_registry_repository.get_properties(self.repository)
         return RepositoryProperties.from_generated(resp)
 
     def get_registry_artifact_properties(self, tag_or_digest, **kwargs):
-        # type: (str) -> RegistryArtifactProperties
+        # type: (str, Dict[str, Any]) -> RegistryArtifactProperties
         """Get the properties of a registry artifact
 
         :param tag_or_digest: The tag/digest of a registry artifact
@@ -85,17 +92,20 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: :class:~azure.containerregistry.RegistryArtifactProperties
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
+        # GET '/acr/v1/{name}/_manifests/{digest}'
         # TODO: If `tag_or_digest` is a tag, need to do a get_tags to find the appropriate digest,
         # generated code only takes a digest
         if self._is_tag(tag_or_digest):
             tag_or_digest = self.get_digest_from_tag(tag_or_digest)
         # TODO: The returned object from the generated code is not being deserialized properly
         return RegistryArtifactProperties.from_generated(
-            self._client.container_registry_repository.get_manifest_attributes(self.repository, tag_or_digest, **kwargs)
+            self._client.container_registry_repository.get_registry_artifact_properties(
+                self.repository, tag_or_digest, **kwargs
+            )
         )
 
     def get_tag_properties(self, tag, **kwargs):
-        # type: (str) -> TagProperties
+        # type: (str, Dict[str, Any]) -> TagProperties
         """Get the properties for a tag
 
         :param tag: The tag to get properties for
@@ -103,8 +113,9 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: :class:~azure.containerregistry.TagProperties
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
+        # GET '/acr/v1/{name}/_tags/{reference}'
         return TagProperties.from_generated(
-            self._client.container_registry_repository.get_tag_attributes(self.repository, tag, **kwargs)
+            self._client.container_registry_repository.get_tag_properties(self.repository, tag, **kwargs)
         )
 
     def list_registry_artifacts(self, **kwargs):

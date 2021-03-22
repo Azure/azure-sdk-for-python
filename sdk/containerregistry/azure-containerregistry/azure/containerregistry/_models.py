@@ -5,23 +5,27 @@
 # ------------------------------------
 
 from enum import Enum
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from ._generated.models import ManifestChangeableAttributes, ManifestAttributesBase
+    from ._generated.models import RepositoryProperties as GeneratedRepositoryProperties
 
 class ContentPermissions(object):
     def __init__(self, **kwargs):
-        self.can_delete = kwargs.get("can_delete")
-        self.can_list = kwargs.get("can_list")
-        self.can_read = kwargs.get("can_read")
-        self.can_write = kwargs.get("can_write")
+        self.delete_enabled = kwargs.get("delete_enabled")
+        self.list_enabled = kwargs.get("list_enabled")
+        self.read_enabled = kwargs.get("read_enabled")
+        self.write_enabled = kwargs.get("write_enabled")
 
     @classmethod
     def from_generated(cls, generated):
-        # type: (azure.containerregistry._generated.models.ChangeableAttributes) -> ContentPermissions
+        # type: (ManifestChangeableAttributes) -> ContentPermissions
         return cls(
-            delete=generated.can_delete,
-            list=generated.can_list,
-            read=generated.can_read,
-            write=generated.can_write,
+            delete_enabled=generated.delete_enabled,
+            list_enabled=generated.list_enabled,
+            read_enabled=generated.read_enabled,
+            write_enabled=generated.write_enabled,
         )
 
 
@@ -55,7 +59,7 @@ class RegistryArtifactProperties(object):
 
     @classmethod
     def from_generated(cls, generated):
-        # type: (azure.containerregistry._generated.models.ManfiestAttributestBase) -> RegistryArtifactProperties
+        # type: (ManifestAttributesBase) -> RegistryArtifactProperties
         return cls(
             config_media_type=generated.config_media_type,
             cpu_architecture=generated.cpu_architecture,
@@ -65,8 +69,8 @@ class RegistryArtifactProperties(object):
             manifest_media_type=generated.manifest_media_type,
             manifest_properties=generated.manifest_properties,
             operating_system=generated.operating_system,
-            registry=generated.registry,
-            repository=generated.repository,
+            # registry=generated.registry,
+            # repository=generated.repository,
             size=generated.size,
             tags=generated.tags,
         )
@@ -107,12 +111,12 @@ class RepositoryProperties(object):
 
     @classmethod
     def from_generated(cls, generated):
-        # type: (azure.containerregistry._generated.models.RepositoryAttributes) -> RepositoryProperties
+        # type: (GeneratedRepositoryProperties) -> RepositoryProperties
         return cls(
             created_on=generated.created_on,
             last_updated_on=generated.last_updated_on,
             name=generated.name,
-            registry=generated.registry,
+            # registry=generated.registry,
             manifest_count=generated.registry_artifact_count,
             tag_count=generated.tag_count,
             content_permissions=generated.writeable_properties,
