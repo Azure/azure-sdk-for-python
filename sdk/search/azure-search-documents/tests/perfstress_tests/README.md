@@ -37,6 +37,7 @@ These options are available for all perf tests:
 - `--warm-up=5` Number of seconds to spend warming up the connection before measuring begins. Default is 5.
 - `--sync` Whether to run the tests in sync or async. Default is False (async). This flag must be used for Storage legacy tests, which do not support async.
 - `--no-cleanup` Whether to keep newly created resources after test run. Default is False (resources will be deleted).
+- `--num-documents` The number of results expect to be returned.
 
 ## Example command
 ```cmd
