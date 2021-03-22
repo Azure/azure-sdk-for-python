@@ -65,7 +65,7 @@ interactions:
     uri: https://sanitized.communication.azure.com/phoneNumbers/operations/search_ffd97d84-b129-42bc-a61c-5017ad455ca9?api-version=2021-03-07
   response:
     body:
-      string: '{"status": "Succeeded", "resourceLocation": "/availablePhoneNumbers/searchResults/ffd97d84-b129-42bc-a61c-5017ad455ca9?api-version=2021-03-07",
+      string: '{"status": "succeeded", "resourceLocation": "/availablePhoneNumbers/searchResults/ffd97d84-b129-42bc-a61c-5017ad455ca9?api-version=2021-03-07",
         "createdDateTime": "2021-03-05T22:37:30.7635903+00:00", "id": "sanitized",
         "operationType": "Search", "lastActionDateTime": "0001-01-01T00:00:00+00:00"}'
     headers:
@@ -193,7 +193,7 @@ interactions:
     uri: https://sanitized.communication.azure.com/phoneNumbers/operations/purchase_ffd97d84-b129-42bc-a61c-5017ad455ca9?api-version=2021-03-07
   response:
     body:
-      string: '{"status": "Succeeded", "resourceLocation": null, "createdDateTime":
+      string: '{"status": "succeeded", "resourceLocation": null, "createdDateTime":
         "2021-03-05T22:37:30.7635903+00:00", "id": "sanitized", "operationType": "Purchase",
         "lastActionDateTime": "0001-01-01T00:00:00+00:00"}'
     headers:

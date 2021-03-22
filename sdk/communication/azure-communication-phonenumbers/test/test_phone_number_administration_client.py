@@ -3,7 +3,13 @@ import pytest
 from azure.communication.phonenumbers import PhoneNumbersClient
 from _shared.testcase import CommunicationTestCase, ResponseReplacerProcessor, BodyReplacerProcessor
 from _shared.utils import create_token_credential
-from azure.communication.phonenumbers import PhoneNumberAssignmentType, PhoneNumberCapabilities, PhoneNumberCapabilityType, PhoneNumberType
+from azure.communication.phonenumbers import (
+    PhoneNumberAssignmentType, 
+    PhoneNumberCapabilities, 
+    PhoneNumberCapabilityType, 
+    PhoneNumberType,
+    PhoneNumberOperationStatus
+)
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
 from phone_number_helper import PhoneNumberUriReplacer
 
@@ -64,7 +70,7 @@ class PhoneNumbersClientTest(CommunicationTestCase):
             polling = True
         )
         poller.result()
-        assert poller.status() == 'Succeeded'
+        assert poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
     @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
     def test_purchase_phone_numbers(self):
@@ -83,4 +89,4 @@ class PhoneNumbersClientTest(CommunicationTestCase):
         purchase_poller = self.phone_number_client.begin_purchase_phone_numbers(phone_number_to_buy.search_id, polling=True)
         purchase_poller.result()
         release_poller = self.phone_number_client.begin_release_phone_number(phone_number_to_buy.phone_numbers[0])
-        assert release_poller.status() == 'Succeeded'
+        assert release_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
