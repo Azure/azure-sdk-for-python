@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 
 import logging
+from collections.abc import Iterable
 from .configuration import Configuration
 from .pipeline import Pipeline
 from .pipeline.transport._base import PipelineClientBase
@@ -120,20 +121,22 @@ class PipelineClient(PipelineClientBase):
                 config.proxy_policy,
                 ContentDecodePolicy(**kwargs)
             ]
-            if isinstance(per_call_policies, (HTTPPolicy, SansIOHTTPPolicy)):
-                policies.append(per_call_policies)
-            else:
+            if isinstance(per_call_policies, Iterable):
                 for policy in per_call_policies:
                     policies.append(policy)
+            else:
+                policies.append(per_call_policies)
+
             policies = policies + [config.redirect_policy,
                                config.retry_policy,
                                config.authentication_policy,
                                config.custom_hook_policy]
-            if isinstance(per_retry_policies, (HTTPPolicy, SansIOHTTPPolicy)):
-                policies.append(per_retry_policies)
-            else:
+            if isinstance(per_retry_policies, Iterable):
                 for policy in per_retry_policies:
                     policies.append(policy)
+            else:
+                policies.append(per_retry_policies)
+
             policies = policies + [config.logging_policy,
                                DistributedTracingPolicy(**kwargs),
                                config.http_logging_policy or HttpLoggingPolicy(**kwargs)]
