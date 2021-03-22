@@ -24,8 +24,6 @@ class SystemEventNames(str, Enum):
     AcsChatThreadCreatedWithUserEventName = (
         "Microsoft.Communication.ChatThreadCreatedWithUser"
     )
-    #backward compatibility
-    # new constants matching the model names
     AcsChatThreadParticipantAddedEventName = "Microsoft.Communication.ChatThreadParticipantAdded"
     AcsChatThreadParticipantRemovedEventName = "Microsoft.Communication.ChatThreadParticipantRemoved"
     AcsChatThreadPropertiesUpdatedPerUserEventName = (
