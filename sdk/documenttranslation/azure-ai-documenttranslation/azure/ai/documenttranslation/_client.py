@@ -15,7 +15,7 @@ from ._generated.models import BatchStatusDetail as _BatchStatusDetail
 from ._models import (
     JobStatusDetail,
     DocumentStatusResult,
-    BatchDocumentInput,
+    DocumentTranslationInput,
     FileFormat
 )
 from ._user_agent import USER_AGENT
@@ -60,18 +60,18 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
     @distributed_trace
     def create_translation_job(self, batch, **kwargs):
-        # type: (List[BatchDocumentInput], **Any) -> JobStatusDetail
+        # type: (List[DocumentTranslationInput], **Any) -> JobStatusDetail
         """
 
         :param batch:
-        :type batch: List[~azure.ai.documenttranslation.BatchDocumentInput]
+        :type batch: List[~azure.ai.documenttranslation.DocumentTranslationInput]
         :return: JobStatusDetail
         :rtype: JobStatusDetail
         """
 
         # submit translation job
         response_headers = self._client.document_translation._submit_batch_request_initial(  # pylint: disable=protected-access
-            inputs=BatchDocumentInput._to_generated_list(batch),  # pylint: disable=protected-access
+            inputs=DocumentTranslationInput._to_generated_list(batch),  # pylint: disable=protected-access
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )

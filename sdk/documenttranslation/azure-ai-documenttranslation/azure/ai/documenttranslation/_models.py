@@ -105,7 +105,7 @@ class StorageTarget(object):  # pylint: disable=useless-object-inheritance
         return [target._to_generated() for target in targets]  # pylint: disable=protected-access
 
 
-class BatchDocumentInput(object):  # pylint: disable=useless-object-inheritance
+class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheritance
     # pylint: disable=C0301
     """Definition for the input batch translation request.
 

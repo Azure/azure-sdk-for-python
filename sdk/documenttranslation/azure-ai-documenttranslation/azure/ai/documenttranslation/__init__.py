@@ -16,7 +16,7 @@ from ._models import (
     DocumentStatusResult,
     DocumentTranslationError,
     TranslationGlossary,
-    BatchDocumentInput,
+    DocumentTranslationInput,
     FileFormat
 )
 
@@ -26,7 +26,7 @@ __VERSION__ = VERSION
 __all__ = [
     "DocumentTranslationClient",
     "DocumentTranslationVersion",
-    "BatchDocumentInput",
+    "DocumentTranslationInput",
     "TranslationGlossary",
     "StorageInputType",
     "FileFormat",
