@@ -29,6 +29,7 @@ __all__ = [
 
 from typing import TYPE_CHECKING
 
+from azure.messaging.webpubsubservice.core.rest import HttpRequest
 from azure.core.pipeline.transport._base import _format_url_section
 from msrest import Serializer
 
