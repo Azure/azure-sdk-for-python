@@ -100,10 +100,6 @@ IGNORED_SAMPLES = {
         "mgmt_topic_async.py",
         "proxy_async.py",
         "receive_deferred_message_queue_async.py"
-    ],
-    "azure-ai-formrecognizer": [
-        "sample_recognize_receipts_from_url.py",
-        "sample_recognize_receipts_from_url_async.py"
     ]
 }
 
