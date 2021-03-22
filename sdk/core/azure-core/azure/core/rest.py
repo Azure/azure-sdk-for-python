@@ -30,7 +30,6 @@ from typing import TYPE_CHECKING
 
 from .pipeline.transport import (
     HttpRequest as _PipelineTransportHttpRequest,
-    HttpResponse as _PipelineTransportHttpResponse
 )
 
 if TYPE_CHECKING:
@@ -42,6 +41,9 @@ if TYPE_CHECKING:
         Mapping[str, str],
         Sequence[Tuple[str, str]]
     ]
+    from .pipeline.transport._base import (
+        _HttpResponseBase as _PipelineTransportHttpResponseBase
+    )
 
 class HttpVerbs(str, Enum):
     GET = "GET"
@@ -82,6 +84,8 @@ class HttpRequest(object):
      if your data doesn't fit into `json`, `data`, or `files`. Accepts a bytes type, or a generator
      that yields bytes.
     :paramtype content: str or bytes or iterable[bytes] or asynciterable[bytes]
+    :ivar str url: The URL this request is against.
+    :ivar str method: The method type of this request.
     """
 
     def __init__(self, method, url, **kwargs):
@@ -149,12 +153,6 @@ class HttpRequest(object):
         # type: (...) -> str
         return self._internal_request.method
 
-    @method.setter
-    def method(self, val):
-        # type: (str) -> None
-        self._internal_request.method = val
-
-
     def __repr__(self):
         return "<HttpRequest [{}], url: '{}'>".format(
             self.method, self.url
@@ -177,11 +175,20 @@ class _HttpResponseBase(object):
     :keyword history: If redirection, history of all redirection
      that resulted in this response.
     :paramtype history: list[~azure.core.protocol.HttpResponse]
+    :ivar int status_code: The status code of this response
+    :ivar headers: The response headers
+    :vartype headers: dict[str, any]
+    :ivar str reason: The reason phrase for this response
+    :ivar bytes content: The response content in bytes
+    :ivar str url: The URL that resulted in this response
+    :ivar str encoding: The response encoding. Is settable, by default
+     is the response Content-Type header
+    :ivar str text: The response body as a string.
     """
 
     def __init__(self, status_code, **kwargs):
         # type: (int, Any) -> None
-        self._internal_response = kwargs.pop("_internal_response")  # type: _PipelineTransportHttpResponse
+        self._internal_response = kwargs.pop("_internal_response")  # type: _PipelineTransportHttpResponseBase
         self.request = kwargs.pop("request")
         self._encoding = None
 
@@ -274,4 +281,6 @@ class AsyncHttpResponse(_HttpResponseBase):
     @property
     def content(self):
         # type: (...) -> bytes
+        if self._internal_response._body is None:
+            raise ValueError("Body is not available. Call async method load_body, or do your call with stream=False.")
         return self._internal_response.body()
