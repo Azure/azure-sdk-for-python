@@ -76,7 +76,6 @@ class ApiType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     HTTP = "http"
     SOAP = "soap"
-    WEBSOCKET = "websocket"
 
 class ApiVersionSetContractDetailsVersioningScheme(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """An value that determines where the API Version identifier will be located in a HTTP request.
@@ -137,23 +136,6 @@ class CertificateConfigurationStoreName(with_metaclass(_CaseInsensitiveEnumMeta,
 
     CERTIFICATE_AUTHORITY = "CertificateAuthority"
     ROOT = "Root"
-
-class CertificateSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Certificate Source.
-    """
-
-    MANAGED = "Managed"
-    KEY_VAULT = "KeyVault"
-    CUSTOM = "Custom"
-    BUILT_IN = "BuiltIn"
-
-class CertificateStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Certificate Status.
-    """
-
-    COMPLETED = "Completed"
-    FAILED = "Failed"
-    IN_PROGRESS = "InProgress"
 
 class ClientAuthenticationMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -355,8 +337,6 @@ class Protocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     HTTP = "http"
     HTTPS = "https"
-    WS = "ws"
-    WSS = "wss"
 
 class ResourceSkuCapacityScaleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The scale type applicable to the sku.
@@ -391,14 +371,12 @@ class SoapApiType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Type of Api to create.
     
     
-    * ``http`` creates a REST API
-    * ``soap`` creates a SOAP pass-through API
-    * ``websocket`` creates websocket API.
+    * ``http`` creates a SOAP to REST API
+    * ``soap`` creates a SOAP pass-through API .
     """
 
     SOAP_TO_REST = "http"  #: Imports a SOAP API having a RESTful front end.
     SOAP_PASS_THROUGH = "soap"  #: Imports the Soap API having a SOAP front end.
-    WEB_SOCKET = "websocket"  #: Imports the Soap API having a Websocket front end.
 
 class State(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Status of the issue.
