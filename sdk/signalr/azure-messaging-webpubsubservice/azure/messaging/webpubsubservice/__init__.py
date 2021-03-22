@@ -63,18 +63,19 @@ class WebPubSubServiceClient(object):
     def _format_url(self, url):
         # type: (str) -> str
         assert self.endpoint[-1] != "/", "My endpoint should not have a trailing slash"
-        return "/".join([self.endpoint + url.lstrip("/")])
+        return "/".join([self.endpoint, url.lstrip("/")])
 
     def send_request(self, request, **kwargs):
         # type: (corerest.HttpRequest, Any) -> corerest.HttpResponse
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~corerest.HttpRequest
+        :param request: The network request you want to make. Required.
+        :type request: ~corerest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False
         :return: The response of your network call.
         :rtype: ~corerest.HttpResponse
         """
+        kwargs.setdefault('stream', False)
         request.url = self._format_url(
             request.url
         )  # BUGBUG - should create new request, not mutate the existing one...

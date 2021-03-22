@@ -59,6 +59,7 @@ setup(
             "azure",
             "azure.messaging",
             "tests",
+            "examples",
         ]
     ),
     install_requires=[
