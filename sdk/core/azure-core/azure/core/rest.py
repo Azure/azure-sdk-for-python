@@ -23,6 +23,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import codecs
+import cgi
 import json
 from enum import Enum
 import xml.etree.ElementTree as ET
@@ -63,6 +65,15 @@ def _is_stream(content):
     return isinstance(content, (str, bytes)) or any(
         hasattr(content, attr) for attr in ["read", "__iter__", "__aiter__"]
     )
+
+def _lookup_encoding(encoding):
+    # type: (str) -> bool
+    # including check for whether encoding is known taken from httpx
+    try:
+        codecs.lookup(encoding)
+        return True
+    except LookupError:
+        return False
 
 def _can_set_content_length_header(internal_request):
     # type: (_PipelineTransportHttpRequest) -> bool
@@ -112,7 +123,6 @@ def _set_body(content, data, files, json, internal_request):
             # don't want to risk changing pipeline.transport, so doing twice here
             internal_request.headers["Content-Type"] = "application/x-www-form-urlencoded"
     internal_request.headers = headers
-
 
 """Classes
 """
@@ -248,8 +258,7 @@ class _HttpResponseBase(object):
     def __init__(self, status_code, **kwargs):
         # type: (int, Any) -> None
         self._internal_response = kwargs.pop("_internal_response")  # type: _PipelineTransportHttpResponseBase
-        self.request = kwargs.pop("request")
-        self._encoding = None
+        self._request = kwargs.pop("request")
 
     @property
     def status_code(self):
@@ -293,7 +302,19 @@ class _HttpResponseBase(object):
         """Returns the response encoding. By default, is specified
         by the response Content-Type header.
         """
-        return self._encoding
+
+        try:
+            return self._encoding
+        except AttributeError:
+            content_type = self.headers.get("Content-Type")
+
+            if not content_type:
+                return None
+            _, params = cgi.parse_header(content_type)
+            encoding = params.get('charset') # -> utf-8
+            if encoding is None or not _lookup_encoding(encoding):
+                return None
+            return encoding
 
     @encoding.setter
     def encoding(self, value: str) -> None:
@@ -304,7 +325,27 @@ class _HttpResponseBase(object):
     def text(self):
         # type: (...) -> str
         """Returns the response body as a string"""
-        return self._internal_response.text(self.encoding)
+        return self._internal_response.text(encoding=self.encoding)
+
+    @property
+    def request(self):
+        # type: (...) -> HttpRequest
+        if self._request:
+            return self._request
+        raise RuntimeError(
+            "You are trying to access the 'request', but there is no request associated with this HttpResponse"
+        )
+
+    @property
+    def content_type(self):
+        # type: (...) -> Optional[str]
+        """Content Type of the response"""
+        return self._internal_response.content_type or self.headers.get("Content-Type")
+
+    @request.setter
+    def request(self, val):
+        # type: (HttpRequest) -> None
+        self._request = val
 
     def json(self):
         # type: (...) -> Any
@@ -326,7 +367,12 @@ class _HttpResponseBase(object):
 
     def __repr__(self):
         # type: (...) -> str
-        return self._internal_response.__repr__()
+        content_type_str = (
+            ", Content-Type: {}".format(self.content_type) if self.content_type else ""
+        )
+        return "<{}: {} {}{}>".format(
+            type(self).__name__, self.status_code, self.reason, content_type_str
+        )
 
 class HttpResponse(_HttpResponseBase):
 
@@ -343,3 +389,11 @@ class AsyncHttpResponse(_HttpResponseBase):
         if self._internal_response._body is None:
             raise ValueError("Body is not available. Call async method load_body, or do your call with stream=False.")
         return self._internal_response.body()
+
+    async def load_body(self):
+        # type: () -> None
+        """Load in memory the body, so it could be accessible from sync methods.
+
+        Will remove once we have the async stream handling worked out
+        """
+        return await self._internal_response.load_body()

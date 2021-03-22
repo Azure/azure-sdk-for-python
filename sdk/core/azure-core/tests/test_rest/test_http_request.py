@@ -3,6 +3,9 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+
+# NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
+# Thank you httpx for your wonderful tests!
 import pytest
 from typing import Generator, AsyncGenerator
 from azure.core.rest import HttpRequest
