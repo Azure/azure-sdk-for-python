@@ -7,7 +7,13 @@ Start be creating a new virtual environment for your perf tests. This will need 
 
 These tests will run against a pre-configured metrics advisor service. The following environment variable will need to be set for the tests to access the live resources:
 ```
-AZURE_APP_CONFIG_CONNECTION_STRING=<app config connection string>
+AZURE_METRICS_ADVISOR_ENDPOINT=<service endpoint>
+AZURE_METRICS_ADVISOR_SUBSCRIPTION_KEY=<service subscription key>
+AZURE_METRICS_ADVISOR_API_KEY=<service api key>
+AZURE_METRICS_ADVISOR_ANOMALY_ALERT_CONFIGURATION_ID=<anomaly alert configuration id>
+AZURE_METRICS_ADVISOR_ALERT_ID=<alert id>
+AZURE_METRICS_ADVISOR_ANOMALY_DETECTION_CONFIGURATION_ID=<anomaly detection configuration id>
+AZURE_METRICS_ADVISOR_INCIDENT_ID=<incident id>
 ```
 
 ### Setup for perf test runs
