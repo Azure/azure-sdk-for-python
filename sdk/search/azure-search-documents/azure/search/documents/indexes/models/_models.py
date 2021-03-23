@@ -8,8 +8,17 @@ from .._generated.models import (
     LexicalAnalyzer,
     LexicalTokenizer,
     AnalyzeRequest,
+    CustomAnalyzer as _CustomAnalyzer,
+    PatternAnalyzer as _PatternAnalyzer,
+    PatternTokenizer as _PatternTokenizer,
+    SearchResourceEncryptionKey as _SearchResourceEncryptionKey,
+    SearchIndexerDataSource as _SearchIndexerDataSource,
+    SynonymMap as _SynonymMap,
+    DataSourceCredentials,
+    AzureActiveDirectoryApplicationCredentials
 )
 
+DELIMITER = "|"
 
 class AnalyzeTextOptions(msrest.serialization.Model):
     """Specifies some text and analysis components used to break that text into tokens.
@@ -140,6 +149,26 @@ class CustomAnalyzer(LexicalAnalyzer):
         self.token_filters = kwargs.get('token_filters', None)
         self.char_filters = kwargs.get('char_filters', None)
 
+    def _to_generated(self):
+        return _CustomAnalyzer(
+            name=self.name,
+            odata_type=self.odata_type,
+            tokenizer=self.tokenizer_name,
+            token_filters=self.token_filters,
+            char_filters=self.char_filters
+        )
+
+    @classmethod
+    def _from_generated(cls, custom_analyzer):
+        if not custom_analyzer:
+            return None
+        return cls(
+            name=custom_analyzer.name,
+            odata_type=custom_analyzer.odata_type,
+            tokenizer_name=custom_analyzer.tokenizer,
+            token_filters=custom_analyzer.token_filters,
+            char_filters=custom_analyzer.char_filters
+        )
 
 class PatternAnalyzer(LexicalAnalyzer):
     """Flexibly separates text into terms via a regular expression.
@@ -183,6 +212,34 @@ class PatternAnalyzer(LexicalAnalyzer):
         self.flags = kwargs.get("flags", None)
         self.stopwords = kwargs.get("stopwords", None)
 
+    def _to_generated(self):
+        if not self.flags:
+            flags = None
+        else:
+            flags = DELIMITER.join(self.flags)
+        return _PatternAnalyzer(
+            name=self.name,
+            lower_case_terms=self.lower_case_terms,
+            pattern=self.pattern,
+            flags=flags,
+            stopwords=self.stopwords,
+        )
+
+    @classmethod
+    def _from_generated(cls, pattern_analyzer):
+        if not pattern_analyzer:
+            return None
+        if not pattern_analyzer.flags:
+            flags = None
+        else:
+            flags = pattern_analyzer.flags.split(DELIMITER)
+        return cls(
+            name=pattern_analyzer.name,
+            lower_case_terms=pattern_analyzer.lower_case_terms,
+            pattern=pattern_analyzer.pattern,
+            flags=flags,
+            stopwords=pattern_analyzer.stopwords,
+        )
 
 class PatternTokenizer(LexicalTokenizer):
     """Tokenizer that uses regex pattern matching to construct distinct tokens.
@@ -223,6 +280,32 @@ class PatternTokenizer(LexicalTokenizer):
         self.flags = kwargs.get("flags", None)
         self.group = kwargs.get("group", -1)
 
+    def _to_generated(self):
+        if not self.flags:
+            flags = None
+        else:
+            flags = DELIMITER.join(self.flags)
+        return _PatternTokenizer(
+            name=self.name,
+            pattern=self.pattern,
+            flags=flags,
+            group=self.group,
+        )
+
+    @classmethod
+    def _from_generated(cls, pattern_tokenizer):
+        if not pattern_tokenizer:
+            return None
+        if not pattern_tokenizer.flags:
+            flags = None
+        else:
+            flags = pattern_tokenizer.flags.split(DELIMITER)
+        return cls(
+            name=pattern_tokenizer.name,
+            pattern=pattern_tokenizer.pattern,
+            flags=flags,
+            group=pattern_tokenizer.group,
+        )
 
 class SearchResourceEncryptionKey(msrest.serialization.Model):
     """A customer-managed encryption key in Azure Key Vault. Keys that you create and manage can be
@@ -273,6 +356,38 @@ class SearchResourceEncryptionKey(msrest.serialization.Model):
         self.application_id = kwargs.get('application_id', None)
         self.application_secret = kwargs.get('application_secret', None)
 
+    def _to_generated(self):
+        if self.application_id and self.application_secret:
+            access_credentials = AzureActiveDirectoryApplicationCredentials(
+                application_id=self.application_id,
+                application_secret=self.application_secret
+            )
+        else:
+            access_credentials = None
+        return _SearchResourceEncryptionKey(
+            key_name=self.key_name,
+            key_version=self.key_version,
+            vault_uri=self.vault_uri,
+            access_credentials=access_credentials
+        )
+
+    @classmethod
+    def _from_generated(cls, search_resource_encryption_key):
+        if not search_resource_encryption_key:
+            return None
+        if search_resource_encryption_key.access_credentials:
+            application_id = search_resource_encryption_key.access_credentials.application_id
+            application_secret = search_resource_encryption_key.access_credentials.application_secret
+        else:
+            application_id = None
+            application_secret = None
+        return cls(
+            key_name=search_resource_encryption_key.key_name,
+            key_version=search_resource_encryption_key.key_version,
+            vault_uri=search_resource_encryption_key.vault_uri,
+            application_id=application_id,
+            application_secret=application_secret
+        )
 
 class SynonymMap(msrest.serialization.Model):
     """Represents a synonym map definition.
@@ -328,6 +443,25 @@ class SynonymMap(msrest.serialization.Model):
         self.encryption_key = kwargs.get('encryption_key', None)
         self.e_tag = kwargs.get('e_tag', None)
 
+    def _to_generated(self):
+        return _SynonymMap(
+            name=self.name,
+            synonyms="\n".join(self.synonyms),
+            encryption_key=self.encryption_key._to_generated() if self.encryption_key else None, # pylint:disable=protected-access
+            e_tag=self.e_tag
+        )
+
+    @classmethod
+    def _from_generated(cls, synonym_map):
+        if not synonym_map:
+            return None
+        return cls(
+            name=synonym_map.name,
+            synonyms=synonym_map.synonyms.split("\n"),
+            # pylint:disable=protected-access
+            encryption_key=SearchResourceEncryptionKey._from_generated(synonym_map.encryption_key),
+            e_tag=synonym_map.e_tag
+        )
 
 class SearchIndexerDataSourceConnection(msrest.serialization.Model):
     """Represents a datasource connection definition, which can be used to configure an indexer.
@@ -385,3 +519,57 @@ class SearchIndexerDataSourceConnection(msrest.serialization.Model):
         self.data_change_detection_policy = kwargs.get('data_change_detection_policy', None)
         self.data_deletion_detection_policy = kwargs.get('data_deletion_detection_policy', None)
         self.e_tag = kwargs.get('e_tag', None)
+
+    def _to_generated(self):
+        if self.connection_string is None or self.connection_string == "":
+            connection_string = "<unchanged>"
+        else:
+            connection_string = self.connection_string
+        credentials = DataSourceCredentials(
+            connection_string=connection_string
+        )
+        return _SearchIndexerDataSource(
+            name=self.name,
+            description=self.description,
+            type=self.type,
+            credentials=credentials,
+            container=self.container,
+            data_change_detection_policy=self.data_change_detection_policy,
+            data_deletion_detection_policy=self.data_deletion_detection_policy,
+            e_tag=self.e_tag
+        )
+
+    @classmethod
+    def _from_generated(cls, search_indexer_data_source):
+        if not search_indexer_data_source:
+            return None
+        connection_string = search_indexer_data_source.credentials.connection_string \
+            if search_indexer_data_source.credentials else None
+        return cls(
+            name=search_indexer_data_source.name,
+            description=search_indexer_data_source.description,
+            type=search_indexer_data_source.type,
+            connection_string=connection_string,
+            container=search_indexer_data_source.container,
+            data_change_detection_policy=search_indexer_data_source.data_change_detection_policy,
+            data_deletion_detection_policy=search_indexer_data_source.data_deletion_detection_policy,
+            e_tag=search_indexer_data_source.e_tag
+        )
+
+
+def pack_analyzer(analyzer):
+    if not analyzer:
+        return None
+    if isinstance(analyzer, (PatternAnalyzer, CustomAnalyzer)):
+        return analyzer._to_generated() # pylint:disable=protected-access
+    return analyzer
+
+
+def unpack_analyzer(analyzer):
+    if not analyzer:
+        return None
+    if isinstance(analyzer, _PatternAnalyzer):
+        return PatternAnalyzer._from_generated(analyzer)    # pylint:disable=protected-access
+    if isinstance(analyzer, _CustomAnalyzer):
+        return CustomAnalyzer._from_generated(analyzer) # pylint:disable=protected-access
+    return analyzer
