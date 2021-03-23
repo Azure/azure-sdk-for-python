@@ -11,7 +11,7 @@ from typing import (  # pylint: disable=unused-import
     Any
 )
 
-from .utils import get_current_utc_with_tz
+from .utils import get_current_utc_as_int
 from .user_token_refresh_options import CommunicationTokenRefreshOptions
 
 
@@ -79,11 +79,11 @@ class CommunicationTokenCredential(object):
         await self._lock.acquire()
 
     def _token_expiring(self):
-        return self._token.expires_on - get_current_utc_with_tz() <\
-            timedelta(minutes=self._ON_DEMAND_REFRESHING_INTERVAL_MINUTES)
+        return self._token.expires_on - get_current_utc_as_int() <\
+            timedelta(minutes=self._ON_DEMAND_REFRESHING_INTERVAL_MINUTES).total_seconds()
 
     def _is_currenttoken_valid(self):
-        return get_current_utc_with_tz() < self._token.expires_on
+        return get_current_utc_as_int() < self._token.expires_on
 
     async def close(self) -> None:
         pass

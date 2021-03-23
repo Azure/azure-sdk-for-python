@@ -176,7 +176,7 @@ class ChatClient(object):
 
         create_chat_thread_result = await self._client.chat.create_chat_thread(
             create_chat_thread_request=create_thread_request,
-            idempotency_token=idempotency_token,
+            repeatability_request_id=idempotency_token,
             **kwargs)
 
         errors = None

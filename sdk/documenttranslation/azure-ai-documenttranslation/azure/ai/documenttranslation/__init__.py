@@ -11,12 +11,12 @@ from ._generated.models import (
 )
 from ._api_version import DocumentTranslationVersion
 from ._models import (
-    StorageTarget,
-    JobStatusDetail,
-    DocumentStatusDetail,
+    TranslationTarget,
+    JobStatusResult,
+    DocumentStatusResult,
     DocumentTranslationError,
     TranslationGlossary,
-    BatchDocumentInput,
+    DocumentTranslationInput,
     FileFormat
 )
 
@@ -26,12 +26,12 @@ __VERSION__ = VERSION
 __all__ = [
     "DocumentTranslationClient",
     "DocumentTranslationVersion",
-    "BatchDocumentInput",
+    "DocumentTranslationInput",
     "TranslationGlossary",
     "StorageInputType",
     "FileFormat",
-    "StorageTarget",
-    "JobStatusDetail",
-    "DocumentStatusDetail",
+    "TranslationTarget",
+    "JobStatusResult",
+    "DocumentStatusResult",
     "DocumentTranslationError",
 ]

@@ -4,28 +4,27 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Union, Any, List, TYPE_CHECKING
+from typing import Any, List
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import AsyncLROPoller
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.credentials import AzureKeyCredential
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from .._generated.aio import BatchDocumentTranslationClient as _BatchDocumentTranslationClient
 from .._user_agent import USER_AGENT
 from .._generated.models import (
     BatchStatusDetail as _BatchStatusDetail,
 )
 from .._models import (
-    JobStatusDetail,
-    BatchDocumentInput,
+    JobStatusResult,
+    DocumentTranslationInput,
     FileFormat,
-    DocumentStatusDetail
+    DocumentStatusResult
 )
-from .._helpers import get_authentication_policy
 from .._polling import TranslationPolling
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.credentials import AzureKeyCredential
+COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
 
 
 class DocumentTranslationClient(object):
@@ -34,13 +33,13 @@ class DocumentTranslationClient(object):
     """
 
     def __init__(
-            self, endpoint: str, credential: Union["AzureKeyCredential", "AsyncTokenCredential"], **kwargs: Any
+            self, endpoint: str, credential: "AzureKeyCredential", **kwargs: Any
     ) -> None:
         """
 
         :param str endpoint:
         :param credential:
-        :type credential: Union[AzureKeyCredential, AsyncTokenCredential]
+        :type credential: AzureKeyCredential
         :keyword str api_version:
         :rtype: None
         """
@@ -48,7 +47,11 @@ class DocumentTranslationClient(object):
         self._credential = credential
         self._api_version = kwargs.pop('api_version', None)
 
-        authentication_policy = get_authentication_policy(credential)
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
+        authentication_policy = AzureKeyCredentialPolicy(
+            name=COGNITIVE_KEY_HEADER, credential=credential
+        )
         self._client = _BatchDocumentTranslationClient(
             endpoint=endpoint,
             credential=credential,  # type: ignore
@@ -59,20 +62,20 @@ class DocumentTranslationClient(object):
         )
 
     @distributed_trace_async
-    async def create_translation_job(self, batch, **kwargs):
-        # type: (List[BatchDocumentInput], **Any) -> JobStatusDetail
+    async def create_translation_job(self, inputs, **kwargs):
+        # type: (List[DocumentTranslationInput], **Any) -> JobStatusResult
         """
 
-        :param batch:
-        :type batch: List[~azure.ai.documenttranslation.BatchDocumentInput]
-        :return: JobStatusDetail
-        :rtype: JobStatusDetail
+        :param inputs:
+        :type inputs: List[~azure.ai.documenttranslation.DocumentTranslationInput]
+        :return: JobStatusResult
+        :rtype: JobStatusResult
         """
 
         # submit translation job
         response_headers = await self._client.document_translation._submit_batch_request_initial(  # pylint: disable=protected-access
             # pylint: disable=protected-access
-            inputs=BatchDocumentInput._to_generated_list(batch),
+            inputs=DocumentTranslationInput._to_generated_list(inputs),
             cls=lambda pipeline_response, _, response_headers: response_headers,
             polling=True,
             **kwargs
@@ -92,17 +95,17 @@ class DocumentTranslationClient(object):
 
     @distributed_trace_async
     async def get_job_status(self, job_id, **kwargs):
-        # type: (str, **Any) -> JobStatusDetail
+        # type: (str, **Any) -> JobStatusResult
         """
 
         :param job_id: guid id for job
         :type job_id: str
-        :rtype: ~azure.ai.documenttranslation.JobStatusDetail
+        :rtype: ~azure.ai.documenttranslation.JobStatusResult
         """
 
         job_status = await self._client.document_translation.get_operation_status(job_id, **kwargs)
         # pylint: disable=protected-access
-        return JobStatusDetail._from_generated(job_status)
+        return JobStatusResult._from_generated(job_status)
 
     @distributed_trace_async
     async def cancel_job(self, job_id, **kwargs):
@@ -118,13 +121,13 @@ class DocumentTranslationClient(object):
 
     @distributed_trace_async
     async def wait_until_done(self, job_id, **kwargs):
-        # type: (str, **Any) -> JobStatusDetail
+        # type: (str, **Any) -> JobStatusResult
         """
 
         :param job_id: guid id for job
         :type job_id: str
-        :return: JobStatusDetail
-        :rtype: JobStatusDetail
+        :return: JobStatusResult
+        :rtype: JobStatusResult
         """
         pipeline_response = await self._client.document_translation.get_operation_status(
             job_id,
@@ -133,7 +136,7 @@ class DocumentTranslationClient(object):
 
         def callback(raw_response):
             detail = self._client._deserialize(_BatchStatusDetail, raw_response)  # pylint: disable=protected-access
-            return JobStatusDetail._from_generated(detail)  # pylint: disable=protected-access
+            return JobStatusResult._from_generated(detail)  # pylint: disable=protected-access
 
         poller = AsyncLROPoller(
             client=self._client._client,  # pylint: disable=protected-access
@@ -149,19 +152,19 @@ class DocumentTranslationClient(object):
 
     @distributed_trace
     def list_submitted_jobs(self, **kwargs):
-        # type: (**Any) -> AsyncItemPaged[JobStatusDetail]
+        # type: (**Any) -> AsyncItemPaged[JobStatusResult]
         """
 
         :keyword int results_per_page:
         :keyword int skip:
-        :rtype: ~azure.core.polling.AsyncItemPaged[JobStatusDetail]
+        :rtype: ~azure.core.polling.AsyncItemPaged[JobStatusResult]
         """
         skip = kwargs.pop('skip', None)
         results_per_page = kwargs.pop('results_per_page', None)
 
         def _convert_from_generated_model(generated_model):
             # pylint: disable=protected-access
-            return JobStatusDetail._from_generated(generated_model)
+            return JobStatusResult._from_generated(generated_model)
 
         model_conversion_function = kwargs.pop(
             "cls",
@@ -176,22 +179,22 @@ class DocumentTranslationClient(object):
         )
 
     @distributed_trace
-    def list_documents_statuses(self, job_id, **kwargs):
-        # type: (str, **Any) -> AsyncItemPaged[DocumentStatusDetail]
+    def list_all_document_statuses(self, job_id, **kwargs):
+        # type: (str, **Any) -> AsyncItemPaged[DocumentStatusResult]
         """
 
         :param job_id: guid id for job
         :type job_id: str
         :keyword int results_per_page:
         :keyword int skip:
-        :rtype: ~azure.core.paging.AsyncItemPaged[DocumentStatusDetail]
+        :rtype: ~azure.core.paging.AsyncItemPaged[DocumentStatusResult]
         """
         skip = kwargs.pop('skip', None)
         results_per_page = kwargs.pop('results_per_page', None)
 
         def _convert_from_generated_model(generated_model):
             # pylint: disable=protected-access
-            return DocumentStatusDetail._from_generated(generated_model)
+            return DocumentStatusResult._from_generated(generated_model)
 
         model_conversion_function = kwargs.pop(
             "cls",
@@ -209,22 +212,22 @@ class DocumentTranslationClient(object):
 
     @distributed_trace_async
     async def get_document_status(self, job_id, document_id, **kwargs):
-        # type: (str, str, **Any) -> DocumentStatusDetail
+        # type: (str, str, **Any) -> DocumentStatusResult
         """
 
         :param job_id: guid id for job
         :type job_id: str
         :param document_id: guid id for document
         :type document_id: str
-        :rtype: ~azure.ai.documenttranslation.DocumentStatusDetail
+        :rtype: ~azure.ai.documenttranslation.DocumentStatusResult
         """
         document_status = await self._client.document_translation.get_document_status(job_id, document_id, **kwargs)
         # pylint: disable=protected-access
-        return DocumentStatusDetail._from_generated(document_status)
+        return DocumentStatusResult._from_generated(document_status)
 
 
     @distributed_trace_async
-    async def get_supported_glossary_formats(self, **kwargs):
+    async def get_glossary_formats(self, **kwargs):
         # type: (**Any) -> List[FileFormat]
         """
 
@@ -235,7 +238,7 @@ class DocumentTranslationClient(object):
         return FileFormat._from_generated_list(glossary_formats.value)
 
     @distributed_trace_async
-    async def get_supported_document_formats(self, **kwargs):
+    async def get_document_formats(self, **kwargs):
         # type: (**Any) -> List[FileFormat]
         """
 

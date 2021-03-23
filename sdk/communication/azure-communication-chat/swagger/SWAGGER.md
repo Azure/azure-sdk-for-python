@@ -15,7 +15,7 @@ autorest SWAGGER.md
 
 ### Settings
 ``` yaml
-input-file: https://int.chatgateway.trafficmanager.net/swagger/2021-03-01-preview5/swagger.json
+input-file: https://int.chatgateway.trafficmanager.net/swagger/2021-03-07/swagger.json
 output-folder: ../azure/communication/chat/_generated
 namespace: azure.communication.chat
 no-namespace-folders: true

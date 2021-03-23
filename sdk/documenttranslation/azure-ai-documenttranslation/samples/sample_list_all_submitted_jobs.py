@@ -16,7 +16,7 @@ def sample_list_all_submitted_jobs():
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
 
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
-    jobs = client.list_submitted_jobs()  # type: ItemPaged[JobStatusDetail]
+    jobs = client.list_submitted_jobs()  # type: ItemPaged[JobStatusResult]
 
     for job in jobs:
         if job.status in ["NotStarted", "Running"]:

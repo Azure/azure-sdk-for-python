@@ -67,7 +67,7 @@ interactions:
     uri: https://sanitized.communication.azure.com/phoneNumbers/operations/capabilities_04387c51-57e3-4842-9463-ed7f5c3ff047?api-version=2021-03-07
   response:
     body:
-      string: '{"status": "Succeeded", "resourceLocation": "/phoneNumbers/+18335260208?api-version=2021-03-07",
+      string: '{"status": "succeeded", "resourceLocation": "/phoneNumbers/+18335260208?api-version=2021-03-07",
         "createdDateTime": "2021-03-16T16:37:13.8361789+00:00", "id": "sanitized",
         "operationType": "UpdatePhoneNumberCapabilities", "lastActionDateTime": "0001-01-01T00:00:00+00:00"}'
     headers:

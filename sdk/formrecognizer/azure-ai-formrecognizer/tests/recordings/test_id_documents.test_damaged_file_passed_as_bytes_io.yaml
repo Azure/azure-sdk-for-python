@@ -1,0 +1,46 @@
+interactions:
+- request:
+    body: !!python/object/new:_io.BytesIO
+      state: !!python/tuple
+      - !!binary |
+        JVBERlVVVQ==
+      - 0
+      - null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '7'
+      Content-Type:
+      - application/pdf
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyze?includeTextDetails=false
+  response:
+    body:
+      string: '{"error": {"code": "BadArgument", "innerError": {"requestId": "89d8061f-7f65-4ec6-800c-821d33b306c9"},
+        "message": "Bad or unrecognizable request JSON or binary file."}}'
+    headers:
+      apim-request-id:
+      - 89d8061f-7f65-4ec6-800c-821d33b306c9
+      content-length:
+      - '161'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 05 Mar 2021 17:44:10 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '3'
+    status:
+      code: 400
+      message: Bad Request
+version: 1
