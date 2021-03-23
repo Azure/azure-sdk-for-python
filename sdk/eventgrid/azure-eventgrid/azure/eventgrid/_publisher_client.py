@@ -178,7 +178,7 @@ class EventGridPublisherClient(object):
         """
         if not isinstance(events, list):
             events = cast(ListEventType, [events])
-        content_type = "application/json; charset=utf-8"
+        content_type = kwargs.pop("content_type", "application/json; charset=utf-8")
 
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
@@ -191,8 +191,8 @@ class EventGridPublisherClient(object):
         elif isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
             for event in events:
                 _eventgrid_data_typecheck(event)
-        self._client._send_request(
-            _build_request(self._endpoint, content_type, events, self._client),
+        self._client._send_request( # pylint: disable=protected-access
+            _build_request(self._endpoint, content_type, events),
             **kwargs
         )
 

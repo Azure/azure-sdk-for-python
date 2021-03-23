@@ -3,17 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from typing import TYPE_CHECKING, Any
+import json
 import hashlib
 import hmac
 import base64
 import six
-import json
 
 try:
     from urllib.parse import quote
 except ImportError:
     from urllib2 import quote  # type: ignore
 
+from msrest import Serializer
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
@@ -137,19 +138,18 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
         **kwargs
     )
 
-def _build_request(endpoint, content_type, events, client):
-    serialize = client._serialize # pylint: disable=protected-access
+def _build_request(endpoint, content_type, events):
+    serialize = Serializer()
     header_parameters = {}  # type: Dict[str, Any]
     header_parameters['Content-Type'] = serialize.header("content_type", content_type, 'str')
 
     query_parameters = {}  # type: Dict[str, Any]
     query_parameters['api-version'] = serialize.query("api_version", "2018-01-01", 'str')
 
-    body = serialize.body(events, '[object]')
-    if body is None:
+    if events is None:
         data = None
     else:
-        data = json.dumps(body)
+        data = json.dumps(events)
         header_parameters['Content-Length'] = str(len(data))
 
     request = HttpRequest(
