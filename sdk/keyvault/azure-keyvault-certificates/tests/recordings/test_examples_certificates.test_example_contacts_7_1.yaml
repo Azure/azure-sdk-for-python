@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.2.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-certificates/4.3.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: PUT
     uri: https://vaultname.vault.azure.net/certificates/contacts?api-version=7.1
   response:
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 17 Feb 2021 22:26:24 GMT
+      - Mon, 22 Mar 2021 23:52:03 GMT
       expires:
       - '-1'
       pragma:
@@ -41,20 +41,20 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus2
+      - eastus2
       x-ms-keyvault-service-version:
-      - 1.2.164.2
+      - 1.2.205.0
       x-powered-by:
       - ASP.NET
     status:
       code: 401
       message: Unauthorized
 - request:
-    body: '{"contacts": [{"phone": "1111111111", "email": "admin@contoso.com", "name":
-      "John Doe"}, {"phone": "2222222222", "email": "admin2@contoso.com", "name":
-      "John Doe2"}]}'
+    body: '{"contacts": [{"name": "John Doe", "email": "admin@contoso.com", "phone":
+      "1111111111"}, {"name": "John Doe2", "email": "admin2@contoso.com", "phone":
+      "2222222222"}]}'
     headers:
       Accept:
       - application/json
@@ -67,7 +67,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.2.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-certificates/4.3.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: PUT
     uri: https://vaultname.vault.azure.net/certificates/contacts?api-version=7.1
   response:
@@ -78,11 +78,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '218'
+      - '220'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 17 Feb 2021 22:26:25 GMT
+      - Mon, 22 Mar 2021 23:52:03 GMT
       expires:
       - '-1'
       pragma:
@@ -92,11 +92,11 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus2
+      - eastus2
       x-ms-keyvault-service-version:
-      - 1.2.164.2
+      - 1.2.205.0
       x-powered-by:
       - ASP.NET
     status:
@@ -112,7 +112,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.2.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-certificates/4.3.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://vaultname.vault.azure.net/certificates/contacts?api-version=7.1
   response:
@@ -123,11 +123,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '218'
+      - '220'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 17 Feb 2021 22:26:25 GMT
+      - Mon, 22 Mar 2021 23:52:03 GMT
       expires:
       - '-1'
       pragma:
@@ -137,11 +137,11 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus2
+      - eastus2
       x-ms-keyvault-service-version:
-      - 1.2.164.2
+      - 1.2.205.0
       x-powered-by:
       - ASP.NET
     status:
@@ -159,7 +159,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.2.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-certificates/4.3.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://vaultname.vault.azure.net/certificates/contacts?api-version=7.1
   response:
@@ -170,11 +170,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '218'
+      - '220'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 17 Feb 2021 22:26:25 GMT
+      - Mon, 22 Mar 2021 23:52:03 GMT
       expires:
       - '-1'
       pragma:
@@ -184,11 +184,11 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus2
+      - eastus2
       x-ms-keyvault-service-version:
-      - 1.2.164.2
+      - 1.2.205.0
       x-powered-by:
       - ASP.NET
     status:

@@ -5,10 +5,11 @@
 import asyncio
 import functools
 
-from azure.keyvault.certificates import CertificatePolicy, CertificateContentType, WellKnownIssuerNames
+from azure.keyvault.certificates import ApiVersion, CertificatePolicy, CertificateContentType, WellKnownIssuerNames
 from azure.keyvault.certificates.aio import CertificateClient
 from azure.keyvault.certificates._shared import HttpChallengeCache
 from devtools_testutils import PowerShellPreparer
+from parameterized import parameterized, param
 import pytest
 
 from _shared.test_case_async import KeyVaultTestCase
@@ -22,6 +23,9 @@ KeyVaultPreparer = functools.partial(
 
 def print(*args):
     assert all(arg is not None for arg in args)
+
+def suffixed_test_name(testcase_func, param_num, param):
+    return "{}_{}".format(testcase_func.__name__, parameterized.to_safe_name(param.kwargs.get("api_version")))
 
 
 @pytest.mark.asyncio
@@ -55,9 +59,17 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             CertificateClient, credential=credential, vault_url=vault_uri, **kwargs
         )
 
+    def _should_skip_test(self, api_version):
+        if self.is_live:
+            return api_version != ApiVersion.V7_1  # test only the default version live
+        return False
+
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_example_certificate_crud_operations(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
+        if self._should_skip_test(kwargs.get("api_version")):
+            pytest.skip()
+        client = self.create_client(azure_keyvault_url, **kwargs)
         certificate_client = client
         cert_name = self.get_resource_name("cert-name")
 
@@ -127,9 +139,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(deleted_certificate.recovery_id)
         # [END delete_certificate]
 
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_example_certificate_list_operations(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
+        if self._should_skip_test(kwargs.get("api_version")):
+            pytest.skip()
+        client = self.create_client(azure_keyvault_url, **kwargs)
         certificate_client = client
 
         # specify the certificate policy
@@ -187,9 +202,15 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(certificate.deleted_on)
         # [END list_deleted_certificates]
 
+    @parameterized.expand(
+        [param(api_version=api_version) for api_version in ApiVersion if api_version != ApiVersion.V2016_10_01],
+        name_func=suffixed_test_name
+    )
     @KeyVaultPreparer()
     async def test_example_certificate_backup_restore(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
+        if self._should_skip_test(kwargs.get("api_version")):
+            pytest.skip()
+        client = self.create_client(azure_keyvault_url, **kwargs)
         certificate_client = client
 
         # specify the certificate policy
@@ -234,9 +255,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(restored_certificate.properties.version)
         # [END restore_certificate]
 
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_example_certificate_recover(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
+        if self._should_skip_test(kwargs.get("api_version")):
+            pytest.skip()
+        client = self.create_client(azure_keyvault_url, **kwargs)
         certificate_client = client
 
         # specify the certificate policy
@@ -273,9 +297,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(recovered_certificate.name)
         # [END recover_deleted_certificate]
 
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_example_contacts(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
+        if self._should_skip_test(kwargs.get("api_version")):
+            pytest.skip()
+        client = self.create_client(azure_keyvault_url, **kwargs)
         certificate_client = client
 
         # [START set_contacts]
@@ -313,9 +340,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(deleted_contact.phone)
         # [END delete_contacts]
 
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_example_issuers(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
+        if self._should_skip_test(kwargs.get("api_version")):
+            pytest.skip()
+        client = self.create_client(azure_keyvault_url, **kwargs)
         certificate_client = client
 
         # [START create_issuer]
