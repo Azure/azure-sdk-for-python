@@ -244,7 +244,7 @@ document_translation_client = DocumentTranslationClient(endpoint, credential)
 
 docs_to_retry = []
 
-documents =  document_translation_client.list_documents_statuses(job_id)  # type: ItemPaged[DocumentStatusResult]
+documents =  document_translation_client.list_all_document_statuses(job_id)  # type: ItemPaged[DocumentStatusResult]
 
 for doc in documents:
     if doc.status == "Succeeded":
@@ -279,7 +279,7 @@ document_translation_client = DocumentTranslationClient(endpoint, credential)
 jobs = document_translation_client.list_submitted_jobs()  # type: ItemPaged[JobStatusResult]
 
 for job in jobs:
-    if job.status in ["NotStarted", "Running"]:
+    if not job.has_completed:
         job = document_translation_client.wait_until_done(job.id)
 
     print("Job ID: {}".format(job.id))
