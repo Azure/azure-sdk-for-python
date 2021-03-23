@@ -10,7 +10,7 @@ api_key = os.environ['API_KEY']
 client = WebPubSubServiceClient(endpoint, credential=AzureKeyCredential(api_key))
 
 # Send message to everybody on the given hub...
-request = prepare_send_to_all('ahub', 'Hello, all!')
+request = prepare_send_to_all('ahub', { 'Hello': 'all!' })
 response = client.send_request(request)
 try:
     response.raise_for_status()
@@ -18,6 +18,11 @@ try:
 except:
     print('Failed to send message: {}'.format(response))
 
+
+with open('send_messages.py', 'r') as f:
+    request = prepare_send_to_all('ahub', f, content_type='text/plain')
+    response = client.send_request(request)
+print(response)
 
 # Add a user to a group
 request = prepare_add_user_to_group('ahub', group='someGroup', user_id='me')
