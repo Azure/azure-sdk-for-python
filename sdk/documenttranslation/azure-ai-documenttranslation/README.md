@@ -3,9 +3,9 @@
 Azure Cognitive Services Document Translation is a cloud service that translates documents to and from 90 languages 
 and dialects while preserving document structure and data format. Use the client library for Document Translation to:
 
-* Translate numerous, large files from an Azure Blob Storage container to a target container in your language of choice
-* Check the translation status and progress of each document in the translation job
-* Apply a custom translation model or glossaries to tailor translation to your specific case
+* Translate numerous, large files from an Azure Blob Storage container to a target container in your language of choice.
+* Check the translation status and progress of each document in the translation job.
+* Apply a custom translation model or glossaries to tailor translation to your specific case.
 
 [Source code][python-dt-src] | [Package (PyPI)][python-dt-pypi] | [API reference documentation][python-dt-ref-docs] | [Product documentation][python-dt-product-docs] | [Samples][python-dt-samples]
 
@@ -46,9 +46,10 @@ az group create --name my-resource-group --location westus2
 # Create document translation
 az cognitiveservices account create \
     --name document-translation-resource \
+    --custom-domain document-translation-resource \
     --resource-group my-resource-group \
     --kind TextTranslation \
-    --sku F0 \
+    --sku S1 \
     --location westus2 \
     --yes
 ```
@@ -60,13 +61,10 @@ An **endpoint** and **credential** are necessary to instantiate the client objec
 
 #### Looking up the endpoint
 You can find the endpoint for your Document Translation resource using the
-[Azure Portal][azure_portal_get_endpoint]
-or [Azure CLI][azure_cli_endpoint_lookup]:
+[Azure Portal][azure_portal_get_endpoint].
 
-```bash
-# Get the endpoint for the document translation resource
-az cognitiveservices account show --name "resource-name" --resource-group "resource-group-name" --query "properties.endpoint"
-```
+> Note that the service requires a custom domain endpoint. Follow the instructions in the above link to format your endpoint:
+> https://<NAME-OF-YOUR-RESOURCE>.cognitiveservices.azure.com/
 
 #### Get the API key
 
@@ -105,15 +103,18 @@ the service documentation:
 Interaction with the Document Translation client library begins with an instance of the `DocumentTranslationClient`.
 The client provides operations for:
 
- - Creating a translation job to translate documents in your source container(s) and write results to you target container(s)
- - Checking the status of individual documents in the translation job and monitoring each document's progress
- - Enumerating all past and current translation jobs with the option to wait until the job(s) finish
- - Identifying supported glossary and document formats
+ - Creating a translation job to translate documents in your source container(s) and write results to you target container(s).
+ - Checking the status of individual documents in the translation job and monitoring each document's progress.
+ - Enumerating all past and current translation jobs with the option to wait until the job(s) finish.
+ - Identifying supported glossary and document formats.
 
-### Input
+### Translation Input
 
-Input to create a translation job requires that a list of `DocumentTranslationInput` be passed. A single source URL to documents can
-be translated to many different languages:
+To create a translation job, pass a list of `DocumentTranslationInput` into the `create_translation_job` client method.
+Constructing a `DocumentTranslationInput` requires that you pass the SAS URLs to your source and target containers (or files)
+and the target language(s) for translation.
+
+A single source container with documents can be translated to many different languages:
 
 ```python
 from azure.ai.documenttranslation import DocumentTranslationInput, TranslationTarget
@@ -179,7 +180,7 @@ The following section provides several code snippets covering some of the most c
 * [List translation jobs](#list-translation-jobs "List Translation Jobs")
 
 ### Translate your documents
-Translate the documents in your source container to the target containers, using custom glossaries.
+Translate the documents in your source container to the target containers.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -193,15 +194,13 @@ target_container_sas_url_fr = "<sas-url-fr>"
 
 document_translation_client = DocumentTranslationClient(endpoint, credential)
 
-glossaries = ["<glossary-url-A>", "<glossary-url-B>"]
-
 job = document_translation_client.create_translation_job(
     [
         DocumentTranslationInput(
             source_url=source_container_sas_url_en,
             targets=[
-                TranslationTarget(target_url=target_container_sas_url_es, glossaries=glossaries, language_code="es"),
-                TranslationTarget(target_url=target_container_sas_url_fr, glossaries=glossaries, language_code="fr"),
+                TranslationTarget(target_url=target_container_sas_url_es, language_code="es"),
+                TranslationTarget(target_url=target_container_sas_url_fr, language_code="fr"),
             ],
         )
     ]
@@ -216,9 +215,6 @@ print("Total number of translations on documents: {}".format(job_result.document
 print("Of total documents...")
 print("{} failed".format(job_result.documents_failed_count))
 print("{} succeeded".format(job_result.documents_succeeded_count))
-print("{} in progress".format(job_result.documents_in_progress_count))
-print("{} not yet started".format(job_result.documents_not_yet_started_count))
-print("{} cancelled".format(job_result.documents_cancelled_count))
 
 if job_result.status == "Succeeded":
     print("Our translation job succeeded")
@@ -230,7 +226,7 @@ if job_result.status == "Failed":
 ```
 
 ### Check status on individual documents
-Check status and translation progress of each document.
+Check status and translation progress of each document under a job.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -241,8 +237,6 @@ credential = AzureKeyCredential("<api_key>")
 job_id = "<job-id>"
 
 document_translation_client = DocumentTranslationClient(endpoint, credential)
-
-docs_to_retry = []
 
 documents =  document_translation_client.list_all_document_statuses(job_id)  # type: ItemPaged[DocumentStatusResult]
 
@@ -259,9 +253,6 @@ for doc in documents:
         print("Document ID: {}, Error Code: {}, Message: {}".format(
             doc.id, doc.error.code, doc.error.message
         ))
-        if doc.source_url not in docs_to_retry:
-            docs_to_retry.append(doc.source_url)
-
 ```
 
 ### List translation jobs
@@ -292,16 +283,12 @@ for job in jobs:
     print("Of total documents...")
     print("{} failed".format(job.documents_failed_count))
     print("{} succeeded".format(job.documents_succeeded_count))
-    print("{} in progress".format(job.documents_in_progress_count))
-    print("{} not yet started".format(job.documents_not_yet_started_count))
     print("{} cancelled".format(job.documents_cancelled_count))
 ```
-
 
 To see how to use the Document Translation client library with Azure Storage Blob to upload documents, create SAS tokens
 for your containers, and download the finished translated documents, see this [sample][sample_batch_translation_with_storage.py]. 
 Note that you will need to install the [azure-storage-blob][azure_storage_blob] library to run this sample.
-
 
 ## Troubleshooting
 
@@ -387,8 +374,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
 [python_logging]: https://docs.python.org/3/library/logging.html
 [azure_cli_endpoint_lookup]: https://docs.microsoft.com/cli/azure/cognitiveservices/account?view=azure-cli-latest#az-cognitiveservices-account-show
-[azure_portal_get_endpoint]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
-[cognitive_authentication_api_key]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
+[azure_portal_get_endpoint]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/get-started-with-document-translation?tabs=csharp#get-your-custom-domain-name-and-subscription-key
+[cognitive_authentication_api_key]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/get-started-with-document-translation?tabs=csharp#get-your-subscription-key
 
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
 
