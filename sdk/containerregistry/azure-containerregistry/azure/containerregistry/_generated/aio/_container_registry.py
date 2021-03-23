@@ -16,8 +16,7 @@ from ._configuration import ContainerRegistryConfiguration
 from .operations import ContainerRegistryOperations
 from .operations import ContainerRegistryRepositoryOperations
 from .operations import ContainerRegistryBlobOperations
-from .operations import RefreshTokensOperations
-from .operations import AccessTokensOperations
+from .operations import AuthenticationOperations
 from .. import models
 
 
@@ -30,10 +29,8 @@ class ContainerRegistry(object):
     :vartype container_registry_repository: azure.containerregistry.aio.operations.ContainerRegistryRepositoryOperations
     :ivar container_registry_blob: ContainerRegistryBlobOperations operations
     :vartype container_registry_blob: azure.containerregistry.aio.operations.ContainerRegistryBlobOperations
-    :ivar refresh_tokens: RefreshTokensOperations operations
-    :vartype refresh_tokens: azure.containerregistry.aio.operations.RefreshTokensOperations
-    :ivar access_tokens: AccessTokensOperations operations
-    :vartype access_tokens: azure.containerregistry.aio.operations.AccessTokensOperations
+    :ivar authentication: AuthenticationOperations operations
+    :vartype authentication: azure.containerregistry.aio.operations.AuthenticationOperations
     :param url: Registry login URL.
     :type url: str
     """
@@ -58,9 +55,7 @@ class ContainerRegistry(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.container_registry_blob = ContainerRegistryBlobOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.refresh_tokens = RefreshTokensOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.access_tokens = AccessTokensOperations(
+        self.authentication = AuthenticationOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:

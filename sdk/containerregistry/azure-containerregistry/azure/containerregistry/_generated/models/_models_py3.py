@@ -7,16 +7,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._container_registry_enums import *
 
-
-class AccessToken(msrest.serialization.Model):
-    """AccessToken.
+class AcrAccessToken(msrest.serialization.Model):
+    """AcrAccessToken.
 
     :param access_token: The access token for performing authenticated requests.
     :type access_token: str
@@ -32,7 +30,7 @@ class AccessToken(msrest.serialization.Model):
         access_token: Optional[str] = None,
         **kwargs
     ):
-        super(AccessToken, self).__init__(**kwargs)
+        super(AcrAccessToken, self).__init__(**kwargs)
         self.access_token = access_token
 
 
@@ -117,6 +115,27 @@ class AcrManifests(msrest.serialization.Model):
         self.repository = repository
         self.manifests = manifests
         self.link = link
+
+
+class AcrRefreshToken(msrest.serialization.Model):
+    """AcrRefreshToken.
+
+    :param refresh_token: The refresh token to be used for generating access tokens.
+    :type refresh_token: str
+    """
+
+    _attribute_map = {
+        'refresh_token': {'key': 'refresh_token', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        refresh_token: Optional[str] = None,
+        **kwargs
+    ):
+        super(AcrRefreshToken, self).__init__(**kwargs)
+        self.refresh_token = refresh_token
 
 
 class Annotations(msrest.serialization.Model):
@@ -862,53 +881,49 @@ class OCIManifest(Manifest):
 class Paths108HwamOauth2ExchangePostRequestbodyContentApplicationXWwwFormUrlencodedSchema(msrest.serialization.Model):
     """Paths108HwamOauth2ExchangePostRequestbodyContentApplicationXWwwFormUrlencodedSchema.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
-    :param grant_type: Required. Can take a value of access_token_refresh_token, or access_token,
-     or refresh_token. Possible values include: "access_token_refresh_token", "access_token",
-     "refresh_token".
-    :type grant_type: str or ~azure.containerregistry.models.PostContentSchemaGrantType
+    :ivar grant_type: Required. Can take a value of access_token. Default value: "access_token".
+    :vartype grant_type: str
     :param service: Required. Indicates the name of your Azure container registry.
     :type service: str
-    :param tenant: AAD tenant associated to the AAD credentials.
+    :param tenant: Required. AAD tenant associated to the AAD credentials.
     :type tenant: str
-    :param refresh_token: AAD refresh token, mandatory when grant_type is
-     access_token_refresh_token or refresh_token.
-    :type refresh_token: str
-    :param access_token: AAD access token, mandatory when grant_type is access_token_refresh_token
-     or access_token.
-    :type access_token: str
+    :param aad_accesstoken: Required. AAD access token, mandatory when grant_type is
+     access_token_refresh_token or access_token.
+    :type aad_accesstoken: str
     """
 
     _validation = {
-        'grant_type': {'required': True},
+        'grant_type': {'required': True, 'constant': True},
         'service': {'required': True},
+        'tenant': {'required': True},
+        'aad_accesstoken': {'required': True},
     }
 
     _attribute_map = {
         'grant_type': {'key': 'grant_type', 'type': 'str'},
         'service': {'key': 'service', 'type': 'str'},
         'tenant': {'key': 'tenant', 'type': 'str'},
-        'refresh_token': {'key': 'refresh_token', 'type': 'str'},
-        'access_token': {'key': 'access_token', 'type': 'str'},
+        'aad_accesstoken': {'key': 'access_token', 'type': 'str'},
     }
+
+    grant_type = "access_token"
 
     def __init__(
         self,
         *,
-        grant_type: Union[str, "PostContentSchemaGrantType"],
         service: str,
-        tenant: Optional[str] = None,
-        refresh_token: Optional[str] = None,
-        access_token: Optional[str] = None,
+        tenant: str,
+        aad_accesstoken: str,
         **kwargs
     ):
         super(Paths108HwamOauth2ExchangePostRequestbodyContentApplicationXWwwFormUrlencodedSchema, self).__init__(**kwargs)
-        self.grant_type = grant_type
         self.service = service
         self.tenant = tenant
-        self.refresh_token = refresh_token
-        self.access_token = access_token
+        self.aad_accesstoken = aad_accesstoken
 
 
 class PathsV3R3RxOauth2TokenPostRequestbodyContentApplicationXWwwFormUrlencodedSchema(msrest.serialization.Model):
@@ -927,22 +942,22 @@ class PathsV3R3RxOauth2TokenPostRequestbodyContentApplicationXWwwFormUrlencodedS
      once for multiple scope requests. You obtained this from the Www-Authenticate response header
      from the challenge.
     :type scope: str
-    :param refresh_token: Required. Must be a valid ACR refresh token.
-    :type refresh_token: str
+    :param acr_refresh_token: Required. Must be a valid ACR refresh token.
+    :type acr_refresh_token: str
     """
 
     _validation = {
         'grant_type': {'required': True, 'constant': True},
         'service': {'required': True},
         'scope': {'required': True},
-        'refresh_token': {'required': True},
+        'acr_refresh_token': {'required': True},
     }
 
     _attribute_map = {
         'grant_type': {'key': 'grant_type', 'type': 'str'},
         'service': {'key': 'service', 'type': 'str'},
         'scope': {'key': 'scope', 'type': 'str'},
-        'refresh_token': {'key': 'refresh_token', 'type': 'str'},
+        'acr_refresh_token': {'key': 'refresh_token', 'type': 'str'},
     }
 
     grant_type = "refresh_token"
@@ -952,13 +967,13 @@ class PathsV3R3RxOauth2TokenPostRequestbodyContentApplicationXWwwFormUrlencodedS
         *,
         service: str,
         scope: str,
-        refresh_token: str,
+        acr_refresh_token: str,
         **kwargs
     ):
         super(PathsV3R3RxOauth2TokenPostRequestbodyContentApplicationXWwwFormUrlencodedSchema, self).__init__(**kwargs)
         self.service = service
         self.scope = scope
-        self.refresh_token = refresh_token
+        self.acr_refresh_token = acr_refresh_token
 
 
 class Platform(msrest.serialization.Model):
@@ -1009,27 +1024,6 @@ class Platform(msrest.serialization.Model):
         self.os_features = os_features
         self.variant = variant
         self.features = features
-
-
-class RefreshToken(msrest.serialization.Model):
-    """RefreshToken.
-
-    :param refresh_token: The refresh token to be used for generating access tokens.
-    :type refresh_token: str
-    """
-
-    _attribute_map = {
-        'refresh_token': {'key': 'refresh_token', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        refresh_token: Optional[str] = None,
-        **kwargs
-    ):
-        super(RefreshToken, self).__init__(**kwargs)
-        self.refresh_token = refresh_token
 
 
 class RegistryArtifactProperties(msrest.serialization.Model):
@@ -1139,7 +1133,7 @@ class RepositoryProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Image name.
+    :param name: Required. Image name.
     :type name: str
     :param created_on: Required. Image created time.
     :type created_on: ~datetime.datetime
@@ -1149,14 +1143,16 @@ class RepositoryProperties(msrest.serialization.Model):
     :type registry_artifact_count: int
     :param tag_count: Required. Number of the tags.
     :type tag_count: int
-    :param writeable_properties: Changeable attributes.
+    :param writeable_properties: Required. Changeable attributes.
     :type writeable_properties: ~azure.containerregistry.models.ContentProperties
     """
 
     _validation = {
+        'name': {'required': True},
         'created_on': {'required': True},
         'registry_artifact_count': {'required': True},
         'tag_count': {'required': True},
+        'writeable_properties': {'required': True},
     }
 
     _attribute_map = {
@@ -1171,12 +1167,12 @@ class RepositoryProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
+        name: str,
         created_on: datetime.datetime,
         registry_artifact_count: int,
         tag_count: int,
-        name: Optional[str] = None,
+        writeable_properties: "ContentProperties",
         last_updated_on: Optional[datetime.datetime] = None,
-        writeable_properties: Optional["ContentProperties"] = None,
         **kwargs
     ):
         super(RepositoryProperties, self).__init__(**kwargs)

@@ -40,8 +40,8 @@ class ContainerRegistryCredentialPolicy(ChallengeAuthenticationPolicy):
     """Challenge based authentication policy for ACR. This policy is used for getting
     the AAD Token, refresh token, and access token before performing a call to service.
 
-    :param credential: Azure Token Credential for authenticating with Azure
-    :type credential: TokenCredential
+    :param TokenCredential credential: Azure Token Credential for authenticating with Azure
+    :param str url: base URL for ACR account
     """
 
     BEARER = "Bearer"
@@ -69,6 +69,18 @@ class ContainerRegistryCredentialPolicy(ChallengeAuthenticationPolicy):
         # type: (HttpPipelineContext, HttpPipelinePolicy) -> HttpResponse
         if not self.url.startswith("https"):
             raise ValueError("Token Credentials require a URL using the HTTPS protocol scheme")
+
+        http_response = next.process()
+        auth_header = http_response.headers[self.WWW_AUTHENTICATE]
+        if http_response.status_code == 401 and auth_header is not None:
+            return None
+
+    def authorize_request(self, context, token_request_context):
+        # type: (HttpPipelineContext, ContainerRegistryTokenRequestContext) -> None
+        context.http_request.headers[self.AUTHORIZATION] = "{} {}".format(
+            self.BEARER,
+            self.token_service.get_token()
+        )
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
