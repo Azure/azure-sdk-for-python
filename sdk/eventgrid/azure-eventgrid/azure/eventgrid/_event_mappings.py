@@ -21,6 +21,7 @@ class SystemEventNames(str, Enum):
     AcsChatMessageDeletedEventName = "Microsoft.Communication.ChatMessageDeleted"
     AcsChatMessageEditedEventName = "Microsoft.Communication.ChatMessageEdited"
     AcsChatMessageReceivedEventName = "Microsoft.Communication.ChatMessageReceived"
+    AcsRecordingFileStatusUpdatedEventName = "Microsoft.Communication.RecordingFileStatusUpdated"
     AcsChatThreadCreatedWithUserEventName = (
         "Microsoft.Communication.ChatThreadCreatedWithUser"
     )
