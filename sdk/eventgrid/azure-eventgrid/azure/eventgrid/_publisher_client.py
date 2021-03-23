@@ -191,10 +191,10 @@ class EventGridPublisherClient(object):
         elif isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
             for event in events:
                 _eventgrid_data_typecheck(event)
-        return self._client._send_request(
+        self._client._send_request(
             _build_request(self._endpoint, content_type, events, self._client),
             **kwargs
-        ) # type: ignore
+        )
 
     def close(self):
         # type: () -> None
