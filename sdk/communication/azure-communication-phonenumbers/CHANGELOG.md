@@ -2,6 +2,12 @@
 
 ## 1.0.0b5 (Unreleased)
 
+### Breaking Changes
+- Renamed AcquiredPhoneNumber to PurchasedPhoneNumber
+- Renamed PhoneNumbersClient.get_phone_number and PhoneNumbersAsyncClient.get_phone_number to PhoneNumbersClient.get_purchased_phone_number
+and PhoneNumbersAsyncClient.get_purchased_phone_number
+- Renamed PhoneNumbersClient.list_acquired_phone_numbers and PhoneNumbersAsyncClient.list_acquired_phone_numbers to PhoneNumbersClient.list_purchased_phone_numbers
+and PhoneNumbersAsyncClient.list_purchased_phone_numbers
 
 ## 1.0.0b4 (2021-03-09)
 - Dropped support for Python 3.5
