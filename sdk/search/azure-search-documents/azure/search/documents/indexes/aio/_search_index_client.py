@@ -26,7 +26,7 @@ from ..._version import SDK_MONIKER
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from .._generated.models import AnalyzeResult, SearchIndex
-    from .._models import AnalyzeTextOptions
+    from ..models._models import AnalyzeTextOptions
     from typing import Any, Dict, List, Union
     from azure.core.credentials import AzureKeyCredential
 
