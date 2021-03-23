@@ -138,7 +138,7 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
         **kwargs
     )
 
-def _build_request(endpoint, content_type, events, client):
+def _build_request(endpoint, content_type, events):
     serialize = Serializer()
     header_parameters = {}  # type: Dict[str, Any]
     header_parameters['Content-Type'] = serialize.header("content_type", content_type, 'str')
