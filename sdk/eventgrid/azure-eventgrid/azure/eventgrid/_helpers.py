@@ -7,12 +7,14 @@ import hashlib
 import hmac
 import base64
 import six
+import json
 
 try:
     from urllib.parse import quote
 except ImportError:
     from urllib2 import quote  # type: ignore
 
+from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from ._signature_credential_policy import EventGridSasCredentialPolicy
@@ -134,3 +136,26 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
         additional_properties=cloud_event.extensions,
         **kwargs
     )
+
+def _build_request(endpoint, content_type, events, client):
+    header_parameters = {}  # type: Dict[str, Any]
+    header_parameters['Content-Type'] = client._serialize.header("content_type", content_type, 'str')
+
+    query_parameters = {}  # type: Dict[str, Any]
+    query_parameters['api-version'] = client._serialize.query("api_version", "2018-01-01", 'str')
+
+    body = client._serialize.body(events, '[object]')
+    if body is None:
+        data = None
+    else:
+        data = json.dumps(body)
+        header_parameters['Content-Length'] = str(len(data))
+
+    request = HttpRequest(
+        method="POST",
+        url=endpoint,
+        headers=header_parameters,
+        data=data
+    )
+    request.format_parameters(query_parameters)
+    return request

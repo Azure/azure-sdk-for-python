@@ -29,6 +29,7 @@ from ._helpers import (
     _is_cloud_event,
     _is_eventgrid_event,
     _eventgrid_data_typecheck,
+    _build_request,
     _cloud_event_to_generated,
 )
 from ._generated._event_grid_publisher_client import (
@@ -177,6 +178,7 @@ class EventGridPublisherClient(object):
         """
         if not isinstance(events, list):
             events = cast(ListEventType, [events])
+        content_type = "application/json; charset=utf-8"
 
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
@@ -185,15 +187,13 @@ class EventGridPublisherClient(object):
                 ]
             except AttributeError:
                 pass  # means it's a dictionary
-            kwargs.setdefault(
-                "content_type", "application/cloudevents-batch+json; charset=utf-8"
-            )
+            content_type = "application/cloudevents-batch+json; charset=utf-8"
         elif isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
-            kwargs.setdefault("content_type", "application/json; charset=utf-8")
             for event in events:
                 _eventgrid_data_typecheck(event)
-        return self._client.publish_custom_event_events(
-            self._endpoint, cast(List, events), **kwargs
+        return self._client._send_request(
+            _build_request(self._endpoint, content_type, events, self._client),
+            **kwargs
         )
 
     def close(self):
