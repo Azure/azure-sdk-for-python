@@ -15,8 +15,8 @@ class BatchTranslationWithStorageSampleAsync(object):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.documenttranslation.aio import DocumentTranslationClient
         from azure.ai.documenttranslation import (
-            BatchDocumentInput,
-            StorageTarget
+            DocumentTranslationInput,
+            TranslationTarget
         )
         from azure.storage.blob.aio import ContainerClient
         from azure.storage.blob import (
@@ -69,13 +69,13 @@ class BatchTranslationWithStorageSampleAsync(object):
         source_container_url = source_storage_endpoint + "/" + source_storage_container_name + "?" + source_container_sas
         target_container_url = target_storage_endpoint + "/" + target_storage_container_name + "?" + target_container_sas
 
-        batch = [
-            BatchDocumentInput(
+        translation_inputs = [
+            DocumentTranslationInput(
                 source_url=source_container_url,
                 targets=[
-                    StorageTarget(
+                    TranslationTarget(
                         target_url=target_container_url,
-                        language="es"
+                        language_code="es"
                     )
                 ],
                 prefix="document"
@@ -84,7 +84,7 @@ class BatchTranslationWithStorageSampleAsync(object):
 
         # run job
         async with translation_client:
-            job_detail = await translation_client.create_translation_job(batch)
+            job_detail = await translation_client.create_translation_job(translation_inputs)
             job_result = await translation_client.wait_until_done(job_detail.id)
 
             # poll status result
@@ -115,7 +115,7 @@ class BatchTranslationWithStorageSampleAsync(object):
         from azure.core.exceptions import ResourceNotFoundError
 
         try:
-            doc_statuses = client.list_documents_statuses(job_id)  # type: AsyncItemPaged[DocumentStatusDetail]
+            doc_statuses = client.list_all_document_statuses(job_id)  # type: AsyncItemPaged[DocumentStatusResult]
         except ResourceNotFoundError as err:
             print("Failed to process any documents in source/target container due to insufficient permissions.")
             raise err
@@ -124,13 +124,13 @@ class BatchTranslationWithStorageSampleAsync(object):
         async for document in doc_statuses:
             if document.status == "Failed":
                 print("Document at {} failed to be translated to {} language".format(
-                    document.url, document.translate_to
+                    document.translated_document_url, document.translate_to
                 ))
                 print("Document ID: {}, Error Code: {}, Message: {}".format(
                     document.id, document.error.code, document.error.message
                 ))
-                if document.url not in docs_to_retry:
-                    docs_to_retry.append(document.url)
+                if document.translated_document_url not in docs_to_retry:
+                    docs_to_retry.append(document.translated_document_url)
 
 async def main():
     sample = BatchTranslationWithStorageSampleAsync()

@@ -13,9 +13,9 @@ from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from ._generated import BatchDocumentTranslationClient as _BatchDocumentTranslationClient
 from ._generated.models import BatchStatusDetail as _BatchStatusDetail
 from ._models import (
-    JobStatusDetail,
-    DocumentStatusDetail,
-    BatchDocumentInput,
+    JobStatusResult,
+    DocumentStatusResult,
+    DocumentTranslationInput,
     FileFormat
 )
 from ._user_agent import USER_AGENT
@@ -59,19 +59,19 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         )
 
     @distributed_trace
-    def create_translation_job(self, batch, **kwargs):
-        # type: (List[BatchDocumentInput], **Any) -> JobStatusDetail
+    def create_translation_job(self, inputs, **kwargs):
+        # type: (List[DocumentTranslationInput], **Any) -> JobStatusResult
         """
 
-        :param batch:
-        :type batch: List[~azure.ai.documenttranslation.BatchDocumentInput]
-        :return: JobStatusDetail
-        :rtype: JobStatusDetail
+        :param inputs:
+        :type inputs: List[~azure.ai.documenttranslation.DocumentTranslationInput]
+        :return: JobStatusResult
+        :rtype: JobStatusResult
         """
 
         # submit translation job
         response_headers = self._client.document_translation._submit_batch_request_initial(  # pylint: disable=protected-access
-            inputs=BatchDocumentInput._to_generated_list(batch),  # pylint: disable=protected-access
+            inputs=DocumentTranslationInput._to_generated_list(inputs),  # pylint: disable=protected-access
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
@@ -89,16 +89,16 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
     @distributed_trace
     def get_job_status(self, job_id, **kwargs):
-        # type: (str, **Any) -> JobStatusDetail
+        # type: (str, **Any) -> JobStatusResult
         """
 
         :param job_id: guid id for job
         :type job_id: str
-        :rtype: ~azure.ai.documenttranslation.JobStatusDetail
+        :rtype: ~azure.ai.documenttranslation.JobStatusResult
         """
 
         job_status = self._client.document_translation.get_operation_status(job_id, **kwargs)
-        return JobStatusDetail._from_generated(job_status)  # pylint: disable=protected-access
+        return JobStatusResult._from_generated(job_status)  # pylint: disable=protected-access
 
     @distributed_trace
     def cancel_job(self, job_id, **kwargs):
@@ -114,13 +114,13 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
     @distributed_trace
     def wait_until_done(self, job_id, **kwargs):
-        # type: (str, **Any) -> JobStatusDetail
+        # type: (str, **Any) -> JobStatusResult
         """
 
         :param job_id: guid id for job
         :type job_id: str
-        :return: JobStatusDetail
-        :rtype: JobStatusDetail
+        :return: JobStatusResult
+        :rtype: JobStatusResult
         """
 
         pipeline_response = self._client.document_translation.get_operation_status(
@@ -130,7 +130,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
         def callback(raw_response):
             detail = self._client._deserialize(_BatchStatusDetail, raw_response)  # pylint: disable=protected-access
-            return JobStatusDetail._from_generated(detail)  # pylint: disable=protected-access
+            return JobStatusResult._from_generated(detail)  # pylint: disable=protected-access
 
         poller = LROPoller(
             client=self._client._client,  # pylint: disable=protected-access
@@ -146,19 +146,19 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
     @distributed_trace
     def list_submitted_jobs(self, **kwargs):
-        # type: (**Any) -> ItemPaged[JobStatusDetail]
+        # type: (**Any) -> ItemPaged[JobStatusResult]
         """
 
         :keyword int results_per_page:
         :keyword int skip:
-        :rtype: ~azure.core.polling.ItemPaged[JobStatusDetail]
+        :rtype: ~azure.core.polling.ItemPaged[JobStatusResult]
         """
 
         skip = kwargs.pop('skip', None)
         results_per_page = kwargs.pop('results_per_page', None)
 
         def _convert_from_generated_model(generated_model):  # pylint: disable=protected-access
-            return JobStatusDetail._from_generated(generated_model)  # pylint: disable=protected-access
+            return JobStatusResult._from_generated(generated_model)  # pylint: disable=protected-access
 
         model_conversion_function = kwargs.pop(
             "cls",
@@ -174,22 +174,22 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         )
 
     @distributed_trace
-    def list_documents_statuses(self, job_id, **kwargs):
-        # type: (str, **Any) -> ItemPaged[DocumentStatusDetail]
+    def list_all_document_statuses(self, job_id, **kwargs):
+        # type: (str, **Any) -> ItemPaged[DocumentStatusResult]
         """
 
         :param job_id: guid id for job
         :type job_id: str
         :keyword int results_per_page:
         :keyword int skip:
-        :rtype: ~azure.core.paging.ItemPaged[DocumentStatusDetail]
+        :rtype: ~azure.core.paging.ItemPaged[DocumentStatusResult]
         """
 
         skip = kwargs.pop('skip', None)
         results_per_page = kwargs.pop('results_per_page', None)
 
         def _convert_from_generated_model(generated_model):
-            return DocumentStatusDetail._from_generated(generated_model)  # pylint: disable=protected-access
+            return DocumentStatusResult._from_generated(generated_model)  # pylint: disable=protected-access
 
         model_conversion_function = kwargs.pop(
             "cls",
@@ -208,24 +208,24 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
     @distributed_trace
     def get_document_status(self, job_id, document_id, **kwargs):
-        # type: (str, str, **Any) -> DocumentStatusDetail
+        # type: (str, str, **Any) -> DocumentStatusResult
         """
 
         :param job_id: guid id for job
         :type job_id: str
         :param document_id: guid id for document
         :type document_id: str
-        :rtype: ~azure.ai.documenttranslation.DocumentStatusDetail
+        :rtype: ~azure.ai.documenttranslation.DocumentStatusResult
         """
 
         document_status = self._client.document_translation.get_document_status(
             job_id,
             document_id,
             **kwargs)
-        return DocumentStatusDetail._from_generated(document_status)  # pylint: disable=protected-access
+        return DocumentStatusResult._from_generated(document_status)  # pylint: disable=protected-access
 
     @distributed_trace
-    def get_supported_glossary_formats(self, **kwargs):
+    def get_glossary_formats(self, **kwargs):
         # type: (**Any) -> List[FileFormat]
         """
 
@@ -236,7 +236,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         return FileFormat._from_generated_list(glossary_formats.value)  # pylint: disable=protected-access
 
     @distributed_trace
-    def get_supported_document_formats(self, **kwargs):
+    def get_document_formats(self, **kwargs):
         # type: (**Any) -> List[FileFormat]
         """
 

@@ -16,8 +16,8 @@ class TranslationStatusChecksSampleAsync(object):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.documenttranslation.aio import DocumentTranslationClient
         from azure.ai.documenttranslation import (
-            BatchDocumentInput,
-            StorageTarget
+            DocumentTranslationInput,
+            TranslationTarget
         )
 
         # get service secrets
@@ -28,17 +28,17 @@ class TranslationStatusChecksSampleAsync(object):
         target_container_url_fr = os.environ["AZURE_TARGET_CONTAINER_URL_FR"]
 
         # prepare translation input
-        batch = [
-            BatchDocumentInput(
+        translation_inputs = [
+            DocumentTranslationInput(
                 source_url=source_container_url,
                 targets=[
-                    StorageTarget(
+                    TranslationTarget(
                         target_url=target_container_url_es,
-                        language="es"
+                        language_code="es"
                     ),
-                    StorageTarget(
+                    TranslationTarget(
                         target_url=target_container_url_fr,
-                        language="fr"
+                        language_code="fr"
                     )
                 ],
                 storage_type="folder",
@@ -51,9 +51,9 @@ class TranslationStatusChecksSampleAsync(object):
 
         # run translation job
         async with client:
-            job_detail = await client.create_translation_job(batch)
+            job_detail = await client.create_translation_job(translation_inputs)
             while True:
-                job_detail = await client.get_job_status(job_detail.id)  # type: JobStatusDetail
+                job_detail = await client.get_job_status(job_detail.id)  # type: JobStatusResult
                 if job_detail.status in ["NotStarted", "Running"]:
                     await asyncio.sleep(30)
                     continue
@@ -75,7 +75,7 @@ class TranslationStatusChecksSampleAsync(object):
         from azure.core.exceptions import ResourceNotFoundError
 
         try:
-            doc_statuses = client.list_documents_statuses(job_id)  # type: AsyncItemPaged[DocumentStatusDetail]
+            doc_statuses = client.list_all_document_statuses(job_id)  # type: AsyncItemPaged[DocumentStatusResult]
         except ResourceNotFoundError as err:
             print("Failed to process any documents in source/target container due to insufficient permissions.")
             raise err
@@ -84,13 +84,13 @@ class TranslationStatusChecksSampleAsync(object):
         async for document in doc_statuses:
             if document.status == "Failed":
                 print("Document at {} failed to be translated to {} language".format(
-                    document.url, document.translate_to
+                    document.translated_document_url, document.translate_to
                 ))
                 print("Document ID: {}, Error Code: {}, Message: {}".format(
                     document.id, document.error.code, document.error.message
                 ))
-                if document.url not in docs_to_retry:
-                    docs_to_retry.append(document.url)
+                if document.translated_document_url not in docs_to_retry:
+                    docs_to_retry.append(document.translated_document_url)
 
 
 async def main():
