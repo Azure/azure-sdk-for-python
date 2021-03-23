@@ -7,6 +7,17 @@ from typing import TYPE_CHECKING
 
 import msrest.serialization
 from ._edm import Collection, ComplexType, String
+from .._generated.models import (
+    SearchField as _SearchField,
+    SearchIndex as _SearchIndex,
+    PatternTokenizer as _PatternTokenizer,
+)
+from ._models import (
+    pack_analyzer,
+    unpack_analyzer,
+    PatternTokenizer,
+    SearchResourceEncryptionKey,
+)
 
 if TYPE_CHECKING:
     from typing import Any, Dict, List
@@ -192,6 +203,48 @@ class SearchField(msrest.serialization.Model):
         self.synonym_map_names = kwargs.get('synonym_map_names', None)
         self.fields = kwargs.get('fields', None)
 
+    def _to_generated(self):
+        fields = [pack_search_field(x) for x in self.fields] \
+            if self.fields else None
+        retrievable = not self.hidden if self.hidden is not None else None
+        return _SearchField(
+            name=self.name,
+            type=self.type,
+            key=self.key,
+            retrievable=retrievable,
+            searchable=self.searchable,
+            filterable=self.filterable,
+            sortable=self.sortable,
+            facetable=self.facetable,
+            analyzer=self.analyzer_name,
+            search_analyzer=self.search_analyzer_name,
+            index_analyzer=self.index_analyzer_name,
+            synonym_maps=self.synonym_map_names,
+            fields=fields
+        )
+
+    @classmethod
+    def _from_generated(cls, search_field):
+        if not search_field:
+            return None
+        fields = [SearchField._from_generated(x) for x in search_field.fields] \
+            if search_field.fields else None
+        hidden = not search_field.retrievable if search_field.retrievable is not None else None
+        return cls(
+            name=search_field.name,
+            type=search_field.type,
+            key=search_field.key,
+            hidden=hidden,
+            searchable=search_field.searchable,
+            filterable=search_field.filterable,
+            sortable=search_field.sortable,
+            facetable=search_field.facetable,
+            analyzer_name=search_field.analyzer,
+            search_analyzer_name=search_field.search_analyzer,
+            index_analyzer_name=search_field.index_analyzer,
+            synonym_map_names=search_field.synonym_maps,
+            fields=fields
+        )
 
 def SimpleField(**kw):
     # type: (**Any) -> SearchField
@@ -493,3 +546,118 @@ class SearchIndex(msrest.serialization.Model):
         self.encryption_key = kwargs.get('encryption_key', None)
         self.similarity = kwargs.get('similarity', None)
         self.e_tag = kwargs.get('e_tag', None)
+
+    def _to_generated(self):
+        if self.analyzers:
+            analyzers = [
+                pack_analyzer(x)  # type: ignore
+                for x in self.analyzers
+            ]  # mypy: ignore
+        else:
+            analyzers = None
+        if self.tokenizers:
+            tokenizers = [
+                x._to_generated()  # type: ignore
+                if isinstance(x, PatternTokenizer)
+                else x
+                for x in self.tokenizers
+            ]
+        else:
+            tokenizers = None
+        if self.fields:
+            fields = [pack_search_field(x) for x in self.fields]
+        else:
+            fields = None
+        return _SearchIndex(
+            name=self.name,
+            fields=fields,
+            scoring_profiles=self.scoring_profiles,
+            default_scoring_profile=self.default_scoring_profile,
+            cors_options=self.cors_options,
+            suggesters=self.suggesters,
+            analyzers=analyzers,
+            tokenizers=tokenizers,
+            token_filters=self.token_filters,
+            char_filters=self.char_filters,
+            encryption_key=self.encryption_key._to_generated() if self.encryption_key else None,
+            similarity=self.similarity,
+            e_tag=self.e_tag
+        )
+
+    @classmethod
+    def _from_generated(cls, search_index):
+        if not search_index:
+            return None
+        if search_index.analyzers:
+            analyzers = [
+                unpack_analyzer(x)  # type: ignore
+                for x in search_index.analyzers
+            ]
+        else:
+            analyzers = None
+        if search_index.tokenizers:
+            tokenizers = [
+                PatternTokenizer._from_generated(x)  # pylint:disable=protected-access
+                if isinstance(x, _PatternTokenizer)
+                else x
+                for x in search_index.tokenizers
+            ]
+        else:
+            tokenizers = None
+        if search_index.fields:
+            fields = [SearchField._from_generated(x) for x in search_index.fields]
+        else:
+            fields = None
+        return cls(
+            name=search_index.name,
+            fields=fields,
+            scoring_profiles=search_index.scoring_profiles,
+            default_scoring_profile=search_index.default_scoring_profile,
+            cors_options=search_index.cors_options,
+            suggesters=search_index.suggesters,
+            analyzers=analyzers,
+            tokenizers=tokenizers,
+            token_filters=search_index.token_filters,
+            char_filters=search_index.char_filters,
+            encryption_key=SearchResourceEncryptionKey._from_generated(search_index.encryption_key),
+            # pylint:disable=protected-access
+            similarity=search_index.similarity,
+            e_tag=search_index.e_tag
+        )
+
+
+def pack_search_field(search_field):
+    # type: (SearchField) -> _SearchField
+    if not search_field:
+        return None
+    if isinstance(search_field, dict):
+        name = search_field.get("name")
+        field_type = search_field.get("type")
+        key = search_field.get("key")
+        hidden = search_field.get("hidden")
+        searchable = search_field.get("searchable")
+        filterable = search_field.get("filterable")
+        sortable = search_field.get("sortable")
+        facetable = search_field.get("facetable")
+        analyzer_name = search_field.get("analyzer_name")
+        search_analyzer_name = search_field.get("search_analyzer_name")
+        index_analyzer_name = search_field.get("index_analyzer_name")
+        synonym_map_names = search_field.get("synonym_map_names")
+        fields = search_field.get("fields")
+        fields = [pack_search_field(x) for x in fields] if fields else None
+        return _SearchField(
+            name=name,
+            type=field_type,
+            key=key,
+            retrievable=not hidden,
+            searchable=searchable,
+            filterable=filterable,
+            sortable=sortable,
+            facetable=facetable,
+            analyzer=analyzer_name,
+            search_analyzer=search_analyzer_name,
+            index_analyzer=index_analyzer_name,
+            synonym_maps=synonym_map_names,
+            fields=fields
+        )
+    return search_field._to_generated()

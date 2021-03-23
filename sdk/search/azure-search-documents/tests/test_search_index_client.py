@@ -14,7 +14,6 @@ from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient, ApiVersion
 from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
 from azure.search.documents.indexes.models import SearchIndexerDataContainer, SearchIndexerDataSourceConnection
-from azure.search.documents.indexes._utils import pack_search_indexer_data_source
 
 CREDENTIAL = AzureKeyCredential(key="test_api_key")
 
@@ -124,5 +123,5 @@ class TestSearchIndexerClient(object):
             connection_string="",
             container=container
         )
-        packed_data_source_connection = pack_search_indexer_data_source(data_source_connection)
+        packed_data_source_connection = data_source_connection._to_generated()
         assert packed_data_source_connection.credentials.connection_string == "<unchanged>"
