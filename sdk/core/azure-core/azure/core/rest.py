@@ -37,7 +37,6 @@ from .pipeline.transport import (
 if TYPE_CHECKING:
     from typing import (
         Any, Optional, Union, Mapping, Sequence, Tuple,
-        Iterator, AsyncIterator, Iterable, AsyncIterable
     )
     ByteStream = Union[Iterable[bytes], AsyncIterable[bytes]]
 
@@ -59,8 +58,8 @@ class HttpVerbs(str, Enum):
     DELETE = "DELETE"
     MERGE = "MERGE"
 
-"""UTILS SECTION
-"""
+########################### UTILS SECTION #################################
+
 def _is_stream(content):
     return isinstance(content, (str, bytes)) or any(
         hasattr(content, attr) for attr in ["read", "__iter__", "__aiter__"]
@@ -75,57 +74,67 @@ def _lookup_encoding(encoding):
     except LookupError:
         return False
 
-def _can_set_content_length_header(internal_request):
-    # type: (_PipelineTransportHttpRequest) -> bool
+def _set_content_length_header(header_name, header_value, internal_request):
+    # type: (str, str, _PipelineTransportHttpRequest) -> None
     valid_methods = ["put", "post", "patch"]
     content_length_headers = ["Content-Length", "Transfer-Encoding"]
-    return (
+    if (
         internal_request.method.lower() in valid_methods and
         not any([c for c in content_length_headers if c in internal_request.headers])
-    )
+    ):
+        internal_request.headers[header_name] = header_value
 
-def _set_body(content, data, files, json, internal_request):
-    # type: (ContentType, dict, Any, Any, _PipelineTransportHttpRequest) -> None
+def _set_content_type_header(header_value, internal_request):
+    # type: (str, _PipelineTransportHttpRequest) -> None
+    if not internal_request.headers.get("Content-Type"):
+        internal_request.headers["Content-Type"] = header_value
+
+def _set_content_body(content, internal_request):
+    # type: (ContentType, _PipelineTransportHttpRequest) -> None
     headers = internal_request.headers
+    content_type = headers.get("Content-Type")
+    if _is_stream(content):
+        # stream will be bytes / str, or iterator of bytes / str
+        internal_request.set_streamed_data_body(content)
+        if isinstance(content, (str, bytes)) and content:
+            _set_content_length_header("Content-Length", str(len(internal_request.data)), internal_request)
+        elif isinstance(content, (Iterable, AsyncIterable)):
+            _set_content_length_header("Transfer-Encoding", "chunked", internal_request)
+    elif isinstance(content, ET.Element):
+        # XML body
+        internal_request.set_xml_body(content)
+        _set_content_length_header("Content-Length", str(len(internal_request.data)), internal_request)
+    elif content_type and content_type.startswith("text/"):
+        # Text body
+        internal_request.set_text_body(content)
+        _set_content_length_header("Content-Length", str(len(internal_request.data)), internal_request)
+    else:
+        # Other body
+        internal_request.data = content
+    internal_request.headers = headers
+
+def _set_body(content, data, files, json_body, internal_request):
+    # type: (ContentType, dict, Any, Any, _PipelineTransportHttpRequest) -> None
     if data is not None and not isinstance(data, dict):
         content = data
         data = None
     if content is not None:
-        content_type = headers.get("Content-Type")
-        if _is_stream(content):
-            internal_request.set_streamed_data_body(content)
-            if isinstance(content, (str, bytes)) and content and _can_set_content_length_header(internal_request):
-                headers["Content-Length"] = str(len(internal_request.data))
-            elif isinstance(content, (Iterable, AsyncIterable)) and _can_set_content_length_header(internal_request):
-                headers["Transfer-Encoding"] = "chunked"
-        elif isinstance(content, ET.Element):
-            internal_request.set_xml_body(content)
-            if _can_set_content_length_header(internal_request):
-                headers["Content-Length"] = str(len(internal_request.data))
-        elif content_type and content_type.startswith("text/"):
-            internal_request.set_text_body(content)
-            if _can_set_content_length_header(internal_request):
-                headers["Content-Length"] = str(len(internal_request.data))
-        else:
-            internal_request.data = content
-    if json is not None:
-        internal_request.set_json_body(json)
-        if not headers.get("Content-Type"):
-            headers["Content-Type"] = "application/json"
-    if files is not None:
+        _set_content_body(content, internal_request)
+    elif json_body is not None:
+        internal_request.set_json_body(json_body)
+        _set_content_type_header("application/json", internal_request)
+    elif files is not None:
         internal_request.set_formdata_body(files)
     elif data:
-        if not headers.get("Content-Type"):
-            internal_request.headers["Content-Type"] = "application/x-www-form-urlencoded"
+        _set_content_type_header("application/x-www-form-urlencoded", internal_request)
         internal_request.set_formdata_body(data)
-        if not headers.get("Content-Type"):
-            # need to set twice because Content-Type is being popped in set_formdata_body
-            # don't want to risk changing pipeline.transport, so doing twice here
-            internal_request.headers["Content-Type"] = "application/x-www-form-urlencoded"
-    internal_request.headers = headers
+        # need to set twice because Content-Type is being popped in set_formdata_body
+        # don't want to risk changing pipeline.transport, so doing twice here
+        _set_content_type_header("application/x-www-form-urlencoded", internal_request)
 
-"""Classes
-"""
+
+################################## CLASSES ######################################
+
 class HttpRequest(object):
     """Represents an HTTP request.
 
@@ -163,7 +172,7 @@ class HttpRequest(object):
 
         data = kwargs.pop("data", None)
         content = kwargs.pop("content", None)
-        json = kwargs.pop("json", None)
+        json_body = kwargs.pop("json", None)
         files = kwargs.pop("files", None)
 
         self._internal_request = _PipelineTransportHttpRequest(
@@ -180,7 +189,7 @@ class HttpRequest(object):
             content=content,
             data=data,
             files=files,
-            json=json,
+            json_body=json_body,
             internal_request=self._internal_request
         )
 
@@ -232,18 +241,9 @@ class HttpRequest(object):
 
 class _HttpResponseBase(object):
     """Base class for HttpResponse and AsyncHttpResponse.
-    :param int status_code: Status code of the response.
-    :keyword headers: Response headers
-    :paramtype headers: dict[str, any]
-    :keyword str text: The response content as a string
-    :keyword any json: JSON content
-    :keyword stream: Streamed response
-    :paramtype stream: bytes or iterator of bytes
-    :keyword callable on_close: Any callable you want to cal
-     when closing your HttpResponse
-    :keyword history: If redirection, history of all redirection
-     that resulted in this response.
-    :paramtype history: list[~azure.core.protocol.HttpResponse]
+
+    :keyword request: The request that resulted in this response.
+    :paramtype request: ~azure.core.rest.HttpRequest
     :ivar int status_code: The status code of this response
     :ivar headers: The response headers
     :vartype headers: dict[str, any]
@@ -253,9 +253,12 @@ class _HttpResponseBase(object):
     :ivar str encoding: The response encoding. Is settable, by default
      is the response Content-Type header
     :ivar str text: The response body as a string.
+    :ivar request: The request that resulted in this response.
+    :vartype request: ~azure.core.rest.HttpRequest
+    :ivar str content_type: The content type of the response
     """
 
-    def __init__(self, status_code, **kwargs):
+    def __init__(self, **kwargs):
         # type: (int, Any) -> None
         self._internal_response = kwargs.pop("_internal_response")  # type: _PipelineTransportHttpResponseBase
         self._request = kwargs.pop("request")
@@ -336,16 +339,16 @@ class _HttpResponseBase(object):
             "You are trying to access the 'request', but there is no request associated with this HttpResponse"
         )
 
+    @request.setter
+    def request(self, val):
+        # type: (HttpRequest) -> None
+        self._request = val
+
     @property
     def content_type(self):
         # type: (...) -> Optional[str]
         """Content Type of the response"""
         return self._internal_response.content_type or self.headers.get("Content-Type")
-
-    @request.setter
-    def request(self, val):
-        # type: (HttpRequest) -> None
-        self._request = val
 
     def json(self):
         # type: (...) -> Any
@@ -386,7 +389,7 @@ class AsyncHttpResponse(_HttpResponseBase):
     @property
     def content(self):
         # type: (...) -> bytes
-        if self._internal_response._body is None:
+        if self._internal_response._body is None:  # pylint: disable=protected-access
             raise ValueError("Body is not available. Call async method load_body, or do your call with stream=False.")
         return self._internal_response.body()
 
