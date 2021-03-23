@@ -303,6 +303,15 @@ class ServiceBusAdministrationClientQueueAsyncTests(AzureMgmtTestCase):
             assert queue_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(topic_name))
             assert queue_description.forward_to.endswith(".servicebus.windows.net/{}".format(topic_name))
 
+            # Update forwarding settings with None.
+            queue_description.forward_to = None
+            queue_description.forward_dead_lettered_messages_to = None
+            await mgmt_service.update_queue(queue_description)
+
+            queue_description = await mgmt_service.get_queue(queue_name)
+            assert queue_description.forward_dead_lettered_messages_to is None
+            assert queue_description.forward_to is None
+
             # Now try updating all settings.
             queue_description.auto_delete_on_idle = datetime.timedelta(minutes=10)
             queue_description.dead_lettering_on_message_expiration = True

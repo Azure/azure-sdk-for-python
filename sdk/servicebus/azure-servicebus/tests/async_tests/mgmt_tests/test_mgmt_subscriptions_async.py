@@ -180,6 +180,15 @@ class ServiceBusAdministrationClientSubscriptionAsyncTests(AzureMgmtTestCase):
             assert subscription_description.forward_to.endswith(".servicebus.windows.net/{}".format(queue_name))
             assert subscription_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(queue_name))
 
+            # Update forward_to with None
+            subscription_description.forward_to = None
+            subscription_description.forward_dead_lettered_messages_to = None
+            await mgmt_service.update_subscription(topic_description.name, subscription_description)
+            subscription_description = await mgmt_service.get_subscription(topic_description.name, subscription_name)
+            # Note: We endswith to avoid the fact that the servicebus_namespace_name is replacered locally but not in the properties bag, and still test this.
+            assert subscription_description.forward_to is None
+            assert subscription_description.forward_dead_lettered_messages_to is None
+
         finally:
             await mgmt_service.delete_subscription(topic_name, subscription_name)
             await mgmt_service.delete_topic(topic_name)
