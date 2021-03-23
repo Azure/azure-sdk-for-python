@@ -73,7 +73,7 @@ class _ReceiveTest(_EventHubTest):
             offset=_EventHubTest.offset
         )
 
-    def _data_generator(self, ):
+    def _data_generator(self):
         for _ in range(1000):
             yield get_random_bytes(self.args.event_size)
 
@@ -89,6 +89,10 @@ class _ReceiveTest(_EventHubTest):
                 print("Loaded {} events".format(i))
                 await async_sender.send(EventData(batch=batch))
                 batch = []
+
+        if batch:
+            await async_sender.send(EventData(batch=batch))
+
         await async_sender.close_async()
 
     async def global_setup(self):
@@ -99,11 +103,11 @@ class _ReceiveTest(_EventHubTest):
 
     async def close(self):
         self.receiver.close()
-        await self.async_receiver.close_async()
         await super().close()
+        await self.async_receiver.close_async()
 
     @staticmethod
     def add_arguments(parser):
         super(_ReceiveTest, _ReceiveTest).add_arguments(parser)
-        parser.add_argument('--max-wait-time', nargs='?', type=int, help='Max time to wait for events in a single receive call. Defaults to 0.', default=0)
+        parser.add_argument('--max-wait-time', nargs='?', type=int, help='Max time to wait for events in a single receive call. Defaults to 60.', default=60)
         parser.add_argument('--preload', nargs='?', type=int, help='Number of events to preload. Default is 10000.', default=10000)
