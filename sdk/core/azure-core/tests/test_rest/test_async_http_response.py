@@ -186,6 +186,7 @@ async def test_rest_response_no_charset_with_ascii_content():
     await response.load_body()
     assert response.text == "Hello, world!"
 
+
 @pytest.mark.asyncio
 async def test_rest_response_no_charset_with_iso_8859_1_content():
     """
@@ -219,10 +220,23 @@ async def test_rest_response_set_explicit_encoding():
     assert response.encoding == "latin-1"
 
 @pytest.mark.asyncio
-async def test_rest_response_json():
+async def test_rest_json():
     data = {"greeting": "hello", "recipient": "world"}
     content = json.dumps(data).encode("utf-8")
     headers = {"Content-Type": "application/json"}
+    response = _create_http_response(
+        200,
+        content=content,
+        headers=headers,
+    )
+    await response.load_body()
+    assert response.json() == data
+
+@pytest.mark.asyncio
+async def test_rest_json_with_specified_encoding():
+    data = {"greeting": "hello", "recipient": "world"}
+    content = json.dumps(data).encode("utf-16")
+    headers = {"Content-Type": "application/json, charset=utf-16"}
     response = _create_http_response(
         200,
         content=content,
@@ -259,3 +273,23 @@ async def test_rest_cannot_access_unset_request():
     with pytest.raises(RuntimeError):
         response.request
 
+@pytest.mark.asyncio
+async def test_rest_emoji():
+    response = _create_http_response(200, content="👩".encode("utf-8"))
+    await response.load_body()
+    assert response.text == "👩"
+
+@pytest.mark.asyncio
+async def test_rest_emoji_family_with_skin_tone_modifier():
+    headers = {
+        "Content-Type": "text-plain; charset=utf-16"
+    }
+    response = _create_http_response(200, headers=headers, content="👩🏻‍👩🏽‍👧🏾‍👦🏿 SSN: 859-98-0987".encode("utf-16"))
+    await response.load_body()
+    assert response.text == "👩🏻‍👩🏽‍👧🏾‍👦🏿 SSN: 859-98-0987"
+
+@pytest.mark.asyncio
+async def test_rest_korean_nfc():
+    response = _create_http_response(200, content="아가".encode("utf-8"))
+    await response.load_body()
+    assert response.text == "아가"

@@ -170,6 +170,7 @@ def test_rest_response_no_charset_with_ascii_content():
     assert response.encoding is None
     assert response.text == "Hello, world!"
 
+
 def test_rest_response_no_charset_with_iso_8859_1_content():
     """
     A response with ISO 8859-1 encoded content should decode correctly,
@@ -198,7 +199,7 @@ def test_rest_response_set_explicit_encoding():
     assert response.text == "Latin 1: ÿ"
     assert response.encoding == "latin-1"
 
-def test_rest_response_json():
+def test_rest_json():
     data = {"greeting": "hello", "recipient": "world"}
     content = json.dumps(data).encode("utf-8")
     headers = {"Content-Type": "application/json"}
@@ -208,6 +209,18 @@ def test_rest_response_json():
         headers=headers,
     )
     assert response.json() == data
+
+# NOTE: This works in async, not sync. Seems requests can't handle this, but aiohttp can
+# def test_rest_json_with_specified_encoding():
+#     data = {"greeting": "hello", "recipient": "world"}
+#     content = json.dumps(data).encode("utf-16")
+#     headers = {"Content-Type": "application/json, charset=utf-16"}
+#     response = _create_http_response(
+#         200,
+#         content=content,
+#         headers=headers,
+#     )
+#     assert response.json() == data
 
 def test_rest_response_with_unset_request():
     response = _create_http_response(200, content=b"Hello, world!")
@@ -233,3 +246,17 @@ def test_rest_cannot_access_unset_request():
     with pytest.raises(RuntimeError):
         response.request
 
+def test_rest_emoji():
+    response = _create_http_response(200, content="👩".encode("utf-8"))
+    assert response.text == "👩"
+
+def test_rest_emoji_family_with_skin_tone_modifier():
+    headers = {
+        "Content-Type": "text-plain; charset=utf-16"
+    }
+    response = _create_http_response(200, headers=headers, content="👩🏻‍👩🏽‍👧🏾‍👦🏿 SSN: 859-98-0987".encode("utf-16"))
+    assert response.text == "👩🏻‍👩🏽‍👧🏾‍👦🏿 SSN: 859-98-0987"
+
+def test_rest_korean_nfc():
+    response = _create_http_response(200, content="아가".encode("utf-8"))
+    assert response.text == "아가"

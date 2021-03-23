@@ -358,7 +358,7 @@ class _HttpResponseBase(object):
         :rtype: any
         :raises json.decoder.JSONDecodeError or ValueError (in python 2.7) if object is not JSON decodable:
         """
-        return json.loads(self._internal_response.text(self.encoding))
+        return json.loads(self.text)
 
     def raise_for_status(self):
         # type: (...) -> None
