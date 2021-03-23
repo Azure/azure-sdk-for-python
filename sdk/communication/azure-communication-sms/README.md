@@ -36,8 +36,8 @@ Azure Communication SMS package is used to do following:
 The following section provides several code snippets covering some of the most common Azure Communication Services tasks, including:
 
 - [Client Initialization](#client-initialization)
-- [Send a 1:1 SMS Message](#send-a-1:1-sms-message)
-- [Send a 1:N SMS Message](#send-a-1:n-sms-message)
+- [Send a 1:1 SMS Message](#send-a-11-sms-message)
+- [Send a 1:N SMS Message](#send-a-1n-sms-message)
 
 ### Client Initialization
 

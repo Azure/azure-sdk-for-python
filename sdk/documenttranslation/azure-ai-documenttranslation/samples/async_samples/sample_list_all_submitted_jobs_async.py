@@ -22,7 +22,7 @@ class ListAllSubmittedJobsSampleAsync(object):
         client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
         # list submitted jobs
-        jobs = client.list_submitted_jobs() # type: AsyncItemPaged[JobStatusDetail]
+        jobs = client.list_submitted_jobs() # type: AsyncItemPaged[JobStatusResult]
 
         async for job in jobs:
             # wait for job to finish

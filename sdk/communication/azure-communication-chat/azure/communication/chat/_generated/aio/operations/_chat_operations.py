@@ -44,7 +44,7 @@ class ChatOperations:
     async def create_chat_thread(
         self,
         create_chat_thread_request: "_models.CreateChatThreadRequest",
-        idempotency_token: Optional[str] = None,
+        repeatability_request_id: Optional[str] = None,
         **kwargs
     ) -> "_models.CreateChatThreadResult":
         """Creates a chat thread.
@@ -53,12 +53,13 @@ class ChatOperations:
 
         :param create_chat_thread_request: Request payload for creating a chat thread.
         :type create_chat_thread_request: ~azure.communication.chat.models.CreateChatThreadRequest
-        :param idempotency_token: If specified, the client directs that the request is repeatable; that
-         is, that the client can make the request multiple times with the same Idempotency-Token and get
-         back an appropriate response without the server executing the request multiple times. The value
-         of the Idempotency-Token is an opaque string representing a client-generated, globally unique
-         for all time, identifier for the request. It is recommended to use version 4 (random) UUIDs.
-        :type idempotency_token: str
+        :param repeatability_request_id: If specified, the client directs that the request is
+         repeatable; that is, that the client can make the request multiple times with the same
+         Repeatability-Request-Id and get back an appropriate response without the server executing the
+         request multiple times. The value of the Repeatability-Request-Id is an opaque string
+         representing a client-generated, globally unique for all time, identifier for the request. It
+         is recommended to use version 4 (random) UUIDs.
+        :type repeatability_request_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CreateChatThreadResult, or the result of cls(response)
         :rtype: ~azure.communication.chat.models.CreateChatThreadResult
@@ -74,7 +75,7 @@ class ChatOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01-preview5"
+        api_version = "2021-03-07"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -91,8 +92,8 @@ class ChatOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if idempotency_token is not None:
-            header_parameters['idempotency-token'] = self._serialize.header("idempotency_token", idempotency_token, 'str')
+        if repeatability_request_id is not None:
+            header_parameters['repeatability-Request-Id'] = self._serialize.header("repeatability_request_id", repeatability_request_id, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
@@ -145,7 +146,7 @@ class ChatOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01-preview5"
+        api_version = "2021-03-07"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -229,7 +230,7 @@ class ChatOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01-preview5"
+        api_version = "2021-03-07"
         accept = "application/json"
 
         # Construct URL
