@@ -38,7 +38,7 @@ if TYPE_CHECKING:
     from typing import Any, IO, List, Optional, Union, Dict
     try:
         from typing import Literal
-    except ImportError:
+    except ImportError: # < 3.8
         from typing_extensions import Literal
     Permissions = Union[Literal['joinLeaveGroup'], Literal['sendToGroup']]
 
