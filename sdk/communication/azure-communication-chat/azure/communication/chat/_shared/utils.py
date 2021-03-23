@@ -15,6 +15,12 @@ from datetime import datetime
 from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
 
+
+def _convert_datetime_to_utc_int(expires_on):
+    epoch = time.mktime(datetime(1970, 1, 1).timetuple())
+    return epoch-time.mktime(expires_on.timetuple())
+
+
 def parse_connection_str(conn_str):
     # type: (str) -> Tuple[str, str, str, str]
     endpoint = None
@@ -44,9 +50,11 @@ def get_current_utc_time():
     return str(datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S ")) + "GMT"
 
 
-def get_current_utc_with_tz():
-    # type: () -> datetime
-    return datetime.now().replace(tzinfo=TZ_UTC)
+def get_current_utc_as_int():
+    # type: () -> int
+    current_utc_datetime = datetime.utcnow().replace(tzinfo=TZ_UTC)
+    return _convert_datetime_to_utc_int(current_utc_datetime)
+    return current_utc_datetime_as_int
 
 
 def create_access_token(token):
@@ -76,6 +84,7 @@ def create_access_token(token):
                            _convert_datetime_to_utc_int(datetime.fromtimestamp(payload['exp']).replace(tzinfo=TZ_UTC)))
     except ValueError:
         raise ValueError(token_parse_err_msg)
+
 
 def get_authentication_policy(
         endpoint, # type: str
@@ -107,7 +116,3 @@ def get_authentication_policy(
 
     raise TypeError("Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
                     "or a token credential from azure.identity".format(type(credential)))
-
-def _convert_datetime_to_utc_int(expires_on):
-    epoch = time.mktime(datetime(1970, 1, 1).timetuple())
-    return epoch-time.mktime(expires_on.timetuple())
