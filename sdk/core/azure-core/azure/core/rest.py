@@ -309,15 +309,18 @@ class _HttpResponseBase(object):
         try:
             return self._encoding
         except AttributeError:
-            content_type = self.headers.get("Content-Type")
+            return self._get_charset_encoding()
 
-            if not content_type:
-                return None
-            _, params = cgi.parse_header(content_type)
-            encoding = params.get('charset') # -> utf-8
-            if encoding is None or not _lookup_encoding(encoding):
-                return None
-            return encoding
+    def _get_charset_encoding(self):
+        content_type = self.headers.get("Content-Type")
+
+        if not content_type:
+            return None
+        _, params = cgi.parse_header(content_type)
+        encoding = params.get('charset') # -> utf-8
+        if encoding is None or not _lookup_encoding(encoding):
+            return None
+        return encoding
 
     @encoding.setter
     def encoding(self, value: str) -> None:
