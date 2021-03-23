@@ -44,7 +44,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         # NOTE: DELETE `/acr/v1/{name}`
         deleted_repository = self._client.container_registry.delete_repository(repository, **kwargs)
-        return DeletedRepositoryResult._from_generated(deleted_repository)
+        return DeletedRepositoryResult._from_generated(deleted_repository)  # pylint: disable=protected-access
 
     def list_repositories(self, **kwargs):
         # type: (Dict[str, Any]) -> ItemPaged[str]
