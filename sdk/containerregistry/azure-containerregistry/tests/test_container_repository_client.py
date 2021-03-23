@@ -98,7 +98,7 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
 
         # TODO: This is giving time in ascending order
-        tags = client.list_tags(order_by=TagOrderBy.LastUpdateTimeDescending)
+        tags = client.list_tags(order_by=TagOrderBy.LAST_UPDATE_TIME_DESCENDING)
         assert isinstance(tags, ItemPaged)
         last_updated_on = None
         count = 0

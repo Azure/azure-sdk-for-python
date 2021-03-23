@@ -20,7 +20,7 @@ class ContentPermissions(object):
         self.write_enabled = kwargs.get("write_enabled")
 
     @classmethod
-    def from_generated(cls, generated):
+    def _from_generated(cls, generated):
         # type: (ManifestChangeableAttributes) -> ContentPermissions
         return cls(
             delete_enabled=generated.delete_enabled,
@@ -36,7 +36,7 @@ class DeletedRepositoryResult(object):
         self.deleted_tags = kwargs.get("deleted_tags", None)
 
     @classmethod
-    def from_generated(cls, gen):
+    def _from_generated(cls, gen):
         return cls(
             deleted_tags=gen.deleted_tags,
             deleted_registry_artifact_digests=gen.deleted_registry_artifact_digests,
@@ -55,7 +55,7 @@ class RegistryArtifactProperties(object):
         self.tags = kwargs.get("tags", None)
 
     @classmethod
-    def from_generated(cls, generated):
+    def _from_generated(cls, generated):
         # type: (ManifestAttributesBase) -> RegistryArtifactProperties
         return cls(
             cpu_architecture=generated.cpu_architecture,
@@ -100,10 +100,10 @@ class RepositoryProperties(object):
         self.manifest_count = kwargs.get("manifest_count", None)
         self.content_permissions = kwargs.get("content_permissions", None)
         if self.content_permissions:
-            self.content_permissions = ContentPermissions.from_generated(self.content_permissions)
+            self.content_permissions = ContentPermissions._from_generated(self.content_permissions)
 
     @classmethod
-    def from_generated(cls, generated):
+    def _from_generated(cls, generated):
         # type: (GeneratedRepositoryProperties) -> RepositoryProperties
         return cls(
             created_on=generated.created_on,
@@ -118,14 +118,14 @@ class RepositoryProperties(object):
 
 class RegistryArtifactOrderBy(int, Enum):
 
-    LastUpdateTimeDescending = 0
-    LastUpdateTimeAscending = 1
+    LAST_UPDATE_TIME_DESCENDING = 0
+    LAST_UPDATE_TIME_ASCENDING = 1
 
 
 class TagOrderBy(int, Enum):
 
-    LastUpdateTimeDescending = 0
-    LastUpdateTimeAscending = 1
+    LAST_UPDATE_TIME_DESCENDING = 0
+    LAST_UPDATE_TIME_ASCENDING = 1
 
 
 class TagProperties(object):
@@ -153,13 +153,13 @@ class TagProperties(object):
         self.last_updated_on = kwargs.get("last_updated_on", None)
         self.content_permissions = kwargs.get("content_permissions", None)
         if self.content_permissions:
-            self.content_permissions = ContentPermissions.from_generated(self.content_permissions)
+            self.content_permissions = ContentPermissions._from_generated(self.content_permissions)
         self.name = kwargs.get("name", None)
         self.signed = kwargs.get("signed", None)
         self.quarantine_state = kwargs.get("quarantine_state", None)
 
     @classmethod
-    def from_generated(cls, generated):
+    def _from_generated(cls, generated):
         return cls(
             created_on=generated.created_on,
             digest=generated.digest,
@@ -167,5 +167,5 @@ class TagProperties(object):
             content_permissions=generated.modifiable_properties,
             name=generated.name,
             signed=generated.additional_properties.get("signed", None),
-            quarantine_state=generated.additional_properties.get("quarantineState", None),
+            quarantine_state=generated.additional_properties.get("quarantine_state", None),
         )

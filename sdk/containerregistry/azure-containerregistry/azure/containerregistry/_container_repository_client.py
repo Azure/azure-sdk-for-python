@@ -31,9 +31,9 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         if not endpoint.startswith("https://"):
             endpoint = "https://" + endpoint
-        self.endpoint = endpoint
+        self._endpoint = endpoint
         self.repository = repository
-        super(ContainerRepositoryClient, self).__init__(endpoint=self.endpoint, credential=credential, **kwargs)
+        super(ContainerRepositoryClient, self).__init__(endpoint=self._endpoint, credential=credential, **kwargs)
 
     def delete(self, **kwargs):
         # type: (...) -> None
@@ -82,7 +82,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         # GET '/acr/v1/{name}'
         resp = self._client.container_registry_repository.get_properties(self.repository)
-        return RepositoryProperties.from_generated(resp)
+        return RepositoryProperties._from_generated(resp)
 
     def get_registry_artifact_properties(self, tag_or_digest, **kwargs):
         # type: (str, Dict[str, Any]) -> RegistryArtifactProperties
@@ -99,7 +99,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         if self._is_tag(tag_or_digest):
             tag_or_digest = self.get_digest_from_tag(tag_or_digest)
         # TODO: The returned object from the generated code is not being deserialized properly
-        return RegistryArtifactProperties.from_generated(
+        return RegistryArtifactProperties._from_generated(
             self._client.container_registry_repository.get_registry_artifact_properties(
                 self.repository, tag_or_digest, **kwargs
             )
@@ -115,7 +115,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
         # GET '/acr/v1/{name}/_tags/{reference}'
-        return TagProperties.from_generated(
+        return TagProperties._from_generated(
             self._client.container_registry_repository.get_tag_properties(self.repository, tag, **kwargs)
         )
 
@@ -140,9 +140,9 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         #     n=kwargs.get("n", None),
         #     orderby=kwargs.get("orderby"),
         # )  # ,
-        # # cls=lambda objs: [RegistryArtifacts.from_generated(x) for x in objs])
+        # # cls=lambda objs: [RegistryArtifacts._from_generated(x) for x in objs])
 
-        # return RegistryArtifactProperties.from_generated(artifacts)
+        # return RegistryArtifactProperties._from_generated(artifacts)
 
     def list_tags(self, **kwargs):
         # type: (...) -> ItemPaged[TagProperties]
@@ -161,7 +161,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             n=kwargs.pop("top", None),
             orderby=kwargs.pop("order_by", None),
             digest=kwargs.pop("digest", None),
-            cls=lambda objs: [TagProperties.from_generated(o) for o in objs],
+            cls=lambda objs: [TagProperties._from_generated(o) for o in objs],
             **kwargs
         )
 
