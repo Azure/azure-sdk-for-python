@@ -64,7 +64,7 @@ You can find the endpoint for your Document Translation resource using the
 [Azure Portal][azure_portal_get_endpoint].
 
 > Note that the service requires a custom domain endpoint. Follow the instructions in the above link to format your endpoint:
-> https://<NAME-OF-YOUR-RESOURCE>.cognitiveservices.azure.com/
+> https://{NAME-OF-YOUR-RESOURCE}.cognitiveservices.azure.com/
 
 #### Get the API key
 
