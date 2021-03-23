@@ -24,8 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from ._connection_string_parser import (
-    parse_connection_string,
-    ConnectionStringProperties,
+    parse_connection_string
 )
 
-__all__ = ["parse_connection_string", "ConnectionStringProperties"]
+__all__ = ["parse_connection_string"]
