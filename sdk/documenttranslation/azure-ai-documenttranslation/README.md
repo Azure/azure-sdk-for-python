@@ -7,7 +7,7 @@ and dialects while preserving document structure and data format. Use the client
 * Check the translation status and progress of each document in the translation job
 * Apply a custom translation model or glossaries to tailor translation to your specific case
 
-[Source code][python-dt-src] | [Package (PyPI)][python-dt-pypi] | [API reference documentation][python-dt-ref-docs]| [Product documentation][python-dt-product-docs] | [Samples][python-dt-samples]
+[Source code][python-dt-src] | [Package (PyPI)][python-dt-pypi] | [API reference documentation][python-dt-ref-docs] | [Product documentation][python-dt-product-docs] | [Samples][python-dt-samples]
 
 ## Getting started
 
@@ -92,7 +92,7 @@ document_translation_client = DocumentTranslationClient(endpoint, credential)
 
 The Document Translation service requires that you upload your files to an Azure Blob Storage source container and provide
 a target container where the translated documents can be written. SAS tokens to the containers (or files) are used to
-access the documents and write the translated documents. Additional information about setting this up can be found in
+access the documents and create the translated documents in the target container. Additional information about setting this up can be found in
 the service documentation:
 
 - [Set up Azure Blob Storage containers][source_containers] with your documents
@@ -103,27 +103,27 @@ the service documentation:
 ### DocumentTranslationClient
 
 Interaction with the Document Translation client library begins with an instance of the `DocumentTranslationClient`.
-`DocumentTranslationClient` provides operations for:
+The client provides operations for:
 
  - Creating a translation job to translate documents in your source container(s) and write results to you target container(s)
  - Checking the status of individual documents in the translation job and monitoring each document's progress
  - Enumerating all past and current translation jobs with the option to wait until the job(s) finish
  - Identifying supported glossary and document formats
 
-### BatchDocumentInput
+### Input
 
-Input to starting a translation job begins with the creation of a list of `BatchDocumentInput`. A single source can
-be translated to many different languages or targets:
+Input to create a translation job requires that a list of `DocumentTranslationInput` be passed. A single source URL to documents can
+be translated to many different languages:
 
 ```python
-from azure.ai.documenttranslation import BatchDocumentInput, StorageTarget
+from azure.ai.documenttranslation import DocumentTranslationInput, TranslationTarget
 
 my_input = [
-    BatchDocumentInput(
-        source_url="<container_sas_url_to_source>",
+    DocumentTranslationInput(
+        source_url="<sas_url_to_source>",
         targets=[
-            StorageTarget(target_url="<container_sas_url_to_target_fr>", language="fr"),
-            StorageTarget(target_url="<container_sas_url_to_target_de>", language="de")
+            TranslationTarget(target_url="<sas_url_to_target_fr>", language_code="fr"),
+            TranslationTarget(target_url="<sas_url_to_target_de>", language_code="de")
         ]
     )
 ]
@@ -132,28 +132,28 @@ my_input = [
 Or multiple different sources can be provided each with their own targets.
 
 ```python
-from azure.ai.documenttranslation import BatchDocumentInput, StorageTarget
+from azure.ai.documenttranslation import DocumentTranslationInput, TranslationTarget
 
 my_input = [
-    BatchDocumentInput(
-        source_url="<container_sas_url_to_source>",
+    DocumentTranslationInput(
+        source_url="<sas_url_to_source_A>",
         targets=[
-            StorageTarget(target_url="<container_sas_url_to_target_fr>", language="fr"),
-            StorageTarget(target_url="<container_sas_url_to_target_de>", language="de")
+            TranslationTarget(target_url="<sas_url_to_target_fr>", language_code="fr"),
+            TranslationTarget(target_url="<sas_url_to_target_de>", language_code="de")
         ]
     ),
-    BatchDocumentInput(
-        source_url="<container_sas_url_to_source>",
+    DocumentTranslationInput(
+        source_url="<sas_url_to_source_B>",
         targets=[
-            StorageTarget(target_url="<container_sas_url_to_target_fr>", language="fr"),
-            StorageTarget(target_url="<container_sas_url_to_target_de>", language="de")
+            TranslationTarget(target_url="<sas_url_to_target_fr>", language_code="fr"),
+            TranslationTarget(target_url="<sas_url_to_target_de>", language_code="de")
         ]
     ),
-    BatchDocumentInput(
-        source_url="<container_sas_url_to_source>",
+    DocumentTranslationInput(
+        source_url="<sas_url_to_source_C>",
         targets=[
-            StorageTarget(target_url="<container_sas_url_to_target_fr>", language="fr"),
-            StorageTarget(target_url="<container_sas_url_to_target_de>", language="de")
+            TranslationTarget(target_url="<sas_url_to_target_fr>", language_code="fr"),
+            TranslationTarget(target_url="<sas_url_to_target_de>", language_code="de")
         ]
     )
 ]
@@ -162,6 +162,13 @@ my_input = [
 > Note: the target_url for each target language must be unique.
 
 See the service documentation for all [supported languages][supported_languages].
+
+### Return value
+
+There are primarily two types of return values when checking on the result of a translation job - `JobStatusResult` and `DocumentStatusResult`.
+* A `JobStatusResult` will contain the details of the entire job, such as it's status, ID, any errors, and status summaries of the documents in the job.
+* A `DocumentStatusResult` will contain the details of an individual document, such as it's status, translation progress, any errors,
+and the URLs to the source document and translated document.
 
 ## Examples
 
@@ -172,17 +179,17 @@ The following section provides several code snippets covering some of the most c
 * [List translation jobs](#list-translation-jobs "List Translation Jobs")
 
 ### Translate your documents
-Translate the documents in your source container to the target containers, using a custom glossaries.
+Translate the documents in your source container to the target containers, using custom glossaries.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.documenttranslation import DocumentTranslationClient, BatchDocumentInput, StorageTarget
+from azure.ai.documenttranslation import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
 
 endpoint = "https://<resource-name>.cognitiveservices.azure.com/"
 credential = AzureKeyCredential("<api_key>")
-source_container_sas_url_en = "<container-sas-url-en>"
-target_container_sas_url_es = "<container-sas-url-es>"
-target_container_sas_url_fr = "<container-sas-url-fr>"
+source_container_sas_url_en = "<sas-url-en>"
+target_container_sas_url_es = "<sas-url-es>"
+target_container_sas_url_fr = "<sas-url-fr>"
 
 document_translation_client = DocumentTranslationClient(endpoint, credential)
 
@@ -190,33 +197,33 @@ glossaries = ["<glossary-url-A>", "<glossary-url-B>"]
 
 job = document_translation_client.create_translation_job(
     [
-        BatchDocumentInput(
+        DocumentTranslationInput(
             source_url=source_container_sas_url_en,
             targets=[
-                StorageTarget(target_url=target_container_sas_url_es, glossaries=glossaries, language="es"),
-                StorageTarget(target_url=target_container_sas_url_fr, glossaries=glossaries, language="fr"),
+                TranslationTarget(target_url=target_container_sas_url_es, glossaries=glossaries, language_code="es"),
+                TranslationTarget(target_url=target_container_sas_url_fr, glossaries=glossaries, language_code="fr"),
             ],
         )
     ]
-)  # type: JobStatusDetail
+)  # type: JobStatusResult
 
-job_detail = document_translation_client.wait_until_done(job.id)  # type: JobStatusDetail
+job_result = document_translation_client.wait_until_done(job.id)  # type: JobStatusResult
 
-print("Job created on: {}".format(job_detail.created_on))
-print("Job last updated on: {}".format(job_detail.last_updated_on))
-print("Total number of translations on documents: {}".format(job_detail.documents_total_count))
+print("Job created on: {}".format(job_result.created_on))
+print("Job last updated on: {}".format(job_result.last_updated_on))
+print("Total number of translations on documents: {}".format(job_result.documents_total_count))
 
 print("Of total documents...")
-print("{} failed".format(job_detail.documents_failed_count))
-print("{} succeeded".format(job_detail.documents_succeeded_count))
-print("{} in progress".format(job_detail.documents_in_progress_count))
-print("{} not yet started".format(job_detail.documents_not_yet_started_count))
-print("{} cancelled".format(job_detail.documents_cancelled_count))
+print("{} failed".format(job_result.documents_failed_count))
+print("{} succeeded".format(job_result.documents_succeeded_count))
+print("{} in progress".format(job_result.documents_in_progress_count))
+print("{} not yet started".format(job_result.documents_not_yet_started_count))
+print("{} cancelled".format(job_result.documents_cancelled_count))
 
-if job_detail.status == "Succeeded":
+if job_result.status == "Succeeded":
     print("Our translation job succeeded")
 
-if job_detail.status == "Failed":
+if job_result.status == "Failed":
     print("All documents failed in the translation job")
 
 # check document statuses... see next sample
@@ -237,12 +244,12 @@ document_translation_client = DocumentTranslationClient(endpoint, credential)
 
 docs_to_retry = []
 
-documents =  document_translation_client.list_documents_statuses(job_id)  # type: ItemPaged[DocumentStatusDetail]
+documents =  document_translation_client.list_documents_statuses(job_id)  # type: ItemPaged[DocumentStatusResult]
 
 for doc in documents:
     if doc.status == "Succeeded":
         print("Document at {} was translated to {} language".format(
-            doc.url, doc.translate_to
+            doc.translated_document_url, doc.translate_to
         ))
     if doc.status == "Running":
         print("Document ID: {}, translation progress is {} percent".format(
@@ -252,7 +259,7 @@ for doc in documents:
         print("Document ID: {}, Error Code: {}, Message: {}".format(
             doc.id, doc.error.code, doc.error.message
         ))
-        if doc.url not in docs_to_retry:
+        if doc.source_url not in docs_to_retry:
             docs_to_retry.append(doc.source_url)
 
 ```
@@ -269,7 +276,7 @@ credential = AzureKeyCredential("<api_key>")
 
 document_translation_client = DocumentTranslationClient(endpoint, credential)
 
-jobs = document_translation_client.list_submitted_jobs()  # type: ItemPaged[JobStatusDetail]
+jobs = document_translation_client.list_submitted_jobs()  # type: ItemPaged[JobStatusResult]
 
 for job in jobs:
     if job.status in ["NotStarted", "Running"]:
@@ -320,22 +327,27 @@ describes available configurations for retries, logging, transport protocols, an
 
 ## Next steps
 
-The following section provides several code snippets illustrating common patterns used in the Document Translation Python API.
+The following section provides several code snippets illustrating common patterns used in the Document Translation Python client library.
 
 ### More sample code
 
 These code samples show common scenario operations with the Azure Document Translation client library.
 
 * Client authentication: TODO
+* Create a translation job: TODO
+* Check the status of documents: TODO
+* List all submitted translation jobs: TODO
 
 
-### Async APIs
+### Async samples
 This library also includes a complete async API supported on Python 3.6+. To use it, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). Async clients
 are found under the `azure.ai.documenttranslation.aio` namespace.
 
 * Client authentication: TODO
-
+* Create a translation job: TODO
+* Check the status of documents: TODO
+* List all submitted translation jobs: TODO
 
 ### Additional documentation
 
@@ -351,7 +363,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 <!-- LINKS -->
 
 [python-dt-src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/documenttranslation/azure-ai-documenttranslation/azure/ai/documenttranslation
-[python-dt-pypi]: http://aka.ms/azsdk/python/texttranslation/pypi
+[python-dt-pypi]: https://aka.ms/azsdk/python/texttranslation/pypi
 [python-dt-product-docs]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
 [python-dt-ref-docs]: https://aka.ms/azsdk/python/documenttranslation/docs
 [python-dt-samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/documenttranslation/azure-ai-documenttranslation/samples
