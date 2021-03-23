@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import msrest.serialization
-from ._generated.models import (
+from .._generated.models import (
     LexicalAnalyzer,
     LexicalTokenizer,
     AnalyzeRequest,
