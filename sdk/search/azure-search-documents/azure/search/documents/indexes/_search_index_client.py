@@ -25,7 +25,7 @@ from .._search_client import SearchClient
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from ._models import AnalyzeTextOptions
+    from .models._models import AnalyzeTextOptions
     from typing import Any, Dict, List, Sequence, Union, Optional
     from azure.core.credentials import AzureKeyCredential
 
