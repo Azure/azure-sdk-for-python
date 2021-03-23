@@ -138,7 +138,7 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
         **kwargs
     )
 
-def _build_request(endpoint, content_type, events):
+def _build_request(endpoint, content_type, events, client):
     serialize = Serializer()
     header_parameters = {}  # type: Dict[str, Any]
     header_parameters['Content-Type'] = serialize.header("content_type", content_type, 'str')
@@ -146,10 +146,11 @@ def _build_request(endpoint, content_type, events):
     query_parameters = {}  # type: Dict[str, Any]
     query_parameters['api-version'] = serialize.query("api_version", "2018-01-01", 'str')
 
-    if events is None:
+    body = serialize.body(events, '[object]')
+    if body is None:
         data = None
     else:
-        data = json.dumps(events)
+        data = json.dumps(body)
         header_parameters['Content-Length'] = str(len(data))
 
     request = HttpRequest(
