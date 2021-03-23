@@ -27,7 +27,7 @@ def sample_cancel_translation_job():
             targets=[
                 TranslationTarget(
                     target_url=target_container_url_es,
-                    language="es"
+                    language_code="es"
                 )
             ],
             storage_type="file"

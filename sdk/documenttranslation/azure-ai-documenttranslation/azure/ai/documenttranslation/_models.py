@@ -68,8 +68,8 @@ class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
 
     :param target_url: Required. Location of the folder / container with your documents.
     :type target_url: str
-    :param language: Required. Target Language.
-    :type language: str
+    :param language_code: Required. Target Language Code.
+    :type language_code: str
     :keyword str category_id: Category / custom system for translation request.
     :keyword glossaries: List of TranslationGlossary.
     :paramtype glossaries: Union[list[str], list[~azure.ai.documenttranslation.TranslationGlossary]]
@@ -80,12 +80,12 @@ class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
     def __init__(
         self,
         target_url,
-        language,
+        language_code,
         **kwargs
     ):
         # type: (str, str, **Any) -> None
         self.target_url = target_url
-        self.language = language
+        self.language_code = language_code
         self.category_id = kwargs.get("category_id", None)
         self.glossaries = kwargs.get("glossaries", None)
         self.storage_source = kwargs.get("storage_source", None)
@@ -94,7 +94,7 @@ class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
         return _TargetInput(
             target_url=self.target_url,
             category=self.category_id,
-            language=self.language,
+            language=self.language_code,
             storage_source=self.storage_source,
             glossaries=TranslationGlossary._to_generated_list(self.glossaries)  # pylint: disable=protected-access
             if self.glossaries else None

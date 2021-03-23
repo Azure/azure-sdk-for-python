@@ -28,7 +28,7 @@ def sample_custom_translation():
             targets=[
                 TranslationTarget(
                     target_url=target_container_url_fr,
-                    language="fr",
+                    language_code="fr",
                     category_id=category_id,
                     glossaries=["https://exampleglossary"]
                 )

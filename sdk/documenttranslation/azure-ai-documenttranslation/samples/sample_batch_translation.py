@@ -29,11 +29,11 @@ def sample_batch_translation():
             targets=[
                 TranslationTarget(
                     target_url=target_container_url_es,
-                    language="es"
+                    language_code="es"
                 ),
                 TranslationTarget(
                     target_url=target_container_url_fr,
-                    language="fr"
+                    language_code="fr"
                 )
             ]
         ),
@@ -42,11 +42,11 @@ def sample_batch_translation():
             targets=[
                 TranslationTarget(
                     target_url=target_container_url_es,
-                    language="es"
+                    language_code="es"
                 ),
                 TranslationTarget(
                     target_url=target_container_url_fr,
-                    language="fr"
+                    language_code="fr"
                 )
             ]
         )

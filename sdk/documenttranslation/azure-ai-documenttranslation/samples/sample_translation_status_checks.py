@@ -29,11 +29,11 @@ def sample_translation_status_checks():
             targets=[
                 TranslationTarget(
                     target_url=target_container_url_es,
-                    language="es"
+                    language_code="es"
                 ),
                 TranslationTarget(
                     target_url=target_container_url_fr,
-                    language="fr"
+                    language_code="fr"
                 )
             ],
             storage_type="folder",

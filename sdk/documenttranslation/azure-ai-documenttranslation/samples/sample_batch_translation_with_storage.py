@@ -62,7 +62,7 @@ def sample_batch_translation_with_storage():
             targets=[
                 TranslationTarget(
                     target_url=target_container_url,
-                    language="es"
+                    language_code="es"
                 )
             ],
             prefix="document"
