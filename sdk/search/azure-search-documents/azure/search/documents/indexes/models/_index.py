@@ -227,6 +227,7 @@ class SearchField(msrest.serialization.Model):
     def _from_generated(cls, search_field):
         if not search_field:
             return None
+        # pylint:disable=protected-access
         fields = [SearchField._from_generated(x) for x in search_field.fields] \
             if search_field.fields else None
         hidden = not search_field.retrievable if search_field.retrievable is not None else None
@@ -557,7 +558,7 @@ class SearchIndex(msrest.serialization.Model):
             analyzers = None
         if self.tokenizers:
             tokenizers = [
-                x._to_generated()  # type: ignore
+                    x._to_generated()   # pylint:disable=protected-access
                 if isinstance(x, PatternTokenizer)
                 else x
                 for x in self.tokenizers
@@ -579,6 +580,7 @@ class SearchIndex(msrest.serialization.Model):
             tokenizers=tokenizers,
             token_filters=self.token_filters,
             char_filters=self.char_filters,
+            # pylint:disable=protected-access
             encryption_key=self.encryption_key._to_generated() if self.encryption_key else None,
             similarity=self.similarity,
             e_tag=self.e_tag
@@ -605,7 +607,7 @@ class SearchIndex(msrest.serialization.Model):
         else:
             tokenizers = None
         if search_index.fields:
-            fields = [SearchField._from_generated(x) for x in search_index.fields]
+            fields = [SearchField._from_generated(x) for x in search_index.fields]  # pylint:disable=protected-access
         else:
             fields = None
         return cls(
@@ -619,8 +621,8 @@ class SearchIndex(msrest.serialization.Model):
             tokenizers=tokenizers,
             token_filters=search_index.token_filters,
             char_filters=search_index.char_filters,
-            encryption_key=SearchResourceEncryptionKey._from_generated(search_index.encryption_key),
             # pylint:disable=protected-access
+            encryption_key=SearchResourceEncryptionKey._from_generated(search_index.encryption_key),
             similarity=search_index.similarity,
             e_tag=search_index.e_tag
         )
@@ -660,4 +662,4 @@ def pack_search_field(search_field):
             synonym_maps=synonym_map_names,
             fields=fields
         )
-    return search_field._to_generated()
+    return search_field._to_generated() # pylint:disable=protected-access

@@ -298,6 +298,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
                 :caption: Create a Data Source
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        # pylint:disable=protected-access
         packed_data_source = data_source_connection._to_generated()
         result = self._client.data_sources.create(packed_data_source, **kwargs)
         return SearchIndexerDataSourceConnection._from_generated(result)
@@ -319,13 +320,14 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         )
         kwargs.update(access_condition)
         name = data_source_connection.name
-        packed_data_source = data_source_connection._to_generated()
+        packed_data_source = data_source_connection._to_generated() # pylint:disable=protected-access
         result = self._client.data_sources.create_or_update(
             data_source_name=name,
             data_source=packed_data_source,
             error_map=error_map,
             **kwargs
         )
+        # pylint:disable=protected-access
         return SearchIndexerDataSourceConnection._from_generated(result)
 
     @distributed_trace
@@ -349,7 +351,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.data_sources.get(name, **kwargs)
-        return SearchIndexerDataSourceConnection._from_generated(result)
+        return SearchIndexerDataSourceConnection._from_generated(result)    # pylint:disable=protected-access
 
     @distributed_trace
     def get_data_source_connections(self, **kwargs):
@@ -370,6 +372,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.data_sources.list(**kwargs)
+        # pylint:disable=protected-access
         return [SearchIndexerDataSourceConnection._from_generated(x) for x in result.data_sources]
 
     @distributed_trace

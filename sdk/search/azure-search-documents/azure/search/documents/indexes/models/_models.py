@@ -458,7 +458,8 @@ class SynonymMap(msrest.serialization.Model):
         return cls(
             name=synonym_map.name,
             synonyms=synonym_map.synonyms.split("\n"),
-            encryption_key=SearchResourceEncryptionKey._from_generated(synonym_map.encryption_key), # pylint:disable=protected-access
+            # pylint:disable=protected-access
+            encryption_key=SearchResourceEncryptionKey._from_generated(synonym_map.encryption_key),
             e_tag=synonym_map.e_tag
         )
 
@@ -560,7 +561,7 @@ def pack_analyzer(analyzer):
     if not analyzer:
         return None
     if isinstance(analyzer, (PatternAnalyzer, CustomAnalyzer)):
-        return analyzer._to_generated()
+        return analyzer._to_generated() # pylint:disable=protected-access
     return analyzer
 
 
@@ -568,7 +569,7 @@ def unpack_analyzer(analyzer):
     if not analyzer:
         return None
     if isinstance(analyzer, _PatternAnalyzer):
-        return PatternAnalyzer._from_generated(analyzer)
+        return PatternAnalyzer._from_generated(analyzer)    # pylint:disable=protected-access
     if isinstance(analyzer, _CustomAnalyzer):
-        return CustomAnalyzer._from_generated(analyzer)
+        return CustomAnalyzer._from_generated(analyzer) # pylint:disable=protected-access
     return analyzer

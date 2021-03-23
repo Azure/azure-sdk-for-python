@@ -87,7 +87,7 @@ class SearchIndexClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-
+        # pylint:disable=protected-access
         return self._client.indexes.list(cls=lambda objs: [SearchIndex._from_generated(x) for x in  objs], **kwargs)
 
     @distributed_trace
@@ -126,7 +126,7 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.indexes.get(name, **kwargs)
-        return SearchIndex._from_generated(result)
+        return SearchIndex._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace
     def get_index_statistics(self, index_name, **kwargs):
@@ -202,7 +202,7 @@ class SearchIndexClient(HeadersMixin):
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         patched_index = index._to_generated()   # pylint:disable=protected-access
         result = self._client.indexes.create(patched_index, **kwargs)
-        return SearchIndex._from_generated(result)
+        return SearchIndex._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace
     def create_or_update_index(
@@ -251,7 +251,7 @@ class SearchIndexClient(HeadersMixin):
             error_map=error_map,
             **kwargs
         )
-        return SearchIndex._from_generated(result)
+        return SearchIndex._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace
     def analyze_text(self, index_name, analyze_request, **kwargs):
@@ -302,6 +302,7 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.synonym_maps.list(**kwargs)
+        # pylint:disable=protected-access
         return [SynonymMap._from_generated(x) for x in result.synonym_maps]
 
     @distributed_trace
@@ -341,7 +342,7 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.synonym_maps.get(name, **kwargs)
-        return SynonymMap._from_generated(result)
+        return SynonymMap._from_generated(result)   # pylint:disable=protected-access
 
     @distributed_trace
     def delete_synonym_map(self, synonym_map, **kwargs):
@@ -403,7 +404,7 @@ class SearchIndexClient(HeadersMixin):
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         patched_synonym_map = synonym_map._to_generated()   # pylint:disable=protected-access
         result = self._client.synonym_maps.create(patched_synonym_map, **kwargs)
-        return SynonymMap._from_generated(result)
+        return SynonymMap._from_generated(result)   # pylint:disable=protected-access
 
     @distributed_trace
     def create_or_update_synonym_map(self, synonym_map, **kwargs):
@@ -431,7 +432,7 @@ class SearchIndexClient(HeadersMixin):
             error_map=error_map,
             **kwargs
         )
-        return SynonymMap._from_generated(result)
+        return SynonymMap._from_generated(result)   # pylint:disable=protected-access
 
     @distributed_trace
     def get_service_statistics(self, **kwargs):

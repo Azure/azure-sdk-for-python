@@ -291,6 +291,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
                 :caption: Create a SearchIndexerDataSourceConnection
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        # pylint:disable=protected-access
         packed_data_source = data_source_connection._to_generated()
         result = await self._client.data_sources.create(packed_data_source, **kwargs)
         return SearchIndexerDataSourceConnection._from_generated(result)
@@ -312,6 +313,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         )
         kwargs.update(access_condition)
         name = data_source_connection.name
+        # pylint:disable=protected-access
         packed_data_source = data_source_connection._to_generated()
         result = await self._client.data_sources.create_or_update(
             data_source_name=name,
@@ -376,6 +378,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.data_sources.get(name, **kwargs)
+        # pylint:disable=protected-access
         return SearchIndexerDataSourceConnection._from_generated(result)
 
     @distributed_trace_async
@@ -397,6 +400,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.data_sources.list(**kwargs)
+        # pylint:disable=protected-access
         return [SearchIndexerDataSourceConnection._from_generated(x) for x in result.data_sources]
 
     @distributed_trace_async
