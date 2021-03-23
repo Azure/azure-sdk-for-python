@@ -2,6 +2,10 @@
 
 ## 5.3.2 (Unreleased)
 
+**New Features**
+
+- Updated `list_ownership`, `claim_ownership`, `update_checkpoint`, `list_checkpoints` on sync and async `CheckpointStore` to support `**kwargs`.
+- Updated `update_checkpoint` on sync and async `PartitionContext` to support taking `**kwargs`.
 
 ## 5.3.1 (2021-03-09)
 

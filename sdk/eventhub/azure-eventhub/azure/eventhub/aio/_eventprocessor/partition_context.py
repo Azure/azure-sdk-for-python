@@ -56,7 +56,7 @@ class PartitionContext(object):
             return get_last_enqueued_event_properties(self._last_received_event)
         return None
 
-    async def update_checkpoint(self, event: Optional["EventData"] = None) -> None:
+    async def update_checkpoint(self, event: Optional["EventData"] = None, **kwargs: Any) -> None:
         """Updates the receive checkpoint to the given events offset.
 
         :param ~azure.eventhub.EventData event: The EventData instance which contains the offset and
@@ -74,7 +74,7 @@ class PartitionContext(object):
                     "offset": checkpoint_event.offset,
                     "sequence_number": checkpoint_event.sequence_number,
                 }
-                await self._checkpoint_store.update_checkpoint(checkpoint)
+                await self._checkpoint_store.update_checkpoint(checkpoint, **kwargs)
         else:
             _LOGGER.warning(
                 "namespace %r, eventhub %r, consumer_group %r, partition_id %r "

@@ -2,6 +2,8 @@
 
 ## 1.1.4 (Unreleased)
 
+**New features**
+- Updated `list_ownership`, `claim_ownership`, `update_checkpoint`, `list_checkpoints` on `BlobCheckpointStore` to support `**kwargs`.
 
 ## 1.1.3 (2021-03-09)
 
