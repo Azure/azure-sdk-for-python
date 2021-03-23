@@ -54,7 +54,6 @@ def get_current_utc_as_int():
     # type: () -> int
     current_utc_datetime = datetime.utcnow().replace(tzinfo=TZ_UTC)
     return _convert_datetime_to_utc_int(current_utc_datetime)
-    return current_utc_datetime_as_int
 
 
 def create_access_token(token):
