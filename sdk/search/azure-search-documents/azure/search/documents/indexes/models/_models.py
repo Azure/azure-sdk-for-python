@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import msrest.serialization
-from ._generated.models import (
+from .._generated.models import (
     LexicalAnalyzer,
     LexicalTokenizer,
     AnalyzeRequest,
@@ -297,7 +297,7 @@ class SynonymMap(msrest.serialization.Model):
      needed if you want to rotate your encryption key; Your data will be unaffected. Encryption with
      customer-managed keys is not available for free search services, and is only available for paid
      services created on or after January 1, 2019.
-    :type encryption_key: ~azure.search.documents.models.SearchResourceEncryptionKey
+    :type encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     :param e_tag: The ETag of the synonym map.
     :type e_tag: str
     """
@@ -340,11 +340,11 @@ class SearchIndexerDataSourceConnection(msrest.serialization.Model):
     :type description: str
     :param type: Required. The type of the datasource connection. Possible values include: "azuresql",
      "cosmosdb", "azureblob", "azuretable", "mysql".
-    :type type: str or ~azure.search.documents.models.SearchIndexerDataSourceType
+    :type type: str or ~azure.search.documents.indexes.models.SearchIndexerDataSourceType
     :param connection_string: The connection string for the datasource connection.
     :type connection_string: str
     :param container: Required. The data container for the datasource connection.
-    :type container: ~azure.search.documents.models.SearchIndexerDataContainer
+    :type container: ~azure.search.documents.indexes.models.SearchIndexerDataContainer
     :param data_change_detection_policy: The data change detection policy for the datasource connection.
     :type data_change_detection_policy: ~azure.search.documents.models.DataChangeDetectionPolicy
     :param data_deletion_detection_policy: The data deletion detection policy for the datasource connection.

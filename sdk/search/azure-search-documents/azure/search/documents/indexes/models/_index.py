@@ -26,7 +26,7 @@ class SearchField(msrest.serialization.Model):
     :param type: Required. The data type of the field. Possible values include: "Edm.String",
      "Edm.Int32", "Edm.Int64", "Edm.Double", "Edm.Boolean", "Edm.DateTimeOffset",
      "Edm.GeographyPoint", "Edm.ComplexType".
-    :type type: str or ~azure.search.documents.models.SearchFieldDataType
+    :type type: str or ~azure.search.documents.indexes.models.SearchFieldDataType
     :param key: A value indicating whether the field uniquely identifies documents in the index.
      Exactly one top-level field in each index must be chosen as the key field and it must be of
      type Edm.String. Key fields can be used to look up documents directly and update or delete
@@ -94,7 +94,7 @@ class SearchField(msrest.serialization.Model):
      "th.microsoft", "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft",
      "vi.microsoft", "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern",
      "simple", "stop", "whitespace".
-    :type analyzer_name: str or ~azure.search.documents.models.LexicalAnalyzerName
+    :type analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
     :param search_analyzer_name: The name of the analyzer used at search time for the field. This option
      can be used only with searchable fields. It must be set together with indexAnalyzer and it
      cannot be set together with the analyzer option. This property cannot be set to the name of a
@@ -117,7 +117,7 @@ class SearchField(msrest.serialization.Model):
      "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop",
      "whitespace".
-    :type search_analyzer_name: str or ~azure.search.documents.models.LexicalAnalyzerName
+    :type search_analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
     :param index_analyzer_name: The name of the analyzer used at indexing time for the field. This
      option can be used only with searchable fields. It must be set together with searchAnalyzer and
      it cannot be set together with the analyzer option.  This property cannot be set to the name of
@@ -140,7 +140,7 @@ class SearchField(msrest.serialization.Model):
      "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop",
      "whitespace".
-    :type index_analyzer_name: str or ~azure.search.documents.models.LexicalAnalyzerName
+    :type index_analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
     :param synonym_map_names: A list of the names of synonym maps to associate with this field. This
      option can be used only with searchable fields. Currently only one synonym map per field is
      supported. Assigning a synonym map to a field ensures that query terms targeting that field are
@@ -314,7 +314,7 @@ def SearchableField(**kw):
      'th.microsoft', 'th.lucene', 'tr.microsoft', 'tr.lucene', 'uk.microsoft', 'ur.microsoft',
      'vi.microsoft', 'standard.lucene', 'standardasciifolding.lucene', 'keyword', 'pattern',
      'simple', 'stop', 'whitespace'.
-    :type analyzer_name: str or ~search_service_client.models.AnalyzerName
+    :type analyzer_name: str or ~azure.search.documents.indexes.models.AnalyzerName
     :param search_analyzer_name: The name of the analyzer used at search time for the field. It must be
      set together with indexAnalyzer and it cannot be set together with the analyzer option. This
      property cannot be set to the name of a language analyzer; use the analyzer property instead
@@ -337,7 +337,7 @@ def SearchableField(**kw):
      'th.lucene', 'tr.microsoft', 'tr.lucene', 'uk.microsoft', 'ur.microsoft', 'vi.microsoft',
      'standard.lucene', 'standardasciifolding.lucene', 'keyword', 'pattern', 'simple', 'stop',
      'whitespace'.
-    :type search_analyzer_name: str or ~search_service_client.models.AnalyzerName
+    :type search_analyzer_name: str or ~azure.search.documents.indexes.models.AnalyzerName
     :param index_analyzer_name: The name of the analyzer used at indexing time for the field.
      It must be set together with searchAnalyzer and it cannot be set together with the analyzer
      option.  This property cannot be set to the name of a language analyzer; use the analyzer
@@ -360,7 +360,7 @@ def SearchableField(**kw):
      'th.lucene', 'tr.microsoft', 'tr.lucene', 'uk.microsoft', 'ur.microsoft', 'vi.microsoft',
      'standard.lucene', 'standardasciifolding.lucene', 'keyword', 'pattern', 'simple', 'stop',
      'whitespace'.
-    :type index_analyzer_name: str or ~search_service_client.models.AnalyzerName
+    :type index_analyzer_name: str or ~azure.search.documents.indexes.models.AnalyzerName
     :param synonym_map_names: A list of the names of synonym maps to associate with this field. Currently
      only one synonym map per field is supported. Assigning a synonym map to a field ensures that
      query terms targeting that field are expanded at query-time using the rules in the synonym map.
@@ -417,25 +417,25 @@ class SearchIndex(msrest.serialization.Model):
     :param name: Required. The name of the index.
     :type name: str
     :param fields: Required. The fields of the index.
-    :type fields: list[~azure.search.documents.models.SearchField]
+    :type fields: list[~azure.search.documents.indexes.models.SearchField]
     :param scoring_profiles: The scoring profiles for the index.
-    :type scoring_profiles: list[~azure.search.documents.models.ScoringProfile]
+    :type scoring_profiles: list[~azure.search.documents.indexes.models.ScoringProfile]
     :param default_scoring_profile: The name of the scoring profile to use if none is specified in
      the query. If this property is not set and no scoring profile is specified in the query, then
      default scoring (tf-idf) will be used.
     :type default_scoring_profile: str
     :param cors_options: Options to control Cross-Origin Resource Sharing (CORS) for the index.
-    :type cors_options: ~azure.search.documents.models.CorsOptions
+    :type cors_options: ~azure.search.documents.indexes.models.CorsOptions
     :param suggesters: The suggesters for the index.
-    :type suggesters: list[~azure.search.documents.models.Suggester]
+    :type suggesters: list[~azure.search.documents.indexes.models.Suggester]
     :param analyzers: The analyzers for the index.
-    :type analyzers: list[~azure.search.documents.models.LexicalAnalyzer]
+    :type analyzers: list[~azure.search.documents.indexes.models.LexicalAnalyzer]
     :param tokenizers: The tokenizers for the index.
-    :type tokenizers: list[~azure.search.documents.models.LexicalTokenizer]
+    :type tokenizers: list[~azure.search.documents.indexes.models.LexicalTokenizer]
     :param token_filters: The token filters for the index.
-    :type token_filters: list[~azure.search.documents.models.TokenFilter]
+    :type token_filters: list[~azure.search.documents.indexes.models.TokenFilter]
     :param char_filters: The character filters for the index.
-    :type char_filters: list[~azure.search.documents.models.CharFilter]
+    :type char_filters: list[~azure.search.documents.indexes.models.CharFilter]
     :param encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your data when you
      want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive
@@ -444,12 +444,12 @@ class SearchIndex(msrest.serialization.Model):
      needed if you want to rotate your encryption key; Your data will be unaffected. Encryption with
      customer-managed keys is not available for free search services, and is only available for paid
      services created on or after January 1, 2019.
-    :type encryption_key: ~azure.search.documents.models.SearchResourceEncryptionKey
+    :type encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     :param similarity: The type of similarity algorithm to be used when scoring and ranking the
      documents matching a search query. The similarity algorithm can only be defined at index
      creation time and cannot be modified on existing indexes. If null, the ClassicSimilarity
      algorithm is used.
-    :type similarity: ~azure.search.documents.models.Similarity
+    :type similarity: ~azure.search.documents.indexes.models.Similarity
     :param e_tag: The ETag of the index.
     :type e_tag: str
     """

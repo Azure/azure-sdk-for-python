@@ -25,7 +25,7 @@ from ._generated.models import (
     PatternAnalyzer as _PatternAnalyzer,
     PatternTokenizer as _PatternTokenizer,
 )
-from ._models import (
+from .models._models import (
     CustomAnalyzer,
     PatternAnalyzer,
     PatternTokenizer,
@@ -33,7 +33,7 @@ from ._models import (
     SearchIndexerDataSourceConnection,
     SearchResourceEncryptionKey,
 )
-from ._index import (
+from .models._index import (
     SearchField,
     SearchIndex,
 )
