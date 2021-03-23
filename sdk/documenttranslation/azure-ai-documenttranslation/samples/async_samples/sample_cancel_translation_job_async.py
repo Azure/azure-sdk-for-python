@@ -15,7 +15,7 @@ class CancelTranslationJobSampleAsync(object):
         from azure.ai.documenttranslation.aio import DocumentTranslationClient
         from azure.ai.documenttranslation import (
             DocumentTranslationInput,
-            StorageTarget
+            TranslationTarget
         )
 
         # get service secrets
@@ -29,7 +29,7 @@ class CancelTranslationJobSampleAsync(object):
             DocumentTranslationInput(
                 source_url=source_container_url,
                 targets=[
-                    StorageTarget(
+                    TranslationTarget(
                         target_url=target_container_url_es,
                         language="es"
                     )

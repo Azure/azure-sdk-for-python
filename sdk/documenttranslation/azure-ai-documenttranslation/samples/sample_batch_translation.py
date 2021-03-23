@@ -11,7 +11,7 @@ def sample_batch_translation():
     from azure.ai.documenttranslation import (
         DocumentTranslationClient,
         DocumentTranslationInput,
-        StorageTarget
+        TranslationTarget
     )
 
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
@@ -27,11 +27,11 @@ def sample_batch_translation():
         DocumentTranslationInput(
             source_url=source_container_url_en,
             targets=[
-                StorageTarget(
+                TranslationTarget(
                     target_url=target_container_url_es,
                     language="es"
                 ),
-                StorageTarget(
+                TranslationTarget(
                     target_url=target_container_url_fr,
                     language="fr"
                 )
@@ -40,11 +40,11 @@ def sample_batch_translation():
         DocumentTranslationInput(
             source_url=source_container_url_de,
             targets=[
-                StorageTarget(
+                TranslationTarget(
                     target_url=target_container_url_es,
                     language="es"
                 ),
-                StorageTarget(
+                TranslationTarget(
                     target_url=target_container_url_fr,
                     language="fr"
                 )

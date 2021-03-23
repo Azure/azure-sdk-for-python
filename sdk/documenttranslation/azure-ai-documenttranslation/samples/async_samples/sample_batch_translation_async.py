@@ -16,7 +16,7 @@ class BatchTranslationSampleAsync(object):
         from azure.ai.documenttranslation.aio import DocumentTranslationClient
         from azure.ai.documenttranslation import (
             DocumentTranslationInput,
-            StorageTarget
+            TranslationTarget
         )
 
         # get service secrets
@@ -35,11 +35,11 @@ class BatchTranslationSampleAsync(object):
             DocumentTranslationInput(
                 source_url=source_container_url_en,
                 targets=[
-                    StorageTarget(
+                    TranslationTarget(
                         target_url=target_container_url_es,
                         language="es"
                     ),
-                    StorageTarget(
+                    TranslationTarget(
                         target_url=target_container_url_fr,
                         language="fr"
                     )
@@ -48,11 +48,11 @@ class BatchTranslationSampleAsync(object):
             DocumentTranslationInput(
                 source_url=source_container_url_de,
                 targets=[
-                    StorageTarget(
+                    TranslationTarget(
                         target_url=target_container_url_es,
                         language="es"
                     ),
-                    StorageTarget(
+                    TranslationTarget(
                         target_url=target_container_url_fr,
                         language="fr"
                     )

@@ -11,7 +11,7 @@ def sample_batch_translation_with_storage():
     from azure.ai.documenttranslation import (
         DocumentTranslationClient,
         DocumentTranslationInput,
-        StorageTarget
+        TranslationTarget
     )
     from azure.storage.blob import ContainerClient, generate_container_sas, ContainerSasPermissions
 
@@ -60,7 +60,7 @@ def sample_batch_translation_with_storage():
         DocumentTranslationInput(
             source_url=source_container_url,
             targets=[
-                StorageTarget(
+                TranslationTarget(
                     target_url=target_container_url,
                     language="es"
                 )

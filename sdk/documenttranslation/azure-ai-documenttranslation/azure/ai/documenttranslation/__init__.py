@@ -11,7 +11,7 @@ from ._generated.models import (
 )
 from ._api_version import DocumentTranslationVersion
 from ._models import (
-    StorageTarget,
+    TranslationTarget,
     JobStatusResult,
     DocumentStatusResult,
     DocumentTranslationError,
@@ -30,7 +30,7 @@ __all__ = [
     "TranslationGlossary",
     "StorageInputType",
     "FileFormat",
-    "StorageTarget",
+    "TranslationTarget",
     "JobStatusResult",
     "DocumentStatusResult",
     "DocumentTranslationError",

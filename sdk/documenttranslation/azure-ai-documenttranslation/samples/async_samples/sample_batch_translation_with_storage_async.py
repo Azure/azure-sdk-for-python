@@ -16,7 +16,7 @@ class BatchTranslationWithStorageSampleAsync(object):
         from azure.ai.documenttranslation.aio import DocumentTranslationClient
         from azure.ai.documenttranslation import (
             DocumentTranslationInput,
-            StorageTarget
+            TranslationTarget
         )
         from azure.storage.blob.aio import ContainerClient
         from azure.storage.blob import (
@@ -73,7 +73,7 @@ class BatchTranslationWithStorageSampleAsync(object):
             DocumentTranslationInput(
                 source_url=source_container_url,
                 targets=[
-                    StorageTarget(
+                    TranslationTarget(
                         target_url=target_container_url,
                         language="es"
                     )

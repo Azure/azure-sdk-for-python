@@ -17,7 +17,7 @@ class TranslationStatusChecksSampleAsync(object):
         from azure.ai.documenttranslation.aio import DocumentTranslationClient
         from azure.ai.documenttranslation import (
             DocumentTranslationInput,
-            StorageTarget
+            TranslationTarget
         )
 
         # get service secrets
@@ -32,11 +32,11 @@ class TranslationStatusChecksSampleAsync(object):
             DocumentTranslationInput(
                 source_url=source_container_url,
                 targets=[
-                    StorageTarget(
+                    TranslationTarget(
                         target_url=target_container_url_es,
                         language="es"
                     ),
-                    StorageTarget(
+                    TranslationTarget(
                         target_url=target_container_url_fr,
                         language="fr"
                     )

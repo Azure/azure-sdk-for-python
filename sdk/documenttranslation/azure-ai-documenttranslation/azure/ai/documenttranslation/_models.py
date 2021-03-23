@@ -63,7 +63,7 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
         return [TranslationGlossary._to_generated_unknown_type(glossary) for glossary in glossaries]
 
 
-class StorageTarget(object):  # pylint: disable=useless-object-inheritance
+class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
     """Destination for the finished translated documents.
 
     :param target_url: Required. Location of the folder / container with your documents.
@@ -113,7 +113,7 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
      documents.
     :type source_url: str
     :param targets: Required. Location of the destination for the output.
-    :type targets: list[StorageTarget]
+    :type targets: list[TranslationTarget]
     :keyword str source_language: Language code
      If none is specified, we will perform auto detect on the document.
     :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
@@ -133,7 +133,7 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
         targets,
         **kwargs
     ):
-        # type: (str, List[StorageTarget], **Any) -> None
+        # type: (str, List[TranslationTarget], **Any) -> None
         self.source_url = source_url
         self.targets = targets
         self.source_language = kwargs.get("source_language", None)
@@ -153,7 +153,7 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
                 language=self.source_language,
                 storage_source=self.storage_source
             ),
-            targets=StorageTarget._to_generated_list(self.targets),  # pylint: disable=protected-access
+            targets=TranslationTarget._to_generated_list(self.targets),  # pylint: disable=protected-access
             storage_type=self.storage_type
         )
 

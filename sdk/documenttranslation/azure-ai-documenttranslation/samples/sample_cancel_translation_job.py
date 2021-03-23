@@ -11,7 +11,7 @@ def sample_cancel_translation_job():
     from azure.ai.documenttranslation import (
         DocumentTranslationClient,
         DocumentTranslationInput,
-        StorageTarget
+        TranslationTarget
     )
 
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
@@ -25,7 +25,7 @@ def sample_cancel_translation_job():
         DocumentTranslationInput(
             source_url=source_container_url,
             targets=[
-                StorageTarget(
+                TranslationTarget(
                     target_url=target_container_url_es,
                     language="es"
                 )
