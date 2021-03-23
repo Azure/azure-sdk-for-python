@@ -187,7 +187,7 @@ class EventGridPublisherClient:
         return await self._client._send_request(
             _build_request(self._endpoint, content_type, events, self._client),
             **kwargs
-        )
+        ) # type: ignore
 
     async def __aenter__(self) -> "EventGridPublisherClient":
         await self._client.__aenter__()

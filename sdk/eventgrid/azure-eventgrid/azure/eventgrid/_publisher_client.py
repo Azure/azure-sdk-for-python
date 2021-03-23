@@ -194,7 +194,7 @@ class EventGridPublisherClient(object):
         return self._client._send_request(
             _build_request(self._endpoint, content_type, events, self._client),
             **kwargs
-        )
+        ) # type: ignore
 
     def close(self):
         # type: () -> None

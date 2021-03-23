@@ -138,13 +138,14 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
     )
 
 def _build_request(endpoint, content_type, events, client):
+    serialize = client._serialize # pylint: disable=protected-access
     header_parameters = {}  # type: Dict[str, Any]
-    header_parameters['Content-Type'] = client._serialize.header("content_type", content_type, 'str')
+    header_parameters['Content-Type'] = serialize.header("content_type", content_type, 'str')
 
     query_parameters = {}  # type: Dict[str, Any]
-    query_parameters['api-version'] = client._serialize.query("api_version", "2018-01-01", 'str')
+    query_parameters['api-version'] = serialize.query("api_version", "2018-01-01", 'str')
 
-    body = client._serialize.body(events, '[object]')
+    body = serialize.body(events, '[object]')
     if body is None:
         data = None
     else:
