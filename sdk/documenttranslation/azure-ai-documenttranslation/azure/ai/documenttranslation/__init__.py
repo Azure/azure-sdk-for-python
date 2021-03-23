@@ -12,7 +12,7 @@ from ._generated.models import (
 from ._api_version import DocumentTranslationVersion
 from ._models import (
     StorageTarget,
-    JobStatusDetail,
+    JobStatusResult,
     DocumentStatusResult,
     DocumentTranslationError,
     TranslationGlossary,
@@ -31,7 +31,7 @@ __all__ = [
     "StorageInputType",
     "FileFormat",
     "StorageTarget",
-    "JobStatusDetail",
+    "JobStatusResult",
     "DocumentStatusResult",
     "DocumentTranslationError",
 ]

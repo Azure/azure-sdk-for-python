@@ -34,13 +34,13 @@ def sample_cancel_translation_job():
         )
     ]
 
-    job_detail = client.create_translation_job(translation_inputs)  # type: JobStatusDetail
+    job_detail = client.create_translation_job(translation_inputs)  # type: JobStatusResult
 
     print("Job initial status: {}".format(job_detail.status))
     print("Number of translations on documents: {}".format(job_detail.documents_total_count))
 
     client.cancel_job(job_detail.id)
-    job_detail = client.get_job_status(job_detail.id)  # type: JobStatusDetail
+    job_detail = client.get_job_status(job_detail.id)  # type: JobStatusResult
 
     if job_detail.status in ["Cancelled", "Cancelling"]:
         print("We cancelled job with ID: {}".format(job_detail.id))

@@ -62,13 +62,13 @@ class BatchTranslationSampleAsync(object):
 
         # run translation job
         async with client:
-            job_detail = await client.create_translation_job(translation_inputs)  # type: JobStatusDetail
+            job_detail = await client.create_translation_job(translation_inputs)  # type: JobStatusResult
 
             print("Job initial status: {}".format(job_detail.status))
             print("Number of translations on documents: {}".format(job_detail.documents_total_count))
 
             # get job result
-            job_result = await client.wait_until_done(job_detail.id)  # type: JobStatusDetail
+            job_result = await client.wait_until_done(job_detail.id)  # type: JobStatusResult
             if job_result.status == "Succeeded":
                 print("We translated our documents!")
                 if job_result.documents_failed_count > 0:

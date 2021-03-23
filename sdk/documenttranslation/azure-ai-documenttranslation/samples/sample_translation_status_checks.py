@@ -44,7 +44,7 @@ def sample_translation_status_checks():
     job_detail = client.create_translation_job(translation_inputs)
 
     while True:
-        job_detail = client.get_job_status(job_detail.id)  # type: JobStatusDetail
+        job_detail = client.get_job_status(job_detail.id)  # type: JobStatusResult
         if job_detail.status in ["NotStarted", "Running"]:
             time.sleep(30)
             continue

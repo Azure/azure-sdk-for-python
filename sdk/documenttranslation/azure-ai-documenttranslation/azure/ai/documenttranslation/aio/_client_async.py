@@ -18,7 +18,7 @@ from .._generated.models import (
     BatchStatusDetail as _BatchStatusDetail,
 )
 from .._models import (
-    JobStatusDetail,
+    JobStatusResult,
     DocumentTranslationInput,
     FileFormat,
     DocumentStatusResult
@@ -63,13 +63,13 @@ class DocumentTranslationClient(object):
 
     @distributed_trace_async
     async def create_translation_job(self, inputs, **kwargs):
-        # type: (List[DocumentTranslationInput], **Any) -> JobStatusDetail
+        # type: (List[DocumentTranslationInput], **Any) -> JobStatusResult
         """
 
         :param inputs:
         :type inputs: List[~azure.ai.documenttranslation.DocumentTranslationInput]
-        :return: JobStatusDetail
-        :rtype: JobStatusDetail
+        :return: JobStatusResult
+        :rtype: JobStatusResult
         """
 
         # submit translation job
@@ -95,17 +95,17 @@ class DocumentTranslationClient(object):
 
     @distributed_trace_async
     async def get_job_status(self, job_id, **kwargs):
-        # type: (str, **Any) -> JobStatusDetail
+        # type: (str, **Any) -> JobStatusResult
         """
 
         :param job_id: guid id for job
         :type job_id: str
-        :rtype: ~azure.ai.documenttranslation.JobStatusDetail
+        :rtype: ~azure.ai.documenttranslation.JobStatusResult
         """
 
         job_status = await self._client.document_translation.get_operation_status(job_id, **kwargs)
         # pylint: disable=protected-access
-        return JobStatusDetail._from_generated(job_status)
+        return JobStatusResult._from_generated(job_status)
 
     @distributed_trace_async
     async def cancel_job(self, job_id, **kwargs):
@@ -121,13 +121,13 @@ class DocumentTranslationClient(object):
 
     @distributed_trace_async
     async def wait_until_done(self, job_id, **kwargs):
-        # type: (str, **Any) -> JobStatusDetail
+        # type: (str, **Any) -> JobStatusResult
         """
 
         :param job_id: guid id for job
         :type job_id: str
-        :return: JobStatusDetail
-        :rtype: JobStatusDetail
+        :return: JobStatusResult
+        :rtype: JobStatusResult
         """
         pipeline_response = await self._client.document_translation.get_operation_status(
             job_id,
@@ -136,7 +136,7 @@ class DocumentTranslationClient(object):
 
         def callback(raw_response):
             detail = self._client._deserialize(_BatchStatusDetail, raw_response)  # pylint: disable=protected-access
-            return JobStatusDetail._from_generated(detail)  # pylint: disable=protected-access
+            return JobStatusResult._from_generated(detail)  # pylint: disable=protected-access
 
         poller = AsyncLROPoller(
             client=self._client._client,  # pylint: disable=protected-access
@@ -152,19 +152,19 @@ class DocumentTranslationClient(object):
 
     @distributed_trace
     def list_submitted_jobs(self, **kwargs):
-        # type: (**Any) -> AsyncItemPaged[JobStatusDetail]
+        # type: (**Any) -> AsyncItemPaged[JobStatusResult]
         """
 
         :keyword int results_per_page:
         :keyword int skip:
-        :rtype: ~azure.core.polling.AsyncItemPaged[JobStatusDetail]
+        :rtype: ~azure.core.polling.AsyncItemPaged[JobStatusResult]
         """
         skip = kwargs.pop('skip', None)
         results_per_page = kwargs.pop('results_per_page', None)
 
         def _convert_from_generated_model(generated_model):
             # pylint: disable=protected-access
-            return JobStatusDetail._from_generated(generated_model)
+            return JobStatusResult._from_generated(generated_model)
 
         model_conversion_function = kwargs.pop(
             "cls",

@@ -37,12 +37,12 @@ def sample_custom_translation():
         )
     ]
 
-    job_detail = client.create_translation_job(translation_inputs)  # type: JobStatusDetail
+    job_detail = client.create_translation_job(translation_inputs)  # type: JobStatusResult
 
     print("Job initial status: {}".format(job_detail.status))
     print("Number of translations on documents: {}".format(job_detail.documents_total_count))
 
-    job_result = client.wait_until_done(job_detail.id)  # type: JobStatusDetail
+    job_result = client.wait_until_done(job_detail.id)  # type: JobStatusResult
     if job_result.status == "Succeeded":
         print("We translated our documents!")
         if job_result.documents_failed_count > 0:
