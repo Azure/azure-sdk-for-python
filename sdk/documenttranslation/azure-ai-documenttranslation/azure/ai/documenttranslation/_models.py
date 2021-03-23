@@ -328,8 +328,8 @@ class FileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
     :vartype file_extensions: list[str]
     :ivar content_types: Supported Content-Types for this format.
     :vartype content_types: list[str]
-    :ivar versions: Supported Version.
-    :vartype versions: list[str]
+    :ivar format_versions: Supported Version.
+    :vartype format_versions: list[str]
     """
 
     def __init__(
@@ -340,7 +340,7 @@ class FileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
         self.format = kwargs.get('format', None)
         self.file_extensions = kwargs.get('file_extensions', None)
         self.content_types = kwargs.get('content_types', None)
-        self.versions = kwargs.get('versions', None)
+        self.format_versions = kwargs.get('format_versions', None)
 
     @classmethod
     def _from_generated(cls, file_format):
@@ -348,7 +348,7 @@ class FileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
             format=file_format.format,
             file_extensions=file_format.file_extensions,
             content_types=file_format.content_types,
-            versions=file_format.versions
+            format_versions=file_format.versions
         )
 
     @staticmethod
