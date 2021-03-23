@@ -14,8 +14,8 @@ class CancelTranslationJobSampleAsync(object):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.documenttranslation.aio import DocumentTranslationClient
         from azure.ai.documenttranslation import (
-            BatchDocumentInput,
-            StorageTarget
+            DocumentTranslationInput,
+            TranslationTarget
         )
 
         # get service secrets
@@ -25,13 +25,13 @@ class CancelTranslationJobSampleAsync(object):
         target_container_url_es = os.environ["AZURE_TARGET_CONTAINER_URL_ES"]
 
         # prepare translation job input
-        batch = [
-            BatchDocumentInput(
+        translation_inputs = [
+            DocumentTranslationInput(
                 source_url=source_container_url,
                 targets=[
-                    StorageTarget(
+                    TranslationTarget(
                         target_url=target_container_url_es,
-                        language="es"
+                        language_code="es"
                     )
                 ],
                 storage_type="file"
@@ -43,13 +43,13 @@ class CancelTranslationJobSampleAsync(object):
 
         # run job
         async with client:
-            job_detail = await client.create_translation_job(batch)
+            job_detail = await client.create_translation_job(translation_inputs)
 
             print("Job initial status: {}".format(job_detail.status))
             print("Number of translations on documents: {}".format(job_detail.documents_total_count))
 
             await client.cancel_job(job_detail.id)
-            job_detail = await client.get_job_status(job_detail.id)  # type: JobStatusDetail
+            job_detail = await client.get_job_status(job_detail.id)  # type: JobStatusResult
 
             if job_detail.status in ["Cancelled", "Cancelling"]:
                 print("We cancelled job with ID: {}".format(job_detail.id))

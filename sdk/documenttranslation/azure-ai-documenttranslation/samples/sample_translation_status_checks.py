@@ -11,8 +11,8 @@ def sample_translation_status_checks():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation import (
         DocumentTranslationClient,
-        BatchDocumentInput,
-        StorageTarget
+        DocumentTranslationInput,
+        TranslationTarget
     )
 
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
@@ -23,17 +23,17 @@ def sample_translation_status_checks():
 
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
-    batch = [
-        BatchDocumentInput(
+    translation_inputs = [
+        DocumentTranslationInput(
             source_url=source_container_url,
             targets=[
-                StorageTarget(
+                TranslationTarget(
                     target_url=target_container_url_es,
-                    language="es"
+                    language_code="es"
                 ),
-                StorageTarget(
+                TranslationTarget(
                     target_url=target_container_url_fr,
-                    language="fr"
+                    language_code="fr"
                 )
             ],
             storage_type="folder",
@@ -41,10 +41,10 @@ def sample_translation_status_checks():
         )
     ]
 
-    job_detail = client.create_translation_job(batch)
+    job_detail = client.create_translation_job(translation_inputs)
 
     while True:
-        job_detail = client.get_job_status(job_detail.id)  # type: JobStatusDetail
+        job_detail = client.get_job_status(job_detail.id)  # type: JobStatusResult
         if job_detail.status in ["NotStarted", "Running"]:
             time.sleep(30)
             continue
@@ -66,7 +66,7 @@ def check_documents(client, job_id):
     from azure.core.exceptions import ResourceNotFoundError
 
     try:
-        doc_statuses = client.list_documents_statuses(job_id)  # type: ItemPaged[DocumentStatusDetail]
+        doc_statuses = client.list_all_document_statuses(job_id)  # type: ItemPaged[DocumentStatusResult]
     except ResourceNotFoundError as err:
         print("Failed to process any documents in source/target container due to insufficient permissions.")
         raise err
@@ -75,13 +75,13 @@ def check_documents(client, job_id):
     for document in doc_statuses:
         if document.status == "Failed":
             print("Document at {} failed to be translated to {} language".format(
-                document.url, document.translate_to
+                document.translated_document_url, document.translate_to
             ))
             print("Document ID: {}, Error Code: {}, Message: {}".format(
                 document.id, document.error.code, document.error.message
             ))
-            if document.url not in docs_to_retry:
-                docs_to_retry.append(document.url)
+            if document.translated_document_url not in docs_to_retry:
+                docs_to_retry.append(document.translated_document_url)
 
 
 if __name__ == '__main__':
