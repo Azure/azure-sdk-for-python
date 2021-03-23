@@ -11,32 +11,30 @@ from azure.ai.documenttranslation import DocumentTranslationClient, DocumentTran
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
 
-class TestService(DocumentTranslationTest):
+class TestTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_translate(self, client):
         # this uses generated code and should be deleted. Using it to test live tests pending our code in master
-        from azure.ai.documenttranslation._generated.models import BatchRequest, SourceInput, TargetInput
         self._setup()  # set up test resources
 
-        response_headers = client._client.document_translation._submit_batch_request_initial(
-            inputs=[
-                BatchRequest(
-                    source=SourceInput(
-                        source_url=self.source_container_sas_url
-                    ),
-                    targets=[TargetInput(
+        # prepare translation inputs
+        translation_inputs = [
+            DocumentTranslationInput(
+                source_url=self.source_container_sas_url,
+                targets=[
+                    TranslationTarget(
                         target_url=self.target_container_sas_url,
-                        language="es"
-                    )]
-                )
-            ],
-            cls=lambda pipeline_response, _, response_headers: response_headers
-        )
+                        language_code="es"
+                    )
+                ],
+                prefix="document"
+            )
+        ]
 
-        batch_id = response_headers['Operation-Location'].split('/')[-1]
-        assert batch_id
-        self.wait()
-        result = client._client.document_translation.get_operation_status(batch_id)
-        assert result
+        # submit job
+        job_detail = client.create_translation_job(translation_inputs)
+
+        # wait for result
+        job_result = client.wait_until_done(job_detail.id)
