@@ -174,7 +174,7 @@ class PhoneNumbersClient(object):
             calling=None, # type: str
             **kwargs # type: Any
     ):
-        # type: (...) -> AsyncLROPoller["_models.PurchasedPhoneNumber"]
+        # type: (...) -> AsyncLROPoller[PurchasedPhoneNumber]
         """Updates the capabilities of a phone number.
 
         :param phone_number: The phone number id in E.164 format. The leading plus can be either + or
@@ -190,7 +190,7 @@ class PhoneNumbersClient(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls
             for LRO operations if no Retry-After header is present.
-        :rtype: ~azure.core.polling.AsyncLROPoller[PurchasedPhoneNumber]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
         """
         return await self._phone_number_client.phone_numbers.begin_update_capabilities(
             phone_number,

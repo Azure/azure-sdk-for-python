@@ -9,8 +9,8 @@ from azure.communication.phonenumbers import (
     PhoneNumberCapabilities, 
     PhoneNumberCapabilityType, 
     PhoneNumberType, 
-    PhoneNumberOperationStatus
 )
+from azure.communication.phonenumbers._generated.models import PhoneNumberOperationStatus
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
 from phone_number_helper import PhoneNumberUriReplacer
 

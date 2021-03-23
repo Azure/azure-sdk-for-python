@@ -15,7 +15,6 @@ from ._generated.models import (
     PhoneNumberAssignmentType,
     PhoneNumberCapabilityType,
     PhoneNumberType,
-    PhoneNumberOperationStatus
 )
 
 __all__ = [
@@ -27,6 +26,5 @@ __all__ = [
     'PhoneNumberAssignmentType',
     'PhoneNumberCapabilityType',
     'PhoneNumberType',
-    'PhoneNumberOperationStatus',
     'PhoneNumbersClient',
 ]
