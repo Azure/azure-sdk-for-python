@@ -25,7 +25,7 @@ class ApiExportOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar export: Query parameter required to export the API details. Constant value: "true".
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-12-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-12-01".
     """
 
     models = models
@@ -36,7 +36,7 @@ class ApiExportOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.export = "true"
-        self.api_version = "2019-12-01"
+        self.api_version = "2020-12-01"
 
         self.config = config
 

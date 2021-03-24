@@ -24,7 +24,7 @@ class ApiOperationOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-12-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-12-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class ApiOperationOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-12-01"
+        self.api_version = "2020-12-01"
 
         self.config = config
 
@@ -50,17 +50,17 @@ class ApiOperationOperations(object):
          API Management service instance. Non-current revision has ;rev=n as a
          suffix where n is the revision number.
         :type api_id: str
-        :param filter: |   Field     |     Usage     |     Supported operators
-         |     Supported functions
+        :param filter: |     Field     |     Usage     |     Supported
+         operators     |     Supported functions
          |</br>|-------------|-------------|-------------|-------------|</br>|
          name | filter | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith | </br>| displayName | filter | ge, le, eq, ne,
-         gt, lt | substringof, contains, startswith, endswith | </br>| method |
+         startswith, endswith |</br>| displayName | filter | ge, le, eq, ne,
+         gt, lt | substringof, contains, startswith, endswith |</br>| method |
          filter | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
-         endswith | </br>| description | filter | ge, le, eq, ne, gt, lt |
-         substringof, contains, startswith, endswith | </br>| urlTemplate |
+         endswith |</br>| description | filter | ge, le, eq, ne, gt, lt |
+         substringof, contains, startswith, endswith |</br>| urlTemplate |
          filter | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
-         endswith | </br>
+         endswith |</br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
@@ -397,8 +397,9 @@ class ApiOperationOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :return: OperationContract or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.apimanagement.models.OperationContract or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
@@ -419,6 +420,7 @@ class ApiOperationOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -435,12 +437,23 @@ class ApiOperationOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
+        header_dict = {}
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
+
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
+
+        return deserialized
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/operations/{operationId}'}
 
     def delete(

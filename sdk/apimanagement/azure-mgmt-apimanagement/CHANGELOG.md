@@ -1,5 +1,80 @@
 # Release History
 
+## 0.3.0 (2021-03-24)
+
+**Features**
+
+  - Model ApiManagementServiceUpdateParameters has a new parameter restore
+  - Model DiagnosticContract has a new parameter operation_name_format
+  - Model NamedValueContract has a new parameter key_vault
+  - Model HostnameConfiguration has a new parameter identity_client_id
+  - Model BackendServiceFabricClusterProperties has a new parameter client_certificate_id
+  - Model ApiManagementServiceBaseProperties has a new parameter restore
+  - Model NamedValueUpdateParameters has a new parameter key_vault
+  - Model RecipientUserCollection has a new parameter count
+  - Model BackendCredentialsContract has a new parameter certificate_ids
+  - Model CacheUpdateParameters has a new parameter use_from_location
+  - Model HttpMessageDiagnostic has a new parameter data_masking
+  - Model NamedValueCreateContract has a new parameter key_vault
+  - Model RecipientEmailCollection has a new parameter count
+  - Model GatewayHostnameConfigurationContract has a new parameter http2_enabled
+  - Model GatewayHostnameConfigurationContract has a new parameter tls11_enabled
+  - Model GatewayHostnameConfigurationContract has a new parameter tls10_enabled
+  - Model PolicyCollection has a new parameter count
+  - Model ApiManagementServiceResource has a new parameter zones
+  - Model ApiManagementServiceResource has a new parameter restore
+  - Model CertificateContract has a new parameter key_vault
+  - Model AdditionalLocation has a new parameter zones
+  - Added operation NamedValueOperations.refresh_secret
+  - Added operation UserSubscriptionOperations.get
+  - Added operation TenantAccessOperations.create
+  - Added operation TenantAccessOperations.list_by_service
+  - Added operation CertificateOperations.refresh_secret
+  - Added operation ApiManagementServiceOperations.get_domain_ownership_identifier
+  - Added operation group ContentItemOperations
+  - Added operation group GatewayCertificateAuthorityOperations
+  - Added operation group PortalRevisionOperations
+  - Added operation group PortalSettingsOperations
+  - Added operation group ApiManagementSkusOperations
+  - Added operation group DeletedServicesOperations
+  - Added operation group TenantSettingsOperations
+  - Added operation group ContentTypeOperations
+
+**Breaking changes**
+
+  - Operation CertificateOperations.create_or_update has a new signature
+  - Operation CertificateOperations.list_by_service has a new signature
+  - Operation EmailTemplateOperations.update has a new signature
+  - Operation GatewayHostnameConfigurationOperations.create_or_update has a new signature
+  - Operation GatewayHostnameConfigurationOperations.delete has a new signature
+  - Operation NamedValueOperations.list_by_service has a new signature
+  - Operation SubscriptionOperations.create_or_update has a new signature
+  - Operation SubscriptionOperations.update has a new signature
+  - Operation TenantAccessGitOperations.regenerate_primary_key has a new signature
+  - Operation TenantAccessGitOperations.regenerate_secondary_key has a new signature
+  - Operation TenantAccessOperations.get has a new signature
+  - Operation TenantAccessOperations.get_entity_tag has a new signature
+  - Operation TenantAccessOperations.list_secrets has a new signature
+  - Operation TenantAccessOperations.regenerate_primary_key has a new signature
+  - Operation TenantAccessOperations.regenerate_secondary_key has a new signature
+  - Operation UserConfirmationPasswordOperations.send has a new signature
+  - Operation UserOperations.delete has a new signature
+  - Operation LoggerOperations.delete has a new signature
+  - Operation EmailTemplateOperations.update has a new signature
+  - Operation CertificateOperations.create_or_update has a new signature
+  - Operation GatewayApiOperations.list_by_service has a new signature
+  - Operation GatewayHostnameConfigurationOperations.list_by_service has a new signature
+  - Operation GatewayOperations.list_by_service has a new signature
+  - Operation TenantAccessOperations.update has a new signature
+  - Operation UserOperations.create_or_update has a new signature
+  - Model ConnectivityStatusContract has a new required parameter resource_type
+  - Model ConnectivityStatusContract has a new required parameter is_optional
+  - Model CacheContract has a new required parameter use_from_location
+  - Removed operation TenantAccessGitOperations.get
+  - Removed operation TenantAccessGitOperations.list_secrets
+  - Model AccessInformationContract has a new signature
+  - Model CertificateCreateOrUpdateParameters has a new signature
+
 ## 0.2.0 (2020-03-25)
 
 **Features**
