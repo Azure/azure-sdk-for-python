@@ -130,7 +130,7 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
         for manifest in client.list_registry_artifacts():
 
             permissions = manifest.content_permissions
-            permissions.can_write = not permissions.can_write
+            permissions.can_delete = not permissions.can_delete
 
             client.set_manifest_properties(manifest.digest, permissions)
 
