@@ -17,6 +17,7 @@ from azure.containerregistry import (
     TagProperties,
     TagOrderBy,
 )
+from azure.containerregistry._generated.models import Paths108HwamOauth2ExchangePostRequestbodyContentApplicationXWwwFormUrlencodedSchema
 from azure.core.paging import ItemPaged
 from azure.identity import DefaultAzureCredential
 
@@ -51,12 +52,18 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
             aad_accesstoken=token,
         )
 
-        refresh = client._client.authentication.exchange_aad_access_token_for_acr_refresh_token(m)
+        refresh = client._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
+            service, token)
+        print(refresh.refresh_token)
 
-        m = PathsV3R3RxOauth2TokenPostRequestbodyContentApplicationXWwwFormUrlencodedSchema(
-            service=service,
-            scope=scope,
-            acr_refresh_token=refresh.refresh_token,
+        assert refresh is not None
+        assert refresh.refresh_token is not None
+
+        access_token = client._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
+            service, scope, refresh.refresh_token
         )
 
-        assert m.access_token
+        assert access_token is not None
+        assert access_token.access_token is not None
+
+        # assert m.access_token

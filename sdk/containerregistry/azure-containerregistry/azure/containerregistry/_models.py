@@ -6,9 +6,10 @@
 
 from enum import Enum
 from typing import TYPE_CHECKING
+from ._generated.models import ContentProperties
 
 if TYPE_CHECKING:
-    from ._generated.models import ContentProperties, ManifestAttributesBase
+    from ._generated.models import ManifestAttributesBase
     from ._generated.models import RepositoryProperties as GeneratedRepositoryProperties
     from ._generated.models import TagProperties as GeneratedTagProperties
 
@@ -20,7 +21,7 @@ class ContentPermissions(object):
         self.can_write = kwargs.get("can_write")
 
     @classmethod
-    def from_generated(cls, generated):
+    def _from_generated(cls, generated):
         # type: (ContentProperties) -> ContentPermissions
         return cls(
             can_delete=generated.can_delete,
@@ -29,6 +30,14 @@ class ContentPermissions(object):
             can_write=generated.can_write,
         )
 
+    def to_generated(self):
+        # type: () -> ContentProperties
+        return ContentProperties(
+            can_delete=self.can_delete,
+            can_list=self.can_list,
+            can_read=self.can_read,
+            can_write=self.can_write,
+        )
 
 class DeletedRepositoryResult(object):
     def __init__(self, **kwargs):
@@ -36,7 +45,7 @@ class DeletedRepositoryResult(object):
         self.deleted_tags = kwargs.get("deleted_tags", None)
 
     @classmethod
-    def from_generated(cls, gen):
+    def _from_generated(cls, gen):
         return cls(
             deleted_tags=gen.deleted_tags,
             deleted_registry_artifact_digests=gen.deleted_registry_artifact_digests,
@@ -51,11 +60,12 @@ class RegistryArtifactProperties(object):
         self.last_updated_on = kwargs.get("last_updated_on", None)
         self.manifest_properties = kwargs.get("manifest_properties", None)
         self.operating_system = kwargs.get("operating_system", None)
+        self.registry_artifacts = kwargs.get("registry_artifacts", None)
         self.size = kwargs.get("size", None)
         self.tags = kwargs.get("tags", None)
 
     @classmethod
-    def from_generated(cls, generated):
+    def _from_generated(cls, generated):
         # type: (ManifestAttributesBase) -> RegistryArtifactProperties
         return cls(
             cpu_architecture=generated.cpu_architecture,
@@ -64,6 +74,7 @@ class RegistryArtifactProperties(object):
             last_updated_on=generated.last_updated_on,
             manifest_properties=generated.manifest_properties,
             operating_system=generated.operating_system,
+            registry_artifacts=generated.registry_artifacts,
             size=generated.size,
             tags=generated.tags,
         )
@@ -99,10 +110,10 @@ class RepositoryProperties(object):
         self.tag_count = kwargs.get("tag_count", None)
         self.content_permissions = kwargs.get("content_permissions", None)
         if self.content_permissions:
-            self.content_permissions = ContentPermissions.from_generated(self.content_permissions)
+            self.content_permissions = ContentPermissions._from_generated(self.content_permissions)
 
     @classmethod
-    def from_generated(cls, generated):
+    def _from_generated(cls, generated):
         # type: (GeneratedRepositoryProperties) -> RepositoryProperties
         return cls(
             created_on=generated.created_on,
@@ -150,13 +161,13 @@ class TagProperties(object):
         self.created_on = kwargs.get("created_on", None)
         self.digest = kwargs.get("digest", None)
         self.last_updated_on = kwargs.get("last_updated_on", None)
-        self.writeable_properties = kwargs.get("writeable_properties", None)
-        if self.writeable_properties:
-            self.writeable_properties = ContentPermissions.from_generated(self.writeable_properties)
+        self.content_permissions = kwargs.get("writeable_properties", None)
+        if self.content_permissions:
+            self.content_permissions = ContentPermissions._from_generated(self.content_permissions)
         self.name = kwargs.get("name", None)
 
     @classmethod
-    def from_generated(cls, generated):
+    def _from_generated(cls, generated):
         # type: (GeneratedTagProperties) -> TagProperties
         return cls(
             created_on=generated.created_on,

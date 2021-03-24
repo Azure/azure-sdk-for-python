@@ -28,7 +28,7 @@ class ContainerRegistryUserCredentialPolicy(SansIOHTTPPolicy):
     """HTTP pipeline policy to authenticate using ContainerRegistryUserCredential"""
 
     def __init__(self, credential):
-        self.credential = credential
+        self._credential = credential
 
     @staticmethod
     def _update_headers(headers, token):
@@ -36,7 +36,7 @@ class ContainerRegistryUserCredentialPolicy(SansIOHTTPPolicy):
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
-        self._update_headers(request.http_request.headers, self.credential.get_token())
+        self._update_headers(request.http_request.headers, self._credential.get_token())
 
 
 class ContainerRegistryCredentialPolicy(SansIOHTTPPolicy):
@@ -55,6 +55,6 @@ class ContainerRegistryCredentialPolicy(SansIOHTTPPolicy):
     AUTHORIZATION = "Authorization"
 
     def __init__(self, credential, url, pipeline):
-        self.credential = credential
+        self._credential = credential
         self.url = url
         self.pipeline = pipeline

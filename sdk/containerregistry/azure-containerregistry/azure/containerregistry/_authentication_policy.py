@@ -47,7 +47,7 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         self._token = None  # type: Optional[AccessToken]
         self._exchange_client = ACRExchangeClient("seankane.azurecr.io", self._credential)
 
-    def need_new_token(self):
+    def _need_new_token(self):
         # type: () -> bool
         return True
 

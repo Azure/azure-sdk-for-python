@@ -53,7 +53,7 @@ class ContainerRegistryCredentialPolicy(ChallengeAuthenticationPolicy):
 
     def __init__(self, credential, url, pipeline):
         # type: (TokenCredential, str, HttpPipeline) -> None
-        self.credential = credential
+        self._credential = credential
         self.url = url
         self.pipeline = pipeline
         self.container_registry_token_service = ContainerRegistryTokenService(

@@ -39,13 +39,17 @@ class AuthenticationOperations:
 
     async def exchange_aad_access_token_for_acr_refresh_token(
         self,
-        aad_accesstoken: Optional["_models.Paths108HwamOauth2ExchangePostRequestbodyContentApplicationXWwwFormUrlencodedSchema"] = None,
+        service: str,
+        access_token: str,
         **kwargs
     ) -> "_models.AcrRefreshToken":
         """Exchange AAD tokens for an ACR refresh Token.
 
-        :param aad_accesstoken:
-        :type aad_accesstoken: ~container_registry.models.Paths108HwamOauth2ExchangePostRequestbodyContentApplicationXWwwFormUrlencodedSchema
+        :param service: Indicates the name of your Azure container registry.
+        :type service: str
+        :param access_token: AAD access token, mandatory when grant_type is access_token_refresh_token
+         or access_token.
+        :type access_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AcrRefreshToken, or the result of cls(response)
         :rtype: ~container_registry.models.AcrRefreshToken
@@ -57,6 +61,7 @@ class AuthenticationOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
         content_type = kwargs.pop("content_type", "application/x-www-form-urlencoded")
+        grant_type = "access_token"
         accept = "application/json"
 
         # Construct URL
@@ -74,19 +79,19 @@ class AuthenticationOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        if aad_accesstoken is not None:
-            body_content = self._serialize.body(aad_accesstoken, 'Paths108HwamOauth2ExchangePostRequestbodyContentApplicationXWwwFormUrlencodedSchema')
-        else:
-            body_content = None
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        # Construct form data
+        _form_content = {
+            'grant_type': grant_type,
+            'service': service,
+            'access_token': access_token,
+        }
+        request = self._client.post(url, query_parameters, header_parameters, form_content=_form_content)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AcrErrors, response)
+            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('AcrRefreshToken', pipeline_response)
@@ -99,13 +104,21 @@ class AuthenticationOperations:
 
     async def exchange_acr_refresh_token_for_acr_access_token(
         self,
-        acr_refresh_token: Optional["_models.PathsV3R3RxOauth2TokenPostRequestbodyContentApplicationXWwwFormUrlencodedSchema"] = None,
+        service: str,
+        scope: str,
+        refresh_token: str,
         **kwargs
     ) -> "_models.AcrAccessToken":
         """Exchange ACR Refresh token for an ACR Access Token.
 
-        :param acr_refresh_token:
-        :type acr_refresh_token: ~container_registry.models.PathsV3R3RxOauth2TokenPostRequestbodyContentApplicationXWwwFormUrlencodedSchema
+        :param service: Indicates the name of your Azure container registry.
+        :type service: str
+        :param scope: Which is expected to be a valid scope, and can be specified more than once for
+         multiple scope requests. You obtained this from the Www-Authenticate response header from the
+         challenge.
+        :type scope: str
+        :param refresh_token: Must be a valid ACR refresh token.
+        :type refresh_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AcrAccessToken, or the result of cls(response)
         :rtype: ~container_registry.models.AcrAccessToken
@@ -117,6 +130,7 @@ class AuthenticationOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
         content_type = kwargs.pop("content_type", "application/x-www-form-urlencoded")
+        grant_type = "refresh_token"
         accept = "application/json"
 
         # Construct URL
@@ -134,19 +148,20 @@ class AuthenticationOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        if acr_refresh_token is not None:
-            body_content = self._serialize.body(acr_refresh_token, 'PathsV3R3RxOauth2TokenPostRequestbodyContentApplicationXWwwFormUrlencodedSchema')
-        else:
-            body_content = None
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        # Construct form data
+        _form_content = {
+            'grant_type': grant_type,
+            'service': service,
+            'scope': scope,
+            'refresh_token': refresh_token,
+        }
+        request = self._client.post(url, query_parameters, header_parameters, form_content=_form_content)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AcrErrors, response)
+            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('AcrAccessToken', pipeline_response)

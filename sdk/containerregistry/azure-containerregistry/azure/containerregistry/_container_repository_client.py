@@ -31,9 +31,9 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         if not endpoint.startswith("https://"):
             endpoint = "https://" + endpoint
-        self.endpoint = endpoint
+        self._endpoint = endpoint
         self.repository = repository
-        super(ContainerRepositoryClient, self).__init__(endpoint=self.endpoint, credential=credential, **kwargs)
+        super(ContainerRepositoryClient, self).__init__(endpoint=self._endpoint, credential=credential, **kwargs)
 
     def delete(self, **kwargs):
         # type: (...) -> None
@@ -69,9 +69,9 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
     def get_digest_from_tag(self, tag):
         # type: (str) -> str
         for t in self.list_tags():
-            if t.tag == tag:
+            if t.name == tag:
                 return t.digest
-        return ""
+        raise ValueError("Could not find a digest for tag {}".format(tag))
 
     def get_properties(self):
         # type: (...) -> RepositoryProperties
@@ -81,8 +81,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :raises: None
         """
         # GET '/acr/v1/{name}'
-        resp = self._client.container_registry_repository.get_properties(self.repository)
-        return RepositoryProperties.from_generated(resp)
+        return RepositoryProperties._from_generated(self._client.container_registry_repository.get_properties(self.repository))
 
     def get_registry_artifact_properties(self, tag_or_digest, **kwargs):
         # type: (str, Dict[str, Any]) -> RegistryArtifactProperties
@@ -94,12 +93,10 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
         # GET '/acr/v1/{name}/_manifests/{digest}'
-        # TODO: If `tag_or_digest` is a tag, need to do a get_tags to find the appropriate digest,
-        # generated code only takes a digest
         if self._is_tag(tag_or_digest):
             tag_or_digest = self.get_digest_from_tag(tag_or_digest)
-        # TODO: The returned object from the generated code is not being deserialized properly
-        return RegistryArtifactProperties.from_generated(
+
+        return RegistryArtifactProperties._from_generated(
             self._client.container_registry_repository.get_registry_artifact_properties(
                 self.repository, tag_or_digest, **kwargs
             )
@@ -115,13 +112,13 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
         # GET '/acr/v1/{name}/_tags/{reference}'
-        return TagProperties.from_generated(
+        return TagProperties._from_generated(
             self._client.container_registry_repository.get_tag_properties(self.repository, tag, **kwargs)
         )
 
     def list_registry_artifacts(self, **kwargs):
         # type: (...) -> ItemPaged[RegistryArtifactProperties]
-        """List the registry artifacts for a repository
+        """List the artifacts for a repository
 
         :keyword last: Query parameter for the last item in the previous query
         :type last: str
@@ -132,17 +129,14 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: ~azure.core.paging.ItemPaged[RegistryArtifactProperties]
         :raises: None
         """
-        raise NotImplementedError("Not implemented")
-        # TODO: turn this into an ItemPaged
-        # artifacts = self._client.manifests.get_list(
-        #     self.repository,
-        #     last=kwargs.get("last", None),
-        #     n=kwargs.get("n", None),
-        #     orderby=kwargs.get("orderby"),
-        # )  # ,
-        # # cls=lambda objs: [RegistryArtifacts.from_generated(x) for x in objs])
-
-        # return RegistryArtifactProperties.from_generated(artifacts)
+        # GET /acr/v1/{name}/_manifests
+        last = kwargs.pop("last", None)
+        n = kwargs.pop("top", None)
+        orderby = kwargs.pop("order_by", None)
+        return self._client.container_registry_repository.get_manifests(
+            self.repository, last=last, n=n, orderby=orderby,
+            cls=lambda objs: [RegistryArtifactProperties._from_generated(x) for x in objs]
+        )
 
     def list_tags(self, **kwargs):
         # type: (...) -> ItemPaged[TagProperties]
@@ -161,32 +155,40 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             n=kwargs.pop("top", None),
             orderby=kwargs.pop("order_by", None),
             digest=kwargs.pop("digest", None),
-            cls=lambda objs: [TagProperties.from_generated(o) for o in objs],
+            cls=lambda objs: [TagProperties._from_generated(o) for o in objs],
             **kwargs
         )
 
-    def set_manifest_properties(self, digest, value):
+    def set_manifest_properties(self, digest, permissions):
         # type: (str, ContentPermissions) -> None
         """Set the properties for a manifest
 
         :param digest: Digest of a manifest
         :type digest: str
-        :param value: The property's values to be set
-        :type value: ContentPermissions
+        :param permissions: The property's values to be set
+        :type permissions: ContentPermissions
         :returns: ~azure.core.paging.ItemPaged[TagProperties]
         :raises: None
         """
-        raise NotImplementedError("Has not been implemented")
 
-    def set_tag_properties(self, tag, permissions):
+        self._client.container_registry_repository.update_manifest_attributes(
+            self.repository, digest, permissions.to_generated()
+        )
+
+    def set_tag_properties(self, tag_or_digest, permissions):
         # type: (str, ContentPermissions) -> None
         """Set the properties for a tag
 
         :param tag: Tag to set properties for
         :type tag: str
-        :param value: The property's values to be set
-        :type value: ContentPermissions
+        :param permissions: The property's values to be set
+        :type permissions: ContentPermissions
         :returns: ~azure.core.paging.ItemPaged[TagProperties]
         :raises: None
         """
-        raise NotImplementedError("Has not been implemented")
+        if self._is_tag(tag_or_digest):
+            tag_or_digest = self.get_digest_from_tag(tag_or_digest)
+
+        self._client.container_registry_repository.update_manifest_attributes(
+            self.repository, tag_or_digest, permissions.to_generated()
+        )

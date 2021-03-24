@@ -54,4 +54,4 @@ class ContainerRegistryBaseClient(object):
 
     def _is_tag(self, tag_or_digest):  # pylint: disable=no-self-use
         tag = tag_or_digest.split(":")
-        return len(tag) == 2 and tag[0] == u"sha"
+        return not (len(tag) == 2 and tag[0].startswith(u"sha"))
