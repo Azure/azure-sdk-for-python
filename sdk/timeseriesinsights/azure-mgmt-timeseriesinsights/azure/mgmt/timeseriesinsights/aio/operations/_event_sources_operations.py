@@ -184,7 +184,7 @@ class EventSourcesOperations:
         resource_group_name: str,
         environment_name: str,
         event_source_name: str,
-        tags: Optional[Dict[str, str]] = None,
+        event_source_update_parameters: "_models.EventSourceUpdateParameters",
         **kwargs
     ) -> "_models.EventSourceResource":
         """Updates the event source with the specified name in the specified subscription, resource group,
@@ -198,8 +198,9 @@ class EventSourcesOperations:
         :param event_source_name: The name of the Time Series Insights event source associated with the
          specified environment.
         :type event_source_name: str
-        :param tags: Key-value pairs of additional properties for the event source.
-        :type tags: dict[str, str]
+        :param event_source_update_parameters: Request object that contains the updated information for
+         the event source.
+        :type event_source_update_parameters: ~azure.mgmt.timeseriesinsights.models.EventSourceUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EventSourceResource, or the result of cls(response)
         :rtype: ~azure.mgmt.timeseriesinsights.models.EventSourceResource
@@ -210,8 +211,6 @@ class EventSourcesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _event_source_update_parameters = _models.EventSourceUpdateParameters(tags=tags)
         api_version = "2020-05-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -236,7 +235,7 @@ class EventSourcesOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_event_source_update_parameters, 'EventSourceUpdateParameters')
+        body_content = self._serialize.body(event_source_update_parameters, 'EventSourceUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)

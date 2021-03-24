@@ -7,9 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._time_series_insights_client import TimeSeriesInsightsClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['TimeSeriesInsightsClient']
 
 try:
