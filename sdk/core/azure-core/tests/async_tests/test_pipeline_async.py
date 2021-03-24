@@ -29,6 +29,7 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     UserAgentPolicy,
+    AsyncRetryPolicy,
     AsyncRedirectPolicy,
     AsyncHTTPPolicy,
     AsyncRetryPolicy,
@@ -231,30 +232,57 @@ async def test_add_custom_policy():
         def send(*args):
             raise AzureError('boo')
 
+    config = Configuration()
+    retry_policy = AsyncRetryPolicy()
+    config.retry_policy = retry_policy
     boo_policy = BooPolicy()
     foo_policy = FooPolicy()
-    client = AsyncPipelineClient(base_url="test", per_call_policies=boo_policy)
+    client = AsyncPipelineClient(base_url="test", config=config, per_call_policies=boo_policy)
     policies = client._pipeline._impl_policies
     assert boo_policy in policies
+    pos_boo = policies.index(boo_policy)
+    pos_retry = policies.index(retry_policy)
+    assert pos_boo < pos_retry
 
-    client = AsyncPipelineClient(base_url="test", per_call_policies=[boo_policy])
+    client = AsyncPipelineClient(base_url="test", config=config, per_call_policies=[boo_policy])
     policies = client._pipeline._impl_policies
     assert boo_policy in policies
+    pos_boo = policies.index(boo_policy)
+    pos_retry = policies.index(retry_policy)
+    assert pos_boo < pos_retry
 
-    client = AsyncPipelineClient(base_url="test", per_retry_policies=boo_policy)
+    client = AsyncPipelineClient(base_url="test", config=config, per_retry_policies=boo_policy)
     policies = client._pipeline._impl_policies
     assert boo_policy in policies
-    client = AsyncPipelineClient(base_url="test", per_retry_policies=[boo_policy])
-    policies = client._pipeline._impl_policies
-    assert boo_policy in policies
+    pos_boo = policies.index(boo_policy)
+    pos_retry = policies.index(retry_policy)
+    assert pos_boo > pos_retry
 
-    client = AsyncPipelineClient(base_url="test", per_call_policies=boo_policy, per_retry_policies=foo_policy)
+    client = AsyncPipelineClient(base_url="test", config=config, per_retry_policies=[boo_policy])
+    policies = client._pipeline._impl_policies
+    assert boo_policy in policies
+    pos_boo = policies.index(boo_policy)
+    pos_retry = policies.index(retry_policy)
+    assert pos_boo > pos_retry
+
+    client = AsyncPipelineClient(base_url="test", config=config, per_call_policies=boo_policy,
+                                 per_retry_policies=foo_policy)
     policies = client._pipeline._impl_policies
     assert boo_policy in policies
     assert foo_policy in policies
+    pos_boo = policies.index(boo_policy)
+    pos_foo = policies.index(foo_policy)
+    pos_retry = policies.index(retry_policy)
+    assert pos_boo < pos_retry
+    assert pos_foo > pos_retry
 
-    client = AsyncPipelineClient(base_url="test", per_call_policies=[boo_policy],
-                            per_retry_policies=[foo_policy])
+    client = AsyncPipelineClient(base_url="test", config=config, per_call_policies=[boo_policy],
+                                 per_retry_policies=[foo_policy])
     policies = client._pipeline._impl_policies
     assert boo_policy in policies
     assert foo_policy in policies
+    pos_boo = policies.index(boo_policy)
+    pos_foo = policies.index(foo_policy)
+    pos_retry = policies.index(retry_policy)
+    assert pos_boo < pos_retry
+    assert pos_foo > pos_retry

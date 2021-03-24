@@ -51,6 +51,7 @@ from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     UserAgentPolicy,
     RedirectPolicy,
+    RetryPolicy,
     HttpLoggingPolicy,
     HTTPPolicy,
     SansIOHTTPPolicy
@@ -343,33 +344,59 @@ class TestClientRequest(unittest.TestCase):
             def send(*args):
                 raise AzureError('boo')
 
+        config = Configuration()
+        retry_policy = RetryPolicy()
+        config.retry_policy = retry_policy
         boo_policy = BooPolicy()
         foo_policy = FooPolicy()
-        client = PipelineClient(base_url="test", per_call_policies=boo_policy)
+        client = PipelineClient(base_url="test", config=config, per_call_policies=boo_policy)
         policies = client._pipeline._impl_policies
         assert boo_policy in policies
+        pos_boo = policies.index(boo_policy)
+        pos_retry = policies.index(retry_policy)
+        assert pos_boo < pos_retry
 
-        client = PipelineClient(base_url="test", per_call_policies=[boo_policy])
+        client = PipelineClient(base_url="test", config=config, per_call_policies=[boo_policy])
         policies = client._pipeline._impl_policies
         assert boo_policy in policies
+        pos_boo = policies.index(boo_policy)
+        pos_retry = policies.index(retry_policy)
+        assert pos_boo < pos_retry
 
-        client = PipelineClient(base_url="test", per_retry_policies=boo_policy)
+        client = PipelineClient(base_url="test", config=config, per_retry_policies=boo_policy)
         policies = client._pipeline._impl_policies
         assert boo_policy in policies
-        client = PipelineClient(base_url="test", per_retry_policies=[boo_policy])
-        policies = client._pipeline._impl_policies
-        assert boo_policy in policies
+        pos_boo = policies.index(boo_policy)
+        pos_retry = policies.index(retry_policy)
+        assert pos_boo > pos_retry
 
-        client = PipelineClient(base_url="test", per_call_policies=boo_policy, per_retry_policies=foo_policy)
+        client = PipelineClient(base_url="test", config=config, per_retry_policies=[boo_policy])
+        policies = client._pipeline._impl_policies
+        assert boo_policy in policies
+        pos_boo = policies.index(boo_policy)
+        pos_retry = policies.index(retry_policy)
+        assert pos_boo > pos_retry
+
+        client = PipelineClient(base_url="test", config=config, per_call_policies=boo_policy, per_retry_policies=foo_policy)
         policies = client._pipeline._impl_policies
         assert boo_policy in policies
         assert foo_policy in policies
+        pos_boo = policies.index(boo_policy)
+        pos_foo = policies.index(foo_policy)
+        pos_retry = policies.index(retry_policy)
+        assert pos_boo < pos_retry
+        assert pos_foo > pos_retry
 
-        client = PipelineClient(base_url="test", per_call_policies=[boo_policy],
+        client = PipelineClient(base_url="test", config=config, per_call_policies=[boo_policy],
                                 per_retry_policies=[foo_policy])
         policies = client._pipeline._impl_policies
         assert boo_policy in policies
         assert foo_policy in policies
+        pos_boo = policies.index(boo_policy)
+        pos_foo = policies.index(foo_policy)
+        pos_retry = policies.index(retry_policy)
+        assert pos_boo < pos_retry
+        assert pos_foo > pos_retry
 
 
 if __name__ == "__main__":
