@@ -153,7 +153,7 @@ class ContainerRegistryBlobOperations(object):
 
         if response.status_code not in [200, 307]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
+            error = self._deserialize(_models.AcrErrors, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -279,7 +279,7 @@ class ContainerRegistryBlobOperations(object):
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
+            error = self._deserialize(_models.AcrErrors, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -337,7 +337,7 @@ class ContainerRegistryBlobOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
+            error = self._deserialize(_models.AcrErrors, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -400,7 +400,7 @@ class ContainerRegistryBlobOperations(object):
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
+            error = self._deserialize(_models.AcrErrors, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -417,7 +417,7 @@ class ContainerRegistryBlobOperations(object):
         self,
         digest,  # type: str
         location,  # type: str
-        value=None,  # type: Optional[IO]
+        value,  # type: IO
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -469,7 +469,7 @@ class ContainerRegistryBlobOperations(object):
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
+            error = self._deserialize(_models.AcrErrors, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -527,7 +527,7 @@ class ContainerRegistryBlobOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
+            error = self._deserialize(_models.AcrErrors, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -578,7 +578,7 @@ class ContainerRegistryBlobOperations(object):
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
+            error = self._deserialize(_models.AcrErrors, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -711,7 +711,7 @@ class ContainerRegistryBlobOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
+            error = self._deserialize(_models.AcrErrors, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

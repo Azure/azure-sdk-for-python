@@ -2,5 +2,5 @@
 
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-sdk-for-js/aa5edc4d4cb0298bde52c939a7c948692f3285e1/sdk/containerregistry/container-registry/swagger/containerregistry.json
+input-file: https://raw.githubusercontent.com/Azure/azure-sdk-for-js/e40f55d5fa64d177c0267b52129c77aa353f95d8/sdk/containerregistry/container-registry/swagger/containerregistry.json
 ```

@@ -767,8 +767,6 @@ class Paths108HwamOauth2ExchangePostRequestbodyContentApplicationXWwwFormUrlenco
     :vartype grant_type: str
     :param service: Required. Indicates the name of your Azure container registry.
     :type service: str
-    :param tenant: Required. AAD tenant associated to the AAD credentials.
-    :type tenant: str
     :param aad_accesstoken: Required. AAD access token, mandatory when grant_type is
      access_token_refresh_token or access_token.
     :type aad_accesstoken: str
@@ -777,14 +775,12 @@ class Paths108HwamOauth2ExchangePostRequestbodyContentApplicationXWwwFormUrlenco
     _validation = {
         'grant_type': {'required': True, 'constant': True},
         'service': {'required': True},
-        'tenant': {'required': True},
         'aad_accesstoken': {'required': True},
     }
 
     _attribute_map = {
         'grant_type': {'key': 'grant_type', 'type': 'str'},
         'service': {'key': 'service', 'type': 'str'},
-        'tenant': {'key': 'tenant', 'type': 'str'},
         'aad_accesstoken': {'key': 'access_token', 'type': 'str'},
     }
 
@@ -796,7 +792,6 @@ class Paths108HwamOauth2ExchangePostRequestbodyContentApplicationXWwwFormUrlenco
     ):
         super(Paths108HwamOauth2ExchangePostRequestbodyContentApplicationXWwwFormUrlencodedSchema, self).__init__(**kwargs)
         self.service = kwargs['service']
-        self.tenant = kwargs['tenant']
         self.aad_accesstoken = kwargs['aad_accesstoken']
 
 

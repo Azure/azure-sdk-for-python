@@ -41,7 +41,7 @@ class AuthenticationOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def exchange_aad_token_for_acr_refresh_token(
+    def exchange_aad_access_token_for_acr_refresh_token(
         self,
         aad_accesstoken=None,  # type: Optional["_models.Paths108HwamOauth2ExchangePostRequestbodyContentApplicationXWwwFormUrlencodedSchema"]
         **kwargs  # type: Any
@@ -65,7 +65,7 @@ class AuthenticationOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.exchange_aad_token_for_acr_refresh_token.metadata['url']  # type: ignore
+        url = self.exchange_aad_access_token_for_acr_refresh_token.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
         }
@@ -84,14 +84,14 @@ class AuthenticationOperations(object):
             body_content = self._serialize.body(aad_accesstoken, 'Paths108HwamOauth2ExchangePostRequestbodyContentApplicationXWwwFormUrlencodedSchema')
         else:
             body_content = None
-        body_content_kwargs['form_content'] = body_content
+        body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
+            error = self._deserialize(_models.AcrErrors, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('AcrRefreshToken', pipeline_response)
@@ -100,7 +100,7 @@ class AuthenticationOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    exchange_aad_token_for_acr_refresh_token.metadata = {'url': '/oauth2/exchange'}  # type: ignore
+    exchange_aad_access_token_for_acr_refresh_token.metadata = {'url': '/oauth2/exchange'}  # type: ignore
 
     def exchange_acr_refresh_token_for_acr_access_token(
         self,
@@ -152,7 +152,7 @@ class AuthenticationOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
+            error = self._deserialize(_models.AcrErrors, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('AcrAccessToken', pipeline_response)
