@@ -7,9 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._api_management_client import ApiManagementClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['ApiManagementClient']
 
 try:

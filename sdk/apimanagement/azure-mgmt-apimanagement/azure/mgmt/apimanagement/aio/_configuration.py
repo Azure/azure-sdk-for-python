@@ -12,12 +12,11 @@ from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 from azure.mgmt.core.policies import ARMHttpLoggingPolicy
 
-from .._version import VERSION
-
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
+VERSION = "unknown"
 
 class ApiManagementClientConfiguration(Configuration):
     """Configuration for ApiManagementClient.
@@ -45,7 +44,7 @@ class ApiManagementClientConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2020-06-01-preview"
+        self.api_version = "2020-12-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-apimanagement/{}'.format(VERSION))
         self._configure(**kwargs)
