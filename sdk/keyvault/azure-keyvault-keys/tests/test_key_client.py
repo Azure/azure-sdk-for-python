@@ -8,28 +8,20 @@ import functools
 import time
 import logging
 import json
-import os
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.keys import JsonWebKey, KeyClient, KeyCurveName
-from azure.keyvault.keys._shared import HttpChallengeCache
 from devtools_testutils import PowerShellPreparer
-from six.moves.urllib_parse import urlparse
 from parameterized import parameterized, param
-import pytest
 
-from _shared.test_case import KeyVaultTestCase
+from _test_case import KeysTestCase, suffixed_test_name
 
 KeyVaultPreparer = functools.partial(
     PowerShellPreparer,
     "keyvault",
     azure_keyvault_url="https://vaultname.vault.azure.net"
 )
-
-def suffixed_test_name(testcase_func, param_num, param):
-    suffix = "mhsm" if param.kwargs.get("is_hsm") else "vault"
-    return "{}_{}".format(testcase_func.__name__, parameterized.to_safe_name(suffix))
 
 # used for logging tests
 class MockHandler(logging.Handler):
@@ -41,34 +33,7 @@ class MockHandler(logging.Handler):
         self.messages.append(record)
 
 
-class KeyClientTests(KeyVaultTestCase):
-    def setUp(self, *args, **kwargs):
-        self.managed_hsm_url = None
-        playback_url = "https://managedhsmname.managedhsm.azure.net"
-        if self.is_live:
-            self.managed_hsm_url = os.environ.get("AZURE_MANAGEDHSM_URL")
-            if self.managed_hsm_url:
-                real = urlparse(self.managed_hsm_url)
-                playback = urlparse(playback_url)
-                self.scrubber.register_name_pair(real.netloc, playback.netloc)
-        else:
-            self.managed_hsm_url = playback_url
-        super(KeyClientTests, self).setUp(*args, **kwargs)
-
-    def tearDown(self):
-        HttpChallengeCache.clear()
-        assert len(HttpChallengeCache._cache) == 0
-        super(KeyClientTests, self).tearDown()
-
-    def create_client(self, vault_uri, **kwargs):
-        credential = self.get_credential(KeyClient)
-        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
-
-    def _should_skip_test(self, is_hsm):
-        if self.is_live and is_hsm:
-            return self.managed_hsm_url is None  # skip live HSM tests if there's no HSM endpoint
-        return False
-
+class KeyClientTests(KeysTestCase):
     def _assert_key_attributes_equal(self, k1, k2):
         self.assertEqual(k1.name, k2.name)
         self.assertEqual(k1.vault_url, k2.vault_url)
@@ -120,7 +85,7 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(key.kty, kty, "kty should by '{}', but is '{}'".format(key, key.kty))
         self.assertTrue(key.n and key.e, "Bad RSA public material.")
         self.assertEqual(
-            key_ops.sort(), key.key_ops.sort(), "keyOps should be '{}', but is '{}'".format(key_ops, key.key_ops)
+            sorted(key_ops), sorted(key.key_ops), "keyOps should be '{}', but is '{}'".format(key_ops, key.key_ops)
         )
         self.assertTrue(
             key_attributes.properties.created_on and key_attributes.properties.updated_on,
@@ -135,7 +100,7 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(tags, key_bundle.properties.tags)
         self.assertEqual(key.id, key_bundle.id)
         self.assertNotEqual(key.properties.updated_on, key_bundle.properties.updated_on)
-        self.assertEqual(key_ops.sort(), key_bundle.key_operations.sort())
+        self.assertEqual(sorted(key_ops), sorted(key_bundle.key_operations))
         return key_bundle
 
     def _import_test_key(self, client, name, hardware_protected=False):
@@ -178,11 +143,10 @@ class KeyClientTests(KeyVaultTestCase):
     @KeyVaultPreparer()
     def test_key_crud_operations(self, azure_keyvault_url, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
-        if self._should_skip_test(is_hsm):
-            pytest.skip()
+        self._skip_if_not_configured(is_hsm)
         azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
 
-        client = self.create_client(azure_keyvault_url)
+        client = self.create_key_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
         # create ec key
@@ -243,11 +207,10 @@ class KeyClientTests(KeyVaultTestCase):
     @KeyVaultPreparer()
     def test_backup_restore(self, azure_keyvault_url, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
-        if self._should_skip_test(is_hsm):
-            pytest.skip()
+        self._skip_if_not_configured(is_hsm)
         azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
 
-        client = self.create_client(azure_keyvault_url)
+        client = self.create_key_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
         key_name = self.get_resource_name("keybak")
@@ -274,11 +237,10 @@ class KeyClientTests(KeyVaultTestCase):
     @KeyVaultPreparer()
     def test_key_list(self, azure_keyvault_url, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
-        if self._should_skip_test(is_hsm):
-            pytest.skip()
+        self._skip_if_not_configured(is_hsm)
         azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
 
-        client = self.create_client(azure_keyvault_url)
+        client = self.create_key_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
         max_keys = self.list_test_size
@@ -302,11 +264,10 @@ class KeyClientTests(KeyVaultTestCase):
     @KeyVaultPreparer()
     def test_list_versions(self, azure_keyvault_url, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
-        if self._should_skip_test(is_hsm):
-            pytest.skip()
+        self._skip_if_not_configured(is_hsm)
         azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
 
-        client = self.create_client(azure_keyvault_url)
+        client = self.create_key_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
         key_name = self.get_resource_name("testKey")
@@ -333,11 +294,10 @@ class KeyClientTests(KeyVaultTestCase):
     @KeyVaultPreparer()
     def test_list_deleted_keys(self, azure_keyvault_url, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
-        if self._should_skip_test(is_hsm):
-            pytest.skip()
+        self._skip_if_not_configured(is_hsm)
         azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
 
-        client = self.create_client(azure_keyvault_url)
+        client = self.create_key_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
         expected = {}
@@ -368,11 +328,10 @@ class KeyClientTests(KeyVaultTestCase):
     @KeyVaultPreparer()
     def test_recover(self, azure_keyvault_url, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
-        if self._should_skip_test(is_hsm):
-            pytest.skip()
+        self._skip_if_not_configured(is_hsm)
         azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
 
-        client = self.create_client(azure_keyvault_url)
+        client = self.create_key_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
         # create keys
@@ -399,11 +358,10 @@ class KeyClientTests(KeyVaultTestCase):
     @KeyVaultPreparer()
     def test_purge(self, azure_keyvault_url, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
-        if self._should_skip_test(is_hsm):
-            pytest.skip()
+        self._skip_if_not_configured(is_hsm)
         azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
 
-        client = self.create_client(azure_keyvault_url)
+        client = self.create_key_client(azure_keyvault_url)
         self.assertIsNotNone(client)
 
         # create keys
@@ -435,11 +393,10 @@ class KeyClientTests(KeyVaultTestCase):
     @KeyVaultPreparer()
     def test_logging_enabled(self, azure_keyvault_url, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
-        if self._should_skip_test(is_hsm):
-            pytest.skip()
+        self._skip_if_not_configured(is_hsm)
         azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
 
-        client = self.create_client(azure_keyvault_url, logging_enable=True)
+        client = self.create_key_client(azure_keyvault_url, logging_enable=True)
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
@@ -466,11 +423,10 @@ class KeyClientTests(KeyVaultTestCase):
     @KeyVaultPreparer()
     def test_logging_disabled(self, azure_keyvault_url, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
-        if self._should_skip_test(is_hsm):
-            pytest.skip()
+        self._skip_if_not_configured(is_hsm)
         azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
 
-        client = self.create_client(azure_keyvault_url, logging_enable=False)
+        client = self.create_key_client(azure_keyvault_url, logging_enable=False)
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
