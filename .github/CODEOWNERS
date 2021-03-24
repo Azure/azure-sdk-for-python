@@ -108,7 +108,7 @@
 /sdk/metricsadvisor/                                                 @xiangyan99 @kristapratico
 
 # PRLabel: %Cognitive - Translator
-/sdk/documenttranslation/                                            @mohamedshabanofficial @kristapratico
+/sdk/documenttranslation/                                            @kristapratico @mohamedshabanofficial
 
 # PRLabel: %Tables
 /sdk/tables/                                                         @seankane-msft
