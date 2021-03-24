@@ -13,6 +13,7 @@ from devtools_testutils import AzureTestCase, PowerShellPreparer
 from azure.containerregistry import (
     ContainerRegistryClient,
     ContainerRegistryUserCredential,
+    ContainerRepositoryClient,
     DeletedRepositoryResult,
     ACRExchangeClient
 )
@@ -30,7 +31,7 @@ acr_preparer = functools.partial(
 )
 
 
-class TestContainerRegistryClient(AzureTestCase, ContainerRegistryTestClass):
+class TestExchangeClient(AzureTestCase, ContainerRegistryTestClass):
 
     def create_exchange_client(self, endpoint):
         return self.create_client_from_credential(
@@ -47,7 +48,34 @@ class TestContainerRegistryClient(AzureTestCase, ContainerRegistryTestClass):
         service = "seankane.azurecr.io"
         scope = "repository:hello-world:metadata_read"
 
-        refresh = client.get_refresh_token(service, os.environ["AZURE_TENANT_ID"])
+        refresh_token = client.exchange_aad_token_for_refresh_token(service, scope)
+        assert refresh_token is not None
+        assert len(refresh_token) > 100
+        print(refresh_token)
 
-        assert refresh is not None
-        print(refresh)
+
+        access_token = client.exchange_refresh_token_for_access_token(service, scope, refresh_token)
+        assert access_token is not None
+        assert len(access_token) > 100
+        print(access_token)
+
+        # access_token = client.get_acr_access_token(service, scope)
+        # assert access_token is not None
+        # assert len(access_token) > 100
+        # print(access_token)
+
+
+    @pytest.mark.live_test_only
+    @acr_preparer()
+    def test_auth_policy_in_action(self, containerregistry_baseurl):
+        client = ContainerRegistryClient(
+            endpoint=containerregistry_baseurl,
+            credential=DefaultAzureCredential(),
+        )
+
+        prev = None
+        for repo in client.list_repositories():
+            assert repo is not None
+            assert repo != prev
+            prev = repo
+            print(repo)
