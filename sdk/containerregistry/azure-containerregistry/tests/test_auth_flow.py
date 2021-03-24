@@ -48,11 +48,10 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
 
         m = Paths108HwamOauth2ExchangePostRequestbodyContentApplicationXWwwFormUrlencodedSchema(
             service=service,
-            scope=scope,
             aad_accesstoken=token,
         )
 
-        refresh = client._client.authentication.exchange_aad_token_for_acr_refresh_token(m)
+        refresh = client._client.authentication.exchange_aad_access_token_for_acr_refresh_token(m)
 
         m = PathsV3R3RxOauth2TokenPostRequestbodyContentApplicationXWwwFormUrlencodedSchema(
             service=service,
