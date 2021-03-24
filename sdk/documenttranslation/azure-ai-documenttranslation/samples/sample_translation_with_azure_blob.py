@@ -4,119 +4,160 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+"""
+FILE: sample_translation_with_azure_blob.py
 
-def sample_batch_translation_with_storage():
-    import os
-    from azure.core.credentials import AzureKeyCredential
-    from azure.ai.documenttranslation import (
-        DocumentTranslationClient,
-        DocumentTranslationInput,
-        TranslationTarget
-    )
-    from azure.storage.blob import ContainerClient, generate_container_sas, ContainerSasPermissions
+DESCRIPTION:
+    This sample demonstrates how to use Azure Blob Storage to set up the necessary resources to create a translation
+    job. Run the sample to create containers, upload documents, and generate SAS tokens for the source/target
+    containers. Once the job is completed, use the storage library to download your documents locally.
 
-    endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
-    key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
-    source_storage_endpoint = os.environ["AZURE_STORAGE_SOURCE_ENDPOINT"]
-    source_storage_account_name = os.environ["AZURE_STORAGE_SOURCE_ACCOUNT_NAME"]
-    source_storage_container_name = os.environ["AZURE_STORAGE_SOURCE_CONTAINER_NAME"]
-    source_storage_key = os.environ["AZURE_STORAGE_SOURCE_KEY"]
-    target_storage_endpoint = os.environ["AZURE_STORAGE_TARGET_ENDPOINT"]
-    target_storage_account_name = os.environ["AZURE_STORAGE_TARGET_ACCOUNT_NAME"]
-    target_storage_container_name = os.environ["AZURE_STORAGE_TARGET_CONTAINER_NAME"]
-    target_storage_key = os.environ["AZURE_STORAGE_TARGET_KEY"]
+PREREQUISITE:
+    This sample requires you install azure-storage-blob client library:
+    https://pypi.org/project/azure-storage-blob/
 
-    translation_client = DocumentTranslationClient(
-        endpoint, AzureKeyCredential(key)
-    )
+USAGE:
+    python sample_translation_with_azure_blob.py
 
-    container_client = ContainerClient(
-        source_storage_endpoint,
-        container_name=source_storage_container_name,
-        credential=source_storage_key
-    )
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_DOCUMENT_TRANSLATION_ENDPOINT - the endpoint to your Form Recognizer resource.
+    2) AZURE_DOCUMENT_TRANSLATION_KEY - your Form Recognizer API key.
+    3) AZURE_STORAGE_SOURCE_ENDPOINT - the endpoint to your Storage account
+    4) AZURE_STORAGE_ACCOUNT_NAME - the name of your storage account
+    5) AZURE_STORAGE_SOURCE_KEY - the shared access key to your storage account
 
-    with open("document.txt", "rb") as doc:
-        container_client.upload_blob("document.txt", doc)
+    Optional environment variables - if not set, they will be created for you
+    6) AZURE_STORAGE_SOURCE_CONTAINER_NAME - the name of your source container
+    7) AZURE_STORAGE_TARGET_CONTAINER_NAME - the name of your target container
+    8) AZURE_DOCUMENT_NAME - the name and file extension of your document in this directory
+        e.g. "mydocument.txt"
+    """
 
-    source_container_sas = generate_container_sas(
-        account_name=source_storage_account_name,
-        container_name=source_storage_container_name,
-        account_key=source_storage_key,
-        permission=ContainerSasPermissions.from_string("rl")
-    )
+import os
+import datetime
+from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import ResourceExistsError
+from azure.ai.documenttranslation import (
+    DocumentTranslationClient,
+    DocumentTranslationInput,
+    TranslationTarget
+)
+from azure.storage.blob import BlobServiceClient, BlobClient, generate_container_sas
 
-    target_container_sas = generate_container_sas(
-        account_name=target_storage_account_name,
-        container_name=target_storage_container_name,
-        account_key=target_storage_key,
-        permission=ContainerSasPermissions.from_string("rlwd")
-    )
 
-    source_container_url = source_storage_endpoint + "/" + source_storage_container_name + "?" + source_container_sas
-    target_container_url = target_storage_endpoint + "/" + target_storage_container_name + "?" + target_container_sas
+class SampleTranslationWithAzureBlob(object):
 
-    translation_inputs = [
-        DocumentTranslationInput(
-            source_url=source_container_url,
-            targets=[
-                TranslationTarget(
-                    target_url=target_container_url,
-                    language_code="es"
-                )
-            ],
-            prefix="document"
+    def __init__(self):
+        self.endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
+        self.key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
+        self.storage_endpoint = os.environ["AZURE_STORAGE_SOURCE_ENDPOINT"]
+        self.storage_account_name = os.environ["AZURE_STORAGE_ACCOUNT_NAME"]
+        self.storage_key = os.environ["AZURE_STORAGE_SOURCE_KEY"]
+        self.storage_source_container_name = os.getenv("AZURE_STORAGE_SOURCE_CONTAINER_NAME", None)  # Optional
+        self.storage_target_container_name = os.getenv("AZURE_STORAGE_TARGET_CONTAINER_NAME", None)  # Optional
+        self.document_name = os.getenv("AZURE_DOCUMENT_NAME", None)  # Optional document in same directory as this sample
+
+    def sample_translation_with_azure_blob(self):
+
+        translation_client = DocumentTranslationClient(
+            self.endpoint, AzureKeyCredential(self.key)
         )
-    ]
 
-    job_detail = translation_client.create_translation_job(translation_inputs)
-    job_result = translation_client.wait_until_done(job_detail.id)
+        blob_service_client = BlobServiceClient(
+            self.storage_endpoint,
+            credential=self.storage_key
+        )
 
-    if job_result.status == "Succeeded":
-        print("We translated our documents!")
-        if job_result.documents_failed_count > 0:
-            check_documents(translation_client, job_result.id)
+        source_container = self.create_container(
+            blob_service_client,
+            container_name=self.storage_source_container_name or "translation-source-container",
+        )
+        target_container = self.create_container(
+            blob_service_client,
+            container_name=self.storage_target_container_name or "translation-target-container"
+        )
 
-    elif job_result.status in ["Failed", "ValidationFailed"]:
-        if job_result.error:
-            print("Translation job failed: {}: {}".format(job_result.error.code, job_result.error.message))
-        check_documents(translation_client, job_result.id)
-        exit(1)
+        if self.document_name:
+            with open(self.document_name, "rb") as doc:
+                source_container.upload_blob(self.document_name, doc)
+        else:
+            self.document_name = "example_document.txt"
+            source_container.upload_blob(
+                name=self.document_name,
+                data=b"This is an example translation with the document translation client library"
+            )
+        print("Uploaded document {} to storage container {}".format(self.document_name, source_container.container_name))
 
-    container_client = ContainerClient(
-        target_storage_endpoint,
-        container_name=target_storage_container_name,
-        credential=target_storage_key
-    )
+        source_container_sas_url = self.generate_sas_url(source_container, permissions="rl")
+        target_container_sas_url = self.generate_sas_url(target_container, permissions="wl")
 
-    target_container_client = container_client.from_container_url(target_container_url)
+        translation_inputs = [
+            DocumentTranslationInput(
+                source_url=source_container_sas_url,
+                targets=[
+                    TranslationTarget(
+                        target_url=target_container_sas_url,
+                        language_code="fr"
+                    )
+                ]
+            )
+        ]
 
-    with open("translated.txt", "wb") as my_blob:
-        download_stream = target_container_client.download_blob("document.txt")
-        my_blob.write(download_stream.readall())
+        job = translation_client.create_translation_job(translation_inputs)
+        print("Created translation job with ID: {}".format(job.id))
+        print("Waiting until job completes...")
 
+        job_result = translation_client.wait_until_done(job.id)
+        print("Job status: {}".format(job_result.status))
 
-def check_documents(client, job_id):
-    from azure.core.exceptions import ResourceNotFoundError
+        if job_result.status == "Failed":
+            print("\nThere was an issue with the translation job.")
+            print("Job Error Code: {}, Message: {}\n".format(job.error.code, job.error.message))
+            exit(1)
 
-    try:
-        doc_statuses = client.list_all_document_statuses(job_id)  # type: ItemPaged[DocumentStatusResult]
-    except ResourceNotFoundError as err:
-        print("Failed to process any documents in source/target container due to insufficient permissions.")
-        raise err
+        doc_results = translation_client.list_all_document_statuses(job_result.id)
 
-    docs_to_retry = []
-    for document in doc_statuses:
-        if document.status == "Failed":
-            print("Document at {} failed to be translated to {} language".format(
-                document.translated_document_url, document.translate_to
-            ))
-            print("Document ID: {}, Error Code: {}, Message: {}".format(
-                document.id, document.error.code, document.error.message
-            ))
-            if document.translated_document_url not in docs_to_retry:
-                docs_to_retry.append(document.translated_document_url)
+        print("\nDocument results:")
+        for document in doc_results:
+            print("Document ID: {}".format(document.id))
+            print("Document status: {}".format(document.status))
+            if document.status == "Succeeded":
+                print("Document location: {}".format(document.translated_document_url))
+                print("Translated to language: {}\n".format(document.translate_to))
+
+                blob_client = BlobClient.from_blob_url(document.translated_document_url, credential=self.storage_key)
+                with open("translated_"+self.document_name, "wb") as my_blob:
+                    download_stream = blob_client.download_blob()
+                    my_blob.write(download_stream.readall())
+
+                print("Downloaded {} locally".format("translated_"+self.document_name))
+            else:
+                print("\nThere was a problem translating your document.")
+                print("Document Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
+
+    def create_container(self, blob_service_client, container_name):
+        try:
+            container_client = blob_service_client.create_container(container_name)
+            print("Creating container: {}".format(container_name))
+        except ResourceExistsError:
+            print("The container with name {} already exists".format(container_name))
+            container_client = blob_service_client.get_container_client(container=container_name)
+        return container_client
+
+    def generate_sas_url(self, container, permissions):
+        sas_token = generate_container_sas(
+            account_name=self.storage_account_name,
+            container_name=container.container_name,
+            account_key=self.storage_key,
+            permission=permissions,
+            expiry=datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+        )
+
+        container_sas_url = self.storage_endpoint + container.container_name + "?" + sas_token
+        print("Generating {} SAS URL".format(container.container_name))
+        return container_sas_url
 
 
 if __name__ == '__main__':
-    sample_batch_translation_with_storage()
+    sample = SampleTranslationWithAzureBlob()
+    sample.sample_translation_with_azure_blob()
