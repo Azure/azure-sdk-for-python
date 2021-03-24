@@ -6,9 +6,9 @@
 
 from enum import Enum
 
-from ._authentication_policy import ContainerRegistryChallengePolicy
-from ._generated import ContainerRegistry
-from ._user_agent import USER_AGENT
+from ._async_authentication_policy import ContainerRegistryChallengePolicy
+from .._generated.aio import ContainerRegistry
+from .._user_agent import USER_AGENT
 
 
 class ContainerRegistryApiVersion(str, Enum):
@@ -38,12 +38,12 @@ class ContainerRegistryBaseClient(object):
             **kwargs
         )
 
-    def __enter__(self):
-        self._client.__enter__()
+    async def __enter__(self):
+        await self._client.__enter__()
         return self
 
-    def __exit__(self, *args):
-        self._client.__exit__(*args)
+    async def __aexit__(self, *args):
+        await self._client.__aexit__(*args)
 
     def close(self):
         # type: () -> None

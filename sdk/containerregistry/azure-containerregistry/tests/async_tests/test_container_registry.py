@@ -11,14 +11,15 @@ import six
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 
 from azure.containerregistry import (
-    ContainerRegistryClient,
     DeletedRepositoryResult,
+    RepositoryProperties,
 )
+from azure.containerregistry.aio import ContainerRegistryClient, ContainerRepositoryClient
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 
-from testcase import ContainerRegistryTestClass
+# from testcase import ContainerRegistryTestClass
 
 
 acr_preparer = functools.partial(
@@ -28,18 +29,40 @@ acr_preparer = functools.partial(
 )
 
 
-class TestContainerRegistryClient(AzureTestCase, ContainerRegistryTestClass):
+class TestContainerRegistryClient(AzureTestCase):#, ContainerRegistryTestClass):
+
+    def create_registry_client(self, endpoint):
+        return ContainerRegistryClient(
+            endpoint=endpoint,
+            credential=DefaultAzureCredential()
+        )
+
     @pytest.mark.live_test_only
     @acr_preparer()
-    def test_list_repositories(self, containerregistry_baseurl):
+    async def test_get(self, containerregistry_baseurl):
+        client = ContainerRepositoryClient(
+            endpoint=containerregistry_baseurl,
+            repository="hello-world",
+            credential=DefaultAzureCredential(),
+        )
+
+        repo = await client.get_properties()
+
+        assert repo is not None
+        assert isinstance(repo, RepositoryProperties)
+
+
+    @pytest.mark.skip("abc")
+    @pytest.mark.live_test_only
+    @acr_preparer()
+    async def test_list_repositories(self, containerregistry_baseurl):
         client = self.create_registry_client(containerregistry_baseurl)
 
         repositories = client.list_repositories()
-        assert isinstance(repositories, ItemPaged)
 
         count = 0
         prev = None
-        for repo in repositories:
+        async for repo in client.list_repositories():
             count += 1
             assert isinstance(repo, six.string_types)
             assert prev != repo

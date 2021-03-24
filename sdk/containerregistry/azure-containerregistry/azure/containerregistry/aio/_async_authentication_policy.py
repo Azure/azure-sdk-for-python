@@ -8,9 +8,9 @@ from base64 import b64encode
 import re
 from typing import TYPE_CHECKING
 
-from azure.core.pipeline.policies import SansIOHTTPPolicy, HTTPPolicy
+from azure.core.pipeline.policies import AsyncHTTPPolicy
 
-from ._exchange_client import ACRExchangeClient
+from ._async_exchange_client import ACRExchangeClient
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest
@@ -36,13 +36,13 @@ def _enforce_https(request):
         )
 
 
-class ContainerRegistryChallengePolicy(HTTPPolicy):
+class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
     """Authentication policy for ACR which accepts a challenge"""
 
     def __init__(self, credential, endpoint, *scopes, **kwargs):
-        # type: (TokenCredential, *str, **Any) -> None
-        super(HTTPPolicy, self).__init__()
-        self._scopes = ["https://management.core.windows.net/.default"]
+        # type: (TokenCredential, str, *str, **Any) -> None
+        super(AsyncHTTPPolicy, self).__init__()
+        self._scopes = "https://management.core.windows.net/.default"
         self._credential = credential
         self._token = None  # type: Optional[AccessToken]
         self._exchange_client = ACRExchangeClient(endpoint, self._credential)
@@ -51,7 +51,7 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         # type: () -> bool
         return True
 
-    def on_request(self, request):
+    async def on_request(self, request):
         # type: (PipelineRequest) -> None
         """Called before the policy sends a request.
         The base implementation authorizes the request with a bearer token.
@@ -59,33 +59,33 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         """
 
         if self._token is None or self._need_new_token():
-            self._token = self._credential.get_token(*self._scopes)
+            self._token = await self._credential.get_token(self._scopes)
             try:
                 self._token = self._token.token
             except AttributeError:
                 pass
         request.http_request.headers["Authorization"] = "Bearer " + self._token
 
-    def send(self, request):
+    async def send(self, request):
         # type: (PipelineRequest) -> PipelineResponse
         """Authorizes a request with a bearer token, possibly handling an authentication challenge
         :param ~azure.core.pipeline.PipelineRequest request: the request
         """
         _enforce_https(request)
 
-        self.on_request(request)
+        await self.on_request(request)
 
-        response = self.next.send(request)
+        response = await self.next.send(request)
 
         if response.http_response.status_code == 401:
             self._token = None  # any cached token is invalid
             challenge = response.http_response.headers.get("WWW-Authenticate")
-            if challenge and self.on_challenge(request, response, challenge):
+            if challenge and await self.on_challenge(request, response, challenge):
                 response = self.next.send(request)
 
         return response
 
-    def on_challenge(self, request, response, challenge):
+    async def on_challenge(self, request, response, challenge):
         # type: (PipelineRequest, PipelineResponse, str) -> bool
         """Authorize request according to an authentication challenge
         This method is called when the resource provider responds 401 with a WWW-Authenticate header.
@@ -96,7 +96,7 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         """
         # pylint:disable=unused-argument,no-self-use
 
-        access_token = self._exchange_client.get_acr_access_token(challenge)
+        access_token = await self._exchange_client.get_acr_access_token(challenge)
         self._token = access_token
         request.http_request.headers["Authorization"] = "Bearer " + self._token
         return access_token is not None

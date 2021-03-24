@@ -10,8 +10,8 @@ import re
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.pipeline.transport import HttpRequest
 
-from ._generated import ContainerRegistry
-from ._user_agent import USER_AGENT
+from .._generated.aio import ContainerRegistry
+from .._user_agent import USER_AGENT
 
 
 class ExchangeClientAuthenticationPolicy(SansIOHTTPPolicy):
@@ -58,12 +58,12 @@ class ACRExchangeClient(object):
         )
         self._credential = credential
 
-    def get_acr_access_token(self, challenge):
+    async def get_acr_access_token(self, challenge):
         parsed_challenge = self._parse_challenge(challenge)
-        refresh_token = self.exchange_aad_token_for_refresh_token(**parsed_challenge)
-        return self.exchange_refresh_token_for_access_token(refresh_token,  **parsed_challenge)
+        refresh_token = await self.exchange_aad_token_for_refresh_token(**parsed_challenge)
+        return await self.exchange_refresh_token_for_access_token(refresh_token, **parsed_challenge)
 
-    def exchange_aad_token_for_refresh_token(self, service=None, scope=None, **kwargs):
+    async def exchange_aad_token_for_refresh_token(self, service=None, scope=None, **kwargs):
 
         # body = """grant_type=access_token&service={}&access_token={}""".format(service, self._credential.get_token(self._credential_scopes).token)
 
@@ -74,12 +74,12 @@ class ACRExchangeClient(object):
         # refresh_token = resp.http_response.internal_response.content
 
         # return json.loads(refresh_token)["refresh_token"]
-
-        refresh_token = self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
-            service, self._credential.get_token(self._credential_scopes).token)
+        token = await self._credential.get_token(self._credential_scopes)
+        refresh_token = await self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
+            service, token.token)
         return refresh_token.refresh_token
 
-    def exchange_refresh_token_for_access_token(self, refresh_token, service=None, scope=None, **kwargs):
+    async def exchange_refresh_token_for_access_token(self, refresh_token, service=None, scope=None, **kwargs):
 
         # body = """grant_type=refresh_token&service={}&scope={}&refresh_token={}""".format(
         #     service, scope, refresh_token)
@@ -92,7 +92,7 @@ class ACRExchangeClient(object):
         # access_token = resp.http_response.internal_response.content
         # return json.loads(access_token)["access_token"]
 
-        access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
+        access_token = await self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
             service, scope, refresh_token)
         return access_token.access_token
 
@@ -110,12 +110,12 @@ class ACRExchangeClient(object):
 
         return ret
 
-    def __enter__(self):
-        self._client.__enter__()
+    async def __aenter__(self):
+        self._client.__aenter__()
         return self
 
-    def __exit__(self, *args):
-        self._client.__exit__(*args)
+    async def __aexit__(self, *args):
+        self._client.__aexit__(*args)
 
     def close(self):
         # type: () -> None
