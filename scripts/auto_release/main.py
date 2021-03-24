@@ -2,7 +2,6 @@ import os
 import sys
 import subprocess as sp
 import time
-import re
 import argparse
 import logging
 
@@ -11,13 +10,13 @@ SERVICE_NAME = 'servicename'
 SDK_FOLDER = 'servicename'
 TRACK = '1'
 VERSION_NEW = '0.0.0'
-VERSION_OLD = '0.0.0'
-VERSION_LAST_RELEASE = '0.0.0'
+VERSION_LAST_RELEASE = '1.0.0b1'
 BRANCH_BASE = ''
 OUT_PATH = ''
 NEW_BRANCH = ''
 
 _LOG = logging.getLogger()
+
 
 def my_print(cmd):
     _LOG.info(f'({SERVICE_NAME})==' + cmd + ' ==\n')
@@ -60,7 +59,8 @@ def get_version(report):
     pattern = 'code_reports/'
     idx1 = report.find(pattern)
     idx2 = report.find('/', idx1 + len(pattern))
-    VERSION_LAST_RELEASE = report[idx1 + len(pattern):idx2]
+    if idx2 > -1 and idx1 > -1:
+        VERSION_LAST_RELEASE = report[idx1 + len(pattern):idx2]
 
 
 def create_changelog_content():
@@ -79,7 +79,7 @@ def create_changelog_content():
 
 
 def edit_version(add_content):
-    global VERSION_NEW, VERSION_OLD
+    global VERSION_NEW, VERSION_LAST_RELEASE
     flag = [False, False, False]  # breaking, feature, bugfix
     for line in add_content:
         if line.find('**Breaking changes**') > -1:
@@ -94,23 +94,15 @@ def edit_version(add_content):
     file_name = 'version.py' if TRACK == '1' else '_version.py'
     with open(f'{path}/{file_name}', 'r') as file_in:
         list_in = file_in.readlines()
-    i = 0
-    while i < len(list_in):
-        result = re.search('\".+\"', list_in[i])
-        if result:
-            idx = result.span()
-            VERSION_OLD = list_in[i][idx[0] + 1: idx[1] - 1]
-            break
-        i = i + 1
 
-    num = VERSION_OLD.split('.')
+    num = VERSION_LAST_RELEASE.split('.')
     if TRACK == '1' and num[0] == '0':
         VERSION_NEW = f'0.{str(int(num[1]) + 1)}.0'
-    elif VERSION_OLD.find('b') > -1:
+    elif VERSION_LAST_RELEASE.find('b') > -1:
         lastnum = num[2].split('b')
         lastnum[1] = str(int(lastnum[1]) + 1)
         VERSION_NEW = f'{num[0]}.{num[1]}.{lastnum[0]}b{lastnum[1]}'
-    elif VERSION_OLD.find('rc') > -1:
+    elif VERSION_LAST_RELEASE.find('rc') > -1:
         lastnum = num[2].split('rc')
         lastnum[1] = str(int(lastnum[1]) + 1)
         VERSION_NEW = f'{num[0]}.{num[1]}.{lastnum[0]}rc{lastnum[1]}'
@@ -121,7 +113,10 @@ def edit_version(add_content):
     elif flag[2]:
         VERSION_NEW = f'{num[0]}.{num[1]}.{int(num[2]) + 1}'
 
-    list_in[i] = f'VERSION = "{VERSION_NEW}"\n'
+    for i in range(0, len(list_in)):
+        if list_in[i].find('VERSION ') > -1:
+            list_in[i] = f'VERSION = "{VERSION_NEW}"\n'
+            break
     with open(f'{path}/{file_name}', 'w') as file_out:
         file_out.writelines(list_in)
 
