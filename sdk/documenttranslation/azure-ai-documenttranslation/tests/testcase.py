@@ -74,10 +74,17 @@ class DocumentTranslationTest(AzureTestCase):
                 data=data or b'This is written in english.',
                 blob_prefix=blob_prefix
             )
+            self.additional_source_container_sas_url = self.create_source_container(
+                data=data or b'This is written in english another container.',
+                blob_prefix=blob_prefix
+            )
             self.target_container_sas_url = self.create_target_container()
+            self.additional_target_container_sas_url = self.create_target_container()
         else:
             self.source_container_sas_url = "source_container_sas_url"
+            self.additional_source_container_sas_url = "additional_source_container_sas_url"
             self.target_container_sas_url = "target_container_sas_url"
+            self.additional_target_container_sas_url = "additional_target_container_sas_url"
 
     def create_source_container(self, data, blob_prefix=""):
         container_name = "src" + str(uuid.uuid4())
