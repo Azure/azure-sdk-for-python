@@ -4,8 +4,30 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+"""
+FILE: sample_create_translation_job.py
 
-def sample_batch_translation():
+DESCRIPTION:
+    This sample demonstrates how to create a translation job for documents in your Azure Blob
+    Storage container and wait until the job is completed.
+
+    To set up your containers for translation and generate SAS tokens to your containers (or files)
+    with the appropriate permissions, see the README.
+
+USAGE:
+    python sample_create_translation_job.py
+
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_DOCUMENT_TRANSLATION_ENDPOINT - the endpoint to your Form Recognizer resource.
+    2) AZURE_DOCUMENT_TRANSLATION_KEY - your Form Recognizer API key.
+    3) AZURE_SOURCE_CONTAINER_URL - the container SAS URL to your source container which has the documents
+        to be translated.
+    4) AZURE_TARGET_CONTAINER_URL - the container SAS URL to your target container where the translated documents
+        will be written.
+    """
+
+
+def sample_translation():
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation import (
@@ -16,81 +38,48 @@ def sample_batch_translation():
 
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
-    source_container_url_en = os.environ["AZURE_SOURCE_CONTAINER_URL_EN"]
-    source_container_url_de = os.environ["AZURE_SOURCE_CONTAINER_URL_DE"]
-    target_container_url_es = os.environ["AZURE_TARGET_CONTAINER_URL_ES"]
-    target_container_url_fr = os.environ["AZURE_TARGET_CONTAINER_URL_FR"]
+    source_container_url = os.environ["AZURE_SOURCE_CONTAINER_URL"]
+    target_container_url = os.environ["AZURE_TARGET_CONTAINER_URL"]
 
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
-    translation_inputs = [
-        DocumentTranslationInput(
-            source_url=source_container_url_en,
-            targets=[
-                TranslationTarget(
-                    target_url=target_container_url_es,
-                    language_code="es"
-                ),
-                TranslationTarget(
-                    target_url=target_container_url_fr,
-                    language_code="fr"
-                )
-            ]
-        ),
-        DocumentTranslationInput(
-            source_url=source_container_url_de,
-            targets=[
-                TranslationTarget(
-                    target_url=target_container_url_es,
-                    language_code="es"
-                ),
-                TranslationTarget(
-                    target_url=target_container_url_fr,
-                    language_code="fr"
-                )
-            ]
-        )
-    ]
+    job = client.create_translation_job(inputs=[
+            DocumentTranslationInput(
+                source_url=source_container_url,
+                targets=[
+                    TranslationTarget(
+                        target_url=target_container_url,
+                        language_code="es"
+                    )
+                ]
+            )
+        ]
+    )  # type: JobStatusResult
 
-    job_detail = client.create_translation_job(translation_inputs)  # type: JobStatusResult
+    job_result = client.wait_until_done(job.id)  # type: JobStatusResult
 
-    print("Job initial status: {}".format(job_detail.status))
-    print("Number of translations on documents: {}".format(job_detail.documents_total_count))
+    print("Job status: {}".format(job_result.status))
+    print("Job created on: {}".format(job_result.created_on))
+    print("Job last updated on: {}".format(job_result.last_updated_on))
+    print("Total number of translations on documents: {}".format(job_result.documents_total_count))
 
-    job_result = client.wait_until_done(job_detail.id)  # type: JobStatusResult
-    if job_result.status == "Succeeded":
-        print("We translated our documents!")
-        if job_result.documents_failed_count > 0:
-            check_documents(client, job_result.id)
+    print("\nOf total documents...")
+    print("{} failed".format(job_result.documents_failed_count))
+    print("{} succeeded".format(job_result.documents_succeeded_count))
+    print("{} in progress".format(job_result.documents_in_progress_count))
+    print("{} not yet started".format(job_result.documents_not_yet_started_count))
+    print("{} cancelled\n".format(job_result.documents_cancelled_count))
 
-    elif job_result.status in ["Failed", "ValidationFailed"]:
-        if job_result.error:
-            print("Translation job failed: {}: {}".format(job_result.error.code, job_result.error.message))
-        check_documents(client, job_result.id)
-        exit(1)
-
-
-def check_documents(client, job_id):
-    from azure.core.exceptions import ResourceNotFoundError
-
-    try:
-        doc_statuses = client.list_all_document_statuses(job_id)  # type: ItemPaged[DocumentStatusResult]
-    except ResourceNotFoundError as err:
-        print("Failed to process any documents in source/target container due to insufficient permissions.")
-        raise err
-
-    docs_to_retry = []
-    for document in doc_statuses:
-        if document.status == "Failed":
-            print("Document at {} failed to be translated to {} language".format(
-                document.translated_document_url, document.translate_to
-            ))
-            print("Document ID: {}, Error Code: {}, Message: {}".format(
-                document.id, document.error.code, document.error.message
-            ))
-            if document.translated_document_url not in docs_to_retry:
-                docs_to_retry.append(document.translated_document_url)
+    doc_results = client.list_all_document_statuses(job_result.id)  # type: ItemPaged[DocumentStatusResult]
+    for document in doc_results:
+        print("Document ID: {}".format(document.id))
+        print("Document status: {}".format(document.status))
+        if document.status == "Succeeded":
+            print("Document location: {}".format(document.translated_document_url))
+            print("Translated to language: {}\n".format(document.translate_to))
+        else:
+            print("Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
 
 
 if __name__ == '__main__':
-    sample_batch_translation()
+    sample_translation()

@@ -15,6 +15,8 @@ DESCRIPTION:
     There is currently only one supported method of authentication:
     1) Use a Document Translation API key with AzureKeyCredential from azure.core.credentials
 
+    Note: the endpoint must be formatted to use the custom domain name for your resource:
+    https://<NAME-OF-YOUR-RESOURCE>.cognitiveservices.azure.com/
 
 USAGE:
     python sample_authentication_async.py
