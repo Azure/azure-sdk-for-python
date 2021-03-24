@@ -50,11 +50,6 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
         repo_client = self.create_repository_client(containerregistry_baseurl, "hello-world")
 
         properties = repo_client.get_properties()
-
-        assert isinstance(properties, RepositoryProperties)
-        assert properties.name == "hello-world"
-        assert properties.registry == containerregistry_baseurl
-        assert properties.content_permissions is not None
         assert isinstance(properties.content_permissions, ContentPermissions)
 
     @pytest.mark.live_test_only
@@ -114,7 +109,7 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
 
         # TODO: This is giving time in ascending order
-        tags = client.list_tags(order_by=TagOrderBy.LastUpdateTimeDescending)
+        tags = client.list_tags(order_by=TagOrderBy.LAST_UPDATE_TIME_DESCENDING)
         assert isinstance(tags, ItemPaged)
         last_updated_on = None
         count = 0

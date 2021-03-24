@@ -41,6 +41,8 @@ class TestContainerRegistryClient(AzureTestCase, ContainerRegistryTestClass):
         for repo in repositories:
             count += 1
             assert isinstance(repo, six.string_types)
+            assert prev != repo
+            prev = repo
 
         assert count > 0
 

@@ -112,7 +112,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
         # GET '/acr/v1/{name}/_tags/{reference}'
-        return TagProperties._from_generated(
+        return TagProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry_repository.get_tag_properties(self.repository, tag, **kwargs)
         )
 

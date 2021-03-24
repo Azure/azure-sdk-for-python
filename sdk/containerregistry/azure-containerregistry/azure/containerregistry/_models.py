@@ -128,14 +128,14 @@ class RepositoryProperties(object):
 
 class RegistryArtifactOrderBy(int, Enum):
 
-    LastUpdateTimeDescending = 0
-    LastUpdateTimeAscending = 1
+    LAST_UPDATE_TIME_DESCENDING = 0
+    LAST_UPDATE_TIME_ASCENDING = 1
 
 
 class TagOrderBy(int, Enum):
 
-    LastUpdateTimeDescending = 0
-    LastUpdateTimeAscending = 1
+    LAST_UPDATE_TIME_DESCENDING = 0
+    LAST_UPDATE_TIME_ASCENDING = 1
 
 
 class TagProperties(object):
