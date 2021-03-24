@@ -12,14 +12,13 @@ from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 from azure.mgmt.core.policies import ARMHttpLoggingPolicy
 
-from ._version import VERSION
-
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
     from azure.core.credentials import TokenCredential
 
+VERSION = "unknown"
 
 class PowerBIDedicatedConfiguration(Configuration):
     """Configuration for PowerBIDedicated.
@@ -48,7 +47,7 @@ class PowerBIDedicatedConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2017-10-01"
+        self.api_version = "2021-01-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-powerbidedicated/{}'.format(VERSION))
         self._configure(**kwargs)
