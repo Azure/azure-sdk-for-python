@@ -38,6 +38,7 @@ class TestContainerRegistryClient(AzureTestCase, ContainerRegistryTestClass):
         assert isinstance(repositories, ItemPaged)
 
         count = 0
+        prev = None
         for repo in repositories:
             count += 1
             assert isinstance(repo, six.string_types)

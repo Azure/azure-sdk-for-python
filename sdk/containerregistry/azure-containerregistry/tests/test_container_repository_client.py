@@ -143,8 +143,7 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
 
             break
 
-        tags = client.set_manifest_properties()
-
+    @pytest.mark.xfail
     @pytest.mark.live_test_only
     @acr_preparer()
     def test_set_tag_properties(self, containerregistry_baseurl):

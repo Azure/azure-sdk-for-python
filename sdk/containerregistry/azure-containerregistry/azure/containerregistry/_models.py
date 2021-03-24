@@ -58,11 +58,13 @@ class RegistryArtifactProperties(object):
         self.created_on = kwargs.get("created_on", None)
         self.digest = kwargs.get("digest", None)
         self.last_updated_on = kwargs.get("last_updated_on", None)
-        self.manifest_properties = kwargs.get("manifest_properties", None)
         self.operating_system = kwargs.get("operating_system", None)
         self.registry_artifacts = kwargs.get("registry_artifacts", None)
         self.size = kwargs.get("size", None)
         self.tags = kwargs.get("tags", None)
+        self.content_permissions = kwargs.get("manifest_properties", None)
+        if self.content_permissions:
+            self.content_permissions = ContentPermissions._from_generated(self.content_permissions)
 
     @classmethod
     def _from_generated(cls, generated):
