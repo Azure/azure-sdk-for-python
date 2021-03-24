@@ -13,24 +13,7 @@ DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClient
 
 class TestTranslation(DocumentTranslationTest):
 
-    @DocumentTranslationPreparer()
-    @DocumentTranslationClientPreparer()
-    def test_single_source_single_target(self, client):
-        self._setup()  # set up test resources
-
-        # prepare translation inputs
-        translation_inputs = [
-            DocumentTranslationInput(
-                source_url=self.source_container_sas_url,
-                targets=[
-                    TranslationTarget(
-                        target_url=self.target_container_sas_url,
-                        language_code="es"
-                    )
-                ]
-            )
-        ]
-
+    def _submit_translation_and_test_result(self, client, translation_inputs):
         # submit job
         job_detail = client.create_translation_job(translation_inputs)
         self.assertIsNotNone(job_detail.id)
@@ -49,169 +32,150 @@ class TestTranslation(DocumentTranslationTest):
         self.assertIsNotNone(job_result.documents_not_yet_started_count)
         self.assertIsNotNone(job_result.documents_cancelled_count)
         self.assertIsNotNone(job_result.total_characters_charged)
+
+
+    @DocumentTranslationPreparer()
+    @DocumentTranslationClientPreparer()
+    def test_single_source_single_target(self, client):
+        # prepare containers
+        blob_data = b'This is some text'
+        source_container_sas_url = self.create_source_container(data=blob_data)
+        target_container_sas_url = self.create_target_container()
+
+        # prepare translation inputs
+        translation_inputs = [
+            DocumentTranslationInput(
+                source_url=source_container_sas_url,
+                targets=[
+                    TranslationTarget(
+                        target_url=target_container_sas_url,
+                        language_code="es"
+                    )
+                ]
+            )
+        ]
+
+        # submit job and test
+        self._submit_translation_and_test_result(client, translation_inputs)
+        
 
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_single_source_two_targets(self, client):
-        self._setup()  # set up test resources
+        # prepare containers
+        blob_data = b'This is some text'
+        source_container_sas_url = self.create_source_container(data=blob_data)
+        target_container_sas_url = self.create_target_container()
 
         # prepare translation inputs
         translation_inputs = [
             DocumentTranslationInput(
-                source_url=self.source_container_sas_url,
+                source_url=source_container_sas_url,
                 targets=[
                     TranslationTarget(
-                        target_url=self.target_container_sas_url,
+                        target_url=target_container_sas_url,
                         language_code="es"
                     ),
                     TranslationTarget(
-                        target_url=self.additional_target_container_sas_url,
+                        target_url=target_container_sas_url,
                         language_code="fr"
                     )
                 ]
             )
         ]
 
-        # submit job
-        job_detail = client.create_translation_job(translation_inputs)
-        self.assertIsNotNone(job_detail.id)
+        # submit job and test
+        self._submit_translation_and_test_result(client, translation_inputs)
 
-        # wait for result
-        job_result = client.wait_until_done(job_detail.id)
-
-        # assert
-        self.assertEqual(job_result.status, "Succeeded")  # job succeeded
-        self.assertIsNotNone(job_result.created_on)
-        self.assertIsNotNone(job_result.last_updated_on)
-        self.assertIsNotNone(job_result.documents_total_count)
-        self.assertIsNotNone(job_result.documents_failed_count)
-        self.assertIsNotNone(job_result.documents_succeeded_count)
-        self.assertIsNotNone(job_result.documents_in_progress_count)
-        self.assertIsNotNone(job_result.documents_not_yet_started_count)
-        self.assertIsNotNone(job_result.documents_cancelled_count)
-        self.assertIsNotNone(job_result.total_characters_charged)
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_multiple_sources_single_target(self, client):
-        self._setup()  # set up test resources
+        # prepare containers
+        blob_data = b'This is some text'
+        source_container_sas_url = self.create_source_container(data=blob_data)
+        blob_data = b'This is some text2'
+        additional_source_container_sas_url = self.create_source_container(data=blob_data)
+        target_container_sas_url = self.create_target_container()
 
         # prepare translation inputs
         translation_inputs = [
             DocumentTranslationInput(
-                source_url=self.source_container_sas_url,
+                source_url=source_container_sas_url,
                 targets=[
                     TranslationTarget(
-                        target_url=self.target_container_sas_url,
+                        target_url=target_container_sas_url,
                         language_code="es"
                     )
                 ]
             ),
             DocumentTranslationInput(
-                source_url=self.additional_source_container_sas_url,
+                source_url=additional_source_container_sas_url,
                 targets=[
                     TranslationTarget(
-                        target_url=self.additional_target_container_sas_url,
+                        target_url=target_container_sas_url,
                         language_code="fr"
                     )
                 ]
             )
         ]
 
-        # submit job
-        job_detail = client.create_translation_job(translation_inputs)
-        self.assertIsNotNone(job_detail.id)
-
-        # wait for result
-        job_result = client.wait_until_done(job_detail.id)
-
-        # assert
-        self.assertEqual(job_result.status, "Succeeded")  # job succeeded
-        self.assertIsNotNone(job_result.created_on)
-        self.assertIsNotNone(job_result.last_updated_on)
-        self.assertIsNotNone(job_result.documents_total_count)
-        self.assertIsNotNone(job_result.documents_failed_count)
-        self.assertIsNotNone(job_result.documents_succeeded_count)
-        self.assertIsNotNone(job_result.documents_in_progress_count)
-        self.assertIsNotNone(job_result.documents_not_yet_started_count)
-        self.assertIsNotNone(job_result.documents_cancelled_count)
-        self.assertIsNotNone(job_result.total_characters_charged)
+        # submit job and test
+        self._submit_translation_and_test_result(client, translation_inputs)
 
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_single_source_single_target_with_prefix(self, client):
-        self._setup()  # set up test resources
+        # prepare containers
+        blob_data = b'This is some text'
+        prefix = "xyz"
+        source_container_sas_url = self.create_source_container(data=blob_data, blob_prefix=prefix)
+        target_container_sas_url = self.create_target_container()
 
         # prepare translation inputs
         translation_inputs = [
             DocumentTranslationInput(
-                source_url=self.source_container_sas_url,
+                source_url=source_container_sas_url,
                 targets=[
                     TranslationTarget(
-                        target_url=self.target_container_sas_url,
+                        target_url=target_container_sas_url,
                         language_code="es"
                     )
                 ],
-                prefix="src"
+                prefix=prefix
             )
         ]
 
-        # submit job
-        job_detail = client.create_translation_job(translation_inputs)
-        self.assertIsNotNone(job_detail.id)
-
-        # wait for result
-        job_result = client.wait_until_done(job_detail.id)
-
-        # assert
-        self.assertEqual(job_result.status, "Succeeded")  # job succeeded
-        self.assertIsNotNone(job_result.created_on)
-        self.assertIsNotNone(job_result.last_updated_on)
-        self.assertIsNotNone(job_result.documents_total_count)
-        self.assertIsNotNone(job_result.documents_failed_count)
-        self.assertIsNotNone(job_result.documents_succeeded_count)
-        self.assertIsNotNone(job_result.documents_in_progress_count)
-        self.assertIsNotNone(job_result.documents_not_yet_started_count)
-        self.assertIsNotNone(job_result.documents_cancelled_count)
-        self.assertIsNotNone(job_result.total_characters_charged)
+        # submit job and test
+        self._submit_translation_and_test_result(client, translation_inputs)
 
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_single_source_single_target_with_prefix(self, client):
-        self._setup()  # set up test resources
+        # prepare containers
+        blob_data = b'This is some text'
+        suffix = "txt"
+        source_container_sas_url = self.create_source_container(data=blob_data)
+        target_container_sas_url = self.create_target_container()
 
         # prepare translation inputs
         translation_inputs = [
             DocumentTranslationInput(
-                source_url=self.source_container_sas_url,
+                source_url=source_container_sas_url,
                 targets=[
                     TranslationTarget(
-                        target_url=self.target_container_sas_url,
+                        target_url=target_container_sas_url,
                         language_code="es"
                     )
                 ],
-                suffix="txt"
+                suffix=suffix
             )
         ]
 
-        # submit job
-        job_detail = client.create_translation_job(translation_inputs)
-        self.assertIsNotNone(job_detail.id)
+        # submit job and test
+        self._submit_translation_and_test_result(client, translation_inputs)
 
-        # wait for result
-        job_result = client.wait_until_done(job_detail.id)
 
-        # assert
-        self.assertEqual(job_result.status, "Succeeded")  # job succeeded
-        self.assertIsNotNone(job_result.created_on)
-        self.assertIsNotNone(job_result.last_updated_on)
-        self.assertIsNotNone(job_result.documents_total_count)
-        self.assertIsNotNone(job_result.documents_failed_count)
-        self.assertIsNotNone(job_result.documents_succeeded_count)
-        self.assertIsNotNone(job_result.documents_in_progress_count)
-        self.assertIsNotNone(job_result.documents_not_yet_started_count)
-        self.assertIsNotNone(job_result.documents_cancelled_count)
-        self.assertIsNotNone(job_result.total_characters_charged)
