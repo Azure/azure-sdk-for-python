@@ -25,8 +25,22 @@ class AutoCompleteTest(PerfStressTest):
         await self.async_service_client.close()
         await super().close()
 
+    @staticmethod
+    def add_arguments(parser):
+        super(AutoCompleteTest, AutoCompleteTest).add_arguments(parser)
+        parser.add_argument('--num-documents', nargs='?', type=int,
+                            help='The number of results expect to be returned.',
+                            default=-1)
+
     def run_sync(self):
-        self.service_client.autocomplete(search_text="mot", suggester_name="sg")
+        if self.args.num_documents == -1:
+            results = len(self.service_client.autocomplete(search_text="mot", suggester_name="sg"))
+        else:
+            results = len(self.service_client.autocomplete(search_text="mot", suggester_name="sg", top=self.args.num_documents))
 
     async def run_async(self):
-        await self.async_service_client.autocomplete(search_text="mot", suggester_name="sg")
+        if self.args.num_documents == -1:
+            results = len(await self.async_service_client.autocomplete(search_text="mot", suggester_name="sg"))
+        else:
+            results = len(await self.async_service_client.autocomplete(search_text="mot", suggester_name="sg", top=self.args.num_documents))
+
