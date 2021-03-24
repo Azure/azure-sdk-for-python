@@ -6,7 +6,7 @@
     - [Writing a test](#writing-a-test)
     - [Adding legacy T1 tests](#adding-legacy-t1-tests)
 3. [Running the tests](#running-the-tests)
-4. [Readme](#Readme)
+4. [Readme](#readme)
 
 # The perfstress framework
 
