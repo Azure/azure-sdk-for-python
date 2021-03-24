@@ -6,10 +6,13 @@
 import time
 
 import azure.core
-from azure.core.credentials import AccessToken, AzureKeyCredential, AzureSasCredential
+from azure.core.credentials import AccessToken, AzureKeyCredential, AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy, SansIOHTTPPolicy, AzureKeyCredentialPolicy, AzureSasCredentialPolicy
+from azure.core.pipeline.policies import (
+    BearerTokenCredentialPolicy, SansIOHTTPPolicy, AzureKeyCredentialPolicy,
+    AzureSasCredentialPolicy, AzureNamedKeyCredentialPolicy
+)
 from azure.core.pipeline.transport import HttpRequest
 
 import pytest
@@ -230,3 +233,41 @@ def test_azure_sas_credential_policy_raises():
     sas = 1234
     with pytest.raises(TypeError):
         credential = AzureSasCredential(sas)
+
+def test_azure_named_key_credential():
+    cred = AzureNamedKeyCredential("sample_name", "samplekey")
+
+    assert cred.name == "sample_name"
+    assert cred.key == "samplekey"
+
+    cred.update("newname", "newkey")
+    assert cred.name == "newname"
+    assert cred.key == "newkey"
+
+
+def test_azure_named_key_credential_raises():
+    with pytest.raises(TypeError, match="Both name and key must be Strings."):
+        cred = AzureNamedKeyCredential("sample_name", 123345)
+
+    cred = AzureNamedKeyCredential("sample_name", "samplekey")
+    assert cred.name == "sample_name"
+    assert cred.key == "samplekey"
+
+    with pytest.raises(TypeError, match="Both name and key must be Strings."):
+        cred.update(1234, "newkey")
+
+def test_azure_named_key_credential_policy():
+    """Tests to see if we can create an AzureKeyCredentialPolicy"""
+
+    key_name = "api_key"
+    api_key = "test_key"
+
+    def verify_authorization_header(request):
+        assert request.headers[key_name] == api_key
+
+    transport=Mock(send=verify_authorization_header)
+    credential = AzureNamedKeyCredential(key_name, api_key)
+    credential_policy = AzureNamedKeyCredentialPolicy(credential=credential)
+    pipeline = Pipeline(transport=transport, policies=[credential_policy])
+
+    pipeline.run(HttpRequest("GET", "https://test_key_credential"))

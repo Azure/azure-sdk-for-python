@@ -30,7 +30,7 @@ else:
 
     AccessToken = namedtuple("AccessToken", ["token", "expires_on"])
 
-__all__ = ["AzureKeyCredential", "AzureSasCredential", "AccessToken"]
+__all__ = ["AzureKeyCredential", "AzureSasCredential", "AccessToken", "AzureNamedKeyCredential"]
 
 
 class AzureKeyCredential(object):
@@ -111,3 +111,49 @@ class AzureSasCredential(object):
         if not isinstance(signature, six.string_types):
             raise TypeError("The signature used for updating must be a string.")
         self._signature = signature
+
+
+class AzureNamedKeyCredential(object):
+    """Credential type used for working with any service needing a named key that follows patterns
+    established by the other credential types.
+
+    :param str name: The name of the credential used to authenticate to an Azure service.
+    :param str key: The key used to authenticate to an Azure service.
+    :raises: TypeError
+    """
+    def __init__(self, name, key):
+        # type: (str, str) -> None
+        if not isinstance(name, six.string_types) or not isinstance(key, six.string_types):
+            raise TypeError("Both name and key must be Strings.")
+        self._name = name
+        self._key = key
+
+    @property
+    def name(self):
+        # type () -> str
+        """The value of the configured name.
+
+        :rtype: str
+        """
+        return self._name
+
+    @property
+    def key(self):
+        # type () -> str
+        """The value of the configured key.
+
+        :rtype: str
+        """
+        return self._key
+
+    def update(self, name, key):
+        # type: (str, str) -> None
+        """Update the named key credential.
+
+        Both name and key must be provided in order to update the named key credential.
+        Individual attributes cannot be updated.
+        """
+        if not isinstance(name, six.string_types) or not isinstance(key, six.string_types):
+            raise TypeError("Both name and key must be Strings.")
+        self._name = name
+        self._key = key

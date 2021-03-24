@@ -145,3 +145,20 @@ class AzureSasCredentialPolicy(SansIOHTTPPolicy):
             else:
                 url = url + "?" + signature
         request.http_request.url = url
+
+
+class AzureNamedKeyCredentialPolicy(SansIOHTTPPolicy):
+    """Adds a key header for the provided credential.
+
+    :param credential: The credential used to authenticate requests.
+    :type credential: ~azure.core.credentials.AzureNamedKeyCredential
+    :raises: ValueError or TypeError
+    """
+    def __init__(self, credential, **kwargs):  # pylint: disable=unused-argument
+        # type: (AzureNamedKeyCredential, **Any) -> None
+        super(AzureNamedKeyCredentialPolicy, self).__init__()
+        self._key = credential.key
+        self._name = credential.name
+
+    def on_request(self, request):
+        request.http_request.headers[self._name] = self._key
