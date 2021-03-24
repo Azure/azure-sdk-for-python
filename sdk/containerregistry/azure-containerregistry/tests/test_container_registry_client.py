@@ -12,7 +12,6 @@ from devtools_testutils import AzureTestCase, PowerShellPreparer
 
 from azure.containerregistry import (
     ContainerRegistryClient,
-    ContainerRegistryUserCredential,
     DeletedRepositoryResult,
 )
 from azure.core.exceptions import ResourceNotFoundError

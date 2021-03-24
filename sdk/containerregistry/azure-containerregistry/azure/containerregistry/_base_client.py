@@ -6,7 +6,7 @@
 
 from enum import Enum
 
-from ._authentication_policy import ContainerRegistryUserCredentialPolicy, ContainerRegistryChallengePolicy
+from ._authentication_policy import ContainerRegistryChallengePolicy
 from ._generated import ContainerRegistry
 from ._user_agent import USER_AGENT
 
@@ -28,7 +28,6 @@ class ContainerRegistryBaseClient(object):
     """
 
     def __init__(self, endpoint, credential, **kwargs):  # pylint:disable=client-method-missing-type-annotations
-        # auth_policy = ContainerRegistryUserCredentialPolicy(credential=credential)
         auth_policy = ContainerRegistryChallengePolicy(credential)
         self._client = ContainerRegistry(
             credential=credential,

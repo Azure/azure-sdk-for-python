@@ -9,31 +9,26 @@ import os
 from azure.containerregistry import (
     ContainerRepositoryClient,
     ContainerRegistryClient,
-    ContainerRegistryUserCredential,
     TagProperties,
     ContentPermissions,
     RegistryArtifactProperties,
 )
+
+from azure.identity import DefaultAzureCredential
 
 
 class ContainerRegistryTestClass(object):
     def create_registry_client(self, endpoint):
         return ContainerRegistryClient(
             endpoint=endpoint,
-            credential=ContainerRegistryUserCredential(
-                username=os.environ["CONTAINERREGISTRY_USERNAME"],
-                password=os.environ["CONTAINERREGISTRY_PASSWORD"],
-            ),
+            credential=DefaultAzureCredential(),
         )
 
     def create_repository_client(self, endpoint, name):
         return ContainerRepositoryClient(
             endpoint=endpoint,
             repository=name,
-            credential=ContainerRegistryUserCredential(
-                username=os.environ["CONTAINERREGISTRY_USERNAME"],
-                password=os.environ["CONTAINERREGISTRY_PASSWORD"],
-            ),
+            credential=DefaultAzureCredential(),
         )
 
     def assert_content_permission(self, content_perm, content_perm2):
@@ -56,7 +51,7 @@ class ContainerRegistryTestClass(object):
         repository=None,
     ):
         assert isinstance(tag, TagProperties)
-        assert isinstance(tag.content_permissions, ContentPermissions)
+        assert isinstance(tag.writeable_permissions, ContentPermissions)
         assert isinstance(tag.created_on, datetime)
         assert isinstance(tag.last_updated_on, datetime)
         if content_permission:

@@ -12,7 +12,6 @@ from devtools_testutils import AzureTestCase, PowerShellPreparer
 
 from azure.containerregistry import (
     ContainerRegistryClient,
-    ContainerRegistryUserCredential,
     ContainerRepositoryClient,
     DeletedRepositoryResult,
     ACRExchangeClient
@@ -40,7 +39,7 @@ class TestExchangeClient(AzureTestCase, ContainerRegistryTestClass):
             endpoint=endpoint,
         )
 
-    @pytest.mark.live_test_only
+    @pytest.mark.skip("not needed")
     @acr_preparer()
     def test_exchange_client(self, containerregistry_baseurl):
         client = self.create_exchange_client(containerregistry_baseurl)
@@ -59,12 +58,6 @@ class TestExchangeClient(AzureTestCase, ContainerRegistryTestClass):
         assert len(access_token) > 100
         print(access_token)
 
-        # access_token = client.get_acr_access_token(service, scope)
-        # assert access_token is not None
-        # assert len(access_token) > 100
-        # print(access_token)
-
-
     @pytest.mark.live_test_only
     @acr_preparer()
     def test_auth_policy_in_action(self, containerregistry_baseurl):
@@ -78,4 +71,3 @@ class TestExchangeClient(AzureTestCase, ContainerRegistryTestClass):
             assert repo is not None
             assert repo != prev
             prev = repo
-            print(repo)
