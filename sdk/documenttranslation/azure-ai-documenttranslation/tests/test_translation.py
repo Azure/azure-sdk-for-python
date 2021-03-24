@@ -193,7 +193,7 @@ class TestTranslation(DocumentTranslationTest):
                         language_code="es"
                     )
                 ],
-                suffix="blah"
+                suffix="txt"
             )
         ]
 
