@@ -8,7 +8,7 @@
 
 **Dependency Updates**
 
-* Updated dependency `azure-core` from  azure-core<2.0.0,>=1.6.0 to azure-core<2.0.0,>=1.12.1
+* Updated dependency `azure-core` from  azure-core<2.0.0,>=1.6.0 to azure-core<2.0.0,>=1.13.0
 
 ## 7.1.0 (2021-03-09)
 

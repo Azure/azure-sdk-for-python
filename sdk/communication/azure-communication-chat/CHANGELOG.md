@@ -12,7 +12,7 @@
 - Replaced `CommunicationError` with `ChatError`.
 - Refactored `CommunicationTokenCredential` constructor to accept `token` instead of `CommunicationTokenRefreshOptions`.
 ### Dependency Updates
-- Updated dependency `azure-core` from  azure-core<2.0.0,>=1.9.0 to azure-core<2.0.0,>=1.12.1
+- Updated dependency `azure-core` from  azure-core<2.0.0,>=1.9.0 to azure-core<2.0.0,>=1.13.0
 
 ## 1.0.0b5 (2021-03-09)
 ### Breaking Changes

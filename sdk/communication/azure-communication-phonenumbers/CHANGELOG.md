@@ -9,7 +9,7 @@ and PhoneNumbersAsyncClient.get_purchased_phone_number
 - Renamed PhoneNumbersClient.list_acquired_phone_numbers and PhoneNumbersAsyncClient.list_acquired_phone_numbers to PhoneNumbersClient.list_purchased_phone_numbers
 and PhoneNumbersAsyncClient.list_purchased_phone_numbers
 ### Dependency Updates
-- Updated dependency `azure-core` from  azure-core<2.0.0,>=1.9.0 to azure-core<2.0.0,>=1.12.1
+- Updated dependency `azure-core` from  azure-core<2.0.0,>=1.9.0 to azure-core<2.0.0,>=1.13.0
 
 ## 1.0.0b4 (2021-03-09)
 - Dropped support for Python 3.5

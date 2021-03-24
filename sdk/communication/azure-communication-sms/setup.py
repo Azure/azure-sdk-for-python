@@ -61,7 +61,7 @@ setup(
         'azure.communication'
     ]),
    install_requires=[
-        'azure-core<2.0.0,>=1.12.1',
+        'azure-core<2.0.0,>=1.13.0',
         'msrest>=0.6.0',
         'six>=1.11.0'
     ],

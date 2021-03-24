@@ -68,7 +68,7 @@ setup(
     ),
     install_requires=[
       'six >=1.11.0',
-      'azure-core<2.0.0,>=1.12.1'
+      'azure-core<2.0.0,>=1.13.0'
     ],
     extras_require={
       ":python_version<'3.4'": ['enum34>=1.0.4'],
