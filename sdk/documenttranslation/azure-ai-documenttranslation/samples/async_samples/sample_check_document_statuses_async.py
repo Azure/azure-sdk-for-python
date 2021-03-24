@@ -4,99 +4,89 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import os
+"""
+FILE: sample_check_document_statuses_async.py
+
+DESCRIPTION:
+    This sample demonstrates how to create a translation job and then monitor each document's status
+    and progress within the job.
+
+    To set up your containers for translation and generate SAS tokens to your containers (or files)
+    with the appropriate permissions, see the README.
+
+USAGE:
+    python sample_check_document_statuses_async.py
+
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_DOCUMENT_TRANSLATION_ENDPOINT - the endpoint to your Form Recognizer resource.
+    2) AZURE_DOCUMENT_TRANSLATION_KEY - your Form Recognizer API key.
+    3) AZURE_SOURCE_CONTAINER_URL - the container SAS URL to your source container which has the documents
+        to be translated.
+    4) AZURE_TARGET_CONTAINER_URL - the container SAS URL to your target container where the translated documents
+        will be written.
+    """
+
 import asyncio
-import time
-
-class TranslationStatusChecksSampleAsync(object):
-        
-    async def translation_status_checks_async(self):
-
-        # import libraries
-        from azure.core.credentials import AzureKeyCredential
-        from azure.ai.documenttranslation.aio import DocumentTranslationClient
-        from azure.ai.documenttranslation import (
-            DocumentTranslationInput,
-            TranslationTarget
-        )
-
-        # get service secrets
-        endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
-        key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
-        source_container_url = os.environ["AZURE_SOURCE_CONTAINER_URL"]
-        target_container_url_es = os.environ["AZURE_TARGET_CONTAINER_URL_ES"]
-        target_container_url_fr = os.environ["AZURE_TARGET_CONTAINER_URL_FR"]
-
-        # prepare translation input
-        translation_inputs = [
-            DocumentTranslationInput(
-                source_url=source_container_url,
-                targets=[
-                    TranslationTarget(
-                        target_url=target_container_url_es,
-                        language_code="es"
-                    ),
-                    TranslationTarget(
-                        target_url=target_container_url_fr,
-                        language_code="fr"
-                    )
-                ],
-                storage_type="folder",
-                prefix="document_2021"
-            )
-        ]
-        
-        # create translation client
-        client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
-
-        # run translation job
-        async with client:
-            job_detail = await client.create_translation_job(translation_inputs)
-            while True:
-                job_detail = await client.get_job_status(job_detail.id)  # type: JobStatusResult
-                if job_detail.status in ["NotStarted", "Running"]:
-                    await asyncio.sleep(30)
-                    continue
-
-                elif job_detail.status in ["Failed", "ValidationFailed"]:
-                    if job_detail.error:
-                        print("Translation job failed: {}: {}".format(job_detail.error.code, job_detail.error.message))
-                    await self.check_documents(client, job_detail.id)
-                    exit(1)
-
-                elif job_detail.status == "Succeeded":
-                    print("We translated our documents!")
-                    if job_detail.documents_failed_count > 0:
-                        await self.check_documents(client, job_detail.id)
-                    break
 
 
-    async def check_documents(self, client, job_id):
-        from azure.core.exceptions import ResourceNotFoundError
+async def sample_document_status_checks_async():
+    import os
+    from azure.core.credentials import AzureKeyCredential
+    from azure.ai.documenttranslation.aio import DocumentTranslationClient
+    from azure.ai.documenttranslation import (
+        DocumentTranslationInput,
+        TranslationTarget
+    )
 
-        try:
-            doc_statuses = client.list_all_document_statuses(job_id)  # type: AsyncItemPaged[DocumentStatusResult]
-        except ResourceNotFoundError as err:
-            print("Failed to process any documents in source/target container due to insufficient permissions.")
-            raise err
+    endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
+    key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
+    source_container_url = os.environ["AZURE_SOURCE_CONTAINER_URL"]
+    target_container_url = os.environ["AZURE_TARGET_CONTAINER_URL"]
 
-        docs_to_retry = []
-        async for document in doc_statuses:
-            if document.status == "Failed":
-                print("Document at {} failed to be translated to {} language".format(
-                    document.translated_document_url, document.translate_to
-                ))
-                print("Document ID: {}, Error Code: {}, Message: {}".format(
-                    document.id, document.error.code, document.error.message
-                ))
-                if document.translated_document_url not in docs_to_retry:
-                    docs_to_retry.append(document.translated_document_url)
+    client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
+    async with client:
+        job_result = await client.create_translation_job(inputs=[
+                DocumentTranslationInput(
+                    source_url=source_container_url,
+                    targets=[
+                        TranslationTarget(
+                            target_url=target_container_url,
+                            language_code="es"
+                        )
+                    ]
+                )
+            ]
+        )  # type: JobStatusResult
+
+        completed_docs = []
+        while not job_result.has_completed:
+            await asyncio.sleep(30)
+
+            doc_statuses = client.list_all_document_statuses(job_result.id)
+            async for document in doc_statuses:
+                if document.id not in completed_docs:
+                    if document.status == "Succeeded":
+                        print("Document at {} was translated to {} language".format(
+                            document.translated_document_url, document.translate_to
+                        ))
+                        completed_docs.append(document.id)
+                    if document.status == "Failed":
+                        print("Document ID: {}, Error Code: {}, Message: {}".format(
+                            document.id, document.error.code, document.error.message
+                        ))
+                        completed_docs.append(document.id)
+                    if document.status == "Running":
+                        print("Document ID: {}, translation progress is {} percent".format(
+                            document.id, document.translation_progress * 100
+                        ))
+
+            job_result = await client.get_job_status(job_result.id)
+
+        print("\nTranslation job completed.")
 
 
 async def main():
-    sample = TranslationStatusChecksSampleAsync()
-    await sample.translation_status_checks_async()
-
+    await sample_document_status_checks_async()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
