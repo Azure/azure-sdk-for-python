@@ -58,6 +58,20 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             **kwargs
         )
 
+    def __enter__(self):
+        # type: () -> DocumentTranslationClient
+        self._client.__enter__()  # pylint:disable=no-member
+        return self
+
+    def __exit__(self, *args):
+        # type: (*Any) -> None
+        self._client.__exit__(*args)  # pylint:disable=no-member
+
+    def close(self):
+        # type: () -> None
+        """Close the :class:`~azure.ai.documenttranslation.DocumentTranslationClient` session."""
+        return self._client.close()
+
     @distributed_trace
     def create_translation_job(self, inputs, **kwargs):
         # type: (List[DocumentTranslationInput], **Any) -> JobStatusResult
