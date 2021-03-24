@@ -69,17 +69,18 @@ class DocumentTranslationTest(AzureTestCase):
 
         Pass data in as bytes (or as a list[bytes] to create more than one blob) in the source container.
         """
-        if self.is_live:
-            self.source_container_sas_url = self.create_source_container(
-                data=data or b'This is written in english.',
-                blob_prefix=blob_prefix
-            )
-            self.target_container_sas_url = self.create_target_container()
-        else:
-            self.source_container_sas_url = "source_container_sas_url"
-            self.target_container_sas_url = "target_container_sas_url"
+        self.source_container_sas_url = self.create_source_container(
+            data=data or b'This is written in english.',
+            blob_prefix=blob_prefix
+        )
+        self.target_container_sas_url = self.create_target_container()
 
     def create_source_container(self, data, blob_prefix=""):
+        # for offline tests
+        if not self.is_live:
+            return "dummy_string"
+
+        # for actual live tests
         container_name = "src" + str(uuid.uuid4())
         container_client = ContainerClient(self.storage_endpoint, container_name,
                                            self.storage_key)
@@ -92,6 +93,11 @@ class DocumentTranslationTest(AzureTestCase):
         return self.generate_sas_url(container_name, "rl")
 
     def create_target_container(self):
+        # for offline tests
+        if not self.is_live:
+            return "dummy_string"
+
+        # for actual live tests
         container_name = "target" + str(uuid.uuid4())
         container_client = ContainerClient(self.storage_endpoint, container_name,
                                            self.storage_key)
