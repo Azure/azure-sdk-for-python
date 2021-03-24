@@ -2,6 +2,7 @@
 
 ## 12.0.0b6 (Unreleased)
 
+- Passing a string parameter into a query filter will now be urlencoded to protect against injection.
 
 ## 12.0.0b5 (2021-03-09)
 * This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported.

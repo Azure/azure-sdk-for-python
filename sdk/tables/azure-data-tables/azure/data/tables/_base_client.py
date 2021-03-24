@@ -361,7 +361,7 @@ class StorageAccountHostsMixin(object):
                     elif isinstance(val, UUID):
                         filter_strings[index] = "guid'{}'".format(str(val))
                     else:
-                        filter_strings[index] = "'{}'".format(val)
+                        filter_strings[index] = "'{}'".format(quote(val))
             return ' '.join(filter_strings)
 
         return filter

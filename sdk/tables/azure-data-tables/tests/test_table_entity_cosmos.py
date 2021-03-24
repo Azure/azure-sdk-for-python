@@ -1595,6 +1595,33 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
+    @CosmosPreparer()
+    def test_query_injection(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+            table_name = self.get_resource_name('querytable')
+            table = self.ts.create_table_if_not_exists(table_name)
+            entity_a = {'PartitionKey': 'foo', 'RowKey': 'bar1', 'IsAdmin': 'admin'}
+            entity_b = {'PartitionKey': 'foo', 'RowKey': 'bar2', 'IsAdmin': ''}
+            table.create_entity(entity_a)
+            table.create_entity(entity_b)
+
+            is_user_admin = "PartitionKey eq @first and IsAdmin eq 'admin'"
+            entities = list(table.query_entities(is_user_admin, parameters={'first': 'foo'}))
+            assert len(entities) ==  1
+
+            injection = "foo' or RowKey eq 'bar2"
+            injected_query = "PartitionKey eq '{}' and IsAdmin eq 'admin'".format(injection)
+            entities = list(table.query_entities(injected_query))
+            assert len(entities) ==  2
+
+            entities = list(table.query_entities(is_user_admin, parameters={'first': injection}))            
+            assert len(entities) ==  0
+        finally:
+            self.ts.delete_table(table_name)
+            self._tear_down()
+
     @pytest.mark.skip("returns ' sex' instead of deserializing into just 'sex'")
     @CosmosPreparer()
     def test_query_entities_with_select(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):

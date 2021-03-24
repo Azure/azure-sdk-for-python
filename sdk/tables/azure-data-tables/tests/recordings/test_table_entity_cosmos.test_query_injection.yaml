@@ -1,0 +1,394 @@
+interactions:
+- request:
+    body: '{"TableName": "uttableae7212bc"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 24 Mar 2021 22:34:09 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 24 Mar 2021 22:34:09 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"TableName":"uttableae7212bc","odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Wed, 24 Mar 2021 22:34:10 GMT
+      etag:
+      - W/"datetime'2021-03-24T22%3A34%3A10.1612552Z'"
+      location:
+      - https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttableae7212bc')
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 201
+      message: Ok
+- request:
+    body: '{"TableName": "querytableae7212bc"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '35'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 24 Mar 2021 22:34:10 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 24 Mar 2021 22:34:10 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"TableName":"querytableae7212bc","odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Wed, 24 Mar 2021 22:34:10 GMT
+      etag:
+      - W/"datetime'2021-03-24T22%3A34%3A10.7374600Z'"
+      location:
+      - https://fake_cosmos_account.table.cosmos.azure.com/Tables('querytableae7212bc')
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 201
+      message: Ok
+- request:
+    body: '{"PartitionKey": "foo", "PartitionKey@odata.type": "Edm.String", "RowKey":
+      "bar1", "RowKey@odata.type": "Edm.String", "IsAdmin": "admin", "IsAdmin@odata.type":
+      "Edm.String"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '173'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 24 Mar 2021 22:34:11 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 24 Mar 2021 22:34:11 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/querytableae7212bc
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/querytableae7212bc/$metadata#querytableae7212bc/@Element","odata.etag":"W/\"datetime''2021-03-24T22%3A34%3A11.2854024Z''\"","PartitionKey":"foo","RowKey":"bar1","IsAdmin":"admin","Timestamp":"2021-03-24T22:34:11.2854024Z"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Wed, 24 Mar 2021 22:34:10 GMT
+      etag:
+      - W/"datetime'2021-03-24T22%3A34%3A11.2854024Z'"
+      location:
+      - https://fake_cosmos_account.table.cosmos.azure.com/querytableae7212bc(PartitionKey='foo',RowKey='bar1')
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"PartitionKey": "foo", "PartitionKey@odata.type": "Edm.String", "RowKey":
+      "bar2", "RowKey@odata.type": "Edm.String", "IsAdmin": "", "IsAdmin@odata.type":
+      "Edm.String"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '168'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 24 Mar 2021 22:34:11 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 24 Mar 2021 22:34:11 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/querytableae7212bc
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/querytableae7212bc/$metadata#querytableae7212bc/@Element","odata.etag":"W/\"datetime''2021-03-24T22%3A34%3A11.3143816Z''\"","PartitionKey":"foo","RowKey":"bar2","IsAdmin":"","Timestamp":"2021-03-24T22:34:11.3143816Z"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Wed, 24 Mar 2021 22:34:10 GMT
+      etag:
+      - W/"datetime'2021-03-24T22%3A34%3A11.3143816Z'"
+      location:
+      - https://fake_cosmos_account.table.cosmos.azure.com/querytableae7212bc(PartitionKey='foo',RowKey='bar2')
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 24 Mar 2021 22:34:11 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 24 Mar 2021 22:34:11 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/querytableae7212bc()?$filter=PartitionKey%20eq%20%27foo%27%20and%20IsAdmin%20eq%20%27admin%27
+  response:
+    body:
+      string: '{"value":[{"odata.etag":"W/\"datetime''2021-03-24T22%3A34%3A11.2854024Z''\"","PartitionKey":"foo","RowKey":"bar1","IsAdmin":"admin","Timestamp":"2021-03-24T22:34:11.2854024Z"}],"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#querytableae7212bc"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Wed, 24 Mar 2021 22:34:10 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 24 Mar 2021 22:34:11 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 24 Mar 2021 22:34:11 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/querytableae7212bc()?$filter=PartitionKey%20eq%20%27foo%27%20or%20RowKey%20eq%20%27bar2%27%20and%20IsAdmin%20eq%20%27admin%27
+  response:
+    body:
+      string: '{"value":[{"odata.etag":"W/\"datetime''2021-03-24T22%3A34%3A11.2854024Z''\"","PartitionKey":"foo","RowKey":"bar1","IsAdmin":"admin","Timestamp":"2021-03-24T22:34:11.2854024Z"},{"odata.etag":"W/\"datetime''2021-03-24T22%3A34%3A11.3143816Z''\"","PartitionKey":"foo","RowKey":"bar2","IsAdmin":"","Timestamp":"2021-03-24T22:34:11.3143816Z"}],"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#querytableae7212bc"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Wed, 24 Mar 2021 22:34:10 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 24 Mar 2021 22:34:11 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 24 Mar 2021 22:34:11 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/querytableae7212bc()?$filter=PartitionKey%20eq%20%27foo%2527%2520or%2520RowKey%2520eq%2520%2527bar2%27%20and%20IsAdmin%20eq%20%27admin%27
+  response:
+    body:
+      string: '{"value":[],"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#querytableae7212bc"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Wed, 24 Mar 2021 22:34:11 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Wed, 24 Mar 2021 22:34:11 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 24 Mar 2021 22:34:11 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables('querytableae7212bc')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Wed, 24 Mar 2021 22:34:11 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Wed, 24 Mar 2021 22:34:11 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 24 Mar 2021 22:34:11 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttableae7212bc')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Wed, 24 Mar 2021 22:34:11 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 24 Mar 2021 22:34:11 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 24 Mar 2021 22:34:11 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"value":[],"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Wed, 24 Mar 2021 22:34:11 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: Ok
+version: 1
