@@ -191,7 +191,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         TENANT_ID = self.settings.TENANT_ID
         CLIENT_OID = self.settings.CLIENT_OID if self.is_live else "000"
         RESOURCE_GROUP = resource_group.name
-        KEY_VAULT_NAME = self.get_resource_name("keyvaultxmmy")
+        KEY_VAULT_NAME = self.get_resource_name("keyvaultxmmky")
         DISK_ENCRYPTION_SET_NAME = self.get_resource_name("diskencryptionset")
 
         VAULT_ID, KEY_URI = self.create_key(RESOURCE_GROUP, AZURE_LOCATION, KEY_VAULT_NAME, TENANT_ID, CLIENT_OID)

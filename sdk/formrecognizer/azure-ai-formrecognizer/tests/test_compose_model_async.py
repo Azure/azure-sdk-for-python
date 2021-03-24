@@ -15,7 +15,6 @@ from asynctestcase import AsyncFormRecognizerTest
 
 GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
-
 class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
@@ -62,16 +61,6 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
             with pytest.raises(HttpResponseError) as e:
                 poller = await client.begin_create_composed_model([model_1.model_id, model_2.model_id])
-                composed_model = await poller.result()
-            self.assertEqual(e.value.error.code, "1001")
-            self.assertIsNotNone(e.value.error.message)
-
-    @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_compose_model_invalid_model(self, client, formrecognizer_storage_container_sas_url):
-        async with client:
-            with pytest.raises(HttpResponseError) as e:
-                poller = await client.begin_create_composed_model(["00000000-0000-0000-0000-000000000000"])
                 composed_model = await poller.result()
             self.assertEqual(e.value.error.code, "1001")
             self.assertIsNotNone(e.value.error.message)

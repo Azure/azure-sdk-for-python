@@ -21,6 +21,7 @@ GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClie
 class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
+    @pytest.mark.skip("504 Gateway error with canary - fix in progress")
     def test_custom_forms_encoded_url(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         try:
@@ -56,13 +57,6 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
             result = client.begin_recognize_custom_forms_from_url(model_id="xx", form_url=self.form_url_jpg)
 
     @FormRecognizerPreparer()
-    def test_passing_bad_url(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
-        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
-
-        with self.assertRaises(HttpResponseError):
-            poller = client.begin_recognize_custom_forms_from_url(model_id="xx", form_url="https://badurl.jpg")
-
-    @FormRecognizerPreparer()
     def test_pass_stream_into_url(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
 
@@ -75,6 +69,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
+    @pytest.mark.skip("504 Gateway error with canary - fix in progress")
     def test_custom_form_bad_url(self, client, formrecognizer_storage_container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
@@ -87,7 +82,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
                 form_url="https://badurl.jpg"
             )
             form = poller.result()
-        self.assertEqual(e.value.error.code, "2003")
+        self.assertEqual(e.value.error.code, "1001")
         self.assertIsNotNone(e.value.error.message)
 
     @FormRecognizerPreparer()
@@ -267,7 +262,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         self.assertFormPagesTransformCorrect(recognized_form[0].pages, read_results, page_results)
         self.assertEqual(recognized_form[0].page_range.first_page_number, page_results[0].page)
         self.assertEqual(recognized_form[0].page_range.last_page_number, page_results[0].page)
-        self.assertEqual(recognized_form[0].form_type_confidence, 1.0)
+        self.assertIsNotNone(recognized_form[0].form_type_confidence)
         self.assertIsNotNone(recognized_form[0].model_id)
         self.assertFormFieldsTransformCorrect(recognized_form[0].fields, actual_fields, read_results)
 
@@ -305,7 +300,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
             self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
             self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
             self.assertEqual(form.form_type, "custom:"+model.model_id)
-            self.assertEqual(form.form_type_confidence, 1.0)
+            self.assertIsNotNone(form.form_type_confidence)
             self.assertEqual(form.model_id, model.model_id)
             self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 
@@ -404,7 +399,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
             self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
             self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
             self.assertEqual(form.form_type, "custom:"+model.model_id)
-            self.assertEqual(form.form_type_confidence, 1.0)
+            self.assertIsNotNone(form.form_type_confidence)
             self.assertEqual(form.model_id, model.model_id)
             self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 
@@ -439,3 +434,17 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         actual_fields = actual.analyze_result.document_results[0].fields
 
         self.assertFormPagesTransformCorrect(recognized_form[0].pages, read_results, page_results)
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    def test_pages_kwarg_specified(self, client, formrecognizer_testing_data_container_sas_url):
+        fr_client = client.get_form_recognizer_client()
+        blob_sas_url = self.get_blob_url(formrecognizer_testing_data_container_sas_url, "testingdata", "multi1.pdf")
+
+        training_poller = client.begin_training(formrecognizer_testing_data_container_sas_url, use_training_labels=False)
+        model = training_poller.result()
+
+        poller = fr_client.begin_recognize_custom_forms_from_url(model.model_id, blob_sas_url, pages=["1"])
+        assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+        result = poller.result()
+        assert result

@@ -1,5 +1,12 @@
 # Release History
 
+## 1.1.0 (2021-03-17)
+
+**Features**
+
+  - Model AgreementTerms has a new parameter system_data
+  - Model AgreementTerms has a new parameter marketplace_terms_link
+
 ## 1.0.0 (2020-12-22)
 
 - GA release

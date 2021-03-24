@@ -10,6 +10,7 @@ import json
 import os
 import tempfile
 import unittest
+import pytest
 try:
     from unittest import mock
 except ImportError:
@@ -111,6 +112,7 @@ class TestCommon(unittest.TestCase):
         client = get_client_from_cli_profile(KeyVaultClient)
         get_azure_cli_credentials.assert_called_with(resource="https://vault.azure.net", with_tenant=True)
         assert client.credentials == 'credentials'
+
 
     @mock.patch('azure.common.client_factory.get_cli_active_cloud')
     @mock.patch('azure.common.client_factory.get_azure_cli_credentials')
@@ -225,6 +227,13 @@ class TestCommon(unittest.TestCase):
 
                 self.credentials = credentials
 
+        class KeyVaultClientTrack2(object):
+            def __init__(self, credential):
+                if credential is None:
+                    raise ValueError("Parameter 'credentials' must not be None.")
+
+                self.credential = credential
+
         for encoding in ['utf-8', 'utf-8-sig', 'ascii']:
 
             temp_auth_file = tempfile.NamedTemporaryFile(delete=False)
@@ -278,6 +287,10 @@ class TestCommon(unittest.TestCase):
                 'a2ab11af-01aa-4759-8345-7803287dbd39',
                 'password'
             )
+
+            with pytest.raises(ValueError) as excinfo:
+                get_client_from_auth_file(KeyVaultClientTrack2, temp_auth_file.name)
+            assert "https://aka.ms/azsdk/python/azidmigration" in str(excinfo.value)
 
             os.unlink(temp_auth_file.name)
 

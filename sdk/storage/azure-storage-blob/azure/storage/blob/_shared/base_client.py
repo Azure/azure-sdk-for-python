@@ -3,19 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+import logging
+import uuid
 from typing import (  # pylint: disable=unused-import
-    Union,
     Optional,
     Any,
-    Iterable,
-    Dict,
-    List,
-    Type,
     Tuple,
-    TYPE_CHECKING,
 )
-import logging
 
 try:
     from urllib.parse import parse_qs, quote
@@ -45,6 +39,7 @@ from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOU
 from .models import LocationMode
 from .authentication import SharedKeyCredentialPolicy
 from .shared_access_signature import QueryStringConstants
+from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
 from .policies import (
     StorageHeadersPolicy,
     StorageContentValidation,
@@ -270,6 +265,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
+        batch_id = str(uuid.uuid1())
+
         request = self._client._client.post(  # pylint: disable=protected-access
             url='{}://{}/{}?{}comp=batch{}{}'.format(
                 self.scheme,
@@ -280,7 +277,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                 kwargs.pop('timeout', "")
             ),
             headers={
-                'x-ms-version': self.api_version
+                'x-ms-version': self.api_version,
+                "Content-Type": "multipart/mixed; boundary=" + _get_batch_request_delimiter(batch_id, False, False)
             }
         )
 
@@ -294,10 +292,17 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             enforce_https=False
         )
 
+        Pipeline._prepare_multipart_mixed_request(request) # pylint: disable=protected-access
+        body = serialize_batch_body(request.multipart_mixed_info[0], batch_id)
+        request.set_bytes_body(body)
+
+        temp = request.multipart_mixed_info
+        request.multipart_mixed_info = None
         pipeline_response = self._pipeline.run(
             request, **kwargs
         )
         response = pipeline_response.http_response
+        request.multipart_mixed_info = temp
 
         try:
             if response.status_code not in [202]:

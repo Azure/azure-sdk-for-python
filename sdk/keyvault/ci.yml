@@ -4,6 +4,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -18,6 +19,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -34,15 +36,15 @@ extends:
   parameters:
     ServiceDirectory: keyvault
     Artifacts:
-    - name: azure_keyvault_administration
+    - name: azure-keyvault-administration
       safename: azurekeyvaultadministration
-    - name: azure_keyvault_certificates
+    - name: azure-keyvault-certificates
       safeName: azurekeyvaultcertificates
-    - name: azure_keyvault_keys
+    - name: azure-keyvault-keys
       safeName: azurekeyvaultkeys
-    - name: azure_keyvault_secrets
+    - name: azure-keyvault-secrets
       safeName: azurekeyvaultsecrets
-    - name: azure_mgmt_keyvault
+    - name: azure-mgmt-keyvault
       safeName: azuremgmtkeyvault
-    - name: azure_keyvault
+    - name: azure-keyvault
       safeName: azurekeyvault

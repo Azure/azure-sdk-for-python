@@ -26,6 +26,15 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
 class LiftrResourceCategories(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     UNKNOWN = "Unknown"
@@ -43,8 +52,10 @@ class MarketplaceSubscriptionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str
     time, the resource will go in Suspended state.
     """
 
+    PROVISIONING = "Provisioning"
     ACTIVE = "Active"
     SUSPENDED = "Suspended"
+    UNSUBSCRIBED = "Unsubscribed"
 
 class MonitoringStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Flag specifying if the resource monitoring is enabled or disabled.

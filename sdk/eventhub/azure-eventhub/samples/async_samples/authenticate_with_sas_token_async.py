@@ -23,7 +23,8 @@ except ImportError:
     from urllib import pathname2url as url_parse_quote
 
 from azure.core.credentials import AccessToken
-from azure.eventhub.aio import EventHubConsumerClient
+from azure.eventhub.aio import EventHubProducerClient
+from azure.eventhub import EventData
 
 
 def generate_sas_token(uri, sas_name, sas_value, token_ttl):
@@ -68,24 +69,21 @@ async def create_with_sas_token():
     token_ttl = 3000  # seconds
     sas_token = generate_sas_token(uri, SAS_POLICY, SAS_KEY, token_ttl)
     # end of creating a SAS token
-    
-    consumer_client = EventHubConsumerClient(
+
+    producer_client = EventHubProducerClient(
         fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
         eventhub_name=EVENTHUB_NAME,
-        consumer_group=CONSUMER_GROUP,
         credential=CustomizedSASCredential(sas_token, time.time() + token_ttl),
         logging_enable=True
     )
-    
-    async def on_event(context, event):
-        print(context.partition_id, ":", event)
 
-    async with consumer_client:
-        await consumer_client.receive(
-            on_event,
-            starting_position=-1
-        )
+    async with producer_client:
+        event_data_batch = await producer_client.create_batch()
+        event_data_batch.add(EventData('Single message'))
+        await producer_client.send_batch(event_data_batch)
 
 
 loop = asyncio.get_event_loop()
+start_time = time.time()
 loop.run_until_complete(create_with_sas_token())
+print("Send messages in {} seconds.".format(time.time() - start_time))

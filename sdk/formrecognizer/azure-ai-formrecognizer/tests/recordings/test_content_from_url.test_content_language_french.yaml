@@ -9,31 +9,31 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '223'
+      - '221'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/layout/analyze?language=fr
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyze?language=fr&readingOrder=basic
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 1815f133-9a37-4ab6-a0e5-a3b293e10476
+      - 35a82a5f-9677-47bd-90b4-b1fe98c2a709
       content-length:
       - '0'
       date:
-      - Tue, 10 Nov 2020 00:21:22 GMT
+      - Mon, 01 Mar 2021 18:40:48 GMT
       operation-location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/layout/analyzeResults/1815f133-9a37-4ab6-a0e5-a3b293e10476
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyzeResults/35a82a5f-9677-47bd-90b4-b1fe98c2a709
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '565'
+      - '158'
     status:
       code: 202
       message: Accepted
@@ -47,48 +47,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/layout/analyzeResults/1815f133-9a37-4ab6-a0e5-a3b293e10476
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyzeResults/35a82a5f-9677-47bd-90b4-b1fe98c2a709
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2020-11-10T00:21:22Z", "lastUpdatedDateTime":
-        "2020-11-10T00:21:22Z"}'
-    headers:
-      apim-request-id:
-      - ddeff76d-c33f-4f38-aed3-e8a68dd395ed
-      content-length:
-      - '106'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 10 Nov 2020 00:21:27 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '12'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/layout/analyzeResults/1815f133-9a37-4ab6-a0e5-a3b293e10476
-  response:
-    body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-11-10T00:21:22Z",
-        "lastUpdatedDateTime": "2020-11-10T00:21:27Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-03-01T18:40:49Z",
+        "lastUpdatedDateTime": "2021-03-01T18:40:54Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
         "unit": "inch", "language": "fr", "lines": [{"boundingBox": [0.8822, 1.1117,
         2.276, 1.1117, 2.276, 1.2468, 0.8822, 1.2468], "text": "Soci\u00e9t\u00e9
@@ -313,19 +278,19 @@ interactions:
         "boundingBox": [0.9965, 2.9319, 7.4974, 2.9324, 7.4971, 4.632, 0.9951, 4.631]}]}]}}'
     headers:
       apim-request-id:
-      - e3007d03-9129-4068-bd66-84e542feb198
+      - 0b246a4f-7f34-42b1-8202-acbd85aacb3b
       content-length:
-      - '16218'
+      - '16338'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 10 Nov 2020 00:21:32 GMT
+      - Mon, 01 Mar 2021 18:40:54 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '23'
+      - '21'
     status:
       code: 200
       message: OK

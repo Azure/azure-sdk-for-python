@@ -12,7 +12,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -31,7 +31,7 @@ class SmsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -41,9 +41,9 @@ class SmsOperations:
 
     async def send(
         self,
-        send_message_request: "models.SendMessageRequest",
+        send_message_request: "_models.SendMessageRequest",
         **kwargs
-    ) -> "models.SendSmsResponse":
+    ) -> "_models.SmsSendResponse":
         """Sends a SMS message from a phone number that belongs to the authenticated account.
 
         Sends a SMS message from a phone number that belongs to the authenticated account.
@@ -51,16 +51,16 @@ class SmsOperations:
         :param send_message_request: Represents the body of the send message request.
         :type send_message_request: ~azure.communication.sms.models.SendMessageRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SendSmsResponse, or the result of cls(response)
-        :rtype: ~azure.communication.sms.models.SendSmsResponse
+        :return: SmsSendResponse, or the result of cls(response)
+        :rtype: ~azure.communication.sms.models.SmsSendResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SendSmsResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SmsSendResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-07-20-preview1"
+        api_version = "2021-03-07"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -87,11 +87,11 @@ class SmsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('SendSmsResponse', pipeline_response)
+        deserialized = self._deserialize('SmsSendResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

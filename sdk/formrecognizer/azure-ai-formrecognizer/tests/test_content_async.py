@@ -34,15 +34,6 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
                 result = await poller.result()
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_content_authentication_successful_key(self, client):
-        with open(self.invoice_pdf, "rb") as fd:
-            myfile = fd.read()
-        async with client:
-            poller = await client.begin_recognize_content(myfile)
-            result = await poller.result()
-
-    @FormRecognizerPreparer()
     async def test_content_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
@@ -401,7 +392,8 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         async with client:
             poller = await client.begin_recognize_content(myfile, language="de")
             assert 'de' == poller._polling_method._initial_response.http_response.request.query['language']
-            await poller.wait()
+            result = await poller.result()
+            assert result
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

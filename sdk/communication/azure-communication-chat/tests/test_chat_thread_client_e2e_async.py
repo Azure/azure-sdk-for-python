@@ -12,8 +12,7 @@ from msrest.serialization import TZ_UTC
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.chat.aio import (
     ChatClient,
-    CommunicationTokenCredential,
-    CommunicationTokenRefreshOptions
+    CommunicationTokenCredential
 )
 from azure.communication.chat import (
     ChatThreadParticipant,
@@ -48,19 +47,17 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
 
         # create user 1
         self.user = self.identity_client.create_user()
-        token_response = self.identity_client.issue_token(self.user, scopes=["chat"])
+        token_response = self.identity_client.get_token(self.user, scopes=["chat"])
         self.token = token_response.token
 
         # create user 2
         self.new_user = self.identity_client.create_user()
-        token_response = self.identity_client.issue_token(self.new_user, scopes=["chat"])
+        token_response = self.identity_client.get_token(self.new_user, scopes=["chat"])
         self.token_new_user = token_response.token
 
         # create ChatClient
-        refresh_option = CommunicationTokenRefreshOptions(self.token)
-        refresh_option_new_user = CommunicationTokenRefreshOptions(self.token_new_user)
-        self.chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_option))
-        self.chat_client_new_user = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_option_new_user))
+        self.chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(self.token))
+        self.chat_client_new_user = ChatClient(self.endpoint, CommunicationTokenCredential(self.token_new_user))
 
     def tearDown(self):
         super(ChatThreadClientTestAsync, self).tearDown()
@@ -80,7 +77,8 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
             display_name='name',
             share_history_time=share_history_time
         )]
-        self.chat_thread_client = await self.chat_client.create_chat_thread(topic, participants)
+        create_chat_thread_result = await self.chat_client.create_chat_thread(topic, thread_participants=participants)
+        self.chat_thread_client = self.chat_client.get_chat_thread_client(create_chat_thread_result.chat_thread.id)
         self.thread_id = self.chat_thread_client.thread_id
 
     async def _create_thread_w_two_users(self):
@@ -100,7 +98,8 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
                 share_history_time=share_history_time
             )
         ]
-        self.chat_thread_client = await self.chat_client.create_chat_thread(topic, participants)
+        create_chat_thread_result = await self.chat_client.create_chat_thread(topic, thread_participants=participants)
+        self.chat_thread_client = self.chat_client.get_chat_thread_client(create_chat_thread_result.chat_thread.id)
         self.thread_id = self.chat_thread_client.thread_id
 
 
@@ -108,10 +107,10 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
         # send a message
         content = 'hello world'
         sender_display_name = 'sender name'
-        create_message_result_id = await self.chat_thread_client.send_message(
+        create_message_result = await self.chat_thread_client.send_message(
             content,
             sender_display_name=sender_display_name)
-        message_id = create_message_result_id
+        message_id = create_message_result.id
         return message_id
 
     @pytest.mark.live_test_only
@@ -138,9 +137,10 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
                 content = 'hello world'
                 sender_display_name = 'sender name'
 
-                create_message_result_id = await self.chat_thread_client.send_message(
+                create_message_result = await self.chat_thread_client.send_message(
                     content,
                     sender_display_name=sender_display_name)
+                create_message_result_id = create_message_result.id
 
                 self.assertTrue(create_message_result_id)
 
@@ -232,7 +232,7 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
                     display_name='name',
                     share_history_time=share_history_time)
 
-                await self.chat_thread_client.add_participant(new_participant)
+                await self.chat_thread_client.add_participants([new_participant])
 
                 chat_thread_participants = self.chat_thread_client.list_participants(results_per_page=1, skip=1)
 
@@ -243,25 +243,6 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
                 assert len(items) == 1
 
             # delete chat threads
-            if not self.is_playback():
-                await self.chat_client.delete_chat_thread(self.thread_id)
-
-    @pytest.mark.live_test_only
-    @AsyncCommunicationTestCase.await_prepared_test
-    async def test_add_participant(self):
-        async with self.chat_client:
-            await self._create_thread()
-
-            async with self.chat_thread_client:
-                share_history_time = datetime.utcnow()
-                share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
-                new_participant = ChatThreadParticipant(
-                    user=self.new_user,
-                    display_name='name',
-                    share_history_time=share_history_time)
-
-                await self.chat_thread_client.add_participant(new_participant)
-
             if not self.is_playback():
                 await self.chat_client.delete_chat_thread(self.thread_id)
 
@@ -280,7 +261,10 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
                         share_history_time=share_history_time)
                 participants = [new_participant]
 
-                await self.chat_thread_client.add_participants(participants)
+                failed_participants = await self.chat_thread_client.add_participants(participants)
+
+                # no error occured while adding participants
+                assert len(failed_participants) == 0
 
             if not self.is_playback():
                 await self.chat_client.delete_chat_thread(self.thread_id)
@@ -375,9 +359,10 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
                 chat_thread_client_new_user = self.chat_client_new_user.get_chat_thread_client(self.thread_id)
 
                 # second user sends 1 message
-                message_id_new_user = await chat_thread_client_new_user.send_message(
+                message_result_new_user = await chat_thread_client_new_user.send_message(
                     "content",
                     sender_display_name="sender_display_name")
+                message_id_new_user = message_result_new_user.id
                 # send read receipt
                 await chat_thread_client_new_user.send_read_receipt(message_id_new_user)
 
@@ -396,3 +381,17 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
 
             if not self.is_playback():
                 await self.chat_client.delete_chat_thread(self.thread_id)
+
+    @pytest.mark.live_test_only
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_get_properties(self):
+        async with self.chat_client:
+            await self._create_thread()
+
+            async with self.chat_thread_client:
+                get_thread_result = await self.chat_thread_client.get_properties()
+                assert get_thread_result.id == self.thread_id
+
+                # delete created users and chat threads
+                if not self.is_playback():
+                    await self.chat_client.delete_chat_thread(self.thread_id)

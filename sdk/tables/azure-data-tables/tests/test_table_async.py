@@ -7,6 +7,7 @@ import pytest
 
 from devtools_testutils import AzureTestCase
 
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
 from azure.data.tables import (
     AccessPolicy,

@@ -604,10 +604,9 @@ class ResourceTypes(object):
 
     :param bool service:
         Access to service-level APIs (e.g., Get/Set Service Properties,
-        Get Service Stats, List Containers/Queues/Shares)
+        Get Service Stats, List Tables)
     :param bool object:
-        Access to object-level APIs for blobs, queue messages, and
-        files(e.g. Put Blob, Query Entity, Get Messages, Create File, etc.)
+        Access to object-level APIs for tables (e.g. Get/Create/Query Entity etc.)
     """
 
     def __init__(

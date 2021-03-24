@@ -15,7 +15,6 @@ from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.chat import (
     ChatClient,
     CommunicationTokenCredential,
-    CommunicationTokenRefreshOptions,
     ChatThreadParticipant
 )
 from azure.communication.chat._shared.utils import parse_connection_str
@@ -46,12 +45,11 @@ class ChatClientTest(CommunicationTestCase):
 
         # create user and issue token
         self.user = self.identity_client.create_user()
-        tokenresponse = self.identity_client.issue_token(self.user, scopes=["chat"])
+        tokenresponse = self.identity_client.get_token(self.user, scopes=["chat"])
         self.token = tokenresponse.token
 
         # create ChatClient
-        refresh_options = CommunicationTokenRefreshOptions(self.token)
-        self.chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
+        self.chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(self.token))
 
     def tearDown(self):
         super(ChatClientTest, self).tearDown()
@@ -61,7 +59,7 @@ class ChatClientTest(CommunicationTestCase):
             self.identity_client.delete_user(self.user)
             self.chat_client.delete_chat_thread(self.thread_id)
 
-    def _create_thread(self, repeatability_request_id=None):
+    def _create_thread(self, idempotency_token=None):
         # create chat thread
         topic = "test topic"
         share_history_time = datetime.utcnow()
@@ -71,8 +69,39 @@ class ChatClientTest(CommunicationTestCase):
             display_name='name',
             share_history_time=share_history_time
         )]
-        chat_thread_client = self.chat_client.create_chat_thread(topic, participants, repeatability_request_id)
-        self.thread_id = chat_thread_client.thread_id
+        create_chat_thread_result = self.chat_client.create_chat_thread(topic,
+                                                                        thread_participants=participants,
+                                                                        idempotency_token=idempotency_token)
+        self.thread_id = create_chat_thread_result.chat_thread.id
+
+    @pytest.mark.live_test_only
+    def test_access_token_validation(self):
+        """
+        This is to make sure that consecutive calls made using the same chat_client or chat_thread_client
+        does not throw an exception due to mismatch in the generation of azure.core.credentials.AccessToken
+        """
+
+        # create ChatClient
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(self.token))
+        raised = False
+        try:
+            # create chat thread
+            topic1 = "test topic1"
+            create_chat_thread1_result = chat_client.create_chat_thread(topic1)
+            self.thread_id = create_chat_thread1_result.chat_thread.id
+
+            # get chat thread client
+            chat_thread1_client = chat_client.get_chat_thread_client(self.thread_id)
+
+            # list all chat threads
+            chat_thead_infos = chat_client.list_chat_threads()
+            for chat_threads_info_page in chat_thead_infos.by_page():
+                for chat_thread_info in chat_threads_info_page:
+                    print("ChatThreadInfo: ", chat_thread_info)
+        except:
+           raised = True
+
+        assert raised is False
 
     @pytest.mark.live_test_only
     def test_create_chat_thread(self):
@@ -80,23 +109,26 @@ class ChatClientTest(CommunicationTestCase):
         assert self.thread_id is not None
 
     @pytest.mark.live_test_only
+    def test_create_chat_thread_w_no_participants(self):
+        # create chat thread
+        topic = "test topic"
+        create_chat_thread_result = self.chat_client.create_chat_thread(topic)
+        self.thread_id = create_chat_thread_result.chat_thread.id
+        assert create_chat_thread_result.chat_thread is not None
+        assert create_chat_thread_result.errors is None
+
+    @pytest.mark.live_test_only
     def test_create_chat_thread_w_repeatability_request_id(self):
-        repeatability_request_id = str(uuid4())
+        idempotency_token = str(uuid4())
         # create thread
-        self._create_thread(repeatability_request_id=repeatability_request_id)
+        self._create_thread(idempotency_token=idempotency_token)
         thread_id = self.thread_id
 
-        # re-create thread with same repeatability_request_id
-        self._create_thread(repeatability_request_id=repeatability_request_id)
+        # re-create thread with same idempotency_token
+        self._create_thread(idempotency_token=idempotency_token)
 
         # test idempotency
         assert thread_id == self.thread_id
-
-    @pytest.mark.live_test_only
-    def test_get_chat_thread(self):
-        self._create_thread()
-        get_thread_result = self.chat_client.get_chat_thread(self.thread_id)
-        assert get_thread_result.id == self.thread_id
 
     @pytest.mark.live_test_only
     def test_list_chat_threads(self):
@@ -104,9 +136,9 @@ class ChatClientTest(CommunicationTestCase):
         if self.is_live:
             time.sleep(2)
 
-        chat_thread_infos = self.chat_client.list_chat_threads(results_per_page=1)
-        for chat_thread_page in chat_thread_infos.by_page():
-            li = list(chat_thread_page)
+        chat_threads = self.chat_client.list_chat_threads(results_per_page=1)
+        for chat_thread_item_page in chat_threads.by_page():
+            li = list(chat_thread_item_page)
             assert len(li) <= 1
 
     @pytest.mark.live_test_only

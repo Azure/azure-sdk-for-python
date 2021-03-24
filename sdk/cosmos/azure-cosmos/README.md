@@ -101,6 +101,7 @@ As of August 2020 the features below are **not supported**.
 * Create Geospatial Index
 * Provision Autoscale DBs or containers
 * Cross-partition ORDER BY for mixed types
+* Update analytical store ttl (time to live)
 * Get the connection string
 * Get the minimum RU/s of a container. For more information, click [here](https://docs.microsoft.com/azure/cosmos-db/concepts-limits#minimum-throughput-limits) or use [Azure CLI](https://docs.microsoft.com/azure/cosmos-db/scripts/cli/sql/throughput#sample-script) examples for Cosmos DB.
 

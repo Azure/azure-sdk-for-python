@@ -299,6 +299,11 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             I.e., if set to 'phi', will only return entities in the Protected Healthcare Information domain.
             See https://aka.ms/tanerpii for more information.
         :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomainType
+        :keyword categories_filter: Instead of filtering over all PII entity categories, you can pass in a list of
+            the specific PII entity categories you want to filter out. For example, if you only want to filter out
+            U.S. social security numbers in a document, you can pass in
+            `[PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
+        :paramtype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategoryType]
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
             For additional information see https://aka.ms/text-analytics-offsets
@@ -324,6 +329,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         domain_filter = kwargs.pop("domain_filter", None)
+        categories_filter = kwargs.pop("categories_filter", None)
 
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
@@ -339,13 +345,14 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 model_version=model_version,
                 show_stats=show_stats,
                 domain=domain_filter,
+                pii_categories=categories_filter,
                 cls=kwargs.pop("cls", pii_entities_result),
                 **kwargs
             )
         except ValueError as error:
             if "API version v3.0 does not have operation 'entities_recognition_pii'" in str(error):
                 raise ValueError(
-                    "'recognize_pii_entities' endpoint is only available for API version v3.1-preview and up"
+                    "'recognize_pii_entities' endpoint is only available for API version V3_1_PREVIEW and up"
                 )
             raise error
         except HttpResponseError as error:
@@ -595,7 +602,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
     def _healthcare_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
         healthcare_result = self._deserialize(
-            self._client.models(api_version="v3.1-preview.3").HealthcareJobState,
+            self._client.models(api_version="v3.1-preview.4").HealthcareJobState,
             raw_response
         )
         return healthcare_paged_result(
@@ -618,7 +625,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         Entities are associated with references that can be found in existing knowledge bases,
         such as UMLS, CHV, MSH, etc.
 
-        Relations are comprised of a pair of entities and a directional relationship.
+        We also extract the relations found between entities, for example in "The subject took 100 mg of ibuprofen",
+        we would extract the relationship between the "100 mg" dosage and the "ibuprofen" medication.
+
+        NOTE: this endpoint is currently in gated preview, meaning your subscription needs to be allow-listed
+        for you to use this endpoint. More information about that here:
+        https://aka.ms/text-analytics-health-request-access
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -631,6 +643,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            Currently not working on the service side at time of release, as service will
+            only use the latest model. Service is aware, and once it's been fixed on the service
+            side, the SDK should work automatically.
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
@@ -686,7 +701,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_health'" in str(error):
                 raise ValueError(
-                    "'begin_analyze_healthcare_entities' endpoint is only available for API version v3.1-preview and up"
+                    "'begin_analyze_healthcare_entities' endpoint is only available for API version V3_1_PREVIEW and up"
                 )
             raise error
 
@@ -695,7 +710,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
     def _analyze_result_callback(self, doc_id_order, task_order, raw_response, _, headers, show_stats=False):
         analyze_result = self._deserialize(
-            self._client.models(api_version="v3.1-preview.3").AnalyzeJobState,
+            self._client.models(api_version="v3.1-preview.4").AnalyzeJobState,
             raw_response
         )
         return analyze_paged_result(
@@ -730,7 +745,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             The outputted action results will be in the same order you inputted your actions.
             Duplicate actions in list not supported.
         :type actions:
-            list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction]
+            list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
+            RecognizeLinkedEntitiesAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -762,7 +778,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         display_name = kwargs.pop("display_name", None)
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = self._client.models(api_version="v3.1-preview.3").MultiLanguageBatchInput(
+        docs = self._client.models(api_version="v3.1-preview.4").MultiLanguageBatchInput(
             documents=_validate_input(documents, "language", language)
         )
         show_stats = kwargs.pop("show_stats", False)
@@ -773,7 +789,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         task_order = [_determine_action_type(action) for action in actions]
 
         try:
-            analyze_tasks = self._client.models(api_version='v3.1-preview.3').JobManifestTasks(
+            analyze_tasks = self._client.models(api_version='v3.1-preview.4').JobManifestTasks(
                 entity_recognition_tasks=[
                     t.to_generated() for t in
                     [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES]
@@ -785,9 +801,16 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 key_phrase_extraction_tasks=[
                     t.to_generated() for t in
                     [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES]
+                ],
+                entity_linking_tasks=[
+                    t.to_generated() for t in
+                    [
+                        a for a in actions if \
+                        _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES
+                    ]
                 ]
             )
-            analyze_body = self._client.models(api_version='v3.1-preview.3').AnalyzeBatchInput(
+            analyze_body = self._client.models(api_version='v3.1-preview.4').AnalyzeBatchInput(
                 display_name=display_name,
                 tasks=analyze_tasks,
                 analysis_input=docs
@@ -810,7 +833,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
                 raise ValueError(
-                    "'begin_analyze_batch_actions' endpoint is only available for API version v3.1-preview and up"
+                    "'begin_analyze_batch_actions' endpoint is only available for API version V3_1_PREVIEW and up"
                 )
             raise error
 

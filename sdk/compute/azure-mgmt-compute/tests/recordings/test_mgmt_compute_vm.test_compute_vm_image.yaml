@@ -9,9 +9,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-compute/18.2.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-compute/19.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/publishers/MicrosoftWindowsServer/artifacttypes/vmimage/offers/WindowsServer/skus/2019-Datacenter/versions/2019.0.20190115?api-version=2020-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/publishers/MicrosoftWindowsServer/artifacttypes/vmimage/offers/WindowsServer/skus/2019-Datacenter/versions/2019.0.20190115?api-version=2020-12-01
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"hyperVGeneration\": \"V1\",\r\n \
@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Feb 2021 09:37:52 GMT
+      - Sat, 20 Feb 2021 07:15:51 GMT
       expires:
       - '-1'
       pragma:
@@ -47,6 +47,8 @@ interactions:
       - Accept-Encoding
       x-content-type-options:
       - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/GetVMImageFromLocation3Min;12999,Microsoft.Compute/GetVMImageFromLocation30Min;73997
     status:
       code: 200
       message: OK
@@ -60,9 +62,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-compute/18.2.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-compute/19.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/publishers/MicrosoftWindowsServer/artifacttypes/vmimage/offers/WindowsServer/skus/2019-Datacenter/versions?api-version=2020-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/publishers/MicrosoftWindowsServer/artifacttypes/vmimage/offers/WindowsServer/skus/2019-Datacenter/versions?api-version=2020-12-01
   response:
     body:
       string: "[\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"17763.1039.2002091844\"\
@@ -91,8 +93,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/MicrosoftWindowsServer/ArtifactTypes/VMImage/Offers/WindowsServer/Skus/2019-Datacenter/Versions/17763.1637.2012040632\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"17763.1697.2101090203\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/MicrosoftWindowsServer/ArtifactTypes/VMImage/Offers/WindowsServer/Skus/2019-Datacenter/Versions/17763.1697.2101090203\"\
-        \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"17763.973.2001110547\"\
-        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/MicrosoftWindowsServer/ArtifactTypes/VMImage/Offers/WindowsServer/Skus/2019-Datacenter/Versions/17763.973.2001110547\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"17763.1757.2102060435\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/MicrosoftWindowsServer/ArtifactTypes/VMImage/Offers/WindowsServer/Skus/2019-Datacenter/Versions/17763.1757.2102060435\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"2019.0.20181107\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/MicrosoftWindowsServer/ArtifactTypes/VMImage/Offers/WindowsServer/Skus/2019-Datacenter/Versions/2019.0.20181107\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"2019.0.20181122\"\
@@ -112,11 +114,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '6532'
+      - '6534'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Feb 2021 09:37:52 GMT
+      - Sat, 20 Feb 2021 07:15:51 GMT
       expires:
       - '-1'
       pragma:
@@ -132,6 +134,8 @@ interactions:
       - Accept-Encoding
       x-content-type-options:
       - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/ListVMImagesVersionsFromLocation3Min;15999,Microsoft.Compute/ListVMImagesVersionsFromLocation30Min;43997
     status:
       code: 200
       message: OK
@@ -145,9 +149,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-compute/18.2.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-compute/19.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/publishers/MicrosoftWindowsServer/artifacttypes/vmimage/offers?api-version=2020-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/publishers/MicrosoftWindowsServer/artifacttypes/vmimage/offers?api-version=2020-12-01
   response:
     body:
       string: "[\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"19h1gen2servertest\"\
@@ -203,7 +207,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Feb 2021 09:37:53 GMT
+      - Sat, 20 Feb 2021 07:15:52 GMT
       expires:
       - '-1'
       pragma:
@@ -219,6 +223,8 @@ interactions:
       - Accept-Encoding
       x-content-type-options:
       - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/ListVMImageOffersFromLocation3Min;5999,Microsoft.Compute/ListVMImageOffersFromLocation30Min;14999
     status:
       code: 200
       message: OK
@@ -232,9 +238,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-compute/18.2.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-compute/19.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/publishers?api-version=2020-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/publishers?api-version=2020-12-01
   response:
     body:
       string: "[\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"128technology\"\
@@ -255,6 +261,8 @@ interactions:
         \n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/1e\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"2021ai\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/2021ai\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"247commercelimited1611063941652\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/247commercelimited1611063941652\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"3cx-pbx\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/3cx-pbx\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"42crunch1580391915541\"\
@@ -771,6 +779,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/datacore\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"Datadog.Agent\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/Datadog.Agent\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"datadynamicsinc1581991927942\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/datadynamicsinc1581991927942\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"dataguiseinc\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/dataguiseinc\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"dataiku\"\
@@ -897,6 +907,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/edevtech\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"edgenetworks\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/edgenetworks\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"edispheresoftwareprivatelimited1606199736428\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/edispheresoftwareprivatelimited1606199736428\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"education4sight\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/education4sight\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"egnyte\"\
@@ -2481,6 +2493,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/pulse-secure\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"puppet\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/puppet\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"puppeteersoy1601024480557\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/puppeteersoy1601024480557\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"PuppetLabs\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/PuppetLabs\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"PuppetLabs.Test\"\
@@ -2673,6 +2687,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/sightapps\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"signal-sciences\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/signal-sciences\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"silk\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/silk\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"silver-peak-systems\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/silver-peak-systems\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"simmachinesinc\"\
@@ -2685,6 +2701,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/simpligov\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"sinefa\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/sinefa\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"sinequa\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/sinequa\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"sinequa1588262295885\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/sinequa1588262295885\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"sios_datakeeper\"\
@@ -2897,6 +2915,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/tempered-networks-inc\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"tenable\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/tenable\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"tensormakecorpdbaoneclickai1608247756082\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/tensormakecorpdbaoneclickai1608247756082\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"teradata\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/teradata\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"Teradici\"\
@@ -2999,6 +3019,8 @@ interactions:
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/tsa-public-service\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"tunnelbiz\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/tunnelbiz\"\
+        \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"turbonet\"\
+        ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/turbonet\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"turbonet1581982683964\"\
         ,\r\n    \"id\": \"/Subscriptions/00000000-0000-0000-0000-000000000000/Providers/Microsoft.Compute/Locations/eastus/Publishers/turbonet1581982683964\"\
         \r\n  },\r\n  {\r\n    \"location\": \"eastus\",\r\n    \"name\": \"twistlock\"\
@@ -3196,11 +3218,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '336044'
+      - '337834'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Feb 2021 09:37:55 GMT
+      - Sat, 20 Feb 2021 07:15:53 GMT
       expires:
       - '-1'
       pragma:
@@ -3229,9 +3251,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-compute/18.2.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-compute/19.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/publishers/MicrosoftWindowsServer/artifacttypes/vmimage/offers/WindowsServer/skus?api-version=2020-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/publishers/MicrosoftWindowsServer/artifacttypes/vmimage/offers/WindowsServer/skus?api-version=2020-12-01
   response:
     body:
       string: "[\r\n  {\r\n    \"properties\": {\r\n      \"automaticOSUpgradeProperties\"\
@@ -3495,7 +3517,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Feb 2021 09:37:55 GMT
+      - Sat, 20 Feb 2021 07:15:54 GMT
       expires:
       - '-1'
       pragma:
@@ -3511,6 +3533,8 @@ interactions:
       - Accept-Encoding
       x-content-type-options:
       - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/ListVMImageSkusFromLocation3Min;9999,Microsoft.Compute/ListVMImageSkusFromLocation30Min;29999
     status:
       code: 200
       message: OK

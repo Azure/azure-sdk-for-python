@@ -4,15 +4,18 @@
 # ------------------------------------
 import functools
 import time
-from azure.core.exceptions import ClientAuthenticationError
+
+from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
 from azure.identity._constants import EnvironmentVariables, DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
-from azure.identity._internal.aad_client import AadClient
+from azure.identity._internal import AadClient, AadClientCertificate
 from azure.core.credentials import AccessToken
+
 import pytest
 from msal import TokenCache
 from six.moves.urllib_parse import urlparse
 
 from helpers import build_aad_response, mock_response
+from test_certificate_credential import CERT_PATH
 
 try:
     from unittest.mock import Mock, patch
@@ -223,3 +226,31 @@ def test_should_refresh():
     client._last_refresh_time = now - DEFAULT_TOKEN_REFRESH_RETRY_DELAY + 1
     should_refresh = client.should_refresh(token)
     assert not should_refresh
+
+
+def test_retries_token_requests():
+    """The client should retry token requests"""
+
+    message = "can't connect"
+    transport = Mock(send=Mock(side_effect=ServiceRequestError(message)))
+    client = AadClient("tenant-id", "client-id", transport=transport)
+
+    with pytest.raises(ServiceRequestError, match=message):
+        client.obtain_token_by_authorization_code("", "", "")
+    assert transport.send.call_count > 1
+    transport.send.reset_mock()
+
+    with pytest.raises(ServiceRequestError, match=message):
+        client.obtain_token_by_client_certificate("", AadClientCertificate(open(CERT_PATH, "rb").read()))
+    assert transport.send.call_count > 1
+    transport.send.reset_mock()
+
+    with pytest.raises(ServiceRequestError, match=message):
+        client.obtain_token_by_client_secret("", "")
+    assert transport.send.call_count > 1
+    transport.send.reset_mock()
+
+    with pytest.raises(ServiceRequestError, match=message):
+        client.obtain_token_by_refresh_token("", "")
+    assert transport.send.call_count > 1
+    transport.send.reset_mock()

@@ -20,7 +20,6 @@ from preparers import GlobalClientPreparer as _GlobalClientPreparer
 
 GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
-@pytest.mark.skip
 class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
@@ -52,13 +51,6 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             async with client:
                 poller = await client.begin_recognize_business_cards_from_url(self.business_card_url_jpg)
-
-    @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_authentication_successful_key(self, client):
-        async with client:
-            poller = await client.begin_recognize_business_cards_from_url(self.business_card_url_jpg)
-            result = await poller.result()
 
     @FormRecognizerPreparer()
     async def test_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
@@ -193,49 +185,6 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    async def test_business_card_jpg(self, client):
-        async with client:
-            poller = await client.begin_recognize_business_cards_from_url(self.business_card_url_jpg)
-
-            result = await poller.result()
-        self.assertEqual(len(result), 1)
-        business_card = result[0]
-        # check dict values
-        self.assertEqual(len(business_card.fields.get("ContactNames").value), 1)
-        self.assertEqual(business_card.fields.get("ContactNames").value[0].value_data.page_number, 1)
-        self.assertEqual(business_card.fields.get("ContactNames").value[0].value['FirstName'].value, 'Avery')
-        self.assertEqual(business_card.fields.get("ContactNames").value[0].value['LastName'].value, 'Smith')
-
-        self.assertEqual(len(business_card.fields.get("JobTitles").value), 1)
-        self.assertEqual(business_card.fields.get("JobTitles").value[0].value, "Senior Researcher")
-
-        self.assertEqual(len(business_card.fields.get("Departments").value), 1)
-        self.assertEqual(business_card.fields.get("Departments").value[0].value, "Cloud & Al Department")
-
-        self.assertEqual(len(business_card.fields.get("Emails").value), 1)
-        self.assertEqual(business_card.fields.get("Emails").value[0].value, "avery.smith@contoso.com")
-
-        self.assertEqual(len(business_card.fields.get("Websites").value), 1)
-        self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com/")
-
-        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
-        # self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
-        # self.assertEqual(business_card.fields.get("MobilePhones").value[0].value, "https://www.contoso.com/")
-
-        # self.assertEqual(len(business_card.fields.get("OtherPhones").value), 1)
-        # self.assertEqual(business_card.fields.get("OtherPhones").value[0].value, "https://www.contoso.com/")
-
-        # self.assertEqual(len(business_card.fields.get("Faxes").value), 1)
-        # self.assertEqual(business_card.fields.get("Faxes").value[0].value, "https://www.contoso.com/")
-
-        self.assertEqual(len(business_card.fields.get("Addresses").value), 1)
-        self.assertEqual(business_card.fields.get("Addresses").value[0].value, "2 Kingdom Street Paddington, London, W2 6BD")
-
-        self.assertEqual(len(business_card.fields.get("CompanyNames").value), 1)
-        self.assertEqual(business_card.fields.get("CompanyNames").value[0].value, "Contoso")
-
-    @FormRecognizerPreparer()
-    @GlobalClientPreparer()
     async def test_business_card_png(self, client):
         async with client:
             poller = await client.begin_recognize_business_cards_from_url(self.business_card_url_png)
@@ -355,6 +304,40 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
             for f in field.value:
                 self.assertFieldElementsHasValues(f.value_data.field_elements, business_card.page_range.first_page_number)
 
+        # check dict values
+        self.assertEqual(len(business_card.fields.get("ContactNames").value), 1)
+        self.assertEqual(business_card.fields.get("ContactNames").value[0].value_data.page_number, 1)
+        self.assertEqual(business_card.fields.get("ContactNames").value[0].value['FirstName'].value, 'Avery')
+        self.assertEqual(business_card.fields.get("ContactNames").value[0].value['LastName'].value, 'Smith')
+
+        self.assertEqual(len(business_card.fields.get("JobTitles").value), 1)
+        self.assertEqual(business_card.fields.get("JobTitles").value[0].value, "Senior Researcher")
+
+        self.assertEqual(len(business_card.fields.get("Departments").value), 1)
+        self.assertEqual(business_card.fields.get("Departments").value[0].value, "Cloud & Al Department")
+
+        self.assertEqual(len(business_card.fields.get("Emails").value), 1)
+        self.assertEqual(business_card.fields.get("Emails").value[0].value, "avery.smith@contoso.com")
+
+        self.assertEqual(len(business_card.fields.get("Websites").value), 1)
+        self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com/")
+
+        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
+        # self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
+        # self.assertEqual(business_card.fields.get("MobilePhones").value[0].value, "https://www.contoso.com/")
+
+        # self.assertEqual(len(business_card.fields.get("OtherPhones").value), 1)
+        # self.assertEqual(business_card.fields.get("OtherPhones").value[0].value, "https://www.contoso.com/")
+
+        # self.assertEqual(len(business_card.fields.get("Faxes").value), 1)
+        # self.assertEqual(business_card.fields.get("Faxes").value[0].value, "https://www.contoso.com/")
+
+        self.assertEqual(len(business_card.fields.get("Addresses").value), 1)
+        self.assertEqual(business_card.fields.get("Addresses").value[0].value, "2 Kingdom Street Paddington, London, W2 6BD")
+
+        self.assertEqual(len(business_card.fields.get("CompanyNames").value), 1)
+        self.assertEqual(business_card.fields.get("CompanyNames").value[0].value, "Contoso")
+
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     @pytest.mark.live_test_only
@@ -381,7 +364,8 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
         async with client:
             poller = await client.begin_recognize_business_cards_from_url(self.business_card_url_jpg, locale="en-IN")
             assert 'en-IN' == poller._polling_method._initial_response.http_response.request.query['locale']
-            await poller.wait()
+            result = await poller.result()
+            assert result
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -390,3 +374,12 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
             async with client:
                 await client.begin_recognize_business_cards_from_url(self.business_card_url_jpg, locale="not a locale")
         assert "locale" in e.value.error.message
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    async def test_pages_kwarg_specified(self, client):
+        async with client:
+            poller = await client.begin_recognize_business_cards_from_url(self.business_card_url_jpg, pages=["1"])
+            assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+            result = await poller.result()
+            assert result

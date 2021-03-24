@@ -1,0 +1,231 @@
+interactions:
+- request:
+    body: 'b''{"source": "blob_sas_url"}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '216'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyze?includeTextDetails=true
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - 339cb21b-3fae-41d8-b946-7de05d244a0e
+      content-length:
+      - '0'
+      date:
+      - Fri, 05 Mar 2021 17:39:50 GMT
+      operation-location:
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyzeResults/339cb21b-3fae-41d8-b946-7de05d244a0e
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '394'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyzeResults/339cb21b-3fae-41d8-b946-7de05d244a0e
+  response:
+    body:
+      string: '{"status": "succeeded", "createdDateTime": "2021-03-05T17:39:51Z",
+        "lastUpdatedDateTime": "2021-03-05T17:39:54Z", "analyzeResult": {"version":
+        "2.1.0", "readResults": [{"page": 1, "angle": -0.4021, "width": 506, "height":
+        319, "unit": "pixel", "lines": [{"text": "Pennsylvania", "boundingBox": [23,
+        20, 222, 23, 222, 69, 23, 67], "words": [{"text": "Pennsylvania", "boundingBox":
+        [26, 20, 220, 26, 221, 64, 23, 64], "confidence": 0.254}], "appearance": {"style":
+        {"name": "other", "confidence": 0.878}}}, {"text": "DRIVER''S LICENSE", "boundingBox":
+        [256, 16, 454, 16, 454, 33, 256, 34], "words": [{"text": "DRIVER''S", "boundingBox":
+        [257, 17, 351, 16, 352, 34, 257, 35], "confidence": 0.87}, {"text": "LICENSE",
+        "boundingBox": [360, 16, 448, 16, 447, 34, 360, 34], "confidence": 0.996}],
+        "appearance": {"style": {"name": "other", "confidence": 0.878}}}, {"text":
+        "USA", "boundingBox": [202, 59, 227, 58, 227, 69, 202, 70], "words": [{"text":
+        "USA", "boundingBox": [202, 59, 224, 58, 224, 69, 202, 70], "confidence":
+        0.994}], "appearance": {"style": {"name": "other", "confidence": 0.878}}},
+        {"text": "4d DLN: 99 999 999", "boundingBox": [166, 75, 313, 73, 314, 90,
+        167, 92], "words": [{"text": "4d", "boundingBox": [168, 78, 180, 77, 181,
+        91, 169, 91], "confidence": 0.996}, {"text": "DLN:", "boundingBox": [183,
+        77, 213, 76, 213, 91, 183, 91], "confidence": 0.959}, {"text": "99", "boundingBox":
+        [216, 75, 235, 75, 235, 91, 216, 91], "confidence": 0.994}, {"text": "999",
+        "boundingBox": [242, 74, 271, 74, 271, 90, 242, 91], "confidence": 0.994},
+        {"text": "999", "boundingBox": [279, 74, 307, 74, 307, 90, 279, 90], "confidence":
+        0.999}], "appearance": {"style": {"name": "other", "confidence": 0.878}}},
+        {"text": "3 DOB: 08/04/1975", "boundingBox": [170, 92, 312, 91, 313, 108,
+        170, 109], "words": [{"text": "3", "boundingBox": [170, 95, 178, 95, 179,
+        109, 170, 109], "confidence": 0.994}, {"text": "DOB:", "boundingBox": [181,
+        95, 212, 93, 213, 108, 182, 109], "confidence": 0.993}, {"text": "08/04/1975",
+        "boundingBox": [215, 93, 309, 92, 309, 109, 215, 108], "confidence": 0.994}],
+        "appearance": {"style": {"name": "other", "confidence": 0.878}}}, {"text":
+        "DUPS: 00", "boundingBox": [358, 76, 416, 74, 417, 89, 358, 91], "words":
+        [{"text": "DUPS:", "boundingBox": [358, 77, 390, 76, 390, 91, 359, 91], "confidence":
+        0.991}, {"text": "00", "boundingBox": [392, 76, 412, 74, 412, 90, 393, 91],
+        "confidence": 0.994}], "appearance": {"style": {"name": "other", "confidence":
+        0.878}}}, {"text": "123", "boundingBox": [21, 94, 21, 79, 30, 79, 31, 94],
+        "words": [{"text": "123", "boundingBox": [22, 94, 21, 79, 31, 79, 31, 93],
+        "confidence": 0.952}], "appearance": {"style": {"name": "other", "confidence":
+        0.878}}}, {"text": "4b EXP: 08/05/2023", "boundingBox": [168, 112, 313, 111,
+        313, 128, 168, 129], "words": [{"text": "4b", "boundingBox": [168, 116, 179,
+        115, 179, 128, 169, 128], "confidence": 0.967}, {"text": "EXP:", "boundingBox":
+        [181, 115, 210, 113, 210, 129, 182, 128], "confidence": 0.979}, {"text": "08/05/2023",
+        "boundingBox": [215, 113, 307, 112, 307, 129, 215, 129], "confidence": 0.994}],
+        "appearance": {"style": {"name": "other", "confidence": 0.878}}}, {"text":
+        "da ISS: 03/01/2019", "boundingBox": [340, 112, 479, 111, 479, 128, 340, 130],
+        "words": [{"text": "da", "boundingBox": [343, 114, 354, 114, 355, 129, 344,
+        130], "confidence": 0.18}, {"text": "ISS:", "boundingBox": [357, 114, 378,
+        113, 379, 129, 358, 129], "confidence": 0.527}, {"text": "03/01/2019", "boundingBox":
+        [381, 113, 476, 112, 475, 129, 382, 129], "confidence": 0.994}], "appearance":
+        {"style": {"name": "other", "confidence": 0.878}}}, {"text": "1 SAMPLE", "boundingBox":
+        [168, 134, 242, 133, 242, 146, 168, 147], "words": [{"text": "1", "boundingBox":
+        [169, 135, 176, 135, 176, 147, 169, 147], "confidence": 0.934}, {"text": "SAMPLE",
+        "boundingBox": [178, 135, 237, 134, 236, 147, 179, 147], "confidence": 0.996}],
+        "appearance": {"style": {"name": "other", "confidence": 0.878}}}, {"text":
+        "2 JANICE ANN", "boundingBox": [169, 147, 271, 146, 271, 159, 169, 160], "words":
+        [{"text": "2", "boundingBox": [169, 148, 174, 148, 175, 161, 170, 161], "confidence":
+        0.994}, {"text": "JANICE", "boundingBox": [177, 148, 229, 147, 230, 160, 177,
+        161], "confidence": 0.996}, {"text": "ANN", "boundingBox": [235, 147, 264,
+        147, 264, 160, 235, 160], "confidence": 0.997}], "appearance": {"style": {"name":
+        "other", "confidence": 0.878}}}, {"text": "8 123 MAIN STREET", "boundingBox":
+        [168, 160, 289, 161, 289, 173, 168, 173], "words": [{"text": "8", "boundingBox":
+        [169, 161, 176, 161, 175, 172, 169, 172], "confidence": 0.996}, {"text": "123",
+        "boundingBox": [179, 161, 199, 161, 199, 173, 179, 172], "confidence": 0.999},
+        {"text": "MAIN", "boundingBox": [202, 161, 232, 161, 232, 174, 202, 173],
+        "confidence": 0.994}, {"text": "STREET", "boundingBox": [238, 161, 287, 161,
+        287, 173, 238, 174], "confidence": 0.996}], "appearance": {"style": {"name":
+        "other", "confidence": 0.878}}}, {"text": "APT. 1", "boundingBox": [175, 172,
+        222, 171, 222, 184, 175, 185], "words": [{"text": "APT.", "boundingBox": [179,
+        173, 208, 172, 208, 185, 178, 185], "confidence": 0.985}, {"text": "1", "boundingBox":
+        [210, 172, 218, 172, 217, 184, 210, 184], "confidence": 0.996}], "appearance":
+        {"style": {"name": "other", "confidence": 0.878}}}, {"text": "HARRISBURG,
+        PA 17101-0000", "boundingBox": [178, 181, 359, 181, 359, 195, 178, 195], "words":
+        [{"text": "HARRISBURG,", "boundingBox": [179, 182, 267, 181, 267, 195, 179,
+        195], "confidence": 0.989}, {"text": "PA", "boundingBox": [269, 181, 286,
+        181, 286, 195, 269, 195], "confidence": 0.997}, {"text": "17101-0000", "boundingBox":
+        [290, 181, 357, 182, 357, 195, 290, 195], "confidence": 0.994}], "appearance":
+        {"style": {"name": "other", "confidence": 0.878}}}, {"text": "15 SEX: F 18
+        EYES: BRO", "boundingBox": [170, 198, 308, 198, 308, 211, 170, 211], "words":
+        [{"text": "15", "boundingBox": [170, 199, 180, 199, 180, 211, 170, 211], "confidence":
+        0.994}, {"text": "SEX:", "boundingBox": [182, 199, 208, 199, 208, 211, 182,
+        211], "confidence": 0.988}, {"text": "F", "boundingBox": [210, 199, 216, 199,
+        217, 211, 210, 211], "confidence": 0.996}, {"text": "18", "boundingBox": [230,
+        199, 241, 199, 241, 211, 230, 211], "confidence": 0.996}, {"text": "EYES:",
+        "boundingBox": [243, 199, 274, 198, 275, 211, 243, 211], "confidence": 0.995},
+        {"text": "BRO", "boundingBox": [277, 198, 302, 198, 303, 211, 277, 211], "confidence":
+        0.997}], "appearance": {"style": {"name": "other", "confidence": 0.878}}},
+        {"text": "16 HGT: 5''-06\"", "boundingBox": [170, 210, 247, 209, 247, 221,
+        170, 222], "words": [{"text": "16", "boundingBox": [171, 211, 180, 211, 180,
+        222, 171, 222], "confidence": 0.962}, {"text": "HGT:", "boundingBox": [182,
+        211, 210, 211, 210, 222, 182, 222], "confidence": 0.987}, {"text": "5''-06\"",
+        "boundingBox": [212, 211, 247, 209, 247, 222, 212, 222], "confidence": 0.945}],
+        "appearance": {"style": {"name": "other", "confidence": 0.878}}}, {"text":
+        "IBERTY", "boundingBox": [357, 205, 393, 210, 391, 223, 355, 217], "words":
+        [{"text": "IBERTY", "boundingBox": [357, 206, 393, 211, 391, 223, 356, 218],
+        "confidence": 0.21}], "appearance": {"style": {"name": "other", "confidence":
+        0.878}}}, {"text": "9 CLASS: C", "boundingBox": [169, 226, 242, 225, 243,
+        237, 169, 238], "words": [{"text": "9", "boundingBox": [170, 227, 177, 227,
+        177, 238, 170, 238], "confidence": 0.994}, {"text": "CLASS:", "boundingBox":
+        [182, 227, 223, 226, 223, 238, 182, 237], "confidence": 0.995}, {"text": "C",
+        "boundingBox": [225, 226, 231, 226, 231, 238, 225, 238], "confidence": 0.996}],
+        "appearance": {"style": {"name": "other", "confidence": 0.878}}}, {"text":
+        "9a END: NONE", "boundingBox": [168, 238, 251, 237, 251, 248, 168, 249], "words":
+        [{"text": "9a", "boundingBox": [169, 238, 180, 238, 180, 249, 169, 249], "confidence":
+        0.994}, {"text": "END:", "boundingBox": [183, 238, 210, 238, 209, 249, 182,
+        249], "confidence": 0.987}, {"text": "NONE", "boundingBox": [212, 238, 246,
+        237, 246, 249, 211, 249], "confidence": 0.994}], "appearance": {"style": {"name":
+        "other", "confidence": 0.878}}}, {"text": "12 RESTR: NONE", "boundingBox":
+        [169, 248, 264, 247, 264, 260, 169, 261], "words": [{"text": "12", "boundingBox":
+        [170, 249, 180, 249, 180, 261, 170, 261], "confidence": 0.994}, {"text": "RESTR:",
+        "boundingBox": [182, 249, 221, 249, 221, 261, 182, 261], "confidence": 0.995},
+        {"text": "NONE", "boundingBox": [223, 249, 260, 248, 260, 260, 224, 261],
+        "confidence": 0.994}], "appearance": {"style": {"name": "other", "confidence":
+        0.878}}}, {"text": "SAMPLE", "boundingBox": [27, 255, 26, 185, 41, 185, 42,
+        255], "words": [{"text": "SAMPLE", "boundingBox": [28, 254, 27, 191, 42, 192,
+        42, 254], "confidence": 0.996}], "appearance": {"style": {"name": "other",
+        "confidence": 0.878}}}, {"text": "damice famale BE 5 DD:1234567890123", "boundingBox":
+        [23, 263, 324, 265, 324, 293, 23, 292], "words": [{"text": "damice", "boundingBox":
+        [23, 265, 97, 264, 98, 292, 25, 293], "confidence": 0.742}, {"text": "famale",
+        "boundingBox": [103, 264, 184, 266, 184, 289, 104, 291], "confidence": 0.184},
+        {"text": "BE", "boundingBox": [189, 266, 213, 267, 213, 288, 190, 289], "confidence":
+        0.178}, {"text": "5", "boundingBox": [219, 268, 222, 268, 222, 288, 219, 288],
+        "confidence": 0.93}, {"text": "DD:1234567890123", "boundingBox": [228, 268,
+        325, 278, 324, 284, 228, 288], "confidence": 0.798}], "appearance": {"style":
+        {"name": "other", "confidence": 0.821}}}, {"text": "DL", "boundingBox": [347,
+        248, 387, 249, 385, 273, 346, 271], "words": [{"text": "DL", "boundingBox":
+        [346, 248, 379, 249, 378, 273, 346, 271], "confidence": 0.994}], "appearance":
+        {"style": {"name": "other", "confidence": 0.878}}}, {"text": "456789012345",
+        "boundingBox": [246, 283, 320, 283, 320, 293, 246, 294], "words": [{"text":
+        "456789012345", "boundingBox": [247, 285, 316, 283, 316, 294, 247, 293], "confidence":
+        0.968}], "appearance": {"style": {"name": "other", "confidence": 0.878}}},
+        {"text": "ORGAN DONOR", "boundingBox": [371, 285, 472, 285, 472, 299, 371,
+        299], "words": [{"text": "ORGAN", "boundingBox": [372, 287, 415, 287, 415,
+        299, 372, 299], "confidence": 0.994}, {"text": "DONOR", "boundingBox": [420,
+        287, 465, 286, 466, 299, 420, 299], "confidence": 0.996}], "appearance": {"style":
+        {"name": "other", "confidence": 0.878}}}]}], "documentResults": [{"docType":
+        "prebuilt:idDocument:driverLicense", "docTypeConfidence": 0.995, "pageRange":
+        [1, 1], "fields": {"Address": {"type": "string", "valueString": "123 MAIN
+        STREET APT. 1 HARRISBURG, PA 17101-0000", "text": "123 MAIN STREET APT. 1
+        HARRISBURG, PA 17101-0000", "boundingBox": [178, 161, 357, 161, 357, 195,
+        178, 195], "page": 1, "confidence": 0.906, "elements": ["#/readResults/0/lines/11/words/1",
+        "#/readResults/0/lines/11/words/2", "#/readResults/0/lines/11/words/3", "#/readResults/0/lines/12/words/0",
+        "#/readResults/0/lines/12/words/1", "#/readResults/0/lines/13/words/0", "#/readResults/0/lines/13/words/1",
+        "#/readResults/0/lines/13/words/2"]}, "Country": {"type": "country", "valueCountry":
+        "USA", "confidence": 0.99}, "DateOfBirth": {"type": "date", "valueDate": "1975-08-04",
+        "text": "08/04/1975", "boundingBox": [215, 93, 309, 92, 309, 109, 215, 108],
+        "page": 1, "confidence": 0.995, "elements": ["#/readResults/0/lines/4/words/2"]},
+        "DateOfExpiration": {"type": "date", "valueDate": "2023-08-05", "text": "08/05/2023",
+        "boundingBox": [215, 113, 307, 112, 307, 129, 215, 129], "page": 1, "confidence":
+        0.99, "elements": ["#/readResults/0/lines/7/words/2"]}, "DocumentNumber":
+        {"type": "string", "valueString": "99 999 999", "text": "99 999 999", "boundingBox":
+        [216, 74, 307, 74, 307, 91, 216, 91], "page": 1, "confidence": 0.991, "elements":
+        ["#/readResults/0/lines/3/words/2", "#/readResults/0/lines/3/words/3", "#/readResults/0/lines/3/words/4"]},
+        "FirstName": {"type": "string", "valueString": "JANICE ANN", "text": "JANICE
+        ANN", "boundingBox": [177, 147, 264, 147, 264, 161, 177, 161], "page": 1,
+        "confidence": 0.987, "elements": ["#/readResults/0/lines/10/words/1", "#/readResults/0/lines/10/words/2"]},
+        "LastName": {"type": "string", "valueString": "SAMPLE", "text": "SAMPLE",
+        "boundingBox": [178, 135, 237, 134, 236, 147, 179, 147], "page": 1, "confidence":
+        0.986, "elements": ["#/readResults/0/lines/9/words/1"]}, "Region": {"type":
+        "string", "valueString": "Pennsylvania", "confidence": 0.99}, "Sex": {"type":
+        "gender", "valueGender": "F", "text": "F", "boundingBox": [210, 199, 216,
+        199, 217, 211, 210, 211], "page": 1, "confidence": 0.99, "elements": ["#/readResults/0/lines/14/words/2"]}}}]}}'
+    headers:
+      apim-request-id:
+      - 8aee81d6-cd6a-4dec-99ac-3c65300bee68
+      content-length:
+      - '11076'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 05 Mar 2021 17:39:55 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '18'
+    status:
+      code: 200
+      message: OK
+version: 1

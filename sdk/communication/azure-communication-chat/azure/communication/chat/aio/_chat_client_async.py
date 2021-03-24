@@ -16,7 +16,7 @@ from uuid import uuid4
 import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.exceptions import HttpResponseError
 from azure.core.async_paging import AsyncItemPaged
 
@@ -25,13 +25,18 @@ from .._shared.user_credential_async import CommunicationTokenCredential
 from .._generated.aio import AzureCommunicationChatService
 from .._generated.models import (
     CreateChatThreadRequest,
-    ChatThreadInfo
+    ChatThreadItem
 )
 from .._models import (
-    ChatThread,
-    ChatThreadParticipant
+    ChatThreadProperties,
+    ChatThreadParticipant,
+    CreateChatThreadResult
 )
-from .._utils import _to_utc_datetime, return_response  # pylint: disable=unused-import
+from .._utils import ( # pylint: disable=unused-import
+    _to_utc_datetime,
+    return_response,
+    CommunicationErrorResponseConverter
+)
 from .._version import SDK_MONIKER
 
 
@@ -81,7 +86,7 @@ class ChatClient(object):
 
         self._client = AzureCommunicationChatService(
             self._endpoint,
-            authentication_policy=BearerTokenCredentialPolicy(self._credential),
+            authentication_policy=AsyncBearerTokenCredentialPolicy(self._credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs)
 
@@ -123,28 +128,26 @@ class ChatClient(object):
     @distributed_trace_async
     async def create_chat_thread(
         self, topic: str,
-        thread_participants: List[ChatThreadParticipant],
-        repeatability_request_id: Optional[str] = None,
         **kwargs
-    ) -> ChatThreadClient:
+    ) -> CreateChatThreadResult:
 
-        # type: (...) -> ChatThreadClient
+        # type: (...) -> CreateChatThreadResult
 
         """Creates a chat thread.
 
         :param topic: Required. The thread topic.
         :type topic: str
-        :param thread_participants: Required. Participants to be added to the thread.
-        :type thread_participants: list[~azure.communication.chat.ChatThreadParticipant]
-        :param repeatability_request_id: If specified, the client directs that the request is
+        :keyword thread_participants: Optional. Participants to be added to the thread.
+        :paramtype thread_participants: List[~azure.communication.chat.ChatThreadParticipant]
+        :keyword idempotency_token: Optional. If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
          Repeatability-Request-ID and get back an appropriate response without the server executing the
          request multiple times. The value of the Repeatability-Request-ID is an opaque string
          representing a client-generated, globally unique for all time, identifier for the request. If not
          specified, a new unique id would be generated.
-        :type repeatability_request_id: str
-        :return: ChatThreadClient
-        :rtype: ~azure.communication.chat.aio.ChatThreadClient
+        :paramtype idempotency_token: str
+        :return: CreateChatThreadResult
+        :rtype: ~azure.communication.chat.CreateChatThreadResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -158,78 +161,54 @@ class ChatClient(object):
         """
         if not topic:
             raise ValueError("topic cannot be None.")
-        if not thread_participants:
-            raise ValueError("List of ThreadParticipant cannot be None.")
-        if repeatability_request_id is None:
-            repeatability_request_id = str(uuid4())
 
-        participants = [m._to_generated() for m in thread_participants]  # pylint:disable=protected-access
+        idempotency_token = kwargs.pop('idempotency_token', None)
+        if idempotency_token is None:
+            idempotency_token = str(uuid4())
+
+        thread_participants = kwargs.pop('thread_participants', None)
+        participants = []
+        if thread_participants is not None:
+            participants = [m._to_generated() for m in thread_participants]  # pylint:disable=protected-access
+
         create_thread_request = \
             CreateChatThreadRequest(topic=topic, participants=participants)
 
         create_chat_thread_result = await self._client.chat.create_chat_thread(
             create_chat_thread_request=create_thread_request,
-            repeatability_request_id=repeatability_request_id,
+            repeatability_request_id=idempotency_token,
             **kwargs)
-        if hasattr(create_chat_thread_result, 'errors') \
-                and create_chat_thread_result.errors is not None:
-            participants = \
-                create_chat_thread_result.errors.invalid_participants
-            errors = []
-            for participant in participants:
-                errors.append('participant ' + participant.target +
-                ' failed to join thread due to: ' + participant.message)
-            raise RuntimeError(errors)
-        thread_id = create_chat_thread_result.chat_thread.id
-        return ChatThreadClient(
-            endpoint=self._endpoint,
-            credential=self._credential,
-            thread_id=thread_id,
-            **kwargs
+
+        errors = None
+        if hasattr(create_chat_thread_result, 'errors') and \
+                create_chat_thread_result.errors is not None:
+            errors = CommunicationErrorResponseConverter._convert(  # pylint:disable=protected-access
+                participants=[thread_participants],
+                chat_errors=create_chat_thread_result.invalid_participants
+            )
+
+        chat_thread = ChatThreadProperties._from_generated( # pylint:disable=protected-access
+            create_chat_thread_result.chat_thread)
+
+        create_chat_thread_result = CreateChatThreadResult(
+            chat_thread=chat_thread,
+            errors=errors
         )
 
-    @distributed_trace_async
-    async def get_chat_thread(
-        self, thread_id: str,
-        **kwargs
-    ) -> ChatThread: # type: (...) -> ChatThread
+        return create_chat_thread_result
 
-        """Gets a chat thread.
-
-        :param thread_id: Required. Thread id to get.
-        :type thread_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ChatThread, or the result of cls(response)
-        :rtype: ~azure.communication.chat.ChatThread
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/chat_client_sample_async.py
-                :start-after: [START get_thread]
-                :end-before: [END get_thread]
-                :language: python
-                :dedent: 12
-                :caption: Getting a chat thread by thread id.
-        """
-        if not thread_id:
-            raise ValueError("thread_id cannot be None.")
-
-        chat_thread = await self._client.chat.get_chat_thread(thread_id, **kwargs)
-        return ChatThread._from_generated(chat_thread)  # pylint:disable=protected-access
 
     @distributed_trace
     def list_chat_threads(
         self,
         **kwargs: Any
-    ): # type: (...) -> AsyncItemPaged[ChatThreadInfo]
+    ): # type: (...) -> AsyncItemPaged[ChatThreadItem]
         """Gets the list of chat threads of a user.
 
         :keyword int results_per_page: The maximum number of chat threads to be returned per page.
         :keyword ~datetime.datetime start_time: The earliest point in time to get chat threads up to.
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of ChatThreadInfo
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.chat.ChatThreadInfo]
+        :return: An iterator like instance of ChatThreadItem
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.chat.ChatThreadItem]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -259,8 +238,7 @@ class ChatClient(object):
 
         :param thread_id: Required. Thread id to delete.
         :type thread_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 

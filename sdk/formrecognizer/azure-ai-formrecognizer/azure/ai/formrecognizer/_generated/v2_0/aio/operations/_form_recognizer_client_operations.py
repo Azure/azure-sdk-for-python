@@ -15,7 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -24,7 +24,7 @@ class FormRecognizerClientOperationsMixin:
 
     async def train_custom_model_async(
         self,
-        train_request: "models.TrainRequest",
+        train_request: "_models.TrainRequest",
         **kwargs
     ) -> None:
         """Train Custom Model.
@@ -40,7 +40,7 @@ class FormRecognizerClientOperationsMixin:
         Other type of content is ignored.
 
         :param train_request: Training request parameters.
-        :type train_request: ~azure.ai.formrecognizer.models.TrainRequest
+        :type train_request: ~azure.ai.formrecognizer.v2_0.models.TrainRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -78,7 +78,7 @@ class FormRecognizerClientOperationsMixin:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -94,7 +94,7 @@ class FormRecognizerClientOperationsMixin:
         model_id: str,
         include_keys: Optional[bool] = False,
         **kwargs
-    ) -> "models.Model":
+    ) -> "_models.Model":
         """Get Custom Model.
 
         Get detailed information about a custom model.
@@ -105,10 +105,10 @@ class FormRecognizerClientOperationsMixin:
         :type include_keys: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Model, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.models.Model
+        :rtype: ~azure.ai.formrecognizer.v2_0.models.Model
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Model"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Model"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -138,7 +138,7 @@ class FormRecognizerClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('Model', pipeline_response)
@@ -194,7 +194,7 @@ class FormRecognizerClientOperationsMixin:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -206,7 +206,7 @@ class FormRecognizerClientOperationsMixin:
         self,
         model_id: str,
         include_text_details: Optional[bool] = False,
-        file_stream: Optional[Union[IO, "models.SourcePath"]] = None,
+        file_stream: Optional[Union[IO, "_models.SourcePath"]] = None,
         **kwargs
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -255,7 +255,7 @@ class FormRecognizerClientOperationsMixin:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -270,7 +270,7 @@ class FormRecognizerClientOperationsMixin:
         self,
         model_id: str,
         include_text_details: Optional[bool] = False,
-        file_stream: Optional[Union[IO, "models.SourcePath"]] = None,
+        file_stream: Optional[Union[IO, "_models.SourcePath"]] = None,
         **kwargs
     ) -> AsyncLROPoller[None]:
         """Analyze Form.
@@ -285,13 +285,13 @@ class FormRecognizerClientOperationsMixin:
         :param include_text_details: Include text lines and element references in the result.
         :type include_text_details: bool
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
+        :type file_stream: IO or ~azure.ai.formrecognizer.v2_0.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -345,7 +345,7 @@ class FormRecognizerClientOperationsMixin:
         model_id: str,
         result_id: str,
         **kwargs
-    ) -> "models.AnalyzeOperationResult":
+    ) -> "_models.AnalyzeOperationResult":
         """Get Analyze Form Result.
 
         Obtain current status and the result of the analyze form operation.
@@ -356,10 +356,10 @@ class FormRecognizerClientOperationsMixin:
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.models.AnalyzeOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_0.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AnalyzeOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeOperationResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -388,7 +388,7 @@ class FormRecognizerClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('AnalyzeOperationResult', pipeline_response)
@@ -402,7 +402,7 @@ class FormRecognizerClientOperationsMixin:
     async def _copy_custom_model_initial(
         self,
         model_id: str,
-        copy_request: "models.CopyRequest",
+        copy_request: "_models.CopyRequest",
         **kwargs
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -438,7 +438,7 @@ class FormRecognizerClientOperationsMixin:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -452,7 +452,7 @@ class FormRecognizerClientOperationsMixin:
     async def begin_copy_custom_model(
         self,
         model_id: str,
-        copy_request: "models.CopyRequest",
+        copy_request: "_models.CopyRequest",
         **kwargs
     ) -> AsyncLROPoller[None]:
         """Copy Custom Model.
@@ -463,11 +463,11 @@ class FormRecognizerClientOperationsMixin:
         :param model_id: Model identifier.
         :type model_id: str
         :param copy_request: Copy request parameters.
-        :type copy_request: ~azure.ai.formrecognizer.models.CopyRequest
+        :type copy_request: ~azure.ai.formrecognizer.v2_0.models.CopyRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -520,7 +520,7 @@ class FormRecognizerClientOperationsMixin:
         model_id: str,
         result_id: str,
         **kwargs
-    ) -> "models.CopyOperationResult":
+    ) -> "_models.CopyOperationResult":
         """Get Custom Model Copy Result.
 
         Obtain current status and the result of a custom model copy operation.
@@ -531,10 +531,10 @@ class FormRecognizerClientOperationsMixin:
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CopyOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.models.CopyOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_0.models.CopyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CopyOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CopyOperationResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -563,7 +563,7 @@ class FormRecognizerClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CopyOperationResult', pipeline_response)
@@ -577,17 +577,17 @@ class FormRecognizerClientOperationsMixin:
     async def generate_model_copy_authorization(
         self,
         **kwargs
-    ) -> "models.CopyAuthorizationResult":
+    ) -> "_models.CopyAuthorizationResult":
         """Generate Copy Authorization.
 
         Generate authorization to copy a model into the target Form Recognizer resource.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CopyAuthorizationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.models.CopyAuthorizationResult
+        :rtype: ~azure.ai.formrecognizer.v2_0.models.CopyAuthorizationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CopyAuthorizationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CopyAuthorizationResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -614,7 +614,7 @@ class FormRecognizerClientOperationsMixin:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -630,7 +630,7 @@ class FormRecognizerClientOperationsMixin:
     async def _analyze_receipt_async_initial(
         self,
         include_text_details: Optional[bool] = False,
-        file_stream: Optional[Union[IO, "models.SourcePath"]] = None,
+        file_stream: Optional[Union[IO, "_models.SourcePath"]] = None,
         **kwargs
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -678,7 +678,7 @@ class FormRecognizerClientOperationsMixin:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -692,7 +692,7 @@ class FormRecognizerClientOperationsMixin:
     async def begin_analyze_receipt_async(
         self,
         include_text_details: Optional[bool] = False,
-        file_stream: Optional[Union[IO, "models.SourcePath"]] = None,
+        file_stream: Optional[Union[IO, "_models.SourcePath"]] = None,
         **kwargs
     ) -> AsyncLROPoller[None]:
         """Analyze Receipt.
@@ -705,13 +705,13 @@ class FormRecognizerClientOperationsMixin:
         :param include_text_details: Include text lines and element references in the result.
         :type include_text_details: bool
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
+        :type file_stream: IO or ~azure.ai.formrecognizer.v2_0.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -762,7 +762,7 @@ class FormRecognizerClientOperationsMixin:
         self,
         result_id: str,
         **kwargs
-    ) -> "models.AnalyzeOperationResult":
+    ) -> "_models.AnalyzeOperationResult":
         """Get Analyze Receipt Result.
 
         Track the progress and obtain the result of the analyze receipt operation.
@@ -771,10 +771,10 @@ class FormRecognizerClientOperationsMixin:
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.models.AnalyzeOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_0.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AnalyzeOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeOperationResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -802,7 +802,7 @@ class FormRecognizerClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('AnalyzeOperationResult', pipeline_response)
@@ -815,7 +815,7 @@ class FormRecognizerClientOperationsMixin:
 
     async def _analyze_layout_async_initial(
         self,
-        file_stream: Optional[Union[IO, "models.SourcePath"]] = None,
+        file_stream: Optional[Union[IO, "_models.SourcePath"]] = None,
         **kwargs
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -861,7 +861,7 @@ class FormRecognizerClientOperationsMixin:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -874,7 +874,7 @@ class FormRecognizerClientOperationsMixin:
 
     async def begin_analyze_layout_async(
         self,
-        file_stream: Optional[Union[IO, "models.SourcePath"]] = None,
+        file_stream: Optional[Union[IO, "_models.SourcePath"]] = None,
         **kwargs
     ) -> AsyncLROPoller[None]:
         """Analyze Layout.
@@ -885,13 +885,13 @@ class FormRecognizerClientOperationsMixin:
         document to be analyzed.
 
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
+        :type file_stream: IO or ~azure.ai.formrecognizer.v2_0.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -941,7 +941,7 @@ class FormRecognizerClientOperationsMixin:
         self,
         result_id: str,
         **kwargs
-    ) -> "models.AnalyzeOperationResult":
+    ) -> "_models.AnalyzeOperationResult":
         """Get Analyze Layout Result.
 
         Track the progress and obtain the result of the analyze layout operation.
@@ -950,10 +950,10 @@ class FormRecognizerClientOperationsMixin:
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.models.AnalyzeOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_0.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AnalyzeOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeOperationResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -981,7 +981,7 @@ class FormRecognizerClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('AnalyzeOperationResult', pipeline_response)
@@ -995,17 +995,17 @@ class FormRecognizerClientOperationsMixin:
     def list_custom_models(
         self,
         **kwargs
-    ) -> AsyncIterable["models.Models"]:
+    ) -> AsyncIterable["_models.Models"]:
         """List Custom Models.
 
         Get information about all custom models.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Models or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.formrecognizer.models.Models]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.formrecognizer.v2_0.models.Models]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Models"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Models"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1054,7 +1054,7 @@ class FormRecognizerClientOperationsMixin:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -1068,17 +1068,17 @@ class FormRecognizerClientOperationsMixin:
     async def get_custom_models(
         self,
         **kwargs
-    ) -> "models.Models":
+    ) -> "_models.Models":
         """Get Custom Models.
 
         Get information about all custom models.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Models, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.models.Models
+        :rtype: ~azure.ai.formrecognizer.v2_0.models.Models
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Models"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Models"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1107,7 +1107,7 @@ class FormRecognizerClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('Models', pipeline_response)

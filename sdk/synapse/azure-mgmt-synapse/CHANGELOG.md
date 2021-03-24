@@ -1,5 +1,49 @@
 # Release History
 
+## 1.0.0 (2021-03-10)
+
+**Features**
+
+  - Model WorkspacePatchInfo has a new parameter network_settings
+  - Model WorkspacePatchInfo has a new parameter encryption
+  - Model SqlPoolPatchInfo has a new parameter storage_account_type
+  - Model BigDataPoolResourceInfo has a new parameter dynamic_executor_allocation
+  - Model BigDataPoolResourceInfo has a new parameter last_succeeded_timestamp
+  - Model BigDataPoolResourceInfo has a new parameter cache_size
+  - Model BigDataPoolResourceInfo has a new parameter custom_libraries
+  - Model Workspace has a new parameter network_settings
+  - Model Workspace has a new parameter adla_resource_id
+  - Model SqlPoolColumn has a new parameter is_computed
+  - Model WorkspaceRepositoryConfiguration has a new parameter tenant_id
+  - Model WorkspaceRepositoryConfiguration has a new parameter last_commit_id
+  - Model SqlPool has a new parameter storage_account_type
+  - Model SensitivityLabel has a new parameter rank
+  - Model SensitivityLabel has a new parameter schema_name
+  - Model SensitivityLabel has a new parameter table_name
+  - Model SensitivityLabel has a new parameter managed_by
+  - Model SensitivityLabel has a new parameter column_name
+  - Added operation DataMaskingRulesOperations.get
+  - Added operation WorkspaceManagedIdentitySqlControlSettingsOperations.begin_create_or_update
+  - Added operation SqlPoolSensitivityLabelsOperations.update
+  - Added operation SqlPoolGeoBackupPoliciesOperations.create_or_update
+  - Added operation SqlPoolsOperations.rename
+  - Added operation group PrivateLinkHubPrivateLinkResourcesOperations
+  - Added operation group SqlPoolRecommendedSensitivityLabelsOperations
+  - Added operation group LibraryOperations
+  - Added operation group LibrariesOperations
+  - Added operation group SqlPoolMaintenanceWindowOptionsOperations
+  - Added operation group SqlPoolMaintenanceWindowsOperations
+  - Added operation group WorkspaceManagedSqlServerRecoverableSqlPoolsOperations
+  - Added operation group WorkspaceManagedSqlServerEncryptionProtectorOperations
+
+**Breaking changes**
+
+  - Model BigDataPoolResourceInfo no longer has parameter have_library_requirements_changed
+  - Model ErrorResponse has a new signature
+  - Model ErrorDetail has a new signature
+  - Removed operation WorkspaceManagedIdentitySqlControlSettingsOperations.create_or_update
+  - Removed operation group WorkspaceManagedSqlServerRecoverableSqlpoolsOperations
+
 ## 1.0.0b1 (2020-12-10)
 
 This is beta preview version.
