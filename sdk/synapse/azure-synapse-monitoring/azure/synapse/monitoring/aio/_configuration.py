@@ -46,7 +46,7 @@ class MonitoringClientConfiguration(Configuration):
         self.endpoint = endpoint
         self.api_version = "2019-11-01-preview"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://dev.azuresynapse.net/.default'])
-        kwargs.setdefault('sdk_moniker', 'synapse/{}'.format(VERSION))
+        kwargs.setdefault('sdk_moniker', 'synapse-monitoring/{}'.format(VERSION))
         self._configure(**kwargs)
 
     def _configure(

@@ -15,6 +15,8 @@ from math import isnan
 from time import sleep
 import uuid
 
+from devtools_testutils import AzureTestCase
+
 from azure.data.tables import (
     generate_table_sas,
     TableEntity,
@@ -33,13 +35,14 @@ from azure.core.exceptions import (
     ResourceExistsError,
 )
 
-from _shared.testcase import TableTestCase, SLEEP_DELAY
+from _shared.asynctestcase import AsyncTableTestCase
+from _shared.testcase import SLEEP_DELAY
 from preparers import CosmosPreparer
 # ------------------------------------------------------------------------------
 # TODO: change to `with table_client as client:` to close sessions
 # ------------------------------------------------------------------------------
 
-class StorageTableEntityTest(TableTestCase):
+class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     async def _set_up(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         account_url = self.account_url(tables_cosmos_account_name, "cosmos")
@@ -1983,47 +1986,25 @@ class StorageTableEntityTest(TableTestCase):
             if self.is_live:
                 sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Cosmos Tables does not yet support sas")
-    @pytest.mark.live_test_only
     @CosmosPreparer()
-    async def test_sas_signed_identifier(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_datetime_milliseconds(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        url = self.account_url(tables_cosmos_account_name, "table")
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
-            # Arrange
-            entity, _ = await self._insert_random_entity()
+            entity = self._create_random_entity_dict()
 
-            access_policy = AccessPolicy()
-            access_policy.start = datetime(2011, 10, 11)
-            access_policy.expiry = datetime(2020, 10, 12)
-            access_policy.permission = TableSasPermissions(read=True)
-            identifiers = {'testid': access_policy}
+            entity['milliseconds'] = datetime(2011, 11, 4, 0, 5, 23, 283000, tzinfo=tzutc())
 
-            await self.table.set_table_access_policy(identifiers)
+            await self.table.create_entity(entity)
 
-            token = generate_table_sas(
-                tables_cosmos_account_name,
-                tables_primary_cosmos_account_key,
-                self.table_name,
-                policy_id='testid',
+            received_entity = await self.table.get_entity(
+                partition_key=entity['PartitionKey'],
+                row_key=entity['RowKey']
             )
 
-            # Act
-            service = TableServiceClient(
-                self.account_url(tables_cosmos_account_name, "cosmos"),
-                credential=token,
-            )
-            table = service.get_table_client(table=self.table_name)
-            entities = []
-            async for t in table.query_entities(
-                    filter="PartitionKey eq '{}'".format(entity.PartitionKey)):
-                entities.append(t)
+            assert entity['milliseconds'] == received_entity['milliseconds']
 
-            # Assert
-            assert len(entities) ==  1
-            self._assert_default_entity(entities[0])
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)

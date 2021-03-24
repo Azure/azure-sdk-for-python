@@ -1,0 +1,101 @@
+{
+    "chosen_version": "2020-06-30-Preview",
+    "total_api_version_list": ["2020-06-30-Preview"],
+    "client": {
+        "name": "SearchClient",
+        "filename": "_search_client",
+        "description": "Client that can be used to manage and query indexes and documents, as well as manage other resources, on a search service.",
+        "base_url": null,
+        "custom_base_url": "\u0027{endpoint}\u0027",
+        "azure_arm": false,
+        "has_lro_operations": false,
+        "client_side_validation": false,
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.core\": [\"PipelineClient\"]}, \"local\": {\"._configuration\": [\"SearchClientConfiguration\"], \"._operations_mixin\": [\"SearchClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.core\": [\"AsyncPipelineClient\"]}, \"local\": {\"._configuration\": [\"SearchClientConfiguration\"], \"._operations_mixin\": [\"SearchClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}}}"
+    },
+    "global_parameters": {
+        "sync": {
+            "endpoint": {
+                "signature": "endpoint,  # type: str",
+                "description": "The endpoint URL of the search service.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "async": {
+            "endpoint": {
+                "signature": "endpoint: str,",
+                "description": "The endpoint URL of the search service.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "endpoint",
+        "service_client_specific": {
+            "sync": {
+                "api_version": {
+                    "signature": "api_version=None, # type: Optional[str]",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile=KnownProfiles.default, # type: KnownProfiles",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            },
+            "async": {
+                "api_version": {
+                    "signature": "api_version: Optional[str] = None,",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile: KnownProfiles = KnownProfiles.default,",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            }
+        }
+    },
+    "config": {
+        "credential": false,
+        "credential_scopes": null,
+        "credential_default_policy_type": "BearerTokenCredentialPolicy",
+        "credential_default_policy_type_has_async_version": true,
+        "credential_key_header_name": null,
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}}"
+    },
+    "operation_groups": {
+        "data_sources": "DataSourcesOperations",
+        "indexers": "IndexersOperations",
+        "skillsets": "SkillsetsOperations",
+        "synonym_maps": "SynonymMapsOperations",
+        "indexes": "IndexesOperations"
+    },
+    "operation_mixins": {
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"Optional\", \"TypeVar\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"Optional\", \"TypeVar\"]}}}",
+        "operations": {
+            "get_service_statistics" : {
+                "sync": {
+                    "signature": "def get_service_statistics(\n    self,\n    request_options=None,  # type: Optional[\"_models.RequestOptions\"]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Gets service level statistics for a search service.\n\n:param request_options: Parameter group.\n:type request_options: ~azure.search.documents.indexes.v2020_06_preview.models.RequestOptions\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ServiceStatistics, or the result of cls(response)\n:rtype: ~azure.search.documents.indexes.v2020_06_preview.models.ServiceStatistics\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def get_service_statistics(\n    self,\n    request_options: Optional[\"_models.RequestOptions\"] = None,\n    **kwargs\n) -\u003e \"_models.ServiceStatistics\":\n",
+                    "doc": "\"\"\"Gets service level statistics for a search service.\n\n:param request_options: Parameter group.\n:type request_options: ~azure.search.documents.indexes.v2020_06_preview.models.RequestOptions\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ServiceStatistics, or the result of cls(response)\n:rtype: ~azure.search.documents.indexes.v2020_06_preview.models.ServiceStatistics\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "request_options"
+            }
+        }
+    }
+}

@@ -88,9 +88,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         or the response returned from :func:`create_snapshot`.
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, an account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the URL already has a SAS token, specifying an explicit credential will take priority.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
         Setting to an older version may result in reduced feature compatibility.
@@ -202,9 +204,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, an account shared access
+            access key values. The value can be a SAS token string,
+            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
-            Credentials provided here will take precedence over those in the connection string.
+            If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+            - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         :param str snapshot:
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`create_snapshot`. If specified, this will override
@@ -228,7 +232,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             path_blob = parsed_url.path.lstrip('/').split('/', 1)
         elif "localhost" in parsed_url.netloc or "127.0.0.1" in parsed_url.netloc:
             path_blob = parsed_url.path.lstrip('/').split('/', 2)
-            account_path += path_blob[0]
+            account_path += '/' + path_blob[0]
         else:
             # for customized url. blob name that has directory info cannot be parsed.
             path_blob = parsed_url.path.lstrip('/').split('/')
@@ -281,7 +285,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, an account shared access
+            access key values. The value can be a SAS token string,
+            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
         :returns: A Blob client.
@@ -380,7 +385,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             kwargs['blob_headers'] = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
                 blob_content_type=content_settings.content_type,
-                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+                blob_content_md5=content_settings.content_md5,
                 blob_content_encoding=content_settings.content_encoding,
                 blob_content_language=content_settings.content_language,
                 blob_content_disposition=content_settings.content_disposition
@@ -980,7 +985,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return options
 
     @distributed_trace
-    def delete_blob(self, delete_snapshots=False, **kwargs):
+    def delete_blob(self, delete_snapshots=None, **kwargs):
         # type: (str, **Any) -> None
         """Marks the specified blob for deletion.
 
@@ -1086,10 +1091,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         Returns True if a blob exists with the defined parameters, and returns
         False otherwise.
 
-        :param str version_id:
+        :kwarg str version_id:
             The version id parameter is an opaque DateTime
             value that, when present, specifies the version of the blob to check if it exists.
-        :param int timeout:
+        :kwarg int timeout:
             The timeout parameter is expressed in seconds.
         :returns: boolean
         """
@@ -1203,7 +1208,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob_headers = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
                 blob_content_type=content_settings.content_type,
-                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+                blob_content_md5=content_settings.content_md5,
                 blob_content_encoding=content_settings.content_encoding,
                 blob_content_language=content_settings.content_language,
                 blob_content_disposition=content_settings.content_disposition
@@ -1371,7 +1376,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob_headers = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
                 blob_content_type=content_settings.content_type,
-                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+                blob_content_md5=content_settings.content_md5,
                 blob_content_encoding=content_settings.content_encoding,
                 blob_content_language=content_settings.content_language,
                 blob_content_disposition=content_settings.content_disposition
@@ -1512,7 +1517,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob_headers = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
                 blob_content_type=content_settings.content_type,
-                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+                blob_content_md5=content_settings.content_md5,
                 blob_content_encoding=content_settings.content_encoding,
                 blob_content_language=content_settings.content_language,
                 blob_content_disposition=content_settings.content_disposition
@@ -2345,7 +2350,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob_headers = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
                 blob_content_type=content_settings.content_type,
-                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+                blob_content_md5=content_settings.content_md5,
                 blob_content_encoding=content_settings.content_encoding,
                 blob_content_language=content_settings.content_language,
                 blob_content_disposition=content_settings.content_disposition

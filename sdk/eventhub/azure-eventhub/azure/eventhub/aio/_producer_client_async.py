@@ -48,6 +48,14 @@ class EventHubProducerClient(ClientBaseAsync):
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
+    :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+     the Event Hubs service, allowing network requests to be routed through any application gateways or
+     other paths needed for the host environment. Default is None.
+     The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
+     If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
+    :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+     authenticate the identity of the connection endpoint.
+     Default is None in which case `certifi.where()` will be used.
 
     .. admonition:: Example:
 
@@ -185,6 +193,14 @@ class EventHubProducerClient(ClientBaseAsync):
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.eventhub.TransportType
+        :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+         the Event Hubs service, allowing network requests to be routed through any application gateways or
+         other paths needed for the host environment. Default is None.
+         The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
+         If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
+        :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+         authenticate the identity of the connection endpoint.
+         Default is None in which case `certifi.where()` will be used.
         :rtype: ~azure.eventhub.aio.EventHubProducerClient
 
         .. admonition:: Example:
@@ -237,6 +253,10 @@ class EventHubProducerClient(ClientBaseAsync):
          A `TypeError` will be raised if partition_key is specified and event_data_batch is an `EventDataBatch` because
          `EventDataBatch` itself has partition_key.
          If both partition_id and partition_key are provided, the partition_id will take precedence.
+         **WARNING: Setting partition_key of non-string value on the events to be sent is discouraged
+         as the partition_key will be ignored by the Event Hub service and events will be assigned
+         to all partitions using round-robin. Furthermore, there are SDKs for consuming events which expect
+         partition_key to only be string type, they might fail to parse the non-string value.**
         :rtype: None
         :raises: :class:`AuthenticationError<azure.eventhub.exceptions.AuthenticationError>`
          :class:`ConnectError<azure.eventhub.exceptions.ConnectError>`
@@ -259,6 +279,7 @@ class EventHubProducerClient(ClientBaseAsync):
         """
         partition_id = kwargs.get("partition_id")
         partition_key = kwargs.get("partition_key")
+
         if isinstance(event_data_batch, EventDataBatch):
             if partition_id or partition_key:
                 raise TypeError("partition_id and partition_key should be None when sending an EventDataBatch "
@@ -267,6 +288,9 @@ class EventHubProducerClient(ClientBaseAsync):
         else:
             to_send_batch = await self.create_batch(partition_id=partition_id, partition_key=partition_key)
             to_send_batch._load_events(event_data_batch)  # pylint:disable=protected-access
+
+        if len(to_send_batch) == 0:
+            return
 
         partition_id = (
             to_send_batch._partition_id or ALL_PARTITIONS  # pylint:disable=protected-access
@@ -297,6 +321,10 @@ class EventHubProducerClient(ClientBaseAsync):
         :param str partition_key: With the given partition_key, event data will be sent to
          a particular partition of the Event Hub decided by the service.
          If both partition_id and partition_key are provided, the partition_id will take precedence.
+         **WARNING: Setting partition_key of non-string value on the events to be sent is discouraged
+         as the partition_key will be ignored by the Event Hub service and events will be assigned
+         to all partitions using round-robin. Furthermore, there are SDKs for consuming events which expect
+         partition_key to only be string type, they might fail to parse the non-string value.**
         :param int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold. By
          default, the value is determined by your Event Hubs tier.
         :rtype: ~azure.eventhub.EventDataBatch

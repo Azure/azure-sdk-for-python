@@ -565,7 +565,7 @@ class AzureResource(msrest.serialization.Model):
     :param location: The resource location.
     :type location: str
     :param tags: A set of tags. The resource tags.
-    :type tags: object
+    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -579,14 +579,14 @@ class AzureResource(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': 'object'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
     def __init__(
         self,
         *,
         location: Optional[str] = "global",
-        tags: Optional[object] = None,
+        tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         super(AzureResource, self).__init__(**kwargs)
@@ -611,7 +611,7 @@ class AlertRule(AzureResource):
     :param location: The resource location.
     :type location: str
     :param tags: A set of tags. The resource tags.
-    :type tags: object
+    :type tags: dict[str, str]
     :param description: The alert rule description.
     :type description: str
     :param state: The alert rule state. Possible values include: "Enabled", "Disabled".
@@ -643,7 +643,7 @@ class AlertRule(AzureResource):
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': 'object'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'severity': {'key': 'properties.severity', 'type': 'str'},
@@ -658,7 +658,7 @@ class AlertRule(AzureResource):
         self,
         *,
         location: Optional[str] = "global",
-        tags: Optional[object] = None,
+        tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "AlertRuleState"]] = None,
         severity: Optional[Union[str, "Severity"]] = None,
@@ -692,7 +692,7 @@ class AlertRulePatchObject(msrest.serialization.Model):
     :ivar name: The resource name.
     :vartype name: str
     :param tags: A set of tags. The resource tags.
-    :type tags: object
+    :type tags: dict[str, str]
     :param description: The alert rule description.
     :type description: str
     :param state: The alert rule state. Possible values include: "Enabled", "Disabled".
@@ -719,7 +719,7 @@ class AlertRulePatchObject(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': 'object'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'severity': {'key': 'properties.severity', 'type': 'str'},
@@ -731,7 +731,7 @@ class AlertRulePatchObject(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[object] = None,
+        tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "AlertRuleState"]] = None,
         severity: Optional[Union[str, "Severity"]] = None,

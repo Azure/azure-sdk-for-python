@@ -1,11 +1,37 @@
 # Release History
 
-## 5.2.1 (Unreleased)
+## 5.3.2 (Unreleased)
+
+
+## 5.3.1 (2021-03-09)
+
+This version will be the last version to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
 
 **Bug fixes**
 
-* Updated `azure.eventhub.extension.__init__.py` to be compatible with pkgutil-style namespace (PR #13210, thanks @pjachowi).
-* Updated uAMQP dependency to 1.2.13
+- Sending empty `event_data_batch` will be a no-op now instead of raising error.
+
+## 5.3.0 (2021-02-08)
+
+**New Features**
+
+- Added a `parse_connection_string` method which parses a connection string into a properties bag, `EventHubConnectionStringProperties`, containing its component parts.
+- The constructor and `from_connection_string` method of `EventHubConsumerClient` and `EventHubProducerClient` now accept two new optional arguments:
+  - `custom_endpoint_address` which allows for specifying a custom endpoint to use when communicating with the Event Hubs service,
+and is useful when your network does not allow communicating to the standard Event Hubs endpoint.
+  - `connection_verify` which allows for specifying the path to the custom CA_BUNDLE file of the SSL certificate which is used to authenticate
+the identity of the connection endpoint.
+
+**Notes**
+
+- Updated uAMQP dependency to 1.2.14.
+
+## 5.2.1 (2021-01-11)
+
+**Bug fixes**
+
+- Updated `azure.eventhub.extension.__init__.py` to be compatible with pkgutil-style namespace (PR #13210, thanks @pjachowi).
+- Updated uAMQP dependency to 1.2.13
   - Added support for Python 3.9.
   - Fixed bug that macOS was unable to detect network error (#15473).
   - Fixed bug that `uamqp.ReceiveClient` and `uamqp.ReceiveClientAsync` receive messages during connection establishment (#15555).
@@ -39,6 +65,7 @@
 - Added enqueueTime to span links of distributed tracing. #9599
 
 **Bug fixes**
+
 - Fixed a bug that turned `azure.eventhub.EventhubConsumerClient` into an exclusive receiver when it has no checkpoint store. #11181
 - Updated uAMQP dependency to 1.2.7.
   - Fixed bug in setting certificate of tlsio on MacOS. #7201
@@ -47,6 +74,7 @@
 ## 5.1.0b1 (2020-04-06)
 
 **New Features**
+
 - Added `EventHubConsumerClient.receive_batch()` to receive and process events in batches instead of one by one. #9184
 - `EventHubConsumerCliuent.receive()` has a new param `max_wait_time`. 
 `on_event` is called every `max_wait_time` when no events are received and `max_wait_time` is not `None` or 0.
@@ -113,7 +141,6 @@ an error on Azure Stack #9920
     - The `starting_position_inclusive` parameter of the `receive` method accepts `bool` or `dict` indicating whether the given event position is inclusive or not.
 - `PartitionContext` no longer has attribute `owner_id`.
 - `PartitionContext` now has attribute `last_enqueued_event_properties` which is populated if `track_last_enqueued_event_properties` is set to `True` in the `receive` method.
-
 
 **New features**
 

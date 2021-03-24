@@ -13,7 +13,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) EG_ACCESS_KEY - The access key of your eventgrid account.
     2) EG_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
-    "<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net".
+    "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
 """
 import os
 from random import randint, sample
@@ -23,22 +23,21 @@ from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridPublisherClient, EventGridEvent
 
 key = os.environ["EG_ACCESS_KEY"]
-topic_hostname = os.environ["EG_TOPIC_HOSTNAME"]
+endpoint = os.environ["EG_TOPIC_HOSTNAME"]
 
 # authenticate client
 credential = AzureKeyCredential(key)
-client = EventGridPublisherClient(topic_hostname, credential)
-
-team_members = ["Josh", "Kerri", "Kieran", "Laurent", "Lily", "Matt", "Soren", "Srikanta", "Swathi"]    # possible values for data field
+client = EventGridPublisherClient(endpoint, credential)
+services = ["EventGrid", "ServiceBus", "EventHubs", "Storage"]    # possible values for data field
 
 def publish_event():
     # publish events
-    while True:
+    for _ in range(3):
 
         event_list = []     # list of events to publish
         # create events and append to list
         for j in range(randint(1, 3)):
-            sample_members = sample(team_members, k=randint(1, 9))      # select random subset of team members
+            sample_members = sample(services, k=randint(1, 4))      # select random subset of team members
             event = EventGridEvent(
                     subject="Door1",
                     data={"team": sample_members},

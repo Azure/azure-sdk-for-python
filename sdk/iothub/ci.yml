@@ -4,6 +4,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -15,6 +16,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -28,9 +30,9 @@ extends:
   parameters:
     ServiceDirectory: iothub
     Artifacts:
-    - name: azure_mgmt_iothub
+    - name: azure-mgmt-iothub
       safeName: azuremgmtiothub
-    - name: azure_mgmt_iothubprovisioningservices
+    - name: azure-mgmt-iothubprovisioningservices
       safeName: azuremgmtiothubprovisioningservices
-    - name: azure_mgmt_iotcentral
+    - name: azure-mgmt-iotcentral
       safeName: azuremgmtiotcentral

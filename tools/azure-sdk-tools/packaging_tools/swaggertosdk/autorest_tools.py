@@ -5,7 +5,6 @@ from pathlib import Path
 import shutil
 import subprocess
 
-
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -15,18 +14,19 @@ def autorest_latest_version_finder():
     return json.loads(subprocess.check_output(cmd_line.split()).decode().strip())
 
 
-def autorest_swagger_to_sdk_conf(readme, output_folder):
+def autorest_swagger_to_sdk_conf(readme, output_folder, config):
     _LOGGER.info("Looking for swagger-to-sdk section in {}".format(readme))
     autorest_bin = shutil.which("autorest")
     # --input-file=foo is to workaround a bug where the command is not executed at all if no input-file is found (even if we don't care about input-file here)
-    cmd_line = "{} {} --perform-load=false --swagger-to-sdk --output-artifact=configuration.json --input-file=foo --output-folder={}".format(
+    cmd_line = "{} {} --perform-load=false --swagger-to-sdk --output-artifact=configuration.json --input-file=foo --output-folder={} --version={}".format(
         autorest_bin,
         str(readme),
-        str(output_folder)
+        str(output_folder),
+        str(config['meta']['autorest_options']['version'])
     )
     execute_simple_command(cmd_line.split())
     conf_path = Path(output_folder, "configuration.json")
-    with conf_path.open() as fd:
+    with conf_path.open(encoding="utf-8") as fd:
         conf_as_json = json.load(fd)
     swagger_to_sdk_conf = [c for c in conf_as_json.get("swagger-to-sdk", []) if c]
     return swagger_to_sdk_conf
@@ -129,14 +129,19 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
                                    universal_newlines=True,
                                    cwd=cwd,
                                    shell=shell,
-                                   env=env)
+                                   env=env,
+                                   encoding='utf-8')
         output_buffer = []
         for line in process.stdout:
             output_buffer.append(line.rstrip())
-            _LOGGER.info(output_buffer[-1])
+            _LOGGER.info(f"==[autorest]"+output_buffer[-1])
         process.wait()
         output = "\n".join(output_buffer)
         if process.returncode:
+            # print necessary error info
+            for i in range(-min(len(output_buffer), 5), 0):
+                print(f'[Autorest] {output_buffer[i]}')
+                
             raise subprocess.CalledProcessError(
                 process.returncode,
                 cmd_line,

@@ -12,18 +12,15 @@ param (
   [String]$ServiceDirectory,
   [Parameter(Mandatory = $true)]
   [String]$PackageName,
-  [String]$Unreleased = "true", #Argument is string becasue of the different ways the script is called in the various repos.
-  [String]$ReplaceLatestEntryTitle = "false",
+  [Boolean]$Unreleased = $true,
+  [Boolean]$ReplaceLatestEntryTitle = $false,
   [String]$ReleaseDate
 )
-
-[Boolean]$Unreleased = [System.Convert]::ToBoolean($Unreleased)
-[Boolean]$ReplaceLatestEntryTitle = [System.Convert]::ToBoolean($ReplaceLatestEntryTitle)
 
 . (Join-Path $PSScriptRoot common.ps1)
 
 if ($ReleaseDate -and $Unreleased) {
-    LogError "Do not pass 'ReleaseDate' argument when 'Unreleased' is true"
+    LogError "Do not pass 'ReleaseDate' arguement when 'Unreleased' is true"
     exit 1
 }
 
@@ -57,7 +54,6 @@ if ($null -eq [AzureEngSemanticVersion]::ParseVersionString($Version))
 $PkgProperties = Get-PkgProperties -PackageName $PackageName -ServiceDirectory $ServiceDirectory
 $ChangeLogEntries = Get-ChangeLogEntries -ChangeLogLocation $PkgProperties.ChangeLogPath
 
-
 if ($ChangeLogEntries.Contains($Version))
 {
     if ($ChangeLogEntries[$Version].ReleaseStatus -eq $ReleaseStatus)
@@ -89,8 +85,7 @@ LogDebug "The latest release note entry in the changelog is for version [$($Late
 
 $LatestsSorted = [AzureEngSemanticVersion]::SortVersionStrings(@($LatestVersion, $Version))
 if ($LatestsSorted[0] -ne $Version) {
-    LogWarning "Version [$Version] is older than the latestversion [$LatestVersion] in the changelog. Please use a more recent version."
-    exit(0)
+    LogWarning "Version [$Version] is older than the latestversion [$LatestVersion] in the changelog. Consider using a more recent version."
 }
 
 if ($ReplaceLatestEntryTitle) 
@@ -99,7 +94,7 @@ if ($ReplaceLatestEntryTitle)
     LogDebug "Resetting latest entry title to [$($newChangeLogEntry.ReleaseTitle)]"
     $ChangeLogEntries.Remove($LatestVersion)
     if ($newChangeLogEntry) {
-        $ChangeLogEntries[$Version] = $newChangeLogEntry
+        $ChangeLogEntries.Insert(0, $Version, $newChangeLogEntry)
     }
     else {
         LogError "Failed to create new changelog entry"
@@ -117,7 +112,7 @@ else
     LogDebug "Adding new ChangeLog entry for Version [$Version]"
     $newChangeLogEntry = New-ChangeLogEntry -Version $Version -Status $ReleaseStatus
     if ($newChangeLogEntry) {
-        $ChangeLogEntries[$Version] = $newChangeLogEntry
+        $ChangeLogEntries.Insert(0, $Version, $newChangeLogEntry)
     }
     else {
         LogError "Failed to create new changelog entry"

@@ -79,6 +79,35 @@ class ServiceBusAdministrationClientSubscriptionAsyncTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    async def test_async_mgmt_subscription_create_with_forward_to(self, servicebus_namespace_connection_string, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+        await clear_topics(mgmt_service)
+        topic_name = "iweidkforward"
+        subscription_name = "kdosakoforward"
+        queue_name = "dkfthj"
+        try:
+            await mgmt_service.create_queue(queue_name)
+            await mgmt_service.create_topic(topic_name)
+            await mgmt_service.create_subscription(
+                topic_name,
+                subscription_name=subscription_name,
+                forward_dead_lettered_messages_to=queue_name,
+                forward_to=queue_name,
+            )
+            subscription = await mgmt_service.get_subscription(topic_name, subscription_name)
+            # Test forward_to (separately, as it changes auto_delete_on_idle when you enable it.)
+            # Note: We endswith to avoid the fact that the servicebus_namespace_name is replacered locally but not in the properties bag, and still test this.
+            assert subscription.forward_to.endswith(".servicebus.windows.net/{}".format(queue_name))
+            assert subscription.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(queue_name))
+
+        finally:
+            await mgmt_service.delete_subscription(topic_name, subscription_name)
+            await mgmt_service.delete_topic(topic_name)
+            await mgmt_service.delete_queue(queue_name)
+            mgmt_service.close()
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_subscription_create_duplicate(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
@@ -100,8 +129,10 @@ class ServiceBusAdministrationClientSubscriptionAsyncTests(AzureMgmtTestCase):
         await clear_topics(mgmt_service)
         topic_name = "fjrui"
         subscription_name = "eqkovc"
+        queue_name = "dfkla"
 
         try:
+            await mgmt_service.create_queue(queue_name)
             topic_description = await mgmt_service.create_topic(topic_name)
             subscription_description = await mgmt_service.create_subscription(topic_description.name, subscription_name)
 
@@ -140,9 +171,29 @@ class ServiceBusAdministrationClientSubscriptionAsyncTests(AzureMgmtTestCase):
             assert subscription_description.forward_to.endswith(".servicebus.windows.net/{}".format(topic_name))
             assert subscription_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(topic_name))
 
+            # Update forward_to with entity name
+            subscription_description.forward_to = queue_name
+            subscription_description.forward_dead_lettered_messages_to = queue_name
+            await mgmt_service.update_subscription(topic_description.name, subscription_description)
+            subscription_description = await mgmt_service.get_subscription(topic_description.name, subscription_name)
+            # Note: We endswith to avoid the fact that the servicebus_namespace_name is replacered locally but not in the properties bag, and still test this.
+            assert subscription_description.forward_to.endswith(".servicebus.windows.net/{}".format(queue_name))
+            assert subscription_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(queue_name))
+
+            # Update forward_to with None
+            subscription_description.forward_to = None
+            subscription_description.forward_dead_lettered_messages_to = None
+            await mgmt_service.update_subscription(topic_description.name, subscription_description)
+            subscription_description = await mgmt_service.get_subscription(topic_description.name, subscription_name)
+            # Note: We endswith to avoid the fact that the servicebus_namespace_name is replacered locally but not in the properties bag, and still test this.
+            assert subscription_description.forward_to is None
+            assert subscription_description.forward_dead_lettered_messages_to is None
+
         finally:
             await mgmt_service.delete_subscription(topic_name, subscription_name)
             await mgmt_service.delete_topic(topic_name)
+            await mgmt_service.delete_queue(queue_name)
+            mgmt_service.close()
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -156,11 +207,11 @@ class ServiceBusAdministrationClientSubscriptionAsyncTests(AzureMgmtTestCase):
             subscription_description = await mgmt_service.create_subscription(topic_name, subscription_name)
 
             # handle a null update properly.
-            with pytest.raises(AttributeError):
+            with pytest.raises(TypeError):
                 await mgmt_service.update_subscription(topic_name, None)
 
             # handle an invalid type update properly.
-            with pytest.raises(AttributeError):
+            with pytest.raises(TypeError):
                 await mgmt_service.update_subscription(topic_name, Exception("test"))
 
             # change the name to a topic that doesn't exist; should fail.
@@ -303,3 +354,76 @@ class ServiceBusAdministrationClientSubscriptionAsyncTests(AzureMgmtTestCase):
 
         await mgmt_service.delete_subscription(topic_name, subscription_name)
         await mgmt_service.delete_topic(topic_name)
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    async def test_mgmt_subscription_async_update_dict_success(self, servicebus_namespace_connection_string, servicebus_namespace, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+        await clear_topics(mgmt_service)
+        topic_name = "fjrui"
+        subscription_name = "eqkovc"
+
+        try:
+            topic_description = await mgmt_service.create_topic(topic_name)
+            subscription_description = await mgmt_service.create_subscription(topic_description.name, subscription_name)
+            subscription_description_dict = dict(subscription_description)
+
+            # Try updating one setting.
+            subscription_description_dict["lock_duration"] = datetime.timedelta(minutes=2)
+            await mgmt_service.update_subscription(topic_description.name, subscription_description_dict)
+            subscription_description = await mgmt_service.get_subscription(topic_name, subscription_name)
+            assert subscription_description.lock_duration == datetime.timedelta(minutes=2)
+
+            # Now try updating all settings.
+            subscription_description_dict = dict(subscription_description)
+            subscription_description_dict["auto_delete_on_idle"] = datetime.timedelta(minutes=10)
+            subscription_description_dict["dead_lettering_on_message_expiration"] = True
+            subscription_description_dict["default_message_time_to_live"] = datetime.timedelta(minutes=11)
+            subscription_description_dict["lock_duration"] = datetime.timedelta(seconds=12)
+            subscription_description_dict["max_delivery_count"] = 14
+            # topic_description.enable_partitioning = True # Cannot be changed after creation
+            # topic_description.requires_session = True # Cannot be changed after creation
+
+            await mgmt_service.update_subscription(topic_description.name, subscription_description_dict)
+            subscription_description = await mgmt_service.get_subscription(topic_description.name, subscription_name)
+
+            assert subscription_description.auto_delete_on_idle == datetime.timedelta(minutes=10)
+            assert subscription_description.dead_lettering_on_message_expiration == True
+            assert subscription_description.default_message_time_to_live == datetime.timedelta(minutes=11)
+            assert subscription_description.max_delivery_count == 14
+            assert subscription_description.lock_duration == datetime.timedelta(seconds=12)
+            # assert topic_description.enable_partitioning == True
+            # assert topic_description.requires_session == True
+
+            # Finally, test forward_to (separately, as it changes auto_delete_on_idle when you enable it.)
+            subscription_description_dict = dict(subscription_description)
+            subscription_description_dict["forward_to"] = "sb://{}.servicebus.windows.net/{}".format(servicebus_namespace.name, topic_name)
+            subscription_description_dict["forward_dead_lettered_messages_to"] = "sb://{}.servicebus.windows.net/{}".format(servicebus_namespace.name, topic_name)
+            await mgmt_service.update_subscription(topic_description.name, subscription_description_dict)
+            subscription_description = await mgmt_service.get_subscription(topic_description.name, subscription_name)
+            # Note: We endswith to avoid the fact that the servicebus_namespace_name is replacered locally but not in the properties bag, and still test this.
+            assert subscription_description.forward_to.endswith(".servicebus.windows.net/{}".format(topic_name))
+            assert subscription_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(topic_name))
+
+        finally:
+            await mgmt_service.delete_subscription(topic_name, subscription_name)
+            await mgmt_service.delete_topic(topic_name)
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    async def test_mgmt_subscription_async_update_dict_error(self, servicebus_namespace_connection_string, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+        await clear_topics(mgmt_service)
+        topic_name = "fjrui"
+        subscription_name = "eqkovc"
+
+        try:
+            topic_description = await mgmt_service.create_topic(topic_name)
+            subscription_description = await mgmt_service.create_subscription(topic_description.name, subscription_name)
+            # send in subscription dict without non-name keyword args
+            subscription_description_only_name = {"name": topic_name}
+            with pytest.raises(TypeError):
+                await mgmt_service.update_subscription(topic_description.name, subscription_description_only_name)
+        finally:
+            await mgmt_service.delete_subscription(topic_name, subscription_name)
+            await mgmt_service.delete_topic(topic_name)

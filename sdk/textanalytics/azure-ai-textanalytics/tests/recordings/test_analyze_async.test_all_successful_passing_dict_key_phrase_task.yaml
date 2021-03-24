@@ -13,46 +13,46 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze
   response:
     body:
       string: ''
     headers:
-      apim-request-id: df911c07-bfc9-420b-a201-242d48302663
-      date: Thu, 19 Nov 2020 21:16:37 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/a6b34fb5-5026-4a5e-9140-bea9c416110f_637413408000000000
+      apim-request-id: 61081a50-1e8c-4b3c-8442-ee7f8841b04e
+      date: Tue, 23 Feb 2021 17:04:22 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/7ae76466-fa39-415e-a830-d68f57caa596
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '49'
+      x-envoy-upstream-service-time: '26'
     status:
       code: 202
       message: Accepted
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/analyze
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/analyze
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/a6b34fb5-5026-4a5e-9140-bea9c416110f_637413408000000000?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/7ae76466-fa39-415e-a830-d68f57caa596?showStats=True
   response:
     body:
-      string: '{"jobId":"a6b34fb5-5026-4a5e-9140-bea9c416110f_637413408000000000","lastUpdateDateTime":"2020-11-19T21:16:38Z","createdDateTime":"2020-11-19T21:16:38Z","expirationDateTime":"2020-11-20T21:16:38Z","status":"succeeded","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:16:38Z"},"completed":1,"failed":0,"inProgress":0,"total":1,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:16:38.9833213Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["Bill
-        Gates","Paul Allen","Microsoft"],"warnings":[]},{"id":"2","keyPhrases":["Bill
-        Gates","Paul Allen","Microsoft"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+      string: '{"jobId":"7ae76466-fa39-415e-a830-d68f57caa596","lastUpdateDateTime":"2021-02-23T17:04:23Z","createdDateTime":"2021-02-23T17:04:23Z","expirationDateTime":"2021-02-24T17:04:23Z","status":"succeeded","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:04:23Z"},"completed":1,"failed":0,"inProgress":0,"total":1,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:04:23.6643106Z","state":"succeeded","results":{"statistics":{"documentsCount":2,"validDocumentsCount":2,"erroneousDocumentsCount":0,"transactionsCount":2},"documents":[{"id":"1","keyPhrases":["Bill
+        Gates","Paul Allen","Microsoft"],"statistics":{"charactersCount":50,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["Bill
+        Gates","Paul Allen","Microsoft"],"statistics":{"charactersCount":49,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: 80b9e74e-0634-43ae-8705-80b082c4a251
+      apim-request-id: 29d5daf0-7cb7-4e28-8f49-c5b3bbc608af
       content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:16:43 GMT
+      date: Tue, 23 Feb 2021 17:04:27 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '58'
+      x-envoy-upstream-service-time: '139'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/a6b34fb5-5026-4a5e-9140-bea9c416110f_637413408000000000?showStats=True
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/7ae76466-fa39-415e-a830-d68f57caa596?showStats=True
 version: 1

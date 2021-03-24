@@ -67,6 +67,9 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/master/sd
 - [authenticate_with_sas_token.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/authenticate_with_sas_token.py)
     - Utilize a SAS token to authenticate when creating an Event Hub client.
 
+- [connection_to_custom_endpoint_address.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/samples/sync_samples/connection_to_custom_endpoint_address.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/samples/async_samples/connection_to_custom_endpoint_address_async.py)) - Examples
+  to create EventHubProducerClient and EventHubConsumerClient that connect to a custom endpoint with a custom certificate.
+
 ## Prerequisites
 - Python 2.7, 3.5 or later.
 - **Microsoft Azure Subscription:**  To use Azure services, including Azure Event Hubs, you'll need a subscription.
@@ -107,5 +110,5 @@ pip install azure-eventhub-checkpointstoreblob-aio  # async version
 
 ## Next steps
 
-Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/latest/azure.eventhub.html) to learn more about
+Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.3.1/azure.eventhub.html) to learn more about
 what you can do with the Azure Event Hubs client library.

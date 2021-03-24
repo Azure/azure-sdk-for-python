@@ -49,7 +49,7 @@ def deserialize_file_properties(response, obj, headers):
 def deserialize_file_stream(response, obj, headers):
     file_properties = deserialize_file_properties(response, obj, headers)
     obj.properties = file_properties
-    return response.location_mode, obj
+    return response.http_response.location_mode, obj
 
 
 def deserialize_permission(response, obj, headers):  # pylint: disable=unused-argument

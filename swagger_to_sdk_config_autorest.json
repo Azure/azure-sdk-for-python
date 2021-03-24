@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "autorest_options": {
+      "version": "3.0.6369",
+      "use": "@autorest/python@5.4.3",
+      "python": "",
+      "python-mode": "update",
+      "sdkrel:python-sdks-folder": "./sdk/.",
+      "multiapi": "",
+      "track2": ""
+    },
+    "advanced_options": {
+      "create_sdk_pull_requests": true,
+      "sdk_generation_pull_request_base": "integration_branch"
+    },
+    "repotag": "azure-sdk-for-python-track2",
+    "version": "0.2.0"
+  }
+}

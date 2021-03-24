@@ -38,7 +38,7 @@ async def retry_hook(settings, **kwargs):
 
 
 class AsyncStorageResponseHook(AsyncHTTPPolicy):
-    def __init__(self, **kwargs):  # pylint: disable=unused-argument
+    def __init__(self, **kwargs):
         self._response_callback = kwargs.get("raw_response_hook")
         super(AsyncStorageResponseHook, self).__init__()
 
@@ -152,15 +152,15 @@ class AsyncTablesRetryPolicy(AsyncRetryPolicy, TablesRetryPolicy):
         random_range_end = backoff + self.random_jitter_range
         return random_generator.uniform(random_range_start, random_range_end)
 
-    async def sleep(
+    async def sleep(  # pylint: disable=arguments-differ
         self, settings, transport
-    ):  # pylint: disable=W0236, arguments-differ
+    ):
         backoff = self.get_backoff_time(settings)
         if not backoff or backoff < 0:
             return
         await transport.sleep(backoff)
 
-    async def send(self, request):  # pylint: disable =W0236
+    async def send(self, request):
         retries_remaining = True
         response = None
         retry_settings = self.configure_retries(request)

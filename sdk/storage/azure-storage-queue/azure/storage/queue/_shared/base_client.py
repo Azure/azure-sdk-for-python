@@ -3,19 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+import logging
+import uuid
 from typing import (  # pylint: disable=unused-import
-    Union,
     Optional,
     Any,
-    Iterable,
-    Dict,
-    List,
-    Type,
     Tuple,
-    TYPE_CHECKING,
 )
-import logging
 
 try:
     from urllib.parse import parse_qs, quote
@@ -26,6 +20,7 @@ except ImportError:
 import six
 
 from azure.core.configuration import Configuration
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport, HttpTransport
@@ -37,12 +32,14 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     UserAgentPolicy,
+    AzureSasCredentialPolicy
 )
 
 from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
 from .models import LocationMode
 from .authentication import SharedKeyCredentialPolicy
 from .shared_access_signature import QueryStringConstants
+from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
 from .policies import (
     StorageHeadersPolicy,
     StorageContentValidation,
@@ -54,7 +51,6 @@ from .policies import (
     ExponentialRetry,
 )
 from .._version import VERSION
-from .._generated.models import StorageErrorException
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
 
@@ -209,6 +205,9 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             query_str += "snapshot={}&".format(self.snapshot)
         if share_snapshot:
             query_str += "sharesnapshot={}&".format(self.snapshot)
+        if sas_token and isinstance(credential, AzureSasCredential):
+            raise ValueError(
+                "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
         if sas_token and not credential:
             query_str += sas_token
         elif is_credential_sastoken(credential):
@@ -223,6 +222,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
+        elif isinstance(credential, AzureSasCredential):
+            self._credential_policy = AzureSasCredentialPolicy(credential)
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
@@ -256,33 +257,52 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         return config, Pipeline(config.transport, policies=policies)
 
     def _batch_send(
-        self, *reqs,  # type: HttpRequest
+        self,
+        *reqs,  # type: HttpRequest
         **kwargs
     ):
         """Given a series of request, do a Storage batch call.
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
+        batch_id = str(uuid.uuid1())
+
         request = self._client._client.post(  # pylint: disable=protected-access
-            url='https://{}/?comp=batch'.format(self.primary_hostname),
+            url='{}://{}/{}?{}comp=batch{}{}'.format(
+                self.scheme,
+                self.primary_hostname,
+                kwargs.pop('path', ""),
+                kwargs.pop('restype', ""),
+                kwargs.pop('sas', ""),
+                kwargs.pop('timeout', "")
+            ),
             headers={
-                'x-ms-version': self.api_version
+                'x-ms-version': self.api_version,
+                "Content-Type": "multipart/mixed; boundary=" + _get_batch_request_delimiter(batch_id, False, False)
             }
         )
 
+        policies = [StorageHeadersPolicy()]
+        if self._credential_policy:
+            policies.append(self._credential_policy)
+
         request.set_multipart_mixed(
             *reqs,
-            policies=[
-                StorageHeadersPolicy(),
-                self._credential_policy
-            ],
+            policies=policies,
             enforce_https=False
         )
 
+        Pipeline._prepare_multipart_mixed_request(request) # pylint: disable=protected-access
+        body = serialize_batch_body(request.multipart_mixed_info[0], batch_id)
+        request.set_bytes_body(body)
+
+        temp = request.multipart_mixed_info
+        request.multipart_mixed_info = None
         pipeline_response = self._pipeline.run(
             request, **kwargs
         )
         response = pipeline_response.http_response
+        request.multipart_mixed_info = temp
 
         try:
             if response.status_code not in [202]:
@@ -298,7 +318,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                     raise error
                 return iter(parts)
             return parts
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
 class TransportWrapper(HttpTransport):

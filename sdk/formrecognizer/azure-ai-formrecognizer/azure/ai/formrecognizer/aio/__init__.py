@@ -8,7 +8,4 @@ from ._form_recognizer_client_async import FormRecognizerClient
 from ._form_training_client_async import FormTrainingClient
 
 
-__all__ = [
-    'FormRecognizerClient',
-    'FormTrainingClient'
-]
+__all__ = ["FormRecognizerClient", "FormTrainingClient"]

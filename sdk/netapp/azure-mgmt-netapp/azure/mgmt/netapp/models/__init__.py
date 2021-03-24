@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AccountEncryption
     from ._models_py3 import ActiveDirectory
     from ._models_py3 import AuthorizeRequest
     from ._models_py3 import Backup
@@ -15,12 +16,14 @@ try:
     from ._models_py3 import BackupPolicy
     from ._models_py3 import BackupPolicyDetails
     from ._models_py3 import BackupPolicyPatch
+    from ._models_py3 import BackupStatus
     from ._models_py3 import BackupsList
     from ._models_py3 import BreakReplicationRequest
     from ._models_py3 import CapacityPool
     from ._models_py3 import CapacityPoolList
     from ._models_py3 import CapacityPoolPatch
     from ._models_py3 import CheckAvailabilityResponse
+    from ._models_py3 import CloudErrorBody
     from ._models_py3 import DailySchedule
     from ._models_py3 import Dimension
     from ._models_py3 import ExportPolicyRule
@@ -39,6 +42,7 @@ try:
     from ._models_py3 import QuotaAvailabilityRequest
     from ._models_py3 import ReplicationObject
     from ._models_py3 import ReplicationStatus
+    from ._models_py3 import ResourceIdentity
     from ._models_py3 import ResourceNameAvailabilityRequest
     from ._models_py3 import ServiceSpecification
     from ._models_py3 import Snapshot
@@ -48,6 +52,7 @@ try:
     from ._models_py3 import SnapshotPolicyPatch
     from ._models_py3 import SnapshotPolicyVolumeList
     from ._models_py3 import SnapshotsList
+    from ._models_py3 import SystemData
     from ._models_py3 import Vault
     from ._models_py3 import VaultList
     from ._models_py3 import Volume
@@ -63,6 +68,7 @@ try:
     from ._models_py3 import VolumeSnapshotProperties
     from ._models_py3 import WeeklySchedule
 except (SyntaxError, ImportError):
+    from ._models import AccountEncryption  # type: ignore
     from ._models import ActiveDirectory  # type: ignore
     from ._models import AuthorizeRequest  # type: ignore
     from ._models import Backup  # type: ignore
@@ -71,12 +77,14 @@ except (SyntaxError, ImportError):
     from ._models import BackupPolicy  # type: ignore
     from ._models import BackupPolicyDetails  # type: ignore
     from ._models import BackupPolicyPatch  # type: ignore
+    from ._models import BackupStatus  # type: ignore
     from ._models import BackupsList  # type: ignore
     from ._models import BreakReplicationRequest  # type: ignore
     from ._models import CapacityPool  # type: ignore
     from ._models import CapacityPoolList  # type: ignore
     from ._models import CapacityPoolPatch  # type: ignore
     from ._models import CheckAvailabilityResponse  # type: ignore
+    from ._models import CloudErrorBody  # type: ignore
     from ._models import DailySchedule  # type: ignore
     from ._models import Dimension  # type: ignore
     from ._models import ExportPolicyRule  # type: ignore
@@ -95,6 +103,7 @@ except (SyntaxError, ImportError):
     from ._models import QuotaAvailabilityRequest  # type: ignore
     from ._models import ReplicationObject  # type: ignore
     from ._models import ReplicationStatus  # type: ignore
+    from ._models import ResourceIdentity  # type: ignore
     from ._models import ResourceNameAvailabilityRequest  # type: ignore
     from ._models import ServiceSpecification  # type: ignore
     from ._models import Snapshot  # type: ignore
@@ -104,6 +113,7 @@ except (SyntaxError, ImportError):
     from ._models import SnapshotPolicyPatch  # type: ignore
     from ._models import SnapshotPolicyVolumeList  # type: ignore
     from ._models import SnapshotsList  # type: ignore
+    from ._models import SystemData  # type: ignore
     from ._models import Vault  # type: ignore
     from ._models import VaultList  # type: ignore
     from ._models import Volume  # type: ignore
@@ -123,6 +133,7 @@ from ._net_app_management_client_enums import (
     ActiveDirectoryStatus,
     CheckNameResourceTypes,
     CheckQuotaNameResourceTypes,
+    CreatedByType,
     EndpointType,
     InAvailabilityReasonType,
     MirrorState,
@@ -134,6 +145,7 @@ from ._net_app_management_client_enums import (
 )
 
 __all__ = [
+    'AccountEncryption',
     'ActiveDirectory',
     'AuthorizeRequest',
     'Backup',
@@ -142,12 +154,14 @@ __all__ = [
     'BackupPolicy',
     'BackupPolicyDetails',
     'BackupPolicyPatch',
+    'BackupStatus',
     'BackupsList',
     'BreakReplicationRequest',
     'CapacityPool',
     'CapacityPoolList',
     'CapacityPoolPatch',
     'CheckAvailabilityResponse',
+    'CloudErrorBody',
     'DailySchedule',
     'Dimension',
     'ExportPolicyRule',
@@ -166,6 +180,7 @@ __all__ = [
     'QuotaAvailabilityRequest',
     'ReplicationObject',
     'ReplicationStatus',
+    'ResourceIdentity',
     'ResourceNameAvailabilityRequest',
     'ServiceSpecification',
     'Snapshot',
@@ -175,6 +190,7 @@ __all__ = [
     'SnapshotPolicyPatch',
     'SnapshotPolicyVolumeList',
     'SnapshotsList',
+    'SystemData',
     'Vault',
     'VaultList',
     'Volume',
@@ -192,6 +208,7 @@ __all__ = [
     'ActiveDirectoryStatus',
     'CheckNameResourceTypes',
     'CheckQuotaNameResourceTypes',
+    'CreatedByType',
     'EndpointType',
     'InAvailabilityReasonType',
     'MirrorState',

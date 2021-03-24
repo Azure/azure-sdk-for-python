@@ -12,7 +12,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search22f51d69.search.windows.net/synonymmaps?api-version=2020-06-30
+    uri: https://search22f51d69.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search22f51d69.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D84B9D47F83EB1\"","name":"test-syn-map","format":"solr","synonyms":"USA,
@@ -25,7 +25,7 @@ interactions:
       elapsed-time: '58'
       etag: W/"0x8D84B9D47F83EB1"
       expires: '-1'
-      location: https://search22f51d69.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
+      location: https://search22f51d69.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -34,7 +34,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://search22f51d69.search.windows.net/synonymmaps?api-version=2020-06-30
+    url: https://search22f51d69.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
 - request:
     body: null
     headers:
@@ -43,7 +43,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search22f51d69.search.windows.net/synonymmaps?api-version=2020-06-30
+    uri: https://search22f51d69.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search22f51d69.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D84B9D47F83EB1\"","name":"test-syn-map","format":"solr","synonyms":"USA,
@@ -65,7 +65,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search22f51d69.search.windows.net/synonymmaps?api-version=2020-06-30
+    url: https://search22f51d69.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
 - request:
     body: null
     headers:
@@ -74,7 +74,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://search22f51d69.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
+    uri: https://search22f51d69.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30-Preview
   response:
     body:
       string: ''
@@ -89,7 +89,7 @@ interactions:
     status:
       code: 204
       message: No Content
-    url: https://search22f51d69.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
+    url: https://search22f51d69.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30-Preview
 - request:
     body: null
     headers:
@@ -98,7 +98,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search22f51d69.search.windows.net/synonymmaps?api-version=2020-06-30
+    uri: https://search22f51d69.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search22f51d69.search.windows.net/$metadata#synonymmaps","value":[]}'
@@ -119,5 +119,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search22f51d69.search.windows.net/synonymmaps?api-version=2020-06-30
+    url: https://search22f51d69.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
 version: 1

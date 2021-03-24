@@ -55,6 +55,10 @@ Please find the samples linked below for demonstration as to how to authenticate
 [TokenCredential][token_credential_interface]
 protocol. There are implementations of the `TokenCredential` protocol available in the
 [azure-identity package][pypi_azure_identity]. The fully qualified namespace is of the format `<yournamespace.servicebus.windows.net>`.
+- To use the credential types provided by `azure-identity`, please install the package:
+```pip install azure-identity```
+- Additionally, to use the async API supported on Python 3.5+, you must first install an async transport, such as [`aiohttp`](https://pypi.org/project/aiohttp/):
+```pip install aiohttp```
 - When using Azure Active Directory, your principal must be assigned a role which allows access to Service Bus, such as the
 Azure Service Bus Data Owner role. For more information about using Azure Active Directory authorization with Service Bus,
 please refer to [the associated documentation][servicebus_aad_authentication].
@@ -77,11 +81,11 @@ To interact with these resources, one should be familiar with the following SDK 
 
 * [ServiceBusClient][client_reference]: This is the object a user should first initialize to connect to a Service Bus Namespace.  To interact with a queue, topic, or subscription, one would spawn a sender or receiver off of this client.
 
-* [Sender][sender_reference]: To send messages to a Queue or Topic, one would use the corresponding `get_queue_sender` or `get_topic_sender` method off of a `ServiceBusClient` instance as seen [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/send_queue.py).
+* [ServiceBusSender][sender_reference]: To send messages to a Queue or Topic, one would use the corresponding `get_queue_sender` or `get_topic_sender` method off of a `ServiceBusClient` instance as seen [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/send_queue.py).
 
-* [Receiver][receiver_reference]: To receive messages from a Queue or Subscription, one would use the corresponding `get_queue_receiver` or `get_subscription_receiver` method off of a `ServiceBusClient` instance as seen [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_queue.py).
+* [ServiceBusReceiver][receiver_reference]: To receive messages from a Queue or Subscription, one would use the corresponding `get_queue_receiver` or `get_subscription_receiver` method off of a `ServiceBusClient` instance as seen [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_queue.py).
 
-* [Message][message_reference]: When sending, this is the type you will construct to contain your payload.  When receiving, this is where you will access the payload.
+* [ServiceBusMessage][message_reference]: When sending, this is the type you will construct to contain your payload.  When receiving, this is where you will access the payload.
 
 ## Examples
 
@@ -454,6 +458,14 @@ For users seeking to perform management operations against ServiceBus (Creating 
 please see the [azure-mgmt-servicebus documentation][service_bus_mgmt_docs] for API documentation.  Terse usage examples can be found
 [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-mgmt-servicebus/tests) as well.
 
+### Building uAMQP wheel from source
+
+`azure-servicebus` depends on the [uAMQP](https://pypi.org/project/uamqp/) for the AMQP protocol implementation.
+uAMQP wheels are provided for most major operating systems and will be installed automatically when installing `azure-servicebus`.
+
+If you're running on a platform for which uAMQP wheels are not provided, please follow
+ the [uAMQP Installation](https://github.com/Azure/azure-uamqp-python#installation) guidance to install from source.
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
@@ -477,7 +489,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [cloud_shell]: https://docs.microsoft.com/azure/cloud-shell/overview
 [cloud_shell_bash]: https://shell.azure.com/bash
 [pip]: https://pypi.org/project/pip/
-[pypi]: https://pypi.org/project/azure-servicebus/#history
+[pypi]: https://pypi.org/project/azure-servicebus/
 [python]: https://www.python.org/downloads/
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io

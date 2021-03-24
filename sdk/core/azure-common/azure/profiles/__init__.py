@@ -201,6 +201,58 @@ class KnownProfiles(Enum):
         },
         "2019-03-01-hybrid"
     )
+    v2020_09_01_hybrid = ProfileDefinition(
+        {
+            "azure.keyvault.KeyVaultClient": {
+                None: "2016-10-01"
+            },
+            "azure.mgmt.authorization.AuthorizationManagementClient": {
+                None: "2016-09-01"
+            },
+            "azure.mgmt.compute.ComputeManagementClient": {
+                None: "2020-06-01",
+                'resource_skus': '2019-04-01',
+                'disks': '2019-07-01',
+                'snapshots': '2019-07-01'
+            },
+            "azure.mgmt.keyvault.KeyVaultManagementClient":{
+                None: "2019-09-01"
+            },
+            "azure.mgmt.monitor.MonitorManagementClient": {
+                'metric_definitions': '2018-01-01',
+                'metrics': '2018-01-01',
+                'diagnostic_settings': '2017-05-01-preview',
+                'diagnostic_settings_category': '2017-05-01-preview',
+                'event_categories': '2015-04-01',
+                'operations': '2015-04-01',
+            },
+            "azure.mgmt.network.NetworkManagementClient": {
+                None: "2018-11-01"
+            },
+            "azure.mgmt.storage.StorageManagementClient": {
+                None: "2019-06-01"
+            },
+            "azure.mgmt.resource.policy.PolicyClient": {
+                None: "2016-12-01"
+            },
+            "azure.mgmt.resource.locks.ManagementLockClient": {
+                None: "2016-09-01"
+            },
+            "azure.mgmt.resource.links.ManagementLinkClient": {
+                None: "2016-09-01"
+            },
+            "azure.mgmt.resource.resources.ResourceManagementClient": {
+                None: "2019-10-01"
+            },
+            "azure.mgmt.resource.subscriptions.SubscriptionClient": {
+                None: "2016-06-01"
+            },
+            "azure.mgmt.dns.DnsManagementClient": {
+                None: "2016-04-01"
+            }
+        },
+        "2020-09-01-hybrid"
+    )
 
 
     def __init__(self, profile_definition):

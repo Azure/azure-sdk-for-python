@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class TemplateSpecVersionsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,10 +50,10 @@ class TemplateSpecVersionsOperations(object):
         resource_group_name,  # type: str
         template_spec_name,  # type: str
         template_spec_version,  # type: str
-        template_spec_version_model,  # type: "models.TemplateSpecVersion"
+        template_spec_version_model,  # type: "_models.TemplateSpecVersion"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TemplateSpecVersion"
+        # type: (...) -> "_models.TemplateSpecVersion"
         """Creates or updates a Template Spec version.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -69,7 +69,7 @@ class TemplateSpecVersionsOperations(object):
         :rtype: ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecVersion
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TemplateSpecVersion"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TemplateSpecVersion"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -106,7 +106,7 @@ class TemplateSpecVersionsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TemplateSpecsError, response)
+            error = self._deserialize(_models.TemplateSpecsError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -126,10 +126,10 @@ class TemplateSpecVersionsOperations(object):
         resource_group_name,  # type: str
         template_spec_name,  # type: str
         template_spec_version,  # type: str
-        template_spec_version_update_model=None,  # type: Optional["models.TemplateSpecVersionUpdateModel"]
+        template_spec_version_update_model=None,  # type: Optional["_models.TemplateSpecVersionUpdateModel"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TemplateSpecVersion"
+        # type: (...) -> "_models.TemplateSpecVersion"
         """Updates Template Spec Version tags with specified values.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -146,7 +146,7 @@ class TemplateSpecVersionsOperations(object):
         :rtype: ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecVersion
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TemplateSpecVersion"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TemplateSpecVersion"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -186,7 +186,7 @@ class TemplateSpecVersionsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TemplateSpecsError, response)
+            error = self._deserialize(_models.TemplateSpecsError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('TemplateSpecVersion', pipeline_response)
@@ -204,7 +204,7 @@ class TemplateSpecVersionsOperations(object):
         template_spec_version,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TemplateSpecVersion"
+        # type: (...) -> "_models.TemplateSpecVersion"
         """Gets a Template Spec version from a specific Template Spec.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -218,7 +218,7 @@ class TemplateSpecVersionsOperations(object):
         :rtype: ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecVersion
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TemplateSpecVersion"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TemplateSpecVersion"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -250,7 +250,7 @@ class TemplateSpecVersionsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TemplateSpecsError, response)
+            error = self._deserialize(_models.TemplateSpecsError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('TemplateSpecVersion', pipeline_response)
@@ -315,7 +315,7 @@ class TemplateSpecVersionsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TemplateSpecsError, response)
+            error = self._deserialize(_models.TemplateSpecsError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -329,7 +329,7 @@ class TemplateSpecVersionsOperations(object):
         template_spec_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.TemplateSpecVersionsListResult"]
+        # type: (...) -> Iterable["_models.TemplateSpecVersionsListResult"]
         """Lists all the Template Spec versions in the specified Template Spec.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -341,7 +341,7 @@ class TemplateSpecVersionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecVersionsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TemplateSpecVersionsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TemplateSpecVersionsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -388,7 +388,7 @@ class TemplateSpecVersionsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.TemplateSpecsError, response)
+                error = self._deserialize(_models.TemplateSpecsError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

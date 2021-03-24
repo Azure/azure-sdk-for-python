@@ -9,8 +9,6 @@
 from typing import List, Union, Dict, Any, cast, TYPE_CHECKING, overload
 
 from azure.core.tracing.decorator import distributed_trace
-from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
-from ._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
 from ._generated.models import (
     MetricFeedbackFilter,
     DetectionSeriesQuery,
@@ -25,8 +23,8 @@ from ._generated.models import (
     SeriesIdentity,
     FeedbackDimensionFilter,
 )
-from ._generated import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2
-from ._helpers import convert_to_sub_feedback, convert_datetime
+from ._generated import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2 as _Client
+from ._helpers import convert_to_sub_feedback, convert_datetime, get_authentication_policy
 from .models._models import (
     AnomalyIncident,
     DataPointAnomaly,
@@ -50,7 +48,7 @@ if TYPE_CHECKING:
         CommentFeedback,
         PeriodFeedback
     )
-
+    from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
     from azure.core.paging import ItemPaged
 
 class MetricsAdvisorClient(object):
@@ -59,8 +57,9 @@ class MetricsAdvisorClient(object):
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://:code:`<resource-name>`.cognitiveservices.azure.com).
     :param credential: An instance of ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential.
-        Requires both subscription key and API key.
-    :type credential: ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential
+        which requires both subscription key and API key. Or an object which can provide an access
+        token for the vault, such as a credential from :mod:`azure.identity`
+    :type credential: ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential or ~azure.core.credentials.TokenCredential
     :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
     :keyword HttpTransport transport: If omitted, the standard pipeline is used.
     :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
@@ -74,15 +73,13 @@ class MetricsAdvisorClient(object):
         except AttributeError:
             raise ValueError("Base URL must be a string.")
 
-        if not credential:
-            raise ValueError("Missing credential")
-
         self._endpoint = endpoint
-
-        self._client = AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2(
+        authentication_policy = get_authentication_policy(credential)
+        self._client = _Client(
             endpoint=endpoint,
+            credential=credential,  # type: ignore
             sdk_moniker=SDK_MONIKER,
-            authentication_policy=MetricsAdvisorKeyCredentialPolicy(credential),
+            authentication_policy=authentication_policy,
             **kwargs
         )
 
@@ -475,7 +472,7 @@ class MetricsAdvisorClient(object):
         return self._list_anomalies_for_alert(**kwargs)
 
     @distributed_trace
-    def list_dimension_values(
+    def list_anomaly_dimension_values(
             self, detection_configuration_id,
             dimension_name,
             start_time,
@@ -500,8 +497,8 @@ class MetricsAdvisorClient(object):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_queries.py
-                :start-after: [START list_dimension_values]
-                :end-before: [END list_dimension_values]
+                :start-after: [START list_anomaly_dimension_values]
+                :end-before: [END list_anomaly_dimension_values]
                 :language: python
                 :dedent: 4
                 :caption: Query dimension values.

@@ -87,6 +87,7 @@ As of August 2020 the features below are **not supported**.
 
 * Group By queries (in roadmap for 2021)
 * Language Native async i/o (in roadmap for 2021)
+* Queries with COUNT from a DISTINCT subquery: SELECT COUNT (1) FROM (SELECT DISTINCT C.ID FROM C)
 * Bulk/Transactional batch processing
 * Direct TCP Mode access
 * Continuation token for cross partitions queries
@@ -100,7 +101,9 @@ As of August 2020 the features below are **not supported**.
 * Create Geospatial Index
 * Provision Autoscale DBs or containers
 * Cross-partition ORDER BY for mixed types
+* Update analytical store ttl (time to live)
 * Get the connection string
+* Get the minimum RU/s of a container. For more information, click [here](https://docs.microsoft.com/azure/cosmos-db/concepts-limits#minimum-throughput-limits) or use [Azure CLI](https://docs.microsoft.com/azure/cosmos-db/scripts/cli/sql/throughput#sample-script) examples for Cosmos DB.
 
 ## Bulk processing limitation workaround
 
@@ -135,6 +138,7 @@ The following sections provide several code snippets covering some of the most c
 * [Delete data](#delete-data "Delete data")
 * [Query the database](#query-the-database "Query the database")
 * [Get database properties](#get-database-properties "Get database properties")
+* [Get database and container throughputs](#get-database-and-container-throughputs "Get database and container throughputs")
 * [Modify container properties](#modify-container-properties "Modify container properties")
 
 ### Create a database
@@ -332,6 +336,33 @@ database = client.get_database_client(database_name)
 properties = database.read()
 print(json.dumps(properties))
 ```
+
+### Get database and container throughputs
+
+Get and display the throughput values of a database and of a container with dedicated throughput:
+
+```Python
+from azure.cosmos import CosmosClient
+import os
+import json
+
+url = os.environ['ACCOUNT_URI']
+key = os.environ['ACCOUNT_KEY']
+client = CosmosClient(url, credential=key)
+
+# Database
+database_name = 'testDatabase'
+database = client.get_database_client(database_name)
+db_offer = database.read_offer()
+print('Found Offer \'{0}\' for Database \'{1}\' and its throughput is \'{2}\''.format(db_offer.properties['id'], database.id, db_offer.properties['content']['offerThroughput']))
+
+# Container with dedicated throughput only. Will return error "offer not found" for containers without dedicated throughput
+container_name = 'testContainer'
+container = database.get_container_client(container_name)
+container_offer = database.read_offer()
+print('Found Offer \'{0}\' for Container \'{1}\' and its throughput is \'{2}\''.format(container_offer.properties['id'], container.id, container_offer.properties['content']['offerThroughput'])) 
+```
+
 
 ### Modify container properties
 

@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('1')?api-version=2020-06-30
+    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('1')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"1","hotelName":"Fancy Stay","description":"Best hotel in
@@ -62,7 +62,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('2')?api-version=2020-06-30
+    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('2')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"2","hotelName":"Roach Motel","description":"Cheapest hotel
@@ -108,7 +108,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2020-06-30
+    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"3","hotelName":"EconoStay","description":"Very popular
@@ -153,7 +153,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30
+    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"4","hotelName":"Express Rooms","description":"Pretty good
@@ -198,7 +198,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('5')?api-version=2020-06-30
+    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('5')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"5","hotelName":"Comfy Place","description":"Another good
@@ -243,7 +243,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('6')?api-version=2020-06-30
+    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('6')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"6","hotelName":null,"description":"Surprisingly expensive.
@@ -288,7 +288,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('7')?api-version=2020-06-30
+    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('7')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"7","hotelName":"Modern Stay","description":"Modern architecture,
@@ -334,7 +334,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('8')?api-version=2020-06-30
+    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('8')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"8","hotelName":null,"description":"Has some road noise
@@ -381,7 +381,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('9')?api-version=2020-06-30
+    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('9')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"9","hotelName":"Secret Point Motel","description":"The
@@ -442,7 +442,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('10')?api-version=2020-06-30
+    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('10')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"10","hotelName":"Countryside Hotel","description":"Save

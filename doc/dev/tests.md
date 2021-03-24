@@ -5,12 +5,13 @@ In this document we will provide the introduction to the testing framework by:
 - [Integrating with pytest](#integrate-with-the-pytest-test-framework)
 - [Using Tox](#tox)
 - [The `devtools_testutils` package](#devtools_testutils-package)
-- [Writing New Tests](#Writing-new-tests)
+- [Writing New Tests](#writing-new-tests)
 - [Define our credentials and settings](#define-credentials)
 - [Create live test resources](#create-live-test-resources)
 - [Write our test](#writing-your-test)
 - [An example test](#an-example-test)
 - [Run and record our tests](#run-and-record-the-test)
+    -[Purging secrets from recording files](#purging-secrets)
 
 ## Setup your development environment
 
@@ -84,6 +85,12 @@ azure-sdk-for-python\sdk\my-directory\my-library> pytest
 azure-sdk-for-python\sdk\my-directory\my-library> pytest <test_file.py>
 ```
 
+If your tests are broken up into multiple folders for organization, you can run specific folders:
+```cmd
+azure-sdk-for-python\sdk\my-directory\my-library> pytest .\tests\async_tests\
+azure-sdk-for-python\sdk\my-directory\my-library> pytest .\tests\async_tests\<test_file.py>
+```
+
 In addition you can provide keywords to run specific tests within the suite or within a specific file
 ```cmd
 azure-sdk-for-python\sdk\my-directory\my-library> pytest -k <keyword>
@@ -107,6 +114,7 @@ azure-sdk-for-python\sdk\my-directory\my-library> tox -c ../../../eng/tox/tox.in
 azure-sdk-for-python\sdk\my-directory\my-library> tox -c ../../../eng/tox/tox.ini -e whl
 azure-sdk-for-python\sdk\my-directory\my-library> tox -c ../../../eng/tox/tox.ini -e sdist
 azure-sdk-for-python\sdk\my_directory\my_library> tox -c ../../../eng/tox/tox.ini -e samples
+azure-sdk-for-python\sdk\my_directory\my_library> tox -c ../../../eng/tox/tox.ini -e apistub
 ```
 A quick description of the five commands above:
 * sphinx: documentation generation using the inline comments written in our code
@@ -115,9 +123,10 @@ A quick description of the five commands above:
 * whl: creates a whl package for installing our package
 * sdist: creates a zipped distribution of our files that the end user could install with pip
 * samples: runs all of the samples in the `samples` directory and verifies they are working correctly
+* apistub: runs the [apistubgenerator](https://github.com/Azure/azure-sdk-tools/tree/master/packages/python-packages/api-stub-generator) tool on your code
 
 ## `devtools_testutils` Package
-The Azure SDK team has created some in house tools to help with easier testing. These additional tools are located in the `devtools_testutils` package that was installed with your `dev_requirements.txt`. In this package is the `AzureTestCase` object which every test case object should inherit from. This management object takes care of creating and scrubbing recordings to make sure secrets are not added to the recordings files (and subsequently to the git history) and authenticating clients for test methods.
+The Azure SDK team has created some in house tools to help with easier testing. These additional tools are located in the `devtools_testutils` package that was installed with your `dev_requirements.txt`. In this package is the [`AzureTestCase`](https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-sdk-tools/devtools_testutils/azure_testcase.py#L99-L350) object which every test case object should inherit from. This management object takes care of creating and scrubbing recordings to make sure secrets are not added to the recordings files (and subsequently to the git history) and authenticating clients for test methods.
 
 ## Writing New Tests
 SDK tests are based on the `scenario_tests` subpackage located in [`azure-sdk-for-python/tools/azure-devtools/src/azure_devtools`](https://pypi.org/project/azure-devtools/). `scenario_tests` is a general, mostly abstracted framework which provides several useful features for writing SDK tests, ie:
@@ -258,39 +267,79 @@ From your terminal run the `pytest` command to run all the tests that you have w
 
 Your update should run smooth and have green dots representing passing tests. Now if you look at the contents of your `tests` directory there should be a new directory called `recording` with four `.yaml` files. Each `yaml` file is a recording for a single test. To run a test in playback mode change the `testsettings_local.cfg` to `live-mode: false` and rerun the tests with the same command. The test infrastructure will use the automatically created `.yaml` recordings to mock the HTTP traffic and run the tests.
 
+### Purging Secrets
+
+The `yaml` files created from running tests in live mode store the request and response interactions between the library and the service and this can include authorization, account names, shared access signatures, and other secrets. The recordings are included in our public GitHub repository, making it important for us to remove any secrets from these recordings before committing them to the repository. There are two easy ways to remove secrets. The first is the `PowerShellPreparer` implementation, discussed above. This method will automatically purge the keys with the provided fake values. The second way is to use the `self.scrubber.register_name_pair(key, fake_key)` method (This method is a function of the base `AzureTestCase` class), which is used when a secret is dynamically created during a test. For example, [Tables](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/tests/_shared/cosmos_testcase.py#L86-L89) uses this method to replace storage account names with standard names.
+
+#### Special Case: Shared Access Signature
+
+Tests that use the Shared Access Signature (SAS) to authenticate a client should use the [`AzureTestCase.generate_sas`](https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-sdk-tools/devtools_testutils/azure_testcase.py#L357-L370) method to generate the SAS and purge the value from the recordings. An example of using this method can be found [here](https://github.com/Azure/azure-sdk-for-python/blob/78650ba08523c14227ce8139cba5f4d1e6ed7956/sdk/tables/azure-data-tables/tests/test_table_entity.py#L1628-L1636). The method takes any number of positional arguments, with the first being the method that creates the SAS, and any number of keyword arguments (**kwargs). The method will be purged appropriately and allow for these tests to be run in playback mode.
+
+## Functional vs. Unit Tests
+
+The test written above is a functional test, it generates HTTP traffic and sends data to the service. Most of our clients have some client-side validation for account names, formatting, or properties that do not generate HTTP traffic. For unit tests, the best practice is to have a separate test class from the `AzureTestCase` class which tests client side validation methods. For example, the `azure-data-tables` library has client-side validation for the table name and properties of the entity, below is an example of how these could be tested:
+
+```python
+import pytest
+from azure.data.tables import TableServiceClient, EntityProperty, EdmType
+
+class TestTablesUnitTest(object):
+
+    def test_invalid_table_name(self):
+        account_name = 'fake_account_name'
+        account_key = 'fake_account_key1234567890'
+        tsc = TableServiceClient(
+            account_url='https://{}.table.core.windows.net/'.format(account_name),
+            credential=account_key
+        )
+
+        invalid_table_name = "bad_table_name" # table name cannot have an '_' character
+
+        with pytest.raises(ValueError):
+            tsc.create_table(invalid_table_name)
+
+    def test_entity_properties(self):
+        ep = EntityProperty('abc', EdmType.STRING)
+        ep = EntityProperty(b'abc', EdmType.BINARY)
+        ep = EntityProperty(1.2345, EdmType.DOUBLE)
+
+        with pytest.raises(ValueError):
+            ep = EntityProperty(2 ** 75, EdmType.Int64) # Tables can only handle integers up to 2 ^ 63
+```
+
+Async tests need to be marked with a `@pytest.mark.asyncio` to be properly handled. For example:
+```python
+import pytest
+from azure.data.tables.aio import TableServiceClient
+
+class TestTablesUnitTest(object):
+
+    @pytest.mark.asyncio
+    async def test_invalid_table_name(self):
+        account_name = 'fake_account_name'
+        account_key = 'fake_account_key1234567890'
+        tsc = TableServiceClient(
+            account_url='https://{}.table.core.windows.net/'.format(account_name),
+            credential=account_key
+        )
+
+        invalid_table_name = "bad_table_name" # table name cannot have an '_' character
+
+        with pytest.raises(ValueError):
+            await tsc.create_table(invalid_table_name)
+```
+
 
 ## More Test Examples
 
 This section will demonstrate how to write tests with the `devtools_testutils` package with a few samples to showcase the features of the test framework.
 
-### Example 1: Basic Recording and Interactions
-
-```python
-import os
-import pytest
-
-from azure.data.tables import TableServiceClient
-from devtools_testutils import AzureTestCase
-
-class ExampleStorageTestCase(AzureTestCase):
-
-    def test_create_table(self):
-        credential = self.get_credential(TableServiceClient)
-        client = self.create_client_from_credential(TableServiceClient, credential, account_url=self.account_url)
-
-        with pytest.raises(ValueError):
-            table_name = "an_invalid_table"
-            created = client.create_table(table_name)
-```
-
-This simple tests that the client verifies a valid table name before sending the HTTP request (Azure Data Tables can only be alphanumeric values). This test will have no recording associated with it.
-
 For more information, refer to the [advanced tests notes][advanced_tests_notes] on more advanced scenarios and additional information.
 
 
 <!-- Links -->
-[advanced_tests_notes]: ./tests-advanced.md
+[advanced_tests_notes]: https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/tests-advanced.md
 [azure_devtools]: https://pypi.org/project/azure-devtools/
 [engsys_wiki]: https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/48/Create-a-new-Live-Test-pipeline?anchor=test-resources.json
 [mgmt_settings_fake]: https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py
-[packaging]: ./packaging.md
+[packaging]: https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/packaging.md

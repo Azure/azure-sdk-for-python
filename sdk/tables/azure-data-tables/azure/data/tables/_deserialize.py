@@ -3,18 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=unused-argument
-from typing import (  # pylint: disable=unused-import
-    Union,
-    Optional,
-    Any,
-    Iterable,
-    Dict,
-    List,
-    Type,
-    Tuple,
-    TYPE_CHECKING,
-)
+
+from typing import TYPE_CHECKING
 from uuid import UUID
 import logging
 import datetime
@@ -36,6 +26,18 @@ try:
     from urllib.parse import quote
 except ImportError:
     from urllib2 import quote  # type: ignore
+
+if TYPE_CHECKING:
+    from typing import (  # pylint: disable=ungrouped-imports
+        Union,
+        Optional,
+        Any,
+        Iterable,
+        Dict,
+        List,
+        Type,
+        Tuple,
+    )
 
 
 def url_quote(url):
@@ -81,7 +83,7 @@ def _from_entity_int64(value):
 zero = datetime.timedelta(0)  # same as 00:00
 
 
-class Timezone(datetime.tzinfo):  # pylint: disable : W0223
+class Timezone(datetime.tzinfo):
     def utcoffset(self, dt):
         return zero
 
@@ -94,11 +96,32 @@ class Timezone(datetime.tzinfo):  # pylint: disable : W0223
 
 def _from_entity_datetime(value):
     # Cosmos returns this with a decimal point that throws an error on deserialization
-    if value[-9:] == ".0000000Z":
-        value = value[:-9] + "Z"
-    return datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(
-        tzinfo=Timezone()
-    )
+    value = clean_up_dotnet_timestamps(value)
+
+    try:
+        return datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(
+            tzinfo=Timezone()
+        )
+    except ValueError:
+        return datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(
+            tzinfo=Timezone()
+        )
+
+
+def clean_up_dotnet_timestamps(value):
+    # .NET has more decimal places than Python supports in datetime objects, this truncates
+    # values after 6 decimal places.
+    value = value.split(".")
+    ms = ""
+    if len(value) == 2:
+        ms = value[-1].replace("Z", "")
+        if len(ms) > 6:
+            ms = ms[:6]
+        ms = ms + "Z"
+        return ".".join([value[0], ms])
+
+    return value[0]
+
 
 
 def _from_entity_guid(value):
@@ -183,7 +206,7 @@ def _convert_to_entity(entry_element):
         mtype = edmtypes.get(name)
 
         # Add type for Int32
-        if type(value) is int and mtype is None:  # pylint:disable=C0123
+        if isinstance(value, int) and mtype is None:
             mtype = EdmType.INT32
 
             if value >= 2 ** 31 or value < (-(2 ** 31)):
@@ -191,10 +214,10 @@ def _convert_to_entity(entry_element):
 
         # Add type for String
         try:
-            if type(value) is unicode and mtype is None:  # pylint:disable=C0123
+            if isinstance(value, unicode) and mtype is None:
                 mtype = EdmType.STRING
         except NameError:
-            if type(value) is str and mtype is None:  # pylint:disable=C0123
+            if isinstance(value, str) and mtype is None:
                 mtype = EdmType.STRING
 
         # no type info, property should parse automatically
@@ -216,7 +239,7 @@ def _convert_to_entity(entry_element):
         etag = "W/\"datetime'" + url_quote(timestamp) + "'\""
     entity["etag"] = etag
 
-    entity._set_metadata()  # pylint: disable = W0212
+    entity._set_metadata()  # pylint: disable=protected-access
     return entity
 
 

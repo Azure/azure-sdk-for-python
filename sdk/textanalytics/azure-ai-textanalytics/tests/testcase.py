@@ -71,6 +71,22 @@ class TextAnalyticsTest(AzureTestCase):
             confidence_scores.positive + confidence_scores.neutral + confidence_scores.negative, 1
         )
 
+    def assert_healthcare_data_sources_equal(self, data_sources_a, data_sources_b):
+        assert len(data_sources_a) == len(data_sources_b)
+        for data_source_a, data_source_b in zip(data_sources_a, data_sources_b):
+            assert data_source_a.entity_id == data_source_b.entity_id
+            assert data_source_a.name == data_source_b.name
+
+
+    def assert_healthcare_entities_equal(self, entity_a, entity_b):
+        assert entity_a.text == entity_b.text
+        assert entity_a.category == entity_b.category
+        assert entity_a.subcategory == entity_b.subcategory
+        assert len(entity_a.data_sources) == len(entity_b.data_sources)
+        self.assert_healthcare_data_sources_equal(entity_a.data_sources, entity_b.data_sources)
+        assert entity_a.length == entity_b.length
+        assert entity_a.offset == entity_b.offset
+
 
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):
     def __init__(self):

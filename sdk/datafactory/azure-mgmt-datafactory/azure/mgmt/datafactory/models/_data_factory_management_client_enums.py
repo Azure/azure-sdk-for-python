@@ -97,6 +97,23 @@ class CopyBehaviorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FLATTEN_HIERARCHY = "FlattenHierarchy"
     MERGE_FILES = "MergeFiles"
 
+class CosmosDbConnectionMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The connection mode used to access CosmosDB account. Type: string (or Expression with
+    resultType string).
+    """
+
+    GATEWAY = "Gateway"
+    DIRECT = "Direct"
+
+class CosmosDbServicePrincipalCredentialType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The service principal credential type to use in Server-To-Server authentication.
+    'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert' for certificate. Type: string (or
+    Expression with resultType string).
+    """
+
+    SERVICE_PRINCIPAL_KEY = "ServicePrincipalKey"
+    SERVICE_PRINCIPAL_CERT = "ServicePrincipalCert"
+
 class DataFlowComputeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Compute type of the cluster which will execute data flow job.
     """
@@ -199,6 +216,14 @@ class EventSubscriptionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     DEPROVISIONING = "Deprovisioning"
     DISABLED = "Disabled"
     UNKNOWN = "Unknown"
+
+class FactoryIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The identity type.
+    """
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
 class FtpAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The authentication type to be used to connect to the FTP server.
@@ -642,6 +667,7 @@ class SftpAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
 
     BASIC = "Basic"
     SSH_PUBLIC_KEY = "SshPublicKey"
+    MULTI_FACTOR = "MultiFactor"
 
 class SparkAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The authentication method used to access the Spark server.

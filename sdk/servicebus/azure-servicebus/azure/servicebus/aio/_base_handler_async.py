@@ -112,15 +112,12 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     @classmethod
     def _convert_connection_string_to_kwargs(cls, conn_str, **kwargs):
         # pylint:disable=protected-access
-        return BaseHandlerSync._convert_connection_string_to_kwargs(conn_str, **kwargs)
-
-    @classmethod
-    def _create_credential_from_connection_string_parameters(
-        cls, token, token_expiry, policy, key
-    ):
-        if token and token_expiry:
-            return ServiceBusSASTokenCredential(token, token_expiry)
-        return ServiceBusSharedKeyCredential(policy, key)
+        return BaseHandlerSync._convert_connection_string_to_kwargs(
+            conn_str,
+            token_cred_type=ServiceBusSASTokenCredential,
+            key_cred_type=ServiceBusSharedKeyCredential,
+            **kwargs
+        )
 
     async def __aenter__(self):
         if self._shutdown.is_set():

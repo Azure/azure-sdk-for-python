@@ -54,6 +54,15 @@ class CheckQuotaNameResourceTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     MICROSOFT_NET_APP_NET_APP_ACCOUNTS_CAPACITY_POOLS_VOLUMES = "Microsoft.NetApp/netAppAccounts/capacityPools/volumes"
     MICROSOFT_NET_APP_NET_APP_ACCOUNTS_CAPACITY_POOLS_VOLUMES_SNAPSHOTS = "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots"
 
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
 class EndpointType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates whether the local volume is the source or destination for the Volume Replication
     """
@@ -101,7 +110,7 @@ class ReplicationSchedule(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DAILY = "daily"
 
 class SecurityStyle(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The security style of volume
+    """The security style of volume, default unix, defaults to ntfs for dual protocol or CIFS protocol
     """
 
     NTFS = "ntfs"

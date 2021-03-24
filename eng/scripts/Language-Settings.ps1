@@ -1,25 +1,60 @@
 $Language = "python"
+$LanguageDisplayName = "Python"
 $PackageRepository = "PyPI"
 $packagePattern = "*.zip"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/master/_data/releases/latest/python-packages.csv"
 $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=python%2F&delimiter=%2F"
 
-function Get-python-PackageInfoFromRepo  ($pkgPath, $serviceDirectory, $pkgName)
+function Get-AllPackageInfoFromRepo ($serviceDirectory)
 {
-  pip install packaging==20.4 -q -I
-  $pkgName = $pkgName.Replace('_', '-')
-  if (Test-Path (Join-Path $pkgPath "setup.py"))
+  $allPackageProps = @()
+  $searchPath = "sdk"
+  if ($serviceDirectory)
   {
-    $setupLocation = $pkgPath.Replace('\','/')
-    pushd $RepoRoot
-    $setupProps = (python -c "import sys; import os; sys.path.append(os.path.join('scripts', 'devops_tasks')); from common_tasks import parse_setup; obj=parse_setup('$setupLocation'); print('{0},{1}'.format(obj[0], obj[1]));") -split ","
-    popd
-    if (($setupProps -ne $null) -and ($setupProps[0] -eq $pkgName))
-    {
-      return [PackageProps]::new($setupProps[0], $setupProps[1], $pkgPath, $serviceDirectory)
-    }
+    $searchPath = Join-Path sdk ${serviceDirectory}
   }
-  return $null
+
+  $allPkgPropLines = $null
+  try
+  {
+    Push-Location $RepoRoot
+    pip install packaging==20.4 -q -I
+    $allPkgPropLines = python (Join-path eng scripts get_package_properties.py) -s $searchPath
+  }
+  catch
+  {
+    # This is soft error and failure is expected for python metapackages
+    LogError "Failed to get all package properties"
+  }
+  finally
+  {
+    Pop-Location
+  }
+
+  foreach ($line in $allPkgPropLines)
+  {
+    $pkgInfo = ($line -Split " ")
+    $packageName = $pkgInfo[0]
+    $packageVersion = $pkgInfo[1]
+    $isNewSdk = ($pkgInfo[2] -eq "True")
+    $setupPyDir = $pkgInfo[3]
+    $pkgDirectoryPath = Resolve-Path (Join-Path -Path $RepoRoot $setupPyDir)
+    $serviceDirectoryName = Split-Path (Split-Path -Path $pkgDirectoryPath -Parent) -Leaf
+    if ($packageName -match "mgmt")
+    {
+      $sdkType = "mgmt"
+    }
+    else
+    {
+      $sdkType = "client"
+    }
+    $pkgProp = [PackageProps]::new($packageName, $packageVersion, $pkgDirectoryPath, $serviceDirectoryName)
+    $pkgProp.IsNewSdk = $isNewSdk
+    $pkgProp.SdkType = $sdkType
+    $pkgProp.ArtifactName = $packageName
+    $allPackageProps += $pkgProp
+  }
+  return $allPackageProps
 }
 
 # Returns the pypi publish status of a package id and version.
@@ -54,6 +89,7 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
   $pkg.Basename -match $SDIST_PACKAGE_REGEX | Out-Null
 
   $pkgId = $matches["package"]
+  $docsReadMeName = $pkgId -replace "^azure-" , ""
   $pkgVersion = $matches["versionstring"]
 
   $workFolder = "$workingDirectory$($pkg.Basename)"
@@ -84,6 +120,7 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
     Deployable     = $forceCreate -or !(IsPythonPackageVersionPublished -pkgId $pkgId -pkgVersion $pkgVersion)
     ReleaseNotes   = $releaseNotes
     ReadmeContent  = $readmeContent
+    DocsReadMeName = $docsReadMeName
   }
 }
 
@@ -161,20 +198,25 @@ function Update-python-CIConfig($pkgs, $ciRepo, $locationInDocRepo, $monikerId=$
         $existingPackageDef.package_info.version = ">=$($releasingPkg.PackageVersion)"
       }
       else {
-        if ($def.version) {
-          $def.PSObject.Properties.Remove('version')  
+        if ($existingPackageDef.package_info.version) {
+          $existingPackageDef.package_info.PSObject.Properties.Remove('version')
         }
       }
     }
     else {
       $newItem = New-Object PSObject -Property @{ 
-          package_info = New-Object PSObject -Property @{ 
-            prefer_source_distribution = "true"
-            install_type = "pypi"
-            name=$releasingPkg.PackageId
-          }
-          exclude_path = @("test*","example*","sample*","doc*")
+        package_info = New-Object PSObject -Property @{
+          prefer_source_distribution = "true"
+          install_type = "pypi"
+          name=$releasingPkg.PackageId
         }
+        exclude_path = @("test*","example*","sample*","doc*")
+      }
+
+      if ($releasingPkg.IsPrerelease) {
+        $newItem.package_info | Add-Member -NotePropertyName version -NotePropertyValue ">=$($releasingPkg.PackageVersion)"
+      }
+
       $allJson.packages += $newItem
     }
   }
@@ -196,17 +238,18 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
     return $null
   }
 
-  $packageName = $artifactName + "-"
-  Write-Host "Searching for $($packageName) wheel in artifact path $($artifactDir)"
-  $files = Get-ChildItem "${artifactDir}" | Where-Object -FilterScript {$_.Name.StartsWith($packageName) -and $_.Name.EndsWith(".whl")}
+  $whlDirectory = (Join-Path -Path $artifactDir -ChildPath $artifactName.Replace("_","-"))
+
+  Write-Host "Searching for $($artifactName) wheel in artifact path $($whlDirectory)"
+  $files = Get-ChildItem $whlDirectory | ? {$_.Name.EndsWith(".whl")}
   if (!$files)
   {
-    Write-Host "$($artifactDir) does not have wheel package for $($packageName)"
+    Write-Host "$whlDirectory does not have wheel package for $($artifactName)"
     return $null
   }
   elseif($files.Count -ne 1)
   {
-    Write-Host "$($artifactDir) should contain only one published wheel package for $($packageName)"
+    Write-Host "$whlDirectory should contain only one published wheel package for $($artifactName)"
     Write-Host "No of Packages $($files.Count)"
     return $null
   }
@@ -217,7 +260,7 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
   return $packages
 }
 
-function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseDate, $BuildType=$null, $GroupId=$null)
+function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseDate)
 {
   if($null -eq $ReleaseDate)
   {
@@ -225,4 +268,18 @@ function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseD
   }
   pip install -r "$EngDir/versioning/requirements.txt" -q -I
   python "$EngDir/versioning/version_set.py" --package-name $PackageName --new-version $Version --service $ServiceDirectory --release-date $ReleaseDate
+}
+
+function GetExistingPackageVersions ($PackageName, $GroupId=$null)
+{
+  try
+  {
+    $existingVersion = Invoke-RestMethod -Method GET -Uri "https://pypi.python.org/pypi/${PackageName}/json"
+    return ($existingVersion.releases | Get-Member -MemberType NoteProperty).Name
+  }
+  catch
+  {
+    LogError "Failed to retrieve package versions. `n$_"
+    return $null
+  }
 }

@@ -42,8 +42,9 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         tokens for multiple identities.
     :keyword AuthenticationRecord authentication_record: an authentication record returned by a user credential such as
         :class:`DeviceCodeCredential` or :class:`InteractiveBrowserCredential`
-    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
-        is unavailable. Defaults to False.
+    :keyword cache_persistence_options: configuration for persistent token caching. If not provided, the credential
+        will use the persistent cache shared by Microsoft development applications
+    :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     """
 
     def __init__(self, username=None, **kwargs):
@@ -71,6 +72,8 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+        :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
+          claims challenge following an authorization failure
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.identity.CredentialUnavailableError: the cache is unavailable or contains insufficient user
             information
@@ -87,7 +90,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
             raise CredentialUnavailableError(message="Shared token cache unavailable")
 
         if self._auth_record:
-            return self._acquire_token_silent(*scopes)
+            return self._acquire_token_silent(*scopes, **kwargs)
 
         account = self._get_account(self._username, self._tenant_id)
 
@@ -121,6 +124,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
                 authority="https://{}/{}".format(self._auth_record.authority, self._tenant_id),
                 token_cache=self._cache,
                 http_client=MsalClient(**self._client_kwargs),
+                client_capabilities=["CP1"]
             )
 
         self._initialized = True
@@ -146,7 +150,9 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
                 continue
 
             now = int(time.time())
-            result = self._app.acquire_token_silent_with_error(list(scopes), account=account, **kwargs)
+            result = self._app.acquire_token_silent_with_error(
+                list(scopes), account=account, claims_challenge=kwargs.get("claims")
+            )
             if result and "access_token" in result and "expires_in" in result:
                 return AccessToken(result["access_token"], now + int(result["expires_in"]))
 

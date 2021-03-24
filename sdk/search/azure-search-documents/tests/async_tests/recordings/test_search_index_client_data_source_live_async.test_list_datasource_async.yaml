@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search74a71e70.search.windows.net/datasources?api-version=2020-06-30
+    uri: https://search74a71e70.search.windows.net/datasources?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search74a71e70.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D84B9BF2B0BEFE\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
@@ -25,7 +25,7 @@ interactions:
       elapsed-time: '50'
       etag: W/"0x8D84B9BF2B0BEFE"
       expires: '-1'
-      location: https://search74a71e70.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
+      location: https://search74a71e70.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -34,7 +34,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://search74a71e70.search.windows.net/datasources?api-version=2020-06-30
+    url: https://search74a71e70.search.windows.net/datasources?api-version=2020-06-30-Preview
 - request:
     body: '{"name": "another-sample", "type": "azureblob", "credentials": {"connectionString":
       "connection_string"},
@@ -49,7 +49,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search74a71e70.search.windows.net/datasources?api-version=2020-06-30
+    uri: https://search74a71e70.search.windows.net/datasources?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search74a71e70.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D84B9BF2F4B24E\"","name":"another-sample","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
@@ -61,7 +61,7 @@ interactions:
       elapsed-time: '31'
       etag: W/"0x8D84B9BF2F4B24E"
       expires: '-1'
-      location: https://search74a71e70.search.windows.net/datasources('another-sample')?api-version=2020-06-30
+      location: https://search74a71e70.search.windows.net/datasources('another-sample')?api-version=2020-06-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -70,7 +70,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://search74a71e70.search.windows.net/datasources?api-version=2020-06-30
+    url: https://search74a71e70.search.windows.net/datasources?api-version=2020-06-30-Preview
 - request:
     body: null
     headers:
@@ -79,7 +79,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search74a71e70.search.windows.net/datasources?api-version=2020-06-30
+    uri: https://search74a71e70.search.windows.net/datasources?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search74a71e70.search.windows.net/$metadata#datasources","value":[{"@odata.etag":"\"0x8D84B9BF2F4B24E\"","name":"another-sample","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null},{"@odata.etag":"\"0x8D84B9BF2B0BEFE\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}]}'
@@ -100,5 +100,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search74a71e70.search.windows.net/datasources?api-version=2020-06-30
+    url: https://search74a71e70.search.windows.net/datasources?api-version=2020-06-30-Preview
 version: 1

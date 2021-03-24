@@ -2,10 +2,19 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import functools
+
+from azure.keyvault.keys.aio import KeyClient
 from azure.keyvault.keys.crypto.aio import CryptographyClient
-from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
+from azure.keyvault.keys._shared import HttpChallengeCache
+from devtools_testutils import PowerShellPreparer
 from _shared.test_case_async import KeyVaultTestCase
-from crypto_client_preparer_async import CryptoClientPreparer
+
+KeyVaultPreparer = functools.partial(
+    PowerShellPreparer,
+    "keyvault",
+    azure_keyvault_url="https://vaultname.vault.azure.net"
+)
 
 
 class TestCryptoExamples(KeyVaultTestCase):
@@ -13,12 +22,24 @@ class TestCryptoExamples(KeyVaultTestCase):
         kwargs["match_body"] = False
         super(TestCryptoExamples, self).__init__(*args, **kwargs)
 
+    def tearDown(self):
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
+        super(TestCryptoExamples, self).tearDown()
+
+    def create_key_client(self, vault_uri, **kwargs):
+        credential = self.get_credential(KeyClient, is_async=True)
+        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
+
+    def get_crypto_client_credential(self):
+        return self.get_credential(CryptographyClient, is_async=True)
+
     # pylint:disable=unused-variable
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @CryptoClientPreparer()
-    async def test_encrypt_decrypt_async(self, key_client, credential, **kwargs):
+    async def test_encrypt_decrypt_async(self, azure_keyvault_url, **kwargs):
+        key_client = self.create_key_client(azure_keyvault_url)
+        credential = self.get_crypto_client_credential()
         key_name = self.get_resource_name("crypto-test-encrypt-key")
         await key_client.create_rsa_key(key_name)
 
@@ -30,6 +51,11 @@ class TestCryptoExamples(KeyVaultTestCase):
         # or a key's id, which must include a version
         key_id = "https://<your vault>.vault.azure.net/keys/<key name>/fe4fdcab688c479a9aa80f01ffeac26"
         crypto_client = CryptographyClient(key_id, credential)
+
+        # the client and credential should be closed when no longer needed
+        # (both are also async context managers)
+        await crypto_client.close()
+        await credential.close()
         # [END create_client]
 
         client = CryptographyClient(key, credential)
@@ -51,10 +77,10 @@ class TestCryptoExamples(KeyVaultTestCase):
         print(result.plaintext)
         # [END decrypt]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @CryptoClientPreparer()
-    async def test_wrap_unwrap_async(self, key_client, credential, **kwargs):
+    async def test_wrap_unwrap_async(self, azure_keyvault_url, **kwargs):
+        key_client = self.create_key_client(azure_keyvault_url)
+        credential = self.get_crypto_client_credential()
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = await key_client.create_rsa_key(key_name)
         client = CryptographyClient(key, credential)
@@ -77,10 +103,10 @@ class TestCryptoExamples(KeyVaultTestCase):
         result = await client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, encrypted_key)
         # [END unwrap_key]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @CryptoClientPreparer()
-    async def test_sign_verify_async(self, key_client, credential, **kwargs):
+    async def test_sign_verify_async(self, azure_keyvault_url, **kwargs):
+        key_client = self.create_key_client(azure_keyvault_url)
+        credential = self.get_crypto_client_credential()
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = await key_client.create_rsa_key(key_name)
         client = CryptographyClient(key, credential)

@@ -2,11 +2,20 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import functools
+
+from azure.keyvault.keys import KeyClient
 from azure.keyvault.keys.crypto import CryptographyClient
-from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
+from azure.keyvault.keys._shared import HttpChallengeCache
+from devtools_testutils import PowerShellPreparer
 
 from _shared.test_case import KeyVaultTestCase
-from crypto_client_preparer import CryptoClientPreparer
+
+KeyVaultPreparer = functools.partial(
+    PowerShellPreparer,
+    "keyvault",
+    azure_keyvault_url="https://vaultname.vault.azure.net"
+)
 
 
 class TestCryptoExamples(KeyVaultTestCase):
@@ -14,12 +23,24 @@ class TestCryptoExamples(KeyVaultTestCase):
         kwargs["match_body"] = False
         super(TestCryptoExamples, self).__init__(*args, **kwargs)
 
+    def tearDown(self):
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
+        super(TestCryptoExamples, self).tearDown()
+
+    def create_key_client(self, vault_uri, **kwargs):
+        credential = self.get_credential(KeyClient)
+        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
+
+    def get_crypto_client_credential(self):
+        return self.get_credential(CryptographyClient)
+
     # pylint:disable=unused-variable
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @CryptoClientPreparer()
-    def test_encrypt_decrypt(self, key_client, credential, **kwargs):
+    def test_encrypt_decrypt(self, azure_keyvault_url, **kwargs):
+        key_client = self.create_key_client(azure_keyvault_url)
+        credential = self.get_crypto_client_credential()
         key_name = self.get_resource_name("crypto-test-encrypt-key")
         key_client.create_rsa_key(key_name)
 
@@ -52,10 +73,10 @@ class TestCryptoExamples(KeyVaultTestCase):
         print(result.plaintext)
         # [END decrypt]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @CryptoClientPreparer()
-    def test_wrap_unwrap(self, key_client, credential, **kwargs):
+    def test_wrap_unwrap(self, azure_keyvault_url, **kwargs):
+        key_client = self.create_key_client(azure_keyvault_url)
+        credential = self.get_crypto_client_credential()
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = key_client.create_rsa_key(key_name)
         client = CryptographyClient(key, credential)
@@ -79,10 +100,10 @@ class TestCryptoExamples(KeyVaultTestCase):
         key = result.key
         # [END unwrap_key]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @CryptoClientPreparer()
-    def test_sign_verify(self, key_client, credential, **kwargs):
+    def test_sign_verify(self, azure_keyvault_url, **kwargs):
+        key_client = self.create_key_client(azure_keyvault_url)
+        credential = self.get_crypto_client_credential()
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = key_client.create_rsa_key(key_name)
         client = CryptographyClient(key, credential)

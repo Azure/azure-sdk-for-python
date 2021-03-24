@@ -1,0 +1,31 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "Hello world", "language": "en"}]}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Content-Length:
+      - '69'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/recognition/pii?showStats=false&stringIndexType=TextElements_v8
+  response:
+    body:
+      string: '{"documents":[{"redactedText":"Hello world","id":"0","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}'
+    headers:
+      apim-request-id: 3eedd1fe-a768-4182-b707-1242903c2b52
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
+      date: Tue, 23 Feb 2021 17:10:23 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '18'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/entities/recognition/pii?showStats=false&stringIndexType=TextElements_v8
+version: 1

@@ -2,109 +2,177 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from ._generated import models
+from enum import Enum
 
-_event_mappings = {
-    "Microsoft.Communication.ChatMemberAddedToThreadWithUser": models.ACSChatMemberAddedToThreadWithUserEventData,
-    "Microsoft.Communication.ChatMemberRemovedFromThreadWithUser":
-    models.ACSChatMemberRemovedFromThreadWithUserEventData,
-    "Microsoft.Communication.ChatMessageDeleted": models.ACSChatMessageDeletedEventData,
-    "Microsoft.Communication.ChatMessageEdited": models.ACSChatMessageEditedEventData,
-    "Microsoft.Communication.ChatMessageReceived": models.ACSChatMessageReceivedEventData,
-    "Microsoft.Communication.ChatThreadCreatedWithUser": models.ACSChatThreadCreatedWithUserEventData,
-    "Microsoft.Communication.ChatThreadPropertiesUpdatedPerUser": models.ACSChatThreadPropertiesUpdatedPerUserEventData,
-    "Microsoft.Communication.ChatThreadWithUserDeleted": models.ACSChatThreadWithUserDeletedEventData,
-    "Microsoft.Communication.SMSDeliveryReportReceived": models.ACSSMSDeliveryReportReceivedEventData,
-    "Microsoft.Communication.SMSReceived": models.ACSSMSReceivedEventData,
-    "Microsoft.AppConfiguration.KeyValueDeleted": models.AppConfigurationKeyValueDeletedEventData,
-    "Microsoft.AppConfiguration.KeyValueModified": models.AppConfigurationKeyValueModifiedEventData,
-    "Microsoft.ContainerRegistry.ImagePushed": models.ContainerRegistryImagePushedEventData,
-    "Microsoft.ContainerRegistry.ImageDeleted": models.ContainerRegistryImageDeletedEventData,
-    "Microsoft.ContainerRegistry.ChartDeleted": models.ContainerRegistryChartDeletedEventData,
-    "Microsoft.ContainerRegistry.ChartPushed": models.ContainerRegistryChartPushedEventData,
-    "Microsoft.Devices.DeviceCreated": models.IotHubDeviceCreatedEventData,
-    "Microsoft.Devices.DeviceDeleted": models.IotHubDeviceDeletedEventData,
-    "Microsoft.Devices.DeviceConnected": models.IotHubDeviceConnectedEventData,
-    "Microsoft.Devices.DeviceDisconnected": models.IotHubDeviceDisconnectedEventData,
-    "Microsoft.Devices.DeviceTelemetry": models.IotHubDeviceTelemetryEventData,
-    "Microsoft.EventGrid.SubscriptionValidationEvent": models.SubscriptionValidationEventData,
-    "Microsoft.EventGrid.SubscriptionDeletedEvent": models.SubscriptionDeletedEventData,
-    "Microsoft.EventHub.CaptureFileCreated": models.EventHubCaptureFileCreatedEventData,
-    "Microsoft.KeyVault.CertificateNewVersionCreated": models.KeyVaultCertificateNewVersionCreatedEventData,
-    "Microsoft.KeyVault.CertificateNearExpiry": models.KeyVaultCertificateNearExpiryEventData,
-    "Microsoft.KeyVault.CertificateExpired": models.KeyVaultCertificateExpiredEventData,
-    "Microsoft.KeyVault.KeyNewVersionCreated": models.KeyVaultKeyNewVersionCreatedEventData,
-    "Microsoft.KeyVault.KeyNearExpiry": models.KeyVaultKeyNearExpiryEventData,
-    "Microsoft.KeyVault.KeyExpired": models.KeyVaultKeyExpiredEventData,
-    "Microsoft.KeyVault.SecretNewVersionCreated": models.KeyVaultSecretNewVersionCreatedEventData,
-    "Microsoft.KeyVault.SecretNearExpiry": models.KeyVaultSecretNearExpiryEventData,
-    "Microsoft.KeyVault.SecretExpired": models.KeyVaultSecretExpiredEventData,
-    "Microsoft.KeyVault.VaultAccessPolicyChanged": models.KeyVaultAccessPolicyChangedEventData,
-    "Microsoft.MachineLearningServices.DatasetDriftDetected":
-    models.MachineLearningServicesDatasetDriftDetectedEventData,
-    "Microsoft.MachineLearningServices.ModelDeployed": models.MachineLearningServicesModelDeployedEventData,
-    "Microsoft.MachineLearningServices.ModelRegistered": models.MachineLearningServicesModelRegisteredEventData,
-    "Microsoft.MachineLearningServices.RunCompleted": models.MachineLearningServicesRunCompletedEventData,
-    "Microsoft.MachineLearningServices.RunStatusChanged": models.MachineLearningServicesRunStatusChangedEventData,
-    "Microsoft.Maps.GeofenceEntered": models.MapsGeofenceEnteredEventData,
-    "Microsoft.Maps.GeofenceExited": models.MapsGeofenceExitedEventData,
-    "Microsoft.Maps.GeofenceResult": models.MapsGeofenceResultEventData,
-    "Microsoft.Media.JobStateChange": models.MediaJobStateChangeEventData,
-    "Microsoft.Media.JobOutputStateChange": models.MediaJobOutputStateChangeEventData,
-    "Microsoft.Media.JobScheduled": models.MediaJobScheduledEventData,
-    "Microsoft.Media.JobProcessing": models.MediaJobProcessingEventData,
-    "Microsoft.Media.JobCanceling": models.MediaJobCancelingEventData,
-    "Microsoft.Media.JobFinished": models.MediaJobFinishedEventData,
-    "Microsoft.Media.JobCanceled": models.MediaJobCanceledEventData,
-    "Microsoft.Media.JobErrored": models.MediaJobErroredEventData,
-    "Microsoft.Media.JobOutputCanceled": models.MediaJobOutputCanceledEventData,
-    "Microsoft.Media.JobOutputCanceling": models.MediaJobOutputCancelingEventData,
-    "Microsoft.Media.JobOutputErrored": models.MediaJobOutputErroredEventData,
-    "Microsoft.Media.JobOutputFinished": models.MediaJobOutputFinishedEventData,
-    "Microsoft.Media.JobOutputProcessing": models.MediaJobOutputProcessingEventData,
-    "Microsoft.Media.JobOutputScheduled": models.MediaJobOutputScheduledEventData,
-    "Microsoft.Media.JobOutputProgress": models.MediaJobOutputProgressEventData,
-    "Microsoft.Media.LiveEventEncoderConnected": models.MediaLiveEventEncoderConnectedEventData,
-    "Microsoft.Media.LiveEventConnectionRejected": models.MediaLiveEventConnectionRejectedEventData,
-    "Microsoft.Media.LiveEventEncoderDisconnected": models.MediaLiveEventEncoderDisconnectedEventData,
-    "Microsoft.Media.LiveEventIncomingStreamReceived": models.MediaLiveEventIncomingStreamReceivedEventData,
-    "Microsoft.Media.LiveEventIncomingStreamsOutOfSync": models.MediaLiveEventIncomingStreamsOutOfSyncEventData,
-    "Microsoft.Media.LiveEventIncomingVideoStreamsOutOfSync":
-    models.MediaLiveEventIncomingVideoStreamsOutOfSyncEventData,
-    "Microsoft.Media.LiveEventIncomingDataChunkDropped": models.MediaLiveEventIncomingDataChunkDroppedEventData,
-    "Microsoft.Media.LiveEventIngestHeartbeat": models.MediaLiveEventIngestHeartbeatEventData,
-    "Microsoft.Media.LiveEventTrackDiscontinuityDetected": models.MediaLiveEventTrackDiscontinuityDetectedEventData,
-    "Microsoft.Resources.ResourceWriteSuccess": models.ResourceWriteSuccessData,
-    "Microsoft.Resources.ResourceWriteFailure": models.ResourceWriteFailureData,
-    "Microsoft.Resources.ResourceWriteCancel": models.ResourceWriteCancelData,
-    "Microsoft.Resources.ResourceDeleteSuccess": models.ResourceDeleteSuccessData,
-    "Microsoft.Resources.ResourceDeleteFailure": models.ResourceDeleteFailureData,
-    "Microsoft.Resources.ResourceDeleteCancel": models.ResourceDeleteCancelData,
-    "Microsoft.Resources.ResourceActionSuccess": models.ResourceActionSuccessData,
-    "Microsoft.Resources.ResourceActionFailure": models.ResourceActionFailureData,
-    "Microsoft.Resources.ResourceActionCancel": models.ResourceActionCancelData,
-    "Microsoft.ServiceBus.ActiveMessagesAvailableWithNoListeners":
-    models.ServiceBusActiveMessagesAvailableWithNoListenersEventData,
-    "Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListener":
-    models.ServiceBusDeadletterMessagesAvailableWithNoListenersEventData,
-    "Microsoft.Storage.BlobCreated": models.StorageBlobCreatedEventData,
-    "Microsoft.Storage.BlobDeleted": models.StorageBlobDeletedEventData,
-    "Microsoft.Storage.BlobRenamed": models.StorageBlobRenamedEventData,
-    "Microsoft.Storage.DirectoryCreated": models.StorageDirectoryCreatedEventData,
-    "Microsoft.Storage.DirectoryDeleted": models.StorageDirectoryDeletedEventData,
-    "Microsoft.Storage.DirectoryRenamed": models.StorageDirectoryRenamedEventData,
-    "Microsoft.Storage.LifecyclePolicyCompleted": models.StorageLifecyclePolicyCompletedEventData,
-    "Microsoft.Web.AppUpdated": models.WebAppUpdatedEventData,
-    "Microsoft.Web.BackupOperationStarted": models.WebBackupOperationStartedEventData,
-    "Microsoft.Web.BackupOperationCompleted": models.WebBackupOperationCompletedEventData,
-    "Microsoft.Web.BackupOperationFailed": models.WebBackupOperationFailedEventData,
-    "Microsoft.Web.RestoreOperationStarted": models.WebRestoreOperationStartedEventData,
-    "Microsoft.Web.RestoreOperationCompleted": models.WebRestoreOperationCompletedEventData,
-    "Microsoft.Web.RestoreOperationFailed": models.WebRestoreOperationFailedEventData,
-    "Microsoft.Web.SlotSwapStarted": models.WebSlotSwapStartedEventData,
-    "Microsoft.Web.SlotSwapCompleted": models.WebSlotSwapCompletedEventData,
-    "Microsoft.Web.SlotSwapFailed": models.WebSlotSwapFailedEventData,
-    "Microsoft.Web.SlotSwapWithPreviewStarted": models.WebSlotSwapWithPreviewStartedEventData,
-    "Microsoft.Web.SlotSwapWithPreviewCancelled": models.WebSlotSwapWithPreviewCancelledEventData,
-    "Microsoft.Web.AppServicePlanUpdated": models.WebAppServicePlanUpdatedEventData,
-}
+
+class SystemEventNames(str, Enum):
+    """
+    This enum represents the names of the various event types for the system events published to
+    Azure Event Grid. To check the list of recognizable system topics,
+    visit https://docs.microsoft.com/azure/event-grid/system-topics.
+    """
+
+    AcsChatMemberAddedToThreadWithUserEventName = (
+        "Microsoft.Communication.ChatMemberAddedToThreadWithUser"
+    )
+    AcsChatMemberRemovedFromThreadWithUserEventName = (
+        "Microsoft.Communication.ChatMemberRemovedFromThreadWithUser"
+    )
+    AcsChatMessageDeletedEventName = "Microsoft.Communication.ChatMessageDeleted"
+    AcsChatMessageEditedEventName = "Microsoft.Communication.ChatMessageEdited"
+    AcsChatMessageReceivedEventName = "Microsoft.Communication.ChatMessageReceived"
+    AcsRecordingFileStatusUpdatedEventName = "Microsoft.Communication.RecordingFileStatusUpdated"
+    AcsChatThreadCreatedWithUserEventName = (
+        "Microsoft.Communication.ChatThreadCreatedWithUser"
+    )
+    AcsChatThreadParticipantAddedEventName = "Microsoft.Communication.ChatThreadParticipantAdded"
+    AcsChatThreadParticipantRemovedEventName = "Microsoft.Communication.ChatThreadParticipantRemoved"
+    AcsChatThreadPropertiesUpdatedPerUserEventName = (
+        "Microsoft.Communication.ChatThreadPropertiesUpdatedPerUser"
+    )
+    AcsChatThreadWithUserDeletedEventName = (
+        "Microsoft.Communication.ChatThreadWithUserDeleted"
+    )
+    AcsSmsDeliveryReportReceivedEventName = (
+        "Microsoft.Communication.SMSDeliveryReportReceived"
+    )
+    AcsSmsReceivedEventName = "Microsoft.Communication.SMSReceived"
+    AppConfigurationKeyValueDeletedEventName = (
+        "Microsoft.AppConfiguration.KeyValueDeleted"
+    )
+    AppConfigurationKeyValueModifiedEventName = (
+        "Microsoft.AppConfiguration.KeyValueModified"
+    )
+    ContainerRegistryChartDeletedEventName = "Microsoft.ContainerRegistry.ChartDeleted"
+    ContainerRegistryChartPushedEventName = "Microsoft.ContainerRegistry.ChartPushed"
+    ContainerRegistryImageDeletedEventName = "Microsoft.ContainerRegistry.ImageDeleted"
+    ContainerRegistryImagePushedEventName = "Microsoft.ContainerRegistry.ImagePushed"
+    EventGridSubscriptionDeletedEventName = (
+        "Microsoft.EventGrid.SubscriptionDeletedEvent"
+    )
+    EventGridSubscriptionValidationEventName = (
+        "Microsoft.EventGrid.SubscriptionValidationEvent"
+    )
+    EventHubCaptureFileCreatedEventName = "Microsoft.EventHub.CaptureFileCreated"
+    IoTHubDeviceConnectedEventName = "Microsoft.Devices.DeviceConnected"
+    IoTHubDeviceCreatedEventName = "Microsoft.Devices.DeviceCreated"
+    IoTHubDeviceDeletedEventName = "Microsoft.Devices.DeviceDeleted"
+    IoTHubDeviceDisconnectedEventName = "Microsoft.Devices.DeviceDisconnected"
+    IotHubDeviceTelemetryEventName = "Microsoft.Devices.DeviceTelemetry"
+    KeyVaultAccessPolicyChangedEventName = "Microsoft.KeyVault.VaultAccessPolicyChanged"
+    KeyVaultCertificateExpiredEventName = "Microsoft.KeyVault.CertificateExpired"
+    KeyVaultCertificateNearExpiryEventName = "Microsoft.KeyVault.CertificateNearExpiry"
+    KeyVaultCertificateNewVersionCreatedEventName = (
+        "Microsoft.KeyVault.CertificateNewVersionCreated"
+    )
+    KeyVaultKeyExpiredEventName = "Microsoft.KeyVault.KeyExpired"
+    KeyVaultKeyNearExpiryEventName = "Microsoft.KeyVault.KeyNearExpiry"
+    KeyVaultKeyNewVersionCreatedEventName = "Microsoft.KeyVault.KeyNewVersionCreated"
+    KeyVaultSecretExpiredEventName = "Microsoft.KeyVault.SecretExpired"
+    KeyVaultSecretNearExpiryEventName = "Microsoft.KeyVault.SecretNearExpiry"
+    KeyVaultSecretNewVersionCreatedEventName = (
+        "Microsoft.KeyVault.SecretNewVersionCreated"
+    )
+    MachineLearningServicesDatasetDriftDetectedEventName = (
+        "Microsoft.MachineLearningServices.DatasetDriftDetected"
+    )
+    MachineLearningServicesModelDeployedEventName = (
+        "Microsoft.MachineLearningServices.ModelDeployed"
+    )
+    MachineLearningServicesModelRegisteredEventName = (
+        "Microsoft.MachineLearningServices.ModelRegistered"
+    )
+    MachineLearningServicesRunCompletedEventName = (
+        "Microsoft.MachineLearningServices.RunCompleted"
+    )
+    MachineLearningServicesRunStatusChangedEventName = (
+        "Microsoft.MachineLearningServices.RunStatusChanged"
+    )
+    MapsGeofenceEnteredEventName = "Microsoft.Maps.GeofenceEntered"
+    MapsGeofenceExitedEventName = "Microsoft.Maps.GeofenceExited"
+    MapsGeofenceResultEventName = "Microsoft.Maps.GeofenceResult"
+    MediaJobCanceledEventName = "Microsoft.Media.JobCanceled"
+    MediaJobCancelingEventName = "Microsoft.Media.JobCanceling"
+    MediaJobErroredEventName = "Microsoft.Media.JobErrored"
+    MediaJobFinishedEventName = "Microsoft.Media.JobFinished"
+    MediaJobOutputCanceledEventName = "Microsoft.Media.JobOutputCanceled"
+    MediaJobOutputCancelingEventName = "Microsoft.Media.JobOutputCanceling"
+    MediaJobOutputErroredEventName = "Microsoft.Media.JobOutputErrored"
+    MediaJobOutputFinishedEventName = "Microsoft.Media.JobOutputFinished"
+    MediaJobOutputProcessingEventName = "Microsoft.Media.JobOutputProcessing"
+    MediaJobOutputProgressEventName = "Microsoft.Media.JobOutputProgress"
+    MediaJobOutputScheduledEventName = "Microsoft.Media.JobOutputScheduled"
+    MediaJobOutputStateChangeEventName = "Microsoft.Media.JobOutputStateChange"
+    MediaJobProcessingEventName = "Microsoft.Media.JobProcessing"
+    MediaJobScheduledEventName = "Microsoft.Media.JobScheduled"
+    MediaJobStateChangeEventName = "Microsoft.Media.JobStateChange"
+    MediaLiveEventConnectionRejectedEventName = (
+        "Microsoft.Media.LiveEventConnectionRejected"
+    )
+    MediaLiveEventEncoderConnectedEventName = (
+        "Microsoft.Media.LiveEventEncoderConnected"
+    )
+    MediaLiveEventEncoderDisconnectedEventName = (
+        "Microsoft.Media.LiveEventEncoderDisconnected"
+    )
+    MediaLiveEventIncomingDataChunkDroppedEventName = (
+        "Microsoft.Media.LiveEventIncomingDataChunkDropped"
+    )
+    MediaLiveEventIncomingStreamReceivedEventName = (
+        "Microsoft.Media.LiveEventIncomingStreamReceived"
+    )
+    MediaLiveEventIncomingStreamsOutOfSyncEventName = (
+        "Microsoft.Media.LiveEventIncomingStreamsOutOfSync"
+    )
+    MediaLiveEventIncomingVideoStreamsOutOfSyncEventName = (
+        "Microsoft.Media.LiveEventIncomingVideoStreamsOutOfSync"
+    )
+    MediaLiveEventIngestHeartbeatEventName = "Microsoft.Media.LiveEventIngestHeartbeat"
+    MediaLiveEventTrackDiscontinuityDetectedEventName = (
+        "Microsoft.Media.LiveEventTrackDiscontinuityDetected"
+    )
+    ResourceActionCancelEventName = "Microsoft.Resources.ResourceActionCancel"
+    ResourceActionFailureEventName = "Microsoft.Resources.ResourceActionFailure"
+    ResourceActionSuccessEventName = "Microsoft.Resources.ResourceActionSuccess"
+    ResourceDeleteCancelEventName = "Microsoft.Resources.ResourceDeleteCancel"
+    ResourceDeleteFailureEventName = "Microsoft.Resources.ResourceDeleteFailure"
+    ResourceDeleteSuccessEventName = "Microsoft.Resources.ResourceDeleteSuccess"
+    ResourceWriteCancelEventName = "Microsoft.Resources.ResourceWriteCancel"
+    ResourceWriteFailureEventName = "Microsoft.Resources.ResourceWriteFailure"
+    ResourceWriteSuccessEventName = "Microsoft.Resources.ResourceWriteSuccess"
+    ServiceBusActiveMessagesAvailableWithNoListenersEventName = (
+        "Microsoft.ServiceBus.ActiveMessagesAvailableWithNoListeners"
+    )
+    ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = (
+        "Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListener"
+    )
+    ServiceBusDeadletterMessagesAvailablePeriodicNotificationsEventName = (
+        "Microsoft.ServiceBus.DeadletterMessagesAvailablePeriodicNotifications"
+    )
+    ServiceBusActiveMessagesAvailablePeriodicNotificationsEventName = (
+        "Microsoft.ServiceBus.ActiveMessagesAvailablePeriodicNotifications"
+    )
+    StorageBlobCreatedEventName = "Microsoft.Storage.BlobCreated"
+    StorageBlobDeletedEventName = "Microsoft.Storage.BlobDeleted"
+    StorageBlobRenamedEventName = "Microsoft.Storage.BlobRenamed"
+    StorageDirectoryCreatedEventName = "Microsoft.Storage.DirectoryCreated"
+    StorageDirectoryDeletedEventName = "Microsoft.Storage.DirectoryDeleted"
+    StorageDirectoryRenamedEventName = "Microsoft.Storage.DirectoryRenamed"
+    StorageLifecyclePolicyCompletedEventName = (
+        "Microsoft.Storage.LifecyclePolicyCompleted"
+    )
+    WebAppServicePlanUpdatedEventName = "Microsoft.Web.AppServicePlanUpdated"
+    WebAppUpdatedEventName = "Microsoft.Web.AppUpdated"
+    WebBackupOperationCompletedEventName = "Microsoft.Web.BackupOperationCompleted"
+    WebBackupOperationFailedEventName = "Microsoft.Web.BackupOperationFailed"
+    WebBackupOperationStartedEventName = "Microsoft.Web.BackupOperationStarted"
+    WebRestoreOperationCompletedEventName = "Microsoft.Web.RestoreOperationCompleted"
+    WebRestoreOperationFailedEventName = "Microsoft.Web.RestoreOperationFailed"
+    WebRestoreOperationStartedEventName = "Microsoft.Web.RestoreOperationStarted"
+    WebSlotSwapCompletedEventName = "Microsoft.Web.SlotSwapCompleted"
+    WebSlotSwapFailedEventName = "Microsoft.Web.SlotSwapFailed"
+    WebSlotSwapStartedEventName = "Microsoft.Web.SlotSwapStarted"
+    WebSlotSwapWithPreviewCancelledEventName = (
+        "Microsoft.Web.SlotSwapWithPreviewCancelled"
+    )
+    WebSlotSwapWithPreviewStartedEventName = "Microsoft.Web.SlotSwapWithPreviewStarted"

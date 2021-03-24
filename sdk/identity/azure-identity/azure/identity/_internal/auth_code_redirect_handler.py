@@ -27,8 +27,8 @@ class AuthCodeRedirectHandler(BaseHTTPRequestHandler):
             return
 
         query = self.path.split("?", 1)[-1]
-        query = parse_qs(query, keep_blank_values=True)
-        self.server.query_params = query
+        parsed = parse_qs(query, keep_blank_values=True)
+        self.server.query_params = {k: v[0] if isinstance(v, list) and len(v) == 1 else v for k, v in parsed.items()}
 
         self.send_response(200)
         self.send_header("Content-Type", "text/html")

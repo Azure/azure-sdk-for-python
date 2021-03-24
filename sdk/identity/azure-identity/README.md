@@ -2,6 +2,7 @@
 
 The Azure Identity library provides a set of credential classes for use with
 Azure SDK clients which support Azure Active Directory (AAD) token authentication.
+This library does not support Azure Active Directory B2C.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity)
 | [Package (PyPI)](https://pypi.org/project/azure-identity/)
@@ -112,7 +113,7 @@ default_credential = DefaultAzureCredential()
 client = BlobServiceClient(account_url, credential=default_credential)
 ```
 
-### Enabling interactive authentication with `DefaultAzureCredential`
+#### Enabling interactive authentication with `DefaultAzureCredential`
 
 Interactive authentication is disabled in the `DefaultAzureCredential` by
 default and can be enabled with a keyword argument:
@@ -124,6 +125,19 @@ DefaultAzureCredential(exclude_interactive_browser_credential=False)
 When enabled, `DefaultAzureCredential` falls back to interactively
 authenticating via the system's default web browser when no other credential is
 available.
+
+#### Specifying a user assigned managed identity for `DefaultAzureCredential`
+
+Many Azure hosts allow the assignment of a user assigned managed identity. To
+configure `DefaultAzureCredential` to authenticate a user assigned identity,
+use the `managed_identity_client_id` keyword argument:
+
+```py
+DefaultAzureCredential(managed_identity_client_id=client_id)
+```
+
+Alternatively, set the environment variable `AZURE_CLIENT_ID` to the identity's
+client ID.
 
 ### Defining a custom authentication flow with `ChainedTokenCredential`
 
@@ -211,7 +225,7 @@ client = SecretClient("https://my-vault.vault.azure.net", default_credential)
 |-|-
 |[InteractiveBrowserCredential][interactive_cred_ref]|interactively authenticate a user with the default web browser
 |[DeviceCodeCredential][device_code_cred_ref]| interactively authenticate a user on a device with limited UI
-|[UsernamePasswordCredential][userpass_cred_ref]| authenticate a user with a username and password
+|[UsernamePasswordCredential][userpass_cred_ref]| authenticate a user with a username and password (does not support multi-factor authentication)
 
 ### Authenticating via Development Tools
 

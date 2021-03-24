@@ -4,8 +4,8 @@ steps:
     inputs:
      versionSpec: '$(PythonVersion)'
 
-  - script: |
-     pip install -r eng/ci_tools.txt
+  - pwsh: |
+     pip install -r eng/ci_tools.txt $(if($IsWindows) {"--user" })
      ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/eng/.docsettings.yml
     displayName: 'Verify Readmes'
 

@@ -4,6 +4,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -15,6 +16,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -28,12 +30,12 @@ extends:
   parameters:
     ServiceDirectory: media
     Artifacts:
-    - name: azure_mgmt_media
+    - name: azure-mgmt-media
       safeName: azuremgmtmedia
     - name: azure_media_lva_edge
       safeName: azuremedialvaedge
-    - name: azure_media_nspkg
+    - name: azure-media-nspkg
       safeName: azuremedianspkg
-    - name: azure_media_analytics_edge
+    - name: azure-media-analytics-edge
       safeName: azuremediaanalyticsedge
 

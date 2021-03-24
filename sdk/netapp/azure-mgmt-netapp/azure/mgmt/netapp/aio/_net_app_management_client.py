@@ -23,6 +23,7 @@ from .operations import PoolsOperations
 from .operations import VolumesOperations
 from .operations import SnapshotsOperations
 from .operations import SnapshotPoliciesOperations
+from .operations import VolumeBackupStatusOperations
 from .operations import AccountBackupsOperations
 from .operations import BackupsOperations
 from .operations import BackupPoliciesOperations
@@ -31,7 +32,7 @@ from .. import models
 
 
 class NetAppManagementClient(object):
-    """Microsoft NetApp Azure Resource Provider specification.
+    """Microsoft NetApp Files Azure Resource Provider specification.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.netapp.aio.operations.Operations
@@ -47,6 +48,8 @@ class NetAppManagementClient(object):
     :vartype snapshots: azure.mgmt.netapp.aio.operations.SnapshotsOperations
     :ivar snapshot_policies: SnapshotPoliciesOperations operations
     :vartype snapshot_policies: azure.mgmt.netapp.aio.operations.SnapshotPoliciesOperations
+    :ivar volume_backup_status: VolumeBackupStatusOperations operations
+    :vartype volume_backup_status: azure.mgmt.netapp.aio.operations.VolumeBackupStatusOperations
     :ivar account_backups: AccountBackupsOperations operations
     :vartype account_backups: azure.mgmt.netapp.aio.operations.AccountBackupsOperations
     :ivar backups: BackupsOperations operations
@@ -77,7 +80,6 @@ class NetAppManagementClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.operations = Operations(
@@ -93,6 +95,8 @@ class NetAppManagementClient(object):
         self.snapshots = SnapshotsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.snapshot_policies = SnapshotPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.volume_backup_status = VolumeBackupStatusOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.account_backups = AccountBackupsOperations(
             self._client, self._config, self._serialize, self._deserialize)
