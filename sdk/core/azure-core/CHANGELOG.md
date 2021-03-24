@@ -2,6 +2,9 @@
 
 ## 1.12.1 (Unreleased)
 
+### Bug fixes
+
+- Make NetworkTraceLoggingPolicy show the auth token in plain text. #14191
 
 ## 1.12.0 (2021-03-08)
 
