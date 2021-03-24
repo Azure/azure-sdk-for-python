@@ -280,6 +280,9 @@ function Add-GitHubPullRequestReviewers {
   $parameters = Set-GitHubAPIParameters -members $Teams -parameterName "team_reviewers" `
   -parameters $parameters
 
+  Write-Host "Invoking Github API w/"
+  Write-Host ($parameters | ConvertTo-Json)
+
   return Invoke-RestMethod `
           -Method POST `
           -Body ($parameters | ConvertTo-Json) `
