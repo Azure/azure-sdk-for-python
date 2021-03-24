@@ -88,7 +88,6 @@ class DocumentTranslationClient(object):
             # pylint: disable=protected-access
             inputs=DocumentTranslationInput._to_generated_list(inputs),
             cls=lambda pipeline_response, _, response_headers: response_headers,
-            polling=True,
             **kwargs
         )
 
@@ -159,7 +158,7 @@ class DocumentTranslationClient(object):
                 **kwargs
             ),
         )
-        return poller.result()
+        return await poller.result()
 
     @distributed_trace
     def list_submitted_jobs(self, **kwargs):
