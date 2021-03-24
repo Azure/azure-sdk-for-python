@@ -24,7 +24,7 @@ USAGE:
         to be translated.
     4) AZURE_TARGET_CONTAINER_URL - the container SAS URL to your target container where the translated documents
         will be written.
-    """
+"""
 
 
 def sample_document_status_checks():

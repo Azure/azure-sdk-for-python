@@ -31,7 +31,7 @@ USAGE:
     7) AZURE_STORAGE_TARGET_CONTAINER_NAME - the name of your target container
     8) AZURE_DOCUMENT_NAME - the name and file extension of your document in this directory
         e.g. "mydocument.txt"
-    """
+"""
 
 import os
 import datetime

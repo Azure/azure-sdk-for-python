@@ -20,7 +20,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_DOCUMENT_TRANSLATION_ENDPOINT - the endpoint to your Form Recognizer resource.
     2) AZURE_DOCUMENT_TRANSLATION_KEY - your Form Recognizer API key.
-    """
+"""
 
 import asyncio
 
