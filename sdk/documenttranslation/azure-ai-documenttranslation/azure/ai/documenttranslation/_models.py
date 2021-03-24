@@ -307,11 +307,18 @@ class DocumentTranslationError(object):  # pylint: disable=useless-object-inheri
     ):
         # type: (**Any) -> None
         self.code = kwargs.get('code', None)
-        self.message = None
-        self.target = None
+        self.message = kwargs.get('message', None)
+        self.target = kwargs.get('target', None)
 
     @classmethod
     def _from_generated(cls, error):
+        if error.inner_error:
+            inner_error = error.inner_error
+            return cls(
+                code=inner_error.code,
+                message=inner_error.message,
+                target=inner_error.target if inner_error.target is not None else error.target
+            )
         return cls(
             code=error.code,
             message=error.message,
