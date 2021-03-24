@@ -15,7 +15,7 @@ autorest SWAGGER.md
 
 ### Settings
 ``` yaml
-input-file: https://int.chatgateway.trafficmanager.net/swagger/2021-01-27-preview4/swagger.json
+input-file: https://int.chatgateway.trafficmanager.net/swagger/2021-03-07/swagger.json
 output-folder: ../azure/communication/chat/_generated
 namespace: azure.communication.chat
 no-namespace-folders: true
@@ -26,4 +26,13 @@ python: true
 v3: true
 no-async: false
 add-credential: false
+```
+
+### Rename CommunicationError to ChatError
+```yaml
+directive:
+    from: swagger-document
+    where: '$.definitions.CommunicationError'
+    transform: >
+        $["x-ms-client-name"] = "ChatError";
 ```

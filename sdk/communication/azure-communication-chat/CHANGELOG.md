@@ -1,6 +1,16 @@
 # Release History
 
 ## 1.0.0b6 (Unreleased)
+### Breaking Changes
+- Renamed `ChatThread` to `ChatThreadProperties`.
+- Renamed `get_chat_thread` to `get_properties`.
+- Moved `get_properties` under `ChatThreadClient`.
+- Renamed `ChatThreadInfo` to `ChatThreadItem`.
+- Removed `ChatThreadClient.add_participant` method.
+- Renamed `repeatability_request_id` to `idempotency_token`.
+- Changed return type of `send_message` to `SendChatMessageResult`.
+- Replaced `CommunicationError` with `ChatError`.
+- Refactored `CommunicationTokenCredential` constructor to accept `token` instead of `CommunicationTokenRefreshOptions`.
 ### Dependency Updates
 - Updated dependency `azure-core` from  azure-core<2.0.0,>=1.9.0 to azure-core<2.0.0,>=1.12.1
 

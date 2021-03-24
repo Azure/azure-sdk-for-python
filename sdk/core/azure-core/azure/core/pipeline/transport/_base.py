@@ -74,6 +74,7 @@ from azure.core.pipeline import (
     PipelineContext,
 )
 from .._tools import await_result as _await_result
+from ..._utils import _case_insensitive_dict
 
 
 if TYPE_CHECKING:
@@ -85,32 +86,6 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
-
-
-def _case_insensitive_dict(*args, **kwargs):
-    """Return a case-insensitive dict from a structure that a dict would have accepted.
-
-    Rational is I don't want to re-implement this, but I don't want
-    to assume "requests" or "aiohttp" are installed either.
-    So I use the one from "requests" or the one from "aiohttp" ("multidict")
-    If one day this library is used in an HTTP context without "requests" nor "aiohttp" installed,
-    we can add "multidict" as a dependency or re-implement our own.
-    """
-    try:
-        from requests.structures import CaseInsensitiveDict
-
-        return CaseInsensitiveDict(*args, **kwargs)
-    except ImportError:
-        pass
-    try:
-        # multidict is installed by aiohttp
-        from multidict import CIMultiDict
-
-        return CIMultiDict(*args, **kwargs)
-    except ImportError:
-        raise ValueError(
-            "Neither 'requests' or 'multidict' are installed and no case-insensitive dict impl have been found"
-        )
 
 
 def _format_url_section(template, **kwargs):

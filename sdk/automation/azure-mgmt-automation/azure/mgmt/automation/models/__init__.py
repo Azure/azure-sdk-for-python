@@ -27,7 +27,6 @@ try:
     from ._models_py3 import CertificateCreateOrUpdateParameters
     from ._models_py3 import CertificateListResult
     from ._models_py3 import CertificateUpdateParameters
-    from ._models_py3 import CollectionItemUpdateConfiguration
     from ._models_py3 import Connection
     from ._models_py3 import ConnectionCreateOrUpdateParameters
     from ._models_py3 import ConnectionListResult
@@ -113,15 +112,13 @@ try:
     from ._models_py3 import RunbookListResult
     from ._models_py3 import RunbookParameter
     from ._models_py3 import RunbookUpdateParameters
+    from ._models_py3 import SUCScheduleProperties
     from ._models_py3 import Schedule
     from ._models_py3 import ScheduleAssociationProperty
     from ._models_py3 import ScheduleCreateOrUpdateParameters
     from ._models_py3 import ScheduleListResult
-    from ._models_py3 import ScheduleProperties
     from ._models_py3 import ScheduleUpdateParameters
     from ._models_py3 import Sku
-    from ._models_py3 import SoftareUpdateConfigurationRunTaskProperties
-    from ._models_py3 import SoftareUpdateConfigurationRunTasks
     from ._models_py3 import SoftwareUpdateConfiguration
     from ._models_py3 import SoftwareUpdateConfigurationCollectionItem
     from ._models_py3 import SoftwareUpdateConfigurationListResult
@@ -129,6 +126,8 @@ try:
     from ._models_py3 import SoftwareUpdateConfigurationMachineRunListResult
     from ._models_py3 import SoftwareUpdateConfigurationRun
     from ._models_py3 import SoftwareUpdateConfigurationRunListResult
+    from ._models_py3 import SoftwareUpdateConfigurationRunTaskProperties
+    from ._models_py3 import SoftwareUpdateConfigurationRunTasks
     from ._models_py3 import SoftwareUpdateConfigurationTasks
     from ._models_py3 import SourceControl
     from ._models_py3 import SourceControlCreateOrUpdateParameters
@@ -190,7 +189,6 @@ except (SyntaxError, ImportError):
     from ._models import CertificateCreateOrUpdateParameters  # type: ignore
     from ._models import CertificateListResult  # type: ignore
     from ._models import CertificateUpdateParameters  # type: ignore
-    from ._models import CollectionItemUpdateConfiguration  # type: ignore
     from ._models import Connection  # type: ignore
     from ._models import ConnectionCreateOrUpdateParameters  # type: ignore
     from ._models import ConnectionListResult  # type: ignore
@@ -276,15 +274,13 @@ except (SyntaxError, ImportError):
     from ._models import RunbookListResult  # type: ignore
     from ._models import RunbookParameter  # type: ignore
     from ._models import RunbookUpdateParameters  # type: ignore
+    from ._models import SUCScheduleProperties  # type: ignore
     from ._models import Schedule  # type: ignore
     from ._models import ScheduleAssociationProperty  # type: ignore
     from ._models import ScheduleCreateOrUpdateParameters  # type: ignore
     from ._models import ScheduleListResult  # type: ignore
-    from ._models import ScheduleProperties  # type: ignore
     from ._models import ScheduleUpdateParameters  # type: ignore
     from ._models import Sku  # type: ignore
-    from ._models import SoftareUpdateConfigurationRunTaskProperties  # type: ignore
-    from ._models import SoftareUpdateConfigurationRunTasks  # type: ignore
     from ._models import SoftwareUpdateConfiguration  # type: ignore
     from ._models import SoftwareUpdateConfigurationCollectionItem  # type: ignore
     from ._models import SoftwareUpdateConfigurationListResult  # type: ignore
@@ -292,6 +288,8 @@ except (SyntaxError, ImportError):
     from ._models import SoftwareUpdateConfigurationMachineRunListResult  # type: ignore
     from ._models import SoftwareUpdateConfigurationRun  # type: ignore
     from ._models import SoftwareUpdateConfigurationRunListResult  # type: ignore
+    from ._models import SoftwareUpdateConfigurationRunTaskProperties  # type: ignore
+    from ._models import SoftwareUpdateConfigurationRunTasks  # type: ignore
     from ._models import SoftwareUpdateConfigurationTasks  # type: ignore
     from ._models import SourceControl  # type: ignore
     from ._models import SourceControlCreateOrUpdateParameters  # type: ignore
@@ -384,7 +382,6 @@ __all__ = [
     'CertificateCreateOrUpdateParameters',
     'CertificateListResult',
     'CertificateUpdateParameters',
-    'CollectionItemUpdateConfiguration',
     'Connection',
     'ConnectionCreateOrUpdateParameters',
     'ConnectionListResult',
@@ -470,15 +467,13 @@ __all__ = [
     'RunbookListResult',
     'RunbookParameter',
     'RunbookUpdateParameters',
+    'SUCScheduleProperties',
     'Schedule',
     'ScheduleAssociationProperty',
     'ScheduleCreateOrUpdateParameters',
     'ScheduleListResult',
-    'ScheduleProperties',
     'ScheduleUpdateParameters',
     'Sku',
-    'SoftareUpdateConfigurationRunTaskProperties',
-    'SoftareUpdateConfigurationRunTasks',
     'SoftwareUpdateConfiguration',
     'SoftwareUpdateConfigurationCollectionItem',
     'SoftwareUpdateConfigurationListResult',
@@ -486,6 +481,8 @@ __all__ = [
     'SoftwareUpdateConfigurationMachineRunListResult',
     'SoftwareUpdateConfigurationRun',
     'SoftwareUpdateConfigurationRunListResult',
+    'SoftwareUpdateConfigurationRunTaskProperties',
+    'SoftwareUpdateConfigurationRunTasks',
     'SoftwareUpdateConfigurationTasks',
     'SourceControl',
     'SourceControlCreateOrUpdateParameters',

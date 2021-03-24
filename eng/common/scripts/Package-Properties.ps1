@@ -155,7 +155,7 @@ function Get-PkgPropsForEntireService ($serviceDirectoryPath)
         }
     }
 
-    $ciYmlFiles = Get-ChildItem $serviceDirectoryPath -filter "ci.*yml"
+    $ciYmlFiles = Get-ChildItem $serviceDirectoryPath -filter "ci.yml"
     foreach($ciYmlFile in $ciYmlFiles)
     {
         $activeArtifactList = Get-ArtifactListFromYml -ciYmlPath $ciYmlFile.FullName
@@ -171,12 +171,12 @@ function Get-PkgPropsForEntireService ($serviceDirectoryPath)
 function Get-ArtifactListFromYml ($ciYmlPath)
 {
     $ProgressPreference = "SilentlyContinue"
-    if ((Get-PSRepository | ?{$_.Name -eq "PSGallery"}).Count -eq 0)
+    if ((Get-PSRepository).Where({$_.Name -eq "PSGallery"}).Count -eq 0)
     {
         Register-PSRepository -Default -ErrorAction:SilentlyContinue
     }
 
-    if ((Get-Module -ListAvailable -Name powershell-yaml | ?{$_.Version -eq "0.4.2"}).Count -eq 0)
+    if ((Get-Module -ListAvailable -Name powershell-yaml).Where({ $_.Version -eq "0.4.2"} ).Count -eq 0)
     {
         Install-Module -Name powershell-yaml -RequiredVersion 0.4.2 -Force -Scope CurrentUser
     }

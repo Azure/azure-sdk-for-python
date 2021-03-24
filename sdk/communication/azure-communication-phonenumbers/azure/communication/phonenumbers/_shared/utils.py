@@ -6,6 +6,7 @@
 
 import base64
 import json
+import time
 from typing import (  # pylint: disable=unused-import
     cast,
     Tuple,
@@ -66,7 +67,8 @@ def create_access_token(token):
     try:
         padded_base64_payload = base64.b64decode(parts[1] + "==").decode('ascii')
         payload = json.loads(padded_base64_payload)
-        return AccessToken(token, datetime.fromtimestamp(payload['exp']).replace(tzinfo=TZ_UTC))
+        return AccessToken(token,
+            _convert_expires_on_datetime_to_utc_int(datetime.fromtimestamp(payload['exp']).replace(tzinfo=TZ_UTC)))
     except ValueError:
         raise ValueError(token_parse_err_msg)
 
@@ -100,3 +102,7 @@ def get_authentication_policy(
 
     raise TypeError("Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
                     "or a token credential from azure.identity".format(type(credential)))
+
+def _convert_expires_on_datetime_to_utc_int(expires_on):
+    epoch = time.mktime(datetime(1970, 1, 1).timetuple())
+    return epoch-time.mktime(expires_on.timetuple())

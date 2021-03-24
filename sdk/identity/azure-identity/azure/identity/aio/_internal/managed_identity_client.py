@@ -36,7 +36,7 @@ class AsyncManagedIdentityClient(ManagedIdentityClientBase):
         resource = _scopes_to_resource(*scopes)
         request = self._request_factory(resource, self._identity_config)
         request_time = int(time.time())
-        response = await self._pipeline.run(request)
+        response = await self._pipeline.run(request, retry_on_methods=[request.method])
         token = self._process_response(response, request_time)
         return token
 
