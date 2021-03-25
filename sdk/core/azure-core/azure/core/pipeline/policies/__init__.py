@@ -25,7 +25,10 @@
 # --------------------------------------------------------------------------
 
 from ._base import HTTPPolicy, SansIOHTTPPolicy, RequestHistory
-from ._authentication import BearerTokenCredentialPolicy, AzureKeyCredentialPolicy, AzureSasCredentialPolicy, AzureNamedKeyCredentialPolicy
+from ._authentication import (
+    BearerTokenCredentialPolicy, AzureKeyCredentialPolicy, AzureSasCredentialPolicy,
+    AzureNamedKeyCredentialPolicy
+    )
 from ._custom_hook import CustomHookPolicy
 from ._redirect import RedirectPolicy
 from ._retry import RetryPolicy, RetryMode
