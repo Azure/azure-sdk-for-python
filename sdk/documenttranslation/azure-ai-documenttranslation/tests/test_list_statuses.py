@@ -11,7 +11,7 @@ from azure.ai.documenttranslation import DocumentTranslationClient, DocumentTran
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
 
-class TestListStatus(DocumentTranslationTest):
+class TestStatuses(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
