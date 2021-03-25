@@ -61,6 +61,17 @@ class DocumentTranslationClient(object):
             **kwargs
         )
 
+    async def __aenter__(self) -> "DocumentTranslationClient":
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *args: "Any") -> None:
+        await self._client.__aexit__(*args)
+
+    async def close(self) -> None:
+        """Close the :class:`~azure.ai.documenttranslation.aio.DocumentTranslationClient` session."""
+        await self._client.__aexit__()
+
     @distributed_trace_async
     async def create_translation_job(self, inputs, **kwargs):
         # type: (List[DocumentTranslationInput], **Any) -> JobStatusResult
@@ -77,7 +88,6 @@ class DocumentTranslationClient(object):
             # pylint: disable=protected-access
             inputs=DocumentTranslationInput._to_generated_list(inputs),
             cls=lambda pipeline_response, _, response_headers: response_headers,
-            polling=True,
             **kwargs
         )
 
@@ -148,7 +158,7 @@ class DocumentTranslationClient(object):
                 **kwargs
             ),
         )
-        return poller.result()
+        return await poller.result()
 
     @distributed_trace
     def list_submitted_jobs(self, **kwargs):
