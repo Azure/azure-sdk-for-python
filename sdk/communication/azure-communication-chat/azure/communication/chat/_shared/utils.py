@@ -13,7 +13,7 @@ from typing import (  # pylint: disable=unused-import
 )
 from datetime import datetime
 from msrest.serialization import TZ_UTC
-from azure.core import parse_connection_string_to_dict
+from azure.core.utils import parse_connection_string as core_parse_connection_string
 from azure.core.credentials import AccessToken
 
 
@@ -24,19 +24,15 @@ def _convert_datetime_to_utc_int(expires_on):
 
 def parse_connection_str(conn_str):
     # type: (str) -> Tuple[str, str, str, str]
-    endpoint = None
-    shared_access_key = None
-    conn_settings = parse_connection_string_to_dict(conn_str)
-    for key, value in conn_settings.items():
-        if key.lower() == "endpoint":
-            endpoint = value.rstrip("/")
-        elif key.lower() == "accesskey":
-            shared_access_key = value
+    conn_settings = core_parse_connection_string(conn_str, case_sensitive_keys=False)
+    endpoint = conn_settings.get("endpoint")
+    shared_access_key = conn_settings.get("accesskey")
     if not all([endpoint, shared_access_key]):
         raise ValueError(
             "Invalid connection string. Should be in the format: "
             "endpoint=sb://<FQDN>/;accesskey=<KeyValue>"
         )
+    endpoint = endpoint.rstrip("/")
     left_slash_pos = cast(str, endpoint).find("//")
     if left_slash_pos != -1:
         host = cast(str, endpoint)[left_slash_pos + 2:]
