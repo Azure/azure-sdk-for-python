@@ -16,10 +16,11 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_statuses(self, client):
-        # prepare containers
-        blob_data = b'This is some text'
+        # prepare containers and test data
+        blob_data = [b'This is some text']
         source_container_sas_url = self.create_source_container(data=blob_data)
         target_container_sas_url = self.create_target_container()
+        target_language = "es"
 
         # prepare translation inputs
         translation_inputs = [
@@ -28,38 +29,33 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language_code=target_language
                     )
                 ]
             )
         ]
 
-        # submit job
-        job_detail = client.create_translation_job(translation_inputs)
-        self.assertIsNotNone(job_detail.id)
-
-        # wait for result
-        job_result = client.wait_until_done(job_detail.id)
-
-        # assert
-        self._validate_job_status(job_result)
+        # submit and validate job
+        job_id = self._submit_and_validate_translation_job(client, translation_inputs, len(blob_data))
 
         # check doc statuses
-        doc_statuses = client.list_all_document_statuses(job_detail.id)
-        self.assertEqual(len(doc_statuses), 1)
+        doc_statuses = client.list_all_document_statuses(job_id)
+        self.assertEqual(len(doc_statuses), len(blob_data))
+
         for document in doc_statuses:
-            self._validate_doc_status(document)
+            self._validate_doc_status(document, target_language)
 
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_statuses_with_pagination(self, client):
-        # prepare containers
+        # prepare containers and test data
         blob_data = [b'text 1', b'text 2', b'text 3', b'text 4', b'text 5', b'text 6']
         source_container_sas_url = self.create_source_container(data=blob_data)
         target_container_sas_url = self.create_target_container()
         result_per_page = 2
         no_of_pages = len(blob_data) // result_per_page
+        target_language = "es"
 
         # prepare translation inputs
         translation_inputs = [
@@ -68,41 +64,36 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language_code=target_language
                     )
                 ]
             )
         ]
 
-        # submit job
-        job_detail = client.create_translation_job(translation_inputs)
-        self.assertIsNotNone(job_detail.id)
-
-        # wait for result
-        job_result = client.wait_until_done(job_detail.id)
-
-        # assert
-        self._validate_job_status(job_result)
+        # submit and validate job
+        job_id = self._submit_and_validate_translation_job(client, translation_inputs, len(blob_data))
 
         # check doc statuses
-        doc_status_pages = client.list_all_document_statuses(job_id=job_detail.id, results_per_page=result_per_page)
-        self.assertEqual(len(doc_status_pages), no_of_pages)
+        doc_statuses_pages = client.list_all_document_statuses(job_id=job_id, results_per_page=result_per_page)
+        self.assertEqual(len(doc_statuses_pages), no_of_pages)
+
         # iterate by page
-        for page in doc_status_pages:
+        for page in doc_statuses_pages:
             self.assertEqual(len(page), result_per_page)
             for document in page:
-                self._validate_doc_status(document)
+                self._validate_doc_status(document, target_language)
 
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_statuses_with_skip(self, client):
-        # prepare containers
+        # prepare containers and test data
         blob_data = [b'text 1', b'text 2', b'text 3', b'text 4', b'text 5', b'text 6']
         source_container_sas_url = self.create_source_container(data=blob_data)
         target_container_sas_url = self.create_target_container()
         docs_len = len(blob_data)
         skip = 2
+        target_language = "es"
 
         # prepare translation inputs
         translation_inputs = [
@@ -111,51 +102,56 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language_code=target_language
                     )
                 ]
             )
         ]
 
-        # submit job
-        job_detail = client.create_translation_job(translation_inputs)
-        self.assertIsNotNone(job_detail.id)
-
-        # wait for result
-        job_result = client.wait_until_done(job_detail.id)
-
-        # assert
-        self.assertEqual(job_result.status, "Succeeded")  # job succeeded
-        self._validate_job_status(job_result)
+        # submit and validate job
+        job_id = self._submit_and_validate_translation_job(client, translation_inputs, len(blob_data))
 
         # check doc statuses
-        doc_statuses = client.list_all_document_statuses(job_id=job_detail.id, skip=skip)
+        doc_statuses = client.list_all_document_statuses(job_id=job_id, skip=skip)
         self.assertEqual(len(doc_statuses), docs_len - skip)
-        # how to check for pages in ItemPaged
-        for document in doc_statuses:
-            self._validate_doc_status(document)
 
+        # iterate over docs
+        for document in doc_statuses:
+            self._validate_doc_status(document, target_language)
 
 
     # helper methods
-    def _validate_doc_status(self, document):
+    def _validate_doc_status(self, document, target_language):
+        # specific assertions
+        self.assertEqual(document.status, "Succeeded")
+        self.assertIsNotNone(document.translate_to, target_language)
+        # generic assertions
+        self.assertIsNotNone(document.id)
         self.assertIsNotNone(document.translated_document_url)
+        self.assertIsNotNone(document.translation_progress)
+        self.assertIsNotNone(document.characters_charged)
         self.assertIsNotNone(document.created_on)
         self.assertIsNotNone(document.last_updated_on)
-        self.assertIsNotNone(document.status)
-        self.assertIsNotNone(document.translate_to)
-        self.assertIsNotNone(document.translation_progress)
-        self.assertIsNotNone(document.id)
-        self.assertIsNotNone(document.characters_charged)
 
-    def _validate_job_status(self, job_result):
-        self.assertEqual(job_result.status, "Succeeded")  # job succeeded
+
+    def _submit_and_validate_translation_job(self, client, translation_inputs, total_docs_count):
+        # submit job
+        job_detail = client.create_translation_job(translation_inputs)
+        self.assertIsNotNone(job_detail.id)
+        # wait for result
+        job_result = client.wait_until_done(job_detail.id)
+        # assertions
+        self.assertEqual(job_result.status, "Succeeded")
+        # docs count
+        self.assertEqual(job_result.documents_total_count, total_docs_count)
+        self.assertEqual(job_result.documents_failed_count, 0)
+        self.assertEqual(job_result.documents_succeeded_count, total_docs_count)
+        self.assertEqual(job_result.documents_in_progress_count, 0)
+        self.assertEqual(job_result.documents_not_yet_started_count, 0)
+        self.assertEqual(job_result.documents_cancelled_count, 0)
+        # generic assertions
         self.assertIsNotNone(job_result.created_on)
         self.assertIsNotNone(job_result.last_updated_on)
-        self.assertIsNotNone(job_result.documents_total_count)
-        self.assertIsNotNone(job_result.documents_failed_count)
-        self.assertIsNotNone(job_result.documents_succeeded_count)
-        self.assertIsNotNone(job_result.documents_in_progress_count)
-        self.assertIsNotNone(job_result.documents_not_yet_started_count)
-        self.assertIsNotNone(job_result.documents_cancelled_count)
         self.assertIsNotNone(job_result.total_characters_charged)
+
+        return job_detail.id
