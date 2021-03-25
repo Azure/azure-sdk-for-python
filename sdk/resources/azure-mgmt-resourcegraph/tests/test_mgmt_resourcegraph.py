@@ -217,7 +217,7 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
     def test_resources_single_management_group_query(self):
         query = QueryRequest(
             query='project id, tags, properties | limit 2',
-            managementgroups = ['d12984f0-19bf-4e3a-8d8b-18dcd401d227']
+            management_groups = ['d12984f0-19bf-4e3a-8d8b-18dcd401d227']
         )
 
         query_response = self.resourcegraph_client.resources(query)
@@ -243,7 +243,7 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
     def test_resources_multiple_management_groups_query(self):
         query = QueryRequest(
             query='project id, tags, properties | limit 2',
-            managementgroups = ['d12984f0-19bf-4e3a-8d8b-18dcd401d227', '72f988bf-86f1-41af-91ab-2d7cd011db47', 'PolicyUIMG']
+            management_groups = ['d12984f0-19bf-4e3a-8d8b-18dcd401d227', '72f988bf-86f1-41af-91ab-2d7cd011db47', 'PolicyUIMG']
         )
 
         query_response = self.resourcegraph_client.resources(query)
