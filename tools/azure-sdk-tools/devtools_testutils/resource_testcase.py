@@ -11,6 +11,8 @@ import time
 import logging
 from functools import partial
 
+from azure.core.exceptions import HttpResponseError
+
 from azure_devtools.scenario_tests import AzureTestError, ReservedResourceNameError
 
 from azure.mgmt.resource import ResourceManagementClient
@@ -67,12 +69,9 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
         if self.is_live and self._need_creation:
             self.client = self.create_mgmt_client(ResourceManagementClient)
             parameters = {"location": self.location}
-            if self.delete_after_tag_timedelta:
-                expiry = datetime.datetime.utcnow() + self.delete_after_tag_timedelta
-                parameters["tags"] = {"DeleteAfter": expiry.replace(microsecond=0).isoformat()}
+            expiry = datetime.datetime.utcnow() + self.delete_after_tag_timedelta
+            parameters["tags"] = {"DeleteAfter": expiry.replace(microsecond=0).isoformat()}
             try:
-                if "tags" not in parameters.keys():
-                    parameters["tags"] = {}
                 parameters["tags"]["BuildId"] = os.environ["BUILD_BUILDID"]
                 parameters["tags"]["BuildJob"] = os.environ["AGENT_JOBNAME"]
                 parameters["tags"]["BuildNumber"] = os.environ["BUILD_BUILDNUMBER"]
@@ -108,14 +107,16 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
         if self.is_live and self._need_creation:
             try:
                 if "wait_timeout" in kwargs:
-                    azure_poller = self.client.resource_groups.delete(name)
+                    azure_poller = self.client.resource_groups.begin_delete(name)
                     azure_poller.wait(kwargs.get("wait_timeout"))
                     if azure_poller.done():
                         return
                     raise AzureTestError("Timed out waiting for resource group to be deleted.")
                 else:
-                    self.client.resource_groups.delete(name, polling=False)
-            except Exception:
+                    self.client.resource_groups.begin_delete(name, polling=False)
+            except HttpResponseError as err:
+                logging.info("Failed to delete resource group with name {}".format(name))
+                logging.info(err.with_traceback)
                 pass
 
 
