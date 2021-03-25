@@ -7,199 +7,219 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AssetSink
+    from ._models_py3 import CertificateSource
+    from ._models_py3 import CognitiveServicesVisionExtension
+    from ._models_py3 import Credentials
+    from ._models_py3 import Endpoint
+    from ._models_py3 import ExtensionProcessorBase
+    from ._models_py3 import FileSink
+    from ._models_py3 import GrpcExtension
+    from ._models_py3 import GrpcExtensionDataTransfer
+    from ._models_py3 import HttpExtension
+    from ._models_py3 import HttpHeaderCredentials
+    from ._models_py3 import Image
+    from ._models_py3 import ImageFormat
+    from ._models_py3 import ImageFormatBmp
+    from ._models_py3 import ImageFormatJpeg
+    from ._models_py3 import ImageFormatPng
+    from ._models_py3 import ImageFormatRaw
+    from ._models_py3 import ImageScale
+    from ._models_py3 import IotHubMessageSink
+    from ._models_py3 import IotHubMessageSource
     from ._models_py3 import ItemNonSetRequestBase
-    from ._models_py3 import MediaGraphAssetSink
-    from ._models_py3 import MediaGraphCertificateSource
-    from ._models_py3 import MediaGraphCognitiveServicesVisionExtension
-    from ._models_py3 import MediaGraphCredentials
-    from ._models_py3 import MediaGraphEndpoint
-    from ._models_py3 import MediaGraphExtensionProcessorBase
-    from ._models_py3 import MediaGraphFileSink
-    from ._models_py3 import MediaGraphGrpcExtension
-    from ._models_py3 import MediaGraphGrpcExtensionDataTransfer
-    from ._models_py3 import MediaGraphHttpExtension
-    from ._models_py3 import MediaGraphHttpHeaderCredentials
-    from ._models_py3 import MediaGraphImage
-    from ._models_py3 import MediaGraphImageFormat
-    from ._models_py3 import MediaGraphImageFormatBmp
-    from ._models_py3 import MediaGraphImageFormatJpeg
-    from ._models_py3 import MediaGraphImageFormatPng
-    from ._models_py3 import MediaGraphImageFormatRaw
-    from ._models_py3 import MediaGraphImageScale
-    from ._models_py3 import MediaGraphInstance
-    from ._models_py3 import MediaGraphInstanceActivateRequest
-    from ._models_py3 import MediaGraphInstanceCollection
-    from ._models_py3 import MediaGraphInstanceDeActivateRequest
-    from ._models_py3 import MediaGraphInstanceDeleteRequest
-    from ._models_py3 import MediaGraphInstanceGetRequest
-    from ._models_py3 import MediaGraphInstanceListRequest
-    from ._models_py3 import MediaGraphInstanceProperties
-    from ._models_py3 import MediaGraphInstanceSetRequest
-    from ._models_py3 import MediaGraphInstanceSetRequestBody
-    from ._models_py3 import MediaGraphIoTHubMessageSink
-    from ._models_py3 import MediaGraphIoTHubMessageSource
-    from ._models_py3 import MediaGraphMotionDetectionProcessor
-    from ._models_py3 import MediaGraphNodeInput
-    from ._models_py3 import MediaGraphOutputSelector
-    from ._models_py3 import MediaGraphParameterDeclaration
-    from ._models_py3 import MediaGraphParameterDefinition
-    from ._models_py3 import MediaGraphPemCertificateList
-    from ._models_py3 import MediaGraphProcessor
-    from ._models_py3 import MediaGraphRtspSource
-    from ._models_py3 import MediaGraphSamplingOptions
-    from ._models_py3 import MediaGraphSignalGateProcessor
-    from ._models_py3 import MediaGraphSink
-    from ._models_py3 import MediaGraphSource
-    from ._models_py3 import MediaGraphSystemData
-    from ._models_py3 import MediaGraphTlsEndpoint
-    from ._models_py3 import MediaGraphTlsValidationOptions
-    from ._models_py3 import MediaGraphTopology
-    from ._models_py3 import MediaGraphTopologyCollection
-    from ._models_py3 import MediaGraphTopologyDeleteRequest
-    from ._models_py3 import MediaGraphTopologyGetRequest
-    from ._models_py3 import MediaGraphTopologyListRequest
-    from ._models_py3 import MediaGraphTopologyProperties
-    from ._models_py3 import MediaGraphTopologySetRequest
-    from ._models_py3 import MediaGraphTopologySetRequestBody
-    from ._models_py3 import MediaGraphUnsecuredEndpoint
-    from ._models_py3 import MediaGraphUsernamePasswordCredentials
+    from ._models_py3 import Line
+    from ._models_py3 import LineCoordinates
+    from ._models_py3 import LineCrossingProcessor
+    from ._models_py3 import LivePipeline
+    from ._models_py3 import LivePipelineActivateRequest
+    from ._models_py3 import LivePipelineCollection
+    from ._models_py3 import LivePipelineDeactivateRequest
+    from ._models_py3 import LivePipelineDeleteRequest
+    from ._models_py3 import LivePipelineGetRequest
+    from ._models_py3 import LivePipelineListRequest
+    from ._models_py3 import LivePipelineProperties
+    from ._models_py3 import LivePipelineSetRequest
+    from ._models_py3 import LivePipelineSetRequestBody
     from ._models_py3 import MethodRequest
+    from ._models_py3 import MotionDetectionProcessor
+    from ._models_py3 import NodeInput
+    from ._models_py3 import ObjectTrackingProcessor
+    from ._models_py3 import OutputSelector
+    from ._models_py3 import ParameterDeclaration
+    from ._models_py3 import ParameterDefinition
+    from ._models_py3 import PemCertificateList
+    from ._models_py3 import PipelineTopology
+    from ._models_py3 import PipelineTopologyCollection
+    from ._models_py3 import PipelineTopologyDeleteRequest
+    from ._models_py3 import PipelineTopologyGetRequest
+    from ._models_py3 import PipelineTopologyListRequest
+    from ._models_py3 import PipelineTopologyProperties
+    from ._models_py3 import PipelineTopologySetRequest
+    from ._models_py3 import PipelineTopologySetRequestBody
+    from ._models_py3 import Point
+    from ._models_py3 import Processor
+    from ._models_py3 import RtspSource
+    from ._models_py3 import SamplingOptions
+    from ._models_py3 import SignalGateProcessor
+    from ._models_py3 import Sink
+    from ._models_py3 import Source
+    from ._models_py3 import SymmetricKeyCredentials
+    from ._models_py3 import SystemData
+    from ._models_py3 import TlsEndpoint
+    from ._models_py3 import TlsValidationOptions
+    from ._models_py3 import UnsecuredEndpoint
+    from ._models_py3 import UsernamePasswordCredentials
 except (SyntaxError, ImportError):
+    from ._models import AssetSink  # type: ignore
+    from ._models import CertificateSource  # type: ignore
+    from ._models import CognitiveServicesVisionExtension  # type: ignore
+    from ._models import Credentials  # type: ignore
+    from ._models import Endpoint  # type: ignore
+    from ._models import ExtensionProcessorBase  # type: ignore
+    from ._models import FileSink  # type: ignore
+    from ._models import GrpcExtension  # type: ignore
+    from ._models import GrpcExtensionDataTransfer  # type: ignore
+    from ._models import HttpExtension  # type: ignore
+    from ._models import HttpHeaderCredentials  # type: ignore
+    from ._models import Image  # type: ignore
+    from ._models import ImageFormat  # type: ignore
+    from ._models import ImageFormatBmp  # type: ignore
+    from ._models import ImageFormatJpeg  # type: ignore
+    from ._models import ImageFormatPng  # type: ignore
+    from ._models import ImageFormatRaw  # type: ignore
+    from ._models import ImageScale  # type: ignore
+    from ._models import IotHubMessageSink  # type: ignore
+    from ._models import IotHubMessageSource  # type: ignore
     from ._models import ItemNonSetRequestBase  # type: ignore
-    from ._models import MediaGraphAssetSink  # type: ignore
-    from ._models import MediaGraphCertificateSource  # type: ignore
-    from ._models import MediaGraphCognitiveServicesVisionExtension  # type: ignore
-    from ._models import MediaGraphCredentials  # type: ignore
-    from ._models import MediaGraphEndpoint  # type: ignore
-    from ._models import MediaGraphExtensionProcessorBase  # type: ignore
-    from ._models import MediaGraphFileSink  # type: ignore
-    from ._models import MediaGraphGrpcExtension  # type: ignore
-    from ._models import MediaGraphGrpcExtensionDataTransfer  # type: ignore
-    from ._models import MediaGraphHttpExtension  # type: ignore
-    from ._models import MediaGraphHttpHeaderCredentials  # type: ignore
-    from ._models import MediaGraphImage  # type: ignore
-    from ._models import MediaGraphImageFormat  # type: ignore
-    from ._models import MediaGraphImageFormatBmp  # type: ignore
-    from ._models import MediaGraphImageFormatJpeg  # type: ignore
-    from ._models import MediaGraphImageFormatPng  # type: ignore
-    from ._models import MediaGraphImageFormatRaw  # type: ignore
-    from ._models import MediaGraphImageScale  # type: ignore
-    from ._models import MediaGraphInstance  # type: ignore
-    from ._models import MediaGraphInstanceActivateRequest  # type: ignore
-    from ._models import MediaGraphInstanceCollection  # type: ignore
-    from ._models import MediaGraphInstanceDeActivateRequest  # type: ignore
-    from ._models import MediaGraphInstanceDeleteRequest  # type: ignore
-    from ._models import MediaGraphInstanceGetRequest  # type: ignore
-    from ._models import MediaGraphInstanceListRequest  # type: ignore
-    from ._models import MediaGraphInstanceProperties  # type: ignore
-    from ._models import MediaGraphInstanceSetRequest  # type: ignore
-    from ._models import MediaGraphInstanceSetRequestBody  # type: ignore
-    from ._models import MediaGraphIoTHubMessageSink  # type: ignore
-    from ._models import MediaGraphIoTHubMessageSource  # type: ignore
-    from ._models import MediaGraphMotionDetectionProcessor  # type: ignore
-    from ._models import MediaGraphNodeInput  # type: ignore
-    from ._models import MediaGraphOutputSelector  # type: ignore
-    from ._models import MediaGraphParameterDeclaration  # type: ignore
-    from ._models import MediaGraphParameterDefinition  # type: ignore
-    from ._models import MediaGraphPemCertificateList  # type: ignore
-    from ._models import MediaGraphProcessor  # type: ignore
-    from ._models import MediaGraphRtspSource  # type: ignore
-    from ._models import MediaGraphSamplingOptions  # type: ignore
-    from ._models import MediaGraphSignalGateProcessor  # type: ignore
-    from ._models import MediaGraphSink  # type: ignore
-    from ._models import MediaGraphSource  # type: ignore
-    from ._models import MediaGraphSystemData  # type: ignore
-    from ._models import MediaGraphTlsEndpoint  # type: ignore
-    from ._models import MediaGraphTlsValidationOptions  # type: ignore
-    from ._models import MediaGraphTopology  # type: ignore
-    from ._models import MediaGraphTopologyCollection  # type: ignore
-    from ._models import MediaGraphTopologyDeleteRequest  # type: ignore
-    from ._models import MediaGraphTopologyGetRequest  # type: ignore
-    from ._models import MediaGraphTopologyListRequest  # type: ignore
-    from ._models import MediaGraphTopologyProperties  # type: ignore
-    from ._models import MediaGraphTopologySetRequest  # type: ignore
-    from ._models import MediaGraphTopologySetRequestBody  # type: ignore
-    from ._models import MediaGraphUnsecuredEndpoint  # type: ignore
-    from ._models import MediaGraphUsernamePasswordCredentials  # type: ignore
+    from ._models import Line  # type: ignore
+    from ._models import LineCoordinates  # type: ignore
+    from ._models import LineCrossingProcessor  # type: ignore
+    from ._models import LivePipeline  # type: ignore
+    from ._models import LivePipelineActivateRequest  # type: ignore
+    from ._models import LivePipelineCollection  # type: ignore
+    from ._models import LivePipelineDeactivateRequest  # type: ignore
+    from ._models import LivePipelineDeleteRequest  # type: ignore
+    from ._models import LivePipelineGetRequest  # type: ignore
+    from ._models import LivePipelineListRequest  # type: ignore
+    from ._models import LivePipelineProperties  # type: ignore
+    from ._models import LivePipelineSetRequest  # type: ignore
+    from ._models import LivePipelineSetRequestBody  # type: ignore
     from ._models import MethodRequest  # type: ignore
+    from ._models import MotionDetectionProcessor  # type: ignore
+    from ._models import NodeInput  # type: ignore
+    from ._models import ObjectTrackingProcessor  # type: ignore
+    from ._models import OutputSelector  # type: ignore
+    from ._models import ParameterDeclaration  # type: ignore
+    from ._models import ParameterDefinition  # type: ignore
+    from ._models import PemCertificateList  # type: ignore
+    from ._models import PipelineTopology  # type: ignore
+    from ._models import PipelineTopologyCollection  # type: ignore
+    from ._models import PipelineTopologyDeleteRequest  # type: ignore
+    from ._models import PipelineTopologyGetRequest  # type: ignore
+    from ._models import PipelineTopologyListRequest  # type: ignore
+    from ._models import PipelineTopologyProperties  # type: ignore
+    from ._models import PipelineTopologySetRequest  # type: ignore
+    from ._models import PipelineTopologySetRequestBody  # type: ignore
+    from ._models import Point  # type: ignore
+    from ._models import Processor  # type: ignore
+    from ._models import RtspSource  # type: ignore
+    from ._models import SamplingOptions  # type: ignore
+    from ._models import SignalGateProcessor  # type: ignore
+    from ._models import Sink  # type: ignore
+    from ._models import Source  # type: ignore
+    from ._models import SymmetricKeyCredentials  # type: ignore
+    from ._models import SystemData  # type: ignore
+    from ._models import TlsEndpoint  # type: ignore
+    from ._models import TlsValidationOptions  # type: ignore
+    from ._models import UnsecuredEndpoint  # type: ignore
+    from ._models import UsernamePasswordCredentials  # type: ignore
 
-from ._direct_methodsfor_live_video_analyticson_io_tedge_enums import (
-    MediaGraphGrpcExtensionDataTransferMode,
-    MediaGraphImageFormatRawPixelFormat,
-    MediaGraphImageScaleMode,
-    MediaGraphInstanceState,
-    MediaGraphMotionDetectionSensitivity,
-    MediaGraphOutputSelectorOperator,
-    MediaGraphOutputSelectorProperty,
-    MediaGraphParameterType,
-    MediaGraphRtspTransport,
+from ._direct_methodsfor_azure_video_analyzeron_io_tedge_enums import (
+    GrpcExtensionDataTransferMode,
+    ImageFormatRawPixelFormat,
+    ImageScaleMode,
+    LivePipelineState,
+    MotionDetectionSensitivity,
+    ObjectTrackingAccuracy,
+    OutputSelectorOperator,
+    OutputSelectorProperty,
+    ParameterType,
+    RtspTransport,
 )
 
 __all__ = [
+    'AssetSink',
+    'CertificateSource',
+    'CognitiveServicesVisionExtension',
+    'Credentials',
+    'Endpoint',
+    'ExtensionProcessorBase',
+    'FileSink',
+    'GrpcExtension',
+    'GrpcExtensionDataTransfer',
+    'HttpExtension',
+    'HttpHeaderCredentials',
+    'Image',
+    'ImageFormat',
+    'ImageFormatBmp',
+    'ImageFormatJpeg',
+    'ImageFormatPng',
+    'ImageFormatRaw',
+    'ImageScale',
+    'IotHubMessageSink',
+    'IotHubMessageSource',
     'ItemNonSetRequestBase',
-    'MediaGraphAssetSink',
-    'MediaGraphCertificateSource',
-    'MediaGraphCognitiveServicesVisionExtension',
-    'MediaGraphCredentials',
-    'MediaGraphEndpoint',
-    'MediaGraphExtensionProcessorBase',
-    'MediaGraphFileSink',
-    'MediaGraphGrpcExtension',
-    'MediaGraphGrpcExtensionDataTransfer',
-    'MediaGraphHttpExtension',
-    'MediaGraphHttpHeaderCredentials',
-    'MediaGraphImage',
-    'MediaGraphImageFormat',
-    'MediaGraphImageFormatBmp',
-    'MediaGraphImageFormatJpeg',
-    'MediaGraphImageFormatPng',
-    'MediaGraphImageFormatRaw',
-    'MediaGraphImageScale',
-    'MediaGraphInstance',
-    'MediaGraphInstanceActivateRequest',
-    'MediaGraphInstanceCollection',
-    'MediaGraphInstanceDeActivateRequest',
-    'MediaGraphInstanceDeleteRequest',
-    'MediaGraphInstanceGetRequest',
-    'MediaGraphInstanceListRequest',
-    'MediaGraphInstanceProperties',
-    'MediaGraphInstanceSetRequest',
-    'MediaGraphInstanceSetRequestBody',
-    'MediaGraphIoTHubMessageSink',
-    'MediaGraphIoTHubMessageSource',
-    'MediaGraphMotionDetectionProcessor',
-    'MediaGraphNodeInput',
-    'MediaGraphOutputSelector',
-    'MediaGraphParameterDeclaration',
-    'MediaGraphParameterDefinition',
-    'MediaGraphPemCertificateList',
-    'MediaGraphProcessor',
-    'MediaGraphRtspSource',
-    'MediaGraphSamplingOptions',
-    'MediaGraphSignalGateProcessor',
-    'MediaGraphSink',
-    'MediaGraphSource',
-    'MediaGraphSystemData',
-    'MediaGraphTlsEndpoint',
-    'MediaGraphTlsValidationOptions',
-    'MediaGraphTopology',
-    'MediaGraphTopologyCollection',
-    'MediaGraphTopologyDeleteRequest',
-    'MediaGraphTopologyGetRequest',
-    'MediaGraphTopologyListRequest',
-    'MediaGraphTopologyProperties',
-    'MediaGraphTopologySetRequest',
-    'MediaGraphTopologySetRequestBody',
-    'MediaGraphUnsecuredEndpoint',
-    'MediaGraphUsernamePasswordCredentials',
+    'Line',
+    'LineCoordinates',
+    'LineCrossingProcessor',
+    'LivePipeline',
+    'LivePipelineActivateRequest',
+    'LivePipelineCollection',
+    'LivePipelineDeactivateRequest',
+    'LivePipelineDeleteRequest',
+    'LivePipelineGetRequest',
+    'LivePipelineListRequest',
+    'LivePipelineProperties',
+    'LivePipelineSetRequest',
+    'LivePipelineSetRequestBody',
     'MethodRequest',
-    'MediaGraphGrpcExtensionDataTransferMode',
-    'MediaGraphImageFormatRawPixelFormat',
-    'MediaGraphImageScaleMode',
-    'MediaGraphInstanceState',
-    'MediaGraphMotionDetectionSensitivity',
-    'MediaGraphOutputSelectorOperator',
-    'MediaGraphOutputSelectorProperty',
-    'MediaGraphParameterType',
-    'MediaGraphRtspTransport',
+    'MotionDetectionProcessor',
+    'NodeInput',
+    'ObjectTrackingProcessor',
+    'OutputSelector',
+    'ParameterDeclaration',
+    'ParameterDefinition',
+    'PemCertificateList',
+    'PipelineTopology',
+    'PipelineTopologyCollection',
+    'PipelineTopologyDeleteRequest',
+    'PipelineTopologyGetRequest',
+    'PipelineTopologyListRequest',
+    'PipelineTopologyProperties',
+    'PipelineTopologySetRequest',
+    'PipelineTopologySetRequestBody',
+    'Point',
+    'Processor',
+    'RtspSource',
+    'SamplingOptions',
+    'SignalGateProcessor',
+    'Sink',
+    'Source',
+    'SymmetricKeyCredentials',
+    'SystemData',
+    'TlsEndpoint',
+    'TlsValidationOptions',
+    'UnsecuredEndpoint',
+    'UsernamePasswordCredentials',
+    'GrpcExtensionDataTransferMode',
+    'ImageFormatRawPixelFormat',
+    'ImageScaleMode',
+    'LivePipelineState',
+    'MotionDetectionSensitivity',
+    'ObjectTrackingAccuracy',
+    'OutputSelectorOperator',
+    'OutputSelectorProperty',
+    'ParameterType',
+    'RtspTransport',
 ]

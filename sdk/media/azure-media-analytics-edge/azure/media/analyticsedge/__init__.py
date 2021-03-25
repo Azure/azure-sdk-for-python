@@ -11,19 +11,19 @@ __version__ = VERSION
 __all__ = models.__all__
 
 def _OverrideTopologySetRequestSerialize(self):
-    graph_body = MediaGraphTopologySetRequestBody(name=self.graph.name)
-    graph_body.system_data = self.graph.system_data
-    graph_body.properties = self.graph.properties
+    topology_body = PipelineTopologySetRequestBody(name=self.pipeline_topology.name)
+    topology_body.system_data = self.pipeline_topology.system_data
+    topology_body.properties = self.pipeline_topology.properties
 
-    return graph_body.serialize()
+    return topology_body.serialize()
 
-MediaGraphTopologySetRequest.serialize = _OverrideTopologySetRequestSerialize
+PipelineTopologySetRequest.serialize = _OverrideTopologySetRequestSerialize
 
 def _OverrideInstanceSetRequestSerialize(self):
-    graph_body = MediaGraphInstanceSetRequestBody(name=self.instance.name)
-    graph_body.system_data = self.instance.system_data
-    graph_body.properties = self.instance.properties
+    live_pipeline_body = LivePipelineSetRequestBody(name=self.live_pipeline.name)
+    live_pipeline_body.system_data = self.live_pipeline.system_data
+    live_pipeline_body.properties = self.live_pipeline.properties
 
-    return graph_body.serialize()
+    return live_pipeline_body.serialize()
 
-MediaGraphInstanceSetRequest.serialize = _OverrideInstanceSetRequestSerialize
+LivePipelineSetRequest.serialize = _OverrideInstanceSetRequestSerialize

@@ -7,35 +7,35 @@ from azure.iot.hub.models import CloudToDeviceMethod, CloudToDeviceMethodResult
 from datetime import time
 
 device_id = "lva-sample-device"
-module_d = "mediaedge"
-connection_string = "HostName=lvasamplehubcx5a4jgbixyvg.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=/53Qw6ifN0ka4so72a1gVEhmyiz5fLb9iw+oWoyoQxk="
-graph_instance_name = "graphInstance1"
-graph_topology_name = "graphTopology1"
+module_d = "lvaEdge"
+connection_string = "connectionString"
+live_pipeline_name = "graphInstance1"
+pipeline_topology_name = "graphTopology1"
 graph_url = "rtsp://sample-url-from-camera"
 
-def build_graph_topology():
-    graph_properties = MediaGraphTopologyProperties()
-    graph_properties.description = "Continuous video recording to an Azure Media Services Asset"
-    user_name_param = MediaGraphParameterDeclaration(name="rtspUserName",type="String",default="dummyusername")
-    password_param = MediaGraphParameterDeclaration(name="rtspPassword",type="SecretString",default="dummypassword")
-    url_param = MediaGraphParameterDeclaration(name="rtspUrl",type="String",default="rtsp://www.sample.com")
+def build_pipeline_topology():
+    pipeline_topology_properties = PipelineTopologyProperties()
+    pipeline_topology_properties.description = "Continuous video recording to an Azure Media Services Asset"
+    user_name_param = ParameterDeclaration(name="rtspUserName",type="String",default="dummyusername")
+    password_param = ParameterDeclaration(name="rtspPassword",type="SecretString",default="dummypassword")
+    url_param = ParameterDeclaration(name="rtspUrl",type="String",default="rtsp://www.sample.com")
 
-    source = MediaGraphRtspSource(name="rtspSource", endpoint=MediaGraphUnsecuredEndpoint(url="${rtspUrl}",credentials=MediaGraphUsernamePasswordCredentials(username="${rtspUserName}",password="${rtspPassword}")))
-    node = MediaGraphNodeInput(node_name="rtspSource")
-    sink = MediaGraphAssetSink(name="assetsink", inputs=[node],asset_name_pattern='sampleAsset-${System.GraphTopologyName}-${System.GraphInstanceName}', segment_length="PT0H0M30S",local_media_cache_maximum_size_mi_b=2048,local_media_cache_path="/var/lib/azuremediaservices/tmp/")
-    graph_properties.parameters = [user_name_param, password_param, url_param]
-    graph_properties.sources = [source]
-    graph_properties.sinks = [sink]
-    graph = MediaGraphTopology(name=graph_topology_name,properties=graph_properties)
+    source = RtspSource(name="rtspSource", endpoint=UnsecuredEndpoint(url="${rtspUrl}",credentials=UsernamePasswordCredentials(username="${rtspUserName}",password="${rtspPassword}")))
+    node = NodeInput(node_name="rtspSource")
+    sink = AssetSink(name="assetsink", inputs=[node],asset_container_sas_url='sampleAsset-${System.GraphTopologyName}-${System.GraphInstanceName}', segment_length="PT0H0M30S",local_media_cache_maximum_size_mi_b=2048,local_media_cache_path="/var/lib/azuremediaservices/tmp/")
+    pipeline_topology_properties.parameters = [user_name_param, password_param, url_param]
+    pipeline_topology_properties.sources = [source]
+    pipeline_topology_properties.sinks = [sink]
+    pipeline_topology = PipelineTopology(name=pipeline_topology_name,properties=pipeline_topology_properties)
 
-    return graph
+    return pipeline_topology
 
 def build_graph_instance():
-    url_param = MediaGraphParameterDefinition(name="rtspUrl", value=graph_url)
-    pass_param = MediaGraphParameterDefinition(name="rtspPassword", value='testpass')
-    graph_instance_properties = MediaGraphInstanceProperties(description="Sample graph description", topology_name=graph_topology_name, parameters=[url_param])
+    url_param = ParameterDefinition(name="rtspUrl", value=graph_url)
+    pass_param = ParameterDefinition(name="rtspPassword", value='testpass')
+    graph_instance_properties = LivePipelineProperties(description="Sample graph description", topology_name=pipeline_topology_name, parameters=[url_param])
 
-    graph_instance = MediaGraphInstance(name=graph_instance_name, properties=graph_instance_properties)
+    graph_instance = LivePipeline(name=live_pipeline_name, properties=graph_instance_properties)
 
     return graph_instance
 
@@ -51,33 +51,33 @@ def invoke_method_helper(method):
     return payload
 
 def main():
-    graph_topology = build_graph_topology()
-    graph_instance = build_graph_instance()
+    pipeline_topology = build_pipeline_topology()
+    live_pipeline = build_graph_instance()
 
     try:
-        set_graph_response = invoke_method_helper(MediaGraphTopologySetRequest(graph=graph_topology))
+        set_pipeline_top_response = invoke_method_helper(PipelineTopologySetRequest(pipeline_topology=pipeline_topology))
         
-        list_graph_response = invoke_method_helper(MediaGraphTopologyListRequest())
-        if list_graph_response:
-            list_graph_result = MediaGraphTopologyCollection.deserialize(list_graph_response)
+        list_pipeline_top_response = invoke_method_helper(PipelineTopologyListRequest())
+        if list_pipeline_top_response:
+            list_pipeline_top_result = PipelineTopologyCollection.deserialize(list_pipeline_top_response)
 
-        get_graph_response = invoke_method_helper(MediaGraphTopologyGetRequest(name=graph_topology_name))
-        if get_graph_response:
-            get_graph_result = MediaGraphTopology.deserialize(get_graph_response)
+        get_pipeline_top_response = invoke_method_helper(PipelineTopologyGetRequest(name=pipeline_topology_name))
+        if get_pipeline_top_response:
+            get_pipeline_top_result = PipelineTopology.deserialize(get_pipeline_top_response)
 
-        set_graph_instance_response = invoke_method_helper(MediaGraphInstanceSetRequest(instance=graph_instance))
+        set_live_pipeline_response = invoke_method_helper(LivePipelineSetRequest(live_pipeline=live_pipeline))
 
-        activate_graph_instance_response = invoke_method_helper(MediaGraphInstanceActivateRequest(name=graph_instance_name))
+        activate_pipeline_response = invoke_method_helper(LivePipelineActivateRequest(name=live_pipeline_name))
 
-        get_graph_instance_response = invoke_method_helper(MediaGraphInstanceGetRequest(name=graph_instance_name))
-        if get_graph_instance_response:
-            get_graph_instance_result = MediaGraphInstance.deserialize(get_graph_instance_response)
+        get_pipeline_response = invoke_method_helper(LivePipelineGetRequest(name=live_pipeline_name))
+        if get_pipeline_response:
+            get_pipeline_result = LivePipeline.deserialize(get_pipeline_response)
 
-        deactivate_graph_instance_response = invoke_method_helper(MediaGraphInstanceDeActivateRequest(name=graph_instance_name))
+        deactivate_pipeline_response = invoke_method_helper(LivePipelineDeactivateRequest(name=live_pipeline_name))
 
-        delete_graph_instance_response = invoke_method_helper(MediaGraphInstanceDeleteRequest(name=graph_instance_name))
+        delete_pipeline_response = invoke_method_helper(LivePipelineDeleteRequest(name=live_pipeline_name))
 
-        delete_graph_response = invoke_method_helper(MediaGraphTopologyDeleteRequest(name=graph_topology_name))
+        delete_pipeline_response = invoke_method_helper(PipelineTopologyDeleteRequest(name=pipeline_topology_name))
 
     except Exception as ex:
         print(ex)

@@ -1,6 +1,6 @@
 # Generate SDK using Autorest
 
-see `https://aka.ms/autorest`
+> see `https://aka.ms/autorest`
 
 ## Getting started
 ```ps
@@ -10,7 +10,9 @@ autorest --v3 --python
 ## Settings
 
 ```yaml
-require: https://github.com/Azure/azure-rest-api-specs/blob/14732a2d9802c98cb8fea52800853874529c5f8e/specification/mediaservices/data-plane/readme.md
+input-file:
+- C:\Azure-Media-LiveVideoAnalytics\src\Edge\Client\AzureVideoAnalyzer.Edge\preview\1.0\AzureVideoAnalyzer.json
+- C:\Azure-Media-LiveVideoAnalytics\src\Edge\Client\AzureVideoAnalyzer.Edge\preview\1.0\AzureVideoAnalyzerSdkDefinitions.json
 output-folder: ../azure/media/analyticsedge/_generated
 namespace: azure.media.analyticsedge
 no-namespace-folders: true
