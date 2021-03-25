@@ -68,15 +68,15 @@ class OpenCensusSpan(HttpSpanMixin, object):
         """
         return self._span_instance
 
-    def span(self, name="span"):
-        # type: (Optional[str]) -> OpenCensusSpan
+    def span(self, name="span", **kwargs):
+        # type: (Optional[str], Any) -> OpenCensusSpan
         """
         Create a child span for the current span and append it to the child spans list in the span instance.
         :param name: Name of the child span
         :type name: str
         :return: The OpenCensusSpan that is wrapping the child span instance
         """
-        return self.__class__(name=name)
+        return self.__class__(name=name, **kwargs)
 
     @property
     def kind(self):
