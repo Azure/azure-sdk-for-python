@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Mapping, TYPE_CHECKING
+from typing import Mapping
 from .._utils import _case_insensitive_dict
 
 
