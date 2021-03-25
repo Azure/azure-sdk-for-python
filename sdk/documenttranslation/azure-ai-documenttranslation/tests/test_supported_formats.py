@@ -32,11 +32,3 @@ class TestSupportedFormats(DocumentTranslationTest):
         # validate
         for glossary_format in supported_glossary_formats:
             self._validate_format(glossary_format)
-
-
-    # helper functions
-    def _validate_format(self, format):
-        self.assertIsNotNone(format.format)
-        self.assertIsNotNone(format.file_extensions)
-        self.assertIsNotNone(format.content_types)
-        self.assertIsNotNone(format.format_versions)

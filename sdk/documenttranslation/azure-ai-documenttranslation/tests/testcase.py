@@ -16,6 +16,7 @@ from azure_devtools.scenario_tests import (
     ReplayableTest
 )
 from azure.storage.blob import generate_container_sas, ContainerClient
+from azure.ai.documenttranslation import DocumentTranslationInput, TranslationTarget
 
 
 class OperationLocationReplacer(RecordingProcessor):
@@ -122,3 +123,74 @@ class DocumentTranslationTest(AzureTestCase):
     def wait(self):
         if self.is_live:
             time.sleep(30)
+
+
+    def _validate_doc_status(self, doc_details, target_language):
+        # specific assertions
+        self.assertEqual(doc_details.status, "Succeeded")
+        self.assertIsNotNone(doc_details.translate_to, target_language)
+        # generic assertions
+        self.assertIsNotNone(doc_details.id)
+        self.assertIsNotNone(doc_details.translated_document_url)
+        self.assertIsNotNone(doc_details.translation_progress)
+        self.assertIsNotNone(doc_details.characters_charged)
+        self.assertIsNotNone(doc_details.created_on)
+        self.assertIsNotNone(doc_details.last_updated_on)
+
+
+    def _submit_and_validate_translation_job(self, client, translation_inputs, total_docs_count):
+        # submit job
+        job_details = client.create_translation_job(translation_inputs)
+        self.assertIsNotNone(job_details.id)
+        # wait for result
+        job_details = client.wait_until_done(job_details.id)
+        # validate
+        self._validate_translation_job(self, job_details, total_docs_count, "Succeeded")
+
+        return job_details.id
+
+    def _validate_translation_job(self, job_details, total_docs_count, status):
+        # status
+        self.assertEqual(job_details.status, status)
+        # docs count
+        self.assertEqual(job_details.documents_total_count, total_docs_count)
+        self.assertEqual(job_details.documents_failed_count, 0)
+        self.assertEqual(job_details.documents_succeeded_count, total_docs_count)
+        self.assertEqual(job_details.documents_in_progress_count, 0)
+        self.assertEqual(job_details.documents_not_yet_started_count, 0)
+        self.assertEqual(job_details.documents_cancelled_count, 0)
+        # generic assertions
+        self.assertIsNotNone(job_details.id)
+        self.assertIsNotNone(job_details.created_on)
+        self.assertIsNotNone(job_details.last_updated_on)
+        self.assertIsNotNone(job_details.total_characters_charged)
+
+    def _validate_format(self, format):
+        self.assertIsNotNone(format.format)
+        self.assertIsNotNone(format.file_extensions)
+        self.assertIsNotNone(format.content_types)
+        self.assertIsNotNone(format.format_versions)
+
+    def _create_and_submit_sample_translation_jobs(self, client, jobs_count):
+        for i in range(jobs_count):
+            # prepare containers and test data
+            blob_data = b'This is some text'  # TOTAL_DOC_COUNT_IN_JOB = 1
+            source_container_sas_url = self.create_source_container(data=blob_data)
+            target_container_sas_url = self.create_target_container()
+
+            # prepare translation inputs
+            translation_inputs = [
+                DocumentTranslationInput(
+                    source_url=source_container_sas_url,
+                    targets=[
+                        TranslationTarget(
+                            target_url=target_container_sas_url,
+                            language_code="es"
+                        )
+                    ]
+                )
+            ]
+
+            # submit multiple jobs
+            job_detail = client.create_translation_job(translation_inputs)
+            self.assertIsNotNone(job_detail.id)

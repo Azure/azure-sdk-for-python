@@ -43,21 +43,4 @@ class TestCancelJob(DocumentTranslationTest):
 
         # check job status
         job_details = client.get_job_status(job_details.id)
-        self._validate_translation_job(job_details, 1)
-
-
-
-    def _validate_translation_job(self, job_details, total_docs_count):
-        # status
-        self.assertEqual(job_details.status, "Canceled")
-        # docs count
-        self.assertEqual(job_details.documents_total_count, total_docs_count)
-        self.assertEqual(job_details.documents_failed_count, 0)
-        self.assertEqual(job_details.documents_succeeded_count, total_docs_count)
-        self.assertEqual(job_details.documents_in_progress_count, 0)
-        self.assertEqual(job_details.documents_not_yet_started_count, 0)
-        self.assertEqual(job_details.documents_cancelled_count, 0)
-        # generic assertions
-        self.assertIsNotNone(job_details.created_on)
-        self.assertIsNotNone(job_details.last_updated_on)
-        self.assertIsNotNone(job_details.total_characters_charged)
+        self._validate_translation_job(job_details, 1, "Canceled")
