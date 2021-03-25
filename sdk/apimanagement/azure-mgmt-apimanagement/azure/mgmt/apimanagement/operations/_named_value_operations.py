@@ -26,7 +26,7 @@ class NamedValueOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-12-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-12-01".
     """
 
     models = models
@@ -36,29 +36,32 @@ class NamedValueOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-12-01"
+        self.api_version = "2020-12-01"
 
         self.config = config
 
     def list_by_service(
-            self, resource_group_name, service_name, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
-        """Lists a collection of NamedValues defined within a service instance.
+            self, resource_group_name, service_name, filter=None, top=None, skip=None, is_key_vault_refresh_failed=None, custom_headers=None, raw=False, **operation_config):
+        """Lists a collection of named values defined within a service instance.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param filter: |   Field     |     Usage     |     Supported operators
-         |     Supported functions
+        :param filter: |     Field     |     Usage     |     Supported
+         operators     |     Supported functions
          |</br>|-------------|-------------|-------------|-------------|</br>|
          tags | filter | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith, any, all | </br>| displayName | filter | ge, le,
-         eq, ne, gt, lt | substringof, contains, startswith, endswith | </br>
+         startswith, endswith, any, all |</br>| displayName | filter | ge, le,
+         eq, ne, gt, lt | substringof, contains, startswith, endswith |</br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
         :param skip: Number of records to skip.
         :type skip: int
+        :param is_key_vault_refresh_failed: When set to true, the response
+         contains only named value entities which failed refresh.
+        :type is_key_vault_refresh_failed: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -89,6 +92,8 @@ class NamedValueOperations(object):
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
+                if is_key_vault_refresh_failed is not None:
+                    query_parameters['isKeyVaultRefreshFailed'] = self._serialize.query("is_key_vault_refresh_failed", is_key_vault_refresh_failed, 'bool')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -130,8 +135,8 @@ class NamedValueOperations(object):
 
     def get_entity_tag(
             self, resource_group_name, service_name, named_value_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the entity state (Etag) version of the NamedValue specified by its
-        identifier.
+        """Gets the entity state (Etag) version of the named value specified by
+        its identifier.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -189,7 +194,7 @@ class NamedValueOperations(object):
 
     def get(
             self, resource_group_name, service_name, named_value_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the details of the NamedValue specified by its identifier.
+        """Gets the details of the named value specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -318,7 +323,7 @@ class NamedValueOperations(object):
 
     def create_or_update(
             self, resource_group_name, service_name, named_value_id, parameters, if_match=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates or updates a NamedValue.
+        """Creates or updates named value.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -415,7 +420,7 @@ class NamedValueOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [200, 202]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
@@ -436,7 +441,7 @@ class NamedValueOperations(object):
 
     def update(
             self, resource_group_name, service_name, named_value_id, parameters, if_match, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Updates the specific NamedValue.
+        """Updates the specific named value.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -500,7 +505,7 @@ class NamedValueOperations(object):
 
     def delete(
             self, resource_group_name, service_name, named_value_id, if_match, custom_headers=None, raw=False, **operation_config):
-        """Deletes specific NamedValue from the API Management service instance.
+        """Deletes specific named value from the API Management service instance.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -560,7 +565,7 @@ class NamedValueOperations(object):
 
     def list_value(
             self, resource_group_name, service_name, named_value_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the secret value of the NamedValue.
+        """Gets the secret of the named value specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -573,8 +578,8 @@ class NamedValueOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PropertyValueContract or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.apimanagement.models.PropertyValueContract or
+        :return: NamedValueSecretContract or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.apimanagement.models.NamedValueSecretContract or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
@@ -610,13 +615,123 @@ class NamedValueOperations(object):
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
+        header_dict = {}
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PropertyValueContract', response)
+            deserialized = self._deserialize('NamedValueSecretContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
     list_value.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/namedValues/{namedValueId}/listValue'}
+
+
+    def _refresh_secret_initial(
+            self, resource_group_name, service_name, named_value_id, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.refresh_secret.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+            'namedValueId': self._serialize.url("named_value_id", named_value_id, 'str', max_length=256, pattern=r'^[^*#&+:<>?]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        header_dict = {}
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('NamedValueContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
+            return client_raw_response
+
+        return deserialized
+
+    def refresh_secret(
+            self, resource_group_name, service_name, named_value_id, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Refresh the secret of the named value specified by its identifier.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param service_name: The name of the API Management service.
+        :type service_name: str
+        :param named_value_id: Identifier of the NamedValue.
+        :type named_value_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns NamedValueContract or
+         ClientRawResponse<NamedValueContract> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.apimanagement.models.NamedValueContract]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.apimanagement.models.NamedValueContract]]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
+        """
+        raw_result = self._refresh_secret_initial(
+            resource_group_name=resource_group_name,
+            service_name=service_name,
+            named_value_id=named_value_id,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            header_dict = {
+                'ETag': 'str',
+            }
+            deserialized = self._deserialize('NamedValueContract', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                client_raw_response.add_headers(header_dict)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    refresh_secret.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/namedValues/{namedValueId}/refreshSecret'}

@@ -24,7 +24,7 @@ class GatewayHostnameConfigurationOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-12-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-12-01".
     """
 
     models = models
@@ -34,12 +34,12 @@ class GatewayHostnameConfigurationOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-12-01"
+        self.api_version = "2020-12-01"
 
         self.config = config
 
     def list_by_service(
-            self, resource_group_name, service_name, gateway_id, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, gateway_id, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
         """Lists the collection of hostname configurations for the specified
         gateway.
 
@@ -50,6 +50,13 @@ class GatewayHostnameConfigurationOperations(object):
         :param gateway_id: Gateway entity identifier. Must be unique in the
          current API Management service instance. Must not have value 'managed'
         :type gateway_id: str
+        :param filter: |     Field     |     Usage     |     Supported
+         operators     |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>|
+         name | filter | ge, le, eq, ne, gt, lt | substringof, contains,
+         startswith, endswith |</br>| hostname | filter | ge, le, eq, ne, gt,
+         lt | substringof, contains, startswith, endswith |</br>
+        :type filter: str
         :param top: Number of records to return.
         :type top: int
         :param skip: Number of records to skip.
@@ -80,6 +87,8 @@ class GatewayHostnameConfigurationOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
@@ -189,8 +198,7 @@ class GatewayHostnameConfigurationOperations(object):
 
     def get(
             self, resource_group_name, service_name, gateway_id, hc_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the details of the Gateway hostname configuration specified by its
-        identifier.
+        """Get details of a hostname configuration.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -264,7 +272,7 @@ class GatewayHostnameConfigurationOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/gateways/{gatewayId}/hostnameConfigurations/{hcId}'}
 
     def create_or_update(
-            self, resource_group_name, service_name, gateway_id, hc_id, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, gateway_id, hc_id, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
         """Creates of updates hostname configuration for a Gateway.
 
         :param resource_group_name: The name of the resource group.
@@ -280,6 +288,9 @@ class GatewayHostnameConfigurationOperations(object):
         :param parameters:
         :type parameters:
          ~azure.mgmt.apimanagement.models.GatewayHostnameConfigurationContract
+        :param if_match: ETag of the Entity. Not required when creating an
+         entity, but required when updating an entity.
+        :type if_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -316,6 +327,8 @@ class GatewayHostnameConfigurationOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -351,7 +364,7 @@ class GatewayHostnameConfigurationOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/gateways/{gatewayId}/hostnameConfigurations/{hcId}'}
 
     def delete(
-            self, resource_group_name, service_name, gateway_id, hc_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, gateway_id, hc_id, if_match, custom_headers=None, raw=False, **operation_config):
         """Deletes the specified hostname configuration from the specified
         Gateway.
 
@@ -365,6 +378,10 @@ class GatewayHostnameConfigurationOperations(object):
         :param hc_id: Gateway hostname configuration identifier. Must be
          unique in the scope of parent Gateway entity.
         :type hc_id: str
+        :param if_match: ETag of the Entity. ETag should match the current
+         entity state from the header response of the GET request or it should
+         be * for unconditional update.
+        :type if_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -396,6 +413,7 @@ class GatewayHostnameConfigurationOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 

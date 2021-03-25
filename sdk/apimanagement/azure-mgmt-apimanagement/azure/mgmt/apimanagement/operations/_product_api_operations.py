@@ -24,7 +24,7 @@ class ProductApiOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-12-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-12-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class ProductApiOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-12-01"
+        self.api_version = "2020-12-01"
 
         self.config = config
 
@@ -49,17 +49,17 @@ class ProductApiOperations(object):
         :param product_id: Product identifier. Must be unique in the current
          API Management service instance.
         :type product_id: str
-        :param filter: |   Field     |     Usage     |     Supported operators
-         |     Supported functions
+        :param filter: |     Field     |     Usage     |     Supported
+         operators     |     Supported functions
          |</br>|-------------|-------------|-------------|-------------|</br>|
          name | filter | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith | </br>| displayName | filter | ge, le, eq, ne,
-         gt, lt | substringof, contains, startswith, endswith | </br>|
+         startswith, endswith |</br>| displayName | filter | ge, le, eq, ne,
+         gt, lt | substringof, contains, startswith, endswith |</br>|
          description | filter | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith | </br>| serviceUrl | filter | ge, le, eq, ne,
-         gt, lt | substringof, contains, startswith, endswith | </br>| path |
-         filter | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
-         endswith | </br>
+         startswith, endswith |</br>| serviceUrl | filter | ge, le, eq, ne, gt,
+         lt | substringof, contains, startswith, endswith |</br>| path | filter
+         | ge, le, eq, ne, gt, lt | substringof, contains, startswith, endswith
+         |</br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int

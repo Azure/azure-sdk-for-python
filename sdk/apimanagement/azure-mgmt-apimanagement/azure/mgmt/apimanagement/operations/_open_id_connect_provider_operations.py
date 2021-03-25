@@ -24,7 +24,7 @@ class OpenIdConnectProviderOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-12-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-12-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class OpenIdConnectProviderOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-12-01"
+        self.api_version = "2020-12-01"
 
         self.config = config
 
@@ -46,12 +46,12 @@ class OpenIdConnectProviderOperations(object):
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param filter: |   Field     |     Usage     |     Supported operators
-         |     Supported functions
+        :param filter: |     Field     |     Usage     |     Supported
+         operators     |     Supported functions
          |</br>|-------------|-------------|-------------|-------------|</br>|
          name | filter | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith | </br>| displayName | filter | ge, le, eq, ne,
-         gt, lt | substringof, contains, startswith, endswith | </br>
+         startswith, endswith |</br>| displayName | filter | ge, le, eq, ne,
+         gt, lt | substringof, contains, startswith, endswith |</br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
@@ -187,7 +187,7 @@ class OpenIdConnectProviderOperations(object):
 
     def get(
             self, resource_group_name, service_name, opid, custom_headers=None, raw=False, **operation_config):
-        """Gets specific OpenID Connect Provider.
+        """Gets specific OpenID Connect Provider without secrets.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -362,8 +362,10 @@ class OpenIdConnectProviderOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :return: OpenidConnectProviderContract or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.apimanagement.models.OpenidConnectProviderContract
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
@@ -383,6 +385,7 @@ class OpenIdConnectProviderOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -399,12 +402,23 @@ class OpenIdConnectProviderOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
+        header_dict = {}
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('OpenidConnectProviderContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
+
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
+
+        return deserialized
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/openidConnectProviders/{opid}'}
 
     def delete(
@@ -520,12 +534,17 @@ class OpenIdConnectProviderOperations(object):
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
+        header_dict = {}
         deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('ClientSecretContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
