@@ -8,6 +8,7 @@ import functools
 import os
 import datetime
 import time
+import logging
 from functools import partial
 
 from azure_devtools.scenario_tests import AzureTestError, ReservedResourceNameError
@@ -15,6 +16,9 @@ from azure_devtools.scenario_tests import AzureTestError, ReservedResourceNameEr
 from azure.mgmt.resource import ResourceManagementClient
 
 from . import AzureMgmtPreparer
+
+
+logging.getLogger().setLevel(logging.INFO)
 
 
 RESOURCE_GROUP_PARAM = "resource_group"
@@ -65,9 +69,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
             parameters = {"location": self.location}
             if self.delete_after_tag_timedelta:
                 expiry = datetime.datetime.utcnow() + self.delete_after_tag_timedelta
-                parameters["tags"] = {
-                    "DeleteAfter": expiry.replace(microsecond=0).isoformat()
-                }
+                parameters["tags"] = {"DeleteAfter": expiry.replace(microsecond=0).isoformat()}
             try:
                 if "tags" not in parameters.keys():
                     parameters["tags"] = {}
@@ -78,9 +80,10 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
             except KeyError:
                 pass
             try:
-                self.resource = self.client.resource_groups.create_or_update(
-                    name, parameters
+                logging.info(
+                    "Attempting to create a Resource Group with name {} and parameters {}".format(name, parameters)
                 )
+                self.resource = self.client.resource_groups.create_or_update(name, parameters)
             except Exception as ex:
                 if "ReservedResourceName" in str(ex):
                     raise ReservedResourceNameError(name)
@@ -88,8 +91,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
         else:
             self.resource = self.resource or FakeResource(
                 name=name,
-                id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/"
-                + name,
+                id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/" + name,
             )
         if name != self.moniker:
             self.test_class_instance.scrubber.register_name_pair(name, self.moniker)
@@ -106,18 +108,12 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
                     azure_poller.wait(kwargs.get("wait_timeout"))
                     if azure_poller.done():
                         return
-                    raise AzureTestError(
-                        "Timed out waiting for resource group to be deleted."
-                    )
+                    raise AzureTestError("Timed out waiting for resource group to be deleted.")
                 else:
                     self.client.resource_groups.delete(name, polling=False)
             except Exception:
                 pass
 
 
-RandomNameResourceGroupPreparer = functools.partial(
-    ResourceGroupPreparer, random_name_enabled=True
-)
-CachedResourceGroupPreparer = functools.partial(
-    ResourceGroupPreparer, use_cache=True, random_name_enabled=True
-)
+RandomNameResourceGroupPreparer = functools.partial(ResourceGroupPreparer, random_name_enabled=True)
+CachedResourceGroupPreparer = functools.partial(ResourceGroupPreparer, use_cache=True, random_name_enabled=True)
