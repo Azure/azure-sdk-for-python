@@ -260,7 +260,7 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
         **kwargs
     ):
         # type: (**Any) -> None
-        self.translated_document_url = kwargs['translated_document_url']
+        self.translated_document_url = kwargs.get('translated_document_url', None)
         self.created_on = kwargs['created_on']
         self.last_updated_on = kwargs['last_updated_on']
         self.status = kwargs['status']
