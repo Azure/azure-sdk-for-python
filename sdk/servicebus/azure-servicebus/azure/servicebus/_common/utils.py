@@ -260,8 +260,7 @@ def send_trace_context_manager(span_name=SPAN_NAME_SEND):
     span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
 
     if span_impl_type is not None:
-        with span_impl_type(name=span_name) as child:
-            child.kind = SpanKind.CLIENT
+        with span_impl_type(name=span_name, kind=SpanKind.CLIENT) as child:
             yield child
     else:
         yield None
@@ -275,9 +274,8 @@ def receive_trace_context_manager(receiver, message=None, span_name=SPAN_NAME_RE
     if span_impl_type is None:
         yield
     else:
-        receive_span = span_impl_type(name=span_name)
+        receive_span = span_impl_type(name=span_name, kind=SpanKind.CONSUMER)
         receiver._add_span_request_attributes(receive_span)  # type: ignore  # pylint: disable=protected-access
-        receive_span.kind = SpanKind.CONSUMER
 
         # If it is desired to create link before span open
         if message:
