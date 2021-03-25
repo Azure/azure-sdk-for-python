@@ -4,7 +4,8 @@
 
 ### Features
 
-- Added `azure.core.credentials.AzureNamedKeyCredential` credential.
+- Added `azure.core.credentials.AzureNamedKeyCredential` credential #17548.
+- Supported adding custom policies  #16519
 
 ### Bug fixes
 
