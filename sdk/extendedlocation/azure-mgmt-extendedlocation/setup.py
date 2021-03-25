@@ -13,7 +13,7 @@ from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-mgmt-extendedlocation"
-PACKAGE_PPRINT_NAME = "MyService Management"
+PACKAGE_PPRINT_NAME = "Extendedlocation Management"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -82,7 +82,7 @@ setup(
     ]),
     install_requires=[
         'msrest>=0.5.0',
-        'msrestazure>=0.4.32,<2.0.0',
+        'azure-mgmt-core>=1.2.0,<2.0.0',
         'azure-common~=1.1',
     ],
     extras_require={
