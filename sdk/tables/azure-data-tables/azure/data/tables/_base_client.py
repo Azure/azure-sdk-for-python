@@ -17,7 +17,7 @@ except ImportError:
     from urlparse import parse_qs  # type: ignore
     from urllib2 import quote  # type: ignore
 
-from azure.core import parse_connection_string_to_dict
+from azure.core.utils import parse_connection_string as core_parse_connection_string
 from azure.core.configuration import Configuration
 from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
@@ -410,7 +410,7 @@ def format_shared_key_credential(account, credential):
 
 
 def parse_connection_str(conn_str, credential, service, keyword_args):
-    conn_settings = parse_connection_string_to_dict(conn_str)
+    conn_settings = core_parse_connection_string(conn_str, case_sensitive_keys=True)
     endpoints = _SERVICE_PARAMS[service]
     primary = None
     secondary = None

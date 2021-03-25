@@ -495,9 +495,9 @@ class TestTableClientUnit(AsyncTableTestCase):
                 with pytest.raises(ValueError) as e:
                     service = service_type[0].from_connection_string(conn_str, table_name="test")
 
-                if conn_str in("", "foobar", "foo;bar;baz", ";", "=;=="):
+                if conn_str in("", "foobar", "foo;bar;baz", ";", "=;==", "foo=;bar=;", "="):
                     assert str(e.value) == "Connection string is either blank or malformed."
-                elif conn_str in ("foobar=baz=foo" , "foo=;bar=;", "="):
+                elif conn_str in ("foobar=baz=foo"):
                     assert str(e.value) == "Connection string missing required connection details."
 
     @pytest.mark.asyncio
