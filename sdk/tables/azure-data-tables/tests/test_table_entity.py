@@ -1555,8 +1555,8 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         try:
             table_name = self.get_resource_name('querytable')
             table = self.ts.create_table_if_not_exists(table_name)
-            entity_a = {'PartitionKey': 'foo', 'RowKey': 'bar1', 'IsAdmin': 'admin'}
-            entity_b = {'PartitionKey': 'foo', 'RowKey': 'bar2', 'IsAdmin': ''}
+            entity_a = {'PartitionKey': u'foo', 'RowKey': u'bar1', 'IsAdmin': u'admin'}
+            entity_b = {'PartitionKey': u'foo', 'RowKey': u'bar2', 'IsAdmin': u''}
             table.create_entity(entity_a)
             table.create_entity(entity_b)
 
