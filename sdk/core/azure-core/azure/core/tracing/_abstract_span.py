@@ -52,8 +52,8 @@ class AbstractSpan(Protocol):
         The optional arguement name is given to the new span.
         """
 
-    def span(self, name="child_span"):
-        # type: (Optional[str]) -> AbstractSpan
+    def span(self, name="child_span", **kwargs):
+        # type: (Optional[str], Any) -> AbstractSpan
         """
         Create a child span for the current span and append it to the child spans list.
         The child span must be wrapped by an implementation of AbstractSpan
