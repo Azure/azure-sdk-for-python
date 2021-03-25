@@ -106,7 +106,7 @@ openssl x509 -inform pem -in mycert.pem -outform der -out mycert.cer
 
 After you have created the certificate, you will need to upload the .cer
 file to Microsoft Azure via the "Upload" action of the "Settings" tab of
-the [management portal](https://manage.windowsazure.com).
+the [management portal](https://portal.azure.com).
 
 
 ## ServiceManagementService
