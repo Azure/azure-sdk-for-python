@@ -1622,6 +1622,47 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self.ts.delete_table(table_name)
             self._tear_down()
 
+    @CosmosPreparer()
+    def test_query_special_chars(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+            table_name = self.get_resource_name('querytable')
+            table = self.ts.create_table_if_not_exists(table_name)
+            entity_a = {'PartitionKey': u'foo', 'RowKey': u'bar1', 'Chars': u":@?'/!_^#+,$"}
+            entity_b = {'PartitionKey': u'foo', 'RowKey': u'bar2', 'Chars': u'=& ?"\\{}<>%'}
+            table.create_entity(entity_a)
+            table.create_entity(entity_b)
+
+            all_entities = list(table.query_entities("PartitionKey eq 'foo'"))
+            assert len(all_entities) == 2
+        
+            parameters = {'key': 'foo'}
+            all_entities = list(table.query_entities("PartitionKey eq @key", parameters=parameters))
+            assert len(all_entities) == 2
+            
+            query = "PartitionKey eq 'foo' and RowKey eq 'bar1' and Chars eq ':@?''/!_^#+,$'"
+            entities = list(table.query_entities(query))
+            assert len(entities) == 1
+
+            query = "PartitionKey eq @key and RowKey eq @row and Chars eq @quote"
+            parameters = {'key': 'foo', 'row': 'bar1', 'quote': ":@?'/!_^#+,$"}
+            entities = list(table.query_entities(query, parameters=parameters))            
+            assert len(entities) ==  1
+
+            query = "PartitionKey eq 'foo' and RowKey eq 'bar2' and Chars eq '=& ?\"\\{}<>%'"
+            entities = list(table.query_entities(query))
+            assert len(entities) == 1
+
+            query = "PartitionKey eq @key and RowKey eq @row and Chars eq @quote"
+            parameters = {'key': 'foo', 'row': 'bar2', 'quote': r'=& ?"\{}<>%'}
+            entities = list(table.query_entities(query, parameters=parameters))            
+            assert len(entities) ==  1
+
+        finally:
+            self.ts.delete_table(table_name)
+            self._tear_down()
+
     @pytest.mark.skip("returns ' sex' instead of deserializing into just 'sex'")
     @CosmosPreparer()
     def test_query_entities_with_select(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):

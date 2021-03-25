@@ -1661,6 +1661,65 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             self._tear_down()
 
     @CosmosPreparer()
+    async def test_query_special_chars(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+            table_name = self.get_resource_name('querytable')
+            table = await self.ts.create_table_if_not_exists(table_name)
+            entity_a = {'PartitionKey': u'foo', 'RowKey': u'bar1', 'Chars': u":@?'/!_^#+,$"}
+            entity_b = {'PartitionKey': u'foo', 'RowKey': u'bar2', 'Chars': u'=& ?"\\{}<>%'}
+            await table.create_entity(entity_a)
+            await table.create_entity(entity_b)
+
+            entities = []
+            all_entities = table.query_entities("PartitionKey eq 'foo'")
+            async for e in all_entities:
+                entities.append(e)
+            assert len(entities) == 2
+        
+            entities = []
+            parameters = {'key': 'foo'}
+            all_entities = table.query_entities("PartitionKey eq @key", parameters=parameters)
+            async for e in all_entities:
+                entities.append(e)
+            assert len(entities) == 2
+            
+            entities = []
+            query = "PartitionKey eq 'foo' and RowKey eq 'bar1' and Chars eq ':@?''/!_^#+,$'"
+            query_entities = table.query_entities(query)
+            async for e in query_entities:
+                entities.append(e)
+            assert len(entities) == 1
+
+            entities = []
+            query = "PartitionKey eq @key and RowKey eq @row and Chars eq @quote"
+            parameters = {'key': 'foo', 'row': 'bar1', 'quote': ":@?'/!_^#+,$"}
+            query_entities = table.query_entities(query, parameters=parameters)
+            async for e in query_entities:
+                entities.append(e)
+            assert len(entities) == 1
+
+            entities = []
+            query = "PartitionKey eq 'foo' and RowKey eq 'bar2' and Chars eq '=& ?\"\\{}<>%'"
+            query_entities = table.query_entities(query)
+            async for e in query_entities:
+                entities.append(e)
+            assert len(entities) == 1
+
+            entities = []
+            query = "PartitionKey eq @key and RowKey eq @row and Chars eq @quote"
+            parameters = {'key': 'foo', 'row': 'bar2', 'quote': r'=& ?"\{}<>%'}
+            query_entities = table.query_entities(query, parameters=parameters)
+            async for e in query_entities:
+                entities.append(e)
+            assert len(entities) == 1
+
+        finally:
+            await self.ts.delete_table(table_name)
+            await self._tear_down()
+
+    @CosmosPreparer()
     async def test_query_invalid_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)

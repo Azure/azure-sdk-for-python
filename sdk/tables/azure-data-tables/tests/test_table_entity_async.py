@@ -1287,7 +1287,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
-            table_name = self.get_resource_name('querytable')
+            table_name = self.get_resource_name('queryasynctable')
             table = await self.ts.create_table_if_not_exists(table_name)
             entity_a = {'PartitionKey': 'foo', 'RowKey': 'bar1', 'IsAdmin': 'admin'}
             entity_b = {'PartitionKey': 'foo', 'RowKey': 'bar2', 'IsAdmin': ''}
@@ -1317,6 +1317,65 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             self.ts.delete_table(table_name)
             self._tear_down()
+
+    @TablesPreparer()
+    async def test_query_special_chars(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            table_name = self.get_resource_name('querytable')
+            table = await self.ts.create_table_if_not_exists(table_name)
+            entity_a = {'PartitionKey': u':@', 'RowKey': u'+,$', 'Chars': u"?'/!_^#"}
+            entity_b = {'PartitionKey': u':@', 'RowKey': u'=& ', 'Chars': u'?"\\{}<>%'}
+            await table.create_entity(entity_a)
+            await table.create_entity(entity_b)
+
+            entities = []
+            all_entities = table.query_entities("PartitionKey eq ':@'")
+            async for e in all_entities:
+                entities.append(e)
+            assert len(entities) == 2
+        
+            entities = []
+            parameters = {'key': ':@'}
+            all_entities = table.query_entities("PartitionKey eq @key", parameters=parameters)
+            async for e in all_entities:
+                entities.append(e)
+            assert len(entities) == 2
+            
+            entities = []
+            query = "PartitionKey eq ':@' and RowKey eq '+,$' and Chars eq '?''/!_^#'"
+            query_entities = table.query_entities(query)
+            async for e in query_entities:
+                entities.append(e)
+            assert len(entities) == 1
+
+            entities = []
+            query = "PartitionKey eq @key and RowKey eq @row and Chars eq @quote"
+            parameters = {'key': ':@', 'row': '+,$', 'quote': "?'/!_^#"}
+            query_entities = table.query_entities(query, parameters=parameters)
+            async for e in query_entities:
+                entities.append(e)
+            assert len(entities) == 1
+
+            entities = []
+            query = "PartitionKey eq ':@' and RowKey eq '=& ' and Chars eq '?\"\\{}<>%'"
+            query_entities = table.query_entities(query)
+            async for e in query_entities:
+                entities.append(e)
+            assert len(entities) == 1
+
+            entities = []
+            query = "PartitionKey eq @key and RowKey eq @row and Chars eq @quote"
+            parameters = {'key': ':@', 'row': '=& ', 'quote': r'?"\{}<>%'}
+            query_entities = table.query_entities(query, parameters=parameters)
+            async for e in query_entities:
+                entities.append(e)
+            assert len(entities) == 1
+
+        finally:
+            await self.ts.delete_table(table_name)
+            await self._tear_down()
 
     @TablesPreparer()
     async def test_query_user_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
