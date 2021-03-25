@@ -4,7 +4,7 @@ from io import open
 import re
 
 PACKAGE_NAME = "azure-ai-documenttranslation"
-PACKAGE_PPRINT_NAME = "Document Translation Package"
+PACKAGE_PPRINT_NAME = "Azure Document Translation Package"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
