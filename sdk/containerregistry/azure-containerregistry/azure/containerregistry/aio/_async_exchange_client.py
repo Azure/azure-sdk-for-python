@@ -64,34 +64,12 @@ class ACRExchangeClient(object):
         return await self.exchange_refresh_token_for_access_token(refresh_token, **parsed_challenge)
 
     async def exchange_aad_token_for_refresh_token(self, service=None, scope=None, **kwargs):
-
-        # body = """grant_type=access_token&service={}&access_token={}""".format(service, self._credential.get_token(self._credential_scopes).token)
-
-        # headers = {'Accept': 'application/json','Content-Type': 'application/x-www-form-urlencoded'}
-        # request = HttpRequest("POST", self._endpoint + "/oauth2/exchange", headers=headers, data=body)
-
-        # resp = self._client._client._pipeline.run(request)
-        # refresh_token = resp.http_response.internal_response.content
-
-        # return json.loads(refresh_token)["refresh_token"]
         token = await self._credential.get_token(self._credential_scopes)
         refresh_token = await self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
             service, token.token)
         return refresh_token.refresh_token
 
     async def exchange_refresh_token_for_access_token(self, refresh_token, service=None, scope=None, **kwargs):
-
-        # body = """grant_type=refresh_token&service={}&scope={}&refresh_token={}""".format(
-        #     service, scope, refresh_token)
-
-        # headers = {'Accept': 'application/json','Content-Type': 'application/x-www-form-urlencoded'}
-        # request = HttpRequest("POST", self._endpoint + "/oauth2/token", headers=headers, data=body)
-
-        # resp = self._client._client._pipeline.run(request)
-
-        # access_token = resp.http_response.internal_response.content
-        # return json.loads(access_token)["access_token"]
-
         access_token = await self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
             service, scope, refresh_token)
         return access_token.access_token

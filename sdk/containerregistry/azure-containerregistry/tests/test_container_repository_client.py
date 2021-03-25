@@ -21,7 +21,7 @@ from azure.containerregistry import (
 )
 from azure.core.paging import ItemPaged
 
-from testcase import ContainerRegistryTestClass
+from testcase import ContainerRegistryTestClass, AcrBodyReplacer
 
 acr_preparer = functools.partial(
     PowerShellPreparer,
@@ -31,10 +31,12 @@ acr_preparer = functools.partial(
 
 
 class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
+    def __init__(self, method_name):
+        super(TestContainerRepositoryClient, self).__init__(method_name)
+        self.vcr.match_on = ["path", "method", "query"]
+        self.recording_processors.append(AcrBodyReplacer())
+        self.repository = "hello-world"
 
-    repository = "hello-world"
-
-    @pytest.mark.live_test_only
     @acr_preparer()
     def test_get_attributes(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)

@@ -81,7 +81,7 @@ class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
             self._token = None  # any cached token is invalid
             challenge = response.http_response.headers.get("WWW-Authenticate")
             if challenge and await self.on_challenge(request, response, challenge):
-                response = self.next.send(request)
+                response = await self.next.send(request)
 
         return response
 

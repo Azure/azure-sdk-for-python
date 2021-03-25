@@ -27,14 +27,14 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         super(ContainerRepositoryClient, self).__init__(endpoint=self._endpoint, credential=credential, **kwargs)
 
 
-    def delete(self, **kwargs):
+    async def delete(self, **kwargs):
         # type: (...) -> None
         """Delete a repository
 
         :returns: None
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        self._client.container_registry.delete_repository(self.repository, **kwargs)
+        await self._client.container_registry.delete_repository(self.repository, **kwargs)
 
     def delete_registry_artifact(self, digest):
         # type: (str) -> None

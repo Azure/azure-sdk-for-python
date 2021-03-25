@@ -4,7 +4,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
+import json
 import os
+import re
+import six
 
 from azure.containerregistry import (
     ContainerRepositoryClient,
@@ -16,19 +19,94 @@ from azure.containerregistry import (
 
 from azure.identity import DefaultAzureCredential
 
+from azure_devtools.scenario_tests import RecordingProcessor
+
+from azure.core.credentials import AccessToken
+
+REDACTED = "REDACTED"
+
+class AcrBodyReplacer(RecordingProcessor):
+    """Replace request body for oauth2 exchanges"""
+    def __init__(self, replacement="redacted"):
+        self._replacement = replacement
+        self._401_replacement = 'Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"'
+
+    def _scrub_body(self, body):
+        # type: (bytes) -> bytes
+        s = body.decode("utf-8")
+        s = s.split("&")
+        for idx, pair in enumerate(s):
+            [k, v] = pair.split("=")
+            if k == "access_token" or k == 
+
+    def process_request(self, request):
+        if request.body and isinstance(request.body, six.binary_type):
+            request.body = self._scrub_body(request.body)
+        else:
+            pass
+
+        return request
+
+    def process_response(self, response):
+        try:
+            headers = response['headers']
+            auth_header = None
+            if "www-authenticate" in headers:
+                response['headers']["www-authenticate"] = self._401_replacement
+
+            body = response['body']
+            try:
+                refresh = json.loads(body['string'])
+                if "refresh_token" in refresh.keys():
+                    refresh['refresh_token'] = REDACTED
+                    body['string'] = json.dumps(refresh)
+                if "access_token" in refresh.keys():
+                    refresh["access_token"] = REDACTED
+                    body['string'] = json.dumps(refresh)
+
+            except json.decoder.JSONDecodeError:
+                pass
+
+
+            return response
+        except (KeyError, ValueError):
+            return response
+
+
+class FakeTokenCredential(object):
+    """Protocol for classes able to provide OAuth tokens.
+    :param str scopes: Lets you specify the type of access needed.
+    """
+    def __init__(self):
+        self.token = AccessToken("YOU SHALL NOT PASS", 0)
+
+    def get_token(self, *args):
+        return self.token
+
 
 class ContainerRegistryTestClass(object):
+
+    def __init__(self, method_name):
+        # self.vcr.match_on = ["path", "method", "query"]
+        self.recording_processors.append(AcrBodyReplacer())
+
     def create_registry_client(self, endpoint):
+        token = DefaultAzureCredential()
+        if not self.is_live:
+            token = FakeTokenCredential()
         return ContainerRegistryClient(
             endpoint=endpoint,
-            credential=DefaultAzureCredential(),
+            credential=token,
         )
 
     def create_repository_client(self, endpoint, name):
+        token = DefaultAzureCredential()
+        if not self.is_live:
+            token = FakeTokenCredential()
         return ContainerRepositoryClient(
             endpoint=endpoint,
             repository=name,
-            credential=DefaultAzureCredential(),
+            credential=token,
         )
 
     def assert_content_permission(self, content_perm, content_perm2):

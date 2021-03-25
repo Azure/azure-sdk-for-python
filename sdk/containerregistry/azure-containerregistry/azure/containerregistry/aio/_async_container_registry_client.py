@@ -3,13 +3,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import Any, Dict, TYPE_CHECKING
 
 from azure.core.async_paging import AsyncItemPaged
 
 from ._async_base_client import ContainerRegistryBaseClient
 from .._container_registry_client import ContainerRegistryClient as SyncContainerRegistryClient
-from .._models import RepositoryProperties
+from .._models import RepositoryProperties, DeletedRepositoryResult
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -26,8 +26,18 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, **kwargs)
 
 
-    def delete_repository(self, name: str, **kwargs) -> None:
-        pass
+    async def delete_repository(self, repository: str, **kwargs: Dict[str, Any]) -> DeletedRepositoryResult:
+        """Delete a repository
+
+        :param repository: The repository to delete
+        :type repository: str
+        :returns: None
+        :raises: :class:~azure.core.exceptions.ResourceNotFoundError
+        """
+        result = await self._client.container_registry.delete_repository(repository, **kwargs)
+        return DeletedRepositoryResult._from_generated(result)
+
+
 
     def list_repositories(self, **kwargs) -> AsyncItemPaged[str]:
 

@@ -29,30 +29,10 @@ acr_preparer = functools.partial(
 )
 
 
-class TestContainerRegistryClient(AzureTestCase):#, ContainerRegistryTestClass):
-
+class TestContainerRegistryClient(AzureTestCase):
     def create_registry_client(self, endpoint):
-        return ContainerRegistryClient(
-            endpoint=endpoint,
-            credential=DefaultAzureCredential()
-        )
+        return ContainerRegistryClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
-    @pytest.mark.live_test_only
-    @acr_preparer()
-    async def test_get(self, containerregistry_baseurl):
-        client = ContainerRepositoryClient(
-            endpoint=containerregistry_baseurl,
-            repository="hello-world",
-            credential=DefaultAzureCredential(),
-        )
-
-        repo = await client.get_properties()
-
-        assert repo is not None
-        assert isinstance(repo, RepositoryProperties)
-
-
-    @pytest.mark.skip("abc")
     @pytest.mark.live_test_only
     @acr_preparer()
     async def test_list_repositories(self, containerregistry_baseurl):
@@ -81,11 +61,10 @@ class TestContainerRegistryClient(AzureTestCase):#, ContainerRegistryTestClass):
         assert len(deleted_result.deleted_registry_artifact_digests) == 1
         assert len(deleted_result.deleted_tags) == 1
 
-    @pytest.mark.skip("Don't want to for now")
     @pytest.mark.live_test_only
     @acr_preparer()
-    def test_delete_repository_does_not_exist(self, containerregistry_baseurl):
+    async def test_delete_repository_does_not_exist(self, containerregistry_baseurl):
         client = self.create_registry_client(containerregistry_baseurl)
 
         with pytest.raises(ResourceNotFoundError):
-            deleted_result = client.delete_repository("not_real_repo")
+            deleted_result = await client.delete_repository("not_real_repo")
