@@ -19,7 +19,7 @@ import uamqp
 from uamqp import utils, compat
 from uamqp.message import MessageProperties
 
-from azure.core import parse_connection_string_to_dict
+from azure.core.utils import parse_connection_string as core_parse_connection_string
 from azure.core.credentials import AccessToken
 
 from ._common._configuration import Configuration
@@ -60,7 +60,7 @@ def _parse_conn_str(conn_str, check_case=False):
     shared_access_signature_expiry = None  # type: Optional[int]
 
     # split connection string into properties
-    conn_settings = parse_connection_string_to_dict(conn_str)
+    conn_settings = core_parse_connection_string(conn_str, case_sensitive_keys=True)
     # case sensitive check when parsing for connection string properties
     if check_case:
         shared_access_key = conn_settings.get("SharedAccessKey")
