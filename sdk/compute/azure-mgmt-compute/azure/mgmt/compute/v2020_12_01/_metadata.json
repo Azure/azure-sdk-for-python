@@ -9,7 +9,7 @@
         "custom_base_url": null,
         "azure_arm": true,
         "has_lro_operations": true,
-        "client_side_validation": true
+        "client_side_validation": false
     },
     "global_parameters": {
         "sync": {
@@ -52,6 +52,11 @@
         "credential_key_header_name": null
     },
     "operation_groups": {
+        "disks": "DisksOperations",
+        "snapshots": "SnapshotsOperations",
+        "disk_encryption_sets": "DiskEncryptionSetsOperations",
+        "disk_accesses": "DiskAccessesOperations",
+        "disk_restore_point": "DiskRestorePointOperations",
         "operations": "Operations",
         "availability_sets": "AvailabilitySetsOperations",
         "proximity_placement_groups": "ProximityPlacementGroupsOperations",
