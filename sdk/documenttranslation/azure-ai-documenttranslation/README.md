@@ -287,7 +287,7 @@ for job in jobs:
 ```
 
 To see how to use the Document Translation client library with Azure Storage Blob to upload documents, create SAS tokens
-for your containers, and download the finished translated documents, see this [sample][sample_batch_translation_with_storage.py]. 
+for your containers, and download the finished translated documents, see this [sample][sample_translation_with_azure_blob]. 
 Note that you will need to install the [azure-storage-blob][azure_storage_blob] library to run this sample.
 
 ## Troubleshooting
@@ -320,10 +320,12 @@ The following section provides several code snippets illustrating common pattern
 
 These code samples show common scenario operations with the Azure Document Translation client library.
 
-* Client authentication: TODO
-* Create a translation job: TODO
-* Check the status of documents: TODO
-* List all submitted translation jobs: TODO
+* Client authentication: [sample_authentication.py][sample_authentication]
+* Create a translation job: [sample_create_translation_job.py][sample_create_translation_job]
+* Check the status of documents: [sample_check_document_statuses.py][sample_check_document_statuses]
+* List all submitted translation jobs: [sample_list_all_submitted_jobs.py][sample_list_all_submitted_jobs]
+* Apply a custom glossary to translation: [sample_translation_with_glossaries.py][sample_translation_with_glossaries]
+* Use Azure Blob Storage to set up translation resources: [sample_translation_with_azure_blob.py][sample_translation_with_azure_blob]
 
 
 ### Async samples
@@ -331,10 +333,12 @@ This library also includes a complete async API supported on Python 3.6+. To use
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). Async clients
 are found under the `azure.ai.documenttranslation.aio` namespace.
 
-* Client authentication: TODO
-* Create a translation job: TODO
-* Check the status of documents: TODO
-* List all submitted translation jobs: TODO
+* Client authentication: [sample_authentication_async.py][sample_authentication_async]
+* Create a translation job: [sample_create_translation_job_async.py][sample_create_translation_job_async]
+* Check the status of documents: [sample_check_document_statuses_async.py][sample_check_document_statuses_async]
+* List all submitted translation jobs: [sample_list_all_submitted_jobs_async.py][sample_list_all_submitted_jobs_async]
+* Apply a custom glossary to translation: [sample_translation_with_glossaries_async.py][sample_translation_with_glossaries_async]
+* Use Azure Blob Storage to set up translation resources: [sample_translation_with_azure_blob_async.py][sample_translation_with_azure_blob_async]
 
 ### Additional documentation
 
@@ -379,9 +383,18 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
 
-
-[sample_batch_translation_with_storage.py]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/documenttranslation/azure-ai-documenttranslation/samples/sample_batch_translation_with_storage.py
-
+[sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/documenttranslation/azure-ai-documenttranslation/samples/sample_authentication.py
+[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/documenttranslation/azure-ai-documenttranslation/async_samples/sample_authentication_async.py
+[sample_create_translation_job]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/documenttranslation/azure-ai-documenttranslation/samples/sample_create_translation_job.py
+[sample_create_translation_job_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/documenttranslation/azure-ai-documenttranslation/async_samples/sample_create_translation_job_async.py
+[sample_check_document_statuses]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/documenttranslation/azure-ai-documenttranslation/samples/sample_check_document_statuses.py
+[sample_check_document_statuses_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/documenttranslation/azure-ai-documenttranslation/async_samples/sample_check_document_statuses_async.py
+[sample_list_all_submitted_jobs]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/documenttranslation/azure-ai-documenttranslation/samples/sample_list_all_submitted_jobs.py
+[sample_list_all_submitted_jobs_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/documenttranslation/azure-ai-documenttranslation/async_samples/sample_list_all_submitted_jobs_async.py
+[sample_translation_with_glossaries]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/documenttranslation/azure-ai-documenttranslation/samples/sample_translation_with_glossaries.py
+[sample_translation_with_glossaries_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/documenttranslation/azure-ai-documenttranslation/async_samples/sample_translation_with_glossaries_async.py
+[sample_translation_with_azure_blob]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/documenttranslation/azure-ai-documenttranslation/samples/sample_translation_with_azure_blob.py
+[sample_translation_with_azure_blob_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/documenttranslation/azure-ai-documenttranslation/async_samples/sample_translation_with_azure_blob_async.py
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
