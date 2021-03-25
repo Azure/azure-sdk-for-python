@@ -5,24 +5,24 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://search3d4a19fe.search.windows.net/servicestats?api-version=2020-06-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search3d4a19fe.search.windows.net/$metadata#Microsoft.Azure.Search.V2020_06_30.ServiceStatistics","counters":{"documentCount":{"usage":0,"quota":null},"indexesCount":{"usage":0,"quota":3},"indexersCount":{"usage":0,"quota":3},"dataSourcesCount":{"usage":0,"quota":3},"storageSize":{"usage":0,"quota":52428800},"synonymMaps":{"usage":0,"quota":3},"skillsetCount":{"usage":0,"quota":3}},"limits":{"maxFieldsPerIndex":1000,"maxFieldNestingDepthPerIndex":10,"maxComplexCollectionFieldsPerIndex":40,"maxComplexObjectsInCollectionsPerDocument":3000}}'
+      string: '{"@odata.context":"https://search3d4a19fe.search.windows.net/$metadata#Microsoft.Azure.Search.V2020_06_30_Preview.ServiceStatistics","counters":{"documentCount":{"usage":0,"quota":null},"indexesCount":{"usage":0,"quota":3},"indexersCount":{"usage":0,"quota":3},"dataSourcesCount":{"usage":0,"quota":3},"storageSize":{"usage":0,"quota":52428800},"synonymMaps":{"usage":0,"quota":3},"skillsetCount":{"usage":0,"quota":3}},"limits":{"maxFieldsPerIndex":1000,"maxFieldNestingDepthPerIndex":10,"maxComplexCollectionFieldsPerIndex":40,"maxComplexObjectsInCollectionsPerDocument":3000}}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
-      content-length: '423'
+      content-length: '431'
       content-type: application/json; odata.metadata=minimal
-      date: Fri, 28 Aug 2020 21:50:36 GMT
-      elapsed-time: '94'
+      date: Thu, 25 Mar 2021 20:32:37 GMT
+      elapsed-time: '46'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 80e9062d-e978-11ea-bb73-5cf37071153c
+      request-id: 3cadf01d-8da9-11eb-a2c6-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
