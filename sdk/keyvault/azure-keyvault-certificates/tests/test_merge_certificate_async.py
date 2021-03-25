@@ -12,22 +12,12 @@ from OpenSSL import crypto
 from parameterized import parameterized, param
 
 from _shared.json_attribute_matcher import json_attribute_matcher
-from _shared.test_case_async import KeyVaultTestCase
+from _test_case_async import CertificatesTestCase, suffixed_test_name
 
 
-def suffixed_test_name(testcase_func, param_num, param):
-    return "{}_{}".format(testcase_func.__name__, parameterized.to_safe_name(param.kwargs.get("api_version")))
-
-
-class MergeCertificateTest(KeyVaultTestCase):
+class MergeCertificateTest(CertificatesTestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, match_body=False, custom_request_matchers=[json_attribute_matcher], **kwargs)
-
-    def create_client(self, vault_uri, **kwargs):
-        credential = self.get_credential(CertificateClient, is_async=True)
-        return self.create_client_from_credential(
-            CertificateClient, credential=credential, vault_url=vault_uri, **kwargs
-        )
 
     @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @PowerShellPreparer("keyvault", azure_keyvault_url="https://vaultname.vault.azure.net")
