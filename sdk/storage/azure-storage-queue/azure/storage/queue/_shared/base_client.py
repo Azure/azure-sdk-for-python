@@ -19,7 +19,7 @@ except ImportError:
 
 import six
 
-from azure.core import parse_connection_string_to_dict
+from azure.core.utils import parse_connection_string as core_parse_connection_string
 from azure.core.configuration import Configuration
 from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import HttpResponseError
@@ -361,7 +361,7 @@ def _format_shared_key_credential(account_name, credential):
 
 
 def parse_connection_str(conn_str, credential, service):
-    conn_settings = parse_connection_string_to_dict(conn_str)
+    conn_settings = core_parse_connection_string(conn_str, case_sensitive_keys=True)
     endpoints = _SERVICE_PARAMS[service]
     primary = None
     secondary = None
