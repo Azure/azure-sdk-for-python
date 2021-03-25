@@ -7,9 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._cdn_management_client import CdnManagementClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['CdnManagementClient']
 
 try:
