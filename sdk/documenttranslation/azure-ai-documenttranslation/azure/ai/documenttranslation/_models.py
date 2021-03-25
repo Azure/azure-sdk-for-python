@@ -23,7 +23,7 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
      supplied.
      If the translation language pair is not present in the glossary, it will not be applied.
     :type glossary_url: str
-    :keyword str format: Format.
+    :param str format: Format.
     :keyword str format_version: Format version.
     :keyword storage_source: Storage Source. Default value: "AzureBlob".
     :paramtype storage_source: str
@@ -32,11 +32,12 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
     def __init__(
             self,
             glossary_url,
+            format,
             **kwargs
     ):
-        # type: (str, **Any) -> None
+        # type: (str, str, **Any) -> None
         self.glossary_url = glossary_url
-        self.format = kwargs.get("format", None)
+        self.format = format
         self.format_version = kwargs.get("format_version", None)
         self.storage_source = kwargs.get("storage_source", None)
 
@@ -49,18 +50,8 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
             )
 
     @staticmethod
-    def _to_generated_unknown_type(glossary):
-        if isinstance(glossary, TranslationGlossary):
-            return glossary._to_generated()  # pylint: disable=protected-access
-        if isinstance(glossary, six.string_types):
-            return _Glossary(
-                    glossary_url=glossary,
-                )
-        return None
-
-    @staticmethod
     def _to_generated_list(glossaries):
-        return [TranslationGlossary._to_generated_unknown_type(glossary) for glossary in glossaries]
+        return [glossary._to_generated() for glossary in glossaries]
 
 
 class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
@@ -72,7 +63,7 @@ class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
     :type language_code: str
     :keyword str category_id: Category / custom system for translation request.
     :keyword glossaries: List of TranslationGlossary.
-    :paramtype glossaries: Union[list[str], list[~azure.ai.documenttranslation.TranslationGlossary]]
+    :paramtype glossaries: list[~azure.ai.documenttranslation.TranslationGlossary]
     :keyword storage_source: Storage Source. Default value: "AzureBlob".
     :paramtype storage_source: str
     """
