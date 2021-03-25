@@ -8,7 +8,7 @@ except ImportError:
     from urlparse import urlparse  # type: ignore
 
 from ._common import DictMixin
-from azure.core import parse_connection_string_to_dict
+from azure.core.utils import parse_connection_string as core_parse_connection_string
 
 
 class EventHubConnectionStringProperties(DictMixin):
@@ -71,7 +71,7 @@ def parse_connection_string(conn_str):
     :type conn_str: str
     :rtype: ~azure.eventhub.EventHubConnectionStringProperties
     """
-    conn_settings = parse_connection_string_to_dict(conn_str)
+    conn_settings = core_parse_connection_string(conn_str, case_sensitive_keys=True)
     shared_access_signature = None
     for key, value in conn_settings.items():
         if key.lower() == "sharedaccesssignature":

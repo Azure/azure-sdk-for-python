@@ -20,7 +20,7 @@ except ImportError:
 
 from uamqp import AMQPClient, Message, authentication, constants, errors, compat, utils
 import six
-from azure.core import parse_connection_string_to_dict
+from azure.core.utils import parse_connection_string as core_parse_connection_string
 from azure.core.credentials import AccessToken
 
 from .exceptions import _handle_exception, ClientClosedError, ConnectError
@@ -53,27 +53,22 @@ def _parse_conn_str(conn_str, kwargs):
     shared_access_signature = None  # type: Optional[str]
     shared_access_signature_expiry = None # type: Optional[int]
     eventhub_name = kwargs.pop("eventhub_name", None)  # type: Optional[str]
-    conn_settings = parse_connection_string_to_dict(conn_str)
-    for key, value in conn_settings.items():
-        if key.lower() == "endpoint":
-            endpoint = value.rstrip("/")
-        elif key.lower() == "hostname":
-            endpoint = value.rstrip("/")
-        elif key.lower() == "sharedaccesskeyname":
-            shared_access_key_name = value
-        elif key.lower() == "sharedaccesskey":
-            shared_access_key = value
-        elif key.lower() == "entitypath":
-            entity_path = value
-        elif key.lower() == "sharedaccesssignature":
-            shared_access_signature = value
-            try:
-                # Expiry can be stored in the "se=<timestamp>" clause of the token. ('&'-separated key-value pairs)
-                # type: ignore
-                shared_access_signature_expiry = int(shared_access_signature.split('se=')[1].split('&')[0])
-            except (IndexError, TypeError, ValueError): # Fallback since technically expiry is optional.
-                # An arbitrary, absurdly large number, since you can't renew.
-                shared_access_signature_expiry = int(time.time() * 2)
+    conn_settings = core_parse_connection_string(conn_str, case_sensitive_keys=False)
+    endpoint = conn_settings.get("endpoint") or conn_settings.get("hostname")
+    if endpoint:
+        endpoint = endpoint.rstrip("/")
+    shared_access_key_name = conn_settings.get("sharedaccesskeyname")
+    shared_access_key = conn_settings.get("sharedaccesskey")
+    entity_path = conn_settings.get('entitypath')
+    shared_access_signature = conn_settings.get("sharedaccesssignature")
+    if shared_access_signature:
+        try:
+            # Expiry can be stored in the "se=<timestamp>" clause of the token. ('&'-separated key-value pairs)
+            # type: ignore
+            shared_access_signature_expiry = int(shared_access_signature.split('se=')[1].split('&')[0])
+        except (IndexError, TypeError, ValueError): # Fallback since technically expiry is optional.
+            # An arbitrary, absurdly large number, since you can't renew.
+            shared_access_signature_expiry = int(time.time() * 2)
     if not (all((endpoint, shared_access_key_name, shared_access_key)) or all((endpoint, shared_access_signature))):
         raise ValueError(
             "Invalid connection string. Should be in the format: "
