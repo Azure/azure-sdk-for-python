@@ -69,7 +69,7 @@ class TestListStatus(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_status_with_pagination(self, client):
+    def test_list_statuses_with_pagination(self, client):
         # prepare containers
         blob_data = [b'text 1', b'text 2', b'text 3', b'text 4', b'text 5', b'text 6']
         source_container_sas_url = self.create_source_container(data=blob_data)
@@ -124,7 +124,7 @@ class TestListStatus(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_status_with_skip(self, client):
+    def test_list_statuses_with_skip(self, client):
         # prepare containers
         blob_data = [b'text 1', b'text 2', b'text 3', b'text 4', b'text 5', b'text 6']
         source_container_sas_url = self.create_source_container(data=blob_data)
