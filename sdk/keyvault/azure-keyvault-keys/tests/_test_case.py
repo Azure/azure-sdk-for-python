@@ -46,7 +46,5 @@ class KeysTestCase(KeyVaultTestCase):
         return self.create_client_from_credential(CryptographyClient, credential=credential, key=key, **kwargs)
 
     def _skip_if_not_configured(self, is_hsm):
-        if self.is_live and is_hsm:
-            if self.managed_hsm_url is None:
-                pytest.skip("No HSM endpoint for live testing")
-        return False
+        if self.is_live and is_hsm and self.managed_hsm_url is None:
+            pytest.skip("No HSM endpoint for live testing")
