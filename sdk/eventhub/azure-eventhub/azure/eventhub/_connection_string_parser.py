@@ -7,8 +7,8 @@ try:
 except ImportError:
     from urlparse import urlparse  # type: ignore
 
-from ._common import DictMixin
 from azure.core.utils import parse_connection_string as core_parse_connection_string
+from ._common import DictMixin
 
 
 class EventHubConnectionStringProperties(DictMixin):

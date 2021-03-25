@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 import os
 import re
-import typing
 from azure.core.utils import parse_connection_string as core_parse_connection_string
 
 INGESTION_ENDPOINT = "ingestionendpoint"
