@@ -69,6 +69,15 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
                     "DeleteAfter": expiry.replace(microsecond=0).isoformat()
                 }
             try:
+                if "tags" not in parameters.keys():
+                    parameters["tags"] = {}
+                parameters["tags"]["BuildId"] = os.environ["BUILD_BUILDID"]
+                parameters["tags"]["BuildJob"] = os.environ["AGENT_JOBNAME"]
+                parameters["tags"]["BuildNumber"] = os.environ["BUILD_BUILDNUMBER"]
+                parameters["tags"]["BuildReason"] = os.environ["BUILD_REASON"]
+            except KeyError:
+                pass
+            try:
                 self.resource = self.client.resource_groups.create_or_update(
                     name, parameters
                 )
