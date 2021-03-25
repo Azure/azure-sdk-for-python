@@ -3,7 +3,7 @@
 import os
 import re
 import typing
-from azure.core import parse_connection_string_to_dict
+from azure.core.utils import parse_connection_string as core_parse_connection_string
 
 INGESTION_ENDPOINT = "ingestionendpoint"
 INSTRUMENTATION_KEY = "instrumentationkey"
@@ -81,13 +81,12 @@ class ConnectionStringParser:
             raise ValueError(
                 "Invalid instrumentation key. It should be a valid UUID.")
 
-    def _parse_connection_string(self, connection_string) -> typing.Dict:
+    def _parse_connection_string(self, connection_string):
         if connection_string is None:
             return {}
         try:
-            conn_settings = parse_connection_string_to_dict(connection_string)
+            result = core_parse_connection_string(connection_string, case_sensitive_keys=False)
             # Convert keys to lower-case due to case type-insensitive checking
-            result = {key.lower(): value for key, value in conn_settings.items()}
         except Exception:
             raise ValueError("Invalid connection string")
         # Validate authorization
