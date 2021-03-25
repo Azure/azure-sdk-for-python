@@ -46,6 +46,10 @@ class TestDocumentStatus(DocumentTranslationTest):
         self.assertIsNotNone(test_doc.id)
 
         doc_status = client.get_document_status(job_id=job_detail.id, document_id=test_doc.id)
+        self._validate_doc_status(doc_status)
+
+
+    def _validate_doc_status(self, doc_status):
         self.assertIsNotNone(doc_status.id)
         self.assertIsNotNone(doc_status.translated_document_url)
         self.assertIsNotNone(doc_status.created_on)

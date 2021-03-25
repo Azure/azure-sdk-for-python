@@ -16,28 +16,24 @@ class TestSupportedFormats(DocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_supported_document_formats(self, client):
-        self._setup()  # set up test resources
-
         supported_doc_formats = client.get_document_formats()  # List[FileFormat]
         self.assertIsNotNone(supported_doc_formats)
 
         for doc_format in supported_doc_formats:
-            self.assertIsNotNone(doc_format.format)
-            self.assertIsNotNone(doc_format.file_extensions)
-            self.assertIsNotNone(doc_format.content_types)
-            self.assertIsNotNone(doc_format.format_versions)
+            self._validate_format(doc_format)
 
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_supported_glossary_formats(self, client):
-        self._setup()  # set up test resources
-
         supported_glossary_formats = client.get_glossary_formats()  # List[FileFormat]
         self.assertIsNotNone(supported_glossary_formats)
 
         for glossary_format in supported_glossary_formats:
-            self.assertIsNotNone(glossary_format.format)
-            self.assertIsNotNone(glossary_format.file_extensions)
-            self.assertIsNotNone(glossary_format.content_types)
-            self.assertIsNotNone(glossary_format.format_versions)
+            self._validate_format(glossary_format)
+
+    def _validate_format(self, format):
+        self.assertIsNotNone(format.format)
+        self.assertIsNotNone(format.file_extensions)
+        self.assertIsNotNone(format.content_types)
+        self.assertIsNotNone(format.format_versions)

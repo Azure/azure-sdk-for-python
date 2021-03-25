@@ -41,17 +41,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
         # list jobs
         submitted_jobs = client.list_submitted_jobs()  # type: ItemPaged[JobStatusResult]
         for job in submitted_jobs:
-            self.assertIsNotNone(job.id)
-            self.assertIsNotNone(job.created_on)
-            self.assertIsNotNone(job.last_updated_on)
-            self.assertIsNotNone(job.status)
-            self.assertIsNotNone(job.documents_total_count)
-            self.assertIsNotNone(job.documents_failed_count)
-            self.assertIsNotNone(job.documents_succeeded_count)
-            self.assertIsNotNone(job.documents_in_progress_count)
-            self.assertIsNotNone(job.documents_not_yet_started_count)
-            self.assertIsNotNone(job.documents_cancelled_count)
-            self.assertIsNotNone(job.total_characters_charged)
+            self._validate_job(job)
 
 
     @DocumentTranslationPreparer()
@@ -61,6 +51,8 @@ class TestSubmittedJobs(DocumentTranslationTest):
         blob_data = b'This is some text'
         source_container_sas_url = self.create_source_container(data=blob_data)
         target_container_sas_url = self.create_target_container()
+        result_per_page = 2
+        no_of_pages = len(blob_data) // result_per_page
 
         # prepare translation inputs
         translation_inputs = [
@@ -83,19 +75,14 @@ class TestSubmittedJobs(DocumentTranslationTest):
         self.assertIsNotNone(job_detail.id)
 
         # list jobs
-        submitted_jobs = client.list_submitted_jobs(results_per_page=1)  # type: ItemPaged[JobStatusResult]
-        for job in submitted_jobs:
-            self.assertIsNotNone(job.id)
-            self.assertIsNotNone(job.created_on)
-            self.assertIsNotNone(job.last_updated_on)
-            self.assertIsNotNone(job.status)
-            self.assertIsNotNone(job.documents_total_count)
-            self.assertIsNotNone(job.documents_failed_count)
-            self.assertIsNotNone(job.documents_succeeded_count)
-            self.assertIsNotNone(job.documents_in_progress_count)
-            self.assertIsNotNone(job.documents_not_yet_started_count)
-            self.assertIsNotNone(job.documents_cancelled_count)
-            self.assertIsNotNone(job.total_characters_charged)
+        submitted_jobs_pages = client.list_submitted_jobs(results_per_page=result_per_page)  # type: Iterator[Iteratr[JobStatusResult]]
+        
+        self.assertEqual(len(submitted_jobs_pages), no_of_pages)
+        # iterate by page
+        for page in submitted_jobs_pages:
+            self.assertEqual(len(page), result_per_page)
+            for job in page:
+                self._validate_job(job)
 
 
     @DocumentTranslationPreparer()
@@ -105,6 +92,8 @@ class TestSubmittedJobs(DocumentTranslationTest):
         blob_data = b'This is some text'
         source_container_sas_url = self.create_source_container(data=blob_data)
         target_container_sas_url = self.create_target_container()
+        docs_len = len(blob_data)
+        skip = 2
 
         # prepare translation inputs
         translation_inputs = [
@@ -127,16 +116,22 @@ class TestSubmittedJobs(DocumentTranslationTest):
         self.assertIsNotNone(job_detail.id)
 
         # list jobs
-        submitted_jobs = client.list_submitted_jobs(skip=1)  # type: ItemPaged[JobStatusResult]
+        submitted_jobs = client.list_submitted_jobs(skip=skip)  # type: ItemPaged[JobStatusResult]
+        self.assertEqual(len(submitted_jobs), docs_len - skip)
+
         for job in submitted_jobs:
-            self.assertIsNotNone(job.id)
-            self.assertIsNotNone(job.created_on)
-            self.assertIsNotNone(job.last_updated_on)
-            self.assertIsNotNone(job.status)
-            self.assertIsNotNone(job.documents_total_count)
-            self.assertIsNotNone(job.documents_failed_count)
-            self.assertIsNotNone(job.documents_succeeded_count)
-            self.assertIsNotNone(job.documents_in_progress_count)
-            self.assertIsNotNone(job.documents_not_yet_started_count)
-            self.assertIsNotNone(job.documents_cancelled_count)
-            self.assertIsNotNone(job.total_characters_charged)
+            self._validate_job(job)
+
+
+    def _validate_job(self, job):
+        self.assertIsNotNone(job.id)
+        self.assertIsNotNone(job.created_on)
+        self.assertIsNotNone(job.last_updated_on)
+        self.assertIsNotNone(job.status)
+        self.assertIsNotNone(job.documents_total_count)
+        self.assertIsNotNone(job.documents_failed_count)
+        self.assertIsNotNone(job.documents_succeeded_count)
+        self.assertIsNotNone(job.documents_in_progress_count)
+        self.assertIsNotNone(job.documents_not_yet_started_count)
+        self.assertIsNotNone(job.documents_cancelled_count)
+        self.assertIsNotNone(job.total_characters_charged)
