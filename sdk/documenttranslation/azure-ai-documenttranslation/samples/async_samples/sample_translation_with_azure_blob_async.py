@@ -20,8 +20,8 @@ USAGE:
     python sample_translation_with_azure_blob_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_DOCUMENT_TRANSLATION_ENDPOINT - the endpoint to your Form Recognizer resource.
-    2) AZURE_DOCUMENT_TRANSLATION_KEY - your Form Recognizer API key.
+    1) AZURE_DOCUMENT_TRANSLATION_ENDPOINT - the endpoint to your Document Translation resource.
+    2) AZURE_DOCUMENT_TRANSLATION_KEY - your Document Translation API key.
     3) AZURE_STORAGE_SOURCE_ENDPOINT - the endpoint to your Storage account
     4) AZURE_STORAGE_ACCOUNT_NAME - the name of your storage account
     5) AZURE_STORAGE_SOURCE_KEY - the shared access key to your storage account

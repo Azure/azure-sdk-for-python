@@ -22,8 +22,8 @@ USAGE:
     python sample_authentication.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_DOCUMENT_TRANSLATION_ENDPOINT - the endpoint to your Form Recognizer resource.
-    2) AZURE_DOCUMENT_TRANSLATION_KEY - your Form Recognizer API key
+    1) AZURE_DOCUMENT_TRANSLATION_ENDPOINT - the endpoint to your Document Translation resource.
+    2) AZURE_DOCUMENT_TRANSLATION_KEY - your Document Translation API key
 """
 
 import os

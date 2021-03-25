@@ -17,8 +17,8 @@ USAGE:
     python sample_translation_with_glossaries.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_DOCUMENT_TRANSLATION_ENDPOINT - the endpoint to your Form Recognizer resource.
-    2) AZURE_DOCUMENT_TRANSLATION_KEY - your Form Recognizer API key.
+    1) AZURE_DOCUMENT_TRANSLATION_ENDPOINT - the endpoint to your Document Translation resource.
+    2) AZURE_DOCUMENT_TRANSLATION_KEY - your Document Translation API key.
     3) AZURE_SOURCE_CONTAINER_URL - the container SAS URL to your source container which has the documents
         to be translated.
     4) AZURE_TARGET_CONTAINER_URL - the container SAS URL to your target container where the translated documents
