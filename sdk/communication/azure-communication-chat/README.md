@@ -240,7 +240,7 @@ def decide_to_retry(error, **kwargs):
     return True
 
 retry = [thread_participant for thread_participant, error in create_chat_thread_result.errors if decide_to_retry(error)]
-if len(retry) > 0:
+if retry:
     chat_thread_client.add_participants(retry)
 ```
 
@@ -263,10 +263,8 @@ An iterator of `[ChatThreadItem]` is the response returned from listing threads
 
 ```python
 from datetime import datetime, timedelta
-import pytz
 
 start_time = datetime.utcnow() - timedelta(days=2)
-start_time = start_time.replace(tzinfo=pytz.utc)
 
 chat_threads = chat_client.list_chat_threads(results_per_page=5, start_time=start_time)
 for chat_thread_item_page in chat_threads.by_page():
@@ -358,10 +356,8 @@ An iterator of `[ChatMessage]` is the response returned from listing messages
 
 ```Python
 from datetime import datetime, timedelta
-import pytz
 
 start_time = datetime.utcnow() - timedelta(days=1)
-start_time = start_time.replace(tzinfo=pytz.utc)
 
 chat_messages = chat_thread_client.list_messages(results_per_page=1, start_time=start_time)
 for chat_message_page in chat_messages.by_page():
@@ -464,7 +460,8 @@ def decide_to_retry(error, **kwargs):
 # verify if all users has been successfully added or not
 # in case of partial failures, you can retry to add all the failed participants 
 retry = [p for p, e in response if decide_to_retry(e)]
-chat_thread_client.add_participants(retry)
+if retry:
+    chat_thread_client.add_participants(retry)
 ```
 
 ### Remove thread participant

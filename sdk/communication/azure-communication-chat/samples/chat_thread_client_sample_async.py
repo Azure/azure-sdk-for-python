@@ -52,18 +52,20 @@ class ChatThreadClientSamplesAsync(object):
 
     async def create_chat_thread_client_async(self):
         token = self.token
+        endpoint = self.endpoint
+        user = self.user
         # [START create_chat_thread_client]
         from datetime import datetime
         from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential
         from azure.communication.chat import ChatThreadParticipant
         from azure.communication.identity import CommunicationUserIdentifier
-
-        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(token))
+        # set `endpoint` to an existing ACS endpoint
+        chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
 
         async with chat_client:
             topic = "test topic"
             participants = [ChatThreadParticipant(
-                user=self.user,
+                user=user,
                 display_name='name',
                 share_history_time=datetime.utcnow()
             )]
@@ -78,10 +80,12 @@ class ChatThreadClientSamplesAsync(object):
     async def get_chat_thread_properties_async(self):
         thread_id = self._thread_id
         token = self.token
+        endpoint = self.endpoint
         # [START get_thread]
         from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential
 
-        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(token))
+        # set `endpoint` to an existing ACS endpoint
+        chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
         async with chat_client:
             chat_thread_client = chat_client.get_chat_thread_client(thread_id)
 
@@ -296,8 +300,8 @@ class ChatThreadClientSamplesAsync(object):
 
                 # list of participants which were unsuccessful to be added to chat thread
                 retry = [p for p, e in result if decide_to_retry(e)]
-                if len(retry) > 0:
-                    chat_thread_client.add_participants(retry)
+                if retry:
+                    await chat_thread_client.add_participants(retry)
 
         # [END add_participants]
         print("add_participants_w_check_async succeeded")
@@ -306,7 +310,7 @@ class ChatThreadClientSamplesAsync(object):
         thread_id = self._thread_id
         chat_client = self._chat_client
         identity_client = self.identity_client
-        # [START remove_participant]
+
         from azure.communication.chat import ChatThreadParticipant
         from azure.communication.identity import CommunicationUserIdentifier
         from datetime import datetime
@@ -333,7 +337,7 @@ class ChatThreadClientSamplesAsync(object):
 
                 thread_participants = [participant1, participant2]
                 await chat_thread_client.add_participants(thread_participants)
-
+                # [START remove_participant]
                 # Option 1 : Iterate through all participants, find and delete Fred Flinstone
                 chat_thread_participants = chat_thread_client.list_participants()
 
@@ -350,7 +354,7 @@ class ChatThreadClientSamplesAsync(object):
                 unique_identifier = user2.identifier  # in real scenario the identifier would need to be retrieved from elsewhere
                 await chat_thread_client.remove_participant(CommunicationUserIdentifier(unique_identifier))
                 print("Wilma has been removed from the thread...")
-        # [END remove_participant]
+                # [END remove_participant]
 
         # clean up temporary users
         self.identity_client.delete_user(user1)
@@ -386,7 +390,6 @@ async def main():
     await sample.send_read_receipt_async()
     await sample.list_read_receipts_async()
     await sample.delete_message_async()
-    await sample.add_participant_w_check_async()
     await sample.add_participants_w_check_async()
     await sample.list_participants_async()
     await sample.remove_participant_async()
