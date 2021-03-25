@@ -544,7 +544,6 @@ class IterStreamer(object):
         # This means count < size and what's leftover will be returned in this call.
         except StopIteration:
             self.leftover = b""
-            pass
 
         if count > size:
             self.leftover = data[size:]
