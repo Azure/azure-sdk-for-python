@@ -31,5 +31,5 @@ extends:
   parameters:
     ServiceDirectory: extendedlocation
     Artifacts:
-    - name: azure_mgmt_extendedlocation
+    - name: azure-mgmt-extendedlocation
       safeName: azuremgmtextendedlocation
