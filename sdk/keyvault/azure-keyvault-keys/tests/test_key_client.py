@@ -15,7 +15,8 @@ from azure.keyvault.keys import JsonWebKey, KeyClient, KeyCurveName
 from devtools_testutils import PowerShellPreparer
 from parameterized import parameterized, param
 
-from _test_case import KeysTestCase, suffixed_test_name
+from _test_case import KeysTestCase
+from _test_case_base import suffixed_test_name
 
 KeyVaultPreparer = functools.partial(
     PowerShellPreparer,

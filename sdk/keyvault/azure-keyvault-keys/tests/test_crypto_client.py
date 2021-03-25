@@ -24,7 +24,8 @@ from parameterized import parameterized, param
 import pytest
 
 from _shared.json_attribute_matcher import json_attribute_matcher
-from _test_case import KeysTestCase, suffixed_test_name
+from _test_case import KeysTestCase
+from _test_case_base import suffixed_test_name
 
 KeyVaultPreparer = functools.partial(
     PowerShellPreparer,

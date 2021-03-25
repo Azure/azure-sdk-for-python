@@ -16,7 +16,8 @@ from azure.keyvault.keys.aio import KeyClient
 from devtools_testutils import PowerShellPreparer
 from parameterized import parameterized, param
 
-from _test_case_async import KeysTestCase, suffixed_test_name
+from _test_case_async import KeysTestCase
+from _test_case_base import suffixed_test_name
 
 KeyVaultPreparer = functools.partial(
     PowerShellPreparer,
@@ -170,7 +171,7 @@ class KeyVaultKeyTest(KeysTestCase):
         self._skip_if_not_configured(is_hsm)
         azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
 
-        client = self.create_key_client(azure_keyvault_url)
+        client = self.create_key_client(azure_keyvault_url, is_async=True)
         self.assertIsNotNone(client)
 
         # create ec key
@@ -240,7 +241,7 @@ class KeyVaultKeyTest(KeysTestCase):
         self._skip_if_not_configured(is_hsm)
         azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
 
-        client = self.create_key_client(azure_keyvault_url)
+        client = self.create_key_client(azure_keyvault_url, is_async=True)
         self.assertIsNotNone(client)
 
         key_name = self.get_resource_name("keybak")
@@ -270,7 +271,7 @@ class KeyVaultKeyTest(KeysTestCase):
         self._skip_if_not_configured(is_hsm)
         azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
 
-        client = self.create_key_client(azure_keyvault_url)
+        client = self.create_key_client(azure_keyvault_url, is_async=True)
         self.assertIsNotNone(client)
 
         max_keys = self.list_test_size
@@ -297,7 +298,7 @@ class KeyVaultKeyTest(KeysTestCase):
         self._skip_if_not_configured(is_hsm)
         azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
 
-        client = self.create_key_client(azure_keyvault_url)
+        client = self.create_key_client(azure_keyvault_url, is_async=True)
         self.assertIsNotNone(client)
 
         key_name = self.get_resource_name("testKey")
@@ -327,7 +328,7 @@ class KeyVaultKeyTest(KeysTestCase):
         self._skip_if_not_configured(is_hsm)
         azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
 
-        client = self.create_key_client(azure_keyvault_url)
+        client = self.create_key_client(azure_keyvault_url, is_async=True)
         self.assertIsNotNone(client)
 
         expected = {}
@@ -362,7 +363,7 @@ class KeyVaultKeyTest(KeysTestCase):
         self._skip_if_not_configured(is_hsm)
         azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
 
-        client = self.create_key_client(azure_keyvault_url)
+        client = self.create_key_client(azure_keyvault_url, is_async=True)
         self.assertIsNotNone(client)
 
         # create keys
@@ -396,7 +397,7 @@ class KeyVaultKeyTest(KeysTestCase):
         self._skip_if_not_configured(is_hsm)
         azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
 
-        client = self.create_key_client(azure_keyvault_url)
+        client = self.create_key_client(azure_keyvault_url, is_async=True)
         self.assertIsNotNone(client)
 
         # create keys
@@ -427,7 +428,7 @@ class KeyVaultKeyTest(KeysTestCase):
         self._skip_if_not_configured(is_hsm)
         azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
 
-        client = self.create_key_client(azure_keyvault_url, logging_enable=True)
+        client = self.create_key_client(azure_keyvault_url, logging_enable=True, is_async=True)
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
@@ -457,7 +458,7 @@ class KeyVaultKeyTest(KeysTestCase):
         self._skip_if_not_configured(is_hsm)
         azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
 
-        client = self.create_key_client(azure_keyvault_url, logging_enable=False)
+        client = self.create_key_client(azure_keyvault_url, logging_enable=False, is_async=True)
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
