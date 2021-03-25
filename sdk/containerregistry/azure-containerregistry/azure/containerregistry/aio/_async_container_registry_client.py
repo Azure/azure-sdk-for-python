@@ -25,7 +25,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         self._credential = credential
         super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, **kwargs)
 
-
     async def delete_repository(self, repository: str, **kwargs: Dict[str, Any]) -> DeletedRepositoryResult:
         """Delete a repository
 
@@ -35,16 +34,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
         result = await self._client.container_registry.delete_repository(repository, **kwargs)
-        return DeletedRepositoryResult._from_generated(result)
-
-
+        return DeletedRepositoryResult._from_generated(result)  # pylint: disable=protected-access
 
     def list_repositories(self, **kwargs) -> AsyncItemPaged[str]:
 
         return self._client.container_registry.get_repositories(
             last=kwargs.pop("last", None), n=kwargs.pop("max", None), **kwargs
         )
-
 
     def get_repository_client(self, name: str, **kwargs) -> SyncContainerRegistryClient:
         pass

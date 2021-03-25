@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from ._generated.models import RepositoryProperties as GeneratedRepositoryProperties
     from ._generated.models import TagProperties as GeneratedTagProperties
 
+
 class ContentPermissions(object):
     def __init__(self, **kwargs):
         self.can_delete = kwargs.get("can_delete")
@@ -38,6 +39,7 @@ class ContentPermissions(object):
             can_read=self.can_read,
             can_write=self.can_write,
         )
+
 
 class DeletedRepositoryResult(object):
     def __init__(self, **kwargs):
@@ -124,7 +126,7 @@ class RepositoryProperties(object):
             manifest_count=generated.registry_artifact_count,
             tag_count=generated.tag_count,
             content_permissions=generated.writeable_properties,
-            registry=generated.additional_properties.get("registry", None)
+            registry=generated.additional_properties.get("registry", None),
         )
 
 

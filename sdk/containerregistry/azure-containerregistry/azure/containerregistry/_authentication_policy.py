@@ -4,22 +4,22 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from base64 import b64encode
-import re
 from typing import TYPE_CHECKING
 
-from azure.core.pipeline.policies import SansIOHTTPPolicy, HTTPPolicy
+from azure.core.exceptions import ServiceRequestError
+from azure.core.pipeline.policies import HTTPPolicy
 
 from ._exchange_client import ACRExchangeClient
 
 if TYPE_CHECKING:
-    from azure.core.pipeline import PipelineRequest
+    from azure.core.credentials import TokenCredential
+    from azure.core.pipeline import PipelineRequest, PipelineResponse
+    from typing import Optional
 
 
 def _enforce_https(request):
     # type: (PipelineRequest) -> None
-    """Raise ServiceRequestError if the request URL is non-HTTPS and the sender did not specify "enforce_https=False"
-    """
+    """Raise ServiceRequestError if the request URL is non-HTTPS and the sender did not specify enforce_https=False"""
 
     # move 'enforce_https' from options to context so it persists
     # across retries but isn't passed to a transport implementation
@@ -39,15 +39,15 @@ def _enforce_https(request):
 class ContainerRegistryChallengePolicy(HTTPPolicy):
     """Authentication policy for ACR which accepts a challenge"""
 
-    def __init__(self, credential, endpoint, *scopes, **kwargs):
-        # type: (TokenCredential, *str, **Any) -> None
-        super(HTTPPolicy, self).__init__()
-        self._scopes = ["https://management.core.windows.net/.default"]
+    def __init__(self, credential, endpoint):
+        # type: (TokenCredential, str) -> None
+        super(ContainerRegistryChallengePolicy, self).__init__()
+        self._scopes = "https://management.core.windows.net/.default"
         self._credential = credential
         self._token = None  # type: Optional[AccessToken]
         self._exchange_client = ACRExchangeClient(endpoint, self._credential)
 
-    def _need_new_token(self):
+    def _need_new_token(self):  # pylint: disable=no-self-use
         # type: () -> bool
         return True
 
@@ -59,7 +59,7 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         """
 
         if self._token is None or self._need_new_token():
-            self._token = self._credential.get_token(*self._scopes)
+            self._token = self._credential.get_token(self._scopes)
             try:
                 self._token = self._token.token
             except AttributeError:

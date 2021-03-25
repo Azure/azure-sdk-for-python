@@ -3,19 +3,19 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import json
-import os
 import re
 from typing import TYPE_CHECKING
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.core.pipeline.transport import HttpRequest
 
 from ._generated import ContainerRegistry
 from ._user_agent import USER_AGENT
 
-if TYPE_CHECKING
+if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+    from azure.core.pipeline import PipelineRequest, PipelineResponse
+    from typing import Dict, Any, List
+
 
 class ExchangeClientAuthenticationPolicy(SansIOHTTPPolicy):
     """Authentication policy for exchange client that does not modify the request"""
@@ -40,7 +40,7 @@ class ACRExchangeClient(object):
     """
 
     BEARER = "Bearer"
-    AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile("(?:(\\w+)=\"([^\"\"]*)\")+")
+    AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
     WWW_AUTHENTICATE = "WWW-Authenticate"
     SCOPE_PARAMETER = "scope"
     SERVICE_PARAMETER = "service"
@@ -68,29 +68,31 @@ class ACRExchangeClient(object):
         refresh_token = self.exchange_aad_token_for_refresh_token(**parsed_challenge)
         return self.exchange_refresh_token_for_access_token(refresh_token, **parsed_challenge)
 
-    def exchange_aad_token_for_refresh_token(self, service=None, scope=None, **kwargs):
-        # type: (str, str, Dict[str, Any]) -> str
+    def exchange_aad_token_for_refresh_token(self, service=None, **kwargs):
+        # type: (str, Dict[str, Any]) -> str
         refresh_token = self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
-            service, self._credential.get_token(self._credential_scopes).token)
+            service=service, access_token=self._credential.get_token(self._credential_scopes).token, **kwargs
+        )
         return refresh_token.refresh_token
 
     def exchange_refresh_token_for_access_token(self, refresh_token, service=None, scope=None, **kwargs):
         # type: (str, str, str) -> str
         access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
-            service, scope, refresh_token)
+            service=service, scope=scope, refresh_token=refresh_token, **kwargs
+        )
         return access_token.access_token
 
     def _parse_challenge(self, header):
         # type: (str) -> Dict[str, Any]
         """Parse challenge header into service and scope"""
         if header.startswith(self.BEARER):
-            challenge_params = header[len(self.BEARER)+1:]
+            challenge_params = header[len(self.BEARER) + 1 :]
 
             matches = re.split(self.AUTHENTICATION_CHALLENGE_PARAMS_PATTERN, challenge_params)
             self._clean(matches)
             ret = {}
             for i in range(0, len(matches), 2):
-                ret[matches[i]] = matches[i+1]
+                ret[matches[i]] = matches[i + 1]
 
         return ret
 
@@ -108,16 +110,16 @@ class ACRExchangeClient(object):
         """
         self._client.close()
 
-    def _clean(self, matches):
+    def _clean(self, matches):  # pylint: disable=no-self-use
         # type: (List[str]) -> None
         while True:
             try:
-                matches.remove('')
+                matches.remove("")
             except ValueError:
                 break
 
         while True:
             try:
-                matches.remove(',')
+                matches.remove(",")
             except ValueError:
                 return

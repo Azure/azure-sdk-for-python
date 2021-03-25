@@ -81,7 +81,9 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :raises: None
         """
         # GET '/acr/v1/{name}'
-        return RepositoryProperties._from_generated(self._client.container_registry_repository.get_properties(self.repository))
+        return RepositoryProperties._from_generated(  # pylint: disable=protected-access
+            self._client.container_registry_repository.get_properties(self.repository)
+        )
 
     def get_registry_artifact_properties(self, tag_or_digest, **kwargs):
         # type: (str, Dict[str, Any]) -> RegistryArtifactProperties
@@ -96,7 +98,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         if self._is_tag(tag_or_digest):
             tag_or_digest = self.get_digest_from_tag(tag_or_digest)
 
-        return RegistryArtifactProperties._from_generated(
+        return RegistryArtifactProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry_repository.get_registry_artifact_properties(
                 self.repository, tag_or_digest, **kwargs
             )
@@ -134,8 +136,13 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         n = kwargs.pop("top", None)
         orderby = kwargs.pop("order_by", None)
         return self._client.container_registry_repository.get_manifests(
-            self.repository, last=last, n=n, orderby=orderby,
-            cls=lambda objs: [RegistryArtifactProperties._from_generated(x) for x in objs]
+            self.repository,
+            last=last,
+            n=n,
+            orderby=orderby,
+            cls=lambda objs: [
+                RegistryArtifactProperties._from_generated(x) for x in objs  # pylint: disable=protected-access
+            ],
         )
 
     def list_tags(self, **kwargs):
@@ -155,7 +162,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             n=kwargs.pop("top", None),
             orderby=kwargs.pop("order_by", None),
             digest=kwargs.pop("digest", None),
-            cls=lambda objs: [TagProperties._from_generated(o) for o in objs],
+            cls=lambda objs: [TagProperties._from_generated(o) for o in objs],  # pylint: disable=protected-access
             **kwargs
         )
 
@@ -167,12 +174,12 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :type digest: str
         :param permissions: The property's values to be set
         :type permissions: ContentPermissions
-        :returns: ~azure.core.paging.ItemPaged[TagProperties]
+        :returns: None
         :raises: None
         """
 
         self._client.container_registry_repository.update_manifest_attributes(
-            self.repository, digest, permissions.to_generated()
+            self.repository, digest, value=permissions.to_generated()
         )
 
     def set_tag_properties(self, tag_or_digest, permissions):
@@ -183,12 +190,12 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :type tag: str
         :param permissions: The property's values to be set
         :type permissions: ContentPermissions
-        :returns: ~azure.core.paging.ItemPaged[TagProperties]
+        :returns: None
         :raises: None
         """
         if self._is_tag(tag_or_digest):
             tag_or_digest = self.get_digest_from_tag(tag_or_digest)
 
         self._client.container_registry_repository.update_manifest_attributes(
-            self.repository, tag_or_digest, permissions.to_generated()
+            self.repository, tag_or_digest, value=permissions.to_generated()
         )

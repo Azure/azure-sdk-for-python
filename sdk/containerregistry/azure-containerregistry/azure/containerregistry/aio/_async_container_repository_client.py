@@ -5,14 +5,18 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 
-from azure.core.async_paging import AsyncItemPaged
-
 from ._async_base_client import ContainerRegistryBaseClient
-from .._container_registry_client import ContainerRegistryClient as SyncContainerRegistryClient
-from .._models import RepositoryProperties
+from .._models import (
+    RegistryArtifactProperties,
+    RepositoryProperties,
+    TagProperties,
+)
 
 if TYPE_CHECKING:
+    from .._models import ContentPermissions
+    from azure.core.async_paging import AsyncItemPaged
     from azure.core.credentials_async import AsyncTokenCredential
+    from typing import Dict, Any
 
 
 class ContainerRepositoryClient(ContainerRegistryBaseClient):
@@ -25,7 +29,6 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         self._credential = credential
         self.repository = repository
         super(ContainerRepositoryClient, self).__init__(endpoint=self._endpoint, credential=credential, **kwargs)
-
 
     async def delete(self, **kwargs):
         # type: (...) -> None
@@ -60,7 +63,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
     def get_digest_from_tag(self, tag):
         # type: (str) -> str
-        for t in self.list_tags():
+        async for t in self.list_tags():
             if t.name == tag:
                 return t.digest
         raise ValueError("Could not find a digest for tag {}".format(tag))
@@ -73,7 +76,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :raises: None
         """
         # GET '/acr/v1/{name}'
-        return RepositoryProperties._from_generated(
+        return RepositoryProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry_repository.get_properties(self.repository)
         )
 
@@ -90,7 +93,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         if self._is_tag(tag_or_digest):
             tag_or_digest = self.get_digest_from_tag(tag_or_digest)
 
-        return RegistryArtifactProperties._from_generated(
+        return RegistryArtifactProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry_repository.get_registry_artifact_properties(
                 self.repository, tag_or_digest, **kwargs
             )
@@ -111,7 +114,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         )
 
     def list_registry_artifacts(self, **kwargs):
-        # type: (...) -> ItemPaged[RegistryArtifactProperties]
+        # type: (...) -> AsyncItemPaged[RegistryArtifactProperties]
         """List the artifacts for a repository
 
         :keyword last: Query parameter for the last item in the previous query
@@ -120,7 +123,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :type n: int
         :keyword orderby: Order by query parameter
         :type orderby: :class:~azure.containerregistry.RegistryArtifactOrderBy
-        :returns: ~azure.core.paging.ItemPaged[RegistryArtifactProperties]
+        :returns: ~azure.core.paging.AsyncItemPaged[RegistryArtifactProperties]
         :raises: None
         """
         # GET /acr/v1/{name}/_manifests
@@ -128,19 +131,24 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         n = kwargs.pop("top", None)
         orderby = kwargs.pop("order_by", None)
         return self._client.container_registry_repository.get_manifests(
-            self.repository, last=last, n=n, orderby=orderby,
-            cls=lambda objs: [RegistryArtifactProperties._from_generated(x) for x in objs]
+            self.repository,
+            last=last,
+            n=n,
+            orderby=orderby,
+            cls=lambda objs: [
+                RegistryArtifactProperties._from_generated(x) for x in objs  # pylint: disable=protected-access
+            ],
         )
 
     def list_tags(self, **kwargs):
-        # type: (...) -> ItemPaged[TagProperties]
+        # type: (...) -> AsyncItemPaged[TagProperties]
         """List the tags for a repository
 
         :param last: Query parameter for the last item in the previous call. Ensuing
             call will return values after last lexically
         :type last: str
         :param order_by: Query paramter for ordering by time ascending or descending
-        :returns: ~azure.core.paging.ItemPaged[TagProperties]
+        :returns: ~azure.core.paging.AsyncItemPaged[TagProperties]
         :raises: None
         """
         return self._client.container_registry_repository.get_tags(
@@ -149,11 +157,11 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             n=kwargs.pop("top", None),
             orderby=kwargs.pop("order_by", None),
             digest=kwargs.pop("digest", None),
-            cls=lambda objs: [TagProperties._from_generated(o) for o in objs],
+            cls=lambda objs: [TagProperties._from_generated(o) for o in objs],  # pylint: disable=protected-access
             **kwargs
         )
 
-    def set_manifest_properties(self, digest, permissions):
+    async def set_manifest_properties(self, digest, permissions):
         # type: (str, ContentPermissions) -> None
         """Set the properties for a manifest
 
@@ -161,15 +169,15 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :type digest: str
         :param permissions: The property's values to be set
         :type permissions: ContentPermissions
-        :returns: ~azure.core.paging.ItemPaged[TagProperties]
+        :returns: None
         :raises: None
         """
 
-        self._client.container_registry_repository.update_manifest_attributes(
-            self.repository, digest, permissions.to_generated()
+        await self._client.container_registry_repository.update_manifest_attributes(
+            self.repository, digest, value=permissions.to_generated()
         )
 
-    def set_tag_properties(self, tag_or_digest, permissions):
+    async def set_tag_properties(self, tag_or_digest, permissions):
         # type: (str, ContentPermissions) -> None
         """Set the properties for a tag
 
@@ -177,12 +185,12 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :type tag: str
         :param permissions: The property's values to be set
         :type permissions: ContentPermissions
-        :returns: ~azure.core.paging.ItemPaged[TagProperties]
+        :returns: None
         :raises: None
         """
         if self._is_tag(tag_or_digest):
             tag_or_digest = self.get_digest_from_tag(tag_or_digest)
 
-        self._client.container_registry_repository.update_manifest_attributes(
-            self.repository, tag_or_digest, permissions.to_generated()
+        await self._client.container_registry_repository.update_manifest_attributes(
+            self.repository, tag_or_digest, value=permissions.to_generated()
         )

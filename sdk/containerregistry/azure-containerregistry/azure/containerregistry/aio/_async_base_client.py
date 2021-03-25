@@ -38,8 +38,8 @@ class ContainerRegistryBaseClient(object):
             **kwargs
         )
 
-    async def __enter__(self):
-        await self._client.__enter__()
+    async def __aenter__(self):
+        await self._client.__aenter__()
         return self
 
     async def __aexit__(self, *args):

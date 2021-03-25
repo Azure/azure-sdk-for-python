@@ -3,15 +3,18 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import json
-import os
 import re
+from typing import TYPE_CHECKING
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.core.pipeline.transport import HttpRequest
 
 from .._generated.aio import ContainerRegistry
 from .._user_agent import USER_AGENT
+
+if TYPE_CHECKING:
+    from typing import Dict, List, Any
+    from azure.core.credentials import TokenCredential
+    from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
 class ExchangeClientAuthenticationPolicy(SansIOHTTPPolicy):
@@ -31,19 +34,21 @@ class ACRExchangeClient(object):
 
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str
+    :param credential: Azure Token Credential to authenticate requests with
+    :type credential: :class:~azure.core.TokenCredential
     :param credential: AAD Token for authenticating requests with Azure
     :type credential: :class:`azure.identity.DefaultTokenCredential`
-
     """
 
     BEARER = "Bearer"
-    AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile("(?:(\\w+)=\"([^\"\"]*)\")+")
+    AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
     WWW_AUTHENTICATE = "WWW-Authenticate"
     SCOPE_PARAMETER = "scope"
     SERVICE_PARAMETER = "service"
     AUTHORIZATION = "Authorization"
 
     def __init__(self, endpoint, credential, **kwargs):
+        # type: (str, TokenCredential, Dict[str, Any]) -> None
         if not endpoint.startswith("https://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
@@ -59,32 +64,37 @@ class ACRExchangeClient(object):
         self._credential = credential
 
     async def get_acr_access_token(self, challenge):
+        # type: (str) -> str
         parsed_challenge = self._parse_challenge(challenge)
         refresh_token = await self.exchange_aad_token_for_refresh_token(**parsed_challenge)
         return await self.exchange_refresh_token_for_access_token(refresh_token, **parsed_challenge)
 
-    async def exchange_aad_token_for_refresh_token(self, service=None, scope=None, **kwargs):
+    async def exchange_aad_token_for_refresh_token(self, service=None, **kwargs):
+        # type: (str, Dict[str, Any]) -> str
         token = await self._credential.get_token(self._credential_scopes)
         refresh_token = await self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
-            service, token.token)
+            service, token.token, **kwargs
+        )
         return refresh_token.refresh_token
 
     async def exchange_refresh_token_for_access_token(self, refresh_token, service=None, scope=None, **kwargs):
+        # type: (str, str, str, Dict[str, Any]) -> str
         access_token = await self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
-            service, scope, refresh_token)
+            service, scope, refresh_token, **kwargs
+        )
         return access_token.access_token
 
     def _parse_challenge(self, header):
         # type: (str) -> Dict[str, Any]
         """Parse challenge header into service and scope"""
         if header.startswith(self.BEARER):
-            challenge_params = header[len(self.BEARER)+1:]
+            challenge_params = header[len(self.BEARER) + 1 :]
 
             matches = re.split(self.AUTHENTICATION_CHALLENGE_PARAMS_PATTERN, challenge_params)
             self._clean(matches)
             ret = {}
             for i in range(0, len(matches), 2):
-                ret[matches[i]] = matches[i+1]
+                ret[matches[i]] = matches[i + 1]
 
         return ret
 
@@ -102,16 +112,16 @@ class ACRExchangeClient(object):
         """
         self._client.close()
 
-    def _clean(self, matches):
+    def _clean(self, matches):  # pylint: disable=no-self-use
         # type: (List[str]) -> None
         while True:
             try:
-                matches.remove('')
+                matches.remove("")
             except ValueError:
                 break
 
         while True:
             try:
-                matches.remove(',')
+                matches.remove(",")
             except ValueError:
                 return
