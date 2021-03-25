@@ -11,6 +11,8 @@ import time
 import logging
 from functools import partial
 
+from azure.core.exceptions import HttpResponseError
+
 from azure_devtools.scenario_tests import AzureTestError, ReservedResourceNameError
 
 from azure.mgmt.resource import ResourceManagementClient
@@ -40,7 +42,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
         playback_fake_resource=None,
         client_kwargs=None,
         random_name_enabled=False,
-        delete_after_tag_timedelta=datetime.timedelta(days=1),
+        delete_after_tag_timedelta=datetime.timedelta(hours=8),
     ):
         super(ResourceGroupPreparer, self).__init__(
             name_prefix,
@@ -67,22 +69,20 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
         if self.is_live and self._need_creation:
             self.client = self.create_mgmt_client(ResourceManagementClient)
             parameters = {"location": self.location}
-            if self.delete_after_tag_timedelta:
-                expiry = datetime.datetime.utcnow() + self.delete_after_tag_timedelta
-                parameters["tags"] = {"DeleteAfter": expiry.replace(microsecond=0).isoformat()}
-            try:
-                if "tags" not in parameters.keys():
-                    parameters["tags"] = {}
-                parameters["tags"]["BuildId"] = os.environ["BUILD_BUILDID"]
-                parameters["tags"]["BuildJob"] = os.environ["AGENT_JOBNAME"]
-                parameters["tags"]["BuildNumber"] = os.environ["BUILD_BUILDNUMBER"]
-                parameters["tags"]["BuildReason"] = os.environ["BUILD_REASON"]
-            except KeyError:
-                pass
+            expiry = datetime.datetime.utcnow() + self.delete_after_tag_timedelta
+            parameters["tags"] = {"DeleteAfter": expiry.replace(microsecond=0).isoformat()}
+            parameters["tags"]["BuildId"] = os.environ.get("BUILD_BUILDID", None)
+            parameters["tags"]["BuildJob"] = os.environ.get("AGENT_JOBNAME", None)
+            parameters["tags"]["BuildNumber"] = os.environ.get("BUILD_BUILDNUMBER", None)
+            parameters["tags"]["BuildReason"] = os.environ.get("BUILD_REASON", None)
             try:
                 logging.info(
                     "Attempting to create a Resource Group with name {} and parameters {}".format(name, parameters)
                 )
+                # Prefixing all RGs created here with 'rgpy-' for tracing purposes
+                name = u"rgpy-" + name
+                if len(name) > 90:
+                    name = name[:90]
                 self.resource = self.client.resource_groups.create_or_update(name, parameters)
             except Exception as ex:
                 if "ReservedResourceName" in str(ex):
@@ -104,14 +104,16 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
         if self.is_live and self._need_creation:
             try:
                 if "wait_timeout" in kwargs:
-                    azure_poller = self.client.resource_groups.delete(name)
+                    azure_poller = self.client.resource_groups.begin_delete(name)
                     azure_poller.wait(kwargs.get("wait_timeout"))
                     if azure_poller.done():
                         return
                     raise AzureTestError("Timed out waiting for resource group to be deleted.")
                 else:
-                    self.client.resource_groups.delete(name, polling=False)
-            except Exception:
+                    self.client.resource_groups.begin_delete(name, polling=False)
+            except HttpResponseError as err:
+                logging.info("Failed to delete resource group with name {}".format(name))
+                logging.info(err.with_traceback)
                 pass
 
 
