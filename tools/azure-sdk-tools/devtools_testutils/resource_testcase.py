@@ -40,7 +40,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
         playback_fake_resource=None,
         client_kwargs=None,
         random_name_enabled=False,
-        delete_after_tag_timedelta=datetime.timedelta(days=1),
+        delete_after_tag_timedelta=datetime.timedelta(hours=8),
     ):
         super(ResourceGroupPreparer, self).__init__(
             name_prefix,
@@ -83,6 +83,10 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
                 logging.info(
                     "Attempting to create a Resource Group with name {} and parameters {}".format(name, parameters)
                 )
+                # Prefixing all RGs created here with 'rgpy-' for tracing purposes
+                name = u"rgpy-" + name
+                if len(name) > 90:
+                    name = name[:90]
                 self.resource = self.client.resource_groups.create_or_update(name, parameters)
             except Exception as ex:
                 if "ReservedResourceName" in str(ex):
