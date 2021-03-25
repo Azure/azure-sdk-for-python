@@ -5,7 +5,8 @@
 # -------------------------------------------------------------------------
 
 from datetime import datetime
-from azure.core import MatchConditions, parse_connection_string_to_dict
+from azure.core import MatchConditions
+from azure.core.utils import parse_connection_string as core_parse_connection_string
 
 
 def quote_etag(etag):
@@ -45,7 +46,7 @@ def get_endpoint_from_connection_string(connection_string):
 
 def parse_connection_string(connection_string):
     # connection_string looks like Endpoint=https://xxxxx;Id=xxxxx;Secret=xxxx
-    segments = parse_connection_string_to_dict(connection_string)
+    segments = core_parse_connection_string(connection_string, case_sensitive_keys=True)
     if len(segments) != 3:
         raise ValueError("Invalid connection string.")
 
