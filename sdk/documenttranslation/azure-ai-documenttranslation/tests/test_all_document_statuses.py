@@ -74,6 +74,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         blob_data = [b'text 1', b'text 2', b'text 3', b'text 4', b'text 5', b'text 6']
         source_container_sas_url = self.create_source_container(data=blob_data)
         target_container_sas_url = self.create_target_container()
+        result_per_page = 2
 
         # prepare translation inputs
         translation_inputs = [
@@ -108,18 +109,20 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         self.assertIsNotNone(job_result.total_characters_charged)
 
         # check doc statuses
-        doc_statuses = client.list_all_document_statuses(job_id=job_detail.id, results_per_page=2)
+        doc_statuses = client.list_all_document_statuses(job_id=job_detail.id, results_per_page=result_per_page)
         self.assertEqual(len(doc_statuses), 1)
-        # how to check for pages in ItemPaged
-        for document in doc_statuses:
-            self.assertIsNotNone(document.translated_document_url)
-            self.assertIsNotNone(document.created_on)
-            self.assertIsNotNone(document.last_updated_on)
-            self.assertIsNotNone(document.status)
-            self.assertIsNotNone(document.translate_to)
-            self.assertIsNotNone(document.translation_progress)
-            self.assertIsNotNone(document.id)
-            self.assertIsNotNone(document.characters_charged)
+        # iterate by page
+        for page in doc_statuses:
+            self.assertEqual(len(page), result_per_page)
+            for document in page:
+                self.assertIsNotNone(document.translated_document_url)
+                self.assertIsNotNone(document.created_on)
+                self.assertIsNotNone(document.last_updated_on)
+                self.assertIsNotNone(document.status)
+                self.assertIsNotNone(document.translate_to)
+                self.assertIsNotNone(document.translation_progress)
+                self.assertIsNotNone(document.id)
+                self.assertIsNotNone(document.characters_charged)
 
 
     @DocumentTranslationPreparer()
@@ -129,6 +132,8 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         blob_data = [b'text 1', b'text 2', b'text 3', b'text 4', b'text 5', b'text 6']
         source_container_sas_url = self.create_source_container(data=blob_data)
         target_container_sas_url = self.create_target_container()
+        docs_len = len(blob_data)
+        skip = 2
 
         # prepare translation inputs
         translation_inputs = [
@@ -163,8 +168,8 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         self.assertIsNotNone(job_result.total_characters_charged)
 
         # check doc statuses
-        doc_statuses = client.list_all_document_statuses(job_id=job_detail.id, skip=2)
-        self.assertEqual(len(doc_statuses), 1)
+        doc_statuses = client.list_all_document_statuses(job_id=job_detail.id, skip=skip)
+        self.assertEqual(len(doc_statuses), docs_len - skip)
         # how to check for pages in ItemPaged
         for document in doc_statuses:
             self.assertIsNotNone(document.translated_document_url)
