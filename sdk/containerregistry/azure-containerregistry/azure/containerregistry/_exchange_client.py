@@ -6,6 +6,7 @@
 import json
 import os
 import re
+from typing import TYPE_CHECKING
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.pipeline.transport import HttpRequest
@@ -13,6 +14,8 @@ from azure.core.pipeline.transport import HttpRequest
 from ._generated import ContainerRegistry
 from ._user_agent import USER_AGENT
 
+if TYPE_CHECKING
+    from azure.core.credentials import TokenCredential
 
 class ExchangeClientAuthenticationPolicy(SansIOHTTPPolicy):
     """Authentication policy for exchange client that does not modify the request"""
@@ -44,6 +47,7 @@ class ACRExchangeClient(object):
     AUTHORIZATION = "Authorization"
 
     def __init__(self, endpoint, credential, **kwargs):
+        # type: (str, TokenCredential, Dict[str, Any]) -> None
         if not endpoint.startswith("https://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
@@ -59,39 +63,19 @@ class ACRExchangeClient(object):
         self._credential = credential
 
     def get_acr_access_token(self, challenge):
+        # type: (str) -> str
         parsed_challenge = self._parse_challenge(challenge)
         refresh_token = self.exchange_aad_token_for_refresh_token(**parsed_challenge)
-        return self.exchange_refresh_token_for_access_token(refresh_token,  **parsed_challenge)
+        return self.exchange_refresh_token_for_access_token(refresh_token, **parsed_challenge)
 
     def exchange_aad_token_for_refresh_token(self, service=None, scope=None, **kwargs):
-
-        # body = """grant_type=access_token&service={}&access_token={}""".format(service, self._credential.get_token(self._credential_scopes).token)
-
-        # headers = {'Accept': 'application/json','Content-Type': 'application/x-www-form-urlencoded'}
-        # request = HttpRequest("POST", self._endpoint + "/oauth2/exchange", headers=headers, data=body)
-
-        # resp = self._client._client._pipeline.run(request)
-        # refresh_token = resp.http_response.internal_response.content
-
-        # return json.loads(refresh_token)["refresh_token"]
-
+        # type: (str, str, Dict[str, Any]) -> str
         refresh_token = self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
             service, self._credential.get_token(self._credential_scopes).token)
         return refresh_token.refresh_token
 
     def exchange_refresh_token_for_access_token(self, refresh_token, service=None, scope=None, **kwargs):
-
-        # body = """grant_type=refresh_token&service={}&scope={}&refresh_token={}""".format(
-        #     service, scope, refresh_token)
-
-        # headers = {'Accept': 'application/json','Content-Type': 'application/x-www-form-urlencoded'}
-        # request = HttpRequest("POST", self._endpoint + "/oauth2/token", headers=headers, data=body)
-
-        # resp = self._client._client._pipeline.run(request)
-
-        # access_token = resp.http_response.internal_response.content
-        # return json.loads(access_token)["access_token"]
-
+        # type: (str, str, str) -> str
         access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
             service, scope, refresh_token)
         return access_token.access_token

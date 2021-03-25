@@ -17,11 +17,12 @@ from azure.containerregistry import (
     RegistryArtifactProperties,
 )
 
+from azure.core.credentials import AccessToken
 from azure.identity import DefaultAzureCredential
 
 from azure_devtools.scenario_tests import RecordingProcessor
+from devtools_testutils import AzureTestCase
 
-from azure.core.credentials import AccessToken
 
 REDACTED = "REDACTED"
 
@@ -33,17 +34,23 @@ class AcrBodyReplacer(RecordingProcessor):
 
     def _scrub_body(self, body):
         # type: (bytes) -> bytes
+        if not isinstance(body, six.binary_type):
+            return body
         s = body.decode("utf-8")
+        if "access_token" not in s and "refresh_token" not in s:
+            return body
         s = s.split("&")
         for idx, pair in enumerate(s):
             [k, v] = pair.split("=")
-            if k == "access_token" or k == 
+            if k == "access_token" or k == "refresh_token":
+                v = REDACTED
+            s[idx] = "=".join([k, v])
+        s = "&".join(s)
+        return bytes(s, "utf-8")
 
     def process_request(self, request):
-        if request.body and isinstance(request.body, six.binary_type):
+        if request.body:# and isinstance(request.body, six.binary_type):
             request.body = self._scrub_body(request.body)
-        else:
-            pass
 
         return request
 
@@ -67,7 +74,6 @@ class AcrBodyReplacer(RecordingProcessor):
             except json.decoder.JSONDecodeError:
                 pass
 
-
             return response
         except (KeyError, ValueError):
             return response
@@ -84,29 +90,29 @@ class FakeTokenCredential(object):
         return self.token
 
 
-class ContainerRegistryTestClass(object):
+class ContainerRegistryTestClass(AzureTestCase):
 
     def __init__(self, method_name):
-        # self.vcr.match_on = ["path", "method", "query"]
+        super(ContainerRegistryTestClass, self).__init__(method_name)
+        self.vcr.match_on = ["path", "method", "query"]
         self.recording_processors.append(AcrBodyReplacer())
 
+    def get_credential(self):
+        if self.is_live:
+            return DefaultAzureCredential()
+        return FakeTokenCredential()
+
     def create_registry_client(self, endpoint):
-        token = DefaultAzureCredential()
-        if not self.is_live:
-            token = FakeTokenCredential()
         return ContainerRegistryClient(
             endpoint=endpoint,
-            credential=token,
+            credential=self.get_credential(),
         )
 
     def create_repository_client(self, endpoint, name):
-        token = DefaultAzureCredential()
-        if not self.is_live:
-            token = FakeTokenCredential()
         return ContainerRepositoryClient(
             endpoint=endpoint,
             repository=name,
-            credential=token,
+            credential=self.get_credential(),
         )
 
     def assert_content_permission(self, content_perm, content_perm2):

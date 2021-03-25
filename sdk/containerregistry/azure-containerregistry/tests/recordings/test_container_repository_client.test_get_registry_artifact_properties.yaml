@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 25 Mar 2021 15:52:47 GMT
+      - Thu, 25 Mar 2021 20:03:13 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -39,15 +39,14 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate:
-      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:hello-world:metadata_read",error="invalid_token"
+      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
       x-content-type-options:
       - nosniff
     status:
       code: 401
       message: Unauthorized
 - request:
-    body: grant_type=access_token&service=seankane.azurecr.io&access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJpYXQiOjE2MTY2ODcyNjYsIm5iZiI6MTYxNjY4NzI2NiwiZXhwIjoxNjE2NzczOTY2LCJhaW8iOiJFMlpnWU5pOTZ5aHZaZzNIdDRjbnpyb2RGUEdlQ1FBPSIsImFwcGlkIjoiZjg1MDY1MGMtMWZjZi00NDg5LWI0NmYtNzFhZjJlMzBkMzYwIiwiYXBwaWRhY3IiOiIxIiwiaWRwIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsIm9pZCI6IjMwNTExYzlkLWJhMWEtNGM3Yi1iNDIyLTViNTQzZGExMWIzZiIsInJoIjoiMC5BUm9BdjRqNWN2R0dyMEdScXkxODBCSGJSd3hsVVBqUEg0bEV0Rzl4cnk0dzAyQWFBQUEuIiwic3ViIjoiMzA1MTFjOWQtYmExYS00YzdiLWI0MjItNWI1NDNkYTExYjNmIiwidGlkIjoiNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3IiwidXRpIjoiSDVvaTZ0elZ3VXluWkEzNEdjZFZBUSIsInZlciI6IjEuMCIsInhtc190Y2R0IjoxMjg5MjQxNTQ3fQ.UrhZkKaCqLriAnO4wBlQfgnQSie3oUSeCteY1O3_HGG4ZnuOPsYxUDH_VvMBrpM8m9d1bQ9cygsp8apqBzYsP_tldBvKusiiOVSkU7A49lDirKx4DfijLPqvNYOYF19eOPwMhPMaRTAjM1vswICC87UfMe_OMUBNqd2XjfPeQ7YsD48opUxindvJHZ5p9GzEi9FrAj_6K2sk81tH7l3Cbs0yrJ3j9MfIk6zX18gFzCue26F25gEHf48GB6dpduAPRalMw7IgbX4FO3HeF33Y41HxmqmKfUkXlW5S1yTzgjrKtI4m39cr-jro98AYCOpFPL58COW6KDppPJemq64aSA
+    body: grant_type=access_token&service=seankane.azurecr.io&access_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -65,14 +64,14 @@ interactions:
     uri: https://fake_url.azurecr.io/oauth2/exchange
   response:
     body:
-      string: '{"refresh_token":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ikk2NVk6VEVDUzpLTEhMOjZCVlE6SUJaRjpGRVhCOlk0VUg6SlRJUzo2VFBYOkNWWEE6SkxUSzpRS0RRIn0.eyJqdGkiOiJhMDgyNjVlYy0xYzkyLTQwYjItYWJmMS1jOTQ3ODk2ZjU4MzciLCJzdWIiOiIzMDUxMWM5ZC1iYTFhLTRjN2ItYjQyMi01YjU0M2RhMTFiM2YiLCJuYmYiOjE2MTY2ODY2NjcsImV4cCI6MTYxNjY5ODM2NywiaWF0IjoxNjE2Njg2NjY3LCJpc3MiOiJBenVyZSBDb250YWluZXIgUmVnaXN0cnkiLCJhdWQiOiJzZWFua2FuZS5henVyZWNyLmlvIiwidmVyc2lvbiI6IjEuMCIsInJpZCI6ImExZTAxZmYzMzk2YzRmMTVhMmRjNjM2NzNkN2ZjYTMzIiwiZ3JhbnRfdHlwZSI6InJlZnJlc2hfdG9rZW4iLCJwZXJtaXNzaW9ucyI6eyJhY3Rpb25zIjpbInJlYWQiLCJ3cml0ZSIsImRlbGV0ZSJdLCJub3RBY3Rpb25zIjpudWxsfSwicm9sZXMiOltdfQ.MMFFfCYja2TZQ86y4vVHulWUVI98SGx1VQ5GPQUnCPBzU1DdXJjPP60-StCxmI1adibyz1UE_DtOtecm4mSPmIFO3awDdELbcngZEnYeR8A5gyzy8xFXhDtTCxOK2ZIJ4gXalpAQazRvx4hCdL7IvQDEgFowNfZG1QDsZti3GyNIS-CEWcTxMQKxM6Ic8NGmgAwl8-O3d6YMIyleDghsEHIWYa-c_GyiDLHCFwsihETXRPbBLotwxB9yqW7xJEoLSqmOG0I8H0crFZR99Z8dz9S9qltxlxMTI20TYwqzgBRzJgi_3vhvlKTv5LQk7vXKfBcpc1ewYVMmhazm5LcF_w"}'
+      string: '{"refresh_token": "REDACTED"}'
     headers:
       connection:
       - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 25 Mar 2021 15:52:47 GMT
+      - Thu, 25 Mar 2021 20:03:15 GMT
       server:
       - openresty
       strict-transport-security:
@@ -83,7 +82,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Ahello-world%3Ametadata_read&refresh_token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ikk2NVk6VEVDUzpLTEhMOjZCVlE6SUJaRjpGRVhCOlk0VUg6SlRJUzo2VFBYOkNWWEE6SkxUSzpRS0RRIn0.eyJqdGkiOiJhMDgyNjVlYy0xYzkyLTQwYjItYWJmMS1jOTQ3ODk2ZjU4MzciLCJzdWIiOiIzMDUxMWM5ZC1iYTFhLTRjN2ItYjQyMi01YjU0M2RhMTFiM2YiLCJuYmYiOjE2MTY2ODY2NjcsImV4cCI6MTYxNjY5ODM2NywiaWF0IjoxNjE2Njg2NjY3LCJpc3MiOiJBenVyZSBDb250YWluZXIgUmVnaXN0cnkiLCJhdWQiOiJzZWFua2FuZS5henVyZWNyLmlvIiwidmVyc2lvbiI6IjEuMCIsInJpZCI6ImExZTAxZmYzMzk2YzRmMTVhMmRjNjM2NzNkN2ZjYTMzIiwiZ3JhbnRfdHlwZSI6InJlZnJlc2hfdG9rZW4iLCJwZXJtaXNzaW9ucyI6eyJhY3Rpb25zIjpbInJlYWQiLCJ3cml0ZSIsImRlbGV0ZSJdLCJub3RBY3Rpb25zIjpudWxsfSwicm9sZXMiOltdfQ.MMFFfCYja2TZQ86y4vVHulWUVI98SGx1VQ5GPQUnCPBzU1DdXJjPP60-StCxmI1adibyz1UE_DtOtecm4mSPmIFO3awDdELbcngZEnYeR8A5gyzy8xFXhDtTCxOK2ZIJ4gXalpAQazRvx4hCdL7IvQDEgFowNfZG1QDsZti3GyNIS-CEWcTxMQKxM6Ic8NGmgAwl8-O3d6YMIyleDghsEHIWYa-c_GyiDLHCFwsihETXRPbBLotwxB9yqW7xJEoLSqmOG0I8H0crFZR99Z8dz9S9qltxlxMTI20TYwqzgBRzJgi_3vhvlKTv5LQk7vXKfBcpc1ewYVMmhazm5LcF_w
+    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Ahello-world%3Ametadata_read&refresh_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -101,14 +100,14 @@ interactions:
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
     body:
-      string: '{"access_token":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ikk2NVk6VEVDUzpLTEhMOjZCVlE6SUJaRjpGRVhCOlk0VUg6SlRJUzo2VFBYOkNWWEE6SkxUSzpRS0RRIn0.eyJqdGkiOiIyYWYyNzI4MC00YTdlLTRiYTgtYTk2Zi1hM2IxOGUwNThkMDYiLCJzdWIiOiIzMDUxMWM5ZC1iYTFhLTRjN2ItYjQyMi01YjU0M2RhMTFiM2YiLCJuYmYiOjE2MTY2ODY2NjgsImV4cCI6MTYxNjY5MTE2OCwiaWF0IjoxNjE2Njg2NjY4LCJpc3MiOiJBenVyZSBDb250YWluZXIgUmVnaXN0cnkiLCJhdWQiOiJzZWFua2FuZS5henVyZWNyLmlvIiwidmVyc2lvbiI6IjIuMCIsInJpZCI6ImExZTAxZmYzMzk2YzRmMTVhMmRjNjM2NzNkN2ZjYTMzIiwiYWNjZXNzIjpbeyJ0eXBlIjoicmVwb3NpdG9yeSIsIm5hbWUiOiJoZWxsby13b3JsZCIsImFjdGlvbnMiOlsibWV0YWRhdGFfcmVhZCJdfV0sInJvbGVzIjpbXSwiZ3JhbnRfdHlwZSI6ImFjY2Vzc190b2tlbiJ9.ZsvarYmAXUucyCxdddmi240TvaiIX8DwdPhwEIaqyM_5o2_mg1wZK-ojF4F2T4fFOqiOKAwlg6i6x_DxFhMkBdizteapM07w-od2egsogoaosdR4O2cPI-qKNC71uZPMRps_3HBxDsgT10nbxjZgFazyOzccAuAjHi3vkuewvk5pItays5YAQ0PLribERK7yV-UebT2he80iHy8xCbEuxpHGD6RBsrckF5riBJ04dmmh3V6h8jC5P3LEC0Cyg075nygsfdGGGDBjxxgiHODvefzIG7DbXZ_76XK2yy33bBouiDzrfXo5gq5fMKLmN4cWqtKfd3cHgvDBF2I4hmUAmQ"}'
+      string: '{"access_token": "REDACTED"}'
     headers:
       connection:
       - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 25 Mar 2021 15:52:48 GMT
+      - Thu, 25 Mar 2021 20:03:15 GMT
       server:
       - openresty
       strict-transport-security:
@@ -149,7 +148,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 25 Mar 2021 15:52:48 GMT
+      - Thu, 25 Mar 2021 20:03:15 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -194,7 +193,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 25 Mar 2021 15:52:48 GMT
+      - Thu, 25 Mar 2021 20:03:16 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -202,15 +201,14 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate:
-      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:hello-world:metadata_read",error="invalid_token"
+      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
       x-content-type-options:
       - nosniff
     status:
       code: 401
       message: Unauthorized
 - request:
-    body: grant_type=access_token&service=seankane.azurecr.io&access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJpYXQiOjE2MTY2ODcyNjYsIm5iZiI6MTYxNjY4NzI2NiwiZXhwIjoxNjE2NzczOTY2LCJhaW8iOiJFMlpnWU5pOTZ5aHZaZzNIdDRjbnpyb2RGUEdlQ1FBPSIsImFwcGlkIjoiZjg1MDY1MGMtMWZjZi00NDg5LWI0NmYtNzFhZjJlMzBkMzYwIiwiYXBwaWRhY3IiOiIxIiwiaWRwIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsIm9pZCI6IjMwNTExYzlkLWJhMWEtNGM3Yi1iNDIyLTViNTQzZGExMWIzZiIsInJoIjoiMC5BUm9BdjRqNWN2R0dyMEdScXkxODBCSGJSd3hsVVBqUEg0bEV0Rzl4cnk0dzAyQWFBQUEuIiwic3ViIjoiMzA1MTFjOWQtYmExYS00YzdiLWI0MjItNWI1NDNkYTExYjNmIiwidGlkIjoiNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3IiwidXRpIjoiSDVvaTZ0elZ3VXluWkEzNEdjZFZBUSIsInZlciI6IjEuMCIsInhtc190Y2R0IjoxMjg5MjQxNTQ3fQ.UrhZkKaCqLriAnO4wBlQfgnQSie3oUSeCteY1O3_HGG4ZnuOPsYxUDH_VvMBrpM8m9d1bQ9cygsp8apqBzYsP_tldBvKusiiOVSkU7A49lDirKx4DfijLPqvNYOYF19eOPwMhPMaRTAjM1vswICC87UfMe_OMUBNqd2XjfPeQ7YsD48opUxindvJHZ5p9GzEi9FrAj_6K2sk81tH7l3Cbs0yrJ3j9MfIk6zX18gFzCue26F25gEHf48GB6dpduAPRalMw7IgbX4FO3HeF33Y41HxmqmKfUkXlW5S1yTzgjrKtI4m39cr-jro98AYCOpFPL58COW6KDppPJemq64aSA
+    body: grant_type=access_token&service=seankane.azurecr.io&access_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -228,14 +226,14 @@ interactions:
     uri: https://fake_url.azurecr.io/oauth2/exchange
   response:
     body:
-      string: '{"refresh_token":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ikk2NVk6VEVDUzpLTEhMOjZCVlE6SUJaRjpGRVhCOlk0VUg6SlRJUzo2VFBYOkNWWEE6SkxUSzpRS0RRIn0.eyJqdGkiOiJhMWQxYzU0NS04MDBmLTQxYTItOGYyOS0zMDJlMWNlNzE5OWUiLCJzdWIiOiIzMDUxMWM5ZC1iYTFhLTRjN2ItYjQyMi01YjU0M2RhMTFiM2YiLCJuYmYiOjE2MTY2ODY2NjgsImV4cCI6MTYxNjY5ODM2OCwiaWF0IjoxNjE2Njg2NjY4LCJpc3MiOiJBenVyZSBDb250YWluZXIgUmVnaXN0cnkiLCJhdWQiOiJzZWFua2FuZS5henVyZWNyLmlvIiwidmVyc2lvbiI6IjEuMCIsInJpZCI6ImExZTAxZmYzMzk2YzRmMTVhMmRjNjM2NzNkN2ZjYTMzIiwiZ3JhbnRfdHlwZSI6InJlZnJlc2hfdG9rZW4iLCJwZXJtaXNzaW9ucyI6eyJhY3Rpb25zIjpbInJlYWQiLCJ3cml0ZSIsImRlbGV0ZSJdLCJub3RBY3Rpb25zIjpudWxsfSwicm9sZXMiOltdfQ.NZFAQbMEBkSY25HOzDNlvaIGqvIg0xbl1R9HbWOCCvpGt0HBZA9UOnQZucVITQgBM2LD4JyRuB5sKqE_w1JKSyl5exPoHtPfTsMycZylwkDJnVttnmza3ufKHqyGGqUY14dxmOZFh1-quK-Fa-B4zOjjtkeuZHEfqsIOTrKZnPzFVVo2t-GiDjqHY5PVtPfzlcp8DSA_Vuuy6rsKcA434uVl7XflrBW1vWOxBmJPBUxORd4KVq3oVaJAOxRGRrVg0XbCdh8G1D3qVcH2AdXqYAn_Y5WWt3Z3JXDefAZKOFwonFtnWUieQiCQgjiAs8ugkqf0Dgge9q3-7tnEGFUZ5Q"}'
+      string: '{"refresh_token": "REDACTED"}'
     headers:
       connection:
       - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 25 Mar 2021 15:52:48 GMT
+      - Thu, 25 Mar 2021 20:03:16 GMT
       server:
       - openresty
       strict-transport-security:
@@ -246,7 +244,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Ahello-world%3Ametadata_read&refresh_token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ikk2NVk6VEVDUzpLTEhMOjZCVlE6SUJaRjpGRVhCOlk0VUg6SlRJUzo2VFBYOkNWWEE6SkxUSzpRS0RRIn0.eyJqdGkiOiJhMWQxYzU0NS04MDBmLTQxYTItOGYyOS0zMDJlMWNlNzE5OWUiLCJzdWIiOiIzMDUxMWM5ZC1iYTFhLTRjN2ItYjQyMi01YjU0M2RhMTFiM2YiLCJuYmYiOjE2MTY2ODY2NjgsImV4cCI6MTYxNjY5ODM2OCwiaWF0IjoxNjE2Njg2NjY4LCJpc3MiOiJBenVyZSBDb250YWluZXIgUmVnaXN0cnkiLCJhdWQiOiJzZWFua2FuZS5henVyZWNyLmlvIiwidmVyc2lvbiI6IjEuMCIsInJpZCI6ImExZTAxZmYzMzk2YzRmMTVhMmRjNjM2NzNkN2ZjYTMzIiwiZ3JhbnRfdHlwZSI6InJlZnJlc2hfdG9rZW4iLCJwZXJtaXNzaW9ucyI6eyJhY3Rpb25zIjpbInJlYWQiLCJ3cml0ZSIsImRlbGV0ZSJdLCJub3RBY3Rpb25zIjpudWxsfSwicm9sZXMiOltdfQ.NZFAQbMEBkSY25HOzDNlvaIGqvIg0xbl1R9HbWOCCvpGt0HBZA9UOnQZucVITQgBM2LD4JyRuB5sKqE_w1JKSyl5exPoHtPfTsMycZylwkDJnVttnmza3ufKHqyGGqUY14dxmOZFh1-quK-Fa-B4zOjjtkeuZHEfqsIOTrKZnPzFVVo2t-GiDjqHY5PVtPfzlcp8DSA_Vuuy6rsKcA434uVl7XflrBW1vWOxBmJPBUxORd4KVq3oVaJAOxRGRrVg0XbCdh8G1D3qVcH2AdXqYAn_Y5WWt3Z3JXDefAZKOFwonFtnWUieQiCQgjiAs8ugkqf0Dgge9q3-7tnEGFUZ5Q
+    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Ahello-world%3Ametadata_read&refresh_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -264,14 +262,14 @@ interactions:
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
     body:
-      string: '{"access_token":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ikk2NVk6VEVDUzpLTEhMOjZCVlE6SUJaRjpGRVhCOlk0VUg6SlRJUzo2VFBYOkNWWEE6SkxUSzpRS0RRIn0.eyJqdGkiOiIxNjE5MDQ1OC1hNGM3LTQ4Y2YtYjYyOC05YTgzMTg0OGFkYWUiLCJzdWIiOiIzMDUxMWM5ZC1iYTFhLTRjN2ItYjQyMi01YjU0M2RhMTFiM2YiLCJuYmYiOjE2MTY2ODY2NjksImV4cCI6MTYxNjY5MTE2OSwiaWF0IjoxNjE2Njg2NjY5LCJpc3MiOiJBenVyZSBDb250YWluZXIgUmVnaXN0cnkiLCJhdWQiOiJzZWFua2FuZS5henVyZWNyLmlvIiwidmVyc2lvbiI6IjIuMCIsInJpZCI6ImExZTAxZmYzMzk2YzRmMTVhMmRjNjM2NzNkN2ZjYTMzIiwiYWNjZXNzIjpbeyJ0eXBlIjoicmVwb3NpdG9yeSIsIm5hbWUiOiJoZWxsby13b3JsZCIsImFjdGlvbnMiOlsibWV0YWRhdGFfcmVhZCJdfV0sInJvbGVzIjpbXSwiZ3JhbnRfdHlwZSI6ImFjY2Vzc190b2tlbiJ9.IxHcEftOeiCig867HcRMyNslh4ts349FhFt8uAVEw5H0as_1n5vWA6abkg1-xXSWWL4LhZ4YfOh0K0Tb6POKzjjNmLePNkYJdSlXB4O8U9xEPvHwDu3tVI0hefriUbQnbqKpBTJRcXIvE1S6Fb-v3ieys8JVaZ8JYGdcPO7mif27PJ-AvNiTVDEoYN9AUd4s3AEIk-3EkCx45FHWQP4PE0EShgsCCxy7VsK8OS9i5rW1_Cng06T5mooRmKj_Tb-tGdDr5CteO6VyaVcE4jaPzPuZARyHgLZG1-uJbV9e5AuNi5QFXy5BNoDjcgRSb6MuokijVYidg11RmeqlU1CJ_A"}'
+      string: '{"access_token": "REDACTED"}'
     headers:
       connection:
       - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 25 Mar 2021 15:52:49 GMT
+      - Thu, 25 Mar 2021 20:03:16 GMT
       server:
       - openresty
       strict-transport-security:
@@ -296,9 +294,9 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/hello-world/_manifests/sha256%3A90659bf80b44ce6be8234e6ff90a1ac34acbeb826903b02cfa0da11c82cbc042
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","manifest":{"digest":"sha256:90659bf80b44ce6be8234e6ff90a1ac34acbeb826903b02cfa0da11c82cbc042","imageSize":2529,"createdTime":"2021-03-16T15:14:35.1695172Z","lastUpdateTime":"2021-03-16T15:14:35.1695172Z","architecture":"amd64","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","configMediaType":"application/vnd.docker.container.image.v1+json","tags":["first","latest"],"changeableAttributes":{"deleteEnabled":false,"writeEnabled":false,"readEnabled":true,"listEnabled":true,"quarantineDetails":"{\"state\":\"Scan
-        InProgress\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure Security
-        Monitoring-Qualys Scanner\",\"result\":{\"version\":\"3/23/2021 4:51:56 PM\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}","quarantineState":"Passed"}}}
+      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","manifest":{"digest":"sha256:90659bf80b44ce6be8234e6ff90a1ac34acbeb826903b02cfa0da11c82cbc042","imageSize":2529,"createdTime":"2021-03-16T15:14:35.1695172Z","lastUpdateTime":"2021-03-16T15:14:35.1695172Z","architecture":"amd64","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","configMediaType":"application/vnd.docker.container.image.v1+json","tags":["first","latest"],"changeableAttributes":{"deleteEnabled":true,"writeEnabled":false,"readEnabled":true,"listEnabled":true,"quarantineDetails":"{\"state\":\"Scan
+        Passed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure Security Monitoring-Qualys
+        Scanner\",\"result\":{\"version\":\"2021-03-23T23:56:01.9480757Z\",\"summary\":[{\"severity\":\"High\",\"count\":6},{\"severity\":\"Medium\",\"count\":34},{\"severity\":\"Low\",\"count\":0}]}}","quarantineState":"Passed"}}}
 
         '
     headers:
@@ -310,11 +308,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '913'
+      - '917'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 25 Mar 2021 15:52:49 GMT
+      - Thu, 25 Mar 2021 20:03:16 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

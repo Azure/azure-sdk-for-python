@@ -21,7 +21,7 @@ from azure.containerregistry import (
 )
 from azure.core.paging import ItemPaged
 
-from testcase import ContainerRegistryTestClass, AcrBodyReplacer
+from .testcase import ContainerRegistryTestClass, AcrBodyReplacer, FakeTokenCredential
 
 acr_preparer = functools.partial(
     PowerShellPreparer,
@@ -30,7 +30,8 @@ acr_preparer = functools.partial(
 )
 
 
-class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
+class TestContainerRepositoryClient(ContainerRegistryTestClass):
+
     def __init__(self, method_name):
         super(TestContainerRepositoryClient, self).__init__(method_name)
         self.vcr.match_on = ["path", "method", "query"]
@@ -46,7 +47,7 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
         assert repo_attribs is not None
         assert repo_attribs.content_permissions is not None
 
-    @pytest.mark.live_test_only
+
     @acr_preparer()
     def test_get_properties(self, containerregistry_baseurl):
         repo_client = self.create_repository_client(containerregistry_baseurl, "hello-world")
@@ -54,7 +55,7 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
         properties = repo_client.get_properties()
         assert isinstance(properties.content_permissions, ContentPermissions)
 
-    @pytest.mark.live_test_only
+
     @acr_preparer()
     def test_get_tag(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
@@ -64,7 +65,7 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
         assert tag is not None
         assert isinstance(tag, TagProperties)
 
-    @pytest.mark.live_test_only
+
     @acr_preparer()
     def test_list_registry_artifacts(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
@@ -79,7 +80,7 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
             assert artifact.tags is not None
             assert isinstance(artifact.tags, list)
 
-    @pytest.mark.live_test_only
+
     @acr_preparer()
     def test_get_registry_artifact_properties(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
@@ -91,7 +92,7 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
         assert isinstance(properties.created_on, datetime)
         assert isinstance(properties.last_updated_on, datetime)
 
-    @pytest.mark.live_test_only
+
     @acr_preparer()
     def test_list_tags(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
@@ -105,7 +106,7 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
 
         assert count > 0
 
-    @pytest.mark.live_test_only
+
     @acr_preparer()
     def test_list_tags_descending(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
@@ -146,7 +147,6 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
             break
 
     @pytest.mark.xfail
-    @pytest.mark.live_test_only
     @acr_preparer()
     def test_set_tag_properties(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)

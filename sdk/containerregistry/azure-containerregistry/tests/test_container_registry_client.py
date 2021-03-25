@@ -18,7 +18,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.identity import DefaultAzureCredential
 
-from testcase import ContainerRegistryTestClass
+from .testcase import ContainerRegistryTestClass
 
 
 acr_preparer = functools.partial(
@@ -28,8 +28,8 @@ acr_preparer = functools.partial(
 )
 
 
-class TestContainerRegistryClient(AzureTestCase, ContainerRegistryTestClass):
-    @pytest.mark.live_test_only
+class TestContainerRegistryClient(ContainerRegistryTestClass):
+
     @acr_preparer()
     def test_list_repositories(self, containerregistry_baseurl):
         client = self.create_registry_client(containerregistry_baseurl)
@@ -59,7 +59,7 @@ class TestContainerRegistryClient(AzureTestCase, ContainerRegistryTestClass):
         assert len(deleted_result.deleted_tags) == 1
 
     @pytest.mark.skip("Don't want to for now")
-    @pytest.mark.live_test_only
+
     @acr_preparer()
     def test_delete_repository_does_not_exist(self, containerregistry_baseurl):
         client = self.create_registry_client(containerregistry_baseurl)

@@ -20,7 +20,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.identity import DefaultAzureCredential
 
-from testcase import ContainerRegistryTestClass
+from .testcase import ContainerRegistryTestClass
 
 
 acr_preparer = functools.partial(
@@ -30,12 +30,12 @@ acr_preparer = functools.partial(
 )
 
 
-class TestExchangeClient(AzureTestCase, ContainerRegistryTestClass):
+class TestExchangeClient(ContainerRegistryTestClass):
 
     def create_exchange_client(self, endpoint):
         return self.create_client_from_credential(
             ACRExchangeClient,
-            credential=self.get_credential(ACRExchangeClient),
+            credential=self.get_credential(),
             endpoint=endpoint,
         )
 
@@ -57,17 +57,3 @@ class TestExchangeClient(AzureTestCase, ContainerRegistryTestClass):
         assert access_token is not None
         assert len(access_token) > 100
         print(access_token)
-
-    @pytest.mark.live_test_only
-    @acr_preparer()
-    def test_auth_policy_in_action(self, containerregistry_baseurl):
-        client = ContainerRegistryClient(
-            endpoint=containerregistry_baseurl,
-            credential=DefaultAzureCredential(),
-        )
-
-        prev = None
-        for repo in client.list_repositories():
-            assert repo is not None
-            assert repo != prev
-            prev = repo
