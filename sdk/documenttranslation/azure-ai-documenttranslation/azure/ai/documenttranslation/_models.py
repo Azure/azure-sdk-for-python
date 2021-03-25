@@ -260,7 +260,7 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
         **kwargs
     ):
         # type: (**Any) -> None
-        self.translated_document_url = kwargs['translated_document_url']
+        self.translated_document_url = kwargs.get('translated_document_url', None)
         self.created_on = kwargs['created_on']
         self.last_updated_on = kwargs['last_updated_on']
         self.status = kwargs['status']
@@ -307,11 +307,18 @@ class DocumentTranslationError(object):  # pylint: disable=useless-object-inheri
     ):
         # type: (**Any) -> None
         self.code = kwargs.get('code', None)
-        self.message = None
-        self.target = None
+        self.message = kwargs.get('message', None)
+        self.target = kwargs.get('target', None)
 
     @classmethod
     def _from_generated(cls, error):
+        if error.inner_error:
+            inner_error = error.inner_error
+            return cls(
+                code=inner_error.code,
+                message=inner_error.message,
+                target=inner_error.target if inner_error.target is not None else error.target
+            )
         return cls(
             code=error.code,
             message=error.message,
