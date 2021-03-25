@@ -287,9 +287,14 @@ class StorageGetFileTest(StorageTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
+        chunk_size_list = list()
         with open(FILE_PATH, 'wb') as stream:
             for data in file_client.download_file().chunks():
+                chunk_size_list.append(len(data))
                 stream.write(data)
+
+        for i in range(0, len(chunk_size_list) - 1):
+            self.assertEqual(chunk_size_list[i], self.MAX_CHUNK_GET_SIZE)
         # Assert
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
