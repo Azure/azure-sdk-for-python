@@ -1,4 +1,4 @@
-import os
+import sys
 import pytest
 from azure.core.utils import parse_connection_string
 
@@ -106,7 +106,8 @@ class CoreConnectionStringParserTests(AzureMgmtTestCase):
         keys = parse_result.keys()
         assert len(keys) == 3
         assert "enDpoiNT" in keys
-        assert "endpoint" in keys
+        if sys.version_info >= (3, 5):
+            assert "endpoint" in keys
     
     def test_case_insensitive_pop_method(self):
         conn_str = 'enDpoiNT=XXXXENDPOINTXXXX;sharedaccesskeyname=XXXXPOLICYXXXX;SHAREDACCESSKEY=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='
