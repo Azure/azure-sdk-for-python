@@ -29,7 +29,7 @@ USAGE:
 import asyncio
 
 
-async def test_sample_translation_with_glossaries_async():
+async def sample_translation_with_glossaries_async():
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation.aio import DocumentTranslationClient
@@ -87,7 +87,7 @@ async def test_sample_translation_with_glossaries_async():
 
 
 async def main():
-    await test_sample_translation_with_glossaries_async()
+    await sample_translation_with_glossaries_async()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

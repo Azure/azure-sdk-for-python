@@ -27,7 +27,7 @@ USAGE:
 """
 
 
-def test_sample_translation_with_glossaries():
+def sample_translation_with_glossaries():
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation import (
@@ -84,4 +84,4 @@ def test_sample_translation_with_glossaries():
 
 
 if __name__ == '__main__':
-    test_sample_translation_with_glossaries()
+    sample_translation_with_glossaries()
