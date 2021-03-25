@@ -1217,6 +1217,10 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
     :type disable_key_based_metadata_write_access: bool
     :param key_vault_key_uri: The URI of the key vault.
     :type key_vault_key_uri: str
+    :param default_identity: The default identity for accessing key vault used in features like
+     customer managed keys. The default identity needs to be explicitly set by the users. It can be
+     "FirstPartyIdentity", "SystemAssignedIdentity" and more.
+    :type default_identity: str
     :param public_network_access: Whether requests from Public Network are allowed. Possible values
      include: "Enabled", "Disabled".
     :type public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
@@ -1267,6 +1271,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
         'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
         'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
+        'default_identity': {'key': 'properties.defaultIdentity', 'type': 'str'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
         'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
@@ -1298,6 +1303,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         self.connector_offer = kwargs.get('connector_offer', None)
         self.disable_key_based_metadata_write_access = kwargs.get('disable_key_based_metadata_write_access', None)
         self.key_vault_key_uri = kwargs.get('key_vault_key_uri', None)
+        self.default_identity = kwargs.get('default_identity', None)
         self.public_network_access = kwargs.get('public_network_access', None)
         self.enable_free_tier = kwargs.get('enable_free_tier', None)
         self.api_properties = kwargs.get('api_properties', None)
@@ -1389,6 +1395,10 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :type disable_key_based_metadata_write_access: bool
     :param key_vault_key_uri: The URI of the key vault.
     :type key_vault_key_uri: str
+    :param default_identity: The default identity for accessing key vault used in features like
+     customer managed keys. The default identity needs to be explicitly set by the users. It can be
+     "FirstPartyIdentity", "SystemAssignedIdentity" and more.
+    :type default_identity: str
     :param public_network_access: Whether requests from Public Network are allowed. Possible values
      include: "Enabled", "Disabled".
     :type public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
@@ -1451,6 +1461,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
         'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
         'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
+        'default_identity': {'key': 'properties.defaultIdentity', 'type': 'str'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
         'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
@@ -1489,6 +1500,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         self.connector_offer = kwargs.get('connector_offer', None)
         self.disable_key_based_metadata_write_access = kwargs.get('disable_key_based_metadata_write_access', None)
         self.key_vault_key_uri = kwargs.get('key_vault_key_uri', None)
+        self.default_identity = kwargs.get('default_identity', None)
         self.public_network_access = kwargs.get('public_network_access', None)
         self.enable_free_tier = kwargs.get('enable_free_tier', None)
         self.api_properties = kwargs.get('api_properties', None)
@@ -1684,6 +1696,10 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
     :type disable_key_based_metadata_write_access: bool
     :param key_vault_key_uri: The URI of the key vault.
     :type key_vault_key_uri: str
+    :param default_identity: The default identity for accessing key vault used in features like
+     customer managed keys. The default identity needs to be explicitly set by the users. It can be
+     "FirstPartyIdentity", "SystemAssignedIdentity" and more.
+    :type default_identity: str
     :param public_network_access: Whether requests from Public Network are allowed. Possible values
      include: "Enabled", "Disabled".
     :type public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
@@ -1721,6 +1737,7 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
         'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
         'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
         'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
+        'default_identity': {'key': 'properties.defaultIdentity', 'type': 'str'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
         'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
@@ -1751,6 +1768,7 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
         self.connector_offer = kwargs.get('connector_offer', None)
         self.disable_key_based_metadata_write_access = kwargs.get('disable_key_based_metadata_write_access', None)
         self.key_vault_key_uri = kwargs.get('key_vault_key_uri', None)
+        self.default_identity = kwargs.get('default_identity', None)
         self.public_network_access = kwargs.get('public_network_access', None)
         self.enable_free_tier = kwargs.get('enable_free_tier', None)
         self.api_properties = kwargs.get('api_properties', None)

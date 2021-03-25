@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2021-01-15",
-    "total_api_version_list": ["2021-01-15"],
+    "chosen_version": "2021-03-15",
+    "total_api_version_list": ["2021-03-15"],
     "client": {
         "name": "CosmosDBManagementClient",
         "filename": "_cosmos_db_management_client",
@@ -9,7 +9,7 @@
         "custom_base_url": null,
         "azure_arm": true,
         "has_lro_operations": true,
-        "client_side_validation": true
+        "client_side_validation": false
     },
     "global_parameters": {
         "sync": {
