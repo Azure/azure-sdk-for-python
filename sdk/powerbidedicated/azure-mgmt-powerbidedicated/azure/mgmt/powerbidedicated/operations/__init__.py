@@ -8,8 +8,10 @@
 
 from ._capacities_operations import CapacitiesOperations
 from ._operations import Operations
+from ._auto_scale_vcores_operations import AutoScaleVCoresOperations
 
 __all__ = [
     'CapacitiesOperations',
     'Operations',
+    'AutoScaleVCoresOperations',
 ]
