@@ -29,14 +29,13 @@ steps:
     - pwsh: |
         Write-Host "${{artifact.name}}"
       displayName: Output Conda Artifact Details
-      
-    - ${{ each checkout in ${{ artifact.checkout }} }}:
+
+    - ${{ each checkout in artifact.checkout }}:
       - pwsh: |
-        Write-Host "${{checkout.package}}"
-        Write-Host "${{checkout.checkout_path}}"
-        Write-Host "${{checkout.version}}"
-      displayName: Output Checkout Details
-    
+          Write-Host "${{checkout.package}}"
+          Write-Host "${{checkout.checkout_path}}"
+          Write-Host "${{checkout.version}}"
+        displayName: Output Checkout Details
 
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
