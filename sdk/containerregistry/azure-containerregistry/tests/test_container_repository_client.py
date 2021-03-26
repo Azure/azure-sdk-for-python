@@ -7,6 +7,7 @@ from datetime import datetime
 import functools
 import os
 import pytest
+import subprocess
 
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 
@@ -38,6 +39,10 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
         self.recording_processors.append(AcrBodyReplacer())
         self.repository = "hello-world"
 
+    def _import_tag_to_be_deleted(self, repository="hello-world"):
+        command = ["powershell.exe", "Import-AzcontainerRegistryImage", "-ResourceGroupName"]
+        subprocess.run(command)
+
     @acr_preparer()
     def test_get_attributes(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
@@ -47,14 +52,12 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
         assert repo_attribs is not None
         assert repo_attribs.content_permissions is not None
 
-
     @acr_preparer()
     def test_get_properties(self, containerregistry_baseurl):
         repo_client = self.create_repository_client(containerregistry_baseurl, "hello-world")
 
         properties = repo_client.get_properties()
         assert isinstance(properties.content_permissions, ContentPermissions)
-
 
     @acr_preparer()
     def test_get_tag(self, containerregistry_baseurl):
@@ -64,7 +67,6 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
         assert tag is not None
         assert isinstance(tag, TagProperties)
-
 
     @acr_preparer()
     def test_list_registry_artifacts(self, containerregistry_baseurl):

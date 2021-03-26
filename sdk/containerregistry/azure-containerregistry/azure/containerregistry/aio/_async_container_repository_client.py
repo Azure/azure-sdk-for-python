@@ -65,7 +65,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        raise NotImplementedError("Has not been implemented")
+        await self._client.container_registry_repository.delete_tag(
+            self.repository, tag, **kwargs)
 
     async def get_properties(self, **kwargs):
         # type: (...) -> RepositoryProperties
@@ -74,7 +75,6 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: :class:~azure.containerregistry.RepositoryProperties
         :raises: None
         """
-        # GET '/acr/v1/{name}'
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry_repository.get_properties(self.repository, **kwargs)
         )
@@ -88,7 +88,6 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: :class:~azure.containerregistry.RegistryArtifactProperties
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        # GET '/acr/v1/{name}/_manifests/{digest}'
         if _is_tag(tag_or_digest):
             tag_or_digest = self._get_digest_from_tag(tag_or_digest)
 
@@ -107,7 +106,6 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: :class:~azure.containerregistry.TagProperties
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        # GET '/acr/v1/{name}/_tags/{reference}'
         return TagProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry_repository.get_tag_properties(self.repository, tag, **kwargs)
         )
