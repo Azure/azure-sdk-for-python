@@ -3,7 +3,7 @@
 
 -------------------
 
-## 1.1.2 (Unreleased)
+## 1.2.0 (Unreleased)
 
 ### Features
 
