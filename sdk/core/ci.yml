@@ -44,3 +44,10 @@ extends:
       safeName: azurecorecoretracingtelemetry
     - name: azure-common
       safeName: azurecommon
+    CondaArtifacts:
+    - name: azure-core
+      meta_source: meta.yml
+      checkout:
+        - package: azure-core
+          checkout_path: sdk/core/azure-core
+          version: 1.12.0

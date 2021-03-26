@@ -2,6 +2,9 @@ parameters:
 - name: Artifacts
   type: object
   default: []
+- name: CondaArtifacts
+  type: object
+  default: []
 - name: TestPipeline
   type: boolean
   default: false
@@ -43,6 +46,7 @@ stages:
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         Artifacts: ${{ parameters.Artifacts }}
+        CondaArtifacts: ${{ parameters.CondaArtifacts }}
         ${{ if eq(parameters.ServiceDirectory, 'template') }}:
           TestPipeline: true
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
@@ -52,6 +56,7 @@ stages:
         AdditionalTestMatrix: ${{ parameters.AdditionalTestMatrix }}
         DevFeedName: ${{ parameters.DevFeedName }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
@@ -67,3 +72,15 @@ stages:
         TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}
         TargetDocRepoName: ${{ parameters.TargetDocRepoName }}
         DevFeedName: ${{ parameters.DevFeedName }}
+
+  # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
+  - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
+    - template: archetype-conda-release.yml
+      parameters:
+        DependsOn: Build
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        CondaArtifacts: ${{ parameters.CondaArtifacts }}
+        ArtifactName: conda
+        ${{ if eq(parameters.ServiceDirectory, 'template') }}:
+          TestPipeline: true
+        

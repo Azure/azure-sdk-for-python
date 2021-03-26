@@ -1,0 +1,44 @@
+parameters:
+  - name: TestPipeline
+    type: boolean
+    default: false
+  - name: ServiceDirectory
+    type: string
+    default: ''
+  - name: CondaArtifacts
+    type: object
+    default: []
+
+steps:
+  - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+    parameters:
+      PackageName: "azure-template"
+      ServiceDirectory: "template"
+      TestPipeline: ${{ parameters.TestPipeline }}
+
+  - task: UsePythonVersion@0
+    displayName: 'Use Python $(PythonVersion)'
+    inputs:
+      versionSpec: $(PythonVersion)
+
+  - script: |
+      pip install -r eng/ci_tools.txt
+    displayName: 'Prep Environment'
+
+  - ${{ each artifact in parameters.CondaArtifacts }}:
+    - pwsh: |
+        Write-Host "${{artifact.name}}"
+      displayName: Output Conda Artifact Details
+      
+    - ${{ each checkout in ${{ artifact.checkout }} }}:
+      - pwsh: |
+        Write-Host "${{checkout.package}}"
+        Write-Host "${{checkout.checkout_path}}"
+        Write-Host "${{checkout.version}}"
+      displayName: Output Checkout Details
+    
+
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'conda'
