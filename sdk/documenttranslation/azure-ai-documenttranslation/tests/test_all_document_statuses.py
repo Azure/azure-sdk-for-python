@@ -8,6 +8,7 @@ import functools
 from testcase import DocumentTranslationTest
 from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
 from azure.ai.documenttranslation import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
+import pytest
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
 
@@ -46,6 +47,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
             self._validate_doc_status(document, target_language)
 
 
+    @pytest.mark.skip("top not exposed yet")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_statuses_with_pagination(self, client):
@@ -84,6 +86,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
                 self._validate_doc_status(document, target_language)
 
 
+    @pytest.mark.skip("skip not exposed yet")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_statuses_with_skip(self, client):
