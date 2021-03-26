@@ -189,6 +189,46 @@ class FileTest(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_snapshot_file_with_if_unmodified())
 
+    async def _test_get_file_with_snapshot(self):
+        directory_name = self._get_directory_reference(prefix="test")
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+        file_client = directory_client.get_file_client('filename')
+
+        old_data = b"this is the old data"
+        await file_client.create_file()
+        await file_client.upload_data(old_data, overwrite=True)
+        snapshot = await file_client.create_snapshot()
+        await file_client.upload_data("this is the new data data", overwrite=True)
+        snapshot_file_client = directory_client.get_file_client("filename", snapshot=snapshot)
+
+        data = await snapshot_file_client.download_file()
+        content = await data.readall()
+        self.assertEqual(content, old_data)
+
+    @record
+    def test_get_file_with_snapshot(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_get_file_with_snapshot())
+
+    async def _test_get_properties_with_snapshot(self):
+        directory_name = self._get_directory_reference(prefix="testdir")
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        await file_client.create_file()
+        snapshot = await file_client.create_snapshot()
+        await file_client.upload_data("this is the new data data", overwrite=True)
+        snapshot_file_client = directory_client.get_file_client("filename", snapshot=snapshot)
+        snapshot_props = await snapshot_file_client.get_file_properties()
+        self.assertEqual(snapshot_props.size, 0)
+
+    @record
+    def test_get_properties_with_snapshot(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_get_properties_with_snapshot())
+
     async def _test_snapshot_file_with_if_unmodified_fail(self):
         # Arrange
         directory_name = self._get_directory_reference()

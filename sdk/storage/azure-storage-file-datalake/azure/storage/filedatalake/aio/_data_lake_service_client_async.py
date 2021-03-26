@@ -4,12 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
-from typing import Any
+from typing import Any, Union
 
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import AsyncPipeline
 
 from azure.storage.blob.aio import BlobServiceClient
+from .. import FileProperties, FileSystemProperties
 from .._generated.aio import AzureDataLakeStorageRESTAPI
 from .._shared.base_client_async import AsyncTransportWrapper, AsyncStorageAccountHostsMixin
 from ._file_system_client_async import FileSystemClient
@@ -394,10 +395,8 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
                                        key_resolver_function=self.key_resolver_function
                                        )
 
-    def get_file_client(self, file_system,  # type: Union[FileSystemProperties, str]
-                        file_path  # type: Union[FileProperties, str]
-                        ):
-        # type: (...) -> DataLakeFileClient
+    def get_file_client(self, file_system, file_path, **kwargs):
+        # type: (Union[FileSystemProperties, str], Union[FileProperties, str], Any) -> DataLakeFileClient
         """Get a client to interact with the specified file.
 
         The file need not already exist.
@@ -410,6 +409,9 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             The file with which to interact. This can either be the full path of the file(from the root directory),
             or an instance of FileProperties. eg. directory/subdirectory/file
         :type file_path: str or ~azure.storage.filedatalake.FileProperties
+        :kwarg str snapshot:
+            The optional file snapshot on which to operate. This can be the snapshot ID string
+            or the response returned from :func:`create_snapshot`.
         :returns: A DataLakeFileClient.
         :rtype: ~azure.storage.filedatalake.aio.DataLakeFileClient
 
@@ -440,4 +442,4 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            key_resolver_function=self.key_resolver_function, snapshot=kwargs.pop("snapshot", None))

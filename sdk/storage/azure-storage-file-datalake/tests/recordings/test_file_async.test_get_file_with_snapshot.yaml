@@ -1,0 +1,339 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 35c9af43-8df3-11eb-a700-c8348e5fffbf
+      x-ms-date:
+      - Fri, 26 Mar 2021 05:22:08 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystem830911b3/test830911b3?resource=directory
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Fri, 26 Mar 2021 05:22:08 GMT
+      ETag: '"0x8D8F0171A3B543F"'
+      Last-Modified: Fri, 26 Mar 2021 05:22:08 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 3c6a45ea-e01f-0047-1eff-21a107000000
+      x-ms-version: '2020-02-10'
+    status:
+      code: 201
+      message: Created
+    url: https://seanprodhierarchical.dfs.core.windows.net/filesystem830911b3/test830911b3?resource=directory
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 35e378c8-8df3-11eb-91cc-c8348e5fffbf
+      x-ms-date:
+      - Fri, 26 Mar 2021 05:22:08 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystem830911b3/test830911b3%2Ffilename?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Fri, 26 Mar 2021 05:22:08 GMT
+      ETag: '"0x8D8F0171A3E6993"'
+      Last-Modified: Fri, 26 Mar 2021 05:22:08 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 3c6a45ed-e01f-0047-21ff-21a107000000
+      x-ms-version: '2020-02-10'
+    status:
+      code: 201
+      message: Created
+    url: https://seanprodhierarchical.dfs.core.windows.net/filesystem830911b3/test830911b3%2Ffilename?resource=file
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 35e65f05-8df3-11eb-884c-c8348e5fffbf
+      x-ms-date:
+      - Fri, 26 Mar 2021 05:22:08 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystem830911b3/test830911b3%2Ffilename?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Fri, 26 Mar 2021 05:22:08 GMT
+      ETag: '"0x8D8F0171A415AE7"'
+      Last-Modified: Fri, 26 Mar 2021 05:22:08 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 3c6a45ef-e01f-0047-23ff-21a107000000
+      x-ms-version: '2020-02-10'
+    status:
+      code: 201
+      message: Created
+    url: https://seanprodhierarchical.dfs.core.windows.net/filesystem830911b3/test830911b3%2Ffilename?resource=file
+- request:
+    body: this is the old data
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '20'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 35e99368-8df3-11eb-9698-c8348e5fffbf
+      x-ms-date:
+      - Fri, 26 Mar 2021 05:22:08 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: PATCH
+    uri: https://storagename.dfs.core.windows.net/filesystem830911b3/test830911b3%2Ffilename?action=append&position=0
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Fri, 26 Mar 2021 05:22:08 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 3c6a45f1-e01f-0047-25ff-21a107000000
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+    url: https://seanprodhierarchical.dfs.core.windows.net/filesystem830911b3/test830911b3%2Ffilename?action=append&position=0
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      If-Match:
+      - '"0x8D8F0171A415AE7"'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 35ec79a8-8df3-11eb-8233-c8348e5fffbf
+      x-ms-date:
+      - Fri, 26 Mar 2021 05:22:08 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: PATCH
+    uri: https://storagename.dfs.core.windows.net/filesystem830911b3/test830911b3%2Ffilename?action=flush&position=20&close=true
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Fri, 26 Mar 2021 05:22:08 GMT
+      ETag: '"0x8D8F0171A49E343"'
+      Last-Modified: Fri, 26 Mar 2021 05:22:08 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 3c6a45f4-e01f-0047-28ff-21a107000000
+      x-ms-request-server-encrypted: 'false'
+      x-ms-version: '2020-02-10'
+    status:
+      code: 200
+      message: OK
+    url: https://seanprodhierarchical.dfs.core.windows.net/filesystem830911b3/test830911b3%2Ffilename?action=flush&position=20&close=true
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 35f1f7c4-8df3-11eb-9592-c8348e5fffbf
+      x-ms-date:
+      - Fri, 26 Mar 2021 05:22:08 GMT
+      x-ms-encryption-algorithm:
+      - AES256
+      x-ms-version:
+      - '2020-06-12'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/filesystem830911b3/test830911b3/filename?comp=snapshot
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Fri, 26 Mar 2021 05:22:08 GMT
+      ETag: '"0x8D8F0171A49E343"'
+      Last-Modified: Fri, 26 Mar 2021 05:22:08 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: cea5e36d-d01e-003e-2fff-215d23000000
+      x-ms-request-server-encrypted: 'true'
+      x-ms-snapshot: '2021-03-26T05:22:09.0831530Z'
+      x-ms-version: '2020-06-12'
+    status:
+      code: 201
+      message: Created
+    url: https://seanprodhierarchical.blob.core.windows.net/filesystem830911b3/test830911b3/filename?comp=snapshot
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 3615c2af-8df3-11eb-8dba-c8348e5fffbf
+      x-ms-date:
+      - Fri, 26 Mar 2021 05:22:08 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystem830911b3/test830911b3%2Ffilename?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Fri, 26 Mar 2021 05:22:08 GMT
+      ETag: '"0x8D8F0171A70F642"'
+      Last-Modified: Fri, 26 Mar 2021 05:22:09 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 3c6a460d-e01f-0047-41ff-21a107000000
+      x-ms-version: '2020-02-10'
+    status:
+      code: 201
+      message: Created
+    url: https://seanprodhierarchical.dfs.core.windows.net/filesystem830911b3/test830911b3%2Ffilename?resource=file
+- request:
+    body: this is the new data data
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '25'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 3618f6ed-8df3-11eb-93ac-c8348e5fffbf
+      x-ms-date:
+      - Fri, 26 Mar 2021 05:22:08 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: PATCH
+    uri: https://storagename.dfs.core.windows.net/filesystem830911b3/test830911b3%2Ffilename?action=append&position=0
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Fri, 26 Mar 2021 05:22:08 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 3c6a4610-e01f-0047-44ff-21a107000000
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+    url: https://seanprodhierarchical.dfs.core.windows.net/filesystem830911b3/test830911b3%2Ffilename?action=append&position=0
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      If-Match:
+      - '"0x8D8F0171A70F642"'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 361d63be-8df3-11eb-bbd2-c8348e5fffbf
+      x-ms-date:
+      - Fri, 26 Mar 2021 05:22:08 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: PATCH
+    uri: https://storagename.dfs.core.windows.net/filesystem830911b3/test830911b3%2Ffilename?action=flush&position=25&close=true
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Fri, 26 Mar 2021 05:22:08 GMT
+      ETag: '"0x8D8F0171A793D0D"'
+      Last-Modified: Fri, 26 Mar 2021 05:22:09 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 3c6a4616-e01f-0047-4aff-21a107000000
+      x-ms-request-server-encrypted: 'false'
+      x-ms-version: '2020-02-10'
+    status:
+      code: 200
+      message: OK
+    url: https://seanprodhierarchical.dfs.core.windows.net/filesystem830911b3/test830911b3%2Ffilename?action=flush&position=25&close=true
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 36215b81-8df3-11eb-85f7-c8348e5fffbf
+      x-ms-date:
+      - Fri, 26 Mar 2021 05:22:08 GMT
+      x-ms-encryption-algorithm:
+      - AES256
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2020-06-12'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/filesystem830911b3/test830911b3/filename?snapshot=2021-03-26T05:22:09.0831530Z
+  response:
+    body:
+      string: this is the old data
+    headers:
+      Accept-Ranges: bytes
+      Content-Length: '20'
+      Content-Range: bytes 0-19/20
+      Content-Type: application/octet-stream
+      Date: Fri, 26 Mar 2021 05:22:09 GMT
+      ETag: '"0x8D8F0171A49E343"'
+      Last-Modified: Fri, 26 Mar 2021 05:22:08 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-type: BlockBlob
+      x-ms-creation-time: Fri, 26 Mar 2021 05:22:08 GMT
+      x-ms-group: $superuser
+      x-ms-owner: $superuser
+      x-ms-permissions: rw-r-----
+      x-ms-request-id: cea5e475-d01e-003e-70ff-215d23000000
+      x-ms-server-encrypted: 'true'
+      x-ms-version: '2020-06-12'
+    status:
+      code: 206
+      message: Partial Content
+    url: https://seanprodhierarchical.blob.core.windows.net/filesystem830911b3/test830911b3/filename?snapshot=2021-03-26T05:22:09.0831530Z
+version: 1

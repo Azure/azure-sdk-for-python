@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
-from typing import Any
+from typing import Any, Union
 
 try:
     from urllib.parse import quote, unquote
@@ -472,9 +472,8 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         await file_client.create_file(**kwargs)
         return file_client
 
-    def get_file_client(self, file  # type: Union[FileProperties, str]
-                        ):
-        # type: (...) -> DataLakeFileClient
+    def get_file_client(self, file, **kwargs):
+        # type: (Union[FileProperties, str], Any) -> DataLakeFileClient
         """Get a client to interact with the specified file.
 
         The file need not already exist.
@@ -483,6 +482,9 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             The file with which to interact. This can either be the name of the file,
             or an instance of FileProperties. eg. directory/subdirectory/file
         :type file: str or ~azure.storage.filedatalake.FileProperties
+        :kwarg str snapshot:
+            The optional file snapshot on which to operate. This can be the snapshot ID string
+            or the response returned from :func:`create_snapshot`.
         :returns: A DataLakeFileClient.
         :rtype: ~azure.storage.filedatalake.aio.DataLakeFileClient
 
@@ -509,7 +511,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            key_resolver_function=self.key_resolver_function, snapshot=kwargs.pop("snapshot", None))
 
     def get_sub_directory_client(self, sub_directory  # type: Union[DirectoryProperties, str]
                                  ):

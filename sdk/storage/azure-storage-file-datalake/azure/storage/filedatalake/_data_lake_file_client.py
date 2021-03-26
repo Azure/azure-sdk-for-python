@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from io import BytesIO
-from typing import Any
+from typing import Any, Optional, Union, Dict
 
 try:
     from urllib.parse import quote, unquote
@@ -53,6 +53,9 @@ class DataLakeFileClient(PathClient):
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+    :kwarg str snapshot:
+        The optional file snapshot on which to operate. This can be the snapshot ID string
+        or the response returned from :func:`create_snapshot`.
 
     .. admonition:: Example:
 
@@ -87,12 +90,8 @@ class DataLakeFileClient(PathClient):
 
         :param str conn_str:
             A connection string to an Azure Storage account.
-        :param file_system_name: The name of file system to interact with.
-        :type file_system_name: str
-        :param directory_name: The name of directory to interact with. The directory is under file system.
-        :type directory_name: str
-        :param file_name: The name of file to interact with. The file is under directory.
-        :type file_name: str
+        :param str file_system_name: The name of file system to interact with.
+        :param str file_path: The name of file to interact with. The file is under directory.
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
@@ -100,6 +99,9 @@ class DataLakeFileClient(PathClient):
             an instance of a AzureSasCredential from azure.core.credentials, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
+        :kwarg str snapshot:
+            The optional file snapshot on which to operate. This can be the snapshot ID string
+            or the response returned from :func:`create_snapshot`.
         :return a DataLakeFileClient
         :rtype ~azure.storage.filedatalake.DataLakeFileClient
         """
@@ -199,6 +201,10 @@ class DataLakeFileClient(PathClient):
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :kwarg str delete_snapshots:
+        Required if the blob has associated snapshots. Values include:
+         - "only": Deletes only the blobs snapshots.
+         - "include": Deletes the blob along with all snapshots.
         :return: None
 
         .. admonition:: Example:

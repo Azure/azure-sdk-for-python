@@ -751,9 +751,8 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                                        loop=self._loop
                                        )
 
-    def get_file_client(self, file_path  # type: Union[FileProperties, str]
-                        ):
-        # type: (...) -> DataLakeFileClient
+    def get_file_client(self, file_path, **kwargs):
+        # type: (Union[FileProperties, str], Any) -> DataLakeFileClient
         """Get a client to interact with the specified file.
 
         The file need not already exist.
@@ -762,6 +761,9 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             The file with which to interact. This can either be the path of the file(from root directory),
             or an instance of FileProperties. eg. directory/subdirectory/file
         :type file_path: str or ~azure.storage.filedatalake.FileProperties
+        :kwarg str snapshot:
+            The optional file snapshot on which to operate. This can be the snapshot ID string
+            or the response returned from :func:`create_snapshot`.
         :returns: A DataLakeFileClient.
         :rtype: ~azure.storage.filedatalake.aio.DataLakeFileClient
 
@@ -787,4 +789,4 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function, loop=self._loop)
+            key_resolver_function=self.key_resolver_function, loop=self._loop, snapshot=kwargs.pop("snapshot", None))

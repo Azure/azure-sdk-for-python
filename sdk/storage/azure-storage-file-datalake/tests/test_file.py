@@ -124,6 +124,38 @@ class FileTest(StorageTestCase):
         self.assertIsNotNone(resp['snapshot'])
 
     @record
+    def test_get_file_with_snapshot(self):
+        directory_name = self._get_directory_reference(prefix="test")
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        old_data = b"this is the old data"
+        file_client.create_file()
+        file_client.upload_data(old_data, overwrite=True)
+        snapshot = file_client.create_snapshot()
+        file_client.upload_data("this is the new data data", overwrite=True)
+        snapshot_file_client = directory_client.get_file_client("filename", snapshot=snapshot)
+
+        data = snapshot_file_client.download_file()
+        content = data.readall()
+        self.assertEqual(content, old_data)
+
+    @record
+    def test_get_properties_with_snapshot(self):
+        directory_name = self._get_directory_reference(prefix="testdir")
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        file_client.create_file()
+        snapshot = file_client.create_snapshot()
+        file_client.upload_data("this is the new data data", overwrite=True)
+        snapshot_file_client = directory_client.get_file_client("filename", snapshot=snapshot)
+
+        self.assertEqual(snapshot_file_client.get_file_properties().size, 0)
+
+    @record
     def test_snapshot_file_with_if_modified_fail(self):
         # Arrange
         directory_name = self._get_directory_reference()

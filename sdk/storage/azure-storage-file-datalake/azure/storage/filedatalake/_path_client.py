@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Dict
+from typing import Any, Dict, Optional, Union
 
 try:
     from urllib.parse import urlparse, quote
@@ -36,6 +36,7 @@ class PathClient(StorageAccountHostsMixin):
             file_system_name,  # type: str
             path_name,  # type: str
             credential=None,  # type: Optional[Any]
+            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -67,12 +68,18 @@ class PathClient(StorageAccountHostsMixin):
         if datalake_hosts:
             blob_primary_account_url = convert_dfs_url_to_blob_url(datalake_hosts[LocationMode.PRIMARY])
             blob_hosts = {LocationMode.PRIMARY: blob_primary_account_url, LocationMode.SECONDARY: ""}
-        self._blob_client = BlobClient(blob_account_url, file_system_name, path_name,
-                                       credential=credential, _hosts=blob_hosts, **kwargs)
-
-        _, sas_token = parse_query(parsed_url.query)
+        path_snapshot, sas_token = parse_query(parsed_url.query)
         self.file_system_name = file_system_name
         self.path_name = path_name
+        try:
+            self.snapshot = snapshot.snapshot # type: ignore
+        except AttributeError:
+            try:
+                self.snapshot = snapshot['snapshot'] # type: ignore
+            except TypeError:
+                self.snapshot = snapshot or path_snapshot
+        self._blob_client = BlobClient(blob_account_url, file_system_name, path_name,
+                                       credential=credential, _hosts=blob_hosts, snapshot=self.snapshot, **kwargs)
 
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
 

@@ -45,6 +45,9 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+    :kwarg str snapshot:
+        The optional file snapshot on which to operate. This can be the snapshot ID string
+        or the response returned from :func:`create_snapshot`.
 
     .. admonition:: Example:
 
