@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags
+    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/latest
   response:
     body:
       string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 25 Mar 2021 20:03:13 GMT
+      - Fri, 26 Mar 2021 15:20:11 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 25 Mar 2021 20:03:15 GMT
+      - Fri, 26 Mar 2021 15:20:12 GMT
       server:
       - openresty
       strict-transport-security:
@@ -107,7 +107,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 25 Mar 2021 20:03:15 GMT
+      - Fri, 26 Mar 2021 15:20:12 GMT
       server:
       - openresty
       strict-transport-security:
@@ -129,10 +129,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags
+    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/latest
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","tags":[{"name":"first","digest":"sha256:90659bf80b44ce6be8234e6ff90a1ac34acbeb826903b02cfa0da11c82cbc042","createdTime":"2021-03-16T15:14:35.3014161Z","lastUpdateTime":"2021-03-16T15:14:35.3014161Z","signed":false,"quarantineState":"Passed","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}},{"name":"latest","digest":"sha256:90659bf80b44ce6be8234e6ff90a1ac34acbeb826903b02cfa0da11c82cbc042","createdTime":"2021-03-16T15:16:49.3869143Z","lastUpdateTime":"2021-03-16T15:16:49.3869143Z","signed":false,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}]}
+      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","tag":{"name":"latest","digest":"sha256:90659bf80b44ce6be8234e6ff90a1ac34acbeb826903b02cfa0da11c82cbc042","createdTime":"2021-03-16T15:16:49.3869143Z","lastUpdateTime":"2021-03-16T15:16:49.3869143Z","signed":false,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}}
 
         '
     headers:
@@ -144,11 +144,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '722'
+      - '380'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 25 Mar 2021 20:03:15 GMT
+      - Fri, 26 Mar 2021 15:20:13 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -193,7 +193,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 25 Mar 2021 20:03:16 GMT
+      - Fri, 26 Mar 2021 15:20:13 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -233,7 +233,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 25 Mar 2021 20:03:16 GMT
+      - Fri, 26 Mar 2021 15:20:13 GMT
       server:
       - openresty
       strict-transport-security:
@@ -269,7 +269,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 25 Mar 2021 20:03:16 GMT
+      - Fri, 26 Mar 2021 15:20:13 GMT
       server:
       - openresty
       strict-transport-security:
@@ -312,7 +312,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 25 Mar 2021 20:03:16 GMT
+      - Fri, 26 Mar 2021 15:20:14 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

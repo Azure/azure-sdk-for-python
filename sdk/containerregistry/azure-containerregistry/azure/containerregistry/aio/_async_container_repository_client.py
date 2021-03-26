@@ -30,6 +30,11 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         self.repository = repository
         super(ContainerRepositoryClient, self).__init__(endpoint=self._endpoint, credential=credential, **kwargs)
 
+    async def _get_digest_from_tag(self, tag):
+        # type: (str) -> str
+        tag_props = await self.get_tag_properties(tag)
+        return tag_props.digest
+
     async def delete(self, **kwargs):
         # type: (...) -> None
         """Delete a repository
@@ -61,13 +66,6 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         raise NotImplementedError("Has not been implemented")
 
-    def get_digest_from_tag(self, tag):
-        # type: (str) -> str
-        async for t in self.list_tags():
-            if t.name == tag:
-                return t.digest
-        raise ValueError("Could not find a digest for tag {}".format(tag))
-
     async def get_properties(self):
         # type: (...) -> RepositoryProperties
         """Get the properties of a repository
@@ -91,7 +89,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         # GET '/acr/v1/{name}/_manifests/{digest}'
         if self._is_tag(tag_or_digest):
-            tag_or_digest = self.get_digest_from_tag(tag_or_digest)
+            tag_or_digest = self._get_digest_from_tag(tag_or_digest)
 
         return RegistryArtifactProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry_repository.get_registry_artifact_properties(
@@ -189,7 +187,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :raises: None
         """
         if self._is_tag(tag_or_digest):
-            tag_or_digest = self.get_digest_from_tag(tag_or_digest)
+            tag_or_digest = self._get_digest_from_tag(tag_or_digest)
 
         await self._client.container_registry_repository.update_manifest_attributes(
             self.repository, tag_or_digest, value=permissions.to_generated()

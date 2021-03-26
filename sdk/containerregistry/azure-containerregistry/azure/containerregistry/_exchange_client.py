@@ -65,20 +65,22 @@ class ACRExchangeClient(object):
     def get_acr_access_token(self, challenge):
         # type: (str) -> str
         parsed_challenge = self._parse_challenge(challenge)
-        refresh_token = self.exchange_aad_token_for_refresh_token(**parsed_challenge)
-        return self.exchange_refresh_token_for_access_token(refresh_token, **parsed_challenge)
+        refresh_token = self.exchange_aad_token_for_refresh_token(service=parsed_challenge["service"])
+        return self.exchange_refresh_token_for_access_token(
+            refresh_token, service=parsed_challenge["service"], scope=parsed_challenge["scope"]
+        )
 
-    def exchange_aad_token_for_refresh_token(self, service=None, **kwargs):
+    def exchange_aad_token_for_refresh_token(self, service=None):
         # type: (str, Dict[str, Any]) -> str
         refresh_token = self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
-            service=service, access_token=self._credential.get_token(self._credential_scopes).token, **kwargs
+            service=service, access_token=self._credential.get_token(self._credential_scopes).token
         )
         return refresh_token.refresh_token
 
-    def exchange_refresh_token_for_access_token(self, refresh_token, service=None, scope=None, **kwargs):
+    def exchange_refresh_token_for_access_token(self, refresh_token, service=None, scope=None):
         # type: (str, str, str) -> str
         access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
-            service=service, scope=scope, refresh_token=refresh_token, **kwargs
+            service=service, scope=scope, refresh_token=refresh_token
         )
         return access_token.access_token
 
