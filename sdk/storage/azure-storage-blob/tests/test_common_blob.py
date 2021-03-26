@@ -622,7 +622,6 @@ class StorageCommonBlobTest(StorageTestCase):
         #Assert
         self.assertFalse(props.server_encrypted)
 
-
     @GlobalStorageAccountPreparer()
     def test_get_blob_properties_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -641,7 +640,6 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertIsNotNone(blob)
         self.assertEqual(props.blob_type, BlobType.BlockBlob)
         self.assertEqual(props.size, len(self.byte_data))
-
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_properties_with_leased_blob(self, resource_group, location, storage_account, storage_account_key):
