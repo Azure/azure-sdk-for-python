@@ -60,7 +60,7 @@ class HttpVerbs(str, Enum):
 
 ########################### UTILS SECTION #################################
 
-def _is_stream(content):
+def _is_stream_or_str_bytes(content):
     return isinstance(content, (str, bytes)) or any(
         hasattr(content, attr) for attr in ["read", "__iter__", "__aiter__"]
     )
@@ -93,13 +93,18 @@ def _set_content_body(content, internal_request):
     # type: (ContentType, _PipelineTransportHttpRequest) -> None
     headers = internal_request.headers
     content_type = headers.get("Content-Type")
-    if _is_stream(content):
+    if _is_stream_or_str_bytes(content):
         # stream will be bytes / str, or iterator of bytes / str
         internal_request.set_streamed_data_body(content)
         if isinstance(content, (str, bytes)) and content:
             _set_content_length_header("Content-Length", str(len(internal_request.data)), internal_request)
+            if isinstance(content, str):
+                _set_content_type_header("text/plain", internal_request)
+            else:
+                _set_content_type_header("application/octet-stream", internal_request)
         elif isinstance(content, (Iterable, AsyncIterable)):
             _set_content_length_header("Transfer-Encoding", "chunked", internal_request)
+            _set_content_type_header("application/octet-stream", internal_request)
     elif isinstance(content, ET.Element):
         # XML body
         internal_request.set_xml_body(content)
