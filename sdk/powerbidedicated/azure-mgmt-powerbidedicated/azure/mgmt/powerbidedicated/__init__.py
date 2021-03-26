@@ -7,9 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._power_bi_dedicated import PowerBIDedicated
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['PowerBIDedicated']
 
 try:
