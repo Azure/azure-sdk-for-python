@@ -185,8 +185,10 @@ class DocumentStatusDetail(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param path: Required. Location of the document or folder.
+    :param path: Location of the document or folder.
     :type path: str
+    :param source_path: Required. Location of the source document.
+    :type source_path: str
     :param created_date_time_utc: Required. Operation created date time.
     :type created_date_time_utc: ~datetime.datetime
     :param last_action_date_time_utc: Required. Date time in which the operation's status has been
@@ -210,7 +212,7 @@ class DocumentStatusDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'path': {'required': True},
+        'source_path': {'required': True},
         'created_date_time_utc': {'required': True},
         'last_action_date_time_utc': {'required': True},
         'status': {'required': True},
@@ -221,6 +223,7 @@ class DocumentStatusDetail(msrest.serialization.Model):
 
     _attribute_map = {
         'path': {'key': 'path', 'type': 'str'},
+        'source_path': {'key': 'sourcePath', 'type': 'str'},
         'created_date_time_utc': {'key': 'createdDateTimeUtc', 'type': 'iso-8601'},
         'last_action_date_time_utc': {'key': 'lastActionDateTimeUtc', 'type': 'iso-8601'},
         'status': {'key': 'status', 'type': 'str'},
@@ -236,7 +239,8 @@ class DocumentStatusDetail(msrest.serialization.Model):
         **kwargs
     ):
         super(DocumentStatusDetail, self).__init__(**kwargs)
-        self.path = kwargs['path']
+        self.path = kwargs.get('path', None)
+        self.source_path = kwargs['source_path']
         self.created_date_time_utc = kwargs['created_date_time_utc']
         self.last_action_date_time_utc = kwargs['last_action_date_time_utc']
         self.status = kwargs['status']
@@ -305,7 +309,7 @@ class ErrorV2(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Enums containing high level error codes. Possible values include:
+    :param code: Required. Enums containing high level error codes. Possible values include:
      "InvalidRequest", "InvalidArgument", "InternalServerError", "ServiceUnavailable",
      "ResourceNotFound", "Unauthorized", "RequestRateTooHigh".
     :type code: str or ~azure.ai.documenttranslation.models.ErrorCodeV2
@@ -323,6 +327,7 @@ class ErrorV2(msrest.serialization.Model):
     """
 
     _validation = {
+        'code': {'required': True},
         'message': {'required': True},
         'target': {'readonly': True},
     }
@@ -339,7 +344,7 @@ class ErrorV2(msrest.serialization.Model):
         **kwargs
     ):
         super(ErrorV2, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
+        self.code = kwargs['code']
         self.message = kwargs['message']
         self.target = None
         self.inner_error = kwargs.get('inner_error', None)
@@ -348,20 +353,31 @@ class ErrorV2(msrest.serialization.Model):
 class FileFormat(msrest.serialization.Model):
     """FileFormat.
 
-    :param format: Name of the format.
+    All required parameters must be populated in order to send to Azure.
+
+    :param format: Required. Name of the format.
     :type format: str
-    :param file_extensions: Supported file extension for this format.
+    :param file_extensions: Required. Supported file extension for this format.
     :type file_extensions: list[str]
-    :param content_types: Supported Content-Types for this format.
+    :param content_types: Required. Supported Content-Types for this format.
     :type content_types: list[str]
+    :param default_version: Default version if none is specified.
+    :type default_version: str
     :param versions: Supported Version.
     :type versions: list[str]
     """
+
+    _validation = {
+        'format': {'required': True},
+        'file_extensions': {'required': True},
+        'content_types': {'required': True},
+    }
 
     _attribute_map = {
         'format': {'key': 'format', 'type': 'str'},
         'file_extensions': {'key': 'fileExtensions', 'type': '[str]'},
         'content_types': {'key': 'contentTypes', 'type': '[str]'},
+        'default_version': {'key': 'defaultVersion', 'type': 'str'},
         'versions': {'key': 'versions', 'type': '[str]'},
     }
 
@@ -370,9 +386,10 @@ class FileFormat(msrest.serialization.Model):
         **kwargs
     ):
         super(FileFormat, self).__init__(**kwargs)
-        self.format = kwargs.get('format', None)
-        self.file_extensions = kwargs.get('file_extensions', None)
-        self.content_types = kwargs.get('content_types', None)
+        self.format = kwargs['format']
+        self.file_extensions = kwargs['file_extensions']
+        self.content_types = kwargs['content_types']
+        self.default_version = kwargs.get('default_version', None)
         self.versions = kwargs.get('versions', None)
 
 
@@ -412,9 +429,9 @@ class Glossary(msrest.serialization.Model):
     
      If the translation language pair is not present in the glossary, it will not be applied.
     :type glossary_url: str
-    :param format: Format.
+    :param format: Required. Format.
     :type format: str
-    :param version: Version.
+    :param version: Optional Version.  If not specified, default is used.
     :type version: str
     :param storage_source: Storage Source. Possible values include: "AzureBlob".
     :type storage_source: str or ~azure.ai.documenttranslation.models.StorageSource
@@ -422,6 +439,7 @@ class Glossary(msrest.serialization.Model):
 
     _validation = {
         'glossary_url': {'required': True},
+        'format': {'required': True},
     }
 
     _attribute_map = {
@@ -437,7 +455,7 @@ class Glossary(msrest.serialization.Model):
     ):
         super(Glossary, self).__init__(**kwargs)
         self.glossary_url = kwargs['glossary_url']
-        self.format = kwargs.get('format', None)
+        self.format = kwargs['format']
         self.version = kwargs.get('version', None)
         self.storage_source = kwargs.get('storage_source', None)
 
