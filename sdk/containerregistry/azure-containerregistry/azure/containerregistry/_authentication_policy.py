@@ -44,7 +44,7 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         super(ContainerRegistryChallengePolicy, self).__init__()
         self._scopes = "https://management.core.windows.net/.default"
         self._credential = credential
-        self._token = None  # type: Optional[str]
+        self._token = None  # type: Optional[AccessToken]
         self._exchange_client = ACRExchangeClient(endpoint, self._credential)
 
     def on_request(self, request):
