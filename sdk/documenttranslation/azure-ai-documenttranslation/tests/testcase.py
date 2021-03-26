@@ -125,6 +125,7 @@ class DocumentTranslationTest(AzureTestCase):
             time.sleep(30)
 
 
+    # model helpers
     def _validate_doc_status(self, doc_details, target_language):
         # specific assertions
         self.assertEqual(doc_details.status, "Succeeded")
@@ -136,18 +137,6 @@ class DocumentTranslationTest(AzureTestCase):
         self.assertIsNotNone(doc_details.characters_charged)
         self.assertIsNotNone(doc_details.created_on)
         self.assertIsNotNone(doc_details.last_updated_on)
-
-
-    def _submit_and_validate_translation_job(self, client, translation_inputs, total_docs_count):
-        # submit job
-        job_details = client.create_translation_job(translation_inputs)
-        self.assertIsNotNone(job_details.id)
-        # wait for result
-        job_details = client.wait_until_done(job_details.id)
-        # validate
-        self._validate_translation_job(self, job_details, total_docs_count, "Succeeded")
-
-        return job_details.id
 
     def _validate_translation_job(self, job_details, total_docs_count, status):
         # status
@@ -171,9 +160,39 @@ class DocumentTranslationTest(AzureTestCase):
         self.assertIsNotNone(format.content_types)
         self.assertIsNotNone(format.format_versions)
 
+
+    # client helpers
+    def _submit_and_validate_translation_job(self, client, translation_inputs, total_docs_count):
+        # submit job
+        job_details = client.create_translation_job(translation_inputs)
+        self.assertIsNotNone(job_details.id)
+        # wait for result
+        job_details = client.wait_until_done(job_details.id)
+        # validate
+        self._validate_translation_job(self, job_details, total_docs_count, "Succeeded")
+
+        return job_details.id
+
+    async def _submit_and_validate_translation_jobs_async(self, async_client, translation_inputs, total_docs_count):
+        # submit job
+        job_details = await async_client.create_translation_job(translation_inputs)
+        self.assertIsNotNone(job_details.id)
+        # wait for result
+        job_details = await async_client.wait_until_done(job_details.id)
+        # validate
+        self._validate_translation_job(self, job_details, total_docs_count, "Succeeded")
+
+        return job_details.id
+
     def _create_and_submit_sample_translation_jobs(self, client, jobs_count):
         for i in range(jobs_count):
             # prepare containers and test data
+            '''
+                WARNING!!
+                TOTAL_DOC_COUNT_IN_JOB = 1
+                if you plan to create more docs in the job,
+                please update this variable TOTAL_DOC_COUNT_IN_JOB in respective test
+            '''
             blob_data = b'This is some text'  # TOTAL_DOC_COUNT_IN_JOB = 1
             source_container_sas_url = self.create_source_container(data=blob_data)
             target_container_sas_url = self.create_target_container()
@@ -193,4 +212,39 @@ class DocumentTranslationTest(AzureTestCase):
 
             # submit multiple jobs
             job_detail = client.create_translation_job(translation_inputs)
+            self.assertIsNotNone(job_detail.id)
+
+    async def _create_and_submit_sample_translation_jobs_async(self, async_client, jobs_count):
+        for i in range(jobs_count):
+            # prepare containers and test data
+            '''
+                # WARNING!!
+                TOTAL_DOC_COUNT_IN_JOB = 1
+                if you plan to create more docs in the job,
+                please update this variable TOTAL_DOC_COUNT_IN_JOB in respective test
+
+                # note
+                since we're only testing the client library
+                we can use sync container calls in here
+                no need for async container clients!
+            '''
+            blob_data = b'This is some text'  
+            source_container_sas_url = self.create_source_container(data=blob_data)
+            target_container_sas_url = self.create_target_container()
+
+            # prepare translation inputs
+            translation_inputs = [
+                DocumentTranslationInput(
+                    source_url=source_container_sas_url,
+                    targets=[
+                        TranslationTarget(
+                            target_url=target_container_sas_url,
+                            language_code="es"
+                        )
+                    ]
+                )
+            ]
+
+            # submit multiple jobs
+            job_detail = await async_client.create_translation_job(translation_inputs)
             self.assertIsNotNone(job_detail.id)

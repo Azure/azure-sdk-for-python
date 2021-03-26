@@ -43,4 +43,4 @@ class TestCancelJob(DocumentTranslationTest):
 
         # check job status
         job_details = client.get_job_status(job_details.id)
-        self._validate_translation_job(job_details, 1, "Canceled")
+        self._validate_translation_job(job_details, 1, "Cancelled")

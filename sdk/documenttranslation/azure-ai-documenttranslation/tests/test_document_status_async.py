@@ -7,7 +7,8 @@
 import functools
 from testcase import DocumentTranslationTest
 from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
-from azure.ai.documenttranslation import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
+from azure.ai.documenttranslation import DocumentTranslationInput, TranslationTarget
+from azure.ai.documenttranslation.aio import DocumentTranslationClient
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
 
@@ -15,7 +16,7 @@ class TestDocumentStatus(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_statuses(self, client):
+    async def test_list_statuses(self, client):
         # prepare containers and test data
         blob_data = [b'This is some text']
         source_container_sas_url = self.create_source_container(data=blob_data)
@@ -36,16 +37,16 @@ class TestDocumentStatus(DocumentTranslationTest):
         ]
 
         # submit and validate translation job
-        job_id = self._submit_and_validate_translation_job(self, client, translation_inputs, len(blob_data))
+        job_id = await self._submit_and_validate_translation_job(self, client, translation_inputs, len(blob_data))
 
         # get doc statuses
         doc_statuses = client.list_all_document_statuses(job_id)
         self.assertIsNotNone(doc_statuses)
 
         # get first doc
-        first_doc = next(doc_statuses)
+        first_doc = doc_statuses._anext_() # TODO not sure about this!
         self.assertIsNotNone(first_doc.id)
 
         # get doc details
-        doc_status = client.get_document_status(job_id=job_id, document_id=first_doc.id)
+        doc_status = await client.get_document_status(job_id=job_id, document_id=first_doc.id)
         self._validate_doc_status(doc_status, target_language)
