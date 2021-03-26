@@ -25,7 +25,7 @@ from azure.identity.aio import DefaultAzureCredential
 from azure_devtools.scenario_tests import RecordingProcessor
 from devtools_testutils import AzureTestCase
 
-from ..testcase import ContainerRegistryTestClass
+from testcase import ContainerRegistryTestClass
 
 
 class AsyncFakeTokenCredential(object):
