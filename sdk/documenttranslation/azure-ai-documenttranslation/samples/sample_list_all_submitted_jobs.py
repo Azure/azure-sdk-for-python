@@ -50,8 +50,6 @@ def sample_list_all_submitted_jobs():
         print("\nOf total documents...")
         print("{} failed".format(job.documents_failed_count))
         print("{} succeeded".format(job.documents_succeeded_count))
-        print("{} in progress".format(job.documents_in_progress_count))
-        print("{} not yet started".format(job.documents_not_yet_started_count))
         print("{} cancelled\n".format(job.documents_cancelled_count))
 
 

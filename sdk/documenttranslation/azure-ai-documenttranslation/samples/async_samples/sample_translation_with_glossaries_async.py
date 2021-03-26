@@ -71,9 +71,6 @@ async def sample_translation_with_glossaries_async():
         print("\nOf total documents...")
         print("{} failed".format(job_result.documents_failed_count))
         print("{} succeeded".format(job_result.documents_succeeded_count))
-        print("{} in progress".format(job_result.documents_in_progress_count))
-        print("{} not yet started".format(job_result.documents_not_yet_started_count))
-        print("{} cancelled\n".format(job_result.documents_cancelled_count))
 
         doc_results = client.list_all_document_statuses(job_result.id)  # type: AsyncItemPaged[DocumentStatusResult]
         async for document in doc_results:
