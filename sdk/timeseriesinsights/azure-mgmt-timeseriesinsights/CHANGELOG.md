@@ -1,5 +1,24 @@
 # Release History
 
+## 1.0.0 (2021-03-26)
+
+**Features**
+
+  - Model IoTHubEventSourceUpdateParameters has a new parameter kind
+  - Model EnvironmentUpdateParameters has a new parameter kind
+  - Model EventHubEventSourceUpdateParameters has a new parameter kind
+  - Model Gen2EnvironmentUpdateParameters has a new parameter kind
+  - Model EventSourceUpdateParameters has a new parameter kind
+  - Model Gen1EnvironmentUpdateParameters has a new parameter kind
+
+**Breaking changes**
+
+  - Operation ReferenceDataSetsOperations.update has a new signature
+  - Operation AccessPoliciesOperations.update has a new signature
+  - Operation EventSourcesOperations.update has a new signature
+  - Operation EnvironmentsOperations.begin_update has a new signature
+  - Operation AccessPoliciesOperations.update has a new signature
+
 ## 1.0.0b1 (2020-12-14)
 
 This is beta preview version.
