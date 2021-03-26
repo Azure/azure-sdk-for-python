@@ -221,7 +221,6 @@ thread_participants = [ChatThreadParticipant(
     display_name='name',
     share_history_time=datetime.utcnow()
 )]
-repeatability_request_id=get_unique_identifier_for_request()
 
 # obtains idempotency_token using some customer logic
 idempotency_token = get_unique_identifier_for_request()
