@@ -736,7 +736,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (Optional[int], Optional[int], **Any) -> StorageStreamDownloader
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
-        a stream.
+        a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
 
         :param int offset:
             Start of byte range to use for downloading a section of the blob.
