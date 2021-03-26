@@ -5,7 +5,7 @@
 This package contains a Python SDK for Azure Communication Services for Chat.
 Read more about Azure Communication Services [here](https://docs.microsoft.com/azure/communication-services/overview)
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/communication/azure-communication-chat) | [Package (Pypi)](https://pypi.org/project/azure-communication-chat/) | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/communication/azure-communication-chat) | [Product documentation](https://docs.microsoft.com/en-us/azure/communication-services/quickstarts/chat/get-started?pivots=programming-language-python)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/communication/azure-communication-chat) | [Package (Pypi)](https://pypi.org/project/azure-communication-chat/) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-communication-chat/1.0.0b5/index.html) | [Product documentation](https://docs.microsoft.com/azure/communication-services/)
 
 # Getting started
 
@@ -196,7 +196,7 @@ chat_thread_client = chat_client.get_chat_thread_client(create_chat_thread_resul
 ```Python
 # With idempotency_token and thread_participants
 from azure.communication.identity import CommunicationIdentityClient
-from azure.communication.chat import ChatThreadParticipant
+from azure.communication.chat import ChatThreadParticipant, ChatClient, CommunicationTokenCredential
 import uuid
 from datetime import datetime
 
@@ -204,11 +204,18 @@ from datetime import datetime
 identity_client = CommunicationIdentityClient.from_connection_string('<connection_string>')
 user = identity_client.create_user()
 
+# user access tokens
+tokenresponse = identity_client.get_token(user, scopes=["chat"])
+token = tokenresponse.token
+
 ## OR pass existing user
 # from azure.communication.identity import CommunicationUserIdentifier
 # user_id = 'some_user_id'
 # user = CommunicationUserIdentifier(user_id)
 
+# create the chat_client
+endpoint = "https://<RESOURCE_NAME>.communcationservices.azure.com"
+chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
 
 # modify function to implement customer logic
 def get_unique_identifier_for_request(**kwargs):
@@ -217,7 +224,7 @@ def get_unique_identifier_for_request(**kwargs):
 
 topic = "test topic"
 thread_participants = [ChatThreadParticipant(
-    user='<user>',
+    user=user,
     display_name='name',
     share_history_time=datetime.utcnow()
 )]
