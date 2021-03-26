@@ -113,7 +113,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
                     self.client.resource_groups.begin_delete(name, polling=False)
             except HttpResponseError as err:
                 logging.info("Failed to delete resource group with name {}".format(name))
-                logging.info(err.with_traceback)
+                logging.info("{}".format(err.response))
                 pass
 
 
