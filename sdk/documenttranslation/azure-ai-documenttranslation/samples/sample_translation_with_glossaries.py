@@ -51,7 +51,7 @@ def sample_translation_with_glossaries():
                     TranslationTarget(
                         target_url=target_container_url,
                         language_code="es",
-                        glossaries=[TranslationGlossary(glossary_url=glossary_url, format="TSV")]
+                        glossaries=[TranslationGlossary(glossary_url=glossary_url, file_format="TSV")]
                     )
                 ]
             )
