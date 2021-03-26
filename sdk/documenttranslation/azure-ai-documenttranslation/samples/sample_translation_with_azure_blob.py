@@ -110,11 +110,6 @@ class SampleTranslationWithAzureBlob(object):
         job_result = translation_client.wait_until_done(job.id)
         print("Job status: {}".format(job_result.status))
 
-        if job_result.status == "Failed":
-            print("\nThere was an issue with the translation job.")
-            print("Job Error Code: {}, Message: {}\n".format(job.error.code, job.error.message))
-            exit(1)
-
         doc_results = translation_client.list_all_document_statuses(job_result.id)
 
         print("\nDocument results:")
