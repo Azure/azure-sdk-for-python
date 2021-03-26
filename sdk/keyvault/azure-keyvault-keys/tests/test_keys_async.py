@@ -16,8 +16,8 @@ from azure.keyvault.keys.aio import KeyClient
 from devtools_testutils import PowerShellPreparer
 from parameterized import parameterized, param
 
-from _test_case_async import KeysTestCase
-from _test_case_base import suffixed_test_name
+from _shared.test_case_async import KeyVaultTestCase
+from _test_case import KeysTestCase, suffixed_test_name
 
 KeyVaultPreparer = functools.partial(
     PowerShellPreparer,
@@ -35,7 +35,7 @@ class MockHandler(logging.Handler):
         self.messages.append(record)
 
 
-class KeyVaultKeyTest(KeysTestCase):
+class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
     def _assert_jwks_equal(self, jwk1, jwk2):
         assert jwk1.kid == jwk2.kid
         assert jwk1.kty == jwk2.kty

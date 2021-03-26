@@ -24,8 +24,8 @@ from parameterized import parameterized, param
 import pytest
 
 from _shared.json_attribute_matcher import json_attribute_matcher
-from _test_case import KeysTestCase
-from _test_case_base import suffixed_test_name
+from _shared.test_case import KeyVaultTestCase
+from _test_case import KeysTestCase, suffixed_test_name
 
 KeyVaultPreparer = functools.partial(
     PowerShellPreparer,
@@ -37,7 +37,7 @@ KeyVaultPreparer = functools.partial(
 NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
 
 
-class CryptoClientTests(KeysTestCase):
+class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
         kwargs["match_body"] = False
         kwargs["custom_request_matchers"] = [json_attribute_matcher]

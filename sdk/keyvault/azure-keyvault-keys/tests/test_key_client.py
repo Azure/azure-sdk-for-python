@@ -15,8 +15,8 @@ from azure.keyvault.keys import JsonWebKey, KeyClient, KeyCurveName
 from devtools_testutils import PowerShellPreparer
 from parameterized import parameterized, param
 
-from _test_case import KeysTestCase
-from _test_case_base import suffixed_test_name
+from _shared.test_case import KeyVaultTestCase
+from _test_case import KeysTestCase, suffixed_test_name
 
 KeyVaultPreparer = functools.partial(
     PowerShellPreparer,
@@ -34,7 +34,7 @@ class MockHandler(logging.Handler):
         self.messages.append(record)
 
 
-class KeyClientTests(KeysTestCase):
+class KeyClientTests(KeysTestCase, KeyVaultTestCase):
     def _assert_key_attributes_equal(self, k1, k2):
         self.assertEqual(k1.name, k2.name)
         self.assertEqual(k1.vault_url, k2.vault_url)
