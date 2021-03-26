@@ -56,7 +56,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         raise NotImplementedError("Has not been implemented")
 
-    def delete_tag(self, tag, **kwargs):
+    async def delete_tag(self, tag, **kwargs):
         # type: (str) -> None
         """Delete a tag
 
@@ -97,7 +97,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             )
         )
 
-    def get_tag_properties(self, tag, **kwargs):
+    async def get_tag_properties(self, tag, **kwargs):
         # type: (str, Dict[str, Any]) -> TagProperties
         """Get the properties for a tag
 
@@ -107,7 +107,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
         return TagProperties._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry_repository.get_tag_properties(self.repository, tag, **kwargs)
+            await self._client.container_registry_repository.get_tag_properties(self.repository, tag, **kwargs)
         )
 
     def list_registry_artifacts(self, **kwargs):

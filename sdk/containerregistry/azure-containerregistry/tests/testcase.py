@@ -8,6 +8,7 @@ import json
 import os
 import re
 import six
+import time
 
 from azure.containerregistry import (
     ContainerRepositoryClient,
@@ -96,6 +97,29 @@ class ContainerRegistryTestClass(AzureTestCase):
         super(ContainerRegistryTestClass, self).__init__(method_name)
         self.vcr.match_on = ["path", "method", "query"]
         self.recording_processors.append(AcrBodyReplacer())
+
+    def sleep(self, t):
+        if self.is_live:
+            time.sleep(t)
+
+    def _fake_sleep(self, *args, **kwargs):
+        pass
+
+    def _import_tag_to_be_deleted(self, endpoint, repository="hello-world", resource_group="fake_rg"):
+        if not self.is_live:
+            return
+        registry = endpoint.split(".")[0]
+        command = [
+            "powershell.exe", "Import-AzcontainerRegistryImage",
+            "-ResourceGroupName", "'{}'".format(resource_group),
+            "-RegistryName", "'{}'".format(registry),
+            "-SourceImage", "'library/hello-world'",
+            "-SourceRegistryUri", "'registry.hub.docker.com'",
+            "-TargetTag", "'hello-world:to_be_deleted'"
+            "-Mode", "'Force'"
+
+        ]
+        subprocess.check_call(command)
 
     def get_credential(self):
         if self.is_live:

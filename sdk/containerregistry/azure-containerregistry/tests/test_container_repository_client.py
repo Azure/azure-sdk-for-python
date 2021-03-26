@@ -8,6 +8,7 @@ import functools
 import os
 import pytest
 import subprocess
+import time
 
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 
@@ -20,6 +21,7 @@ from azure.containerregistry import (
     TagProperties,
     TagOrderBy,
 )
+from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
 
 from testcase import ContainerRegistryTestClass, AcrBodyReplacer, FakeTokenCredential
@@ -28,6 +30,7 @@ acr_preparer = functools.partial(
     PowerShellPreparer,
     "containerregistry",
     containerregistry_baseurl="fake_url.azurecr.io",
+    containerregistry_resource_group="fake_rg",
 )
 
 
@@ -39,9 +42,20 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
         self.recording_processors.append(AcrBodyReplacer())
         self.repository = "hello-world"
 
-    def _import_tag_to_be_deleted(self, repository="hello-world"):
-        command = ["powershell.exe", "Import-AzcontainerRegistryImage", "-ResourceGroupName"]
-        subprocess.run(command)
+    @acr_preparer()
+    def test_delete_tag(self, containerregistry_baseurl, containerregistry_resource_group):
+        self._import_tag_to_be_deleted(containerregistry_baseurl, resource_group=containerregistry_resource_group)
+
+        client = self.create_repository_client(containerregistry_baseurl, "hello-world")
+
+        tag = client.get_tag_properties("to_be_deleted")
+        assert tag is not None
+
+        client.delete_tag("to_be_deleted")
+        self.sleep(10)
+
+        with pytest.raises(ResourceNotFoundError):
+            client.get_tag_properties("to_be_deleted")
 
     @acr_preparer()
     def test_get_attributes(self, containerregistry_baseurl):
@@ -82,7 +96,6 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
             assert artifact.tags is not None
             assert isinstance(artifact.tags, list)
 
-
     @acr_preparer()
     def test_get_registry_artifact_properties(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
@@ -93,7 +106,6 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
         assert isinstance(properties, RegistryArtifactProperties)
         assert isinstance(properties.created_on, datetime)
         assert isinstance(properties.last_updated_on, datetime)
-
 
     @acr_preparer()
     def test_list_tags(self, containerregistry_baseurl):
@@ -107,7 +119,6 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
             print(tag)
 
         assert count > 0
-
 
     @acr_preparer()
     def test_list_tags_descending(self, containerregistry_baseurl):
