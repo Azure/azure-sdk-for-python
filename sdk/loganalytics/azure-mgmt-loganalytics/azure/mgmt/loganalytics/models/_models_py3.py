@@ -274,27 +274,6 @@ class Cluster(TrackedResource):
         self.key_vault_properties = key_vault_properties
 
 
-class ClusterErrorResponse(msrest.serialization.Model):
-    """Error response indicates that the service is not able to process the incoming request. The reason is provided in the error message.
-
-    :param error: The details of the error.
-    :type error: ~azure.mgmt.loganalytics.models.ErrorResponse
-    """
-
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
-    }
-
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorResponse"] = None,
-        **kwargs
-    ):
-        super(ClusterErrorResponse, self).__init__(**kwargs)
-        self.error = error
-
-
 class ClusterListResult(msrest.serialization.Model):
     """The list clusters operation response.
 
@@ -488,27 +467,6 @@ class DataExport(Resource):
         self.event_hub_name = event_hub_name
 
 
-class DataExportErrorResponse(msrest.serialization.Model):
-    """Error response indicates that the service is not able to process the incoming request. The reason is provided in the error message.
-
-    :param error: The details of the error.
-    :type error: ~azure.mgmt.loganalytics.models.ErrorResponse
-    """
-
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
-    }
-
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorResponse"] = None,
-        **kwargs
-    ):
-        super(DataExportErrorResponse, self).__init__(**kwargs)
-        self.error = error
-
-
 class DataExportListResult(msrest.serialization.Model):
     """Result of the request to list data exports.
 
@@ -687,29 +645,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self.info = None
 
 
-class ErrorContract(msrest.serialization.Model):
-    """Contains details when the response code indicates an error.
-
-    :param error: The details of the error.
-    :type error: ~azure.mgmt.loganalytics.models.ErrorResponse
-    """
-
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
-    }
-
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorResponse"] = None,
-        **kwargs
-    ):
-        super(ErrorContract, self).__init__(**kwargs)
-        self.error = error
-
-
-class ErrorResponse(msrest.serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+class ErrorDetail(msrest.serialization.Model):
+    """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -720,7 +657,7 @@ class ErrorResponse(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.loganalytics.models.ErrorResponse]
+    :vartype details: list[~azure.mgmt.loganalytics.models.ErrorDetail]
     :ivar additional_info: The error additional info.
     :vartype additional_info: list[~azure.mgmt.loganalytics.models.ErrorAdditionalInfo]
     """
@@ -737,7 +674,7 @@ class ErrorResponse(msrest.serialization.Model):
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorResponse]'},
+        'details': {'key': 'details', 'type': '[ErrorDetail]'},
         'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
     }
 
@@ -745,12 +682,33 @@ class ErrorResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(ErrorResponse, self).__init__(**kwargs)
+        super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
         self.details = None
         self.additional_info = None
+
+
+class ErrorResponse(msrest.serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+
+    :param error: The error object.
+    :type error: ~azure.mgmt.loganalytics.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorDetail'},
+    }
+
+    def __init__(
+        self,
+        *,
+        error: Optional["ErrorDetail"] = None,
+        **kwargs
+    ):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = error
 
 
 class Identity(msrest.serialization.Model):
@@ -1981,10 +1939,15 @@ class Workspace(TrackedResource):
     :vartype customer_id: str
     :param sku: The SKU of the workspace.
     :type sku: ~azure.mgmt.loganalytics.models.WorkspaceSku
-    :param retention_in_days: The workspace data retention in days, between 30 and 730.
+    :param retention_in_days: The workspace data retention in days. Allowed values are per pricing
+     plan. See pricing tiers documentation for details.
     :type retention_in_days: int
     :param workspace_capping: The daily volume cap for ingestion.
     :type workspace_capping: ~azure.mgmt.loganalytics.models.WorkspaceCapping
+    :ivar created_date: Workspace creation date.
+    :vartype created_date: str
+    :ivar modified_date: Workspace modification date.
+    :vartype modified_date: str
     :param public_network_access_for_ingestion: The network access type for accessing Log Analytics
      ingestion. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
     :type public_network_access_for_ingestion: str or
@@ -1993,9 +1956,14 @@ class Workspace(TrackedResource):
      query. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
     :type public_network_access_for_query: str or
      ~azure.mgmt.loganalytics.models.PublicNetworkAccessType
+    :param force_cmk_for_query: Indicates whether customer managed storage is mandatory for query
+     management.
+    :type force_cmk_for_query: bool
     :ivar private_link_scoped_resources: List of linked private link scope resources.
     :vartype private_link_scoped_resources:
      list[~azure.mgmt.loganalytics.models.PrivateLinkScopedResource]
+    :param features: Workspace features.
+    :type features: dict[str, object]
     """
 
     _validation = {
@@ -2004,7 +1972,8 @@ class Workspace(TrackedResource):
         'type': {'readonly': True},
         'location': {'required': True},
         'customer_id': {'readonly': True},
-        'retention_in_days': {'maximum': 730, 'minimum': 30},
+        'created_date': {'readonly': True},
+        'modified_date': {'readonly': True},
         'private_link_scoped_resources': {'readonly': True},
     }
 
@@ -2020,9 +1989,13 @@ class Workspace(TrackedResource):
         'sku': {'key': 'properties.sku', 'type': 'WorkspaceSku'},
         'retention_in_days': {'key': 'properties.retentionInDays', 'type': 'int'},
         'workspace_capping': {'key': 'properties.workspaceCapping', 'type': 'WorkspaceCapping'},
+        'created_date': {'key': 'properties.createdDate', 'type': 'str'},
+        'modified_date': {'key': 'properties.modifiedDate', 'type': 'str'},
         'public_network_access_for_ingestion': {'key': 'properties.publicNetworkAccessForIngestion', 'type': 'str'},
         'public_network_access_for_query': {'key': 'properties.publicNetworkAccessForQuery', 'type': 'str'},
+        'force_cmk_for_query': {'key': 'properties.forceCmkForQuery', 'type': 'bool'},
         'private_link_scoped_resources': {'key': 'properties.privateLinkScopedResources', 'type': '[PrivateLinkScopedResource]'},
+        'features': {'key': 'properties.features', 'type': '{object}'},
     }
 
     def __init__(
@@ -2037,6 +2010,8 @@ class Workspace(TrackedResource):
         workspace_capping: Optional["WorkspaceCapping"] = None,
         public_network_access_for_ingestion: Optional[Union[str, "PublicNetworkAccessType"]] = "Enabled",
         public_network_access_for_query: Optional[Union[str, "PublicNetworkAccessType"]] = "Enabled",
+        force_cmk_for_query: Optional[bool] = None,
+        features: Optional[Dict[str, object]] = None,
         **kwargs
     ):
         super(Workspace, self).__init__(tags=tags, location=location, **kwargs)
@@ -2046,9 +2021,13 @@ class Workspace(TrackedResource):
         self.sku = sku
         self.retention_in_days = retention_in_days
         self.workspace_capping = workspace_capping
+        self.created_date = None
+        self.modified_date = None
         self.public_network_access_for_ingestion = public_network_access_for_ingestion
         self.public_network_access_for_query = public_network_access_for_query
+        self.force_cmk_for_query = force_cmk_for_query
         self.private_link_scoped_resources = None
+        self.features = features
 
 
 class WorkspaceCapping(msrest.serialization.Model):
@@ -2177,10 +2156,15 @@ class WorkspacePatch(AzureEntityResource):
     :vartype customer_id: str
     :param sku: The SKU of the workspace.
     :type sku: ~azure.mgmt.loganalytics.models.WorkspaceSku
-    :param retention_in_days: The workspace data retention in days, between 30 and 730.
+    :param retention_in_days: The workspace data retention in days. Allowed values are per pricing
+     plan. See pricing tiers documentation for details.
     :type retention_in_days: int
     :param workspace_capping: The daily volume cap for ingestion.
     :type workspace_capping: ~azure.mgmt.loganalytics.models.WorkspaceCapping
+    :ivar created_date: Workspace creation date.
+    :vartype created_date: str
+    :ivar modified_date: Workspace modification date.
+    :vartype modified_date: str
     :param public_network_access_for_ingestion: The network access type for accessing Log Analytics
      ingestion. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
     :type public_network_access_for_ingestion: str or
@@ -2189,9 +2173,14 @@ class WorkspacePatch(AzureEntityResource):
      query. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
     :type public_network_access_for_query: str or
      ~azure.mgmt.loganalytics.models.PublicNetworkAccessType
+    :param force_cmk_for_query: Indicates whether customer managed storage is mandatory for query
+     management.
+    :type force_cmk_for_query: bool
     :ivar private_link_scoped_resources: List of linked private link scope resources.
     :vartype private_link_scoped_resources:
      list[~azure.mgmt.loganalytics.models.PrivateLinkScopedResource]
+    :param features: Workspace features.
+    :type features: dict[str, object]
     """
 
     _validation = {
@@ -2200,7 +2189,8 @@ class WorkspacePatch(AzureEntityResource):
         'type': {'readonly': True},
         'etag': {'readonly': True},
         'customer_id': {'readonly': True},
-        'retention_in_days': {'maximum': 730, 'minimum': 30},
+        'created_date': {'readonly': True},
+        'modified_date': {'readonly': True},
         'private_link_scoped_resources': {'readonly': True},
     }
 
@@ -2215,9 +2205,13 @@ class WorkspacePatch(AzureEntityResource):
         'sku': {'key': 'properties.sku', 'type': 'WorkspaceSku'},
         'retention_in_days': {'key': 'properties.retentionInDays', 'type': 'int'},
         'workspace_capping': {'key': 'properties.workspaceCapping', 'type': 'WorkspaceCapping'},
+        'created_date': {'key': 'properties.createdDate', 'type': 'str'},
+        'modified_date': {'key': 'properties.modifiedDate', 'type': 'str'},
         'public_network_access_for_ingestion': {'key': 'properties.publicNetworkAccessForIngestion', 'type': 'str'},
         'public_network_access_for_query': {'key': 'properties.publicNetworkAccessForQuery', 'type': 'str'},
+        'force_cmk_for_query': {'key': 'properties.forceCmkForQuery', 'type': 'bool'},
         'private_link_scoped_resources': {'key': 'properties.privateLinkScopedResources', 'type': '[PrivateLinkScopedResource]'},
+        'features': {'key': 'properties.features', 'type': '{object}'},
     }
 
     def __init__(
@@ -2230,6 +2224,8 @@ class WorkspacePatch(AzureEntityResource):
         workspace_capping: Optional["WorkspaceCapping"] = None,
         public_network_access_for_ingestion: Optional[Union[str, "PublicNetworkAccessType"]] = "Enabled",
         public_network_access_for_query: Optional[Union[str, "PublicNetworkAccessType"]] = "Enabled",
+        force_cmk_for_query: Optional[bool] = None,
+        features: Optional[Dict[str, object]] = None,
         **kwargs
     ):
         super(WorkspacePatch, self).__init__(**kwargs)
@@ -2239,9 +2235,13 @@ class WorkspacePatch(AzureEntityResource):
         self.sku = sku
         self.retention_in_days = retention_in_days
         self.workspace_capping = workspace_capping
+        self.created_date = None
+        self.modified_date = None
         self.public_network_access_for_ingestion = public_network_access_for_ingestion
         self.public_network_access_for_query = public_network_access_for_query
+        self.force_cmk_for_query = force_cmk_for_query
         self.private_link_scoped_resources = None
+        self.features = features
 
 
 class WorkspacePurgeBody(msrest.serialization.Model):
@@ -2382,7 +2382,7 @@ class WorkspaceSku(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required. The name of the SKU. Possible values include: "Free", "Standard",
-     "Premium", "PerNode", "PerGB2018", "Standalone", "CapacityReservation".
+     "Premium", "PerNode", "PerGB2018", "Standalone", "CapacityReservation", "LACluster".
     :type name: str or ~azure.mgmt.loganalytics.models.WorkspaceSkuNameEnum
     :param capacity_reservation_level: The capacity reservation level for this workspace, when
      CapacityReservation sku is selected.

@@ -10,19 +10,17 @@ try:
     from ._models_py3 import AvailableServiceTier
     from ._models_py3 import AzureEntityResource
     from ._models_py3 import Cluster
-    from ._models_py3 import ClusterErrorResponse
     from ._models_py3 import ClusterListResult
     from ._models_py3 import ClusterPatch
     from ._models_py3 import ClusterSku
     from ._models_py3 import CoreSummary
     from ._models_py3 import DataExport
-    from ._models_py3 import DataExportErrorResponse
     from ._models_py3 import DataExportListResult
     from ._models_py3 import DataSource
     from ._models_py3 import DataSourceFilter
     from ._models_py3 import DataSourceListResult
     from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorContract
+    from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse
     from ._models_py3 import Identity
     from ._models_py3 import IntelligencePack
@@ -72,19 +70,17 @@ except (SyntaxError, ImportError):
     from ._models import AvailableServiceTier  # type: ignore
     from ._models import AzureEntityResource  # type: ignore
     from ._models import Cluster  # type: ignore
-    from ._models import ClusterErrorResponse  # type: ignore
     from ._models import ClusterListResult  # type: ignore
     from ._models import ClusterPatch  # type: ignore
     from ._models import ClusterSku  # type: ignore
     from ._models import CoreSummary  # type: ignore
     from ._models import DataExport  # type: ignore
-    from ._models import DataExportErrorResponse  # type: ignore
     from ._models import DataExportListResult  # type: ignore
     from ._models import DataSource  # type: ignore
     from ._models import DataSourceFilter  # type: ignore
     from ._models import DataSourceListResult  # type: ignore
     from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorContract  # type: ignore
+    from ._models import ErrorDetail  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import Identity  # type: ignore
     from ._models import IntelligencePack  # type: ignore
@@ -153,19 +149,17 @@ __all__ = [
     'AvailableServiceTier',
     'AzureEntityResource',
     'Cluster',
-    'ClusterErrorResponse',
     'ClusterListResult',
     'ClusterPatch',
     'ClusterSku',
     'CoreSummary',
     'DataExport',
-    'DataExportErrorResponse',
     'DataExportListResult',
     'DataSource',
     'DataSourceFilter',
     'DataSourceListResult',
     'ErrorAdditionalInfo',
-    'ErrorContract',
+    'ErrorDetail',
     'ErrorResponse',
     'Identity',
     'IntelligencePack',
