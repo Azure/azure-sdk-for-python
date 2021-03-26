@@ -6,7 +6,6 @@
 
 # pylint: disable=unused-import
 from typing import Any, List
-import six
 from ._generated.models import (
     BatchRequest as _BatchRequest,
     SourceInput as _SourceInput,
@@ -15,18 +14,18 @@ from ._generated.models import (
     Glossary as _Glossary
 )
 
-class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
-    """Glossary / translation memory for the request.
 
-    :param glossary_url: Required. Location of the glossary.
-     We will use the file extension to extract the formatting if the format parameter is not
-     supplied.
-     If the translation language pair is not present in the glossary, it will not be applied.
-    :type glossary_url: str
-    :param str file_format: Format.
-    :keyword str format_version: Format version.
-    :keyword storage_source: Storage Source. Default value: "AzureBlob".
-    :paramtype storage_source: str
+class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
+    """Glossary / translation memory to apply to the translation.
+
+    :param str glossary_url: Required. Location of the glossary file. This should be a SAS URL to
+        the glossary file in the storage blob container. If the translation language pair is
+        not present in the glossary, it will not be applied.
+    :param str file_format: Required. Format of the glossary file. To see supported formats,
+        call the :func:`~DocumentTranslationClient.get_glossary_formats()` client method.
+    :keyword str format_version: File format version.
+    :keyword str storage_source: Storage Source. Default value: "AzureBlob".
+        Currently only "AzureBlob" is supported.
     """
 
     def __init__(
@@ -57,15 +56,16 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
 class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
     """Destination for the finished translated documents.
 
-    :param target_url: Required. Location of the folder / container with your documents.
-    :type target_url: str
-    :param language_code: Required. Target Language Code.
-    :type language_code: str
-    :keyword str category_id: Category / custom system for translation request.
-    :keyword glossaries: List of TranslationGlossary.
+    :param str target_url: Required. The target location for your translated documents.
+        This should be a container SAS URL to your target container.
+    :param str language_code: Required. Target Language Code. This is the language
+        you want your documents to be translated to. See supported languages here:
+        https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
+    :keyword str category_id: Category / custom model ID for using custom translation.
+    :keyword glossaries: Optional glossaries to apply to translation.
     :paramtype glossaries: list[~azure.ai.documenttranslation.TranslationGlossary]
-    :keyword storage_source: Storage Source. Default value: "AzureBlob".
-    :paramtype storage_source: str
+    :keyword str storage_source: Storage Source. Default value: "AzureBlob".
+        Currently only "AzureBlob" is supported.
     """
 
     def __init__(
@@ -98,24 +98,29 @@ class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
 
 class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheritance
     # pylint: disable=C0301
-    """Definition for the input batch translation request.
+    """Input for translation. This requires that you have your source document or
+    documents in an Azure Blob Storage container. Provide a SAS URL to the source file or
+    source container containing the documents for translation. The source document(s) are
+    translated and written to the location provided by the target container SAS URL.
 
-    :param source_url: Required. Location of the folder / container or single file with your
-     documents.
-    :type source_url: str
-    :param targets: Required. Location of the destination for the output.
-    :type targets: list[TranslationTarget]
-    :keyword str source_language_code: Language code
-     If none is specified, we will perform auto detect on the document.
+    :param str source_url: Required. Location of the folder / container or single file with your
+        documents.
+    :param targets: Required. Location of the destination for the output. This is a container
+        SAS URL to your target container (or containers if more than 1). A target
+        container is required for each language code specified.
+    :type targets: list[~azure.ai.documenttranslation.TranslationTarget]
+    :keyword str source_language_code: Language code for the source documents.
+        If none is specified, the source language will be auto-detected for each document.
     :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
-     translation. For example, when using a Azure storage blob Uri, use the prefix to restrict sub folders for
-     translation.
+        translation. For example, when using a Azure storage blob Uri, use the prefix to restrict
+        sub folders for translation.
     :keyword str suffix: A case-sensitive suffix string to filter documents in the source path for
-     translation. This is most often use for file extensions.
+        translation. This is most often use for file extensions.
     :keyword storage_type: Storage type of the input documents source string. Possible values
-     include: "Folder", "File".
+        include: "Folder", "File".
     :paramtype storage_type: str or ~azure.ai.documenttranslation.StorageInputType
     :keyword str storage_source: Storage Source. Default value: "AzureBlob".
+        Currently only "AzureBlob" is supported.
     """
 
     def __init__(
@@ -157,30 +162,28 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
 
 
 class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, too-many-instance-attributes
-    """Job status response.
+    """Status information about the translation job.
 
-    :ivar id: Required. Id of the job.
-    :vartype id: str
-    :ivar created_on: Required. Operation created date time.
+    :ivar str id: Id of the job.
+    :ivar created_on: The date time when the translation job was created.
     :vartype created_on: ~datetime.datetime
-    :ivar last_updated_on: Required. Date time in which the operation's status has been
-     updated.
+    :ivar last_updated_on: The date time when the translation job's status was last updated.
     :vartype last_updated_on: ~datetime.datetime
-    :ivar status: Required. List of possible statuses for job or document. Possible values
-     include: "NotStarted", "Running", "Succeeded", "Failed", "Cancelled", "Cancelling",
-     "ValidationFailed".
-    :vartype status: str
-    :ivar error: This contains an outer error with error code, message, details, target and an
-     inner error with more descriptive details.
+    :ivar str status: List of possible statuses for job or document. Possible values
+        include: "NotStarted", "Running", "Succeeded", "Failed", "Cancelled", "Cancelling",
+        "ValidationFailed".
+    :ivar error: Returned if there is an error with the translation job.
+        Includes error code, message, target.
     :vartype error: ~azure.ai.documenttranslation.DocumentTranslationError
-    :ivar int documents_total_count: Total count.
-    :ivar int documents_failed_count: Failed count.
-    :ivar int documents_succeeded_count: Number of Success.
-    :ivar int documents_in_progress_count: Number of in progress.
-    :ivar int documents_not_yet_started_count: Count of not yet started.
-    :ivar int documents_cancelled_count: Number of cancelled.
-    :ivar int total_characters_charged: Required. Total characters charged by the API.
-
+    :ivar int documents_total_count: Number of translations to be made on documents in the job.
+    :ivar int documents_failed_count: Number of documents that failed translation.
+        More details can be found by calling the :func:`~DocumentTranslationClient.list_all_document_statuses`
+        client method.
+    :ivar int documents_succeeded_count: Number of successful translations on documents.
+    :ivar int documents_in_progress_count: Number of translations on documents in progress.
+    :ivar int documents_not_yet_started_count: Number of documents that have not yet started being translated.
+    :ivar int documents_cancelled_count: Number of documents that were cancelled for translation.
+    :ivar int total_characters_charged: Total characters charged across all documents within the job.
     """
 
     def __init__(
@@ -221,29 +224,26 @@ class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, to
 
 
 class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritance, R0903
-    """DocumentStatusResult.
+    """Status information about a particular document within a translation job.
 
-    :ivar translated_document_url: Required. Location of the translated document.
-    :vartype translated_document_url: str
-    :ivar created_on: Required. Operation created date time.
+    :ivar str translated_document_url: Location of the translated document in the target
+        container. Note that any SAS tokens are removed from this path.
+    :ivar created_on: The date time when the document was created.
     :vartype created_on: ~datetime.datetime
-    :ivar last_updated_on: Required. Date time in which the operation's status has been
-     updated.
+    :ivar last_updated_on: The date time when the document's status was last updated.
     :vartype last_updated_on: ~datetime.datetime
-    :ivar status: Required. List of possible statuses for job or document. Possible values
-     include: "NotStarted", "Running", "Succeeded", "Failed", "Cancelled", "Cancelling",
-     "ValidationFailed".
-    :vartype status: str
-    :ivar translate_to: Required. To language.
-    :vartype translate_to: str
-    :ivar error: This contains an outer error with error code, message, details, target and an
-     inner error with more descriptive details.
+    :ivar str status: List of possible statuses for job or document. Possible values
+        include: "NotStarted", "Running", "Succeeded", "Failed", "Cancelled", "Cancelling",
+        "ValidationFailed".
+    :ivar str translate_to: The language code of the language the document was translated to,
+        if successful.
+    :ivar error: Returned if there is an error with the particular document.
+        Includes error code, message, target.
     :vartype error: ~azure.ai.documenttranslation.DocumentTranslationError
-    :ivar translation_progress: Progress of the translation if available.
-    :vartype translation_progress: float
-    :ivar id: Document Id.
-    :vartype id: str
-    :ivar int characters_charged: Character charged by the API.
+    :ivar float translation_progress: Progress of the translation if available.
+        Value is between [0.0, 1.0].
+    :ivar str id: Document Id.
+    :ivar int characters_charged: Characters charged for the document.
     """
 
     def __init__(
@@ -278,18 +278,15 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
 
 
 class DocumentTranslationError(object):  # pylint: disable=useless-object-inheritance, R0903
-    """This contains an outer error with error code, message, details, target and an
-    inner error with more descriptive details.
+    """This contains the error code, message, and target with descriptive details on why
+    a translation job or particular document failed.
 
-    :ivar code: Enums containing high level error codes. Possible values include:
-     "InvalidRequest", "InvalidArgument", "InternalServerError", "ServiceUnavailable",
-     "ResourceNotFound", "Unauthorized", "RequestRateTooHigh".
-    :vartype code: str
-    :ivar message: Gets high level error message.
-    :vartype message: str
-    :ivar target: Gets the source of the error.
-     For example it would be "documents" or "document id" in case of invalid document.
-    :vartype target: str
+    :ivar str code: The error code. Possible high level values include:
+        "InvalidRequest", "InvalidArgument", "InternalServerError", "ServiceUnavailable",
+        "ResourceNotFound", "Unauthorized", "RequestRateTooHigh".
+    :ivar str message: The error message associated with the failure.
+    :ivar str target: The source of the error.
+        For example it would be "documents" or "document id" in case of invalid document.
     """
 
     def __init__(
@@ -318,7 +315,7 @@ class DocumentTranslationError(object):  # pylint: disable=useless-object-inheri
 
 
 class FileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
-    """FileFormat.
+    """Possible file formats supported by the Document Translation service.
 
     :ivar file_format: Name of the format.
     :vartype file_format: str
