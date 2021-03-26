@@ -1,4 +1,4 @@
-# Core Performance Tests
+# azure-identity Performance Tests
 
 In order to run the performance tests, the `azure-devtools` package must be installed. This is done as part of the
 `dev_requirements` install. Start by creating a new Python 3 virtual environment.
@@ -10,7 +10,7 @@ current module for runnable perf tests. Only a specific test can be run at a tim
 
 `perfstress` with no options will list all available tests: 
 ```
-(env) ~/azure-core/tests> perfstress
+(env) ~/azure-identity/tests> perfstress
 ```
 
 ### Common perf command line options
@@ -24,7 +24,7 @@ These options are available for all perf tests:
 
 ## Example command
 ```
-sdk/core/azure-core/tests> perfstress BearerTokenPolicyTest
+(env) ~/azure-identity/tests> perfstress BearerTokenPolicyTest
 ```
 
 ## Tests
