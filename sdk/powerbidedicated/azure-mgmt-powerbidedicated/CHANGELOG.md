@@ -4,12 +4,12 @@
 
 **Features**
 
-  - Model DedicatedCapacityUpdateParameters has a new parameter mode
-  - Model DedicatedCapacityMutableProperties has a new parameter mode
-  - Model Resource has a new parameter system_data
-  - Model DedicatedCapacity has a new parameter mode
-  - Model DedicatedCapacity has a new parameter system_data
   - Model DedicatedCapacityProperties has a new parameter mode
+  - Model DedicatedCapacityMutableProperties has a new parameter mode
+  - Model DedicatedCapacityUpdateParameters has a new parameter mode
+  - Model DedicatedCapacity has a new parameter system_data
+  - Model DedicatedCapacity has a new parameter mode
+  - Model Resource has a new parameter system_data
   - Added operation group AutoScaleVCoresOperations
 
 **Breaking changes**
