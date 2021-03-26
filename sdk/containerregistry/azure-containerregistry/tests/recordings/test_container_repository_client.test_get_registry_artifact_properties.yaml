@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Mar 2021 15:20:11 GMT
+      - Fri, 26 Mar 2021 19:12:18 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Mar 2021 15:20:12 GMT
+      - Fri, 26 Mar 2021 19:12:20 GMT
       server:
       - openresty
       strict-transport-security:
@@ -107,7 +107,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Mar 2021 15:20:12 GMT
+      - Fri, 26 Mar 2021 19:12:21 GMT
       server:
       - openresty
       strict-transport-security:
@@ -148,7 +148,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Mar 2021 15:20:13 GMT
+      - Fri, 26 Mar 2021 19:12:21 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -193,7 +193,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Mar 2021 15:20:13 GMT
+      - Fri, 26 Mar 2021 19:12:21 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -233,7 +233,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Mar 2021 15:20:13 GMT
+      - Fri, 26 Mar 2021 19:12:21 GMT
       server:
       - openresty
       strict-transport-security:
@@ -269,7 +269,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Mar 2021 15:20:13 GMT
+      - Fri, 26 Mar 2021 19:12:22 GMT
       server:
       - openresty
       strict-transport-security:
@@ -312,7 +312,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Mar 2021 15:20:14 GMT
+      - Fri, 26 Mar 2021 19:12:22 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

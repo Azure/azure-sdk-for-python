@@ -6,6 +6,7 @@
 from typing import TYPE_CHECKING
 
 from ._base_client import ContainerRegistryBaseClient
+from ._helpers import _is_tag
 from ._models import RepositoryProperties, TagProperties, RegistryArtifactProperties
 
 if TYPE_CHECKING:
@@ -49,7 +50,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         self._client.container_registry.delete_repository(self.repository, **kwargs)
 
-    def delete_registry_artifact(self, digest):
+    def delete_registry_artifact(self, digest, **kwargs):
         # type: (str) -> None
         """Delete a registry artifact
 
@@ -60,7 +61,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         raise NotImplementedError("Has not been implemented")
 
-    def delete_tag(self, tag):
+    def delete_tag(self, tag, **kwargs):
         # type: (str) -> None
         """Delete a tag
 
@@ -71,7 +72,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         raise NotImplementedError("Has not been implemented")
 
-    def get_properties(self):
+    def get_properties(self, **kwargs):
         # type: (...) -> RepositoryProperties
         """Get the properties of a repository
 
@@ -80,7 +81,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         # GET '/acr/v1/{name}'
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry_repository.get_properties(self.repository)
+            self._client.container_registry_repository.get_properties(self.repository, **kwargs)
         )
 
     def get_registry_artifact_properties(self, tag_or_digest, **kwargs):
@@ -93,7 +94,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
         # GET '/acr/v1/{name}/_manifests/{digest}'
-        if self._is_tag(tag_or_digest):
+        if _is_tag(tag_or_digest):
             tag_or_digest = self._get_digest_from_tag(tag_or_digest)
 
         return RegistryArtifactProperties._from_generated(  # pylint: disable=protected-access
@@ -122,8 +123,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
         :keyword last: Query parameter for the last item in the previous query
         :type last: str
-        :keyword n: Max number of items to be returned
-        :type n: int
+        :keyword page_size: Max number of items to be returned
+        :type page_size: int
         :keyword orderby: Order by query parameter
         :type orderby: :class:~azure.containerregistry.RegistryArtifactOrderBy
         :returns: ~azure.core.paging.ItemPaged[RegistryArtifactProperties]
@@ -131,7 +132,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         # GET /acr/v1/{name}/_manifests
         last = kwargs.pop("last", None)
-        n = kwargs.pop("top", None)
+        n = kwargs.pop("page_size", None)
         orderby = kwargs.pop("order_by", None)
         return self._client.container_registry_repository.get_manifests(
             self.repository,
@@ -157,14 +158,14 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         return self._client.container_registry_repository.get_tags(
             self.repository,
             last=kwargs.pop("last", None),
-            n=kwargs.pop("top", None),
+            n=kwargs.pop("page_size", None),
             orderby=kwargs.pop("order_by", None),
             digest=kwargs.pop("digest", None),
             cls=lambda objs: [TagProperties._from_generated(o) for o in objs],  # pylint: disable=protected-access
             **kwargs
         )
 
-    def set_manifest_properties(self, digest, permissions):
+    def set_manifest_properties(self, digest, permissions, **kwargs):
         # type: (str, ContentPermissions) -> None
         """Set the properties for a manifest
 
@@ -177,10 +178,10 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
 
         self._client.container_registry_repository.update_manifest_attributes(
-            self.repository, digest, value=permissions.to_generated()
+            self.repository, digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
         )
 
-    def set_tag_properties(self, tag_or_digest, permissions):
+    def set_tag_properties(self, tag_or_digest, permissions, **kwargs):
         # type: (str, ContentPermissions) -> None
         """Set the properties for a tag
 
@@ -191,9 +192,9 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: None
         """
-        if self._is_tag(tag_or_digest):
+        if _is_tag(tag_or_digest):
             tag_or_digest = self._get_digest_from_tag(tag_or_digest)
 
         self._client.container_registry_repository.update_manifest_attributes(
-            self.repository, tag_or_digest, value=permissions.to_generated()
+            self.repository, tag_or_digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
         )

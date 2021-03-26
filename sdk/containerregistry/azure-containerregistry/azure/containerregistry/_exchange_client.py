@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 from ._generated import ContainerRegistry
+from ._helpers import _parse_challenge
 from ._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
@@ -48,7 +49,7 @@ class ACRExchangeClient(object):
 
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, TokenCredential, Dict[str, Any]) -> None
-        if not endpoint.startswith("https://"):
+        if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
         self._credential_scopes = "https://management.core.windows.net/.default"
@@ -56,7 +57,7 @@ class ACRExchangeClient(object):
             credential=credential,
             url=endpoint,
             sdk_moniker=USER_AGENT,
-            authentication_policy=ExchangeClientAuthenticationPolicy(),
+            authentication_policy=SansIOHTTPPolicy(),
             credential_scopes=kwargs.pop("credential_scopes", self._credential_scopes),
             **kwargs
         )
@@ -64,7 +65,7 @@ class ACRExchangeClient(object):
 
     def get_acr_access_token(self, challenge):
         # type: (str) -> str
-        parsed_challenge = self._parse_challenge(challenge)
+        parsed_challenge = _parse_challenge(challenge)
         refresh_token = self.exchange_aad_token_for_refresh_token(service=parsed_challenge["service"])
         return self.exchange_refresh_token_for_access_token(
             refresh_token, service=parsed_challenge["service"], scope=parsed_challenge["scope"]
@@ -84,20 +85,6 @@ class ACRExchangeClient(object):
         )
         return access_token.access_token
 
-    def _parse_challenge(self, header):
-        # type: (str) -> Dict[str, Any]
-        """Parse challenge header into service and scope"""
-        if header.startswith(self.BEARER):
-            challenge_params = header[len(self.BEARER) + 1 :]
-
-            matches = re.split(self.AUTHENTICATION_CHALLENGE_PARAMS_PATTERN, challenge_params)
-            self._clean(matches)
-            ret = {}
-            for i in range(0, len(matches), 2):
-                ret[matches[i]] = matches[i + 1]
-
-        return ret
-
     def __enter__(self):
         self._client.__enter__()
         return self
@@ -111,17 +98,3 @@ class ACRExchangeClient(object):
         Calling this method is unnecessary when using the client as a context manager.
         """
         self._client.close()
-
-    def _clean(self, matches):  # pylint: disable=no-self-use
-        # type: (List[str]) -> None
-        while True:
-            try:
-                matches.remove("")
-            except ValueError:
-                break
-
-        while True:
-            try:
-                matches.remove(",")
-            except ValueError:
-                return

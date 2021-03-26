@@ -31,7 +31,7 @@ class ContentPermissions(object):
             can_write=generated.can_write,
         )
 
-    def to_generated(self):
+    def _to_generated(self):
         # type: () -> ContentProperties
         return ContentProperties(
             can_delete=self.can_delete,

@@ -8,7 +8,7 @@ from typing import Any, Dict, TYPE_CHECKING
 from azure.core.async_paging import AsyncItemPaged
 
 from ._async_base_client import ContainerRegistryBaseClient
-from .._container_registry_client import ContainerRegistryClient as SyncContainerRegistryClient
+from ._async_container_repository_client import ContainerRepositoryClient
 from .._models import RepositoryProperties, DeletedRepositoryResult
 
 if TYPE_CHECKING:
@@ -39,8 +39,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     def list_repositories(self, **kwargs) -> AsyncItemPaged[str]:
 
         return self._client.container_registry.get_repositories(
-            last=kwargs.pop("last", None), n=kwargs.pop("max", None), **kwargs
+            last=kwargs.pop("last", None), n=kwargs.pop("page_size", None), **kwargs
         )
 
-    def get_repository_client(self, name: str, **kwargs) -> SyncContainerRegistryClient:
-        pass
+    def get_repository_client(self, name: str, **kwargs) -> ContainerRepositoryClient:
+
+        return ContainerRepositoryClient(self._endpoint, name, self._credential, **kwargs)

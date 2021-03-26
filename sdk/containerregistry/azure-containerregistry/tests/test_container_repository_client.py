@@ -21,7 +21,7 @@ from azure.containerregistry import (
 )
 from azure.core.paging import ItemPaged
 
-from .testcase import ContainerRegistryTestClass, AcrBodyReplacer, FakeTokenCredential
+from testcase import ContainerRegistryTestClass, AcrBodyReplacer, FakeTokenCredential
 
 acr_preparer = functools.partial(
     PowerShellPreparer,

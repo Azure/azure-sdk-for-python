@@ -44,12 +44,8 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         super(ContainerRegistryChallengePolicy, self).__init__()
         self._scopes = "https://management.core.windows.net/.default"
         self._credential = credential
-        self._token = None  # type: Optional[AccessToken]
+        self._token = None  # type: Optional[str]
         self._exchange_client = ACRExchangeClient(endpoint, self._credential)
-
-    def _need_new_token(self):  # pylint: disable=no-self-use
-        # type: () -> bool
-        return True
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
@@ -57,14 +53,8 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         The base implementation authorizes the request with a bearer token.
         :param ~azure.core.pipeline.PipelineRequest request: the request
         """
-
-        if self._token is None or self._need_new_token():
-            self._token = self._credential.get_token(self._scopes)
-            try:
-                self._token = self._token.token
-            except AttributeError:
-                pass
-        request.http_request.headers["Authorization"] = "Bearer " + self._token
+        # Future caching implementation will be included here
+        pass  # pylint: disable=unnecessary-pass
 
     def send(self, request):
         # type: (PipelineRequest) -> PipelineResponse

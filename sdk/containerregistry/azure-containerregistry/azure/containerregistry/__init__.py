@@ -8,7 +8,6 @@
 
 from ._container_registry_client import ContainerRegistryClient
 from ._container_repository_client import ContainerRepositoryClient
-from ._exchange_client import ACRExchangeClient
 from ._models import (
     ContentPermissions,
     DeletedRepositoryResult,

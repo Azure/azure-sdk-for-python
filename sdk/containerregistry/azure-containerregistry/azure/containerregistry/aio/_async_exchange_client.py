@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 from .._generated.aio import ContainerRegistry
+from .._helpers import _parse_challenge
 from .._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
@@ -65,7 +66,7 @@ class ACRExchangeClient(object):
 
     async def get_acr_access_token(self, challenge):
         # type: (str) -> str
-        parsed_challenge = self._parse_challenge(challenge)
+        parsed_challenge = _parse_challenge(challenge)
         refresh_token = await self.exchange_aad_token_for_refresh_token(service=parsed_challenge["service"])
         return await self.exchange_refresh_token_for_access_token(
             refresh_token, service=parsed_challenge["service"], scope=parsed_challenge["scope"]
@@ -86,20 +87,6 @@ class ACRExchangeClient(object):
         )
         return access_token.access_token
 
-    def _parse_challenge(self, header):
-        # type: (str) -> Dict[str, Any]
-        """Parse challenge header into service and scope"""
-        if header.startswith(self.BEARER):
-            challenge_params = header[len(self.BEARER) + 1 :]
-
-            matches = re.split(self.AUTHENTICATION_CHALLENGE_PARAMS_PATTERN, challenge_params)
-            self._clean(matches)
-            ret = {}
-            for i in range(0, len(matches), 2):
-                ret[matches[i]] = matches[i + 1]
-
-        return ret
-
     async def __aenter__(self):
         self._client.__aenter__()
         return self
@@ -107,23 +94,9 @@ class ACRExchangeClient(object):
     async def __aexit__(self, *args):
         self._client.__aexit__(*args)
 
-    def close(self):
+    async def close(self):
         # type: () -> None
         """Close sockets opened by the client.
         Calling this method is unnecessary when using the client as a context manager.
         """
-        self._client.close()
-
-    def _clean(self, matches):  # pylint: disable=no-self-use
-        # type: (List[str]) -> None
-        while True:
-            try:
-                matches.remove("")
-            except ValueError:
-                break
-
-        while True:
-            try:
-                matches.remove(",")
-            except ValueError:
-                return
+        await self._client.close()
