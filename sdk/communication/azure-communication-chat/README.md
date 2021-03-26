@@ -265,12 +265,12 @@ Use `list_chat_threads` method retrieves the list of created chat threads
 An iterator of `[ChatThreadItem]` is the response returned from listing threads
 
 ```python
-from azure.communication.chat import ChatClient, CommunicationUserCredential
+from azure.communication.chat import ChatClient, CommunicationTokenCredential
 from datetime import datetime, timedelta
 
 token = "<token>"
 endpoint = "https://<RESOURCE_NAME>.communcationservices.azure.com"
-chat_client = ChatClient(endpoint, CommunicationUserCredential(token))
+chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
 start_time = datetime.utcnow() - timedelta(days=2)
 
 chat_threads = chat_client.list_chat_threads(results_per_page=5, start_time=start_time)
