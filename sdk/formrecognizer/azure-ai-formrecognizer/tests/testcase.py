@@ -59,9 +59,16 @@ class OperationLocationReplacer(RecordingProcessor):
             if 'location' in headers:
                 location_header = "location"
             if location_header:
-                if len(headers[location_header]) > 0:
+                if isinstance(headers[location_header], list):
                     suffix = headers[location_header][0].split("/formrecognizer/")[1]
                     response['headers'][location_header] = [self._replacement + suffix]
+                else:
+                    suffix = headers[location_header].split("/formrecognizer/")[1]
+                    response['headers'][location_header] = self._replacement + suffix
+            url = response["url"]
+            if url is not None:
+                suffix = url.split("/formrecognizer/")[1]
+                response['url'] = self._replacement + suffix
             return response
         except (KeyError, ValueError):
             return response
@@ -136,6 +143,7 @@ class FormRecognizerTest(AzureTestCase):
         self.business_card_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "businessCard.jpg")
         self.business_card_url_png = self.get_blob_url(testing_container_sas_url, "testingdata", "businessCard.png")
         self.business_card_multipage_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "business-card-multipage.pdf")
+        self.id_document_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "license_2.jpg")
         self.invoice_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "Invoice_1.pdf")
         self.invoice_url_tiff = self.get_blob_url(testing_container_sas_url, "testingdata", "Invoice_1.tiff")
         self.multipage_vendor_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multi1.pdf")
@@ -150,6 +158,7 @@ class FormRecognizerTest(AzureTestCase):
         self.business_card_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-english.jpg"))
         self.business_card_png = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-english.png"))
         self.business_card_multipage_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-multipage.pdf"))
+        self.id_document_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/id_documents/license.jpg"))
         self.invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.pdf"))
         self.invoice_tiff = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.tiff"))
         self.form_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg"))
@@ -174,15 +183,15 @@ class FormRecognizerTest(AzureTestCase):
         return blob_sas_url
 
     def get_oauth_endpoint(self):
-        return self.get_settings_value("FORM_RECOGNIZER_AAD_ENDPOINT")
+        return os.getenv("FORMRECOGNIZER_TEST_ENDPOINT")
 
     def generate_oauth_token(self):
         if self.is_live:
             from azure.identity import ClientSecretCredential
             return ClientSecretCredential(
-                self.get_settings_value("TENANT_ID"),
-                self.get_settings_value("CLIENT_ID"),
-                self.get_settings_value("CLIENT_SECRET"),
+                os.getenv("FORMRECOGNIZER_TENANT_ID"),
+                os.getenv("FORMRECOGNIZER_CLIENT_ID"),
+                os.getenv("FORMRECOGNIZER_CLIENT_SECRET"),
             )
         return self.generate_fake_token()
 
@@ -392,26 +401,97 @@ class FormRecognizerTest(AzureTestCase):
         for item in items:
             self.assertEqual(item.value_type, "dictionary")
             self.assertBoundingBoxHasPoints(item.value.get("Name").value_data.bounding_box)
-            self.assertIsNotNone(item.value.get("Name").confidence)
-            self.assertIsNotNone(item.value.get("Name").value_data.text)
-            self.assertIsNotNone(item.value.get("Name").value_type)
-            self.assertBoundingBoxHasPoints(item.value.get("Quantity").value_data.bounding_box)
-            self.assertIsNotNone(item.value.get("Quantity").confidence)
-            self.assertIsNotNone(item.value.get("Quantity").value_data.text)
-            self.assertIsNotNone(item.value.get("Quantity").value_type)
-            self.assertBoundingBoxHasPoints(item.value.get("TotalPrice").value_data.bounding_box)
-            self.assertIsNotNone(item.value.get("TotalPrice").confidence)
-            self.assertIsNotNone(item.value.get("TotalPrice").value_data.text)
-            self.assertIsNotNone(item.value.get("TotalPrice").value_type)
+            if item.value.get("Name", None):
+                self.assertIsNotNone(item.value.get("Name").confidence)
+                self.assertIsNotNone(item.value.get("Name").value_data.text)
+                self.assertIsNotNone(item.value.get("Name").value_type)
+            if item.value.get("Quantity", None):
+                self.assertBoundingBoxHasPoints(item.value.get("Quantity").value_data.bounding_box)
+                self.assertIsNotNone(item.value.get("Quantity").confidence)
+                self.assertIsNotNone(item.value.get("Quantity").value_data.text)
+                self.assertIsNotNone(item.value.get("Quantity").value_type)
+            if item.value.get("TotalPrice", None):
+                self.assertBoundingBoxHasPoints(item.value.get("TotalPrice").value_data.bounding_box)
+                self.assertIsNotNone(item.value.get("TotalPrice").confidence)
+                self.assertIsNotNone(item.value.get("TotalPrice").value_data.text)
+                self.assertIsNotNone(item.value.get("TotalPrice").value_type)
+            if item.value.get("Price", None):
+                self.assertBoundingBoxHasPoints(item.value.get("Price").value_data.bounding_box)
+                self.assertIsNotNone(item.value.get("Price").confidence)
+                self.assertIsNotNone(item.value.get("Price").value_data.text)
+                self.assertIsNotNone(item.value.get("Price").value_type)
 
             if include_field_elements:
-                self.assertFieldElementsHasValues(item.value.get("Name").value_data.field_elements, page_number)
-                self.assertFieldElementsHasValues(item.value.get("Quantity").value_data.field_elements, page_number)
-                self.assertFieldElementsHasValues(item.value.get("TotalPrice").value_data.field_elements, page_number)
-            else:
-                self.assertIsNone(item.value.get("Name").value_data.field_elements)
-                self.assertIsNone(item.value.get("Quantity").value_data.field_elements)
-                self.assertIsNone(item.value.get("TotalPrice").value_data.field_elements)
+                if item.value.get("Name", None):
+                    self.assertFieldElementsHasValues(item.value.get("Name").value_data.field_elements, page_number)
+                if item.value.get("Quantity", None):
+                    self.assertFieldElementsHasValues(item.value.get("Quantity").value_data.field_elements, page_number)
+                if item.value.get("TotalPrice", None):
+                    self.assertFieldElementsHasValues(item.value.get("TotalPrice").value_data.field_elements, page_number)
+                if item.value.get("Price", None):
+                    self.assertFieldElementsHasValues(item.value.get("Price").value_data.field_elements, page_number)
+
+    def assertInvoiceItemsHasValues(self, items, page_number, include_field_elements):
+        for item in items:
+            self.assertEqual(item.value_type, "dictionary")
+            if item.value.get("Amount", None):
+                self.assertBoundingBoxHasPoints(item.value.get("Amount").value_data.bounding_box)
+                self.assertIsNotNone(item.value.get("Amount").confidence)
+                self.assertIsNotNone(item.value.get("Amount").value_data.text)
+                self.assertIsNotNone(item.value.get("Amount").value_type)
+            if item.value.get("Quantity", None):
+                self.assertBoundingBoxHasPoints(item.value.get("Quantity").value_data.bounding_box)
+                self.assertIsNotNone(item.value.get("Quantity").confidence)
+                self.assertIsNotNone(item.value.get("Quantity").value_data.text)
+                self.assertIsNotNone(item.value.get("Quantity").value_type)
+            if item.value.get("Description", None):
+                self.assertBoundingBoxHasPoints(item.value.get("Description").value_data.bounding_box)
+                self.assertIsNotNone(item.value.get("Description").confidence)
+                self.assertIsNotNone(item.value.get("Description").value_data.text)
+                self.assertIsNotNone(item.value.get("Description").value_type)
+            if item.value.get("UnitPrice", None):
+                self.assertBoundingBoxHasPoints(item.value.get("UnitPrice").value_data.bounding_box)
+                self.assertIsNotNone(item.value.get("UnitPrice").confidence)
+                self.assertIsNotNone(item.value.get("UnitPrice").value_data.text)
+                self.assertIsNotNone(item.value.get("UnitPrice").value_type)
+            if item.value.get("ProductCode", None):
+                self.assertBoundingBoxHasPoints(item.value.get("ProductCode").value_data.bounding_box)
+                self.assertIsNotNone(item.value.get("ProductCode").confidence)
+                self.assertIsNotNone(item.value.get("ProductCode").value_data.text)
+                self.assertIsNotNone(item.value.get("ProductCode").value_type)
+            if item.value.get("Unit", None):
+                self.assertBoundingBoxHasPoints(item.value.get("Unit").value_data.bounding_box)
+                self.assertIsNotNone(item.value.get("Unit").confidence)
+                self.assertIsNotNone(item.value.get("Unit").value_data.text)
+                self.assertIsNotNone(item.value.get("Unit").value_type)
+            if item.value.get("Date", None):
+                self.assertBoundingBoxHasPoints(item.value.get("Date").value_data.bounding_box)
+                self.assertIsNotNone(item.value.get("Date").confidence)
+                self.assertIsNotNone(item.value.get("Date").value_data.text)
+                self.assertIsNotNone(item.value.get("Date").value_type)
+            if item.value.get("Tax", None):
+                self.assertBoundingBoxHasPoints(item.value.get("Tax").value_data.bounding_box)
+                self.assertIsNotNone(item.value.get("Tax").confidence)
+                self.assertIsNotNone(item.value.get("Tax").value_data.text)
+                self.assertIsNotNone(item.value.get("Tax").value_type)
+
+            if include_field_elements:
+                if item.value.get("Amount", None):
+                    self.assertFieldElementsHasValues(item.value.get("Amount").value_data.field_elements, page_number)
+                if item.value.get("Quantity", None):
+                    self.assertFieldElementsHasValues(item.value.get("Quantity").value_data.field_elements, page_number)
+                if item.value.get("Description", None):
+                    self.assertFieldElementsHasValues(item.value.get("Description").value_data.field_elements, page_number)
+                if item.value.get("UnitPrice", None):
+                    self.assertFieldElementsHasValues(item.value.get("UnitPrice").value_data.field_elements, page_number)
+                if item.value.get("ProductCode", None):
+                    self.assertFieldElementsHasValues(item.value.get("ProductCode").value_data.field_elements, page_number)
+                if item.value.get("Unit", None):
+                    self.assertFieldElementsHasValues(item.value.get("Unit").value_data.field_elements, page_number)
+                if item.value.get("Date", None):
+                    self.assertFieldElementsHasValues(item.value.get("Date").value_data.field_elements, page_number)
+                if item.value.get("Tax", None):
+                    self.assertFieldElementsHasValues(item.value.get("Tax").value_data.field_elements, page_number)
 
     def assertBoundingBoxHasPoints(self, box):
         if box is None:
@@ -544,7 +624,7 @@ class FormRecognizerTest(AzureTestCase):
             self.assertIsNotNone(field.label_data.text)
 
     def assertLabeledRecognizedFormHasValues(self, form, model):
-        self.assertEqual(form.form_type_confidence, 1.0)
+        self.assertIsNotNone(form.form_type_confidence)
         self.assertEqual(form.model_id, model.model_id)
         self.assertFormPagesHasValues(form.pages)
         for label, field in form.fields.items():

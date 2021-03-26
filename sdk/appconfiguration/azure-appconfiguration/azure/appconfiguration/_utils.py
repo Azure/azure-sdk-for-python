@@ -7,6 +7,7 @@
 from datetime import datetime
 from azure.core import MatchConditions
 
+
 def quote_etag(etag):
     if not etag or etag == "*":
         return etag
@@ -15,6 +16,7 @@ def quote_etag(etag):
     if etag.startswith("'") and etag.endswith("'"):
         return etag
     return '"' + etag + '"'
+
 
 def prep_if_match(etag, match_condition):
     # type: (str, MatchConditions) -> str
@@ -25,6 +27,7 @@ def prep_if_match(etag, match_condition):
         return "*"
     return None
 
+
 def prep_if_none_match(etag, match_condition):
     # type: (str, MatchConditions) -> str
     if match_condition == MatchConditions.IfModified:
@@ -33,6 +36,7 @@ def prep_if_none_match(etag, match_condition):
     if match_condition == MatchConditions.IfMissing:
         return "*"
     return None
+
 
 def get_endpoint_from_connection_string(connection_string):
     endpoint, _, _ = parse_connection_string(connection_string)
@@ -66,4 +70,4 @@ def parse_connection_string(connection_string):
 
 
 def get_current_utc_time():
-    return str(datetime.utcnow().strftime("%b, %d %Y %H:%M:%S ")) + "GMT"
+    return str(datetime.utcnow().strftime("%b, %d %Y %H:%M:%S.%f ")) + "GMT"

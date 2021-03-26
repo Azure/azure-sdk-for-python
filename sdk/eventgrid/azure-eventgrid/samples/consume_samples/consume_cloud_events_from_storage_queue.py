@@ -14,7 +14,7 @@ USAGE:
     3) STORAGE_QUEUE_NAME: The name of the storage queue.
 """
 
-from azure.eventgrid import CloudEvent
+from azure.core.messaging import CloudEvent
 from azure.storage.queue import QueueServiceClient, BinaryBase64DecodePolicy
 import os
 import json
@@ -29,7 +29,7 @@ with QueueServiceClient.from_connection_string(connection_str) as qsc:
         message_decode_policy=BinaryBase64DecodePolicy()
         ).peek_messages()
 
-    ## deserialize payload into a lost of typed Events
+    ## deserialize payload into a list of typed Events
     events = [CloudEvent.from_dict(json.loads(msg.content)) for msg in payload]
 
     for event in events:

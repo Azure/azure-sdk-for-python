@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: containerservice
     Artifacts:
-    - name: azure_mgmt_containerservice
+    - name: azure-mgmt-containerservice
       safeName: azuremgmtcontainerservice

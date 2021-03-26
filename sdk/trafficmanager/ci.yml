@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: trafficmanager
     Artifacts:
-    - name: azure_mgmt_trafficmanager
+    - name: azure-mgmt-trafficmanager
       safeName: azuremgmttrafficmanager

@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: hdinsight
     Artifacts:
-    - name: azure_mgmt_hdinsight
+    - name: azure-mgmt-hdinsight
       safeName: azuremgmthdinsight

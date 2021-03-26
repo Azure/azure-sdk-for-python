@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searchb0841f28.search.windows.net/datasources?api-version=2020-06-30
+    uri: https://searchb0841f28.search.windows.net/datasources?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://searchb0841f28.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D84B9B8481B87C\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
@@ -25,7 +25,7 @@ interactions:
       elapsed-time: '34'
       etag: W/"0x8D84B9B8481B87C"
       expires: '-1'
-      location: https://searchb0841f28.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
+      location: https://searchb0841f28.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -34,5 +34,5 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://searchb0841f28.search.windows.net/datasources?api-version=2020-06-30
+    url: https://searchb0841f28.search.windows.net/datasources?api-version=2020-06-30-Preview
 version: 1

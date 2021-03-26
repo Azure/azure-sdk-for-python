@@ -24,15 +24,16 @@
 #
 # --------------------------------------------------------------------------
 
-from .._internal._index import (
+from ._index import (
     ComplexField,
     SearchField,
     SearchableField,
     SimpleField,
+    SearchIndex,
 )
-from .._internal import _edm as SearchFieldDataType
-from ..._internal._generated.models import SuggestOptions
-from .._internal._generated.models import (
+from . import _edm as SearchFieldDataType
+from ..._generated.models import SuggestOptions
+from .._generated.models import (
     AnalyzeResult,
     AnalyzedTokenInfo,
     AsciiFoldingTokenFilter,
@@ -99,7 +100,6 @@ from .._internal._generated.models import (
     PhoneticEncoder,
     PhoneticTokenFilter,
     RegexFlags,
-    SearchIndex,
     SearchIndexer,
     SearchIndexerDataContainer,
     SearchIndexerError,
@@ -145,7 +145,7 @@ from .._internal._generated.models import (
     VisualFeature,
     WordDelimiterTokenFilter,
 )
-from .._internal._models import (
+from ._models import (
     AnalyzeTextOptions,
     CustomAnalyzer,
     PatternAnalyzer,

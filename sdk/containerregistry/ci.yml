@@ -10,7 +10,10 @@ trigger:
     - restapi*
   paths:
     include:
-    - sdk/containerregistry/
+    - sdk/tables/
+    - sdk/core/
+    - tools/
+    - eng/
 
 pr:
   branches:
@@ -23,12 +26,18 @@ pr:
     - restapi*
   paths:
     include:
-    - sdk/containerregistry/
+    - sdk/tables/
+    - sdk/core/
+    - tools/
+    - eng/
+
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: containerregistry
     Artifacts:
-    - name: azure_mgmt_containerregistry
+    - name: azure-mgmt-containerregistry
       safeName: azuremgmtcontainerregistry
+    - name: azure-containerregistry
+      safeName: azurecontainerregistry

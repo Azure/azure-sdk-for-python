@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: managedservices
     Artifacts:
-    - name: azure_mgmt_managedservices
+    - name: azure-mgmt-managedservices
       safeName: azuremgmtmanagedservices

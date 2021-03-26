@@ -9,6 +9,7 @@
 from typing import Any, Union, List, Dict, cast
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.messaging import CloudEvent
 from azure.core.pipeline.policies import (
     RequestIdPolicy,
     HeadersPolicy,
@@ -20,37 +21,29 @@ from azure.core.pipeline.policies import (
     ProxyPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
-    UserAgentPolicy
+    UserAgentPolicy,
 )
 from .._policies import CloudEventDistributedTracingPolicy
-from .._models import CloudEvent, EventGridEvent
+from .._models import EventGridEvent
 from .._helpers import (
-    _get_endpoint_only_fqdn,
     _get_authentication_policy,
     _is_cloud_event,
     _is_eventgrid_event,
-    _eventgrid_data_typecheck
+    _eventgrid_data_typecheck,
+    _build_request,
+    _cloud_event_to_generated,
 )
 from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
-from .._generated.models import CloudEvent as InternalCloudEvent
 from .._version import VERSION
 
 SendType = Union[
-    CloudEvent,
-    EventGridEvent,
-    Dict,
-    List[CloudEvent],
-    List[EventGridEvent],
-    List[Dict]
+    CloudEvent, EventGridEvent, Dict, List[CloudEvent], List[EventGridEvent], List[Dict]
 ]
 
-ListEventType = Union[
-    List[CloudEvent],
-    List[EventGridEvent],
-    List[Dict]
-]
+ListEventType = Union[List[CloudEvent], List[EventGridEvent], List[Dict]]
 
-class EventGridPublisherClient():
+
+class EventGridPublisherClient:
     """Asynchronous EventGridPublisherClient publishes events to an EventGrid topic or domain.
     It can be used to publish either an EventGridEvent, a CloudEvent or a Custom Schema.
 
@@ -81,21 +74,19 @@ class EventGridPublisherClient():
         self,
         endpoint: str,
         credential: Union[AzureKeyCredential, AzureSasCredential],
-        **kwargs: Any) -> None:
+        **kwargs: Any
+    ) -> None:
         self._client = EventGridPublisherClientAsync(
-            policies=EventGridPublisherClient._policies(credential, **kwargs),
-            **kwargs
-            )
-        endpoint = _get_endpoint_only_fqdn(endpoint)
+            policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs
+        )
         self._endpoint = endpoint
 
     @staticmethod
     def _policies(
-        credential: Union[AzureKeyCredential, AzureSasCredential],
-        **kwargs: Any
-        ) -> List[Any]:
+        credential: Union[AzureKeyCredential, AzureSasCredential], **kwargs: Any
+    ) -> List[Any]:
         auth_policy = _get_authentication_policy(credential)
-        sdk_moniker = 'eventgridpublisherclient/{}'.format(VERSION)
+        sdk_moniker = "eventgridpublisherclient/{}".format(VERSION)
         policies = [
             RequestIdPolicy(**kwargs),
             HeadersPolicy(**kwargs),
@@ -109,15 +100,12 @@ class EventGridPublisherClient():
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
             CloudEventDistributedTracingPolicy(),
-            HttpLoggingPolicy(**kwargs)
+            HttpLoggingPolicy(**kwargs),
         ]
         return policies
 
     @distributed_trace_async
-    async def send(
-        self,
-        events: SendType,
-        **kwargs: Any) -> None:
+    async def send(self, events: SendType, **kwargs: Any) -> None:
         """Sends events to a topic or a domain specified during the client initialization.
 
         A single instance or a list of dictionaries, CloudEvents or EventGridEvents are accepted.
@@ -147,14 +135,14 @@ class EventGridPublisherClient():
                 :start-after: [START publish_eg_event_dict_async]
                 :end-before: [END publish_eg_event_dict_async]
                 :language: python
-                :dedent: 0
-                :caption: Publishing an EventGridEvent using a dict-like representation.
+                :dedent: 4
+                :caption: Publishing a list of EventGridEvents using a dict-like representation.
 
             .. literalinclude:: ../samples/async_samples/sample_publish_cloud_event_using_dict_async.py
                 :start-after: [START publish_cloud_event_dict_async]
                 :end-before: [END publish_cloud_event_dict_async]
                 :language: python
-                :dedent: 0
+                :dedent: 4
                 :caption: Publishing a CloudEvent using a dict-like representation.
 
         When publishing a Custom Schema Event(s), dict-like representation is accepted.
@@ -166,38 +154,40 @@ class EventGridPublisherClient():
                 :start-after: [START publish_custom_schema_async]
                 :end-before: [END publish_custom_schema_async]
                 :language: python
-                :dedent: 0
+                :dedent: 4
                 :caption: Publishing a Custom Schema event.
 
-        **WARNING**: To gain the best performance when sending multiple events at one time,
-        it is highly recommended to send a list of events instead of iterating over and sending each event in a loop.
+        **WARNING**: When sending a list of multiple events at one time, iterating over and sending each event
+        will not result in optimal performance. For best performance, it is highly recommended to send
+        a list of events.
 
         :param events: A single instance or a list of dictionaries/CloudEvent/EventGridEvent to be sent.
-        :type events: SendType
+        :type events: ~azure.core.messaging.CloudEvent or ~azure.eventgrid.EventGridEvent or dict or
+         List[~azure.core.messaging.CloudEvent] or List[~azure.eventgrid.EventGridEvent] or List[dict]
         :keyword str content_type: The type of content to be used to send the events.
          Has default value "application/json; charset=utf-8" for EventGridEvents,
          with "cloudevents-batch+json" for CloudEvents
         :rtype: None
-         """
+        """
         if not isinstance(events, list):
             events = cast(ListEventType, [events])
+        content_type = kwargs.pop("content_type", "application/json; charset=utf-8")
 
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
-                events = [cast(CloudEvent, e)._to_generated(**kwargs) for e in events] # pylint: disable=protected-access
+                events = [
+                    _cloud_event_to_generated(e, **kwargs) for e in events # pylint: disable=protected-access
+                ]
             except AttributeError:
-                pass # means it's a dictionary
-            kwargs.setdefault("content_type", "application/cloudevents-batch+json; charset=utf-8")
-            return await self._client.publish_cloud_event_events(
-                self._endpoint,
-                cast(List[InternalCloudEvent], events),
-                **kwargs
-                )
-        kwargs.setdefault("content_type", "application/json; charset=utf-8")
-        if isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
+                pass  # means it's a dictionary
+            content_type = "application/cloudevents-batch+json; charset=utf-8"
+        elif isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
             for event in events:
                 _eventgrid_data_typecheck(event)
-        return await self._client.publish_custom_event_events(self._endpoint, cast(List, events), **kwargs)
+        await self._client._send_request( # pylint: disable=protected-access
+            _build_request(self._endpoint, content_type, events),
+            **kwargs
+        )
 
     async def __aenter__(self) -> "EventGridPublisherClient":
         await self._client.__aenter__()
@@ -207,6 +197,5 @@ class EventGridPublisherClient():
         await self._client.__aexit__(*args)
 
     async def close(self) -> None:
-        """Close the :class:`~azure.eventgrid.aio.EventGridPublisherClient` session.
-        """
+        """Close the :class:`~azure.eventgrid.aio.EventGridPublisherClient` session."""
         await self._client.__aexit__()

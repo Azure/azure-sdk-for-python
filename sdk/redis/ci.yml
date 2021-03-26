@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: redis
     Artifacts:
-    - name: azure_mgmt_redis
+    - name: azure-mgmt-redis
       safeName: azuremgmtredis

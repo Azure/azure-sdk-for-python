@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: signalr
     Artifacts:
-    - name: azure_mgmt_signalr
+    - name: azure-mgmt-signalr
       safeName: azuremgmtsignalr

@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: reservations
     Artifacts:
-    - name: azure_mgmt_reservations
+    - name: azure-mgmt-reservations
       safeName: azuremgmtreservations

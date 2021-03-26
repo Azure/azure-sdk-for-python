@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: relay
     Artifacts:
-    - name: azure_mgmt_relay
+    - name: azure-mgmt-relay
       safeName: azuremgmtrelay

@@ -12,12 +12,12 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) CLOUD_ACCESS_KEY - The access key of your eventgrid account.
     2) CLOUD_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
-    "<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net".
+    "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
 """
 # [START publish_cloud_event_to_topic_async]
 import os
 import asyncio
-from azure.eventgrid import CloudEvent
+from azure.core.messaging import CloudEvent
 from azure.eventgrid.aio import EventGridPublisherClient
 from azure.core.credentials import AzureKeyCredential
 
@@ -28,7 +28,7 @@ async def publish():
     credential = AzureKeyCredential(topic_key)
     client = EventGridPublisherClient(endpoint, credential)
 
-    client.send([
+    await client.send([
         CloudEvent(
             type="Contoso.Items.ItemReceived",
             source="/contoso/items",

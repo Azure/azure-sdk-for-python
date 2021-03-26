@@ -1,0 +1,160 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "baseName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]",
+            "metadata": {
+                "description": "The base resource name."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "metadata": {
+                    "description": "The location of the resource. By default, this is the same as the resource group."
+                }
+            }
+        },
+        "testApplicationOid": {
+            "type": "string",
+            "metadata": {
+                "description": "The principal to assign the role to. This is application object id."
+            }
+        },
+        "tenantId": {
+            "type": "string",
+            "metadata": {
+                "description": "The tenant id to which the application and resources belong."
+            }
+        },
+        "testApplicationId": {
+            "type": "string",
+            "metadata": {
+                "description": "The application client id used to run tests."
+            }
+        },
+        "testApplicationSecret": {
+            "type": "string",
+            "metadata": {
+                "description": "The application client secret used to run tests."
+            }
+        },
+        "docTranslationEndpointSuffix": {
+            "defaultValue": ".cognitiveservices.azure.com/",
+            "type": "string"
+        },
+        "storageEndpointSuffix": {
+            "defaultValue": ".blob.core.windows.net/",
+            "type": "string"
+        },
+        "blobStorageAccount": {
+            "type": "string",
+            "defaultValue": "[concat(parameters('baseName'), 'prim')]"
+        }
+    },
+    "variables": {
+        "authorizationApiVersion": "2018-09-01-preview",
+        "docTranslationBaseName": "[parameters('baseName')]",
+        "docTranslationApiVersion": "2017-04-18",
+        "storageMgmtApiVersion": "2019-04-01",
+        "storageAccountName": "[concat(parameters('baseName'), 'prim')]",
+        "location": "[resourceGroup().location]",
+        "azureDocTranslationUrl": "[concat('https://', variables('docTranslationBaseName'), parameters('docTranslationEndpointSuffix'))]",
+        "cognitiveServiceUserRoleId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
+        "encryption": {
+            "services": {
+                "blob": {
+                    "enabled": true
+                }
+            },
+            "keySource": "Microsoft.Storage"
+        },
+        "networkAcls": {
+            "bypass": "AzureServices",
+            "virtualNetworkRules": [],
+            "ipRules": [],
+            "defaultAction": "Allow"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "[variables('authorizationApiVersion')]",
+            "name": "[guid(concat(variables('cognitiveServiceUserRoleId'), variables('docTranslationBaseName')))]",
+            "dependsOn": [
+                "[variables('docTranslationBaseName')]"
+            ],
+            "properties": {
+                "principalId": "[parameters('testApplicationOid')]",
+                "roleDefinitionId": "[variables('cognitiveServiceUserRoleId')]"
+            }
+        },
+        {
+            "type": "Microsoft.CognitiveServices/accounts",
+            "name": "[variables('docTranslationBaseName')]",
+            "apiVersion": "[variables('docTranslationApiVersion')]",
+            "sku": {
+                "name": "S1"
+            },
+            "kind": "TextTranslation",
+            "location": "[parameters('location')]",
+            "properties": {
+                "customSubDomainName": "[variables('docTranslationBaseName')]"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "[variables('storageMgmtApiVersion')]",
+            "name": "[variables('storageAccountName')]",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "Standard_RAGRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2",
+            "properties": {
+                "networkAcls": "[variables('networkAcls')]",
+                "supportsHttpsTrafficOnly": true,
+                "encryption": "[variables('encryption')]",
+                "accessTier": "Cool"
+            }
+        }
+    ],
+    "outputs": {
+        "AZURE_TENANT_ID": {
+            "type": "string",
+            "value": "[parameters('tenantId')]"
+        },
+        "AZURE_CLIENT_ID": {
+            "type": "string",
+            "value": "[parameters('testApplicationId')]"
+        },
+        "AZURE_CLIENT_SECRET": {
+            "type": "string",
+            "value": "[parameters('testApplicationSecret')]"
+        },
+        "DOCUMENTTRANSLATION_NAME": {
+            "type": "string",
+            "value": "[variables('docTranslationBaseName')]"
+        },
+        "DOCUMENTTRANSLATION_TEST_API_KEY": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('docTranslationBaseName')), variables('docTranslationApiVersion')).key1]"
+        },
+        "DOCUMENTTRANSLATION_TEST_ENDPOINT": {
+            "type": "string",
+            "value": "[variables('azureDocTranslationUrl')]"
+        },
+        "DOCUMENTTRANSLATION_STORAGE_NAME": {
+            "type": "string",
+            "value": "[parameters('blobStorageAccount')]"
+        },
+        "DOCUMENTTRANSLATION_STORAGE_KEY": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), variables('storageMgmtApiVersion')).keys[0].value]"
+        }
+    }
+}

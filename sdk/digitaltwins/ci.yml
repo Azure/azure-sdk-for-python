@@ -30,9 +30,9 @@ extends:
   parameters:
     ServiceDirectory: digitaltwins
     Artifacts:
-    - name: azure_mgmt_digitaltwins
+    - name: azure-mgmt-digitaltwins
       safeName: azuremgmtdigitaltwins
-    - name: azure_digitaltwins_core
+    - name: azure-digitaltwins-core
       safeName: azuredigitaltwinscore
-    - name: azure_digitaltwins_nspkg
+    - name: azure-digitaltwins-nspkg
       safeName: azuredigitaltwinsnspkg

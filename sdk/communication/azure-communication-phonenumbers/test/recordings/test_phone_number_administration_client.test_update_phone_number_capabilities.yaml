@@ -1,0 +1,132 @@
+interactions:
+- request:
+    body: '{"calling": "inbound", "sms": "inbound+outbound"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '49'
+      Content-Type:
+      - application/merge-patch+json
+      Date:
+      - Tue, 16 Mar 2021 16:37:12 GMT
+      User-Agent:
+      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.communication.azure.com/phoneNumbers/sanitized/capabilities?api-version=2021-03-07
+  response:
+    body:
+      string: '{"capabilitiesUpdateId": "04387c51-57e3-4842-9463-ed7f5c3ff047"}'
+    headers:
+      access-control-expose-headers:
+      - Operation-Location,Location,operation-id,capabilities-id
+      capabilities-id:
+      - 04387c51-57e3-4842-9463-ed7f5c3ff047
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 16 Mar 2021 16:37:13 GMT
+      ms-cv:
+      - VtGvV19eLUyviHRxGzv3qw.0
+      operation-id:
+      - capabilities_04387c51-57e3-4842-9463-ed7f5c3ff047
+      operation-location:
+      - /phoneNumbers/operations/capabilities_04387c51-57e3-4842-9463-ed7f5c3ff047?api-version=2021-03-07
+      request-context:
+      - appId=
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 971ms
+    status:
+      code: 202
+      message: Accepted
+    url: sanitized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Date:
+      - Tue, 16 Mar 2021 16:37:44 GMT
+      User-Agent:
+      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.communication.azure.com/phoneNumbers/operations/capabilities_04387c51-57e3-4842-9463-ed7f5c3ff047?api-version=2021-03-07
+  response:
+    body:
+      string: '{"status": "succeeded", "resourceLocation": "/phoneNumbers/+18335260208?api-version=2021-03-07",
+        "createdDateTime": "2021-03-16T16:37:13.8361789+00:00", "id": "sanitized",
+        "operationType": "UpdatePhoneNumberCapabilities", "lastActionDateTime": "0001-01-01T00:00:00+00:00"}'
+    headers:
+      access-control-expose-headers:
+      - Location
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 16 Mar 2021 16:37:44 GMT
+      ms-cv:
+      - zBPNquZsdkmXWbHJTp15iA.0
+      request-context:
+      - appId=
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 310ms
+    status:
+      code: 200
+      message: OK
+    url: sanitized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Date:
+      - Tue, 16 Mar 2021 16:37:44 GMT
+      User-Agent:
+      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.communication.azure.com/phoneNumbers/+18335260208?api-version=2021-03-07
+  response:
+    body:
+      string: '{"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US",
+        "phoneNumberType": "TollFree", "capabilities": {"calling": "inbound", "sms":
+        "inbound+outbound"}, "assignmentType": "Application", "purchaseDate": "2000-01-01T00:00:00+00:00",
+        "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "Monthly"}}'
+    headers:
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 16 Mar 2021 16:37:45 GMT
+      ms-cv:
+      - SYhI+g0k2UupvbcQ5+vBGQ.0
+      request-context:
+      - appId=
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 1225ms
+    status:
+      code: 200
+      message: OK
+    url: sanitized
+version: 1

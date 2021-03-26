@@ -1,7 +1,28 @@
 # Release History
 
-## 1.11.1 (Unreleased)
+## 1.13.0 (Unreleased)
 
+### Features
+
+- Supported adding custom policies  #16519
+
+### Bug fixes
+
+- Make NetworkTraceLoggingPolicy show the auth token in plain text. #14191
+
+## 1.12.0 (2021-03-08)
+
+This version will be the last version to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
+
+### Features
+
+- Added `azure.core.messaging.CloudEvent` model that follows the cloud event spec.
+- Added `azure.core.serialization.NULL` sentinel value
+- Improve `repr`s for `HttpRequest` and `HttpResponse`s  #16972
+
+### Bug Fixes
+
+- Disable retry in stream downloading. (thanks to @jochen-ott-by @hoffmann for the contribution)  #16723
 
 ## 1.11.0 (2021-02-08)
 

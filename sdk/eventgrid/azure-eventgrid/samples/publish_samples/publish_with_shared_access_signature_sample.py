@@ -13,7 +13,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) CLOUD_ACCESS_KEY - The access key of your eventgrid account.
     2) CLOUD_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
-    "<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net".
+    "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
 """
 import os
 from random import randint, sample
@@ -21,7 +21,8 @@ import time
 
 from datetime import datetime, timedelta
 from azure.core.credentials import AzureSasCredential
-from azure.eventgrid import EventGridPublisherClient, CloudEvent, generate_sas
+from azure.core.messaging import CloudEvent
+from azure.eventgrid import EventGridPublisherClient, generate_sas
 
 key = os.environ["CLOUD_ACCESS_KEY"]
 endpoint = os.environ["CLOUD_TOPIC_HOSTNAME"]

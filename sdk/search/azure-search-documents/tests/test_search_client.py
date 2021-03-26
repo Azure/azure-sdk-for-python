@@ -13,17 +13,18 @@ except ImportError:
 from azure.core.paging import ItemPaged
 from azure.core.credentials import AzureKeyCredential
 
-from azure.search.documents._internal._generated.models import (
+from azure.search.documents._generated.models import (
     IndexBatch,
     SearchDocumentsResult,
     SearchResult,
 )
-from azure.search.documents._internal._search_client import SearchPageIterator
+from azure.search.documents._search_client import SearchPageIterator
 
 from azure.search.documents import (
     IndexDocumentsBatch,
     SearchClient,
     RequestEntityTooLargeError,
+    ApiVersion,
 )
 from azure.search.documents.models import odata
 
@@ -103,7 +104,7 @@ class TestSearchClient(object):
         )
 
     @mock.patch(
-        "azure.search.documents._internal._generated.operations._documents_operations.DocumentsOperations.count"
+        "azure.search.documents._generated.v2020_06_preview.operations._documents_operations.DocumentsOperations.count"
     )
     def test_get_document_count(self, mock_count):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
@@ -115,7 +116,7 @@ class TestSearchClient(object):
 
 
     @mock.patch(
-        "azure.search.documents._internal._generated.operations._documents_operations.DocumentsOperations.get"
+        "azure.search.documents._generated.v2020_06_preview.operations._documents_operations.DocumentsOperations.get"
     )
     def test_get_document(self, mock_get):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
@@ -138,7 +139,7 @@ class TestSearchClient(object):
         assert mock_get.call_args[1]["selected_fields"] == "foo"
 
     @mock.patch(
-        "azure.search.documents._internal._generated.operations._documents_operations.DocumentsOperations.search_post"
+        "azure.search.documents._generated.v2020_06_preview.operations._documents_operations.DocumentsOperations.search_post"
     )
     def test_search_query_argument(self, mock_search_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
@@ -157,7 +158,7 @@ class TestSearchClient(object):
         )
 
     @mock.patch(
-        "azure.search.documents._internal._generated.operations._documents_operations.DocumentsOperations.suggest_post"
+        "azure.search.documents._generated.v2020_06_preview.operations._documents_operations.DocumentsOperations.suggest_post"
     )
     def test_suggest_query_argument(self, mock_suggest_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
@@ -181,7 +182,7 @@ class TestSearchClient(object):
             )
 
     @mock.patch(
-        "azure.search.documents._internal._generated.operations._documents_operations.DocumentsOperations.autocomplete_post"
+        "azure.search.documents._generated.v2020_06_preview.operations._documents_operations.DocumentsOperations.autocomplete_post"
     )
     def test_autocomplete_query_argument(self, mock_autocomplete_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
@@ -194,6 +195,91 @@ class TestSearchClient(object):
         assert (
             mock_autocomplete_post.call_args[1]["autocomplete_request"].search_text
             == "search text"
+        )
+
+    @mock.patch(
+        "azure.search.documents._generated.v2020_06.operations._documents_operations.DocumentsOperations.count"
+    )
+    def test_get_document_count_v2020_06_30(self, mock_count):
+        client = SearchClient("endpoint", "index name", CREDENTIAL, api_version=ApiVersion.V2020_06_30)
+        client.get_document_count()
+        assert mock_count.called
+        assert mock_count.call_args[0] == ()
+        assert len(mock_count.call_args[1]) == 1
+        assert mock_count.call_args[1]["headers"] == client._headers
+
+    @mock.patch(
+        "azure.search.documents._generated.v2020_06.operations._documents_operations.DocumentsOperations.get"
+    )
+    def test_get_document_v2020_06_30(self, mock_get):
+        client = SearchClient("endpoint", "index name", CREDENTIAL, api_version=ApiVersion.V2020_06_30)
+        client.get_document("some_key")
+        assert mock_get.called
+        assert mock_get.call_args[0] == ()
+        assert len(mock_get.call_args[1]) == 3
+        assert mock_get.call_args[1]["headers"] == client._headers
+        assert mock_get.call_args[1]["key"] == "some_key"
+        assert mock_get.call_args[1]["selected_fields"] == None
+
+        mock_get.reset()
+
+        client.get_document("some_key", selected_fields="foo")
+        assert mock_get.called
+        assert mock_get.call_args[0] == ()
+        assert len(mock_get.call_args[1]) == 3
+        assert mock_get.call_args[1]["headers"] == client._headers
+        assert mock_get.call_args[1]["key"] == "some_key"
+        assert mock_get.call_args[1]["selected_fields"] == "foo"
+
+    @mock.patch(
+        "azure.search.documents._generated.v2020_06.operations._documents_operations.DocumentsOperations.search_post"
+    )
+    def test_search_query_argument_v2020_06_30(self, mock_search_post):
+        client = SearchClient("endpoint", "index name", CREDENTIAL, api_version=ApiVersion.V2020_06_30)
+        result = client.search(search_text="search text")
+        assert isinstance(result, ItemPaged)
+        assert result._page_iterator_class is SearchPageIterator
+        search_result = SearchDocumentsResult()
+        search_result.results = [SearchResult(additional_properties={"key": "val"})]
+        mock_search_post.return_value = search_result
+        assert not mock_search_post.called
+        next(result)
+        assert mock_search_post.called
+        assert mock_search_post.call_args[0] == ()
+        assert (
+                mock_search_post.call_args[1]["search_request"].search_text == "search text"
+        )
+
+    @mock.patch(
+        "azure.search.documents._generated.v2020_06.operations._documents_operations.DocumentsOperations.suggest_post"
+    )
+    def test_suggest_query_argument_v2020_06_30(self, mock_suggest_post):
+        client = SearchClient("endpoint", "index name", CREDENTIAL, api_version=ApiVersion.V2020_06_30)
+        result = client.suggest(
+            search_text="search text", suggester_name="sg"
+        )
+        assert mock_suggest_post.called
+        assert mock_suggest_post.call_args[0] == ()
+        assert mock_suggest_post.call_args[1]["headers"] == client._headers
+        assert (
+                mock_suggest_post.call_args[1]["suggest_request"].search_text
+                == "search text"
+        )
+
+    @mock.patch(
+        "azure.search.documents._generated.v2020_06.operations._documents_operations.DocumentsOperations.autocomplete_post"
+    )
+    def test_autocomplete_query_argument_v2020_06_30(self, mock_autocomplete_post):
+        client = SearchClient("endpoint", "index name", CREDENTIAL, api_version=ApiVersion.V2020_06_30)
+        result = client.autocomplete(
+            search_text="search text", suggester_name="sg"
+        )
+        assert mock_autocomplete_post.called
+        assert mock_autocomplete_post.call_args[0] == ()
+        assert mock_autocomplete_post.call_args[1]["headers"] == client._headers
+        assert (
+                mock_autocomplete_post.call_args[1]["autocomplete_request"].search_text
+                == "search text"
         )
 
     def test_autocomplete_bad_argument(self):
@@ -232,7 +318,7 @@ class TestSearchClient(object):
             assert mock_index_documents.call_args[1]["extra"] == "foo"
 
     @mock.patch(
-        "azure.search.documents._internal._generated.operations._documents_operations.DocumentsOperations.index"
+        "azure.search.documents._generated.v2020_06_preview.operations._documents_operations.DocumentsOperations.index"
     )
     def test_index_documents(self, mock_index):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
@@ -259,9 +345,6 @@ class TestSearchClient(object):
         assert len(mock_index.call_args[1]) == 4
         assert mock_index.call_args[1]["headers"] == client._headers
         assert mock_index.call_args[1]["extra"] == "foo"
-        index_documents = mock_index.call_args[1]["batch"]
-        assert isinstance(index_documents, IndexBatch)
-        assert index_documents.actions == batch.actions
 
     def test_request_too_large_error(self):
         with mock.patch.object(SearchClient, "_index_documents_actions", side_effect=RequestEntityTooLargeError("Error")):

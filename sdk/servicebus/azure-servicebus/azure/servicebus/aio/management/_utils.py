@@ -8,7 +8,7 @@ from xml.etree.ElementTree import ElementTree
 
 import urllib.parse as urlparse
 
-from azure.servicebus.management import _constants as constants
+from ...management import _constants as constants
 from ...management._handle_response_error import _handle_response_error
 
 # This module defines functions get_next_template and extract_data_template.

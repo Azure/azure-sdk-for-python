@@ -1,7 +1,14 @@
 # Release History
 
-## 4.4.0b3 (Unreleased)
+## 4.4.0b4 (Unreleased)
 
+
+## 4.4.0b3 (2021-3-11)
+### Added
+- `CryptographyClient` will perform all operations locally if initialized with
+  the `.from_jwk` factory method
+  ([#16565](https://github.com/Azure/azure-sdk-for-python/pull/16565))
+- Added requirement for six>=1.12.0
 
 ## 4.4.0b2 (2021-2-10)
 ### Fixed
