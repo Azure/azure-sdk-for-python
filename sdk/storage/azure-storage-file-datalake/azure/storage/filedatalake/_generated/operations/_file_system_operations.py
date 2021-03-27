@@ -392,15 +392,15 @@ class FileSystemOperations(object):
     delete.metadata = {'url': '/{filesystem}'}  # type: ignore
 
     def list_paths(
-            self,
-            recursive,  # type: bool
-            request_id_parameter=None,  # type: Optional[str]
-            timeout=None,  # type: Optional[int]
-            continuation=None,  # type: Optional[str]
-            path=None,  # type: Optional[str]
-            max_results=None,  # type: Optional[int]
-            upn=None,  # type: Optional[bool]
-            **kwargs  # type: Any
+        self,
+        recursive,  # type: bool
+        request_id_parameter=None,  # type: Optional[str]
+        timeout=None,  # type: Optional[int]
+        continuation=None,  # type: Optional[str]
+        path=None,  # type: Optional[str]
+        max_results=None,  # type: Optional[int]
+        upn=None,  # type: Optional[bool]
+        **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.PathList"]
         """List Paths.
@@ -452,10 +452,8 @@ class FileSystemOperations(object):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
             if request_id_parameter is not None:
-                header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter",
-                                                                                     request_id_parameter, 'str')
-            header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version,
-                                                                       'str')
+                header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+            header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
             header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
@@ -467,8 +465,7 @@ class FileSystemOperations(object):
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['resource'] = self._serialize.query("self._config.resource", self._config.resource,
-                                                                     'str')
+                query_parameters['resource'] = self._serialize.query("self._config.resource", self._config.resource, 'str')
                 if timeout is not None:
                     query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
                 # TODO: change this once continuation/next_link autorest PR is merged
