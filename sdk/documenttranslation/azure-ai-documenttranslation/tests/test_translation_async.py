@@ -67,7 +67,7 @@ class TestTranslation(DocumentTranslationTest):
         ]
 
         # submit job and test
-        await self._submit_and_validate_translation_job(client, translation_inputs, 2)
+        await self._submit_and_validate_translation_job_async(client, translation_inputs, 2)
 
 
     @DocumentTranslationPreparer()
@@ -103,7 +103,7 @@ class TestTranslation(DocumentTranslationTest):
         ]
 
         # submit job and test
-        await self._submit_and_validate_translation_job(client, translation_inputs, 2)
+        await self._submit_and_validate_translation_job_async(client, translation_inputs, 2)
 
 
     @DocumentTranslationPreparer()
@@ -130,7 +130,7 @@ class TestTranslation(DocumentTranslationTest):
         ]
 
         # submit job and test
-        await self._submit_and_validate_translation_job(client, translation_inputs, 1)
+        await self._submit_and_validate_translation_job_async(client, translation_inputs, 1)
 
 
     @DocumentTranslationPreparer()
@@ -157,4 +157,4 @@ class TestTranslation(DocumentTranslationTest):
         ]
 
         # submit job and test
-        await self._submit_and_validate_translation_job(client, translation_inputs, 1)
+        await self._submit_and_validate_translation_job_async(client, translation_inputs, 1)

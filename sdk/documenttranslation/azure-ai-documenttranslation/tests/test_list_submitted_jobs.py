@@ -22,7 +22,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
         jobs_count = 3
 
         # create some jobs
-        self._create_and_submit_sample_translation_jobs(self, client, jobs_count)
+        self._create_and_submit_sample_translation_jobs(client, jobs_count)
 
         # list jobs
         submitted_jobs = client.list_submitted_jobs()
@@ -43,7 +43,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
         no_of_pages = jobs_count // result_per_page
 
         # create some jobs
-        self._create_and_submit_sample_translation_jobs(self, client, jobs_count)
+        self._create_and_submit_sample_translation_jobs(client, jobs_count)
 
         # list jobs
         submitted_jobs_pages = client.list_submitted_jobs(results_per_page=result_per_page)
@@ -65,7 +65,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
         skip = 2
 
         # create some jobs
-        self._create_and_submit_sample_translation_jobs(self, client, jobs_count)
+        self._create_and_submit_sample_translation_jobs(client, jobs_count)
 
         # list jobs
         submitted_jobs = client.list_submitted_jobs(skip=skip)
