@@ -44,7 +44,7 @@ class TestDocumentStatus(DocumentTranslationTest):
         self.assertIsNotNone(doc_statuses)
 
         # get first doc
-        first_doc = doc_statuses._anext_() # TODO not sure about this!
+        first_doc = await doc_statuses.__anext__() # TODO not sure about this!
         self.assertIsNotNone(first_doc.id)
 
         # get doc details
