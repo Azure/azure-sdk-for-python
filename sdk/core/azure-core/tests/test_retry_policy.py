@@ -221,7 +221,7 @@ def test_retry_timeout():
     timeout = 1
 
     def send(request, **kwargs):
-        assert kwargs["connection_timeout"] == timeout, "policy should set connection_timeout not to exceed timeout"
+        assert kwargs["connection_timeout"] <= timeout, "policy should set connection_timeout not to exceed timeout"
         raise ServiceResponseError("oops")
 
     transport = Mock(
