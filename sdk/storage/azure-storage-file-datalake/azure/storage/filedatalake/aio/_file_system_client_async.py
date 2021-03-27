@@ -11,7 +11,6 @@ from typing import (  # pylint: disable=unused-import
 )
 
 from azure.core.exceptions import HttpResponseError
-
 from azure.core.tracing.decorator import distributed_trace
 
 from azure.core.pipeline import AsyncPipeline

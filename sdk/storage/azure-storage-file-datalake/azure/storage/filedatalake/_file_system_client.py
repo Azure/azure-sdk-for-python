@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 from typing import Optional, Any, Union
 
-from azure.core.exceptions import HttpResponseError
 
 try:
     from urllib.parse import urlparse, quote, unquote
@@ -15,6 +14,7 @@ except ImportError:
 
 import six
 from azure.core.pipeline import Pipeline
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.storage.blob import ContainerClient
 from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
