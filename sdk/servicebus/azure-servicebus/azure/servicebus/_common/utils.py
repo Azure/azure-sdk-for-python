@@ -256,25 +256,25 @@ def strip_protocol_from_uri(uri):
 
 
 @contextmanager
-def send_trace_context_manager(span_name=SPAN_NAME_SEND):
+def send_trace_context_manager(span_name=SPAN_NAME_SEND, links=None):
     span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
 
     if span_impl_type is not None:
-        with span_impl_type(name=span_name, kind=SpanKind.CLIENT) as child:
+        with span_impl_type(name=span_name, kind=SpanKind.CLIENT, links=links) as child:
             yield child
     else:
         yield None
 
 
 @contextmanager
-def receive_trace_context_manager(receiver, message=None, span_name=SPAN_NAME_RECEIVE):
+def receive_trace_context_manager(receiver, message=None, span_name=SPAN_NAME_RECEIVE, links=None):
     # type: (ReceiverMixin, Optional[Union[ServiceBusMessage, Iterable[ServiceBusMessage]]], str) -> Iterator[None]
     """Tracing"""
     span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
     if span_impl_type is None:
         yield
     else:
-        receive_span = span_impl_type(name=span_name, kind=SpanKind.CONSUMER)
+        receive_span = span_impl_type(name=span_name, kind=SpanKind.CONSUMER, links=links)
         receiver._add_span_request_attributes(receive_span)  # type: ignore  # pylint: disable=protected-access
 
         # If it is desired to create link before span open
@@ -297,6 +297,13 @@ def add_link_to_send(message, send_span):
     except Exception as exp:  # pylint:disable=broad-except
         _log.warning("add_link_to_send had an exception %r", exp)
 
+def get_link_for_send(message):
+    traceparent = None
+    if message.message.application_properties:
+        traceparent = message.message.application_properties.get(
+            TRACE_PARENT_PROPERTY, ""
+        ).decode(TRACE_PROPERTY_ENCODING)
+        return traceparent
 
 def trace_message(message, parent_span=None):
     # type: (ServiceBusMessage, Optional[AbstractSpan]) -> None
@@ -310,8 +317,7 @@ def trace_message(message, parent_span=None):
             current_span = parent_span or span_impl_type(
                 span_impl_type.get_current_span()
             )
-            with current_span.span(name=SPAN_NAME_MESSAGE) as message_span:
-                message_span.kind = SpanKind.PRODUCER
+            with current_span.span(name=SPAN_NAME_MESSAGE, kind=SpanKind.PRODUCER) as message_span:
                 message_span.add_attribute(TRACE_NAMESPACE_PROPERTY, TRACE_NAMESPACE)
                 # TODO: Remove intermediary message; this is standin while this var is being renamed in a concurrent PR
                 if not message.message.application_properties:

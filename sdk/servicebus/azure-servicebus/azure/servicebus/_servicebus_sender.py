@@ -25,6 +25,7 @@ from ._common.utils import (
     send_trace_context_manager,
     trace_message,
     add_link_to_send,
+    get_link_for_send
 )
 from ._common.constants import (
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
