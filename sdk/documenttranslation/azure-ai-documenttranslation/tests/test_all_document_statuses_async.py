@@ -74,7 +74,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         ]
 
         # submit and validate job
-        job_id = await self._submit_and_validate_translation_job(client, translation_inputs, len(blob_data))
+        job_id = await self._submit_and_validate_translation_job_async(client, translation_inputs, len(blob_data))
 
         # check doc statuses
         doc_statuses_pages = client.list_all_document_statuses(job_id=job_id, results_per_page=result_per_page)
@@ -113,7 +113,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         ]
 
         # submit and validate job
-        job_id = await self._submit_and_validate_translation_job(client, translation_inputs, len(blob_data))
+        job_id = await self._submit_and_validate_translation_job_async(client, translation_inputs, len(blob_data))
 
         # check doc statuses
         doc_statuses = client.list_all_document_statuses(job_id=job_id, skip=skip)

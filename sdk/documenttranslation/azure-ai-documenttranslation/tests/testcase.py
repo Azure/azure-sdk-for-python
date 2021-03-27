@@ -173,7 +173,7 @@ class DocumentTranslationTest(AzureTestCase):
 
         return job_details.id
 
-    async def _submit_and_validate_translation_jobs_async(self, async_client, translation_inputs, total_docs_count):
+    async def _submit_and_validate_translation_job_async(self, async_client, translation_inputs, total_docs_count):
         # submit job
         job_details = await async_client.create_translation_job(translation_inputs)
         self.assertIsNotNone(job_details.id)
