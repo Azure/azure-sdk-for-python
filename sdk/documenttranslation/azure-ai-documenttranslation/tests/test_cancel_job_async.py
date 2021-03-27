@@ -41,6 +41,7 @@ class TestCancelJob(DocumentTranslationTest):
 
         # cancel job
         await client.cancel_job(job_details.id)
+        self.wait(duration=10)  # for 'cancelled' status to propagate
 
         # check job status
         job_details = await client.get_job_status(job_details.id)

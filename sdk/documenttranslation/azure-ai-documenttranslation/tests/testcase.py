@@ -120,9 +120,9 @@ class DocumentTranslationTest(AzureTestCase):
         container_sas_url = self.storage_endpoint + container_name + "?" + sas_token
         return container_sas_url
 
-    def wait(self):
+    def wait(self, duration=30):
         if self.is_live:
-            time.sleep(30)
+            time.sleep(duration)
 
 
     # model helpers
