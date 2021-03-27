@@ -508,6 +508,9 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         """Sets the properties of a storage account's Datalake service, including
         Azure Storage Analytics.
 
+        .. versionadded:: 12.4.0
+            This operation was introduced in API version '2020-06-12'.
+
         If an element (e.g. analytics_logging) is left as None, the
         existing settings on the service for that functionality are preserved.
 
@@ -555,6 +558,9 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         # type: (Any) -> Dict[str, Any]
         """Gets the properties of a storage account's datalake service, including
         Azure Storage Analytics.
+
+        .. versionadded:: 12.4.0
+            This operation was introduced in API version '2020-06-12'.
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.

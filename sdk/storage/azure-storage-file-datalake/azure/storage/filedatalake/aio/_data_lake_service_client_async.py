@@ -460,6 +460,9 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         If an element (e.g. analytics_logging) is left as None, the
         existing settings on the service for that functionality are preserved.
 
+        .. versionadded:: 12.4.0
+            This operation was introduced in API version '2020-06-12'.
+
         :param analytics_logging:
             Groups the Azure Analytics Logging settings.
         :type analytics_logging: ~azure.storage.filedatalake.DatalakeAnalyticsLogging
@@ -504,6 +507,9 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         # type: (Any) -> Dict[str, Any]
         """Gets the properties of a storage account's datalake service, including
         Azure Storage Analytics.
+
+        .. versionadded:: 12.4.0
+            This operation was introduced in API version '2020-06-12'.
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
