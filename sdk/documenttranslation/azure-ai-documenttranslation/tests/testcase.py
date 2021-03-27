@@ -211,8 +211,9 @@ class DocumentTranslationTest(AzureTestCase):
             ]
 
             # submit multiple jobs
-            job_detail = client.create_translation_job(translation_inputs)
-            self.assertIsNotNone(job_detail.id)
+            job_details = client.create_translation_job(translation_inputs)
+            self.assertIsNotNone(job_details.id)
+            client.wait_until_done(job_details.id)
 
     async def _create_and_submit_sample_translation_jobs_async(self, async_client, jobs_count):
         for i in range(jobs_count):
@@ -246,5 +247,6 @@ class DocumentTranslationTest(AzureTestCase):
             ]
 
             # submit multiple jobs
-            job_detail = await async_client.create_translation_job(translation_inputs)
-            self.assertIsNotNone(job_detail.id)
+            job_details = await async_client.create_translation_job(translation_inputs)
+            self.assertIsNotNone(job_details.id)
+            await async_client.wait_until_done(job_details.id)
