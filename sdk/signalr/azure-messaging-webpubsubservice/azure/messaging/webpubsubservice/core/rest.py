@@ -37,6 +37,7 @@ from azure.core.pipeline.transport import (
 
 if TYPE_CHECKING:
     from typing import Any, Optional, Union, Mapping, Sequence, Tuple
+
     HeaderTypes = Union[Mapping[str, str], Sequence[Tuple[str, str]]]
 
 

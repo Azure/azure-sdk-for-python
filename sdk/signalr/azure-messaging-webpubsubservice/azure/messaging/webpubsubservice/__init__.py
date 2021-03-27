@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-__all__ = ["WebPubSubServiceClient"]
+__all__ = ["build_authentication_token", "WebPubSubServiceClient"]
 
 from typing import TYPE_CHECKING
 
+import jwt
 
 import azure.core.pipeline as corepipeline
 import azure.core.pipeline.policies as corepolicies
@@ -20,12 +21,69 @@ import azure.core.pipeline.transport as coretransport
 
 # Temporary location for types that eventually graduate to Azure Core
 from .core import rest as corerest
+
 from ._policies import JwtCredentialPolicy
 
 if TYPE_CHECKING:
     import azure.core.credentials as corecredentials
     from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
     from typing import Any, List, cast
+
+
+def build_authentication_token(endpoint, hub, key, **kwargs):
+    """Build an authentication token for the given endpoint, hub using the provided key.
+
+    :param endpoint: HTTP or HTTPS endpoint for the WebPubSub service instance.
+    :type endpoint: ~str
+    :param hub: The hub to give access to.
+    :type hub: ~str
+    :param key: Key to sign the token with.
+    :type key: ~str
+    :keyword user: Optional user name (subject) for the token. Default is no user.
+    :type user: ~str
+    :keyword claims: Additional claims for the token.
+    :type claims: ~dict
+    :returns: ~dict containing the web socket endpoint, the token and a url with the generated access token.
+    :rtype: ~str
+
+
+    Example:
+    >>> build_authentication_token('https://contoso.com/api/webpubsub', hub='theHub', key='123')
+    {
+        'baseUrl': 'wss://contoso.com/api/webpubsub/client/hubs/theHub',
+        'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...',
+        'url': 'wss://contoso.com/api/webpubsub/client/hubs/theHub?accessToken=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...'
+    }
+    """
+    user = kwargs.pop("user", None)
+    claims = kwargs.pop("claims", {})
+    endpoint = endpoint.lower()
+    if not endpoint.startswith("http://") and not endpoint.startswith("https://"):
+        raise ValueError(
+            "Invalid endpoint: '{}' has unknown scheme - expected 'http://' or 'https://'".format(
+                endpoint
+            )
+        )
+
+    # Ensure endpoint has no trailing slash
+    endpoint = endpoint.rstrip("/")
+
+    # Switch from http(s) to ws(s) scheme
+    client_endpoint = "ws" + endpoint[4:]
+    client_url = "{}/client/hubs/{}".format(client_endpoint, hub)
+    audience = "{}/client/hubs/{}".format(endpoint, hub)
+
+    payload = {"audience": audience, "expiresIn": "1h"}
+    payload.update(claims)
+    if user:
+        payload.setdefault("subject", user)
+
+    token = jwt.encode(payload, key, algorithm="HS256")
+    return {
+        "baseUrl": client_url,
+        "token": token,
+        "url": "{}?accessToken={}".format(client_url, token),
+    }
 
 
 class WebPubSubServiceClient(object):
@@ -55,7 +113,7 @@ class WebPubSubServiceClient(object):
             corepolicies.RedirectPolicy(**kwargs),
             JwtCredentialPolicy(credential, kwargs.get("user", None)),
             corepolicies.NetworkTraceLoggingPolicy(**kwargs),
-        ] # type: Any
+        ]  # type: Any
         self._pipeline = corepipeline.Pipeline(
             transport,
             policies,
@@ -84,7 +142,8 @@ class WebPubSubServiceClient(object):
             request.url
         )  # BUGBUG - should create new request, not mutate the existing one...
         pipeline_response = self._pipeline.run(
-            request._internal_request, **kwargs)  # pylint: disable=W0212
+            request._internal_request, **kwargs # pylint: disable=W0212
+        )
         return corerest.HttpResponse(
             request=request,
             _internal_response=pipeline_response.http_response,

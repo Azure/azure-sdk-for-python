@@ -29,6 +29,7 @@ import typing
 import jwt
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+
 if typing.TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
     from azure.core.pipeline import PipelineRequest
@@ -50,6 +51,7 @@ class _UTC_TZ(datetime.tzinfo):
 
 
 _UTC = _UTC_TZ()
+
 
 class JwtCredentialPolicy(SansIOHTTPPolicy):
 
@@ -77,14 +79,15 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
         request.http_request.headers["Authorization"] = "Bearer " + self._encode(
             request.http_request.url
         )
-        return super(JwtCredentialPolicy, self).on_request(request) # pylint: disable=R1725
+        return super(JwtCredentialPolicy, self).on_request( # pylint: disable=super-with-arguments
+            request
+        )
 
     def _encode(self, url):
         # type: (AzureKeyCredential) -> str
         data = {
             "aud": url,
-            "exp": datetime.datetime.now(tz=_UTC)
-            + datetime.timedelta(seconds=60),
+            "exp": datetime.datetime.now(tz=_UTC) + datetime.timedelta(seconds=60),
         }
         if self._user:
             data[self.NAME_CLAIM_TYPE] = self._user
@@ -95,5 +98,5 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
             algorithm="HS256",
         )
         if isinstance(encoded, bytes):
-            encoded = encoded.decode('utf8')
+            encoded = encoded.decode("utf8")
         return typing.cast(str, encoded)  # jwt's typing is incorrect...
