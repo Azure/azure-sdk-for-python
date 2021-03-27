@@ -13,17 +13,10 @@ from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.keys import JsonWebKey, KeyCurveName
 from azure.keyvault.keys.aio import KeyClient
-from devtools_testutils import PowerShellPreparer
 from parameterized import parameterized, param
 
 from _shared.test_case_async import KeyVaultTestCase
 from _test_case import KeysTestCase, suffixed_test_name
-
-KeyVaultPreparer = functools.partial(
-    PowerShellPreparer,
-    "keyvault",
-    azure_keyvault_url="https://vaultname.vault.azure.net"
-)
 
 # used for logging tests
 class MockHandler(logging.Handler):
@@ -165,13 +158,12 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         return imported_key
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    @KeyVaultPreparer()
-    async def test_key_crud_operations(self, azure_keyvault_url, **kwargs):
+    async def test_key_crud_operations(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(is_hsm)
-        azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
+        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        client = self.create_key_client(azure_keyvault_url, is_async=True)
+        client = self.create_key_client(endpoint_url, is_async=True)
         self.assertIsNotNone(client)
 
         # create ec key
@@ -235,13 +227,12 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         self.assertEqual(rsa_key.id, deleted_key.id)
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    @KeyVaultPreparer()
-    async def test_backup_restore(self, azure_keyvault_url, **kwargs):
+    async def test_backup_restore(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(is_hsm)
-        azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
+        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        client = self.create_key_client(azure_keyvault_url, is_async=True)
+        client = self.create_key_client(endpoint_url, is_async=True)
         self.assertIsNotNone(client)
 
         key_name = self.get_resource_name("keybak")
@@ -265,13 +256,12 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         self._assert_key_attributes_equal(created_bundle.properties, restored_key.properties)
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    @KeyVaultPreparer()
-    async def test_key_list(self, azure_keyvault_url, **kwargs):
+    async def test_key_list(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(is_hsm)
-        azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
+        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        client = self.create_key_client(azure_keyvault_url, is_async=True)
+        client = self.create_key_client(endpoint_url, is_async=True)
         self.assertIsNotNone(client)
 
         max_keys = self.list_test_size
@@ -292,13 +282,12 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         self.assertEqual(len(expected), 0)
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    @KeyVaultPreparer()
-    async def test_list_versions(self, azure_keyvault_url, **kwargs):
+    async def test_list_versions(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(is_hsm)
-        azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
+        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        client = self.create_key_client(azure_keyvault_url, is_async=True)
+        client = self.create_key_client(endpoint_url, is_async=True)
         self.assertIsNotNone(client)
 
         key_name = self.get_resource_name("testKey")
@@ -322,13 +311,12 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         self.assertEqual(0, len(expected))
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    @KeyVaultPreparer()
-    async def test_list_deleted_keys(self, azure_keyvault_url, **kwargs):
+    async def test_list_deleted_keys(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(is_hsm)
-        azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
+        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        client = self.create_key_client(azure_keyvault_url, is_async=True)
+        client = self.create_key_client(endpoint_url, is_async=True)
         self.assertIsNotNone(client)
 
         expected = {}
@@ -357,13 +345,12 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         self.assertEqual(len(expected), 0)
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    @KeyVaultPreparer()
-    async def test_recover(self, azure_keyvault_url, **kwargs):
+    async def test_recover(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(is_hsm)
-        azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
+        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        client = self.create_key_client(azure_keyvault_url, is_async=True)
+        client = self.create_key_client(endpoint_url, is_async=True)
         self.assertIsNotNone(client)
 
         # create keys
@@ -391,13 +378,12 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    @KeyVaultPreparer()
-    async def test_purge(self, azure_keyvault_url, **kwargs):
+    async def test_purge(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(is_hsm)
-        azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
+        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        client = self.create_key_client(azure_keyvault_url, is_async=True)
+        client = self.create_key_client(endpoint_url, is_async=True)
         self.assertIsNotNone(client)
 
         # create keys
@@ -422,13 +408,12 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
             assert deleted_key.name not in key_names
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    @KeyVaultPreparer()
-    async def test_logging_enabled(self, azure_keyvault_url, **kwargs):
+    async def test_logging_enabled(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(is_hsm)
-        azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
+        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        client = self.create_key_client(azure_keyvault_url, logging_enable=True, is_async=True)
+        client = self.create_key_client(endpoint_url, logging_enable=True, is_async=True)
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
@@ -452,13 +437,12 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         assert False, "Expected request body wasn't logged"
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    @KeyVaultPreparer()
-    async def test_logging_disabled(self, azure_keyvault_url, **kwargs):
+    async def test_logging_disabled(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(is_hsm)
-        azure_keyvault_url = self.managed_hsm_url if is_hsm else azure_keyvault_url
+        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        client = self.create_key_client(azure_keyvault_url, logging_enable=False, is_async=True)
+        client = self.create_key_client(endpoint_url, logging_enable=False, is_async=True)
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
