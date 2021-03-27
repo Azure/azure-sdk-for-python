@@ -6,9 +6,11 @@ package:
   version: "{{ version }}"
 
 source:
-  url: .\azure-core-1.12.0.zip
+  url: {{ environ.get('CORE_SOURCE_DISTRIBUTION', '') }}
 
 build:
+  script_env:
+    - CORE_SOURCE_DISTRIBUTION
   noarch: python
   number: 0
   script: "{{ PYTHON }} -m pip install . -vv"

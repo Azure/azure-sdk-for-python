@@ -21,23 +21,42 @@ steps:
     inputs:
       versionSpec: $(PythonVersion)
 
+  # use conda
+
   - script: |
       pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
 
-  - ${{ each artifact in parameters.CondaArtifacts }}:
-    - pwsh: |
-        Write-Host "${{artifact.name}}"
-      displayName: Output Conda Artifact Details
+  - pwsh: |
+      mkdir $(Agent.BuildDirectory)/conda/output
+      mkdir $(Agent.BuildDirectory)/conda/build
 
+      Write-Host "##vso[task.setvariable variable=conda.output]$(Agent.BuildDirectory)/conda/output"
+      Write-Host "##vso[task.setvariable variable=conda.build]$(Agent.BuildDirectory)/conda/build"
+    displayName: 'Create Conda Working Directories'
+
+  - ${{ each artifact in parameters.CondaArtifacts }}:
     - ${{ each checkout in artifact.checkout }}:
       - pwsh: |
           Write-Host "${{checkout.package}}"
           Write-Host "${{checkout.checkout_path}}"
           Write-Host "${{checkout.version}}"
-        displayName: Output Checkout Details
+        displayName: Write Variables for Debug
 
+      - template: /eng/pipelines/steps/get-tagged-sdist.yml
+        parameters:
+          DestinationDirectory: $(conda.output)/${{artifact.name}}
+          Package: ${{checkout.package}}
+          CheckoutPath: ${{checkout.checkout_path}}
+          Version: ${{checkout.version}}
+
+    - task: PythonScript@0
+      displayName: 'Build Conda Output Package'
+      inputs:
+        scriptPath: 'scripts/devops_tasks/build_conda_artifacts.py'
+        arguments: '-d "$(conda.output)" --meta="" --output-var="${{ upper(parameters.ServiceDirectory) }}_SOURCE_DISTRIBUTION"'
+   
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
-      ArtifactPath: '$(Build.ArtifactStagingDirectory)'
+      ArtifactPath: '$(Agent.BuildDirectory)/conda'
       ArtifactName: 'conda'

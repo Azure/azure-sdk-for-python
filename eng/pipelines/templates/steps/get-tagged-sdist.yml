@@ -1,0 +1,22 @@
+parameters:
+  - name: DestinationDirectory
+    type: string
+    default: ''
+  - name: Package
+    type: string
+    default: ''
+  - name: CheckoutPath
+    type: string
+    default: ''
+  - name: Version
+    type: string
+    default: ''
+          
+steps:
+  - pwsh: |
+      mkdir $(Agent.BuildDirectory)/conda/output
+      mkdir $(Agent.BuildDirectory)/conda/build
+
+      Write-Host "##vso[task.setvariable variable=conda.output]$(Agent.BuildDirectory)/conda/output"
+      Write-Host "##vso[task.setvariable variable=conda.build]$(Agent.BuildDirectory)/conda/build"
+    displayName: 'Create Conda Working Directories'
