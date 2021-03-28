@@ -8,9 +8,8 @@ import warnings
 from opentelemetry import trace
 from opentelemetry.trace import Span, Link, Tracer, SpanKind as OpenTelemetrySpanKind
 from opentelemetry.context import attach, detach, get_current
-from opentelemetry.propagators import extract, inject
+from opentelemetry.propagate import extract, inject
 from opentelemetry.trace.propagation import get_current_span as get_span_from_context
-from opentelemetry.trace.propagation.textmap import DictGetter
 
 from azure.core.tracing import SpanKind, HttpSpanMixin  # pylint: disable=no-name-in-module
 
@@ -71,6 +70,8 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     def __init__(self, span=None, name="span", **kwargs):
         # type: (Optional[Span], Optional[str], Any) -> None
         current_tracer = self.get_current_tracer()
+
+        ## kind
         value = kwargs.pop('kind', None)
         kind = (
             OpenTelemetrySpanKind.CLIENT if value == SpanKind.CLIENT else
@@ -81,6 +82,9 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
             OpenTelemetrySpanKind.INTERNAL if value == SpanKind.UNSPECIFIED else
             None
         ) # type: SpanKind
+        if value and kind is None:
+            raise ValueError("Kind {} is not supported in OpenTelemetry".format(value))
+
         self._span_instance = span or current_tracer.start_span(name=name, kind=kind, **kwargs)
         self._current_ctxt_manager = None
 
@@ -210,6 +214,12 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         cls.link_from_headers({
             'traceparent': traceparent
         }, attributes)
+
+    @staticmethod
+    def create_link_from_headers(cls, headers, attributes=None):
+        ctx = extract(headers)
+        span_ctx = get_span_from_context(ctx).get_span_context()
+        return Link(span_ctx, attributes)
 
     @classmethod
     def link_from_headers(cls, headers, attributes=None):
