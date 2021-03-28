@@ -158,8 +158,8 @@ avro<2.0.0,>=1.10.0
 opencensus>=0.6.0
 opencensus-ext-threading
 opencensus-ext-azure>=0.3.1
-opentelemetry-api==1.0.0rc1
-opentelemetry-sdk==1.0.0rc1
+opentelemetry-api==1.0.0
+opentelemetry-sdk==1.0.0
 #override azure-eventhub-checkpointstoreblob msrest>=0.6.18
 #override azure-eventhub-checkpointstoreblob-aio msrest>=0.6.18
 #override azure-eventhub-checkpointstoreblob azure-core<2.0.0,>=1.10.0
@@ -196,7 +196,7 @@ opentelemetry-sdk==1.0.0rc1
 #override azure-monitor-opentelemetry-exporter msrest>=0.6.10
 #override azure-monitor-opentelemetry-exporter opentelemetry-api==1.0.0rc1
 #override azure-monitor-opentelemetry-exporter opentelemetry-sdk==1.0.0rc1
-#override azure-core-tracing-opentelemetry opentelemetry-api==1.0.0rc1
+#override azure-core-tracing-opentelemetry opentelemetry-api==1.0.0
 #override azure-identity six>=1.12.0
 #override azure-keyvault-keys six>=1.12.0
 #override azure-mixedreality-authentication azure-core<2.0.0,>=1.4.0
