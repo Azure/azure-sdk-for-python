@@ -215,6 +215,12 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
             'traceparent': traceparent
         }, attributes)
 
+    @staticmethod
+    def create_link_from_headers(cls, headers, attributes=None):
+        ctx = extract(headers)
+        span_ctx = get_span_from_context(ctx).get_span_context()
+        return Link(span_ctx, attributes)
+
     @classmethod
     def link_from_headers(cls, headers, attributes=None):
         # type: (Dict[str, str], Attributes) -> None
