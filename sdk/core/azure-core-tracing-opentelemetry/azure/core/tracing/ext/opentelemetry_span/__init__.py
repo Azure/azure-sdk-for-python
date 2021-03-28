@@ -145,7 +145,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
 
     def __enter__(self):
         """Start a span."""
-        self._current_ctxt_manager = self.get_current_tracer().use_span(self._span_instance, end_on_exit=True)
+        self._current_ctxt_manager = trace.use_span(self._span_instance, end_on_exit=True)
         self._current_ctxt_manager.__enter__()
         return self
 
@@ -171,7 +171,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         :return: A key value pair dictionary
         """
         temp_headers = {} # type: Dict[str, str]
-        inject(_set_headers_from_http_request_headers, temp_headers)
+        inject(temp_headers)
         return temp_headers
 
     def add_attribute(self, key, value):
@@ -235,7 +235,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
             that one of the packages you are using doesn't follow the latest Opentelemtry Spec.
             Try updating the azure pacakges to the latest versions."""
         )
-        ctx = extract(DictGetter(), headers)
+        ctx = extract(headers)
         span_ctx = get_span_from_context(ctx).get_span_context()
         current_span = cls.get_current_span()
         current_span._links.append(Link(span_ctx, attributes)) # pylint: disable=protected-access
@@ -261,7 +261,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         # type: (Span) -> ContextManager
         """Change the context for the life of this context manager.
         """
-        return cls.get_current_tracer().use_span(span, end_on_exit=False)
+        return trace.use_span(span, end_on_exit=False)
 
     @classmethod
     def set_current_span(cls, span):
