@@ -21,7 +21,7 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Mapping, MutableMapping, Dict, Optional, Union, Callable, Sequence
+    from typing import Any, Mapping, Dict, Optional, Union, Callable, Sequence
 
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
     AttributeValue = Union[
@@ -37,24 +37,6 @@ if TYPE_CHECKING:
     Attributes = Optional[Dict[str, AttributeValue]]
 
 __version__ = VERSION
-
-
-def _get_headers_from_http_request_headers(headers: "Mapping[str, Any]", key: str):
-    """Return headers that matches this key.
-
-    Must comply to opentelemetry.context.propagation.httptextformat.Getter:
-    Getter = typing.Callable[[_T, str], typing.List[str]]
-    """
-    return [headers.get(key, "")]
-
-
-def _set_headers_from_http_request_headers(headers: "MutableMapping[str, Any]", key: str, value: str):
-    """Set headers in the given headers dict.
-
-    Must comply to opentelemetry.context.propagation.httptextformat.Setter:
-    Setter = typing.Callable[[_T, str, str], None]
-    """
-    headers[key] = value
 
 
 class OpenTelemetrySpan(HttpSpanMixin, object):
