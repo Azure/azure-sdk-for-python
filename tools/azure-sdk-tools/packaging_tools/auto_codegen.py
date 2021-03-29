@@ -75,6 +75,10 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
     # Check whether MANIFEST.in includes _meta.json
     require_meta = "include _meta.json\n"
     manifest_file = os.path.join(package_folder, "MANIFEST.in")
+    if not os.path.exists(manifest_file):
+        _LOGGER.info(f"MANIFEST.in doesn't exist: {manifest_file}")
+        return
+
     includes = []
     write_flag = False
     with open(manifest_file, "r") as f:
@@ -99,14 +103,12 @@ def main(generate_input, generate_output):
     for input_readme in data["relatedReadmeMdFiles"]:
         relative_path_readme = str(Path(spec_folder, input_readme))
         _LOGGER.info(f'[CODEGEN]({input_readme})codegen begin')
-        config = read_config(Path(sdk_folder).expanduser(), CONFIG_FILE)
-        generate(CONFIG_FILE,
+        config = generate(CONFIG_FILE,
                  sdk_folder,
                  [],
                  relative_path_readme,
                  spec_folder,
-                 force_generation=True,
-                 config=config
+                 force_generation=True
                  )
         package_names = get_package_names(sdk_folder)
         _LOGGER.info(f'[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]')
