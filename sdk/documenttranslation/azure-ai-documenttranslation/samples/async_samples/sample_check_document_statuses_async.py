@@ -31,6 +31,7 @@ import asyncio
 
 async def sample_document_status_checks_async():
     import os
+    # [START create_translation_job_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation.aio import DocumentTranslationClient
     from azure.ai.documenttranslation import (
@@ -57,6 +58,7 @@ async def sample_document_status_checks_async():
                 )
             ]
         )  # type: JobStatusResult
+        # [END create_translation_job_async]
 
         completed_docs = []
         while not job_result.has_completed:

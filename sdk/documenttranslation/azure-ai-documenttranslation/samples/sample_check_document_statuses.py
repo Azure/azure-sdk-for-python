@@ -30,6 +30,7 @@ USAGE:
 def sample_document_status_checks():
     import os
     import time
+    # [START create_translation_job]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation import (
         DocumentTranslationClient,
@@ -56,6 +57,7 @@ def sample_document_status_checks():
             )
         ]
     )  # type: JobStatusResult
+    # [END create_translation_job]
 
     completed_docs = []
     while not job_result.has_completed:

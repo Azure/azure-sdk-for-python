@@ -169,9 +169,17 @@ class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, to
     :vartype created_on: ~datetime.datetime
     :ivar last_updated_on: The date time when the translation job's status was last updated.
     :vartype last_updated_on: ~datetime.datetime
-    :ivar str status: List of possible statuses for job or document. Possible values
-        include: "NotStarted", "Running", "Succeeded", "Failed", "Cancelled", "Cancelling",
-        "ValidationFailed".
+    :ivar str status: Status for a job.
+
+        * `NotStarted` - the job has not begun yet.
+        * `Running` - translation is in progress.
+        * `Succeeded` - at least one document translated successfully within the job.
+        * `Cancelled` - the job was cancelled.
+        * `Cancelling` - the job is being cancelled.
+        * `ValidationFailed` - the input failed validation. E.g. there was insufficient permissions on blob containers.
+        * `Failed` - all the documents within the job failed. To understand the reason for each document failure,
+         call the :func:`~DocumentTranslationClient.list_all_document_statuses()` client method and inspect the error.
+
     :ivar error: Returned if there is an error with the translation job.
         Includes error code, message, target.
     :vartype error: ~azure.ai.documenttranslation.DocumentTranslationError
@@ -232,9 +240,14 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
     :vartype created_on: ~datetime.datetime
     :ivar last_updated_on: The date time when the document's status was last updated.
     :vartype last_updated_on: ~datetime.datetime
-    :ivar str status: List of possible statuses for job or document. Possible values
-        include: "NotStarted", "Running", "Succeeded", "Failed", "Cancelled", "Cancelling",
-        "ValidationFailed".
+    :ivar str status: Status for a document.
+
+        * `NotStarted` - the document has not been translated yet.
+        * `Running` - translation is in progress for document
+        * `Succeeded` - translation succeeded for the document
+        * `Failed` - the document failed to translate. Check the error property.
+        * `Cancelled` - the job was cancelled, the document was not translated.
+        * `Cancelling` - the job is cancelling, the document will not be translated.
     :ivar str translate_to: The language code of the language the document was translated to,
         if successful.
     :ivar error: Returned if there is an error with the particular document.

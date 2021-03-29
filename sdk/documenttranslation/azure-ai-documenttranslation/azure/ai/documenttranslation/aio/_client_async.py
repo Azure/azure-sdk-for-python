@@ -38,13 +38,22 @@ class DocumentTranslationClient(object):
 
         :param str endpoint: Supported Document Translation endpoint (protocol and hostname, for example:
             https://<resource-name>.cognitiveservices.azure.com/).
-        :param credential: Credentials needed for the client to connect to Azure.
+        :param credential: Credential needed for the client to connect to Azure.
             Currently only API key authentication is supported.
         :type credential: :class:`~azure.core.credentials.AzureKeyCredential`
         :keyword api_version:
             The API version of the service to use for requests. It defaults to the latest service version.
             Setting to an older version may result in reduced feature compatibility.
         :paramtype api_version: str or ~azure.ai.documenttranslation.DocumentTranslationApiVersion
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+                :start-after: [START create_dt_client_with_key_async]
+                :end-before: [END create_dt_client_with_key_async]
+                :language: python
+                :dedent: 4
+                :caption: Creating the DocumentTranslationClient with an endpoint and API key.
         """
         self._endpoint = endpoint
         self._credential = credential
@@ -90,6 +99,15 @@ class DocumentTranslationClient(object):
         :return: A JobStatusResult with information on the status of the job.
         :rtype: ~azure.ai.documenttranslation.JobStatusResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_check_document_statuses_async.py
+                :start-after: [START create_translation_job_async]
+                :end-before: [END create_translation_job_async]
+                :language: python
+                :dedent: 4
+                :caption: Create a translation job.
         """
 
         # submit translation job
@@ -159,6 +177,16 @@ class DocumentTranslationClient(object):
         :return: A JobStatusResult with information on the status of the job.
         :rtype: ~azure.ai.documenttranslation.JobStatusResult
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
+            Will raise if validation fails on the input. E.g. insufficient permissions on the blob containers.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_create_translation_job_async.py
+                :start-after: [START wait_until_done_async]
+                :end-before: [END wait_until_done_async]
+                :language: python
+                :dedent: 4
+                :caption: Create a translation job and wait until it is done.
         """
         pipeline_response = await self._client.document_translation.get_operation_status(
             job_id,
@@ -196,6 +224,15 @@ class DocumentTranslationClient(object):
         :return: AsyncItemPaged[:class:`~azure.ai.documenttranslation.JobStatusResult`]
         :rtype: ~azure.core.paging.AsyncItemPaged
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_list_all_submitted_jobs_async.py
+                :start-after: [START list_all_jobs_async]
+                :end-before: [END list_all_jobs_async]
+                :language: python
+                :dedent: 4
+                :caption: List all submitted jobs under the resource.
         """
         skip = kwargs.pop('skip', None)
         results_per_page = kwargs.pop('results_per_page', None)
@@ -232,6 +269,15 @@ class DocumentTranslationClient(object):
         :return: AsyncItemPaged[:class:`~azure.ai.documenttranslation.DocumentStatusResult`]
         :rtype: ~azure.core.paging.AsyncItemPaged
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_create_translation_job_async.py
+                :start-after: [START list_all_document_statuses_async]
+                :end-before: [END list_all_document_statuses_async]
+                :language: python
+                :dedent: 8
+                :caption: List all the document statuses under the translation job.
         """
         skip = kwargs.pop('skip', None)
         results_per_page = kwargs.pop('results_per_page', None)
