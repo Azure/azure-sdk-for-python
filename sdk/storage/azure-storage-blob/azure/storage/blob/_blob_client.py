@@ -18,11 +18,12 @@ except ImportError:
     from urllib2 import quote, unquote  # type: ignore
 
 import six
+from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 from ._shared import encode_base64
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, TransportWrapper
 from ._shared.encryption import generate_blob_encryption_data
 from ._shared.uploads import IterStreamer
 from ._shared.request_handlers import (
@@ -3765,8 +3766,16 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 :caption: Get container client from blob object.
         """
         from ._container_client import ContainerClient
+        if not isinstance(self._pipeline._transport, TransportWrapper):
+            _pipeline = Pipeline(
+                transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+                policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            )
+        else:
+            _pipeline = self._pipeline   # pylint: disable = protected-access
         return ContainerClient(
             "{}://{}".format(self.scheme, self.primary_hostname), container_name=self.container_name,
             credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
-            _location_mode=self._location_mode, _hosts=self._hosts, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
+            _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
+            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
+            key_resolver_function=self.key_resolver_function)
