@@ -48,7 +48,7 @@ steps:
           Write-Host "${{checkout.version}}"
         displayName: Write Variables for Debug
 
-      - template: /eng/pipelines/steps/get-tagged-code.yml
+      - template: /eng/pipelines/templates/steps/get-tagged-code.yml
         parameters:
           DestinationDirectory: $(conda.output)/${{checkout.package}}
           Package: ${{checkout.package}}
