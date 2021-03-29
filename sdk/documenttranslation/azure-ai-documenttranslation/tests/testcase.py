@@ -138,16 +138,23 @@ class DocumentTranslationTest(AzureTestCase):
         self.assertIsNotNone(doc_details.created_on)
         self.assertIsNotNone(doc_details.last_updated_on)
 
-    def _validate_translation_job(self, job_details, total_docs_count, status):
+    def _validate_translation_job(self, job_details, **kwargs):
+        status = kwargs.pop("status", None)
+        total = kwargs.pop('total', 0)
+        failed = kwargs.pop('failed', 0)
+        succeeded = kwargs.pop('succeeded', 0)
+        inprogress = kwargs.pop('inprogress', 0)
+        notstarted = kwargs.pop('notstarted', 0)
+        cancelled = kwargs.pop('cancelled', 0)
         # status
-        self.assertEqual(job_details.status, status)
+        self.assertEqual(job_details.status, status) if status else self.assertIsNotNone(job_details.status)
         # docs count
-        self.assertEqual(job_details.documents_total_count, total_docs_count)
-        self.assertEqual(job_details.documents_failed_count, 0)
-        self.assertEqual(job_details.documents_succeeded_count, total_docs_count)
-        self.assertEqual(job_details.documents_in_progress_count, 0)
-        self.assertEqual(job_details.documents_not_yet_started_count, 0)
-        self.assertEqual(job_details.documents_cancelled_count, 0)
+        self.assertEqual(job_details.documents_total_count, total) if total else self.assertIsNotNone(job_details.documents_total_count)
+        self.assertEqual(job_details.documents_failed_count, failed) if failed else self.assertIsNotNone(job_details.documents_failed_count)
+        self.assertEqual(job_details.documents_succeeded_count, succeeded) if succeeded else self.assertIsNotNone(job_details.documents_succeeded_count)
+        self.assertEqual(job_details.documents_in_progress_count, inprogress) if inprogress else self.assertIsNotNone(job_details.documents_in_progress_count)
+        self.assertEqual(job_details.documents_not_yet_started_count, notstarted) if notstarted else self.assertIsNotNone(job_details.documents_in_progress_count)
+        self.assertEqual(job_details.documents_cancelled_count, cancelled) if cancelled else self.assertIsNotNone(job_details.documents_cancelled_count)
         # generic assertions
         self.assertIsNotNone(job_details.id)
         self.assertIsNotNone(job_details.created_on)
@@ -158,7 +165,7 @@ class DocumentTranslationTest(AzureTestCase):
         self.assertIsNotNone(format.format)
         self.assertIsNotNone(format.file_extensions)
         self.assertIsNotNone(format.content_types)
-        self.assertIsNotNone(format.format_versions)
+        #self.assertIsNotNone(format.format_versions)
 
 
     # client helpers
@@ -169,7 +176,7 @@ class DocumentTranslationTest(AzureTestCase):
         # wait for result
         job_details = client.wait_until_done(job_details.id)
         # validate
-        self._validate_translation_job(job_details, total_docs_count, "Succeeded")
+        self._validate_translation_job(job_details=job_details, status='Succeeded', total=total_docs_count, succeeded=total_docs_count)
 
         return job_details.id
 
@@ -180,11 +187,12 @@ class DocumentTranslationTest(AzureTestCase):
         # wait for result
         job_details = await async_client.wait_until_done(job_details.id)
         # validate
-        self._validate_translation_job(job_details, total_docs_count, "Succeeded")
+        self._validate_translation_job(job_details=job_details, status='Succeeded', total=total_docs_count, succeeded=total_docs_count)
 
         return job_details.id
 
     def _create_and_submit_sample_translation_jobs(self, client, jobs_count):
+        result_job_ids = []
         for i in range(jobs_count):
             # prepare containers and test data
             '''
@@ -214,6 +222,9 @@ class DocumentTranslationTest(AzureTestCase):
             job_details = client.create_translation_job(translation_inputs)
             self.assertIsNotNone(job_details.id)
             client.wait_until_done(job_details.id)
+            result_job_ids.append(job_details.id)
+
+        return result_job_ids
 
     async def _create_and_submit_sample_translation_jobs_async(self, async_client, jobs_count):
         for i in range(jobs_count):

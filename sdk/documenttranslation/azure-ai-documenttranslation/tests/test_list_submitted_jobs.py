@@ -22,15 +22,18 @@ class TestSubmittedJobs(DocumentTranslationTest):
         jobs_count = 3
 
         # create some jobs
-        self._create_and_submit_sample_translation_jobs(client, jobs_count)
+        job_ids = self._create_and_submit_sample_translation_jobs(client, jobs_count)
 
         # list jobs
         submitted_jobs = list(client.list_submitted_jobs())
-        self.assertEqual(len(submitted_jobs), jobs_count)
+        self.assertIsNotNone(submitted_jobs)
 
         # check statuses
         for job in submitted_jobs:
-            self._validate_translation_job(job, TOTAL_DOC_COUNT_IN_JOB, "Succeeded")
+            if job.id in job_ids:
+                self._validate_translation_job(job, status="Succeeded", total=TOTAL_DOC_COUNT_IN_JOB, succeeded=TOTAL_DOC_COUNT_IN_JOB)
+            else:
+                self._validate_translation_job(job)
 
 
     @pytest.mark.skip("top not exposed yet")
@@ -43,7 +46,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
         no_of_pages = jobs_count // result_per_page
 
         # create some jobs
-        self._create_and_submit_sample_translation_jobs(client, jobs_count)
+        job_ids = self._create_and_submit_sample_translation_jobs(client, jobs_count)
 
         # list jobs
         submitted_jobs_pages = list(client.list_submitted_jobs(results_per_page=result_per_page))
@@ -54,7 +57,10 @@ class TestSubmittedJobs(DocumentTranslationTest):
             page_jobs = list(page)
             self.assertEqual(len(page_jobs), result_per_page)
             for job in page:
-                self._validate_translation_job(job, TOTAL_DOC_COUNT_IN_JOB, "Succeeded")
+                if job.id in job_ids:
+                    self._validate_translation_job(job, status="Succeeded", total=TOTAL_DOC_COUNT_IN_JOB, succeeded=TOTAL_DOC_COUNT_IN_JOB)
+                else:
+                    self._validate_translation_job(job)
 
 
     @pytest.mark.skip("skip not exposed yet")
@@ -66,11 +72,14 @@ class TestSubmittedJobs(DocumentTranslationTest):
         skip = 2
 
         # create some jobs
-        self._create_and_submit_sample_translation_jobs(client, jobs_count)
+        job_ids = self._create_and_submit_sample_translation_jobs(client, jobs_count)
 
         # list jobs
         submitted_jobs = list(client.list_submitted_jobs(skip=skip))
         self.assertEqual(len(submitted_jobs), jobs_count - skip)
 
         for job in submitted_jobs:
-            self._validate_translation_job(job, TOTAL_DOC_COUNT_IN_JOB, "Succeeded")
+            if job.id in job_ids:
+                self._validate_translation_job(job, status="Succeeded", total=TOTAL_DOC_COUNT_IN_JOB, succeeded=TOTAL_DOC_COUNT_IN_JOB)
+            else:
+                self._validate_translation_job(job)
