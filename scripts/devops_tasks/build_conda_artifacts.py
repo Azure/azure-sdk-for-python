@@ -13,19 +13,22 @@ import argparse
 import sys
 import os
 
-from common_tasks import process_glob_string, run_check_call, str_to_bool
+from common_tasks import process_glob_string, run_check_call, str_to_bool, parse_setup
 from subprocess import check_call
+
+NAMESPACE_EXTENSION_TEMPLATE = """__path__ = __import__('pkgutil').extend_path(__path__, __name__)  # type: str
+"""
 
 CONDA_PKG_SETUP_TEMPLATE = """from setuptools import find_packages, setup
 
 setup(
     name={conda_package_name},
     version={version},
-    description='Microsoft Azure SDK For Python {} Combined Conda Library'.format(),
+    description='Microsoft Azure SDK For Python {service} Combined Conda Library',
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
-    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/{service_directory}/',
+    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/{service}/',
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
@@ -48,7 +51,29 @@ setup(
 def create_package(pkg_directory, output_directory):
     check_call([sys.executable, 'setup.py', "sdist", "--format", "zip", '-d', output_directory], cwd=pkg_directory)
 
+def create_sdist_skeleton(build_directory, artifact_name, common_root):
+    # clean
+
+    # create existing
+
+    # given the common root, create a folder for each level, populating with a __init__ that has content from 
+    # NAMESPACE_EXTENSION_TEMPLATE
+    pass
+
+def create_sdist_setup(build_directory, artifact_name, service):
+    # populate a setup.py in the root of the build_directory/artifact_name
+    # resolve to 0.0.0
+    pass
+
+def resolve_common_namespaces(build_directory, artifact_name, common_root):
+    pass
+
 def create_combined_sdist(output_directory, build_directory, artifact_name, common_root):
+    
+    create_sdist_skeleton(build_directory, artifact_name, common_root)
+    resolve_common_namespaces(build_directory, artifact_name, common_root)
+    create_sdist_setup(build_directory, artifact_name, service)
+
     print('{}/{}/{}.zip'.format(output_directory, artifact_name, artifact_name))
     return '{}/{}/{}.zip'.format(output_directory, artifact_name, artifact_name)
 
