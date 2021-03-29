@@ -61,8 +61,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
     can also be retrieved using the `get_client` functions.
 
     For more optional configuration, please click
-    <a href="https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob
-    #optional-configuration">here</a>.
+    :code:`<a href="https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob
+    #optional-configuration">here</a>`.
 
     :param str account_url:
         The URL to the blob storage account. Any other entities included

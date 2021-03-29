@@ -50,8 +50,8 @@ class ShareServiceClient(StorageAccountHostsMixin):
     can also be retrieved using the :func:`get_share_client` function.
 
     For more optional configuration, please click
-    <a href="https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share
-    #optional-configuration">here</a>.
+    :code:`<a href="https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share
+    #optional-configuration">here</a>`.
 
     :param str account_url:
         The URL to the file share storage account. Any other entities included
