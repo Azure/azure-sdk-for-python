@@ -256,11 +256,11 @@ def strip_protocol_from_uri(uri):
 
 
 @contextmanager
-def send_trace_context_manager(span_name=SPAN_NAME_SEND, links=None):
+def send_trace_context_manager(span_name=SPAN_NAME_SEND, traceparent=None, attributes=None):
     span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
 
     if span_impl_type is not None:
-        with span_impl_type(name=span_name, kind=SpanKind.CLIENT, links=links) as child:
+        with span_impl_type(name=span_name, kind=SpanKind.CLIENT) as child:
             yield child
     else:
         yield None
@@ -274,6 +274,8 @@ def receive_trace_context_manager(receiver, message=None, span_name=SPAN_NAME_RE
     if span_impl_type is None:
         yield
     else:
+        if links:
+            links = [span_impl_type.create_link_from_headers(**l) for l in links]
         receive_span = span_impl_type(name=span_name, kind=SpanKind.CONSUMER, links=links)
         receiver._add_span_request_attributes(receive_span)  # type: ignore  # pylint: disable=protected-access
 
@@ -317,7 +319,10 @@ def trace_message(message, parent_span=None):
             current_span = parent_span or span_impl_type(
                 span_impl_type.get_current_span()
             )
-            with current_span.span(name=SPAN_NAME_MESSAGE, kind=SpanKind.PRODUCER) as message_span:
+            link = span_impl_type.create_link_from_headers({
+                'traceparent': parent_span.get_trace_parent()
+            })
+            with current_span.span(name=SPAN_NAME_MESSAGE, kind=SpanKind.PRODUCER, links=link) as message_span:
                 message_span.add_attribute(TRACE_NAMESPACE_PROPERTY, TRACE_NAMESPACE)
                 # TODO: Remove intermediary message; this is standin while this var is being renamed in a concurrent PR
                 if not message.message.application_properties:
@@ -330,6 +335,27 @@ def trace_message(message, parent_span=None):
         _log.warning("trace_message had an exception %r", exp)
 
 
+def get_receive_links(messages):
+    trace_messages = (
+        messages if isinstance(messages, Iterable)  # pylint:disable=isinstance-second-argument-not-valid-type
+        else (messages,)
+    )
+
+    links = []
+    for message in trace_messages:  # type: ignore
+        if message.message.application_properties:
+            traceparent = message.message.application_properties.get(
+                TRACE_PARENT_PROPERTY, ""
+            ).decode(TRACE_PROPERTY_ENCODING)
+            if traceparent:
+                links.append(({'traceparent': traceparent},
+                    {
+                        SPAN_ENQUEUED_TIME_PROPERTY: message.message.annotations.get(
+                            TRACE_ENQUEUED_TIME_PROPERTY
+                        )
+                    }))
+    return links
+    
 def trace_link_message(messages, parent_span=None):
     # type: (Union[ServiceBusMessage, Iterable[ServiceBusMessage]], Optional[AbstractSpan]) -> None
     """Link the current message(s) to current span or provided parent span.

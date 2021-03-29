@@ -592,14 +592,15 @@ class ServiceBusReceiver(
             raise ValueError("The max_wait_time must be greater than 0.")
         if max_message_count is not None and max_message_count <= 0:
             raise ValueError("The max_message_count must be greater than 0")
-        with receive_trace_context_manager(self) as receive_span:
-            messages = self._do_retryable_operation(
+        messages = self._do_retryable_operation(    
                 self._receive,
                 max_message_count=max_message_count,
                 timeout=max_wait_time,
                 operation_requires_timeout=True,
             )
-            trace_link_message(messages, receive_span)
+        links = get_receive_links(messages)
+        with receive_trace_context_manager(self, links=links) as receive_span:
+            # trace_link_message(messages, receive_span)
             if (
                 self._auto_lock_renewer
                 and not self._session
