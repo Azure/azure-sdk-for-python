@@ -67,9 +67,13 @@ class ACRExchangeClient(object):
     async def get_acr_access_token(self, challenge):
         # type: (str) -> str
         parsed_challenge = _parse_challenge(challenge)
-        refresh_token = await self.exchange_aad_token_for_refresh_token(service=parsed_challenge["service"])
+        refresh_token = await self.exchange_aad_token_for_refresh_token(
+            service=parsed_challenge["service"]
+        )
         return await self.exchange_refresh_token_for_access_token(
-            refresh_token, service=parsed_challenge["service"], scope=parsed_challenge["scope"]
+            refresh_token,
+            service=parsed_challenge["service"],
+            scope=parsed_challenge["scope"],
         )
 
     async def exchange_aad_token_for_refresh_token(self, service=None):
@@ -80,7 +84,9 @@ class ACRExchangeClient(object):
         )
         return refresh_token.refresh_token
 
-    async def exchange_refresh_token_for_access_token(self, refresh_token, service=None, scope=None):
+    async def exchange_refresh_token_for_access_token(
+        self, refresh_token, service=None, scope=None
+    ):
         # type: (str, str, str, Dict[str, Any]) -> str
         access_token = await self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
             service, scope, refresh_token

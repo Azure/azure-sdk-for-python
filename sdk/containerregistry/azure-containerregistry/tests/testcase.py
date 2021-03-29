@@ -102,17 +102,19 @@ class ContainerRegistryTestClass(AzureTestCase):
             return DefaultAzureCredential()
         return FakeTokenCredential()
 
-    def create_registry_client(self, endpoint):
+    def create_registry_client(self, endpoint, **kwargs):
         return ContainerRegistryClient(
             endpoint=endpoint,
             credential=self.get_credential(),
+            **kwargs,
         )
 
-    def create_repository_client(self, endpoint, name):
+    def create_repository_client(self, endpoint, name, **kwargs):
         return ContainerRepositoryClient(
             endpoint=endpoint,
             repository=name,
             credential=self.get_credential(),
+            **kwargs,
         )
 
     def assert_content_permission(self, content_perm, content_perm2):

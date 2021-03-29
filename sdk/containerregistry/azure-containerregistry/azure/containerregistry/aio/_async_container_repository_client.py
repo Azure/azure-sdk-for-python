@@ -22,14 +22,20 @@ if TYPE_CHECKING:
 
 class ContainerRepositoryClient(ContainerRegistryBaseClient):
     def __init__(
-        self, endpoint: str, repository: str, credential: "AsyncTokenCredential", **kwargs
+        self,
+        endpoint: str,
+        repository: str,
+        credential: "AsyncTokenCredential",
+        **kwargs
     ):  # pylint: disable=client-method-missing-type-annotations
         if not endpoint.startswith("https://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
         self._credential = credential
         self.repository = repository
-        super(ContainerRepositoryClient, self).__init__(endpoint=self._endpoint, credential=credential, **kwargs)
+        super(ContainerRepositoryClient, self).__init__(
+            endpoint=self._endpoint, credential=credential, **kwargs
+        )
 
     async def _get_digest_from_tag(self, tag):
         # type: (str) -> str
@@ -43,7 +49,9 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        await self._client.container_registry.delete_repository(self.repository, **kwargs)
+        await self._client.container_registry.delete_repository(
+            self.repository, **kwargs
+        )
 
     def delete_registry_artifact(self, digest, **kwargs):
         # type: (str) -> None
@@ -76,7 +84,9 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         # GET '/acr/v1/{name}'
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry_repository.get_properties(self.repository, **kwargs)
+            await self._client.container_registry_repository.get_properties(
+                self.repository, **kwargs
+            )
         )
 
     def get_registry_artifact_properties(self, tag_or_digest, **kwargs):
@@ -109,7 +119,9 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         # GET '/acr/v1/{name}/_tags/{reference}'
         return TagProperties._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry_repository.get_tag_properties(self.repository, tag, **kwargs)
+            self._client.container_registry_repository.get_tag_properties(
+                self.repository, tag, **kwargs
+            )
         )
 
     def list_registry_artifacts(self, **kwargs):
@@ -135,7 +147,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             n=n,
             orderby=orderby,
             cls=lambda objs: [
-                RegistryArtifactProperties._from_generated(x) for x in objs  # pylint: disable=protected-access
+                RegistryArtifactProperties._from_generated(x)
+                for x in objs  # pylint: disable=protected-access
             ],
         )
 
@@ -156,7 +169,9 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             n=kwargs.pop("top", None),
             orderby=kwargs.pop("order_by", None),
             digest=kwargs.pop("digest", None),
-            cls=lambda objs: [TagProperties._from_generated(o) for o in objs],  # pylint: disable=protected-access
+            cls=lambda objs: [
+                TagProperties._from_generated(o) for o in objs
+            ],  # pylint: disable=protected-access
             **kwargs
         )
 
@@ -173,7 +188,10 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
 
         await self._client.container_registry_repository.update_manifest_attributes(
-            self.repository, digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
+            self.repository,
+            digest,
+            value=permissions._to_generated(),
+            **kwargs  # pylint: disable=protected-access
         )
 
     async def set_tag_properties(self, tag_or_digest, permissions, **kwargs):
@@ -191,5 +209,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             tag_or_digest = self._get_digest_from_tag(tag_or_digest)
 
         await self._client.container_registry_repository.update_manifest_attributes(
-            self.repository, tag_or_digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
+            self.repository,
+            tag_or_digest,
+            value=permissions._to_generated(),
+            **kwargs  # pylint: disable=protected-access
         )

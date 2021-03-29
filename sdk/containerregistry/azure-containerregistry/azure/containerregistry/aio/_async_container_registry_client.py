@@ -6,8 +6,9 @@
 from typing import Any, Dict, TYPE_CHECKING
 
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.pipeline import AsyncPipeline
 
-from ._async_base_client import ContainerRegistryBaseClient
+from ._async_base_client import ContainerRegistryBaseClient, AsyncTransportWrapper
 from ._async_container_repository_client import ContainerRepositoryClient
 from .._models import RepositoryProperties, DeletedRepositoryResult
 
@@ -23,9 +24,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
         self._credential = credential
-        super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, **kwargs)
+        super(ContainerRegistryClient, self).__init__(
+            endpoint=endpoint, credential=credential, **kwargs
+        )
 
-    async def delete_repository(self, repository: str, **kwargs: Dict[str, Any]) -> DeletedRepositoryResult:
+    async def delete_repository(
+        self, repository: str, **kwargs: Dict[str, Any]
+    ) -> DeletedRepositoryResult:
         """Delete a repository
 
         :param repository: The repository to delete
@@ -33,8 +38,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        result = await self._client.container_registry.delete_repository(repository, **kwargs)
-        return DeletedRepositoryResult._from_generated(result)  # pylint: disable=protected-access
+        result = await self._client.container_registry.delete_repository(
+            repository, **kwargs
+        )
+        return DeletedRepositoryResult._from_generated(
+            result
+        )  # pylint: disable=protected-access
 
     def list_repositories(self, **kwargs) -> AsyncItemPaged[str]:
 
@@ -42,6 +51,26 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             last=kwargs.pop("last", None), n=kwargs.pop("page_size", None), **kwargs
         )
 
-    def get_repository_client(self, name: str, **kwargs) -> ContainerRepositoryClient:
+    def get_repository_client(
+        self, repository: str, **kwargs
+    ) -> ContainerRepositoryClient:
+        # type: (str, Dict[str, Any]) -> ContainerRepositoryClient
+        """Get a repository client
 
-        return ContainerRepositoryClient(self._endpoint, name, self._credential, **kwargs)
+        :param repository: The repository to create a client for
+        :type repository: str
+        :returns: :class:~azure.containerregistry.aio.ContainerRepositoryClient
+        """
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(
+                self._client._client._pipeline._transport  # pylint: disable=protected-access
+            ),
+            policies=self._client._client._pipeline._impl_policies,  # pylint: disable=protected-access
+        )
+        return ContainerRepositoryClient(
+            self._endpoint,
+            repository,
+            credential=self._credential,
+            pipeline=_pipeline,
+            **kwargs
+        )

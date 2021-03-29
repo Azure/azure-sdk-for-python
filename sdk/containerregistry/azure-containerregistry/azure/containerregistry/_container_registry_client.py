@@ -4,9 +4,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import TYPE_CHECKING
-from azure.core.paging import ItemPaged
 
-from ._base_client import ContainerRegistryBaseClient
+from azure.core.paging import ItemPaged
+from azure.core.pipeline import Pipeline
+
+from ._base_client import ContainerRegistryBaseClient, TransportWrapper
 from ._container_repository_client import ContainerRepositoryClient
 from ._models import DeletedRepositoryResult
 
@@ -31,7 +33,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
         self._credential = credential
-        super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, **kwargs)
+        super(ContainerRegistryClient, self).__init__(
+            endpoint=endpoint, credential=credential, **kwargs
+        )
 
     def delete_repository(self, repository, **kwargs):
         # type: (str, Dict[str, Any]) -> DeletedRepositoryResult
@@ -43,8 +47,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
         # NOTE: DELETE `/acr/v1/{name}`
-        return DeletedRepositoryResult._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry.delete_repository(repository, **kwargs)
+        return (
+            DeletedRepositoryResult._from_generated(  # pylint: disable=protected-access
+                self._client.container_registry.delete_repository(repository, **kwargs)
+            )
         )
 
     def list_repositories(self, **kwargs):
@@ -70,4 +76,16 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :type repository: str
         :returns: :class:~azure.containerregistry.ContainerRepositoryClient
         """
-        return ContainerRepositoryClient(self._endpoint, repository, credential=self._credential, **kwargs)
+        _pipeline = Pipeline(
+            transport=TransportWrapper(
+                self._client._client._pipeline._transport  # pylint: disable=protected-access
+            ),
+            policies=self._client._client._pipeline._impl_policies,  # pylint: disable=protected-access
+        )
+        return ContainerRepositoryClient(
+            self._endpoint,
+            repository,
+            credential=self._credential,
+            pipeline=_pipeline,
+            **kwargs
+        )
