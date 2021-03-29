@@ -143,7 +143,7 @@ class FormRecognizerTest(AzureTestCase):
         self.business_card_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "businessCard.jpg")
         self.business_card_url_png = self.get_blob_url(testing_container_sas_url, "testingdata", "businessCard.png")
         self.business_card_multipage_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "business-card-multipage.pdf")
-        self.id_document_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "license_2.jpg")
+        self.id_document_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "license.jpg")
         self.invoice_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "Invoice_1.pdf")
         self.invoice_url_tiff = self.get_blob_url(testing_container_sas_url, "testingdata", "Invoice_1.tiff")
         self.multipage_vendor_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multi1.pdf")
