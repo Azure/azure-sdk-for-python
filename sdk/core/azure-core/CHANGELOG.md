@@ -24,7 +24,6 @@ This version will be the last version to officially support Python 3.5, future v
 ### Bug Fixes
 
 - Disable retry in stream downloading. (thanks to @jochen-ott-by @hoffmann for the contribution)  #16723
->>>>>>> master
 
 ## 1.11.0 (2021-02-08)
 
