@@ -25,7 +25,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
         self._create_and_submit_sample_translation_jobs(client, jobs_count)
 
         # list jobs
-        submitted_jobs = client.list_submitted_jobs()
+        submitted_jobs = list(client.list_submitted_jobs())
         self.assertEqual(len(submitted_jobs), jobs_count)
 
         # check statuses
@@ -46,12 +46,13 @@ class TestSubmittedJobs(DocumentTranslationTest):
         self._create_and_submit_sample_translation_jobs(client, jobs_count)
 
         # list jobs
-        submitted_jobs_pages = client.list_submitted_jobs(results_per_page=result_per_page)
+        submitted_jobs_pages = list(client.list_submitted_jobs(results_per_page=result_per_page))
         self.assertEqual(len(submitted_jobs_pages), no_of_pages)
 
         # iterate by page
         for page in submitted_jobs_pages:
-            self.assertEqual(len(page), result_per_page)
+            page_jobs = list(page)
+            self.assertEqual(len(page_jobs), result_per_page)
             for job in page:
                 self._validate_translation_job(job, TOTAL_DOC_COUNT_IN_JOB, "Succeeded")
 
@@ -68,7 +69,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
         self._create_and_submit_sample_translation_jobs(client, jobs_count)
 
         # list jobs
-        submitted_jobs = client.list_submitted_jobs(skip=skip)
+        submitted_jobs = list(client.list_submitted_jobs(skip=skip))
         self.assertEqual(len(submitted_jobs), jobs_count - skip)
 
         for job in submitted_jobs:

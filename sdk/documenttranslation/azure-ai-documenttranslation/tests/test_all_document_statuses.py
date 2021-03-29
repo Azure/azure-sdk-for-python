@@ -40,7 +40,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         job_id = self._submit_and_validate_translation_job(client, translation_inputs, len(blob_data))
 
         # check doc statuses
-        doc_statuses = client.list_all_document_statuses(job_id)
+        doc_statuses = list(client.list_all_document_statuses(job_id)) # convert from generic iterator to list
         self.assertEqual(len(doc_statuses), len(blob_data))
 
         for document in doc_statuses:
@@ -76,12 +76,13 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         job_id = self._submit_and_validate_translation_job(client, translation_inputs, len(blob_data))
 
         # check doc statuses
-        doc_statuses_pages = client.list_all_document_statuses(job_id=job_id, results_per_page=result_per_page)
+        doc_statuses_pages = list(client.list_all_document_statuses(job_id=job_id, results_per_page=result_per_page))
         self.assertEqual(len(doc_statuses_pages), no_of_pages)
 
         # iterate by page
         for page in doc_statuses_pages:
-            self.assertEqual(len(page), result_per_page)
+            page_items = list(page)
+            self.assertEqual(len(page_items), result_per_page)
             for document in page:
                 self._validate_doc_status(document, target_language)
 
@@ -115,7 +116,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         job_id = self._submit_and_validate_translation_job(client, translation_inputs, len(blob_data))
 
         # check doc statuses
-        doc_statuses = client.list_all_document_statuses(job_id=job_id, skip=skip)
+        doc_statuses = list(client.list_all_document_statuses(job_id=job_id, skip=skip))
         self.assertEqual(len(doc_statuses), docs_len - skip)
 
         # iterate over docs
