@@ -55,7 +55,7 @@ from .constants import (
 )
 
 if TYPE_CHECKING:
-    from .message import ServiceBusReceivedMessage, ServiceBusMessage, ServiceBusMessageBatch
+    from .message import ServiceBusReceivedMessage, ServiceBusMessage, AMQPAnnotatedMessage
     from azure.core.tracing import AbstractSpan
     from .receiver_mixins import ReceiverMixin
     from .._servicebus_session import BaseSession
@@ -63,7 +63,14 @@ if TYPE_CHECKING:
     MessagesType = Union[
         Mapping[str, Any],
         ServiceBusMessage,
-        List[Union[Mapping[str, Any], ServiceBusMessage]]
+        AMQPAnnotatedMessage,
+        List[Union[Mapping[str, Any], ServiceBusMessage, AMQPAnnotatedMessage]]
+    ]
+
+    SingleMessageType = Union[
+        Mapping[str, Any],
+        ServiceBusMessage,
+        AMQPAnnotatedMessage
     ]
 
 _log = logging.getLogger(__name__)
@@ -215,8 +222,14 @@ def transform_messages_to_sendable_if_needed(messages):
             return messages
 
 
-def _single_message_from_dict(message, message_type):
-    # type: (Union[ServiceBusMessage, Mapping[str, Any]], Type[ServiceBusMessage]) -> ServiceBusMessage
+def _convert_to_single_service_bus_message(message, message_type):
+    # type: (SingleMessageType, Type[ServiceBusMessage]) -> ServiceBusMessage
+    try:
+        # Handle AMQPAnnotatedMessage
+        message = message._to_service_bus_message()  # pylint: disable=protected-access
+    except AttributeError:
+        message = message
+
     if isinstance(message, message_type):
         return message
     try:
@@ -242,8 +255,8 @@ def create_messages_from_dicts_if_needed(messages, message_type):
     :rtype: Union[ServiceBusMessage, List[ServiceBusMessage]]
     """
     if isinstance(messages, list):
-        return [_single_message_from_dict(m, message_type) for m in messages]
-    return _single_message_from_dict(messages, message_type)
+        return [_convert_to_single_service_bus_message(m, message_type) for m in messages]
+    return _convert_to_single_service_bus_message(messages, message_type)
 
 
 def strip_protocol_from_uri(uri):

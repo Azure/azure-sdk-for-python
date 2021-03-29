@@ -1,7 +1,16 @@
 # Release History
 
-## 7.1.1 (Unreleased)
+## 7.2.0b1 (Unreleased)
 
+**New features**
+
+* Added support for sending AMQP annotated message which allows full access to the AMQP message fields.
+  -`azure.servicebus.AMQPAnnotatedMessage` is now made public and could be instantiated for sending.
+* Added new enum class `azure.servicebus.AMQPMessageBodyType` to represent the body type of the message message which includes:
+  - `DATA`: The body of message consists of one or more data sections and each section contains opaque binary data.
+  - `SEQUENCE`: The body of message consists of one or more sequence sections and each section contains an arbitrary number of structured data elements.
+  - `VALUE`: The body of message consists of one amqp-value section and the section contains a single AMQP value.
+* Added new property `body_type` on `azure.servicebus.ServiceBusMessage` and `azure.servicebus.ReceivedMessage` which returns `azure.servicebus.AMQPMessageBodyType`.
 
 ## 7.1.0 (2021-03-09)
 
