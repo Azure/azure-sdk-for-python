@@ -26,11 +26,14 @@ class TestSubmittedJobs(DocumentTranslationTest):
 
         # list jobs
         submitted_jobs = client.list_submitted_jobs()
-        self.assertEqual(len(submitted_jobs), jobs_count)
+        jobs_list = []
 
         # check statuses
         async for job in submitted_jobs:
+            jobs_list.append(job)
             self._validate_translation_job(job, TOTAL_DOC_COUNT_IN_JOB, "Succeeded")
+
+        self.assertEqual(len(jobs_list), jobs_count)
 
 
     @pytest.mark.skip("top not exposed yet")
@@ -47,13 +50,19 @@ class TestSubmittedJobs(DocumentTranslationTest):
 
         # list jobs
         submitted_jobs_pages = client.list_submitted_jobs(results_per_page=result_per_page)
-        self.assertEqual(len(submitted_jobs_pages), no_of_pages)
+        pages_list = []
 
         # iterate by page
         async for page in submitted_jobs_pages:
-            self.assertEqual(len(page), result_per_page)
+            pages_list.append()
+            page_jobs = []
             async for job in page:
+                page_jobs.append(job)
                 self._validate_translation_job(job, TOTAL_DOC_COUNT_IN_JOB, "Succeeded")
+            self.assertEqual(len(page_jobs), result_per_page)
+
+        self.assertEqual(len(pages_list), no_of_pages)
+
 
 
     @pytest.mark.skip("skip not exposed yet")
@@ -69,7 +78,12 @@ class TestSubmittedJobs(DocumentTranslationTest):
 
         # list jobs
         submitted_jobs = client.list_submitted_jobs(skip=skip)
-        self.assertEqual(len(submitted_jobs), jobs_count - skip)
+        jobs_list = []
 
         async for job in submitted_jobs:
+            jobs_list.append(job)
             self._validate_translation_job(job, TOTAL_DOC_COUNT_IN_JOB, "Succeeded")
+
+        self.assertEqual(len(jobs_list), jobs_count - skip)
+
+            

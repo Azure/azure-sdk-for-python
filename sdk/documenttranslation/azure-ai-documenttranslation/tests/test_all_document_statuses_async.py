@@ -42,10 +42,14 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
         # check doc statuses
         doc_statuses = client.list_all_document_statuses(job_id)
-        self.assertEqual(len(doc_statuses), len(blob_data))
+        doc_statuses_list = []
 
         async for document in doc_statuses:
+            doc_statuses_list.append(document)
             self._validate_doc_status(document, target_language)
+
+        self.assertEqual(len(doc_statuses_list), len(blob_data))
+
 
 
     @pytest.mark.skip("top not exposed yet")
@@ -78,13 +82,19 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
         # check doc statuses
         doc_statuses_pages = client.list_all_document_statuses(job_id=job_id, results_per_page=result_per_page)
-        self.assertEqual(len(doc_statuses_pages), no_of_pages)
+        pages_list = []
 
         # iterate by page
         async for page in doc_statuses_pages:
-            self.assertEqual(len(page), result_per_page)
+            pages_list.append(page)
+            page_docs_list = []
             async for document in page:
+                page_docs_list.append(document)
                 self._validate_doc_status(document, target_language)
+            self.assertEqual(len(page_docs_list), result_per_page)
+
+        self.assertEqual(len(pages_list), no_of_pages)
+
 
 
     @pytest.mark.skip("skip not exposed yet")
@@ -117,8 +127,11 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
         # check doc statuses
         doc_statuses = client.list_all_document_statuses(job_id=job_id, skip=skip)
-        self.assertEqual(len(doc_statuses), docs_len - skip)
+        doc_statuses_list = []
 
         # iterate over docs
         async for document in doc_statuses:
+            doc_statuses_list.append(document)
             self._validate_doc_status(document, target_language)
+
+        self.assertEqual(len(doc_statuses_list), docs_len - skip)
