@@ -140,12 +140,12 @@ class DocumentTranslationTest(AzureTestCase):
 
     def _validate_translation_job(self, job_details, **kwargs):
         status = kwargs.pop("status", None)
-        total = kwargs.pop('total', 0)
-        failed = kwargs.pop('failed', 0)
-        succeeded = kwargs.pop('succeeded', 0)
-        inprogress = kwargs.pop('inprogress', 0)
-        notstarted = kwargs.pop('notstarted', 0)
-        cancelled = kwargs.pop('cancelled', 0)
+        total = kwargs.pop('total', None)
+        failed = kwargs.pop('failed', None)
+        succeeded = kwargs.pop('succeeded', None)
+        inprogress = kwargs.pop('inprogress', None)
+        notstarted = kwargs.pop('notstarted', None)
+        cancelled = kwargs.pop('cancelled', None)
         # status
         self.assertEqual(job_details.status, status) if status else self.assertIsNotNone(job_details.status)
         # docs count
@@ -227,6 +227,7 @@ class DocumentTranslationTest(AzureTestCase):
         return result_job_ids
 
     async def _create_and_submit_sample_translation_jobs_async(self, async_client, jobs_count):
+        result_job_ids = []
         for i in range(jobs_count):
             # prepare containers and test data
             '''
@@ -261,3 +262,6 @@ class DocumentTranslationTest(AzureTestCase):
             job_details = await async_client.create_translation_job(translation_inputs)
             self.assertIsNotNone(job_details.id)
             await async_client.wait_until_done(job_details.id)
+            result_job_ids.append(job_details.id)
+
+        return result_job_ids
