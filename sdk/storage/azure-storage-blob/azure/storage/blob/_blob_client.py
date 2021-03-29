@@ -75,6 +75,10 @@ _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
 class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-methods
     """A client to interact with a specific blob, although that blob may not yet exist.
 
+    For more optional configuration, please click
+    <a href="https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob
+    #optional-configuration">here</a>.
+
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the blob,
         use the :func:`from_blob_url` classmethod.
