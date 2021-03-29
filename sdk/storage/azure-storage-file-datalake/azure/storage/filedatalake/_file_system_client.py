@@ -892,7 +892,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         The generator will lazily follow the continuation tokens returned by
         the service.
 
-        .. versionadded:: 12.3.0
+        .. versionadded:: 12.4.0
             This operation was introduced in API version '2020-06-12'.
 
         :param str name_starts_with:
