@@ -96,7 +96,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                                                  **kwargs)  # type: ignore # pylint: disable=protected-access
         self._client = AzureDataLakeStorageRESTAPI(self.url, file_system=file_system_name, pipeline=self._pipeline)
         self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(self._container_client.url,
-                                                                               file_system_name,
+                                                                               file_system=file_system_name,
                                                                                pipeline=self._pipeline)
         self._loop = kwargs.get('loop', None)
 
