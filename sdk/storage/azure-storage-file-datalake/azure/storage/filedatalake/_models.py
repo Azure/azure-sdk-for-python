@@ -929,8 +929,7 @@ class RetentionPolicy(GenRetentionPolicy):
     """
 
     def __init__(self, enabled=False, days=None):
-        self.enabled = enabled
-        self.days = days
+        super(RetentionPolicy, self).__init__(enabled=enabled, days=days, allow_permanent_delete=None)
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
