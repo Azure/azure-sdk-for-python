@@ -129,6 +129,18 @@ class AbstractSpan(Protocol):
         Returns the span the class is wrapping.
         """
 
+    @staticmethod
+    def create_link_from_headers(headers, attributes=None):
+        # type: (Dict[str, str], Attributes) -> Any
+        """
+        Given a dictionary, extracts the context and creates a link that can be added to spans.
+
+        :param headers: A dictionary of the request header as key value pairs.
+        :type headers: dict
+        :param attributes: Any additional attributes that should be added to link
+        :type attributes: dict
+        """
+
     @classmethod
     def link(cls, traceparent, attributes=None):
         # type: (str, Attributes) -> None
