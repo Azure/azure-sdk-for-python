@@ -10,6 +10,7 @@ from io import BytesIO
 from itertools import islice
 import warnings
 
+from typing import AsyncIterator
 from azure.core.exceptions import HttpResponseError
 from .._shared.encryption import decrypt_blob
 from .._shared.request_handlers import validate_and_format_range_headers
@@ -319,6 +320,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         return response
 
     def chunks(self):
+        # type: () -> AsyncIterator[bytes]
         """Iterate over chunks in the download stream.
 
         :rtype: AsyncIterator[bytes]

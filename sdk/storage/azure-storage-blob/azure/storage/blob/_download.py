@@ -9,6 +9,7 @@ import threading
 import warnings
 from io import BytesIO
 
+from typing import Iterator
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.common import with_current_context
 from ._shared.encryption import decrypt_blob
@@ -443,6 +444,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         return response
 
     def chunks(self):
+        # type: () -> Iterator[bytes]
         """Iterate over chunks in the download stream.
 
         :rtype: Iterator[bytes]
