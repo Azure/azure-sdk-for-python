@@ -13,7 +13,8 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename?api-version=2020-09-01
   response:
@@ -21,7 +22,7 @@ interactions:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename","type":"Microsoft.Cdn/profiles","name":"profilename","location":"WestUs","kind":"cdn","tags":{},"sku":{"name":"Standard_Verizon"},"properties":{"resourceState":"Creating","provisioningState":"Creating"}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e2c8a893-4277-4296-ad75-a4ece217a8b9?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/f1c3ed15-4f39-40b9-82a9-3f568c121e0a?api-version=2020-09-01
       cache-control:
       - no-cache
       content-length:
@@ -29,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:13:16 GMT
+      - Mon, 29 Mar 2021 02:07:03 GMT
       expires:
       - '-1'
       pragma:
@@ -55,9 +56,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e2c8a893-4277-4296-ad75-a4ece217a8b9?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/f1c3ed15-4f39-40b9-82a9-3f568c121e0a?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -69,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:13:26 GMT
+      - Mon, 29 Mar 2021 02:07:13 GMT
       expires:
       - '-1'
       pragma:
@@ -97,9 +99,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e2c8a893-4277-4296-ad75-a4ece217a8b9?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/f1c3ed15-4f39-40b9-82a9-3f568c121e0a?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -111,7 +114,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:13:57 GMT
+      - Mon, 29 Mar 2021 02:07:43 GMT
       expires:
       - '-1'
       pragma:
@@ -139,9 +142,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e2c8a893-4277-4296-ad75-a4ece217a8b9?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/f1c3ed15-4f39-40b9-82a9-3f568c121e0a?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -153,7 +157,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:14:27 GMT
+      - Mon, 29 Mar 2021 02:08:13 GMT
       expires:
       - '-1'
       pragma:
@@ -181,9 +185,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e2c8a893-4277-4296-ad75-a4ece217a8b9?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/f1c3ed15-4f39-40b9-82a9-3f568c121e0a?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -195,7 +200,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:14:58 GMT
+      - Mon, 29 Mar 2021 02:08:43 GMT
       expires:
       - '-1'
       pragma:
@@ -223,93 +228,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e2c8a893-4277-4296-ad75-a4ece217a8b9?api-version=2020-09-01
-  response:
-    body:
-      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '62'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 19 Jan 2021 09:15:28 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Kestrel
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e2c8a893-4277-4296-ad75-a4ece217a8b9?api-version=2020-09-01
-  response:
-    body:
-      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '62'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 19 Jan 2021 09:15:59 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Kestrel
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e2c8a893-4277-4296-ad75-a4ece217a8b9?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/f1c3ed15-4f39-40b9-82a9-3f568c121e0a?api-version=2020-09-01
   response:
     body:
       string: '{"status":"Succeeded","error":{"code":"None","message":null}}'
@@ -321,7 +243,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:16:30 GMT
+      - Mon, 29 Mar 2021 02:09:14 GMT
       expires:
       - '-1'
       pragma:
@@ -349,7 +271,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename?api-version=2020-09-01
   response:
@@ -363,7 +286,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:16:31 GMT
+      - Mon, 29 Mar 2021 02:09:14 GMT
       expires:
       - '-1'
       pragma:
@@ -401,7 +324,8 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x?api-version=2020-09-01
   response:
@@ -409,7 +333,7 @@ interactions:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x","type":"Microsoft.Cdn/profiles/endpoints","name":"endpoint9527x","location":"WestUs","tags":{"kay1":"value1"},"properties":{"hostName":"endpoint9527x.azureedge.net","originHostHeader":"www.bing.com","originPath":"/image","contentTypesToCompress":["text/html","application/octet-stream"],"isCompressionEnabled":true,"isHttpAllowed":true,"isHttpsAllowed":true,"queryStringCachingBehavior":"BypassCaching","optimizationType":null,"probePath":null,"origins":[{"name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":null,"httpsPort":null,"originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null}}],"originGroups":[],"defaultOriginGroup":null,"customDomains":[],"geoFilters":[],"deliveryPolicy":null,"urlSigningKeys":null,"webApplicationFirewallPolicyLink":null,"resourceState":"Creating","provisioningState":"Creating"}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/f86afc75-fa03-4090-838a-97f98a89de9a?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/48beee33-d20e-4227-b967-3e305ffeace1?api-version=2020-09-01
       cache-control:
       - no-cache
       content-length:
@@ -417,7 +341,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:16:47 GMT
+      - Mon, 29 Mar 2021 02:09:15 GMT
       expires:
       - '-1'
       pragma:
@@ -443,9 +367,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/f86afc75-fa03-4090-838a-97f98a89de9a?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/48beee33-d20e-4227-b967-3e305ffeace1?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -457,7 +382,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:16:57 GMT
+      - Mon, 29 Mar 2021 02:09:25 GMT
       expires:
       - '-1'
       pragma:
@@ -485,9 +410,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/f86afc75-fa03-4090-838a-97f98a89de9a?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/48beee33-d20e-4227-b967-3e305ffeace1?api-version=2020-09-01
   response:
     body:
       string: '{"status":"Succeeded","error":{"code":"None","message":null}}'
@@ -499,7 +425,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:17:27 GMT
+      - Mon, 29 Mar 2021 02:09:54 GMT
       expires:
       - '-1'
       pragma:
@@ -527,7 +453,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x?api-version=2020-09-01
   response:
@@ -541,7 +468,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:17:28 GMT
+      - Mon, 29 Mar 2021 02:09:54 GMT
       expires:
       - '-1'
       pragma:
@@ -571,7 +498,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/origins/origin1?api-version=2020-09-01
   response:
@@ -585,7 +513,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:17:29 GMT
+      - Mon, 29 Mar 2021 02:09:54 GMT
       expires:
       - '-1'
       pragma:
@@ -613,7 +541,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x?api-version=2020-09-01
   response:
@@ -627,7 +556,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:17:30 GMT
+      - Mon, 29 Mar 2021 02:09:55 GMT
       expires:
       - '-1'
       pragma:
@@ -657,7 +586,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename?api-version=2020-09-01
   response:
@@ -671,7 +601,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:17:30 GMT
+      - Mon, 29 Mar 2021 02:09:55 GMT
       expires:
       - '-1'
       pragma:
@@ -705,7 +635,8 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/origins/origin1?api-version=2020-09-01
   response:
@@ -713,7 +644,7 @@ interactions:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/origins/origin1","type":"Microsoft.Cdn/profiles/endpoints/origins","name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":42,"httpsPort":43,"resourceState":"Active","originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null,"provisioningState":"Succeeded"}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/719b058f-4577-4e53-88cc-9bdb1b210ab6?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/b476546a-8560-4a4f-af67-49dd124275d0?api-version=2020-09-01
       cache-control:
       - no-cache
       content-length:
@@ -721,11 +652,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:17:33 GMT
+      - Mon, 29 Mar 2021 02:09:55 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/719b058f-4577-4e53-88cc-9bdb1b210ab6/profileresults/profilename/endpointresults/endpoint9527x/originresults/origin1?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/b476546a-8560-4a4f-af67-49dd124275d0/profileresults/profilename/endpointresults/endpoint9527x/originresults/origin1?api-version=2020-09-01
       pragma:
       - no-cache
       server:
@@ -735,7 +666,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1199'
     status:
       code: 202
       message: Accepted
@@ -749,51 +680,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/719b058f-4577-4e53-88cc-9bdb1b210ab6?api-version=2020-09-01
-  response:
-    body:
-      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '62'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 19 Jan 2021 09:17:44 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Kestrel
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/719b058f-4577-4e53-88cc-9bdb1b210ab6?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/b476546a-8560-4a4f-af67-49dd124275d0?api-version=2020-09-01
   response:
     body:
       string: '{"status":"Succeeded","error":{"code":"None","message":null}}'
@@ -805,7 +695,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:18:14 GMT
+      - Mon, 29 Mar 2021 02:10:06 GMT
       expires:
       - '-1'
       pragma:
@@ -833,7 +723,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/origins/origin1?api-version=2020-09-01
   response:
@@ -847,7 +738,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:18:15 GMT
+      - Mon, 29 Mar 2021 02:10:06 GMT
       expires:
       - '-1'
       pragma:
@@ -879,7 +770,8 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/validateCustomDomain?api-version=2020-09-01
   response:
@@ -896,7 +788,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:18:16 GMT
+      - Mon, 29 Mar 2021 02:10:06 GMT
       expires:
       - '-1'
       pragma:
@@ -912,7 +804,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1199'
     status:
       code: 200
       message: OK
@@ -930,7 +822,8 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/purge?api-version=2020-09-01
   response:
@@ -938,17 +831,17 @@ interactions:
       string: ''
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7ef531fb-7029-4c6e-80a5-55ea49334cea?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/beaf909f-798d-48fd-8271-83ed429f7755?api-version=2020-09-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Tue, 19 Jan 2021 09:18:19 GMT
+      - Mon, 29 Mar 2021 02:10:07 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7ef531fb-7029-4c6e-80a5-55ea49334cea/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/beaf909f-798d-48fd-8271-83ed429f7755/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
       pragma:
       - no-cache
       server:
@@ -972,9 +865,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7ef531fb-7029-4c6e-80a5-55ea49334cea?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/beaf909f-798d-48fd-8271-83ed429f7755?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -986,7 +880,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:18:31 GMT
+      - Mon, 29 Mar 2021 02:10:17 GMT
       expires:
       - '-1'
       pragma:
@@ -1014,9 +908,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7ef531fb-7029-4c6e-80a5-55ea49334cea?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/beaf909f-798d-48fd-8271-83ed429f7755?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -1028,7 +923,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:19:01 GMT
+      - Mon, 29 Mar 2021 02:10:46 GMT
       expires:
       - '-1'
       pragma:
@@ -1056,9 +951,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7ef531fb-7029-4c6e-80a5-55ea49334cea?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/beaf909f-798d-48fd-8271-83ed429f7755?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -1070,7 +966,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:19:31 GMT
+      - Mon, 29 Mar 2021 02:11:16 GMT
       expires:
       - '-1'
       pragma:
@@ -1098,9 +994,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7ef531fb-7029-4c6e-80a5-55ea49334cea?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/beaf909f-798d-48fd-8271-83ed429f7755?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -1112,7 +1009,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:20:01 GMT
+      - Mon, 29 Mar 2021 02:11:47 GMT
       expires:
       - '-1'
       pragma:
@@ -1140,9 +1037,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7ef531fb-7029-4c6e-80a5-55ea49334cea?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/beaf909f-798d-48fd-8271-83ed429f7755?api-version=2020-09-01
   response:
     body:
       string: '{"status":"Succeeded","error":{"code":"None","message":null}}'
@@ -1154,7 +1052,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:20:32 GMT
+      - Mon, 29 Mar 2021 02:12:17 GMT
       expires:
       - '-1'
       pragma:
@@ -1182,12 +1080,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7ef531fb-7029-4c6e-80a5-55ea49334cea/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/beaf909f-798d-48fd-8271-83ed429f7755/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7ef531fb-7029-4c6e-80a5-55ea49334cea/profileresults/profilename/endpointresults/endpoint9527x","type":"Microsoft.Cdn/operationresults/profileresults/endpointresults","name":"endpoint9527x","location":"WestUs","tags":{"kay1":"value1"},"properties":{"hostName":"endpoint9527x.azureedge.net","originHostHeader":"www.bing.com","originPath":"/image","contentTypesToCompress":["text/html","application/octet-stream"],"isCompressionEnabled":true,"isHttpAllowed":true,"isHttpsAllowed":true,"queryStringCachingBehavior":"BypassCaching","optimizationType":null,"probePath":null,"origins":[{"name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":42,"httpsPort":43,"originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null}}],"originGroups":[],"defaultOriginGroup":null,"customDomains":[],"geoFilters":[],"deliveryPolicy":null,"urlSigningKeys":[],"webApplicationFirewallPolicyLink":null,"resourceState":"Running","provisioningState":"Succeeded"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/beaf909f-798d-48fd-8271-83ed429f7755/profileresults/profilename/endpointresults/endpoint9527x","type":"Microsoft.Cdn/operationresults/profileresults/endpointresults","name":"endpoint9527x","location":"WestUs","tags":{"kay1":"value1"},"properties":{"hostName":"endpoint9527x.azureedge.net","originHostHeader":"www.bing.com","originPath":"/image","contentTypesToCompress":["text/html","application/octet-stream"],"isCompressionEnabled":true,"isHttpAllowed":true,"isHttpsAllowed":true,"queryStringCachingBehavior":"BypassCaching","optimizationType":null,"probePath":null,"origins":[{"name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":42,"httpsPort":43,"originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null}}],"originGroups":[],"defaultOriginGroup":null,"customDomains":[],"geoFilters":[],"deliveryPolicy":null,"urlSigningKeys":[],"webApplicationFirewallPolicyLink":null,"resourceState":"Running","provisioningState":"Succeeded"}}'
     headers:
       cache-control:
       - no-cache
@@ -1196,7 +1095,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:20:33 GMT
+      - Mon, 29 Mar 2021 02:12:17 GMT
       expires:
       - '-1'
       pragma:
@@ -1226,7 +1125,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/stop?api-version=2020-09-01
   response:
@@ -1234,7 +1134,7 @@ interactions:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x","type":"Microsoft.Cdn/profiles/endpoints","name":"endpoint9527x","location":"WestUs","tags":{"kay1":"value1"},"properties":{"hostName":"endpoint9527x.azureedge.net","originHostHeader":"www.bing.com","originPath":"/image","contentTypesToCompress":["text/html","application/octet-stream"],"isCompressionEnabled":true,"isHttpAllowed":true,"isHttpsAllowed":true,"queryStringCachingBehavior":"BypassCaching","optimizationType":null,"probePath":null,"origins":[{"name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":42,"httpsPort":43,"originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null}}],"originGroups":[],"defaultOriginGroup":null,"customDomains":[],"geoFilters":[],"deliveryPolicy":null,"urlSigningKeys":[],"webApplicationFirewallPolicyLink":null,"resourceState":"Stopping","provisioningState":"Succeeded"}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/a031b57a-b7e7-4583-8a22-5de6e5997cce?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7b3aa20a-e388-445a-94ee-2296a43431f7?api-version=2020-09-01
       cache-control:
       - no-cache
       content-length:
@@ -1242,11 +1142,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:20:37 GMT
+      - Mon, 29 Mar 2021 02:12:17 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/a031b57a-b7e7-4583-8a22-5de6e5997cce/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7b3aa20a-e388-445a-94ee-2296a43431f7/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
       pragma:
       - no-cache
       server:
@@ -1270,9 +1170,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/a031b57a-b7e7-4583-8a22-5de6e5997cce?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7b3aa20a-e388-445a-94ee-2296a43431f7?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -1284,7 +1185,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:20:47 GMT
+      - Mon, 29 Mar 2021 02:12:27 GMT
       expires:
       - '-1'
       pragma:
@@ -1312,9 +1213,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/a031b57a-b7e7-4583-8a22-5de6e5997cce?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7b3aa20a-e388-445a-94ee-2296a43431f7?api-version=2020-09-01
   response:
     body:
       string: '{"status":"Succeeded","error":{"code":"None","message":null}}'
@@ -1326,7 +1228,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:21:17 GMT
+      - Mon, 29 Mar 2021 02:12:58 GMT
       expires:
       - '-1'
       pragma:
@@ -1354,12 +1256,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/a031b57a-b7e7-4583-8a22-5de6e5997cce/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7b3aa20a-e388-445a-94ee-2296a43431f7/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/a031b57a-b7e7-4583-8a22-5de6e5997cce/profileresults/profilename/endpointresults/endpoint9527x","type":"Microsoft.Cdn/operationresults/profileresults/endpointresults","name":"endpoint9527x","location":"WestUs","tags":{"kay1":"value1"},"properties":{"hostName":"endpoint9527x.azureedge.net","originHostHeader":"www.bing.com","originPath":"/image","contentTypesToCompress":["text/html","application/octet-stream"],"isCompressionEnabled":true,"isHttpAllowed":true,"isHttpsAllowed":true,"queryStringCachingBehavior":"BypassCaching","optimizationType":null,"probePath":null,"origins":[{"name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":42,"httpsPort":43,"originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null}}],"originGroups":[],"defaultOriginGroup":null,"customDomains":[],"geoFilters":[],"deliveryPolicy":null,"urlSigningKeys":[],"webApplicationFirewallPolicyLink":null,"resourceState":"Stopped","provisioningState":"Succeeded"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7b3aa20a-e388-445a-94ee-2296a43431f7/profileresults/profilename/endpointresults/endpoint9527x","type":"Microsoft.Cdn/operationresults/profileresults/endpointresults","name":"endpoint9527x","location":"WestUs","tags":{"kay1":"value1"},"properties":{"hostName":"endpoint9527x.azureedge.net","originHostHeader":"www.bing.com","originPath":"/image","contentTypesToCompress":["text/html","application/octet-stream"],"isCompressionEnabled":true,"isHttpAllowed":true,"isHttpsAllowed":true,"queryStringCachingBehavior":"BypassCaching","optimizationType":null,"probePath":null,"origins":[{"name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":42,"httpsPort":43,"originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null}}],"originGroups":[],"defaultOriginGroup":null,"customDomains":[],"geoFilters":[],"deliveryPolicy":null,"urlSigningKeys":[],"webApplicationFirewallPolicyLink":null,"resourceState":"Stopped","provisioningState":"Succeeded"}}'
     headers:
       cache-control:
       - no-cache
@@ -1368,7 +1271,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:21:18 GMT
+      - Mon, 29 Mar 2021 02:12:58 GMT
       expires:
       - '-1'
       pragma:
@@ -1398,7 +1301,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/start?api-version=2020-09-01
   response:
@@ -1406,7 +1310,7 @@ interactions:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x","type":"Microsoft.Cdn/profiles/endpoints","name":"endpoint9527x","location":"WestUs","tags":{"kay1":"value1"},"properties":{"hostName":"endpoint9527x.azureedge.net","originHostHeader":"www.bing.com","originPath":"/image","contentTypesToCompress":["text/html","application/octet-stream"],"isCompressionEnabled":true,"isHttpAllowed":true,"isHttpsAllowed":true,"queryStringCachingBehavior":"BypassCaching","optimizationType":null,"probePath":null,"origins":[{"name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":42,"httpsPort":43,"originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null}}],"originGroups":[],"defaultOriginGroup":null,"customDomains":[],"geoFilters":[],"deliveryPolicy":null,"urlSigningKeys":[],"webApplicationFirewallPolicyLink":null,"resourceState":"Starting","provisioningState":"Succeeded"}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/5e8fa28d-bf6a-4436-884c-823bd8e37eb2?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/573a3e5f-e9cd-4619-bab5-4c52f5cf4e32?api-version=2020-09-01
       cache-control:
       - no-cache
       content-length:
@@ -1414,11 +1318,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:21:21 GMT
+      - Mon, 29 Mar 2021 02:12:58 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/5e8fa28d-bf6a-4436-884c-823bd8e37eb2/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/573a3e5f-e9cd-4619-bab5-4c52f5cf4e32/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
       pragma:
       - no-cache
       server:
@@ -1442,9 +1346,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/5e8fa28d-bf6a-4436-884c-823bd8e37eb2?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/573a3e5f-e9cd-4619-bab5-4c52f5cf4e32?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -1456,7 +1361,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:21:32 GMT
+      - Mon, 29 Mar 2021 02:13:08 GMT
       expires:
       - '-1'
       pragma:
@@ -1484,9 +1389,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/5e8fa28d-bf6a-4436-884c-823bd8e37eb2?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/573a3e5f-e9cd-4619-bab5-4c52f5cf4e32?api-version=2020-09-01
   response:
     body:
       string: '{"status":"Succeeded","error":{"code":"None","message":null}}'
@@ -1498,7 +1404,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:22:02 GMT
+      - Mon, 29 Mar 2021 02:13:38 GMT
       expires:
       - '-1'
       pragma:
@@ -1526,12 +1432,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/5e8fa28d-bf6a-4436-884c-823bd8e37eb2/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/573a3e5f-e9cd-4619-bab5-4c52f5cf4e32/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/5e8fa28d-bf6a-4436-884c-823bd8e37eb2/profileresults/profilename/endpointresults/endpoint9527x","type":"Microsoft.Cdn/operationresults/profileresults/endpointresults","name":"endpoint9527x","location":"WestUs","tags":{"kay1":"value1"},"properties":{"hostName":"endpoint9527x.azureedge.net","originHostHeader":"www.bing.com","originPath":"/image","contentTypesToCompress":["text/html","application/octet-stream"],"isCompressionEnabled":true,"isHttpAllowed":true,"isHttpsAllowed":true,"queryStringCachingBehavior":"BypassCaching","optimizationType":null,"probePath":null,"origins":[{"name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":42,"httpsPort":43,"originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null}}],"originGroups":[],"defaultOriginGroup":null,"customDomains":[],"geoFilters":[],"deliveryPolicy":null,"urlSigningKeys":[],"webApplicationFirewallPolicyLink":null,"resourceState":"Running","provisioningState":"Succeeded"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/573a3e5f-e9cd-4619-bab5-4c52f5cf4e32/profileresults/profilename/endpointresults/endpoint9527x","type":"Microsoft.Cdn/operationresults/profileresults/endpointresults","name":"endpoint9527x","location":"WestUs","tags":{"kay1":"value1"},"properties":{"hostName":"endpoint9527x.azureedge.net","originHostHeader":"www.bing.com","originPath":"/image","contentTypesToCompress":["text/html","application/octet-stream"],"isCompressionEnabled":true,"isHttpAllowed":true,"isHttpsAllowed":true,"queryStringCachingBehavior":"BypassCaching","optimizationType":null,"probePath":null,"origins":[{"name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":42,"httpsPort":43,"originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null}}],"originGroups":[],"defaultOriginGroup":null,"customDomains":[],"geoFilters":[],"deliveryPolicy":null,"urlSigningKeys":[],"webApplicationFirewallPolicyLink":null,"resourceState":"Running","provisioningState":"Succeeded"}}'
     headers:
       cache-control:
       - no-cache
@@ -1540,7 +1447,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:22:03 GMT
+      - Mon, 29 Mar 2021 02:13:38 GMT
       expires:
       - '-1'
       pragma:
@@ -1572,7 +1479,8 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/load?api-version=2020-09-01
   response:
@@ -1580,17 +1488,17 @@ interactions:
       string: ''
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/57f67324-19de-45e3-b939-eff9220f622b?api-version=2020-09-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Tue, 19 Jan 2021 09:22:06 GMT
+      - Mon, 29 Mar 2021 02:13:38 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/57f67324-19de-45e3-b939-eff9220f622b/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
       pragma:
       - no-cache
       server:
@@ -1614,9 +1522,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/57f67324-19de-45e3-b939-eff9220f622b?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -1628,7 +1537,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:22:17 GMT
+      - Mon, 29 Mar 2021 02:13:49 GMT
       expires:
       - '-1'
       pragma:
@@ -1656,9 +1565,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/57f67324-19de-45e3-b939-eff9220f622b?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -1670,7 +1580,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:22:47 GMT
+      - Mon, 29 Mar 2021 02:14:18 GMT
       expires:
       - '-1'
       pragma:
@@ -1698,9 +1608,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/57f67324-19de-45e3-b939-eff9220f622b?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -1712,7 +1623,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:23:17 GMT
+      - Mon, 29 Mar 2021 02:14:49 GMT
       expires:
       - '-1'
       pragma:
@@ -1740,9 +1651,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/57f67324-19de-45e3-b939-eff9220f622b?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -1754,7 +1666,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:23:48 GMT
+      - Mon, 29 Mar 2021 02:15:19 GMT
       expires:
       - '-1'
       pragma:
@@ -1782,9 +1694,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/57f67324-19de-45e3-b939-eff9220f622b?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -1796,7 +1709,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:24:19 GMT
+      - Mon, 29 Mar 2021 02:15:49 GMT
       expires:
       - '-1'
       pragma:
@@ -1824,9 +1737,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/57f67324-19de-45e3-b939-eff9220f622b?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -1838,7 +1752,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:24:49 GMT
+      - Mon, 29 Mar 2021 02:16:19 GMT
       expires:
       - '-1'
       pragma:
@@ -1866,9 +1780,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/57f67324-19de-45e3-b939-eff9220f622b?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -1880,7 +1795,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:25:20 GMT
+      - Mon, 29 Mar 2021 02:16:49 GMT
       expires:
       - '-1'
       pragma:
@@ -1908,9 +1823,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/57f67324-19de-45e3-b939-eff9220f622b?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -1922,7 +1838,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:25:50 GMT
+      - Mon, 29 Mar 2021 02:17:19 GMT
       expires:
       - '-1'
       pragma:
@@ -1950,9 +1866,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/57f67324-19de-45e3-b939-eff9220f622b?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -1964,7 +1881,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:26:20 GMT
+      - Mon, 29 Mar 2021 02:17:49 GMT
       expires:
       - '-1'
       pragma:
@@ -1992,9 +1909,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/57f67324-19de-45e3-b939-eff9220f622b?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -2006,7 +1924,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:26:52 GMT
+      - Mon, 29 Mar 2021 02:18:19 GMT
       expires:
       - '-1'
       pragma:
@@ -2034,9 +1952,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/57f67324-19de-45e3-b939-eff9220f622b?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -2048,7 +1967,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:27:22 GMT
+      - Mon, 29 Mar 2021 02:18:50 GMT
       expires:
       - '-1'
       pragma:
@@ -2076,9 +1995,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/57f67324-19de-45e3-b939-eff9220f622b?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -2090,7 +2010,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:27:52 GMT
+      - Mon, 29 Mar 2021 02:19:20 GMT
       expires:
       - '-1'
       pragma:
@@ -2118,9 +2038,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/57f67324-19de-45e3-b939-eff9220f622b?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -2132,7 +2053,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:28:23 GMT
+      - Mon, 29 Mar 2021 02:19:49 GMT
       expires:
       - '-1'
       pragma:
@@ -2160,9 +2081,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/57f67324-19de-45e3-b939-eff9220f622b?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -2174,7 +2096,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:28:53 GMT
+      - Mon, 29 Mar 2021 02:20:20 GMT
       expires:
       - '-1'
       pragma:
@@ -2202,135 +2124,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
-  response:
-    body:
-      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '62'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 19 Jan 2021 09:29:24 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Kestrel
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
-  response:
-    body:
-      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '62'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 19 Jan 2021 09:29:54 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Kestrel
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
-  response:
-    body:
-      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '62'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 19 Jan 2021 09:30:25 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Kestrel
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/57f67324-19de-45e3-b939-eff9220f622b?api-version=2020-09-01
   response:
     body:
       string: '{"status":"Succeeded","error":{"code":"None","message":null}}'
@@ -2342,7 +2139,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:30:55 GMT
+      - Mon, 29 Mar 2021 02:20:50 GMT
       expires:
       - '-1'
       pragma:
@@ -2370,12 +2167,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/57f67324-19de-45e3-b939-eff9220f622b/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/8d4328e1-ebca-4b30-acc7-9fc94c0846e3/profileresults/profilename/endpointresults/endpoint9527x","type":"Microsoft.Cdn/operationresults/profileresults/endpointresults","name":"endpoint9527x","location":"WestUs","tags":{"kay1":"value1"},"properties":{"hostName":"endpoint9527x.azureedge.net","originHostHeader":"www.bing.com","originPath":"/image","contentTypesToCompress":["text/html","application/octet-stream"],"isCompressionEnabled":true,"isHttpAllowed":true,"isHttpsAllowed":true,"queryStringCachingBehavior":"BypassCaching","optimizationType":null,"probePath":null,"origins":[{"name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":42,"httpsPort":43,"originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null}}],"originGroups":[],"defaultOriginGroup":null,"customDomains":[],"geoFilters":[],"deliveryPolicy":null,"urlSigningKeys":[],"webApplicationFirewallPolicyLink":null,"resourceState":"Running","provisioningState":"Succeeded"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/57f67324-19de-45e3-b939-eff9220f622b/profileresults/profilename/endpointresults/endpoint9527x","type":"Microsoft.Cdn/operationresults/profileresults/endpointresults","name":"endpoint9527x","location":"WestUs","tags":{"kay1":"value1"},"properties":{"hostName":"endpoint9527x.azureedge.net","originHostHeader":"www.bing.com","originPath":"/image","contentTypesToCompress":["text/html","application/octet-stream"],"isCompressionEnabled":true,"isHttpAllowed":true,"isHttpsAllowed":true,"queryStringCachingBehavior":"BypassCaching","optimizationType":null,"probePath":null,"origins":[{"name":"origin1","properties":{"hostName":"host1.hello.com","httpPort":42,"httpsPort":43,"originHostHeader":null,"priority":null,"weight":null,"enabled":true,"privateLinkAlias":null,"privateLinkResourceId":null,"privateLinkLocation":null,"privateEndpointStatus":null,"privateLinkApprovalMessage":null}}],"originGroups":[],"defaultOriginGroup":null,"customDomains":[],"geoFilters":[],"deliveryPolicy":null,"urlSigningKeys":[],"webApplicationFirewallPolicyLink":null,"resourceState":"Running","provisioningState":"Succeeded"}}'
     headers:
       cache-control:
       - no-cache
@@ -2384,7 +2182,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:30:56 GMT
+      - Mon, 29 Mar 2021 02:20:50 GMT
       expires:
       - '-1'
       pragma:
@@ -2414,7 +2212,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/getSupportedOptimizationTypes?api-version=2020-09-01
   response:
@@ -2428,7 +2227,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:30:57 GMT
+      - Mon, 29 Mar 2021 02:20:50 GMT
       expires:
       - '-1'
       pragma:
@@ -2444,7 +2243,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -2462,7 +2261,8 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x?api-version=2020-09-01
   response:
@@ -2476,7 +2276,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:31:05 GMT
+      - Mon, 29 Mar 2021 02:20:50 GMT
       expires:
       - '-1'
       pragma:
@@ -2508,21 +2308,22 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/generateSsoUri?api-version=2020-09-01
   response:
     body:
-      string: '{"ssoUriValue":"https://cdn.windowsazure.com/account/loginexternal/?token=HHH62oZ2NImhVjehJbhWewufxl%2fXiOso7COYzafMX%2bs%3d&timestamp=2021-01-19T09:31:06.9462439Z&cdnAccountId=1073D0&userCustomId=SSO-f4fef8bd-1bba-4dbc-ab03-001753a41877&restEndpointId=0"}'
+      string: '{"ssoUriValue":"https://cdn.windowsazure.com/account/loginexternal/?token=F9qYW4Z%2bQA68eV7vXhSkDfLbaqskc2n2lSiH4ZhzFcE%3d&timestamp=2021-03-29T02:20:51.5018676Z&cdnAccountId=10CF63&userCustomId=SSO-afa881d1-b640-4bac-924f-07eb043c726e&restEndpointId=0"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '256'
+      - '254'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:31:06 GMT
+      - Mon, 29 Mar 2021 02:20:51 GMT
       expires:
       - '-1'
       pragma:
@@ -2538,7 +2339,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1195'
+      - '1197'
     status:
       code: 200
       message: OK
@@ -2556,7 +2357,8 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename?api-version=2020-09-01
   response:
@@ -2564,7 +2366,7 @@ interactions:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename","type":"Microsoft.Cdn/profiles","name":"profilename","location":"WestUs","kind":"cdn","tags":{"additional_properties":"Tag1"},"sku":{"name":"Standard_Verizon"},"properties":{"resourceState":"Active","provisioningState":"Succeeded"}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7508941d-62c7-4b10-aa2b-ee3d0d7c3718?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/bdd3b0bf-cd46-47bd-b1b9-7e097bf20def?api-version=2020-09-01
       cache-control:
       - no-cache
       content-length:
@@ -2572,11 +2374,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:31:08 GMT
+      - Mon, 29 Mar 2021 02:20:51 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7508941d-62c7-4b10-aa2b-ee3d0d7c3718/profileresults/profilename?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/bdd3b0bf-cd46-47bd-b1b9-7e097bf20def/profileresults/profilename?api-version=2020-09-01
       pragma:
       - no-cache
       server:
@@ -2600,9 +2402,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/7508941d-62c7-4b10-aa2b-ee3d0d7c3718?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/bdd3b0bf-cd46-47bd-b1b9-7e097bf20def?api-version=2020-09-01
   response:
     body:
       string: '{"status":"Succeeded","error":{"code":"None","message":null}}'
@@ -2614,7 +2417,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:31:19 GMT
+      - Mon, 29 Mar 2021 02:21:01 GMT
       expires:
       - '-1'
       pragma:
@@ -2642,7 +2445,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename?api-version=2020-09-01
   response:
@@ -2656,7 +2460,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:31:19 GMT
+      - Mon, 29 Mar 2021 02:21:01 GMT
       expires:
       - '-1'
       pragma:
@@ -2690,7 +2494,8 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Cdn/checkNameAvailability?api-version=2020-09-01
   response:
@@ -2704,7 +2509,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:31:21 GMT
+      - Mon, 29 Mar 2021 02:21:01 GMT
       expires:
       - '-1'
       pragma:
@@ -2720,7 +2525,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1194'
+      - '1196'
     status:
       code: 200
       message: OK
@@ -2738,7 +2543,8 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Cdn/validateProbe?api-version=2020-09-01
   response:
@@ -2752,7 +2558,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:31:21 GMT
+      - Mon, 29 Mar 2021 02:21:02 GMT
       expires:
       - '-1'
       pragma:
@@ -2768,7 +2574,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1193'
+      - '1195'
     status:
       code: 200
       message: OK
@@ -2786,7 +2592,8 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
     uri: https://management.azure.com/providers/Microsoft.Cdn/checkNameAvailability?api-version=2020-09-01
   response:
@@ -2800,7 +2607,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:31:22 GMT
+      - Mon, 29 Mar 2021 02:21:02 GMT
       expires:
       - '-1'
       pragma:
@@ -2832,7 +2639,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x/customDomains/someDomain?api-version=2020-09-01
   response:
@@ -2842,7 +2650,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Tue, 19 Jan 2021 09:31:24 GMT
+      - Mon, 29 Mar 2021 02:21:02 GMT
       expires:
       - '-1'
       pragma:
@@ -2854,7 +2662,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14997'
+      - '14999'
     status:
       code: 204
       message: No Content
@@ -2870,7 +2678,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename/endpoints/endpoint9527x?api-version=2020-09-01
   response:
@@ -2878,17 +2687,17 @@ interactions:
       string: ''
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e4554fb3-b027-4f3b-9ae0-ee71958abaad?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/49b17b5a-4167-44b7-b7ab-d4d7104c590f?api-version=2020-09-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Tue, 19 Jan 2021 09:31:27 GMT
+      - Mon, 29 Mar 2021 02:21:02 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e4554fb3-b027-4f3b-9ae0-ee71958abaad/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/49b17b5a-4167-44b7-b7ab-d4d7104c590f/profileresults/profilename/endpointresults/endpoint9527x?api-version=2020-09-01
       pragma:
       - no-cache
       server:
@@ -2898,7 +2707,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14996'
+      - '14998'
     status:
       code: 202
       message: Accepted
@@ -2912,9 +2721,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e4554fb3-b027-4f3b-9ae0-ee71958abaad?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/49b17b5a-4167-44b7-b7ab-d4d7104c590f?api-version=2020-09-01
   response:
     body:
       string: '{"status":"InProgress","error":{"code":"None","message":null}}'
@@ -2926,7 +2736,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:31:37 GMT
+      - Mon, 29 Mar 2021 02:21:12 GMT
       expires:
       - '-1'
       pragma:
@@ -2954,51 +2764,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e4554fb3-b027-4f3b-9ae0-ee71958abaad?api-version=2020-09-01
-  response:
-    body:
-      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '62'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 19 Jan 2021 09:32:09 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Kestrel
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/e4554fb3-b027-4f3b-9ae0-ee71958abaad?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/49b17b5a-4167-44b7-b7ab-d4d7104c590f?api-version=2020-09-01
   response:
     body:
       string: '{"status":"Succeeded","error":{"code":"None","message":null}}'
@@ -3010,7 +2779,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:32:39 GMT
+      - Mon, 29 Mar 2021 02:21:42 GMT
       expires:
       - '-1'
       pragma:
@@ -3040,7 +2809,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/profiles/profilename?api-version=2020-09-01
   response:
@@ -3048,17 +2818,17 @@ interactions:
       string: ''
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/3fe4f8f1-364e-4dcb-b956-c0921cf3aba0?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/2c4b092b-d7ad-4faa-93c0-7a36220c823c?api-version=2020-09-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Tue, 19 Jan 2021 09:32:41 GMT
+      - Mon, 29 Mar 2021 02:21:42 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/3fe4f8f1-364e-4dcb-b956-c0921cf3aba0/profileresults/profilename?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/2c4b092b-d7ad-4faa-93c0-7a36220c823c/profileresults/profilename?api-version=2020-09-01
       pragma:
       - no-cache
       server:
@@ -3068,7 +2838,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14995'
+      - '14997'
     status:
       code: 202
       message: Accepted
@@ -3082,51 +2852,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cdn/unknown Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/3fe4f8f1-364e-4dcb-b956-c0921cf3aba0?api-version=2020-09-01
-  response:
-    body:
-      string: '{"status":"InProgress","error":{"code":"None","message":null}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '62'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 19 Jan 2021 09:32:51 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Kestrel
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-cdn/10.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/3fe4f8f1-364e-4dcb-b956-c0921cf3aba0?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_cdn_test_cdn8f6e0a82/providers/Microsoft.Cdn/operationresults/2c4b092b-d7ad-4faa-93c0-7a36220c823c?api-version=2020-09-01
   response:
     body:
       string: '{"status":"Succeeded","error":{"code":"None","message":null}}'
@@ -3138,7 +2867,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 Jan 2021 09:33:22 GMT
+      - Mon, 29 Mar 2021 02:21:53 GMT
       expires:
       - '-1'
       pragma:
