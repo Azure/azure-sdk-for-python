@@ -6,9 +6,3 @@
 
 from ._azure_ag_food_platform_data_plane_service import AzureAgFoodPlatformDataPlaneService as FarmBeatsClient
 __all__ = ['FarmBeatsClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
