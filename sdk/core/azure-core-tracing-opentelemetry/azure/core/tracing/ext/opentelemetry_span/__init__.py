@@ -128,13 +128,13 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     def __enter__(self):
         """Start a span."""
         self._current_ctxt_manager = trace.use_span(self._span_instance, end_on_exit=True)
-        self._current_ctxt_manager.__enter__()
+        self._current_ctxt_manager.__enter__() # pylint: disable=no-member
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
         """Finish a span."""
         if self._current_ctxt_manager:
-            self._current_ctxt_manager.__exit__(exception_type, exception_value, traceback)
+            self._current_ctxt_manager.__exit__(exception_type, exception_value, traceback) # pylint: disable=no-member
             self._current_ctxt_manager = None
 
     def start(self):
