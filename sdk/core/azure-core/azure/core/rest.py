@@ -385,12 +385,27 @@ class _HttpResponseBase(object):
             type(self).__name__, self.status_code, self.reason, content_type_str
         )
 
+    def stream_download(self, pipeline=None):
+        """Generator for streaming request body data.
+
+        :rtype: iterator[bytes]
+        """
+
 class HttpResponse(_HttpResponseBase):
 
     @property
     def content(self):
         # type: (...) -> bytes
         return self._internal_response.body()
+
+    def stream_download(self, pipeline=None):
+        """Generator for streaming request body data.
+
+        Will remove once we have stream handling worked out.
+
+        :rtype: iterator[bytes]
+        """
+        return self._internal_response.stream_download(pipeline=pipeline)
 
 class AsyncHttpResponse(_HttpResponseBase):
 
@@ -408,3 +423,15 @@ class AsyncHttpResponse(_HttpResponseBase):
         Will remove once we have the async stream handling worked out
         """
         return await self._internal_response.load_body()
+
+    def stream_download(self, pipeline=None):
+        """Generator for streaming response body data.
+
+        Will return an asynchronous generator.
+
+        Will remove once we have async stream handling worked out.
+
+        :param pipeline: The pipeline object
+        :type pipeline: azure.core.pipeline
+        """
+        return self._internal_response.stream_download(pipeline=pipeline)
