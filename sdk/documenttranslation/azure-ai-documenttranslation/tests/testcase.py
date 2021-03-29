@@ -169,7 +169,7 @@ class DocumentTranslationTest(AzureTestCase):
         # wait for result
         job_details = client.wait_until_done(job_details.id)
         # validate
-        self._validate_translation_job(self, job_details, total_docs_count, "Succeeded")
+        self._validate_translation_job(job_details, total_docs_count, "Succeeded")
 
         return job_details.id
 
@@ -180,7 +180,7 @@ class DocumentTranslationTest(AzureTestCase):
         # wait for result
         job_details = await async_client.wait_until_done(job_details.id)
         # validate
-        self._validate_translation_job(self, job_details, total_docs_count, "Succeeded")
+        self._validate_translation_job(job_details, total_docs_count, "Succeeded")
 
         return job_details.id
 
