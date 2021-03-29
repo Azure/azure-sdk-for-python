@@ -10,7 +10,7 @@ class LegacyListBlobsTest(_LegacyContainerTest):
 
     async def global_setup(self):
         await super().global_setup()
-        for i in range(self.args.num_blobs):
+        for i in range(self.args.count):
             self.service_client.create_blob_from_bytes(
                 container_name=self.container_name,
                 blob_name="listtest" + str(i),
