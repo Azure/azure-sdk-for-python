@@ -20,7 +20,7 @@ from typing import (
     Type,
     TYPE_CHECKING,
     Union,
-    cast
+    cast,
 )
 from contextlib import contextmanager
 from msrest.serialization import UTC
@@ -55,7 +55,11 @@ from .constants import (
 )
 
 if TYPE_CHECKING:
-    from .message import ServiceBusReceivedMessage, ServiceBusMessage, AMQPAnnotatedMessage
+    from .message import (
+        ServiceBusReceivedMessage,
+        ServiceBusMessage,
+        AMQPAnnotatedMessage,
+    )
     from azure.core.tracing import AbstractSpan
     from .receiver_mixins import ReceiverMixin
     from .._servicebus_session import BaseSession
@@ -64,13 +68,11 @@ if TYPE_CHECKING:
         Mapping[str, Any],
         ServiceBusMessage,
         AMQPAnnotatedMessage,
-        List[Union[Mapping[str, Any], ServiceBusMessage, AMQPAnnotatedMessage]]
+        List[Union[Mapping[str, Any], ServiceBusMessage, AMQPAnnotatedMessage]],
     ]
 
     SingleMessageType = Union[
-        Mapping[str, Any],
-        ServiceBusMessage,
-        AMQPAnnotatedMessage
+        Mapping[str, Any], ServiceBusMessage, AMQPAnnotatedMessage
     ]
 
 _log = logging.getLogger(__name__)
@@ -237,9 +239,7 @@ def _convert_to_single_service_bus_message(message, message_type):
     except TypeError:
         raise TypeError(
             "Only ServiceBusMessage instances or Mappings representing messages are supported. "
-            "Received instead: {}".format(
-                message.__class__.__name__
-            )
+            "Received instead: {}".format(message.__class__.__name__)
         )
 
 
@@ -255,7 +255,9 @@ def create_messages_from_dicts_if_needed(messages, message_type):
     :rtype: Union[ServiceBusMessage, List[ServiceBusMessage]]
     """
     if isinstance(messages, list):
-        return [_convert_to_single_service_bus_message(m, message_type) for m in messages]
+        return [
+            _convert_to_single_service_bus_message(m, message_type) for m in messages
+        ]
     return _convert_to_single_service_bus_message(messages, message_type)
 
 
@@ -345,7 +347,10 @@ def trace_link_message(messages, parent_span=None):
     Will extract DiagnosticId if available.
     """
     trace_messages = (
-        messages if isinstance(messages, Iterable)  # pylint:disable=isinstance-second-argument-not-valid-type
+        messages
+        if isinstance(
+            messages, Iterable
+        )  # pylint:disable=isinstance-second-argument-not-valid-type
         else (messages,)
     )
     try:  # pylint:disable=too-many-nested-blocks

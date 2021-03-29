@@ -10,7 +10,11 @@ from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast
 import uamqp
 from uamqp import SendClientAsync, types
 
-from .._common.message import ServiceBusMessage, ServiceBusMessageBatch, AMQPAnnotatedMessage
+from .._common.message import (
+    ServiceBusMessage,
+    ServiceBusMessageBatch,
+    AMQPAnnotatedMessage,
+)
 from .._servicebus_sender import SenderMixin
 from ._base_handler_async import BaseHandler
 from .._common.constants import (
@@ -37,13 +41,13 @@ MessageTypes = Union[
     Mapping[str, Any],
     ServiceBusMessage,
     AMQPAnnotatedMessage,
-    List[Union[Mapping[str, Any], ServiceBusMessage, AMQPAnnotatedMessage]]
+    List[Union[Mapping[str, Any], ServiceBusMessage, AMQPAnnotatedMessage]],
 ]
 MessageObjTypes = Union[
     ServiceBusMessage,
     ServiceBusMessageBatch,
     AMQPAnnotatedMessage,
-    List[Union[ServiceBusMessage, AMQPAnnotatedMessage]]
+    List[Union[ServiceBusMessage, AMQPAnnotatedMessage]],
 ]
 
 _LOGGER = logging.getLogger(__name__)
@@ -290,9 +294,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
 
     async def send_messages(
-        self,
-        message: Union[MessageTypes, ServiceBusMessageBatch],
-        **kwargs: Any
+        self, message: Union[MessageTypes, ServiceBusMessageBatch], **kwargs: Any
     ) -> None:
         """Sends message and blocks until acknowledgement is received or operation times out.
 
@@ -338,7 +340,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                     add_link_to_send(batch_message, send_span)
                 obj_message = message  # type: MessageObjTypes
             else:
-                obj_message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
+                obj_message = create_messages_from_dicts_if_needed(
+                    message, ServiceBusMessage
+                )
                 obj_message = transform_messages_to_sendable_if_needed(obj_message)
                 try:
                     # Ignore type (and below) as it will except if wrong.
@@ -351,7 +355,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                     trace_message(cast(ServiceBusMessage, obj_message), send_span)
                     add_link_to_send(obj_message, send_span)
             if (
-                isinstance(obj_message, ServiceBusMessageBatch) and len(obj_message) == 0
+                isinstance(obj_message, ServiceBusMessageBatch)
+                and len(obj_message) == 0
             ):  # pylint: disable=len-as-condition
                 return  # Short circuit noop if an empty list or batch is provided.
 

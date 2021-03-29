@@ -209,5 +209,5 @@ class AMQPMessageBodyType(str, Enum):
 AMQP_MESSAGE_BODY_TYPE_MAP = {
     MessageBodyType.Data.value: AMQPMessageBodyType.DATA,
     MessageBodyType.Sequence.value: AMQPMessageBodyType.SEQUENCE,
-    MessageBodyType.Value.value: AMQPMessageBodyType.VALUE
+    MessageBodyType.Value.value: AMQPMessageBodyType.VALUE,
 }

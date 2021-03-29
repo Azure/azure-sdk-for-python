@@ -44,7 +44,7 @@ from .utils import (
     utc_now,
     transform_messages_to_sendable_if_needed,
     trace_message,
-    create_messages_from_dicts_if_needed
+    create_messages_from_dicts_if_needed,
 )
 
 if TYPE_CHECKING:
@@ -336,7 +336,9 @@ class ServiceBusMessage(
         rtype: Optional[~azure.servicebus.AMQPMessageBodyType]
         """
         try:
-            return AMQP_MESSAGE_BODY_TYPE_MAP.get(self.message._body.type)  # pylint: disable=protected-access
+            return AMQP_MESSAGE_BODY_TYPE_MAP.get(
+                self.message._body.type
+            )  # pylint: disable=protected-access
         except AttributeError:
             return None
 
@@ -601,7 +603,9 @@ class ServiceBusMessageBatch(object):
         trace_message(
             message, parent_span
         )  # parent_span is e.g. if built as part of a send operation.
-        message_size = message.message.get_message_encoded_size()  # pylint: disable=protected-access
+        message_size = (
+            message.message.get_message_encoded_size()
+        )  # pylint: disable=protected-access
 
         # For a ServiceBusMessageBatch, if the encoded_message_size of event_data is < 256, then the overhead cost to
         # encode that message into the ServiceBusMessageBatch would be 5 bytes, if >= 256, it would be 8 bytes.
@@ -941,10 +945,16 @@ class AMQPAnnotatedMessage(object):
         self._sequence_body = kwargs.pop("sequence_body", None)
         self._value_body = kwargs.pop("value_body", None)
 
-        validation = [body for body in (self._value_body, self._data_body, self._sequence_body) if body is not None]
+        validation = [
+            body
+            for body in (self._value_body, self._data_body, self._sequence_body)
+            if body is not None
+        ]
         if len(validation) != 1:
-            raise ValueError("There should be one and only one of either data_body, sequence_body "
-                            "or value_body being set as the body of the AMQPAnnotatedMessage.")
+            raise ValueError(
+                "There should be one and only one of either data_body, sequence_body "
+                "or value_body being set as the body of the AMQPAnnotatedMessage."
+            )
 
         header = kwargs.get("header")
         footer = kwargs.get("footer")
@@ -953,8 +963,15 @@ class AMQPAnnotatedMessage(object):
         annotations = kwargs.get("annotations")
         delivery_annotations = kwargs.get("delivery_annotations")
 
-        body_type = uamqp.MessageBodyType.Data if self._data_body else\
-            (uamqp.MessageBodyType.Sequence if self._sequence_body else uamqp.MessageBodyType.Value)
+        body_type = (
+            uamqp.MessageBodyType.Data
+            if self._data_body
+            else (
+                uamqp.MessageBodyType.Sequence
+                if self._sequence_body
+                else uamqp.MessageBodyType.Value
+            )
+        )
         body = self._data_body or self._sequence_body or self._value_body
 
         message_header = None
@@ -978,7 +995,7 @@ class AMQPAnnotatedMessage(object):
             properties=message_properties,
             application_properties=application_properties,
             annotations=annotations,
-            delivery_annotations=delivery_annotations
+            delivery_annotations=delivery_annotations,
         )
 
     def _to_service_bus_message(self):
@@ -1004,7 +1021,9 @@ class AMQPAnnotatedMessage(object):
 
         rtype: Optional[~azure.servicebus.AMQPMessageBodyType]
         """
-        return AMQP_MESSAGE_BODY_TYPE_MAP.get(self._message._body.type)  # pylint: disable=protected-access
+        return AMQP_MESSAGE_BODY_TYPE_MAP.get(
+            self._message._body.type
+        )  # pylint: disable=protected-access
 
     @property
     def properties(self):
@@ -1027,7 +1046,7 @@ class AMQPAnnotatedMessage(object):
             creation_time=self._message.properties.creation_time,
             group_id=self._message.properties.group_id,
             group_sequence=self._message.properties.group_sequence,
-            reply_to_group_id=self._message.properties.reply_to_group_id
+            reply_to_group_id=self._message.properties.reply_to_group_id,
         )
 
     # NOTE: These are disabled pending arch. design and cross-sdk consensus on

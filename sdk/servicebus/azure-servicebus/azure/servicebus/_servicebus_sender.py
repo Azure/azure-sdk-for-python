@@ -13,7 +13,11 @@ from uamqp.authentication.common import AMQPAuth
 
 from ._base_handler import BaseHandler
 from ._common import mgmt_handlers
-from ._common.message import ServiceBusMessage, ServiceBusMessageBatch, AMQPAnnotatedMessage
+from ._common.message import (
+    ServiceBusMessage,
+    ServiceBusMessageBatch,
+    AMQPAnnotatedMessage,
+)
 from .exceptions import (
     OperationTimeoutError,
     _ServiceBusErrorPolicy,
@@ -46,7 +50,7 @@ if TYPE_CHECKING:
         Mapping[str, Any],
         ServiceBusMessage,
         AMQPAnnotatedMessage,
-        List[Union[Mapping[str, Any], ServiceBusMessage, AMQPAnnotatedMessage]]
+        List[Union[Mapping[str, Any], ServiceBusMessage, AMQPAnnotatedMessage]],
     ]
     MessageObjTypes = Union[
         ServiceBusMessage,
@@ -396,7 +400,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                     add_link_to_send(batch_message, send_span)
                 obj_message = message  # type: MessageObjTypes
             else:
-                obj_message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
+                obj_message = create_messages_from_dicts_if_needed(
+                    message, ServiceBusMessage
+                )
                 # Ensure message is sendable (not a ReceivedMessage), and if needed (a list) is batched. Adds tracing.
                 obj_message = transform_messages_to_sendable_if_needed(obj_message)
                 try:
@@ -411,7 +417,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                     add_link_to_send(obj_message, send_span)
 
             if (
-                isinstance(obj_message, ServiceBusMessageBatch) and len(obj_message) == 0
+                isinstance(obj_message, ServiceBusMessageBatch)
+                and len(obj_message) == 0
             ):  # pylint: disable=len-as-condition
                 return  # Short circuit noop if an empty list or batch is provided.
 
