@@ -16,7 +16,7 @@ from uuid import uuid4
 import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.exceptions import HttpResponseError
 from azure.core.async_paging import AsyncItemPaged
 
@@ -43,8 +43,8 @@ from .._version import SDK_MONIKER
 class ChatClient(object):
     """A client to interact with the AzureCommunicationService Chat gateway.
 
-    This client provides operations to create a chat thread, delete a chat thread,
-    get chat thread by id, list chat threads.
+    This client provides operations to create chat thread, delete chat thread,
+    get chat thread client by thread id, list chat threads.
 
     :param str endpoint:
         The endpoint of the Azure Communication resource.
@@ -86,7 +86,7 @@ class ChatClient(object):
 
         self._client = AzureCommunicationChatService(
             self._endpoint,
-            authentication_policy=BearerTokenCredentialPolicy(self._credential),
+            authentication_policy=AsyncBearerTokenCredentialPolicy(self._credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs)
 
@@ -113,7 +113,7 @@ class ChatClient(object):
                 :end-before: [END get_chat_thread_client]
                 :language: python
                 :dedent: 8
-                :caption: Creating the ChatThreadClient from an existing chat thread id.
+                :caption: Retrieving the ChatThreadClient from an existing chat thread id.
         """
         if not thread_id:
             raise ValueError("thread_id cannot be None.")
@@ -140,9 +140,9 @@ class ChatClient(object):
         :keyword thread_participants: Optional. Participants to be added to the thread.
         :paramtype thread_participants: List[~azure.communication.chat.ChatThreadParticipant]
         :keyword idempotency_token: Optional. If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-ID and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-ID is an opaque string
+         repeatable; that is, the client can make the request multiple times with the same
+         Idempotency_Token and get back an appropriate response without the server executing the
+         request multiple times. The value of the Idempotency_Token is an opaque string
          representing a client-generated, globally unique for all time, identifier for the request. If not
          specified, a new unique id would be generated.
         :paramtype idempotency_token: str
@@ -157,7 +157,7 @@ class ChatClient(object):
                 :end-before: [END create_thread]
                 :language: python
                 :dedent: 12
-                :caption: Creating ChatThreadClient by creating a new chat thread.
+                :caption: Creating a new chat thread.
         """
         if not topic:
             raise ValueError("topic cannot be None.")
@@ -218,7 +218,7 @@ class ChatClient(object):
                 :end-before: [END list_threads]
                 :language: python
                 :dedent: 12
-                :caption: listing chat threads.
+                :caption: Listing chat threads.
         """
         results_per_page = kwargs.pop("results_per_page", None)
         start_time = kwargs.pop("start_time", None)
@@ -234,7 +234,7 @@ class ChatClient(object):
         thread_id: str,
         **kwargs
     ) -> None:
-        """Deletes a thread.
+        """Deletes a chat thread.
 
         :param thread_id: Required. Thread id to delete.
         :type thread_id: str
@@ -249,7 +249,7 @@ class ChatClient(object):
                 :end-before: [END delete_thread]
                 :language: python
                 :dedent: 12
-                :caption: deleting chat thread.
+                :caption: Deleting a chat thread.
         """
         if not thread_id:
             raise ValueError("thread_id cannot be None.")
