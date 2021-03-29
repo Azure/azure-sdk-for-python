@@ -26,4 +26,4 @@ class LegacyListBlobsTest(_LegacyContainerTest):
     @staticmethod
     def add_arguments(parser):
         super(LegacyListBlobsTest, LegacyListBlobsTest).add_arguments(parser)
-        parser.add_argument('--num-blobs', nargs='?', type=int, help='Number of blobs to list. Defaults to 100', default=100)
+        parser.add_argument('-c', '--count', nargs='?', type=int, help='Number of blobs to list. Defaults to 100', default=100)
