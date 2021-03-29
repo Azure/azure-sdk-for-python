@@ -29,6 +29,10 @@ class StorageStreamDownloader(object):
         return self.size
 
     def chunks(self):
+        """Iterate over chunks in the download stream.
+
+        :rtype: AsyncIterator[bytes]
+        """
         return self._downloader.chunks()
 
     async def readall(self):

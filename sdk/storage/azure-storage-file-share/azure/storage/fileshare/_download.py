@@ -388,6 +388,10 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         return response
 
     def chunks(self):
+        """Iterate over chunks in the download stream.
+
+        :rtype: Iterator[bytes]
+        """
         if self.size == 0 or self._download_complete:
             iter_downloader = None
         else:

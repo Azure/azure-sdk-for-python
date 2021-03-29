@@ -443,6 +443,19 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         return response
 
     def chunks(self):
+        """Iterate over chunks in the download stream.
+
+        :rtype: Iterator[bytes]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/blob_samples_hello_world.py
+                :start-after: [START download_a_blob_in_chunk]
+                :end-before: [END download_a_blob_in_chunk]
+                :language: python
+                :dedent: 12
+                :caption: Download a blob using chunks().
+        """
         if self.size == 0 or self._download_complete:
             iter_downloader = None
         else:
