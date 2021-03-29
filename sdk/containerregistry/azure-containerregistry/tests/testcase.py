@@ -109,7 +109,7 @@ class ContainerRegistryTestClass(AzureTestCase):
         pass
 
     def import_repo_to_be_deleted(
-        self, endpoint, repository="to_be_deleted", resource_group="fake_rg"
+        self, endpoint, repository="to_be_deleted", resource_group="fake_rg", tag="to_be_deleted"
     ):
         if not self.is_live:
             return
@@ -126,7 +126,7 @@ class ContainerRegistryTestClass(AzureTestCase):
             "-SourceRegistryUri",
             "'registry.hub.docker.com'",
             "-TargetTag",
-            "'{}:to_be_deleted'".format(repository),
+            "'{}:{}'".format(repository, tag),
             "-Mode",
             "'Force'",
         ]
@@ -155,6 +155,23 @@ class ContainerRegistryTestClass(AzureTestCase):
             "'Force'",
         ]
         subprocess.check_call(command)
+
+    def _clean_up(self, endpoint):
+        if not self.is_live:
+            return
+
+        reg_client = self.create_registry_client(endpoint)
+        for repo in reg_client.list_repositories():
+            repo_client = self.create_repository_client(endpoint, repo)
+            for tag in repo_client.list_tags():
+
+                p = tag.content_permissions
+                p.can_delete = True
+                repo_client.set_tag_properties(tag.digest, p)
+
+            self.sleep(10)
+
+            reg_client.delete_repository(repo)
 
     def get_credential(self):
         if self.is_live:
