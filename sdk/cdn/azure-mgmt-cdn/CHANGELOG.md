@@ -1,5 +1,26 @@
 # Release History
 
+## 11.0.0 (2021-03-29)
+
+**Features**
+
+  - Model Resource has a new parameter system_data
+  - Model ManagedRuleSetDefinition has a new parameter system_data
+
+**Breaking changes**
+
+  - Operation SecurityPoliciesOperations.begin_patch has a new signature
+  - Operation RuleSetsOperations.begin_create has a new signature
+  - Model RouteUpdateParameters no longer has parameter optimization_type
+  - Model RouteUpdatePropertiesParameters no longer has parameter optimization_type
+  - Model CustomerCertificateParameters no longer has parameter expiration_date
+  - Model CustomerCertificateParameters no longer has parameter subject
+  - Model CustomerCertificateParameters no longer has parameter thumbprint
+  - Model RouteProperties no longer has parameter optimization_type
+  - Model Route no longer has parameter optimization_type
+  - Operation LogAnalyticsOperations.get_log_analytics_metrics has a new signature
+  - Model ManagedCertificateParameters has a new signature
+
 ## 10.0.0 (2021-01-19)
 
 **Features**
