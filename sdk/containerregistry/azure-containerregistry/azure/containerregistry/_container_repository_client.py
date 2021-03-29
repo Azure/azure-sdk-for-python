@@ -52,14 +52,14 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
     def delete_registry_artifact(self, digest, **kwargs):
         # type: (str) -> None
-        """Delete a registry artifact
+        """Delete a registry artifact. A registry artifact can only be deleted from the digest
 
         :param digest: The digest of the artifact to be deleted
         :type digest: str
         :returns: None
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        raise NotImplementedError("Has not been implemented")
+        self._client.container_registry_repository.delete_manifest(self.repository, digest)
 
     def delete_tag(self, tag, **kwargs):
         # type: (str) -> None

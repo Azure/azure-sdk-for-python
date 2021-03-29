@@ -45,7 +45,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         await self._client.container_registry.delete_repository(self.repository, **kwargs)
 
-    def delete_registry_artifact(self, digest, **kwargs):
+    async def delete_registry_artifact(self, digest, **kwargs):
         # type: (str) -> None
         """Delete a registry artifact
 
@@ -54,7 +54,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        raise NotImplementedError("Has not been implemented")
+        await self._client.container_registry_repository.delete_manifest(self.repository, digest)
 
     async def delete_tag(self, tag, **kwargs):
         # type: (str) -> None

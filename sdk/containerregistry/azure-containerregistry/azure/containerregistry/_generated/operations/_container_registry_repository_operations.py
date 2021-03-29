@@ -423,7 +423,7 @@ class ContainerRegistryRepositoryOperations(object):
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize('TagList', pipeline_response)
-            list_of_elem = deserialized.tags
+            list_of_elem = deserialized.tag_attribute_bases
             if cls:
                 list_of_elem = cls(list_of_elem)
             return deserialized.link or None, iter(list_of_elem)

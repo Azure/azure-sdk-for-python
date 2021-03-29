@@ -1,0 +1,332 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/to_be_deleted/_manifests
+  response:
+    body:
+      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"to_be_deleted","Action":"metadata_read"}]}]}
+
+        '
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-length: '216'
+      content-type: application/json; charset=utf-8
+      date: Mon, 29 Mar 2021 18:50:00 GMT
+      docker-distribution-api-version: registry/2.0
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      x-content-type-options: nosniff
+    status:
+      code: 401
+      message: Unauthorized
+    url: https://seankane.azurecr.io/acr/v1/to_be_deleted/_manifests
+- request:
+    body:
+      access_token: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJpYXQiOjE2MTcwNDM1MDAsIm5iZiI6MTYxNzA0MzUwMCwiZXhwIjoxNjE3MTMwMjAwLCJhaW8iOiJFMlpnWURpbzlzdFQ5NXFRUVVkK3hWSHRULy8xQUE9PSIsImFwcGlkIjoiZjg1MDY1MGMtMWZjZi00NDg5LWI0NmYtNzFhZjJlMzBkMzYwIiwiYXBwaWRhY3IiOiIxIiwiaWRwIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsIm9pZCI6IjMwNTExYzlkLWJhMWEtNGM3Yi1iNDIyLTViNTQzZGExMWIzZiIsInJoIjoiMC5BUm9BdjRqNWN2R0dyMEdScXkxODBCSGJSd3hsVVBqUEg0bEV0Rzl4cnk0dzAyQWFBQUEuIiwic3ViIjoiMzA1MTFjOWQtYmExYS00YzdiLWI0MjItNWI1NDNkYTExYjNmIiwidGlkIjoiNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3IiwidXRpIjoiT3EydzMyVi14VXVqc0FrNm94Y0VBZyIsInZlciI6IjEuMCIsInhtc190Y2R0IjoxMjg5MjQxNTQ3fQ.hWjWRe_6O2wql1pkNnQKG1oW1a3Z3SckZ6OZMIMM_LuporkwdltV7mK4FIdB5635Zyk8z2OjAuVGYFnReAcJUhOR0JoT6Xtf90cfH8TWSKvkw5iqUtBQfI_ZtKzfSHMQwoRDsdsFmgVeka_QlZmUhSffcUCEcBOiBbCEHeKy2SX8jTX4iNmDYW2DnLw_TTA5LJhTItY_U9imPZzuYoAe2d8ctOgYpBPWRDOgwAnjJBzALPi1o3BTjhoVSlcpioXoP8A0h-hVmNz77zehcQ8A2R0tSCfWZ3sNDevkj5cC5c7fCqHX7K26w4LdRCpollDZkm-4IoIMnuQOtTPXUhQ3aQ
+      grant_type: access_token
+      service: seankane.azurecr.io
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://fake_url.azurecr.io/oauth2/exchange
+  response:
+    body:
+      string: '{"refresh_token": "REDACTED"}'
+    headers:
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Mon, 29 Mar 2021 18:50:01 GMT
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: OK
+    url: https://seankane.azurecr.io/oauth2/exchange
+- request:
+    body:
+      grant_type: refresh_token
+      refresh_token: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ikk2NVk6VEVDUzpLTEhMOjZCVlE6SUJaRjpGRVhCOlk0VUg6SlRJUzo2VFBYOkNWWEE6SkxUSzpRS0RRIn0.eyJqdGkiOiIyZTcxMTViZS1mMDZkLTQ2MmQtOGRkOS03MmExZmFkNTBkYzQiLCJzdWIiOiIzMDUxMWM5ZC1iYTFhLTRjN2ItYjQyMi01YjU0M2RhMTFiM2YiLCJuYmYiOjE2MTcwNDI5MDEsImV4cCI6MTYxNzA1NDYwMSwiaWF0IjoxNjE3MDQyOTAxLCJpc3MiOiJBenVyZSBDb250YWluZXIgUmVnaXN0cnkiLCJhdWQiOiJzZWFua2FuZS5henVyZWNyLmlvIiwidmVyc2lvbiI6IjEuMCIsInJpZCI6ImExZTAxZmYzMzk2YzRmMTVhMmRjNjM2NzNkN2ZjYTMzIiwiZ3JhbnRfdHlwZSI6InJlZnJlc2hfdG9rZW4iLCJwZXJtaXNzaW9ucyI6eyJhY3Rpb25zIjpbInJlYWQiLCJ3cml0ZSIsImRlbGV0ZSJdLCJub3RBY3Rpb25zIjpudWxsfSwicm9sZXMiOltdfQ.Zbqym1oarG3-7UyAP9oq7He6Fyw_e5ZhtlYlOwRKiXS0tJO8KTCqshja6ahY729Di-fk4RNnXIMXtS9lG4ZZuCs-3zTJvA1s0KnZoxaj34qjXdW8I1MYp1VM34DxTgjGX208zwcEuTK6uMB5b6v-4fd5bYUzYMk3T4_DwXH5pLUkSSqPxp0B1C9FVQ1EY59MZu4W2-8E73DSF4yBnTuZeI8KqNo9UCrP392L1avAQvywHfRCrPySYSKnbx23MIn23F1zEkZRHsP-NVivhppUFgUNXoLpW76mwVBYf2lHRg2jMbMDjMP1HjnyUowxpO0nzVnuMq6Ew6uWAA2PVzTIHw
+      scope: repository:to_be_deleted:metadata_read
+      service: seankane.azurecr.io
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://fake_url.azurecr.io/oauth2/token
+  response:
+    body:
+      string: '{"access_token": "REDACTED"}'
+    headers:
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Mon, 29 Mar 2021 18:50:01 GMT
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: OK
+    url: https://seankane.azurecr.io/oauth2/token
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/to_be_deleted/_manifests
+  response:
+    body:
+      string: '{"registry":"fake_url.azurecr.io","imageName":"to_be_deleted","manifests":[{"digest":"sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792","imageSize":0,"createdTime":"2021-03-29T18:49:54.088615Z","lastUpdateTime":"2021-03-29T18:49:54.088615Z","architecture":"amd64","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","imageSize":0,"createdTime":"2021-03-29T18:33:26.4188433Z","lastUpdateTime":"2021-03-29T18:33:26.4188433Z","mediaType":"application/vnd.docker.distribution.manifest.list.v2+json","tags":["to_be_deleted"],"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}},{"digest":"sha256:50b8560ad574c779908da71f7ce370c0a2471c098d44d1c8f6b513c5a55eeeb1","imageSize":0,"createdTime":"2021-03-29T18:33:26.9893324Z","lastUpdateTime":"2021-03-29T18:33:26.9893324Z","architecture":"arm","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:88b2e00179bd6c4064612403c8d42a13de7ca809d61fee966ce9e129860a8a90","imageSize":0,"createdTime":"2021-03-29T18:33:26.812248Z","lastUpdateTime":"2021-03-29T18:33:26.812248Z","architecture":"mips64le","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:963612c5503f3f1674f315c67089dee577d8cc6afc18565e0b4183ae355fb343","imageSize":0,"createdTime":"2021-03-29T18:33:26.7610154Z","lastUpdateTime":"2021-03-29T18:33:26.7610154Z","architecture":"arm64","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:b0408a0f1d74eced127a2658429f336ed8fa48e36d59878f155b19865e5dbd70","imageSize":0,"createdTime":"2021-03-29T18:33:26.8748922Z","lastUpdateTime":"2021-03-29T18:33:26.8748922Z","architecture":"amd64","os":"windows","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:bb7ab0fa94fdd78aca84b27a1bd46c4b811051f9b69905d81f5f267fc6546a9d","imageSize":0,"createdTime":"2021-03-29T18:33:27.5628238Z","lastUpdateTime":"2021-03-29T18:33:27.5628238Z","architecture":"ppc64le","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:cb55d8f7347376e1ba38ca740904b43c9a52f66c7d2ae1ef1a0de1bc9f40df98","imageSize":0,"createdTime":"2021-03-29T18:33:29.7231407Z","lastUpdateTime":"2021-03-29T18:33:29.7231407Z","architecture":"386","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:e49abad529e5d9bd6787f3abeab94e09ba274fe34731349556a850b9aebbf7bf","imageSize":0,"createdTime":"2021-03-29T18:33:27.1797223Z","lastUpdateTime":"2021-03-29T18:33:27.1797223Z","architecture":"s390x","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:e5785cb0c62cebbed4965129bae371f0589cadd6d84798fb58c2c5f9e237efd9","imageSize":0,"createdTime":"2021-03-29T18:33:26.9111873Z","lastUpdateTime":"2021-03-29T18:33:26.9111873Z","architecture":"arm","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}}]}
+
+        '
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Mon, 29 Mar 2021 18:50:01 GMT
+      docker-distribution-api-version: registry/2.0
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://seankane.azurecr.io/acr/v1/to_be_deleted/_manifests
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: DELETE
+    uri: https://fake_url.azurecr.io/v2/to_be_deleted/manifests/sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792
+  response:
+    body:
+      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"to_be_deleted","Action":"delete"}]}]}
+
+        '
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-length: '209'
+      content-type: application/json; charset=utf-8
+      date: Mon, 29 Mar 2021 18:50:02 GMT
+      docker-distribution-api-version: registry/2.0
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      x-content-type-options: nosniff
+    status:
+      code: 401
+      message: Unauthorized
+    url: https://seankane.azurecr.io/v2/to_be_deleted/manifests/sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792
+- request:
+    body:
+      access_token: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJpYXQiOjE2MTcwNDM1MDAsIm5iZiI6MTYxNzA0MzUwMCwiZXhwIjoxNjE3MTMwMjAwLCJhaW8iOiJFMlpnWURpbzlzdFQ5NXFRUVVkK3hWSHRULy8xQUE9PSIsImFwcGlkIjoiZjg1MDY1MGMtMWZjZi00NDg5LWI0NmYtNzFhZjJlMzBkMzYwIiwiYXBwaWRhY3IiOiIxIiwiaWRwIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsIm9pZCI6IjMwNTExYzlkLWJhMWEtNGM3Yi1iNDIyLTViNTQzZGExMWIzZiIsInJoIjoiMC5BUm9BdjRqNWN2R0dyMEdScXkxODBCSGJSd3hsVVBqUEg0bEV0Rzl4cnk0dzAyQWFBQUEuIiwic3ViIjoiMzA1MTFjOWQtYmExYS00YzdiLWI0MjItNWI1NDNkYTExYjNmIiwidGlkIjoiNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3IiwidXRpIjoiT3EydzMyVi14VXVqc0FrNm94Y0VBZyIsInZlciI6IjEuMCIsInhtc190Y2R0IjoxMjg5MjQxNTQ3fQ.hWjWRe_6O2wql1pkNnQKG1oW1a3Z3SckZ6OZMIMM_LuporkwdltV7mK4FIdB5635Zyk8z2OjAuVGYFnReAcJUhOR0JoT6Xtf90cfH8TWSKvkw5iqUtBQfI_ZtKzfSHMQwoRDsdsFmgVeka_QlZmUhSffcUCEcBOiBbCEHeKy2SX8jTX4iNmDYW2DnLw_TTA5LJhTItY_U9imPZzuYoAe2d8ctOgYpBPWRDOgwAnjJBzALPi1o3BTjhoVSlcpioXoP8A0h-hVmNz77zehcQ8A2R0tSCfWZ3sNDevkj5cC5c7fCqHX7K26w4LdRCpollDZkm-4IoIMnuQOtTPXUhQ3aQ
+      grant_type: access_token
+      service: seankane.azurecr.io
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://fake_url.azurecr.io/oauth2/exchange
+  response:
+    body:
+      string: '{"refresh_token": "REDACTED"}'
+    headers:
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Mon, 29 Mar 2021 18:50:02 GMT
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: OK
+    url: https://seankane.azurecr.io/oauth2/exchange
+- request:
+    body:
+      grant_type: refresh_token
+      refresh_token: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ikk2NVk6VEVDUzpLTEhMOjZCVlE6SUJaRjpGRVhCOlk0VUg6SlRJUzo2VFBYOkNWWEE6SkxUSzpRS0RRIn0.eyJqdGkiOiI0OWU5MDAxYS1hNWNkLTRiNmItOWU4NC1mMmM1YjNkODdlYzgiLCJzdWIiOiIzMDUxMWM5ZC1iYTFhLTRjN2ItYjQyMi01YjU0M2RhMTFiM2YiLCJuYmYiOjE2MTcwNDI5MDIsImV4cCI6MTYxNzA1NDYwMiwiaWF0IjoxNjE3MDQyOTAyLCJpc3MiOiJBenVyZSBDb250YWluZXIgUmVnaXN0cnkiLCJhdWQiOiJzZWFua2FuZS5henVyZWNyLmlvIiwidmVyc2lvbiI6IjEuMCIsInJpZCI6ImExZTAxZmYzMzk2YzRmMTVhMmRjNjM2NzNkN2ZjYTMzIiwiZ3JhbnRfdHlwZSI6InJlZnJlc2hfdG9rZW4iLCJwZXJtaXNzaW9ucyI6eyJhY3Rpb25zIjpbInJlYWQiLCJ3cml0ZSIsImRlbGV0ZSJdLCJub3RBY3Rpb25zIjpudWxsfSwicm9sZXMiOltdfQ.gQ0SKisCvhSWqJMEifR6kY1iMO0Xp36JcD2fRjuIp72c5EsBbXRNv7LSe04KBAjVINHAwnlWvqoGPqzaZIWkd5X3J_rA145cJe3TZYW5XJqD_jqDeOLRC2HHaMGFW0aghSJvRVMn8k4nkwTwOTFJk24VkVk2Pio4I1awucQnB7DgQEj48JNyQsdudp5qP9V4RBuCEFGtAEeZJZ5R3_G1oJl_B4L8n4bShT5Rswk5g3OWndVjWWCKlDm69BrWEZD2MX_n593wt7pqbgbfhAcWAyuYnool41OT7jLjeHQp52wNp9yKFPUm3p-6Yi1WjesZdocUNGM5RKJ-PMlh89VAXg
+      scope: repository:to_be_deleted:delete
+      service: seankane.azurecr.io
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://fake_url.azurecr.io/oauth2/token
+  response:
+    body:
+      string: '{"access_token": "REDACTED"}'
+    headers:
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Mon, 29 Mar 2021 18:50:02 GMT
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: OK
+    url: https://seankane.azurecr.io/oauth2/token
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: DELETE
+    uri: https://fake_url.azurecr.io/v2/to_be_deleted/manifests/sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792
+  response:
+    body:
+      string: ''
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-length: '0'
+      date: Mon, 29 Mar 2021 18:50:02 GMT
+      docker-distribution-api-version: registry/2.0
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+    status:
+      code: 202
+      message: Accepted
+    url: https://seankane.azurecr.io/v2/to_be_deleted/manifests/sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/to_be_deleted/_manifests
+  response:
+    body:
+      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"to_be_deleted","Action":"metadata_read"}]}]}
+
+        '
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-length: '216'
+      content-type: application/json; charset=utf-8
+      date: Mon, 29 Mar 2021 18:50:02 GMT
+      docker-distribution-api-version: registry/2.0
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      x-content-type-options: nosniff
+    status:
+      code: 401
+      message: Unauthorized
+    url: https://seankane.azurecr.io/acr/v1/to_be_deleted/_manifests
+- request:
+    body:
+      access_token: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJpYXQiOjE2MTcwNDM1MDAsIm5iZiI6MTYxNzA0MzUwMCwiZXhwIjoxNjE3MTMwMjAwLCJhaW8iOiJFMlpnWURpbzlzdFQ5NXFRUVVkK3hWSHRULy8xQUE9PSIsImFwcGlkIjoiZjg1MDY1MGMtMWZjZi00NDg5LWI0NmYtNzFhZjJlMzBkMzYwIiwiYXBwaWRhY3IiOiIxIiwiaWRwIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsIm9pZCI6IjMwNTExYzlkLWJhMWEtNGM3Yi1iNDIyLTViNTQzZGExMWIzZiIsInJoIjoiMC5BUm9BdjRqNWN2R0dyMEdScXkxODBCSGJSd3hsVVBqUEg0bEV0Rzl4cnk0dzAyQWFBQUEuIiwic3ViIjoiMzA1MTFjOWQtYmExYS00YzdiLWI0MjItNWI1NDNkYTExYjNmIiwidGlkIjoiNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3IiwidXRpIjoiT3EydzMyVi14VXVqc0FrNm94Y0VBZyIsInZlciI6IjEuMCIsInhtc190Y2R0IjoxMjg5MjQxNTQ3fQ.hWjWRe_6O2wql1pkNnQKG1oW1a3Z3SckZ6OZMIMM_LuporkwdltV7mK4FIdB5635Zyk8z2OjAuVGYFnReAcJUhOR0JoT6Xtf90cfH8TWSKvkw5iqUtBQfI_ZtKzfSHMQwoRDsdsFmgVeka_QlZmUhSffcUCEcBOiBbCEHeKy2SX8jTX4iNmDYW2DnLw_TTA5LJhTItY_U9imPZzuYoAe2d8ctOgYpBPWRDOgwAnjJBzALPi1o3BTjhoVSlcpioXoP8A0h-hVmNz77zehcQ8A2R0tSCfWZ3sNDevkj5cC5c7fCqHX7K26w4LdRCpollDZkm-4IoIMnuQOtTPXUhQ3aQ
+      grant_type: access_token
+      service: seankane.azurecr.io
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://fake_url.azurecr.io/oauth2/exchange
+  response:
+    body:
+      string: '{"refresh_token": "REDACTED"}'
+    headers:
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Mon, 29 Mar 2021 18:50:03 GMT
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: OK
+    url: https://seankane.azurecr.io/oauth2/exchange
+- request:
+    body:
+      grant_type: refresh_token
+      refresh_token: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ikk2NVk6VEVDUzpLTEhMOjZCVlE6SUJaRjpGRVhCOlk0VUg6SlRJUzo2VFBYOkNWWEE6SkxUSzpRS0RRIn0.eyJqdGkiOiJhMmIyMGYxYi01NTU2LTRkYmUtYTFhOS04ZjBlYzQ2YWU0NGEiLCJzdWIiOiIzMDUxMWM5ZC1iYTFhLTRjN2ItYjQyMi01YjU0M2RhMTFiM2YiLCJuYmYiOjE2MTcwNDI5MDMsImV4cCI6MTYxNzA1NDYwMywiaWF0IjoxNjE3MDQyOTAzLCJpc3MiOiJBenVyZSBDb250YWluZXIgUmVnaXN0cnkiLCJhdWQiOiJzZWFua2FuZS5henVyZWNyLmlvIiwidmVyc2lvbiI6IjEuMCIsInJpZCI6ImExZTAxZmYzMzk2YzRmMTVhMmRjNjM2NzNkN2ZjYTMzIiwiZ3JhbnRfdHlwZSI6InJlZnJlc2hfdG9rZW4iLCJwZXJtaXNzaW9ucyI6eyJhY3Rpb25zIjpbInJlYWQiLCJ3cml0ZSIsImRlbGV0ZSJdLCJub3RBY3Rpb25zIjpudWxsfSwicm9sZXMiOltdfQ.l0Q4Za29p7rbLlVmQTPCUVNogglznakiRH2r9UzNSeMIR8lCCxvLdlwcSufk8Yl9Z1Qm77tonTQDAiCQUq0zGlB3WR7RJtMpeIaQFoyQM0k-b4-i0HNSrYvYDS30WoJg7456gE5yPx27ZsJnQbl8HdZWPxPvu7QeMtRrLoTxtVJ4ivbt-LuoCtKuRpV2PV0lwUk2CiZUPTv0Pj8ClliwqZfCm1N-tE5wGeGqaI3xigoP6kCEe-m0UwGBa8UgTR2AXFgHCX94O2t8G6SsXdoLR2BfBV3yOou_bHAMclKxGpQutRjqnn4QN6-sDmO1wdecbZD-tn1a8H3Dvm3dZuasKg
+      scope: repository:to_be_deleted:metadata_read
+      service: seankane.azurecr.io
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://fake_url.azurecr.io/oauth2/token
+  response:
+    body:
+      string: '{"access_token": "REDACTED"}'
+    headers:
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Mon, 29 Mar 2021 18:50:03 GMT
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: OK
+    url: https://seankane.azurecr.io/oauth2/token
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/to_be_deleted/_manifests
+  response:
+    body:
+      string: '{"registry":"fake_url.azurecr.io","imageName":"to_be_deleted","manifests":[{"digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","imageSize":0,"createdTime":"2021-03-29T18:33:26.4188433Z","lastUpdateTime":"2021-03-29T18:33:26.4188433Z","mediaType":"application/vnd.docker.distribution.manifest.list.v2+json","tags":["to_be_deleted"],"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}},{"digest":"sha256:50b8560ad574c779908da71f7ce370c0a2471c098d44d1c8f6b513c5a55eeeb1","imageSize":0,"createdTime":"2021-03-29T18:33:26.9893324Z","lastUpdateTime":"2021-03-29T18:33:26.9893324Z","architecture":"arm","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:88b2e00179bd6c4064612403c8d42a13de7ca809d61fee966ce9e129860a8a90","imageSize":0,"createdTime":"2021-03-29T18:33:26.812248Z","lastUpdateTime":"2021-03-29T18:33:26.812248Z","architecture":"mips64le","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:963612c5503f3f1674f315c67089dee577d8cc6afc18565e0b4183ae355fb343","imageSize":0,"createdTime":"2021-03-29T18:33:26.7610154Z","lastUpdateTime":"2021-03-29T18:33:26.7610154Z","architecture":"arm64","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:b0408a0f1d74eced127a2658429f336ed8fa48e36d59878f155b19865e5dbd70","imageSize":0,"createdTime":"2021-03-29T18:33:26.8748922Z","lastUpdateTime":"2021-03-29T18:33:26.8748922Z","architecture":"amd64","os":"windows","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:bb7ab0fa94fdd78aca84b27a1bd46c4b811051f9b69905d81f5f267fc6546a9d","imageSize":0,"createdTime":"2021-03-29T18:33:27.5628238Z","lastUpdateTime":"2021-03-29T18:33:27.5628238Z","architecture":"ppc64le","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:cb55d8f7347376e1ba38ca740904b43c9a52f66c7d2ae1ef1a0de1bc9f40df98","imageSize":0,"createdTime":"2021-03-29T18:33:29.7231407Z","lastUpdateTime":"2021-03-29T18:33:29.7231407Z","architecture":"386","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:e49abad529e5d9bd6787f3abeab94e09ba274fe34731349556a850b9aebbf7bf","imageSize":0,"createdTime":"2021-03-29T18:33:27.1797223Z","lastUpdateTime":"2021-03-29T18:33:27.1797223Z","architecture":"s390x","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:e5785cb0c62cebbed4965129bae371f0589cadd6d84798fb58c2c5f9e237efd9","imageSize":0,"createdTime":"2021-03-29T18:33:26.9111873Z","lastUpdateTime":"2021-03-29T18:33:26.9111873Z","architecture":"arm","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}}]}
+
+        '
+    headers:
+      access-control-expose-headers: X-Ms-Correlation-Request-Id
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Mon, 29 Mar 2021 18:50:03 GMT
+      docker-distribution-api-version: registry/2.0
+      server: openresty
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://seankane.azurecr.io/acr/v1/to_be_deleted/_manifests
+version: 1
