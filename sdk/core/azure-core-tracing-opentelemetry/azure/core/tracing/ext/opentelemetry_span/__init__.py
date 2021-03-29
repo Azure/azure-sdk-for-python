@@ -199,6 +199,15 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
 
     @staticmethod
     def create_link_from_headers(headers, attributes=None):
+        # type: (Dict[str, str], Attributes) -> Link
+        """
+        Given a dictionary, extracts the context and creates a link that can be added to spans.
+
+        :param headers: A dictionary of the request header as key value pairs.
+        :type headers: dict
+        :param attributes: Any additional attributes that should be added to link
+        :type attributes: dict
+        """
         ctx = extract(headers)
         span_ctx = get_span_from_context(ctx).get_span_context()
         return Link(span_ctx, attributes)
