@@ -144,26 +144,13 @@ class JobsOperations:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_create_satellite_job.metadata = {'url': '/jobs/satelliteData'}  # type: ignore
 
-    async def create_weather_job(
+    async def _create_weather_job_initial(
         self,
         x_ms_farm_beats_data_provider_id: Optional[str] = None,
         x_ms_farm_beats_data_provider_key: Optional[str] = None,
         body: Optional["_models.WeatherIngestionJobRequest"] = None,
         **kwargs
     ) -> "_models.WeatherIngestionJobResponse":
-        """Create a weather job.
-
-        :param x_ms_farm_beats_data_provider_id: Weather data provider app id.
-        :type x_ms_farm_beats_data_provider_id: str
-        :param x_ms_farm_beats_data_provider_key: Weather data provider api key.
-        :type x_ms_farm_beats_data_provider_key: str
-        :param body: Job parameters supplied by user.
-        :type body: ~azure.farmbeats.models.WeatherIngestionJobRequest
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: WeatherIngestionJobResponse, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.WeatherIngestionJobResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherIngestionJobResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -174,7 +161,7 @@ class JobsOperations:
         accept = "application/json"
 
         # Construct URL
-        url = self.create_weather_job.metadata['url']  # type: ignore
+        url = self._create_weather_job_initial.metadata['url']  # type: ignore
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
@@ -209,22 +196,78 @@ class JobsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_weather_job.metadata = {'url': '/jobs/weatherData'}  # type: ignore
+    _create_weather_job_initial.metadata = {'url': '/jobs/weatherData'}  # type: ignore
 
-    async def create_cascade_delete_job(
+    async def begin_create_weather_job(
+        self,
+        x_ms_farm_beats_data_provider_id: Optional[str] = None,
+        x_ms_farm_beats_data_provider_key: Optional[str] = None,
+        body: Optional["_models.WeatherIngestionJobRequest"] = None,
+        **kwargs
+    ) -> AsyncLROPoller["_models.WeatherIngestionJobResponse"]:
+        """Create a weather job.
+
+        :param x_ms_farm_beats_data_provider_id: Weather data provider app id.
+        :type x_ms_farm_beats_data_provider_id: str
+        :param x_ms_farm_beats_data_provider_key: Weather data provider api key.
+        :type x_ms_farm_beats_data_provider_key: str
+        :param body: Job parameters supplied by user.
+        :type body: ~azure.farmbeats.models.WeatherIngestionJobRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either WeatherIngestionJobResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.farmbeats.models.WeatherIngestionJobResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherIngestionJobResponse"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_weather_job_initial(
+                x_ms_farm_beats_data_provider_id=x_ms_farm_beats_data_provider_id,
+                x_ms_farm_beats_data_provider_key=x_ms_farm_beats_data_provider_key,
+                body=body,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('WeatherIngestionJobResponse', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_weather_job.metadata = {'url': '/jobs/weatherData'}  # type: ignore
+
+    async def _create_cascade_delete_job_initial(
         self,
         body: Optional["_models.CascadeDeleteJobRequest"] = None,
         **kwargs
     ) -> "_models.CascadeDeleteJobResponse":
-        """Create a cascade delete job.
-
-        :param body: Job parameters supplied by user.
-        :type body: ~azure.farmbeats.models.CascadeDeleteJobRequest
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CascadeDeleteJobResponse, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.CascadeDeleteJobResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeDeleteJobResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -235,7 +278,7 @@ class JobsOperations:
         accept = "application/json"
 
         # Construct URL
-        url = self.create_cascade_delete_job.metadata['url']  # type: ignore
+        url = self._create_cascade_delete_job_initial.metadata['url']  # type: ignore
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
@@ -266,22 +309,70 @@ class JobsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_cascade_delete_job.metadata = {'url': '/jobs/cascadeDelete'}  # type: ignore
+    _create_cascade_delete_job_initial.metadata = {'url': '/jobs/cascadeDelete'}  # type: ignore
 
-    async def create_cascade_status_update_job(
+    async def begin_create_cascade_delete_job(
+        self,
+        body: Optional["_models.CascadeDeleteJobRequest"] = None,
+        **kwargs
+    ) -> AsyncLROPoller["_models.CascadeDeleteJobResponse"]:
+        """Create a cascade delete job.
+
+        :param body: Job parameters supplied by user.
+        :type body: ~azure.farmbeats.models.CascadeDeleteJobRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either CascadeDeleteJobResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.farmbeats.models.CascadeDeleteJobResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeDeleteJobResponse"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_cascade_delete_job_initial(
+                body=body,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('CascadeDeleteJobResponse', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_cascade_delete_job.metadata = {'url': '/jobs/cascadeDelete'}  # type: ignore
+
+    async def _create_cascade_status_update_job_initial(
         self,
         body: Optional["_models.CascadeStatusUpdateJobRequest"] = None,
         **kwargs
     ) -> "_models.CascadeStatusUpdateJobResponse":
-        """Create a cascade update status job.
-
-        :param body: Job parameters supplied by user.
-        :type body: ~azure.farmbeats.models.CascadeStatusUpdateJobRequest
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CascadeStatusUpdateJobResponse, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.CascadeStatusUpdateJobResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeStatusUpdateJobResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -292,7 +383,7 @@ class JobsOperations:
         accept = "application/json"
 
         # Construct URL
-        url = self.create_cascade_status_update_job.metadata['url']  # type: ignore
+        url = self._create_cascade_status_update_job_initial.metadata['url']  # type: ignore
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
@@ -323,22 +414,70 @@ class JobsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_cascade_status_update_job.metadata = {'url': '/jobs/cascadeUpdateStatus'}  # type: ignore
+    _create_cascade_status_update_job_initial.metadata = {'url': '/jobs/cascadeUpdateStatus'}  # type: ignore
 
-    async def create_farm_operation_data_ingestion_job(
+    async def begin_create_cascade_status_update_job(
+        self,
+        body: Optional["_models.CascadeStatusUpdateJobRequest"] = None,
+        **kwargs
+    ) -> AsyncLROPoller["_models.CascadeStatusUpdateJobResponse"]:
+        """Create a cascade update status job.
+
+        :param body: Job parameters supplied by user.
+        :type body: ~azure.farmbeats.models.CascadeStatusUpdateJobRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either CascadeStatusUpdateJobResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.farmbeats.models.CascadeStatusUpdateJobResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeStatusUpdateJobResponse"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_cascade_status_update_job_initial(
+                body=body,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('CascadeStatusUpdateJobResponse', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_cascade_status_update_job.metadata = {'url': '/jobs/cascadeUpdateStatus'}  # type: ignore
+
+    async def _create_farm_operation_data_ingestion_job_initial(
         self,
         body: Optional["_models.FarmOperationDataIngestionJobRequest"] = None,
         **kwargs
     ) -> "_models.FarmOperationDataIngestionJobResponse":
-        """Create a farm operation data ingestion job.
-
-        :param body: Job parameters supplied by user.
-        :type body: ~azure.farmbeats.models.FarmOperationDataIngestionJobRequest
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: FarmOperationDataIngestionJobResponse, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.FarmOperationDataIngestionJobResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FarmOperationDataIngestionJobResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -349,7 +488,7 @@ class JobsOperations:
         accept = "application/json"
 
         # Construct URL
-        url = self.create_farm_operation_data_ingestion_job.metadata['url']  # type: ignore
+        url = self._create_farm_operation_data_ingestion_job_initial.metadata['url']  # type: ignore
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
@@ -380,22 +519,70 @@ class JobsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_farm_operation_data_ingestion_job.metadata = {'url': '/jobs/farmOperationData'}  # type: ignore
+    _create_farm_operation_data_ingestion_job_initial.metadata = {'url': '/jobs/farmOperationData'}  # type: ignore
 
-    async def create_weather_data_delete_job(
+    async def begin_create_farm_operation_data_ingestion_job(
+        self,
+        body: Optional["_models.FarmOperationDataIngestionJobRequest"] = None,
+        **kwargs
+    ) -> AsyncLROPoller["_models.FarmOperationDataIngestionJobResponse"]:
+        """Create a farm operation data ingestion job.
+
+        :param body: Job parameters supplied by user.
+        :type body: ~azure.farmbeats.models.FarmOperationDataIngestionJobRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either FarmOperationDataIngestionJobResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.farmbeats.models.FarmOperationDataIngestionJobResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FarmOperationDataIngestionJobResponse"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_farm_operation_data_ingestion_job_initial(
+                body=body,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('FarmOperationDataIngestionJobResponse', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_farm_operation_data_ingestion_job.metadata = {'url': '/jobs/farmOperationData'}  # type: ignore
+
+    async def _create_weather_data_delete_job_initial(
         self,
         body: Optional["_models.WeatherDataDeleteJobRequest"] = None,
         **kwargs
     ) -> "_models.WeatherDataDeleteJobResponse":
-        """Create a weather data delete job.
-
-        :param body: Job parameters supplied by user.
-        :type body: ~azure.farmbeats.models.WeatherDataDeleteJobRequest
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: WeatherDataDeleteJobResponse, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.WeatherDataDeleteJobResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherDataDeleteJobResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -406,7 +593,7 @@ class JobsOperations:
         accept = "application/json"
 
         # Construct URL
-        url = self.create_weather_data_delete_job.metadata['url']  # type: ignore
+        url = self._create_weather_data_delete_job_initial.metadata['url']  # type: ignore
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
@@ -437,7 +624,64 @@ class JobsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_weather_data_delete_job.metadata = {'url': '/jobs/weatherDataDelete'}  # type: ignore
+    _create_weather_data_delete_job_initial.metadata = {'url': '/jobs/weatherDataDelete'}  # type: ignore
+
+    async def begin_create_weather_data_delete_job(
+        self,
+        body: Optional["_models.WeatherDataDeleteJobRequest"] = None,
+        **kwargs
+    ) -> AsyncLROPoller["_models.WeatherDataDeleteJobResponse"]:
+        """Create a weather data delete job.
+
+        :param body: Job parameters supplied by user.
+        :type body: ~azure.farmbeats.models.WeatherDataDeleteJobRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either WeatherDataDeleteJobResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.farmbeats.models.WeatherDataDeleteJobResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherDataDeleteJobResponse"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_weather_data_delete_job_initial(
+                body=body,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('WeatherDataDeleteJobResponse', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_weather_data_delete_job.metadata = {'url': '/jobs/weatherDataDelete'}  # type: ignore
 
     async def get_job(
         self,
