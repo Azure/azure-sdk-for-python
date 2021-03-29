@@ -187,7 +187,7 @@ class DatalakeServiceTest(StorageTestCase):
         # Should not work with 0 days
         delete_retention_policy = RetentionPolicy(enabled=True, days=0)
 
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(HttpResponseError):
             await self.dsc.set_service_properties(delete_retention_policy=delete_retention_policy)
 
         # Assert
