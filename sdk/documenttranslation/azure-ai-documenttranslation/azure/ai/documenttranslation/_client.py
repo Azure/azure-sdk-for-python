@@ -94,8 +94,9 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         For supported languages and document formats, see the service documentation:
         https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
 
-        :param inputs: A list of translation inputs. Each individual input can contain a single
-            source URL to documents and multiple target URLs (one for each language).
+        :param inputs: A list of translation inputs. Each individual input has a single
+            source URL to documents and can contain multiple target URLs (one for each language)
+            for the destination to write translated documents.
         :type inputs: List[~azure.ai.documenttranslation.DocumentTranslationInput]
         :return: A JobStatusResult with information on the status of the job.
         :rtype: ~azure.ai.documenttranslation.JobStatusResult
