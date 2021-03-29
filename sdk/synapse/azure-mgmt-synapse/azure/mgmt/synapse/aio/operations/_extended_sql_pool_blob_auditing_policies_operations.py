@@ -66,7 +66,7 @@ class ExtendedSqlPoolBlobAuditingPoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2021-03-01"
         blob_auditing_policy_name = "default"
         accept = "application/json"
 
@@ -133,7 +133,7 @@ class ExtendedSqlPoolBlobAuditingPoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2021-03-01"
         blob_auditing_policy_name = "default"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -206,7 +206,7 @@ class ExtendedSqlPoolBlobAuditingPoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

@@ -29,8 +29,9 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
         defines authorities for other clouds.
     :keyword str tenant_id: an Azure Active Directory tenant ID. Used to select an account when the cache contains
         tokens for multiple identities.
-    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
-        is unavailable. Defaults to False.
+    :keyword cache_persistence_options: configuration for persistent token caching. If not provided, the credential
+        will use the persistent cache shared by Microsoft development applications
+    :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     """
 
     async def __aenter__(self):

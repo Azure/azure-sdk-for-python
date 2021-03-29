@@ -15,4 +15,8 @@ from ._version import VERSION
 from ._azure_appconfiguration_error import ResourceReadOnlyError
 
 __version__ = VERSION
-__all__ = ["AzureAppConfigurationClient", "ConfigurationSetting", "ResourceReadOnlyError"]
+__all__ = [
+    "AzureAppConfigurationClient",
+    "ConfigurationSetting",
+    "ResourceReadOnlyError",
+]

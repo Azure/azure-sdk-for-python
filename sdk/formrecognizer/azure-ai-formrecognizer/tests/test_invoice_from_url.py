@@ -19,7 +19,7 @@ from preparers import FormRecognizerPreparer
 
 GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
-@pytest.mark.skip
+
 class TestInvoiceFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
@@ -194,7 +194,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
         self.assertEqual(invoice.fields.get("CustomerName").value, "Microsoft")
         self.assertEqual(invoice.fields.get("InvoiceId").value, '34278587')
         self.assertEqual(invoice.fields.get("InvoiceDate").value, date(2017, 6, 18))
-        self.assertEqual(invoice.fields.get("InvoiceTotal").value, 56651.49)
+        self.assertEqual(invoice.fields.get("Items").value[0].value["Amount"].value, 56651.49)
         self.assertEqual(invoice.fields.get("DueDate").value, date(2017, 6, 24))
 
     @FormRecognizerPreparer()
@@ -234,8 +234,11 @@ class TestInvoiceFromUrl(FormRecognizerTest):
         self.assertFormPagesHasValues(invoice.pages)
 
         for field in invoice.fields.values():
+            if field.name == "Items":
+                continue
             self.assertFieldElementsHasValues(field.value_data.field_elements, invoice.page_range.first_page_number)
-        
+        self.assertInvoiceItemsHasValues(invoice.fields["Items"].value, invoice.page_range.first_page_number, True)
+
         # check dict values
         self.assertEqual(invoice.fields.get("VendorName").value, "Contoso")
         self.assertEqual(invoice.fields.get("VendorAddress").value, '1 Redmond way Suite 6000 Redmond, WA 99243')
@@ -271,7 +274,8 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     def test_invoice_locale_specified(self, client):
         poller = client.begin_recognize_invoices_from_url(self.invoice_url_pdf, locale="en-US")
         assert 'en-US' == poller._polling_method._initial_response.http_response.request.query['locale']
-        poller.wait()
+        result = poller.result()
+        assert result
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -279,3 +283,11 @@ class TestInvoiceFromUrl(FormRecognizerTest):
         with pytest.raises(HttpResponseError) as e:
             client.begin_recognize_invoices_from_url(self.invoice_url_pdf, locale="not a locale")
         assert "locale" in e.value.error.message
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    def test_pages_kwarg_specified(self, client):
+        poller = client.begin_recognize_invoices_from_url(self.invoice_url_pdf, pages=["1"])
+        assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+        result = poller.result()
+        assert result

@@ -31,5 +31,7 @@ extends:
   parameters:
     ServiceDirectory: deviceupdate
     Artifacts:
-    - name: azure_mgmt_deviceupdate
+    - name: azure-iot-deviceupdate
+      safeName: azureiotdeviceupdate
+    - name: azure-mgmt-deviceupdate
       safeName: azuremgmtdeviceupdate

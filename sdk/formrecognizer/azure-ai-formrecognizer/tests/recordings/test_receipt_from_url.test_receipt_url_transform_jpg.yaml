@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: 'b''{"source": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-allinone.jpg"}'''
+    body: 'b''{"source": "blob_sas_url"}'''
     headers:
       Accept:
       - application/json
@@ -9,31 +9,31 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '172'
+      - '223'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/receipt/analyze?includeTextDetails=true
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyze?includeTextDetails=true
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - ea1d5080-cf65-4716-8cf9-2e7742d287a7
+      - 07329b6f-cfb5-48ae-b849-bd9c85d3eecf
       content-length:
       - '0'
       date:
-      - Mon, 16 Nov 2020 19:13:11 GMT
+      - Fri, 19 Mar 2021 21:51:02 GMT
       operation-location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/receipt/analyzeResults/ea1d5080-cf65-4716-8cf9-2e7742d287a7
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyzeResults/07329b6f-cfb5-48ae-b849-bd9c85d3eecf
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '189'
+      - '309'
     status:
       code: 202
       message: Accepted
@@ -47,148 +47,173 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/receipt/analyzeResults/ea1d5080-cf65-4716-8cf9-2e7742d287a7
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyzeResults/07329b6f-cfb5-48ae-b849-bd9c85d3eecf
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-11-16T19:13:11Z",
-        "lastUpdatedDateTime": "2020-11-16T19:13:13Z", "analyzeResult": {"version":
-        "2.1.0", "readResults": [{"page": 1, "angle": 0.6893, "width": 1688, "height":
-        3000, "unit": "pixel", "lines": [{"text": "Contoso", "boundingBox": [635,
-        510, 1086, 461, 1098, 558, 643, 604], "words": [{"text": "Contoso", "boundingBox":
-        [639, 510, 1087, 461, 1098, 551, 646, 604], "confidence": 0.955}]}, {"text":
-        "Contoso", "boundingBox": [305, 574, 519, 624, 504, 686, 291, 634], "words":
-        [{"text": "Contoso", "boundingBox": [311, 575, 517, 623, 503, 686, 297, 636],
-        "confidence": 0.435}]}, {"text": "123 Main Street", "boundingBox": [300, 675,
-        703, 767, 686, 844, 284, 749], "words": [{"text": "123", "boundingBox": [302,
-        676, 390, 695, 375, 770, 287, 751], "confidence": 0.935}, {"text": "Main",
-        "boundingBox": [405, 698, 528, 726, 512, 802, 390, 774], "confidence": 0.958},
-        {"text": "Street", "boundingBox": [542, 730, 702, 767, 685, 845, 527, 806],
-        "confidence": 0.959}]}, {"text": "Redmond, WA 98052", "boundingBox": [290,
-        784, 828, 850, 820, 933, 279, 868], "words": [{"text": "Redmond,", "boundingBox":
-        [293, 784, 550, 826, 540, 905, 280, 856], "confidence": 0.762}, {"text": "WA",
-        "boundingBox": [565, 828, 645, 837, 637, 917, 555, 907], "confidence": 0.943},
-        {"text": "98052", "boundingBox": [660, 838, 824, 849, 818, 933, 651, 919],
-        "confidence": 0.959}]}, {"text": "987-654-3210", "boundingBox": [275, 1003,
-        656, 1055, 646, 1123, 269, 1073], "words": [{"text": "987-654-3210", "boundingBox":
-        [278, 1004, 656, 1057, 647, 1123, 271, 1075], "confidence": 0.939}]}, {"text":
-        "6/10/2019 13:59", "boundingBox": [265, 1228, 678, 1258, 671, 1344, 258, 1311],
-        "words": [{"text": "6/10/2019", "boundingBox": [267, 1229, 525, 1247, 517,
-        1332, 259, 1313], "confidence": 0.762}, {"text": "13:59", "boundingBox": [541,
-        1248, 677, 1263, 669, 1345, 533, 1333], "confidence": 0.958}]}, {"text": "Sales
-        Associate: Paul", "boundingBox": [253, 1347, 868, 1379, 863, 1457, 249, 1425],
-        "words": [{"text": "Sales", "boundingBox": [259, 1348, 419, 1359, 414, 1435,
-        252, 1422], "confidence": 0.92}, {"text": "Associate:", "boundingBox": [434,
-        1360, 711, 1374, 707, 1452, 428, 1436], "confidence": 0.909}, {"text": "Paul",
-        "boundingBox": [726, 1374, 865, 1379, 862, 1457, 722, 1452], "confidence":
-        0.959}]}, {"text": "1 Cappuccino", "boundingBox": [244, 1583, 658, 1601, 653,
-        1689, 240, 1674], "words": [{"text": "1", "boundingBox": [245, 1583, 299,
-        1585, 295, 1676, 241, 1671], "confidence": 0.824}, {"text": "Cappuccino",
-        "boundingBox": [322, 1586, 654, 1605, 648, 1689, 318, 1678], "confidence":
-        0.727}]}, {"text": "$2.20", "boundingBox": [1106, 1584, 1268, 1574, 1270,
-        1656, 1110, 1666], "words": [{"text": "$2.20", "boundingBox": [1108, 1584,
-        1263, 1574, 1268, 1656, 1113, 1666], "confidence": 0.958}]}, {"text": "1 BACON
-        & EGGS", "boundingBox": [232, 1834, 745, 1840, 744, 1924, 231, 1918], "words":
-        [{"text": "1", "boundingBox": [232, 1834, 286, 1836, 285, 1920, 231, 1920],
-        "confidence": 0.845}, {"text": "BACON", "boundingBox": [308, 1836, 506, 1841,
-        504, 1920, 307, 1920], "confidence": 0.885}, {"text": "&", "boundingBox":
-        [523, 1841, 568, 1842, 566, 1921, 521, 1921], "confidence": 0.799}, {"text":
-        "EGGS", "boundingBox": [585, 1842, 746, 1843, 744, 1924, 583, 1921], "confidence":
-        0.949}]}, {"text": "Sunny-side-up", "boundingBox": [347, 1975, 751, 1977,
-        751, 2061, 347, 2060], "words": [{"text": "Sunny-side-up", "boundingBox":
-        [348, 1975, 749, 1979, 747, 2061, 348, 2061], "confidence": 0.946}]}, {"text":
-        "$9.5", "boundingBox": [1135, 1955, 1262, 1952, 1263, 2035, 1136, 2039], "words":
-        [{"text": "$9.5", "boundingBox": [1135, 1955, 1257, 1952, 1259, 2036, 1136,
-        2039], "confidence": 0.95}]}, {"text": "Sub-Total", "boundingBox": [440, 2229,
-        771, 2219, 773, 2318, 442, 2327], "words": [{"text": "Sub-Total", "boundingBox":
-        [441, 2229, 769, 2220, 774, 2319, 443, 2328], "confidence": 0.856}]}, {"text":
-        "$ 11.70", "boundingBox": [1092, 2221, 1301, 2224, 1299, 2319, 1093, 2317],
-        "words": [{"text": "$", "boundingBox": [1092, 2221, 1127, 2221, 1126, 2317,
-        1092, 2316], "confidence": 0.799}, {"text": "11.70", "boundingBox": [1146,
-        2221, 1297, 2223, 1296, 2319, 1145, 2317], "confidence": 0.948}]}, {"text":
-        "Tax", "boundingBox": [442, 2371, 549, 2367, 552, 2454, 445, 2458], "words":
-        [{"text": "Tax", "boundingBox": [445, 2371, 546, 2367, 549, 2454, 448, 2458],
-        "confidence": 0.958}]}, {"text": "$ 1.17", "boundingBox": [1129, 2359, 1310,
-        2359, 1306, 2456, 1129, 2456], "words": [{"text": "$", "boundingBox": [1129,
-        2359, 1171, 2359, 1171, 2456, 1129, 2456], "confidence": 0.89}, {"text": "1.17",
-        "boundingBox": [1190, 2359, 1304, 2359, 1304, 2456, 1190, 2456], "confidence":
-        0.942}]}, {"text": "Tip", "boundingBox": [433, 2505, 539, 2506, 540, 2602,
-        434, 2602], "words": [{"text": "Tip", "boundingBox": [436, 2505, 536, 2505,
-        536, 2602, 436, 2602], "confidence": 0.959}]}, {"text": "$ 1.63", "boundingBox":
-        [1030, 2478, 1269, 2486, 1267, 2591, 1024, 2583], "words": [{"text": "$",
-        "boundingBox": [1027, 2478, 1073, 2478, 1069, 2584, 1024, 2583], "confidence":
-        0.788}, {"text": "1.63", "boundingBox": [1094, 2479, 1267, 2485, 1264, 2591,
-        1091, 2585], "confidence": 0.284}]}, {"text": "Total", "boundingBox": [433,
-        2652, 611, 2644, 615, 2738, 436, 2747], "words": [{"text": "Total", "boundingBox":
-        [435, 2652, 609, 2644, 613, 2739, 439, 2747], "confidence": 0.866}]}, {"text":
-        "$14.50", "boundingBox": [1034, 2620, 1386, 2637, 1380, 2762, 1029, 2739],
-        "words": [{"text": "$14.50", "boundingBox": [1034, 2620, 1384, 2638, 1380,
-        2763, 1030, 2739], "confidence": 0.57}]}]}], "documentResults": [{"docType":
-        "prebuilt:receipt", "pageRange": [1, 1], "fields": {"ReceiptType": {"type":
-        "string", "valueString": "Itemized", "confidence": 0.692}, "MerchantName":
-        {"type": "string", "valueString": "Contoso Contoso", "text": "Contoso Contoso",
-        "boundingBox": [378.2, 292.4, 1117.7, 468.3, 1035.7, 812.7, 296.3, 636.8],
-        "page": 1, "confidence": 0.613, "elements": ["#/readResults/0/lines/0/words/0",
-        "#/readResults/0/lines/1/words/0"]}, "MerchantAddress": {"type": "string",
-        "valueString": "123 Main Street Redmond, WA 98052", "text": "123 Main Street
-        Redmond, WA 98052", "boundingBox": [302, 675.8, 848.1, 793.7, 809.9, 970.4,
-        263.9, 852.5], "page": 1, "confidence": 0.99, "elements": ["#/readResults/0/lines/2/words/0",
-        "#/readResults/0/lines/2/words/1", "#/readResults/0/lines/2/words/2", "#/readResults/0/lines/3/words/0",
-        "#/readResults/0/lines/3/words/1", "#/readResults/0/lines/3/words/2"]}, "MerchantPhoneNumber":
-        {"type": "phoneNumber", "valuePhoneNumber": "+19876543210", "text": "987-654-3210",
-        "boundingBox": [278, 1004, 656, 1057, 647, 1123, 271, 1075], "page": 1, "confidence":
-        0.99, "elements": ["#/readResults/0/lines/4/words/0"]}, "TransactionDate":
-        {"type": "date", "valueDate": "2019-06-10", "text": "6/10/2019", "boundingBox":
-        [267, 1229, 525, 1247, 517, 1332, 259, 1313], "page": 1, "confidence": 0.99,
-        "elements": ["#/readResults/0/lines/5/words/0"]}, "TransactionTime": {"type":
-        "time", "valueTime": "13:59:00", "text": "13:59", "boundingBox": [541, 1248,
-        677, 1263, 669, 1345, 533, 1333], "page": 1, "confidence": 0.977, "elements":
-        ["#/readResults/0/lines/5/words/1"]}, "Items": {"type": "array", "valueArray":
-        [{"type": "object", "valueObject": {"Quantity": {"type": "number", "valueNumber":
-        1, "text": "1", "boundingBox": [245, 1583, 299, 1585, 295, 1676, 241, 1671],
-        "page": 1, "confidence": 0.92, "elements": ["#/readResults/0/lines/7/words/0"]},
-        "Name": {"type": "string", "valueString": "Cappuccino", "text": "Cappuccino",
-        "boundingBox": [322, 1586, 654, 1605, 648, 1689, 318, 1678], "page": 1, "confidence":
-        0.923, "elements": ["#/readResults/0/lines/7/words/1"]}, "TotalPrice": {"type":
-        "number", "valueNumber": 2.2, "text": "$2.20", "boundingBox": [1108, 1584,
-        1263, 1574, 1268, 1656, 1113, 1666], "page": 1, "confidence": 0.918, "elements":
-        ["#/readResults/0/lines/8/words/0"]}}}, {"type": "object", "valueObject":
-        {"Quantity": {"type": "number", "valueNumber": 1, "text": "1", "boundingBox":
-        [232, 1834, 286, 1836, 285, 1920, 231, 1920], "page": 1, "confidence": 0.858,
-        "elements": ["#/readResults/0/lines/9/words/0"]}, "Name": {"type": "string",
-        "valueString": "BACON & EGGS", "text": "BACON & EGGS", "boundingBox": [308,
-        1836, 746, 1841.4, 745, 1925.4, 307, 1920], "page": 1, "confidence": 0.916,
-        "elements": ["#/readResults/0/lines/9/words/1", "#/readResults/0/lines/9/words/2",
-        "#/readResults/0/lines/9/words/3"]}, "TotalPrice": {"type": "number", "valueNumber":
-        9.5, "text": "$9.5", "boundingBox": [1135, 1955, 1257, 1952, 1259, 2036, 1136,
-        2039], "page": 1, "confidence": 0.916, "elements": ["#/readResults/0/lines/11/words/0"]}}}]},
-        "Subtotal": {"type": "number", "valueNumber": 11.7, "text": "11.70", "boundingBox":
-        [1146, 2221, 1297, 2223, 1296, 2319, 1145, 2317], "page": 1, "confidence":
-        0.955, "elements": ["#/readResults/0/lines/13/words/1"]}, "Tax": {"type":
-        "number", "valueNumber": 1.17, "text": "1.17", "boundingBox": [1190, 2359,
-        1304, 2359, 1304, 2456, 1190, 2456], "page": 1, "confidence": 0.979, "elements":
-        ["#/readResults/0/lines/15/words/1"]}, "Tip": {"type": "number", "valueNumber":
-        1.63, "text": "1.63", "boundingBox": [1094, 2479, 1267, 2485, 1264, 2591,
-        1091, 2585], "page": 1, "confidence": 0.941, "elements": ["#/readResults/0/lines/17/words/1"]},
-        "Total": {"type": "number", "valueNumber": 14.5, "text": "$14.50", "boundingBox":
-        [1034, 2620, 1384, 2638, 1380, 2763, 1030, 2739], "page": 1, "confidence":
-        0.985, "elements": ["#/readResults/0/lines/19/words/0"]}}}]}}'
+      string: '{"status": "succeeded", "createdDateTime": "2021-03-19T21:51:03Z",
+        "lastUpdatedDateTime": "2021-03-19T21:51:06Z", "analyzeResult": {"version":
+        "2.1.0", "readResults": [{"page": 1, "angle": 0.1273, "width": 1688, "height":
+        3000, "unit": "pixel", "lines": [{"text": "Contoso", "boundingBox": [306,
+        569, 519, 624, 502, 686, 290, 632], "words": [{"text": "Contoso", "boundingBox":
+        [308, 570, 515, 627, 500, 685, 290, 634], "confidence": 0.879}], "appearance":
+        {"style": {"name": "other", "confidence": 0.878}}}, {"text": "Contoso", "boundingBox":
+        [625, 512, 1089, 465, 1096, 561, 631, 607], "words": [{"text": "Contoso",
+        "boundingBox": [625, 512, 1072, 468, 1078, 564, 631, 607], "confidence": 0.996}],
+        "appearance": {"style": {"name": "other", "confidence": 0.878}}}, {"text":
+        "123 Main Street", "boundingBox": [301, 677, 697, 759, 681, 835, 284, 750],
+        "words": [{"text": "123", "boundingBox": [301, 677, 378, 692, 361, 766, 284,
+        751], "confidence": 0.994}, {"text": "Main", "boundingBox": [392, 694, 519,
+        721, 502, 794, 376, 768], "confidence": 0.994}, {"text": "Street", "boundingBox":
+        [533, 724, 694, 763, 676, 835, 516, 798], "confidence": 0.996}], "appearance":
+        {"style": {"name": "other", "confidence": 0.878}}}, {"text": "Redmond, WA
+        98052", "boundingBox": [284, 784, 823, 855, 814, 925, 275, 868], "words":
+        [{"text": "Redmond,", "boundingBox": [291, 785, 548, 829, 539, 905, 278, 854],
+        "confidence": 0.931}, {"text": "WA", "boundingBox": [561, 831, 643, 841, 635,
+        916, 553, 907], "confidence": 0.997}, {"text": "98052", "boundingBox": [657,
+        842, 822, 855, 817, 925, 649, 917], "confidence": 0.996}], "appearance": {"style":
+        {"name": "other", "confidence": 0.878}}}, {"text": "987-654-3210", "boundingBox":
+        [270, 999, 655, 1049, 646, 1125, 264, 1075], "words": [{"text": "987-654-3210",
+        "boundingBox": [274, 1000, 651, 1049, 643, 1125, 268, 1076], "confidence":
+        0.994}], "appearance": {"style": {"name": "other", "confidence": 0.878}}},
+        {"text": "6/10/2019 13:59", "boundingBox": [258, 1224, 683, 1259, 676, 1341,
+        255, 1309], "words": [{"text": "6/10/2019", "boundingBox": [259, 1224, 514,
+        1247, 509, 1331, 255, 1312], "confidence": 0.986}, {"text": "13:59", "boundingBox":
+        [531, 1248, 681, 1262, 675, 1341, 526, 1333], "confidence": 0.996}], "appearance":
+        {"style": {"name": "other", "confidence": 0.878}}}, {"text": "Sales Associate:
+        Paul", "boundingBox": [252, 1347, 860, 1378, 859, 1449, 249, 1425], "words":
+        [{"text": "Sales", "boundingBox": [258, 1348, 408, 1358, 404, 1432, 253, 1419],
+        "confidence": 0.994}, {"text": "Associate:", "boundingBox": [422, 1359, 703,
+        1373, 701, 1447, 418, 1433], "confidence": 0.93}, {"text": "Paul", "boundingBox":
+        [717, 1373, 858, 1378, 859, 1449, 716, 1448], "confidence": 0.994}], "appearance":
+        {"style": {"name": "other", "confidence": 0.878}}}, {"text": "1 Cappuccino",
+        "boundingBox": [244, 1581, 660, 1597, 658, 1688, 241, 1675], "words": [{"text":
+        "1", "boundingBox": [244, 1581, 286, 1584, 283, 1678, 241, 1675], "confidence":
+        0.991}, {"text": "Cappuccino", "boundingBox": [304, 1585, 658, 1598, 657,
+        1688, 302, 1679], "confidence": 0.187}], "appearance": {"style": {"name":
+        "other", "confidence": 0.878}}}, {"text": "$2.20", "boundingBox": [1106, 1580,
+        1264, 1574, 1268, 1656, 1108, 1662], "words": [{"text": "$2.20", "boundingBox":
+        [1106, 1579, 1260, 1574, 1263, 1656, 1108, 1662], "confidence": 0.991}], "appearance":
+        {"style": {"name": "other", "confidence": 0.878}}}, {"text": "1 BACON & EGGS",
+        "boundingBox": [226, 1838, 740, 1839, 740, 1924, 226, 1923], "words": [{"text":
+        "1", "boundingBox": [227, 1839, 275, 1839, 275, 1924, 226, 1924], "confidence":
+        0.996}, {"text": "BACON", "boundingBox": [293, 1839, 497, 1840, 497, 1923,
+        293, 1924], "confidence": 0.996}, {"text": "&", "boundingBox": [514, 1840,
+        554, 1840, 553, 1923, 514, 1923], "confidence": 0.994}, {"text": "EGGS", "boundingBox":
+        [571, 1840, 737, 1841, 736, 1924, 570, 1923], "confidence": 0.993}], "appearance":
+        {"style": {"name": "other", "confidence": 0.878}}}, {"text": "Sunny-side-up",
+        "boundingBox": [343, 1976, 758, 1974, 759, 2061, 343, 2063], "words": [{"text":
+        "Sunny-side-up", "boundingBox": [343, 1977, 757, 1975, 755, 2063, 346, 2064],
+        "confidence": 0.986}], "appearance": {"style": {"name": "other", "confidence":
+        0.878}}}, {"text": "$9.5", "boundingBox": [1134, 1948, 1253, 1948, 1255, 2041,
+        1137, 2041], "words": [{"text": "$9.5", "boundingBox": [1134, 1948, 1252,
+        1948, 1252, 2041, 1134, 2041], "confidence": 0.972}], "appearance": {"style":
+        {"name": "other", "confidence": 0.878}}}, {"text": "---", "boundingBox": [218,
+        2143, 291, 2140, 292, 2158, 218, 2161], "words": [{"text": "---", "boundingBox":
+        [220, 2143, 291, 2141, 292, 2158, 219, 2161], "confidence": 0.802}], "appearance":
+        {"style": {"name": "other", "confidence": 0.878}}}, {"text": "-----", "boundingBox":
+        [277, 2142, 461, 2136, 461, 2155, 278, 2161], "words": [{"text": "-----",
+        "boundingBox": [287, 2142, 434, 2137, 435, 2156, 288, 2161], "confidence":
+        0.741}], "appearance": {"style": {"name": "handwriting", "confidence": 0.357}}},
+        {"text": "--", "boundingBox": [1252, 2129, 1319, 2127, 1320, 2143, 1252, 2146],
+        "words": [{"text": "--", "boundingBox": [1261, 2130, 1303, 2128, 1302, 2145,
+        1260, 2145], "confidence": 0.952}], "appearance": {"style": {"name": "other",
+        "confidence": 0.878}}}, {"text": "Sub-Total", "boundingBox": [434, 2232, 768,
+        2222, 770, 2312, 437, 2322], "words": [{"text": "Sub-Total", "boundingBox":
+        [434, 2234, 769, 2222, 770, 2313, 442, 2322], "confidence": 0.837}], "appearance":
+        {"style": {"name": "other", "confidence": 0.878}}}, {"text": "$ 11.70", "boundingBox":
+        [1082, 2228, 1309, 2228, 1309, 2313, 1084, 2312], "words": [{"text": "$",
+        "boundingBox": [1082, 2228, 1120, 2228, 1120, 2313, 1082, 2312], "confidence":
+        0.994}, {"text": "11.70", "boundingBox": [1137, 2228, 1306, 2228, 1306, 2313,
+        1137, 2313], "confidence": 0.995}], "appearance": {"style": {"name": "other",
+        "confidence": 0.878}}}, {"text": "Tax", "boundingBox": [433, 2367, 563, 2363,
+        565, 2458, 435, 2462], "words": [{"text": "Tax", "boundingBox": [433, 2367,
+        559, 2363, 562, 2458, 435, 2462], "confidence": 0.994}], "appearance": {"style":
+        {"name": "other", "confidence": 0.878}}}, {"text": "$ 1.17", "boundingBox":
+        [1125, 2353, 1306, 2362, 1304, 2451, 1121, 2444], "words": [{"text": "$",
+        "boundingBox": [1125, 2353, 1166, 2355, 1162, 2446, 1121, 2444], "confidence":
+        0.994}, {"text": "1.17", "boundingBox": [1184, 2356, 1307, 2361, 1303, 2452,
+        1180, 2446], "confidence": 0.988}], "appearance": {"style": {"name": "other",
+        "confidence": 0.878}}}, {"text": "Tip", "boundingBox": [439, 2502, 545, 2506,
+        541, 2606, 435, 2602], "words": [{"text": "Tip", "boundingBox": [438, 2502,
+        545, 2506, 541, 2606, 435, 2602], "confidence": 0.994}], "appearance": {"style":
+        {"name": "other", "confidence": 0.878}}}, {"text": "$ 1.63", "boundingBox":
+        [1038, 2483, 1271, 2489, 1269, 2583, 1032, 2577], "words": [{"text": "$",
+        "boundingBox": [1034, 2483, 1064, 2483, 1062, 2578, 1032, 2577], "confidence":
+        0.997}, {"text": "1.63", "boundingBox": [1083, 2483, 1268, 2488, 1266, 2583,
+        1081, 2578], "confidence": 0.748}], "appearance": {"style": {"name": "handwriting",
+        "confidence": 0.531}}}, {"text": "Total", "boundingBox": [431, 2651, 607,
+        2646, 610, 2739, 435, 2745], "words": [{"text": "Total", "boundingBox": [431,
+        2651, 605, 2646, 608, 2739, 433, 2745], "confidence": 0.979}], "appearance":
+        {"style": {"name": "other", "confidence": 0.878}}}, {"text": "$14.50", "boundingBox":
+        [1034, 2623, 1381, 2642, 1374, 2757, 1027, 2740], "words": [{"text": "$14.50",
+        "boundingBox": [1033, 2623, 1374, 2641, 1368, 2757, 1027, 2740], "confidence":
+        0.781}], "appearance": {"style": {"name": "handwriting", "confidence": 0.491}}}]}],
+        "documentResults": [{"docType": "prebuilt:receipt", "pageRange": [1, 1], "fields":
+        {"Items": {"type": "array", "valueArray": [{"type": "object", "valueObject":
+        {"Name": {"type": "string", "valueString": "Cappuccino", "text": "Cappuccino",
+        "boundingBox": [304, 1585, 658, 1598, 657, 1688, 302, 1679], "page": 1, "confidence":
+        0.558, "elements": ["#/readResults/0/lines/7/words/1"]}, "Quantity": {"type":
+        "number", "valueNumber": 1, "text": "1", "boundingBox": [244, 1581, 286, 1584,
+        283, 1678, 241, 1675], "page": 1, "confidence": 0.936, "elements": ["#/readResults/0/lines/7/words/0"]},
+        "TotalPrice": {"type": "number", "valueNumber": 2.2, "text": "$2.20", "boundingBox":
+        [1106, 1579, 1260, 1574, 1263, 1656, 1108, 1662], "page": 1, "confidence":
+        0.972, "elements": ["#/readResults/0/lines/8/words/0"]}}}, {"type": "object",
+        "valueObject": {"Name": {"type": "string", "valueString": "BACON & EGGS",
+        "text": "BACON & EGGS", "boundingBox": [293, 1839, 737, 1839, 737, 1924, 293,
+        1924], "page": 1, "confidence": 0.906, "elements": ["#/readResults/0/lines/9/words/1",
+        "#/readResults/0/lines/9/words/2", "#/readResults/0/lines/9/words/3"]}, "Quantity":
+        {"type": "number", "valueNumber": 1, "text": "1", "boundingBox": [227, 1839,
+        275, 1839, 275, 1924, 226, 1924], "page": 1, "confidence": 0.936, "elements":
+        ["#/readResults/0/lines/9/words/0"]}, "TotalPrice": {"type": "number", "valueNumber":
+        9.5, "text": "$9.5", "boundingBox": [1134, 1948, 1252, 1948, 1252, 2041, 1134,
+        2041], "page": 1, "confidence": 0.977, "elements": ["#/readResults/0/lines/11/words/0"]}}}]},
+        "MerchantAddress": {"type": "string", "valueString": "123 Main Street Redmond,
+        WA 98052", "text": "123 Main Street Redmond, WA 98052", "boundingBox": [298.6,
+        675.8, 844.8, 782.2, 810.6, 957.9, 264.4, 851.5], "page": 1, "confidence":
+        0.974, "elements": ["#/readResults/0/lines/2/words/0", "#/readResults/0/lines/2/words/1",
+        "#/readResults/0/lines/2/words/2", "#/readResults/0/lines/3/words/0", "#/readResults/0/lines/3/words/1",
+        "#/readResults/0/lines/3/words/2"]}, "MerchantName": {"type": "string", "valueString":
+        "Contoso", "text": "Contoso", "boundingBox": [308, 570, 515, 627, 500, 685,
+        290, 634], "page": 1, "confidence": 0.974, "elements": ["#/readResults/0/lines/0/words/0"]},
+        "MerchantPhoneNumber": {"type": "phoneNumber", "valuePhoneNumber": "+19876543210",
+        "text": "987-654-3210", "boundingBox": [274, 1000, 651, 1049, 643, 1125, 268,
+        1076], "page": 1, "confidence": 0.987, "elements": ["#/readResults/0/lines/4/words/0"]},
+        "ReceiptType": {"type": "string", "valueString": "Itemized", "confidence":
+        0.99}, "Subtotal": {"type": "number", "valueNumber": 11.7, "text": "$ 11.70",
+        "boundingBox": [1082, 2225.1, 1307.1, 2228, 1306, 2315.4, 1080.9, 2312.5],
+        "page": 1, "confidence": 0.967, "elements": ["#/readResults/0/lines/16/words/0",
+        "#/readResults/0/lines/16/words/1"]}, "Tax": {"type": "number", "valueNumber":
+        1.17, "text": "$ 1.17", "boundingBox": [1125, 2352.1, 1307.4, 2361, 1303,
+        2452.9, 1120.6, 2444], "page": 1, "confidence": 0.985, "elements": ["#/readResults/0/lines/18/words/0",
+        "#/readResults/0/lines/18/words/1"]}, "Tip": {"type": "number", "valueNumber":
+        1.63, "text": "$ 1.63", "boundingBox": [1034, 2481.7, 1268.6, 2488, 1266,
+        2583.5, 1031.5, 2577.2], "page": 1, "confidence": 0.941, "elements": ["#/readResults/0/lines/20/words/0",
+        "#/readResults/0/lines/20/words/1"]}, "Total": {"type": "number", "valueNumber":
+        14.5, "text": "$14.50", "boundingBox": [1033, 2623, 1374, 2641, 1368, 2757,
+        1027, 2740], "page": 1, "confidence": 0.978, "elements": ["#/readResults/0/lines/22/words/0"]},
+        "TransactionDate": {"type": "date", "valueDate": "2019-06-10", "text": "6/10/2019",
+        "boundingBox": [259, 1224, 514, 1247, 509, 1331, 255, 1312], "page": 1, "confidence":
+        0.987, "elements": ["#/readResults/0/lines/5/words/0"]}, "TransactionTime":
+        {"type": "time", "valueTime": "13:59:00", "text": "13:59", "boundingBox":
+        [531, 1248, 681, 1262, 675, 1341, 526, 1333], "page": 1, "confidence": 0.985,
+        "elements": ["#/readResults/0/lines/5/words/1"]}}}]}}'
     headers:
       apim-request-id:
-      - 3cec6114-4945-4079-ac25-4c580d2d7548
+      - 9cb2e505-24a9-4616-89f0-2ca8f4d06323
       content-length:
-      - '8501'
+      - '10449'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 Nov 2020 19:13:16 GMT
+      - Fri, 19 Mar 2021 21:51:08 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '17'
+      - '66'
     status:
       code: 200
       message: OK

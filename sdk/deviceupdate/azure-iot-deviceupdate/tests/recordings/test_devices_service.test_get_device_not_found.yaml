@@ -1,0 +1,31 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/devices/foo
+  response:
+    body:
+      string: '{"type":"https://tools.ietf.org/html/rfc7231#section-6.5.4","title":"Not
+        Found","status":404,"traceId":"00-b1ea1c0b711c0b49929c690e21b3c1da-f0960fd372e63243-00"}'
+    headers:
+      content-length:
+      - '161'
+      content-type:
+      - application/problem+json; charset=utf-8
+      date:
+      - Wed, 03 Mar 2021 18:10:20 GMT
+      traceparent:
+      - 00-b1ea1c0b711c0b49929c690e21b3c1da-e50af4d51122fc4c-00
+    status:
+      code: 404
+      message: Not Found
+version: 1

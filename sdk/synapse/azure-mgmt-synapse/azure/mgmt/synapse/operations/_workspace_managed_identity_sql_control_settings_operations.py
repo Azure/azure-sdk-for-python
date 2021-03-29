@@ -11,13 +11,15 @@ import warnings
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -69,7 +71,7 @@ class WorkspaceManagedIdentitySqlControlSettingsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         # Construct URL
@@ -95,7 +97,7 @@ class WorkspaceManagedIdentitySqlControlSettingsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorContract, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagedIdentitySqlControlSettingsModel', pipeline_response)
@@ -106,7 +108,7 @@ class WorkspaceManagedIdentitySqlControlSettingsOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/managedIdentitySqlControlSettings/default'}  # type: ignore
 
-    def create_or_update(
+    def _create_or_update_initial(
         self,
         resource_group_name,  # type: str
         workspace_name,  # type: str
@@ -114,32 +116,17 @@ class WorkspaceManagedIdentitySqlControlSettingsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Optional["_models.ManagedIdentitySqlControlSettingsModel"]
-        """Create or update Managed Identity Sql Control Settings.
-
-        Create or update Managed Identity Sql Control Settings.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: The name of the workspace.
-        :type workspace_name: str
-        :param managed_identity_sql_control_settings: Managed Identity Sql Control Settings.
-        :type managed_identity_sql_control_settings: ~azure.mgmt.synapse.models.ManagedIdentitySqlControlSettingsModel
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ManagedIdentitySqlControlSettingsModel, or the result of cls(response)
-        :rtype: ~azure.mgmt.synapse.models.ManagedIdentitySqlControlSettingsModel or None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ManagedIdentitySqlControlSettingsModel"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2021-03-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
-        url = self.create_or_update.metadata['url']  # type: ignore
+        url = self._create_or_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -165,7 +152,7 @@ class WorkspaceManagedIdentitySqlControlSettingsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorContract, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -176,4 +163,78 @@ class WorkspaceManagedIdentitySqlControlSettingsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/managedIdentitySqlControlSettings/default'}  # type: ignore
+    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/managedIdentitySqlControlSettings/default'}  # type: ignore
+
+    def begin_create_or_update(
+        self,
+        resource_group_name,  # type: str
+        workspace_name,  # type: str
+        managed_identity_sql_control_settings,  # type: "_models.ManagedIdentitySqlControlSettingsModel"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller["_models.ManagedIdentitySqlControlSettingsModel"]
+        """Create or update Managed Identity Sql Control Settings.
+
+        Create or update Managed Identity Sql Control Settings.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: The name of the workspace.
+        :type workspace_name: str
+        :param managed_identity_sql_control_settings: Managed Identity Sql Control Settings.
+        :type managed_identity_sql_control_settings: ~azure.mgmt.synapse.models.ManagedIdentitySqlControlSettingsModel
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of LROPoller that returns either ManagedIdentitySqlControlSettingsModel or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.synapse.models.ManagedIdentitySqlControlSettingsModel]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedIdentitySqlControlSettingsModel"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                managed_identity_sql_control_settings=managed_identity_sql_control_settings,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('ManagedIdentitySqlControlSettingsModel', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/managedIdentitySqlControlSettings/default'}  # type: ignore

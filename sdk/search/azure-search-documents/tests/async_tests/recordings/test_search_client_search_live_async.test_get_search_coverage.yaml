@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search6a118e2.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
+    uri: https://search6a118e2.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"value":[{"@search.score":2.245087,"hotelId":"10","hotelName":"Countryside
@@ -75,7 +75,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search6a118e2.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
+    url: https://search6a118e2.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
 - request:
     body: '{"minimumCoverage": 50.0, "search": "hotel"}'
     headers:
@@ -88,7 +88,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search6a118e2.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
+    uri: https://search6a118e2.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@search.coverage":100.0,"value":[{"@search.score":2.245087,"hotelId":"10","hotelName":"Countryside
@@ -152,5 +152,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search6a118e2.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
+    url: https://search6a118e2.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
 version: 1

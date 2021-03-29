@@ -779,6 +779,23 @@ class NatGatewaySkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     STANDARD = "Standard"
 
+class NetworkInterfaceMigrationPhase(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Migration phase of Network Interface resource.
+    """
+
+    NONE = "None"
+    PREPARE = "Prepare"
+    COMMIT = "Commit"
+    ABORT = "Abort"
+    COMMITTED = "Committed"
+
+class NetworkInterfaceNicType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Type of Network Interface resource.
+    """
+
+    STANDARD = "Standard"
+    ELASTIC = "Elastic"
+
 class NetworkOperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Status of the Azure async operation.
     """
@@ -936,6 +953,16 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UPDATING = "Updating"
     DELETING = "Deleting"
     FAILED = "Failed"
+
+class PublicIpAddressMigrationPhase(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Migration phase of Public IP Address.
+    """
+
+    NONE = "None"
+    PREPARE = "Prepare"
+    COMMIT = "Commit"
+    ABORT = "Abort"
+    COMMITTED = "Committed"
 
 class PublicIPAddressSkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Name of a public IP address SKU.
@@ -1182,6 +1209,20 @@ class VirtualNetworkPeeringState(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     INITIATED = "Initiated"
     CONNECTED = "Connected"
     DISCONNECTED = "Disconnected"
+
+class VirtualNetworkPrivateEndpointNetworkPolicies(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Enable or Disable apply network policies on private end point in the subnet.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+class VirtualNetworkPrivateLinkServiceNetworkPolicies(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Enable or Disable apply network policies on private link service in the subnet.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 class VirtualWanSecurityProviderType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The virtual wan security provider type.

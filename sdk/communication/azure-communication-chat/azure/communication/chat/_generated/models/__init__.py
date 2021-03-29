@@ -7,9 +7,9 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import AddChatParticipantsErrors
     from ._models_py3 import AddChatParticipantsRequest
     from ._models_py3 import AddChatParticipantsResult
+    from ._models_py3 import ChatError
     from ._models_py3 import ChatMessage
     from ._models_py3 import ChatMessageContent
     from ._models_py3 import ChatMessageReadReceipt
@@ -17,23 +17,25 @@ try:
     from ._models_py3 import ChatMessagesCollection
     from ._models_py3 import ChatParticipant
     from ._models_py3 import ChatParticipantsCollection
-    from ._models_py3 import ChatThread
-    from ._models_py3 import ChatThreadInfo
-    from ._models_py3 import ChatThreadsInfoCollection
-    from ._models_py3 import CommunicationError
+    from ._models_py3 import ChatThreadItem
+    from ._models_py3 import ChatThreadProperties
+    from ._models_py3 import ChatThreadsItemCollection
     from ._models_py3 import CommunicationErrorResponse
-    from ._models_py3 import CreateChatThreadErrors
+    from ._models_py3 import CommunicationIdentifierModel
+    from ._models_py3 import CommunicationUserIdentifierModel
     from ._models_py3 import CreateChatThreadRequest
     from ._models_py3 import CreateChatThreadResult
+    from ._models_py3 import MicrosoftTeamsUserIdentifierModel
+    from ._models_py3 import PhoneNumberIdentifierModel
     from ._models_py3 import SendChatMessageRequest
     from ._models_py3 import SendChatMessageResult
     from ._models_py3 import SendReadReceiptRequest
     from ._models_py3 import UpdateChatMessageRequest
     from ._models_py3 import UpdateChatThreadRequest
 except (SyntaxError, ImportError):
-    from ._models import AddChatParticipantsErrors  # type: ignore
     from ._models import AddChatParticipantsRequest  # type: ignore
     from ._models import AddChatParticipantsResult  # type: ignore
+    from ._models import ChatError  # type: ignore
     from ._models import ChatMessage  # type: ignore
     from ._models import ChatMessageContent  # type: ignore
     from ._models import ChatMessageReadReceipt  # type: ignore
@@ -41,14 +43,16 @@ except (SyntaxError, ImportError):
     from ._models import ChatMessagesCollection  # type: ignore
     from ._models import ChatParticipant  # type: ignore
     from ._models import ChatParticipantsCollection  # type: ignore
-    from ._models import ChatThread  # type: ignore
-    from ._models import ChatThreadInfo  # type: ignore
-    from ._models import ChatThreadsInfoCollection  # type: ignore
-    from ._models import CommunicationError  # type: ignore
+    from ._models import ChatThreadItem  # type: ignore
+    from ._models import ChatThreadProperties  # type: ignore
+    from ._models import ChatThreadsItemCollection  # type: ignore
     from ._models import CommunicationErrorResponse  # type: ignore
-    from ._models import CreateChatThreadErrors  # type: ignore
+    from ._models import CommunicationIdentifierModel  # type: ignore
+    from ._models import CommunicationUserIdentifierModel  # type: ignore
     from ._models import CreateChatThreadRequest  # type: ignore
     from ._models import CreateChatThreadResult  # type: ignore
+    from ._models import MicrosoftTeamsUserIdentifierModel  # type: ignore
+    from ._models import PhoneNumberIdentifierModel  # type: ignore
     from ._models import SendChatMessageRequest  # type: ignore
     from ._models import SendChatMessageResult  # type: ignore
     from ._models import SendReadReceiptRequest  # type: ignore
@@ -57,12 +61,13 @@ except (SyntaxError, ImportError):
 
 from ._azure_communication_chat_service_enums import (
     ChatMessageType,
+    CommunicationCloudEnvironmentModel,
 )
 
 __all__ = [
-    'AddChatParticipantsErrors',
     'AddChatParticipantsRequest',
     'AddChatParticipantsResult',
+    'ChatError',
     'ChatMessage',
     'ChatMessageContent',
     'ChatMessageReadReceipt',
@@ -70,18 +75,21 @@ __all__ = [
     'ChatMessagesCollection',
     'ChatParticipant',
     'ChatParticipantsCollection',
-    'ChatThread',
-    'ChatThreadInfo',
-    'ChatThreadsInfoCollection',
-    'CommunicationError',
+    'ChatThreadItem',
+    'ChatThreadProperties',
+    'ChatThreadsItemCollection',
     'CommunicationErrorResponse',
-    'CreateChatThreadErrors',
+    'CommunicationIdentifierModel',
+    'CommunicationUserIdentifierModel',
     'CreateChatThreadRequest',
     'CreateChatThreadResult',
+    'MicrosoftTeamsUserIdentifierModel',
+    'PhoneNumberIdentifierModel',
     'SendChatMessageRequest',
     'SendChatMessageResult',
     'SendReadReceiptRequest',
     'UpdateChatMessageRequest',
     'UpdateChatThreadRequest',
     'ChatMessageType',
+    'CommunicationCloudEnvironmentModel',
 ]

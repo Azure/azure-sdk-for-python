@@ -14,18 +14,26 @@ from datetime import datetime, timedelta
 from msrest.serialization import UTC
 import datetime as dt
 
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
+
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 
 from azure_devtools.scenario_tests import ReplayableTest
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
-from azure.eventgrid import EventGridPublisherClient, CloudEvent, EventGridEvent, generate_sas
+from azure.core.messaging import CloudEvent
+from azure.core.serialization import NULL
+from azure.eventgrid import EventGridPublisherClient, EventGridEvent, generate_sas
+from azure.eventgrid._helpers import _cloud_event_to_generated
 
 from eventgrid_preparer import (
     CachedEventGridTopicPreparer
 )
 
 class EventGridPublisherClientTests(AzureMgmtTestCase):
-    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['aeg-sas-key']
+    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['aeg-sas-key', 'aeg-sas-token']
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
@@ -39,6 +47,21 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 data_version="2.0"
                 )
         client.send(eg_event)
+
+    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
+    @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
+    def test_send_event_grid_event_fails_without_full_url(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
+        parsed_url = urlparse(eventgrid_topic_endpoint)
+        client = EventGridPublisherClient(parsed_url.netloc, akc_credential)
+        eg_event = EventGridEvent(
+                subject="sample", 
+                data={"sample": "eventgridevent"}, 
+                event_type="Sample.EventGrid.Event",
+                data_version="2.0"
+                )
+        with pytest.raises(ValueError):
+            client.send(eg_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
@@ -132,6 +155,24 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 )
         client.send(cloud_event)
 
+    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/16993")
+    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
+    @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
+    def test_send_cloud_event_data_NULL(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
+        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
+        cloud_event = CloudEvent(
+                source = "http://samplesource.dev",
+                data = NULL,
+                type="Sample.Cloud.Event"
+                )
+        
+        def callback(request):
+            req = json.loads(request.http_request.body)
+            assert req[0].get("data") is None
+
+        client.send(cloud_event, raw_request_hook=callback)
+
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
     def test_send_cloud_event_data_base64_using_data(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
@@ -150,27 +191,8 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
 
         client.send(cloud_event, raw_response_hook=callback)
 
-    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
-    @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
-    def test_send_cloud_event_bytes_using_data_base64(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
-        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
-        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
-        cloud_event = CloudEvent(
-                source = "http://samplesource.dev",
-                data_base64 = b'cloudevent',
-                type="Sample.Cloud.Event"
-                )
-
-        def callback(request):
-            req = json.loads(request.http_request.body)
-            assert req[0].get("data_base64") is not None
-            assert req[0].get("data") is None
-
-        client.send(cloud_event, raw_response_hook=callback)
-
-
     def test_send_cloud_event_fails_on_providing_data_and_b64(self):
-        with pytest.raises(ValueError, match="data and data_base64 cannot be provided at the same time*"):
+        with pytest.raises(ValueError, match="Unexpected keyword arguments data_base64.*"):
             cloud_event = CloudEvent(
                     source = "http://samplesource.dev",
                     data_base64 = b'cloudevent',
@@ -236,15 +258,15 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 data = "cloudevent",
                 type="Sample.Cloud.Event",
                 extensions={
-                    'reason_code':204,
+                    'reasoncode':204,
                     'extension':'hello'
                     }
                 )
         client.send([cloud_event])
-        internal = cloud_event._to_generated().serialize()
-        assert 'reason_code' in internal
+        internal = _cloud_event_to_generated(cloud_event).serialize()
+        assert 'reasoncode' in internal
         assert 'extension' in internal
-        assert internal['reason_code'] == 204
+        assert internal['reasoncode'] == 204
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')

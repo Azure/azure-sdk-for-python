@@ -1,7 +1,7 @@
 {
   "meta": {
     "autorest_options": {
-      "version": "3.0.6272",
+      "version": "3.0.6369",
       "use": "@autorest/python@5.4.3",
       "python": "",
       "python-mode": "update",

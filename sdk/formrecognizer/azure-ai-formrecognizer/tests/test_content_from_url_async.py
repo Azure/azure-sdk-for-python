@@ -278,7 +278,8 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         async with client:
             poller = await client.begin_recognize_content_from_url(self.form_url_jpg, language="de")
             assert 'de' == poller._polling_method._initial_response.http_response.request.query['language']
-            await poller.wait()
+            result = await poller.result()
+            assert result
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

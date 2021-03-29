@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import os
 from azure.core.credentials import AccessToken
 from testcase import FormRecognizerTest
 
@@ -27,9 +28,9 @@ class AsyncFormRecognizerTest(FormRecognizerTest):
         if self.is_live:
             from azure.identity.aio import ClientSecretCredential
             return ClientSecretCredential(
-                self.get_settings_value("TENANT_ID"),
-                self.get_settings_value("CLIENT_ID"),
-                self.get_settings_value("CLIENT_SECRET"),
+                os.getenv("FORMRECOGNIZER_TENANT_ID"),
+                os.getenv("FORMRECOGNIZER_CLIENT_ID"),
+                os.getenv("FORMRECOGNIZER_CLIENT_SECRET"),
             )
         return self.generate_fake_token()
 

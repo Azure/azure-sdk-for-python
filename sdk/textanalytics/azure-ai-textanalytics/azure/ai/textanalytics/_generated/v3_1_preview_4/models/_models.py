@@ -801,9 +801,8 @@ class EntitiesTaskParameters(msrest.serialization.Model):
     :param model_version:
     :type model_version: str
     :param string_index_type:  Possible values include: "TextElements_v8", "UnicodeCodePoint",
-     "Utf16CodeUnit". Default value: "TextElements_v8".
-    :type string_index_type: str or
-     ~azure.ai.textanalytics.v3_1_preview_4.models.StringIndexTypeResponse
+     "Utf16CodeUnit".
+    :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_4.models.StringIndexType
     """
 
     _attribute_map = {
@@ -817,7 +816,7 @@ class EntitiesTaskParameters(msrest.serialization.Model):
     ):
         super(EntitiesTaskParameters, self).__init__(**kwargs)
         self.model_version = kwargs.get('model_version', "latest")
-        self.string_index_type = kwargs.get('string_index_type', "TextElements_v8")
+        self.string_index_type = kwargs.get('string_index_type', None)
 
 
 class Entity(msrest.serialization.Model):
@@ -936,9 +935,8 @@ class EntityLinkingTaskParameters(msrest.serialization.Model):
     :param model_version:
     :type model_version: str
     :param string_index_type:  Possible values include: "TextElements_v8", "UnicodeCodePoint",
-     "Utf16CodeUnit". Default value: "TextElements_v8".
-    :type string_index_type: str or
-     ~azure.ai.textanalytics.v3_1_preview_4.models.StringIndexTypeResponse
+     "Utf16CodeUnit".
+    :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_4.models.StringIndexType
     """
 
     _attribute_map = {
@@ -952,7 +950,7 @@ class EntityLinkingTaskParameters(msrest.serialization.Model):
     ):
         super(EntityLinkingTaskParameters, self).__init__(**kwargs)
         self.model_version = kwargs.get('model_version', "latest")
-        self.string_index_type = kwargs.get('string_index_type', "TextElements_v8")
+        self.string_index_type = kwargs.get('string_index_type', None)
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -1792,9 +1790,8 @@ class PiiTaskParameters(msrest.serialization.Model):
     :param pii_categories: (Optional) describes the PII categories to return.
     :type pii_categories: list[str or ~azure.ai.textanalytics.v3_1_preview_4.models.PiiCategory]
     :param string_index_type:  Possible values include: "TextElements_v8", "UnicodeCodePoint",
-     "Utf16CodeUnit". Default value: "TextElements_v8".
-    :type string_index_type: str or
-     ~azure.ai.textanalytics.v3_1_preview_4.models.StringIndexTypeResponse
+     "Utf16CodeUnit".
+    :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_4.models.StringIndexType
     """
 
     _validation = {
@@ -1804,7 +1801,7 @@ class PiiTaskParameters(msrest.serialization.Model):
     _attribute_map = {
         'domain': {'key': 'domain', 'type': 'str'},
         'model_version': {'key': 'model-version', 'type': 'str'},
-        'pii_categories': {'key': 'piiCategories', 'type': '[str]'},
+        'pii_categories': {'key': 'pii-categories', 'type': '[str]'},
         'string_index_type': {'key': 'stringIndexType', 'type': 'str'},
     }
 
@@ -1816,7 +1813,7 @@ class PiiTaskParameters(msrest.serialization.Model):
         self.domain = kwargs.get('domain', "none")
         self.model_version = kwargs.get('model_version', "latest")
         self.pii_categories = kwargs.get('pii_categories', None)
-        self.string_index_type = kwargs.get('string_index_type', "TextElements_v8")
+        self.string_index_type = kwargs.get('string_index_type', None)
 
 
 class RequestStatistics(msrest.serialization.Model):

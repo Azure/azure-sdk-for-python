@@ -16,7 +16,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search53532449.search.windows.net/synonymmaps?api-version=2020-06-30
+    uri: https://search53532449.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search53532449.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D84B8A002FB8F1\"","name":"test-syn-map","format":"solr","synonyms":"USA,
@@ -37,7 +37,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://search53532449.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
+      - https://search53532449.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30-Preview
       odata-version:
       - '4.0'
       pragma:
@@ -70,7 +70,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://search53532449.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
+    uri: https://search53532449.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search53532449.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D84B8A004A71C8\"","name":"test-syn-map","format":"solr","synonyms":"Washington,
@@ -126,7 +126,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://search53532449.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
+    uri: https://search53532449.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"error":{"code":"","message":"The precondition given in one of the

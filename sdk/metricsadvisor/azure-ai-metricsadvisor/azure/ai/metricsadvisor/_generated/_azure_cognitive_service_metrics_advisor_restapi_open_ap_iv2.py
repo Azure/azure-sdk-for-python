@@ -15,6 +15,9 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
+    from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+
 from ._configuration import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2Configuration
 from .operations import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin
 from . import models
@@ -23,18 +26,21 @@ from . import models
 class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2(AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin):
     """Azure Cognitive Service Metrics Advisor REST API (OpenAPI v2).
 
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example: https://:code:`<resource-name>`.cognitiveservices.azure.com).
     :type endpoint: str
     """
 
     def __init__(
         self,
+        credential,  # type: "TokenCredential"
         endpoint,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         base_url = '{endpoint}/metricsadvisor/v1.0'
-        self._config = AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2Configuration(endpoint, **kwargs)
+        self._config = AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2Configuration(credential, endpoint, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -42,6 +48,24 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2(AzureCognitiveServiceM
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
+
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        """
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     def close(self):
         # type: () -> None
