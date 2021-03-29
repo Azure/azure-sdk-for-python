@@ -599,7 +599,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
                 :caption: Get blob service client from container object.
         """
         from ._blob_service_client import BlobServiceClient
-        if not isinstance(self._pipeline._transport, TransportWrapper):
+        if not isinstance(self._pipeline._transport, TransportWrapper): # pylint: disable = protected-access
             _pipeline = Pipeline(
                 transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
                 policies=self._pipeline._impl_policies # pylint: disable = protected-access
