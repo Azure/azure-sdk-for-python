@@ -29,60 +29,17 @@ parameters:
   - name: BuildDocs
     type: boolean
     default: true
-  - name: SkipPythonVersion
-    type: string
-    default: ''
-  - name: TestMatrix
-    type: object
-    default:
-      Linux_Python27:
-        Pool: azsdk-pool-mms-ubuntu-1804-general
-        OSVmImage: MMSUbuntu18.04
-        PythonVersion: '2.7'
-        CoverageArg: '--disablecov'
-        RunForPR: true
-      Linux_Python35:
-        Pool: azsdk-pool-mms-ubuntu-1804-general
-        OSVmImage: MMSUbuntu18.04
-        PythonVersion: '3.5'
-        CoverageArg: '--disablecov'
-        RunForPR: false
-      Linux_Python38:
-        Pool: azsdk-pool-mms-ubuntu-1804-general
-        OSVmImage: MMSUbuntu18.04
-        PythonVersion: '3.8'
-        CoverageArg: '--disablecov'
-        RunForPR: true
-      Windows_Python35:
-        Pool: azsdk-pool-mms-win-2019-general
-        OSVmImage: MMS2019
-        PythonVersion: '3.5'
-        CoverageArg: '--disablecov'
-        RunForPR: true
-      MacOS_Python27:
-        Pool: Azure Pipelines
-        OSVmImage: 'macOS-10.15'
-        PythonVersion: '2.7'
-        CoverageArg: '--disablecov'
-        RunForPR: false
-      Linux_pypy3:
-        Pool: azsdk-pool-mms-ubuntu-1804-general
-        OSVmImage: MMSUbuntu18.04
-        PythonVersion: 'pypy3'
-        CoverageArg: '--disablecov'
-        RunForPR: false
-      Linux_Python39:
-        Pool: azsdk-pool-mms-ubuntu-1804-general
-        OSVmImage: MMSUbuntu18.04
-        PythonVersion: '3.9'
-        CoverageArg: ''
-        RunForPR: true
-  - name: AdditionalTestMatrix
-    type: object
-    default: []
   - name: DevFeedName
     type: string
     default: 'public/azure-sdk-for-python'
+  - name: MatrixConfigs
+    type: object
+  - name: MatrixFilters
+    type: object
+    default: []
+  - name: MatrixReplace
+    type: object
+    default: []
 
 jobs:
   - job: 'Build'
@@ -135,83 +92,22 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
 
-  - job: 'Test'
-    condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
-    timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-    variables:
-    - template: ../variables/globals.yml
-    - name: InjectedPackages
-      value: ${{ parameters.InjectedPackages }}
-
-    dependsOn:
-       - 'Build'
-
-    strategy:
-      matrix:
-        ${{ each matrixEntry in parameters.TestMatrix }}:
-          ${{ if or(eq(matrixEntry.value.RunForPR, 'true'), ne(variables['Build.Reason'], 'PullRequest')) }}:
-            # Skip python version if any specific service has opted out
-            ${{ if ne(parameters.SkipPythonVersion, matrixEntry.value.PythonVersion) }}:
-              ${{ matrixEntry.key }}:
-                ${{ insert }}: ${{ matrixEntry.value }}
-
-        ${{ each matrixEntry in parameters.AdditionalTestMatrix }}:
-          ${{ if or(eq(matrixEntry.value.RunForPR, 'true'), ne(variables['Build.Reason'], 'PullRequest')) }}:
-            ${{ matrixEntry.key }}:
-              ${{ insert }}: ${{ matrixEntry.value }}
-
-    pool:
-      name: $(Pool)
-      vmImage: $(OSVmImage)
-
-    steps:
-    - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
-      parameters:
-        AgentImage: $(OSVmImage)
-
-    - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
-      parameters:
-        PackageName: "azure-template"
-        ServiceDirectory: "template"
-        TestPipeline: ${{ parameters.TestPipeline }}
-
-    - pwsh: |
-        $toxenvvar = "whl,sdist"
-        if ('$(System.TeamProject)' -eq 'internal') {
-          $toxenvvar = "whl,sdist,depends,latestdependency,mindependency"
-        }
-
-        # ensure that the variable is unset. if it isn't, use the value discovered there
-        if ('$(Run.ToxCustomEnvs)' -ne ('$' + '(Run.ToxCustomEnvs)'))
-        {
-          $toxenvvar = '$(Run.ToxCustomEnvs)'
-        }
-
-        echo "##vso[task.setvariable variable=toxenv]$toxenvvar"
-      displayName: "Set Tox Environment"
-
-    - template: ../steps/build-test.yml
-      parameters:
+  - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+    parameters:
+      JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
+      MatrixConfigs: ${{ parameters.MatrixConfigs }}
+      MatrixFilters: ${{ parameters.MatrixFilters }}
+      MatrixReplace: ${{ parameters.MatrixReplace }}
+      CloudConfig:
+        Cloud: Public
+      AdditionalParameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestPipeline: ${{ parameters.TestPipeline }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
-        OSVmImage: $(OSVmImage)
-        CoverageArg: $(CoverageArg)
-        PythonVersion: $(PythonVersion)
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        ToxTestEnv: $(toxenv)
+        TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
-        InjectedPackages: $(InjectedPackages)
-        BeforeTestSteps:
-          - task: DownloadPipelineArtifact@2
-            inputs:
-              artifactName: 'packages' 
-              targetPath: $(Build.ArtifactStagingDirectory)
-
-          - template: ../steps/set-dev-build.yml
-            parameters:
-              ServiceDirectory: ${{ parameters.ServiceDirectory }}
-              BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        InjectedPackages: ${{ parameters.InjectedPackages }}
 
   - job: 'RunRegression'
     condition: and(succeededOrFailed(), or(eq(variables['Run.Regression'], 'true'), and(eq(variables['Build.Reason'], 'Schedule'), eq(variables['System.TeamProject'],'internal'))))

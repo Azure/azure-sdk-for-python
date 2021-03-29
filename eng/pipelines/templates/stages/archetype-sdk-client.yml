@@ -23,18 +23,35 @@ parameters:
 - name: TargetDocRepoName
   type: string
   default: azure-docs-sdk-python
-- name: SkipPythonVersion
-  type: string
-  default: ''
-- name: AdditionalTestMatrix
-  type: object
-  default: []
 - name: DevFeedName
   type: string
   default: public/azure-sdk-for-python
 - name: BuildTargetingString
   type: string
   default: azure-*
+- name: MatrixConfigs
+  type: object
+  default:
+    - Name: Python_ci_test_base
+      Path: eng/pipelines/templates/stages/platform-matrix.json
+      Selection: sparse
+      GenerateVMJobs: true
+- name: PRMatrixConfigs
+  type: object
+  default:
+    - Name: Python_ci_test_pr
+      Path: eng/pipelines/templates/stages/pr.platform-matrix.json
+      Selection: sparse
+      GenerateVMJobs: true
+- name: AdditionalMatrixConfigs
+  type: object
+  default: []
+- name: MatrixFilters
+  type: object
+  default: []
+- name: MatrixReplace
+  type: object
+  default: []
 
 stages:
   - stage: Build
@@ -48,10 +65,19 @@ stages:
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         BuildDocs: ${{ parameters.BuildDocs }}
         InjectedPackages: ${{ parameters.InjectedPackages }}
-        SkipPythonVersion: ${{ parameters.SkipPythonVersion }}
-        AdditionalTestMatrix: ${{ parameters.AdditionalTestMatrix }}
         DevFeedName: ${{ parameters.DevFeedName }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        MatrixConfigs:
+          - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+            - ${{ each config in parameters.MatrixConfigs }}:
+              -  ${{ config }}
+          - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+            - ${{ each config in parameters.PRMatrixConfigs }}:
+              -  ${{ config }}
+          - ${{ each config in parameters.AdditionalMatrixConfigs }}:
+            -  ${{ config }}
+        MatrixFilters: ${{ parameters.MatrixFilters }}
+        MatrixReplace: ${{ parameters.MatrixReplace }}
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
