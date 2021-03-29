@@ -157,6 +157,24 @@ class BlobServiceSamplesAsync(object):
                 # Delete the container
                 await blob_service_client.delete_container("containertestasync")
 
+    async def get_blob_service_client_from_container_client_async(self):
+        # Instantiate a BlobServiceClient using a connection string
+        from azure.storage.blob.aio import ContainerClient
+        container_client1 = ContainerClient.from_connection_string(self.connection_string, "container")
+
+        await container_client1.create_container()
+
+        # [START get_blob_service_client_from_container_client]
+        blob_service_client = container_client1.get_blob_service_client()
+        print(await blob_service_client.get_service_properties())
+        container_client2 = blob_service_client.get_container_client("container")
+
+        print(await container_client2.get_container_properties())
+        await container_client2.delete_container()
+        await container_client1.close()
+        # [END get_blob_service_client_from_container_client]
+
+
 async def main():
     sample = BlobServiceSamplesAsync()
     await sample.get_storage_account_information_async()
@@ -164,6 +182,7 @@ async def main():
     await sample.container_operations_async()
     await sample.blob_service_properties_async()
     await sample.blob_service_stats_async()
+    await sample.get_blob_service_client_from_container_client_async()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
