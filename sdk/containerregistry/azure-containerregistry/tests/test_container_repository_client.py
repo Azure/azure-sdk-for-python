@@ -86,6 +86,7 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
     def test_list_registry_artifacts(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
 
+        count = 0
         for artifact in client.list_registry_artifacts():
             assert artifact is not None
             assert isinstance(artifact, RegistryArtifactProperties)
@@ -93,8 +94,9 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
             assert isinstance(artifact.created_on, datetime)
             assert artifact.last_updated_on is not None
             assert isinstance(artifact.last_updated_on, datetime)
-            assert artifact.tags is not None
-            assert isinstance(artifact.tags, list)
+            count += 1
+
+        assert count > 0
 
     @acr_preparer()
     def test_get_registry_artifact_properties(self, containerregistry_baseurl):
