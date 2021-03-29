@@ -184,16 +184,27 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
         tags = client.set_manifest_properties()
 
-    @pytest.mark.skip("Don't want to delete right now")
     @acr_preparer()
-    def test_delete_repository(self, containerregistry_baseurl):
-        client = self.create_repository_client(containerregistry_baseurl, self.repository)
-        client.delete()
+    def test_delete_repository(self, containerregistry_baseurl, containerregistry_resource_group):
+        TO_BE_DELETED = "to_be_deleted"
 
-        repo_client = self.create_registry_client(containerregistry_baseurl)
+        self.import_repo_to_be_deleted(containerregistry_baseurl, resource_group=containerregistry_resource_group)
 
-        repo_count = 0
-        for repo in repo_client.list_repositories():
-            repo_count += 1
+        reg_client = self.create_registry_client(containerregistry_baseurl)
+        existing_repos = list(reg_client.list_repositories())
+        assert TO_BE_DELETED in existing_repos
 
-        assert repo_count == 0
+        repo_client = self.create_repository_client(containerregistry_baseurl, TO_BE_DELETED)
+        repo_client.delete()
+        self.sleep(5)
+
+        existing_repos = list(reg_client.list_repositories())
+        assert TO_BE_DELETED not in existing_repos
+
+    @acr_preparer()
+    def test_delete_repository_doesnt_exist(self, containerregistry_baseurl):
+        DOES_NOT_EXIST = "does_not_exist"
+
+        repo_client = self.create_repository_client(containerregistry_baseurl, DOES_NOT_EXIST)
+        with pytest.raises(ResourceNotFoundError):
+            repo_client.delete()

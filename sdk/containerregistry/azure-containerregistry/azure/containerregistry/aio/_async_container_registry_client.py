@@ -30,7 +30,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :param repository: The repository to delete
         :type repository: str
-        :returns: None
+        :returns: :class:~azure.containerregistry.DeletedRepositoryResult
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
         result = await self._client.container_registry.delete_repository(repository, **kwargs)

@@ -25,6 +25,7 @@ acr_preparer = functools.partial(
     PowerShellPreparer,
     "containerregistry",
     containerregistry_baseurl="fake_url.azurecr.io",
+    containerregistry_resource_group="fake_rg",
 )
 
 
@@ -47,18 +48,19 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
         assert count > 0
 
-    @pytest.mark.skip("Don't want to delete for now")
     @acr_preparer()
-    def test_delete_repository(self, containerregistry_baseurl):
+    def test_delete_repository(self, containerregistry_baseurl, containerregistry_resource_group):
+        self.import_repo_to_be_deleted(containerregistry_baseurl, resource_group=containerregistry_resource_group)
+        self.sleep(5)
+
         client = self.create_registry_client(containerregistry_baseurl)
 
-        deleted_result = client.delete_repository("debian")
+        deleted_result = client.delete_repository("to_be_deleted")
 
         assert isinstance(deleted_result, DeletedRepositoryResult)
-        assert len(deleted_result.deleted_registry_artifact_digests) == 1
+        assert len(deleted_result.deleted_registry_artifact_digests) == 10
         assert len(deleted_result.deleted_tags) == 1
-
-    @pytest.mark.skip("Don't want to for now")
+        assert deleted_result.deleted_tags[0] == "to_be_deleted"
 
     @acr_preparer()
     def test_delete_repository_does_not_exist(self, containerregistry_baseurl):

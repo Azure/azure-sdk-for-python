@@ -108,6 +108,30 @@ class ContainerRegistryTestClass(AzureTestCase):
     def _fake_sleep(self, *args, **kwargs):
         pass
 
+    def import_repo_to_be_deleted(
+        self, endpoint, repository="to_be_deleted", resource_group="fake_rg"
+    ):
+        if not self.is_live:
+            return
+        registry = endpoint.split(".")[0]
+        command = [
+            "powershell.exe",
+            "Import-AzcontainerRegistryImage",
+            "-ResourceGroupName",
+            "'{}'".format(resource_group),
+            "-RegistryName",
+            "'{}'".format(registry),
+            "-SourceImage",
+            "'library/hello-world'",
+            "-SourceRegistryUri",
+            "'registry.hub.docker.com'",
+            "-TargetTag",
+            "'{}:to_be_deleted'".format(repository),
+            "-Mode",
+            "'Force'",
+        ]
+        subprocess.check_call(command)
+
     def _import_tag_to_be_deleted(
         self, endpoint, repository="hello-world", resource_group="fake_rg"
     ):

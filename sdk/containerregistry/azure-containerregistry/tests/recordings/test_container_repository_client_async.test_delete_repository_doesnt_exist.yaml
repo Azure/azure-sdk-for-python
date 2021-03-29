@@ -7,19 +7,19 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://fake_url.azurecr.io/acr/v1/not_real_repo
+    uri: https://fake_url.azurecr.io/acr/v1/does_not_exist
   response:
     body:
       string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"not_real_repo","Action":"delete"}]}]}
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"does_not_exist","Action":"delete"}]}]}
 
         '
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '209'
+      content-length: '210'
       content-type: application/json; charset=utf-8
-      date: Mon, 29 Mar 2021 17:35:15 GMT
+      date: Mon, 29 Mar 2021 17:35:20 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -28,10 +28,10 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankane.azurecr.io/acr/v1/not_real_repo
+    url: https://seankane.azurecr.io/acr/v1/does_not_exist
 - request:
     body:
-      access_token: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJpYXQiOjE2MTcwMzkwMTYsIm5iZiI6MTYxNzAzOTAxNiwiZXhwIjoxNjE3MTI1NzE2LCJhaW8iOiJFMlpnWUxpdVo3OXhzOFdHdkIxYUhXeStmMituQVFBPSIsImFwcGlkIjoiZjg1MDY1MGMtMWZjZi00NDg5LWI0NmYtNzFhZjJlMzBkMzYwIiwiYXBwaWRhY3IiOiIxIiwiaWRwIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsIm9pZCI6IjMwNTExYzlkLWJhMWEtNGM3Yi1iNDIyLTViNTQzZGExMWIzZiIsInJoIjoiMC5BUm9BdjRqNWN2R0dyMEdScXkxODBCSGJSd3hsVVBqUEg0bEV0Rzl4cnk0dzAyQWFBQUEuIiwic3ViIjoiMzA1MTFjOWQtYmExYS00YzdiLWI0MjItNWI1NDNkYTExYjNmIiwidGlkIjoiNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3IiwidXRpIjoiLWFzX0xGOTJlVWFjdFN6bVQ1c1BBZyIsInZlciI6IjEuMCIsInhtc190Y2R0IjoxMjg5MjQxNTQ3fQ.lXULYlyPw0I-nvw5J9TTkS9HfRKGjCEEEZsbAv4OARVoWPZGGHEW_NYQz77m4zHfz7PuXD0qPyGKIEC2qMmferd_cktH_jvYv2TdFau5mggI3zkWlAu0x9HVy_I-deEdTGzm6m37EC--aJDd6y274QEb5yCVwcexMYk-vpXNFbtYsAWZ6X8jctKdmm3D8K2QNzn45gARvtOfPeN0L1b_6wiv9qA1a_Y1zGSWT6RB1Tfe0IRcIdVHYyF5S7oWe_0C-wHN5nHzDoT7lFQx-EkhnUyHHoslxODTntHQRXr5gPLG-o5Gbc-BNV5MoUhQu3ojdKa5m_0CXh34m42BUJX2Iw
+      access_token: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJpYXQiOjE2MTcwMzkwMjEsIm5iZiI6MTYxNzAzOTAyMSwiZXhwIjoxNjE3MTI1NzIxLCJhaW8iOiJFMlpnWVBpd3cyUEwzSTR3eFo3dW1XNnNYcDVhQUE9PSIsImFwcGlkIjoiZjg1MDY1MGMtMWZjZi00NDg5LWI0NmYtNzFhZjJlMzBkMzYwIiwiYXBwaWRhY3IiOiIxIiwiaWRwIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsIm9pZCI6IjMwNTExYzlkLWJhMWEtNGM3Yi1iNDIyLTViNTQzZGExMWIzZiIsInJoIjoiMC5BUm9BdjRqNWN2R0dyMEdScXkxODBCSGJSd3hsVVBqUEg0bEV0Rzl4cnk0dzAyQWFBQUEuIiwic3ViIjoiMzA1MTFjOWQtYmExYS00YzdiLWI0MjItNWI1NDNkYTExYjNmIiwidGlkIjoiNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3IiwidXRpIjoiTndYRDQzQWZNVUNSLVRfMzk4eElBQSIsInZlciI6IjEuMCIsInhtc190Y2R0IjoxMjg5MjQxNTQ3fQ.aseuguWMUT-unLBgLaXuAm-8Z3fl8E3kkrkw2tMPRi4y11QWVQaKPpzuvyqFeyj913dNKkJ6hwNTmbPSlSbQXfkSG11Nh85cAE4I30gqXEo4zepm2skU6D5yVJruusH0mJ_HpuavI7k77truIm16w6f_vQweSYx6SnlT8gGOHDzT7ebO6nXg8D-DINqJM1rdkgDLeJuT17S2QYWno0c9pve4gnhIK5cZCO2r86adZX2FFeudnWCfWtFqe4tTEG-xFnS-qpC4Y_Ki7TB19ItxH6-bLWWc-k2jVcsTcNgY9EeB_gGlRbzAUgEQmMLxdyZu2M2Y2SPnd0PW09YeVqD_4Q
       grant_type: access_token
       service: seankane.azurecr.io
     headers:
@@ -47,7 +47,7 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 29 Mar 2021 17:35:17 GMT
+      date: Mon, 29 Mar 2021 17:35:22 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -58,8 +58,8 @@ interactions:
 - request:
     body:
       grant_type: refresh_token
-      refresh_token: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ikk2NVk6VEVDUzpLTEhMOjZCVlE6SUJaRjpGRVhCOlk0VUg6SlRJUzo2VFBYOkNWWEE6SkxUSzpRS0RRIn0.eyJqdGkiOiJhMTI3YjkzOS1iNTkwLTQxOTItYTUxNy01ZjdmYzNlOWQzNmMiLCJzdWIiOiIzMDUxMWM5ZC1iYTFhLTRjN2ItYjQyMi01YjU0M2RhMTFiM2YiLCJuYmYiOjE2MTcwMzg0MTcsImV4cCI6MTYxNzA1MDExNywiaWF0IjoxNjE3MDM4NDE3LCJpc3MiOiJBenVyZSBDb250YWluZXIgUmVnaXN0cnkiLCJhdWQiOiJzZWFua2FuZS5henVyZWNyLmlvIiwidmVyc2lvbiI6IjEuMCIsInJpZCI6ImExZTAxZmYzMzk2YzRmMTVhMmRjNjM2NzNkN2ZjYTMzIiwiZ3JhbnRfdHlwZSI6InJlZnJlc2hfdG9rZW4iLCJwZXJtaXNzaW9ucyI6eyJhY3Rpb25zIjpbInJlYWQiLCJ3cml0ZSIsImRlbGV0ZSJdLCJub3RBY3Rpb25zIjpudWxsfSwicm9sZXMiOltdfQ.p6RQLCCApPH_N2XXNcB7e-6N51qONOkOanipndPJmnF0SxXjMNZ1JpoDClZJFW-f4jUnPlhMOw7-V_9KkJO9q5jBKMX4iRfZJhlFqCn_RHgHOfc-xFw8S6MwFszit9iN1M6bVpl7qHHSp-GiB0iUe_9KDGCiojll5zESrjSMEKgjaHbRcF9sUiwjTED45dPjsVeLpgKmEkGs9pxJgPGn9E3YEGZUyvdQSA4wNsa_akHr2L3pUKposoZEMwzjQVNxh6Um-cdZfN_939bn_uLt5D9mkaY7eXBPkI283FjCOoBJ4R4cG79Q5cvUS2ajiHCewddSW1KXx2PGqMZHAz5QIg
-      scope: repository:not_real_repo:delete
+      refresh_token: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ikk2NVk6VEVDUzpLTEhMOjZCVlE6SUJaRjpGRVhCOlk0VUg6SlRJUzo2VFBYOkNWWEE6SkxUSzpRS0RRIn0.eyJqdGkiOiI0MmE3YjQyMy02Njc0LTRmZmItOGQzNi1mMGY1M2ZlNWMyZDYiLCJzdWIiOiIzMDUxMWM5ZC1iYTFhLTRjN2ItYjQyMi01YjU0M2RhMTFiM2YiLCJuYmYiOjE2MTcwMzg0MjIsImV4cCI6MTYxNzA1MDEyMiwiaWF0IjoxNjE3MDM4NDIyLCJpc3MiOiJBenVyZSBDb250YWluZXIgUmVnaXN0cnkiLCJhdWQiOiJzZWFua2FuZS5henVyZWNyLmlvIiwidmVyc2lvbiI6IjEuMCIsInJpZCI6ImExZTAxZmYzMzk2YzRmMTVhMmRjNjM2NzNkN2ZjYTMzIiwiZ3JhbnRfdHlwZSI6InJlZnJlc2hfdG9rZW4iLCJwZXJtaXNzaW9ucyI6eyJhY3Rpb25zIjpbInJlYWQiLCJ3cml0ZSIsImRlbGV0ZSJdLCJub3RBY3Rpb25zIjpudWxsfSwicm9sZXMiOltdfQ.ajVjufqmwhT1zxtUFmOgkdn02mfWpwLc2Gku2mSeNRMMseDhCE-7zI_VHjvgDGyJVaUtghN-nF7NyT5FqHff667ZqHcdBPkjRu_ByiJxHQgSl6sbdOh_DV22fsaSxgwwNJgWBheGkFqCpIv-QqBTuZ4jpgtUKUY2PtxHRUER351RugYYPZUhcntFbFbcZsRUm6aolb1QSjoP5rDTxiQXooH6uCV7Kr-iochmxLLZLW7FZcPPunTEVKDKQabVIbR9Ebce72AsI3u8c-BQmghLTgYt3F7EIQiVWt3tfB7pMhnOb1NZy1U0XTSspIPoivaYAYgMyfK4q_ypg-lMcokOUA
+      scope: repository:does_not_exist:delete
       service: seankane.azurecr.io
     headers:
       Accept:
@@ -74,7 +74,7 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 29 Mar 2021 17:35:17 GMT
+      date: Mon, 29 Mar 2021 17:35:22 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -90,19 +90,19 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://fake_url.azurecr.io/acr/v1/not_real_repo
+    uri: https://fake_url.azurecr.io/acr/v1/does_not_exist
   response:
     body:
       string: '{"errors":[{"code":"NAME_UNKNOWN","message":"repository name not known
-        to registry","detail":{"name":"not_real_repo"}}]}
+        to registry","detail":{"name":"does_not_exist"}}]}
 
         '
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '121'
+      content-length: '122'
       content-type: application/json; charset=utf-8
-      date: Mon, 29 Mar 2021 17:35:17 GMT
+      date: Mon, 29 Mar 2021 17:35:22 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -110,5 +110,5 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://seankane.azurecr.io/acr/v1/not_real_repo
+    url: https://seankane.azurecr.io/acr/v1/does_not_exist
 version: 1
