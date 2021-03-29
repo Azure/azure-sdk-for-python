@@ -4,7 +4,7 @@
 
 Azure core requires Python 2.7 or Python 3.6+ since this release.
 
-### Features
+### New Features
 
 - Supported adding custom policies  #16519
 
