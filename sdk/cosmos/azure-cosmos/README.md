@@ -85,9 +85,7 @@ For more information about these resources, see [Working with Azure Cosmos datab
 
 Currently the features below are **not supported**.
 
-### Data Plane Limitations
-
-Requests for data plane operations are sent to your Azure Cosmos DB database endpoint.
+**Data Plane Limitations:**
 
 * Group By queries (in roadmap for 2021)
 * Language Native async i/o (in roadmap for 2021)
@@ -102,9 +100,7 @@ Requests for data plane operations are sent to your Azure Cosmos DB database end
 * Change Feed: Pull model
 * Cross-partition ORDER BY for mixed types
 
-### Control Plane Limitations
-
-All requests for control plane operations are sent to Azure Resource Manager.
+**Control Plane Limitations:**
 
 * Get CollectionSizeUsage, DatabaseUsage, and DocumentUsage metrics
 * Create User
@@ -121,7 +117,7 @@ If you want to use Python SDK to perform bulk inserts to Cosmos DB, the best alt
 
 ## Control Plane Limitations Workaround
 
-You can use Azure Portal, [Azure CLI](https://docs.microsoft.com/azure/cosmos-db/manage-with-cli) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the unsupported operations.
+Typically you can use [Azure Portal](https://portal.azure.com/), [Azure CLI](https://docs.microsoft.com/azure/cosmos-db/manage-with-cli) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
 
 
 ## Boolean Data Type
