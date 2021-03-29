@@ -36,6 +36,11 @@ steps:
     displayName: 'Create Conda Working Directories'
 
   - ${{ each artifact in parameters.CondaArtifacts }}:
+    # there may be multiple CondaArtifacts. Be certain $(conda.build) is clean just in case!
+    - pwsh:
+        Write-Host "Clean up Conda Build Directory $(conda.build)"
+      displayName: Clean Conda Build Directory
+
     - ${{ each checkout in artifact.checkout }}:
       - pwsh: |
           Write-Host "${{checkout.package}}"
@@ -43,20 +48,26 @@ steps:
           Write-Host "${{checkout.version}}"
         displayName: Write Variables for Debug
 
-      - template: /eng/pipelines/steps/get-tagged-sdist.yml
+      - template: /eng/pipelines/steps/get-tagged-code.yml
         parameters:
-          DestinationDirectory: $(conda.output)/${{artifact.name}}
+          DestinationDirectory: $(conda.output)/${{checkout.package}}
           Package: ${{checkout.package}}
           CheckoutPath: ${{checkout.checkout_path}}
           Version: ${{checkout.version}}
 
     - task: PythonScript@0
-      displayName: 'Build Conda Output Package'
+      displayName: 'Build Combined SDIST'
       inputs:
         scriptPath: 'scripts/devops_tasks/build_conda_artifacts.py'
-        arguments: '-d "$(conda.output)" --meta="" --output-var="${{ upper(parameters.ServiceDirectory) }}_SOURCE_DISTRIBUTION"'
-   
+        arguments: '-d "$(conda.output)" -b "$(conda.build)" -m "$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.meta_source }}" -r "${{ parameters.common_root }}" -n "${{ parameters.common_root }}" -o "${{ upper(parameters.ServiceDirectory) }}_SOURCE_DISTRIBUTION"'
+  
+    - pwsh: |
+        Write-Host "Does the environment variable have a properly set output location?"
+        Write-Host "$env:${{ upper(parameters.ServiceDirectory) }}_SOURCE_DISTRIBUTION"
+      displayName: 'Conda Build ${{ artifact.name }}'
+      
+  
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
-      ArtifactPath: '$(Agent.BuildDirectory)/conda'
+      ArtifactPath: '$(Agent.BuildDirectory)/conda/output'
       ArtifactName: 'conda'

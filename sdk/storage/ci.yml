@@ -57,7 +57,7 @@ extends:
     CondaArtifacts:
     - name: azure-storage
       meta_source: meta.yml
-      namespace_combination_root: azure/storage
+      common_root: azure/storage
       checkout:
         - package: azure-storage-blob
           checkout_path: sdk/storage/azure-storage-blob

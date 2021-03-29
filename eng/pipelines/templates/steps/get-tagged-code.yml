@@ -13,10 +13,20 @@ parameters:
     default: ''
           
 steps:
+
+  
+  # sparse checkout the target version of Azure/azure-sdk-for-python with path CheckoutPath/Package
+
   - pwsh: |
       mkdir $(Agent.BuildDirectory)/conda/output
       mkdir $(Agent.BuildDirectory)/conda/build
 
       Write-Host "##vso[task.setvariable variable=conda.output]$(Agent.BuildDirectory)/conda/output"
       Write-Host "##vso[task.setvariable variable=conda.build]$(Agent.BuildDirectory)/conda/build"
-    displayName: 'Create Conda Working Directories'
+    displayName: 'Get Tagged Code into Temp Directory'
+
+  # copy the source from within the temp directory into our DestinationDirectory
+  - pwsh: |
+      Write-Host "Argh!"
+    displayName: 'Copy Source to Target Directory'
+

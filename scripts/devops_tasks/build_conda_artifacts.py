@@ -14,47 +14,99 @@ import sys
 import os
 
 from common_tasks import process_glob_string, run_check_call, str_to_bool
+from subprocess import check_call
 
+CONDA_PKG_SETUP_TEMPLATE = """from setuptools import find_packages, setup
+
+setup(
+    name={conda_package_name},
+    version={version},
+    description='Microsoft Azure SDK For Python {} Combined Conda Library'.format(),
+    license='MIT License',
+    author='Microsoft Corporation',
+    author_email='azpysdkhelp@microsoft.com',
+    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/{service_directory}/',
+    classifiers=[
+        "Development Status :: 5 - Production/Stable",
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'License :: OSI Approved :: MIT License',
+    ],
+    zip_safe=False,
+    packages=find_packages(exclude=[ {package_excludes} ]),
+    install_requires=[]
+)
+"""
+
+def create_package(pkg_directory, output_directory):
+    check_call([sys.executable, 'setup.py', "sdist", "--format", "zip", '-d', output_directory], cwd=pkg_directory)
+
+def create_combined_sdist(output_directory, build_directory, artifact_name, common_root):
+    print('{}/{}/{}.zip'.format(output_directory, artifact_name, artifact_name))
+    return '{}/{}/{}.zip'.format(output_directory, artifact_name, artifact_name)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Build Azure Packages, Called from DevOps YAML Pipeline"
+        description="Build a Conda Package, given a properly formatted build directory, and input configuration. This script assumes that the build directory has been set up w/ the necessary sdists in each location."
     )
+
     parser.add_argument(
         "-d",
         "--distribution-directory",
         dest="distribution_directory",
-        help="The path to the output directory",
+        help="The output conda sdist will be dropped into this directory under a folder named the same as argument artifact_name.",
         required=True,
     )
 
     parser.add_argument(
-        "glob_string",
-        nargs="?",
-        help=(
-            "A comma separated list of glob strings that will target the top level directories that contain packages. "
-            'Examples: All == "azure-*", Single = "azure-keyvault"'
-        ),
-    )
-
-
-    parser.add_argument(
-        "--meta",
-        help=(
-            "Location of the meta yml"
-        ),
+        "-b",
+        "--build-directory",
+        dest="build_directory",
+        help="The 'working' directory. This top level path will contain all the necessary sdist code from the appropriate historical tag. EG: <build-directory>/azure-storage-blob, <build-directory/azure-storage-queue",
+        required=True,
     )
 
     parser.add_argument(
+        "-m",
+        "--meta-yml",
+        dest="meta_yml",
+        help="The path to the meta yaml that will be used to generate this conda distribution.",
+        required=True,
+    )
+
+    parser.add_argument(
+        "-r",
+        "--common_root",
+        dest="common_root",
+        help="The common root namespace. For instance, when outputting the artifact 'azure-storage', the common root will be azure/storage.",
+        required=False,
+    )
+
+    parser.add_argument(
+        "-n",
+        "--artifact_name",
+        dest="artifact_name",
+        help="The name of the output conda package.",
+        required=True,
+    )
+
+    parser.add_argument(
+        "-o",
         "--output_var",
-        help=(
-            ""
-        ),
+        dest="output_var",
+        help="The name of the environment variable that will be set in azure devops. The contents will be the final location of the output artifact. Local users will need to grab this value and set their env manually.",
+        required=False,
     )
-    
 
     args = parser.parse_args()
-    output_source_location = "a_new_location"
+    output_source_location = create_combined_sdist(output_directory, args.build_directory, args.artifact_name, args.common_root)
 
     if args.output_var:
-        print("##vso[task.setvariable variable={}]{}".format(args.output_var, output_source))
+        print("##vso[task.setvariable variable={}]{}".format(args.output_var, output_source_location))
