@@ -198,7 +198,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         }, attributes)
 
     @staticmethod
-    def create_link_from_headers(cls, headers, attributes=None):
+    def create_link_from_headers(headers, attributes=None):
         ctx = extract(headers)
         span_ctx = get_span_from_context(ctx).get_span_context()
         return Link(span_ctx, attributes)

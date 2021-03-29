@@ -27,7 +27,7 @@ settings.tracing_implementation = OpenTelemetrySpan
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import ConsoleSpanExporter
-from opentelemetry.sdk.trace.export import SimpleExportSpanProcessor
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
 # Simple console exporter
 exporter = ConsoleSpanExporter()
@@ -35,7 +35,7 @@ exporter = ConsoleSpanExporter()
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
 trace.get_tracer_provider().add_span_processor(
-    SimpleExportSpanProcessor(exporter)
+    SimpleSpanProcessor(exporter)
 )
 
 # Example with Servicebus SDKs
@@ -50,9 +50,9 @@ queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 with tracer.start_as_current_span(name="MyApplication"):
     with ServiceBusClient.from_connection_string(connstr) as client:
         with client.get_queue_sender(queue_name) as sender:
-            # Sending a single message
-            single_message = ServiceBusMessage("Single message")
-            sender.send_messages(single_message)
+            # # Sending a single message
+            # single_message = ServiceBusMessage("Single message")
+            # sender.send_messages(single_message)
 
             # Sending a list of messages
             messages = [ServiceBusMessage("First message"), ServiceBusMessage("Second message")]
