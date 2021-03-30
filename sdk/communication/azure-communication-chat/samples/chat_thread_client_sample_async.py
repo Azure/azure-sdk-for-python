@@ -311,8 +311,8 @@ class ChatThreadClientSamplesAsync(object):
         chat_client = self._chat_client
         identity_client = self.identity_client
 
-        from azure.communication.chat import ChatThreadParticipant
-        from azure.communication.identity import CommunicationUserIdentifier
+        from azure.communication.chat import ChatThreadParticipant, CommunicationUserIdentifier
+
         from datetime import datetime
 
         async with chat_client:

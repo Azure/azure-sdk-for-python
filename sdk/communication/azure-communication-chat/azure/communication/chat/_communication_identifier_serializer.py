@@ -44,7 +44,7 @@ def serialize_identifier(identifier):
         return CommunicationIdentifierModel(
             raw_id=identifier.id,
             communication_user=CommunicationUserIdentifierModel(
-                id=communicationIdentifier.identifier
+                id=identifier.properties['identifier']
             )
         )
     if identifier.kind == CommunicationIdentifierKind.PHONE_NUMBER:

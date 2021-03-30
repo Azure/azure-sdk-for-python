@@ -503,7 +503,7 @@ class TestChatThreadClient(unittest.TestCase):
         failed_participant = result[0][0]
         communication_error = result[0][1]
 
-        self.assertEqual(new_participant.user.identifier, failed_participant.user.identifier)
+        self.assertEqual(new_participant.user.id, failed_participant.user.id)
         self.assertEqual(new_participant.display_name, failed_participant.display_name)
         self.assertEqual(new_participant.share_history_time, failed_participant.share_history_time)
         self.assertEqual(error_message, communication_error.message)
