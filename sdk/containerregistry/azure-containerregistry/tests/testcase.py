@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import copy
 from datetime import datetime
 import json
 import os
@@ -31,13 +32,14 @@ REDACTED = "REDACTED"
 
 class AcrBodyReplacer(RecordingProcessor):
     """Replace request body for oauth2 exchanges"""
-
     def __init__(self, replacement="redacted"):
         self._replacement = replacement
         self._401_replacement = 'Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"'
 
     def _scrub_body(self, body):
         # type: (bytes) -> bytes
+        if isinstance(body, dict):
+            return self._scrub_body_dict(body)
         if not isinstance(body, six.binary_type):
             return body
         s = body.decode("utf-8")
@@ -52,6 +54,13 @@ class AcrBodyReplacer(RecordingProcessor):
         s = "&".join(s)
         return bytes(s, "utf-8")
 
+    def _scrub_body_dict(self, body):
+        new_body = copy.deepcopy(body)
+        for k in ["access_token", "refresh_token"]:
+            if k in new_body.keys():
+                new_body[k] = REDACTED
+        return new_body
+
     def process_request(self, request):
         if request.body:
             request.body = self._scrub_body(request.body)
@@ -60,20 +69,20 @@ class AcrBodyReplacer(RecordingProcessor):
 
     def process_response(self, response):
         try:
-            headers = response["headers"]
+            headers = response['headers']
             auth_header = None
             if "www-authenticate" in headers:
-                response["headers"]["www-authenticate"] = self._401_replacement
+                response['headers']["www-authenticate"] = self._401_replacement
 
-            body = response["body"]
+            body = response['body']
             try:
-                refresh = json.loads(body["string"])
+                refresh = json.loads(body['string'])
                 if "refresh_token" in refresh.keys():
-                    refresh["refresh_token"] = REDACTED
-                    body["string"] = json.dumps(refresh)
+                    refresh['refresh_token'] = REDACTED
+                    body['string'] = json.dumps(refresh)
                 if "access_token" in refresh.keys():
                     refresh["access_token"] = REDACTED
-                    body["string"] = json.dumps(refresh)
+                    body['string'] = json.dumps(refresh)
 
             except json.decoder.JSONDecodeError:
                 pass
@@ -81,7 +90,6 @@ class AcrBodyReplacer(RecordingProcessor):
             return response
         except (KeyError, ValueError):
             return response
-
 
 class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.

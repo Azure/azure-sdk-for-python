@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 17:23:17 GMT
+      - Tue, 30 Mar 2021 12:30:04 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 17:23:18 GMT
+      - Tue, 30 Mar 2021 12:30:06 GMT
       server:
       - openresty
       strict-transport-security:
@@ -107,7 +107,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 17:23:19 GMT
+      - Tue, 30 Mar 2021 12:30:06 GMT
       server:
       - openresty
       strict-transport-security:
@@ -132,7 +132,7 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
-      string: '{"repositories":["alpine","alpine/git","busybox","debian","docker101tutorial","hello-world","to_be_deleted","ubuntu"]}
+      string: '{"repositories":["alpine/git","debian","hello-world","library/hello-world","to_be_deleted","ubuntu"]}
 
         '
     headers:
@@ -144,11 +144,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '119'
+      - '102'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 17:23:19 GMT
+      - Tue, 30 Mar 2021 12:30:06 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -195,7 +195,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 17:23:20 GMT
+      - Tue, 30 Mar 2021 12:30:07 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -235,7 +235,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 17:23:21 GMT
+      - Tue, 30 Mar 2021 12:30:09 GMT
       server:
       - openresty
       strict-transport-security:
@@ -271,7 +271,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 17:23:21 GMT
+      - Tue, 30 Mar 2021 12:30:09 GMT
       server:
       - openresty
       strict-transport-security:
@@ -314,7 +314,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 17:23:24 GMT
+      - Tue, 30 Mar 2021 12:30:11 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -359,7 +359,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 17:23:29 GMT
+      - Tue, 30 Mar 2021 12:30:16 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -399,7 +399,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 17:23:30 GMT
+      - Tue, 30 Mar 2021 12:30:16 GMT
       server:
       - openresty
       strict-transport-security:
@@ -435,7 +435,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 17:23:30 GMT
+      - Tue, 30 Mar 2021 12:30:16 GMT
       server:
       - openresty
       strict-transport-security:
@@ -460,7 +460,7 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
-      string: '{"repositories":["alpine","alpine/git","busybox","debian","docker101tutorial","hello-world","ubuntu"]}
+      string: '{"repositories":["alpine/git","debian","hello-world","library/hello-world","ubuntu"]}
 
         '
     headers:
@@ -472,11 +472,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '103'
+      - '86'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 17:23:30 GMT
+      - Tue, 30 Mar 2021 12:30:17 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

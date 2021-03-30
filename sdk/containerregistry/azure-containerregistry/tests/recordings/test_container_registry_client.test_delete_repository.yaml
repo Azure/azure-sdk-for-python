@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 17:22:28 GMT
+      - Tue, 30 Mar 2021 12:28:42 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -73,7 +73,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 17:22:30 GMT
+      - Tue, 30 Mar 2021 12:28:44 GMT
       server:
       - openresty
       strict-transport-security:
@@ -109,7 +109,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 17:22:30 GMT
+      - Tue, 30 Mar 2021 12:28:44 GMT
       server:
       - openresty
       strict-transport-security:
@@ -152,7 +152,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 17:22:32 GMT
+      - Tue, 30 Mar 2021 12:28:47 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

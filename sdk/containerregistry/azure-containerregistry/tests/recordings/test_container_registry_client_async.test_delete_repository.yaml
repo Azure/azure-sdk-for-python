@@ -19,7 +19,7 @@ interactions:
       connection: keep-alive
       content-length: '209'
       content-type: application/json; charset=utf-8
-      date: Mon, 29 Mar 2021 17:22:56 GMT
+      date: Tue, 30 Mar 2021 12:29:16 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -31,7 +31,7 @@ interactions:
     url: https://seankane.azurecr.io/acr/v1/to_be_deleted
 - request:
     body:
-      access_token: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJpYXQiOjE2MTcwMzgyNzYsIm5iZiI6MTYxNzAzODI3NiwiZXhwIjoxNjE3MTI0OTc2LCJhaW8iOiJFMlpnWUpqQTF5OFhzZEw3b2FCTTMwYlBIbVlaQUE9PSIsImFwcGlkIjoiZjg1MDY1MGMtMWZjZi00NDg5LWI0NmYtNzFhZjJlMzBkMzYwIiwiYXBwaWRhY3IiOiIxIiwiaWRwIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsIm9pZCI6IjMwNTExYzlkLWJhMWEtNGM3Yi1iNDIyLTViNTQzZGExMWIzZiIsInJoIjoiMC5BUm9BdjRqNWN2R0dyMEdScXkxODBCSGJSd3hsVVBqUEg0bEV0Rzl4cnk0dzAyQWFBQUEuIiwic3ViIjoiMzA1MTFjOWQtYmExYS00YzdiLWI0MjItNWI1NDNkYTExYjNmIiwidGlkIjoiNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3IiwidXRpIjoiZ1J4ckdCblNhRTJZeUUtSTZmdjlBQSIsInZlciI6IjEuMCIsInhtc190Y2R0IjoxMjg5MjQxNTQ3fQ.iIBCRRapm6l8YAVeq7ubG153fwq0wvzHighCcHXxS8qjiVd0K_QMZyHNfd0j1JChlLkksgaGvCQulwVWE8vqXKmGEwe-Q5a26ii9CBCtTY44xIPOmB8yyRPqfKc7E7Gri4QhQaiITwClcFl0amwk8sRaNFflwTmB3Obugo93kWQJQDiPXRum5tDkdkRUcMkPM75KEG32sBYQeJFAGtsXtPoDFRX0d-SyrW4GijXFPeJ85zTOGXm0PBSvARWIQYmbknfK2jnysP1uo7dmUtRVy9gQ6plRutFvv7qr3UmTaAjRjtaLMc5VORZ-kNdYTByEOdzFHHThWMasdTXmtTwpsg
+      access_token: REDACTED
       grant_type: access_token
       service: seankane.azurecr.io
     headers:
@@ -47,7 +47,7 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 29 Mar 2021 17:22:57 GMT
+      date: Tue, 30 Mar 2021 12:29:18 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -58,7 +58,7 @@ interactions:
 - request:
     body:
       grant_type: refresh_token
-      refresh_token: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ikk2NVk6VEVDUzpLTEhMOjZCVlE6SUJaRjpGRVhCOlk0VUg6SlRJUzo2VFBYOkNWWEE6SkxUSzpRS0RRIn0.eyJqdGkiOiJjNWViNWI2NC1lY2JiLTRjMjktOWY4OS04MzJjMTZlYTExNmQiLCJzdWIiOiIzMDUxMWM5ZC1iYTFhLTRjN2ItYjQyMi01YjU0M2RhMTFiM2YiLCJuYmYiOjE2MTcwMzc2NzcsImV4cCI6MTYxNzA0OTM3NywiaWF0IjoxNjE3MDM3Njc3LCJpc3MiOiJBenVyZSBDb250YWluZXIgUmVnaXN0cnkiLCJhdWQiOiJzZWFua2FuZS5henVyZWNyLmlvIiwidmVyc2lvbiI6IjEuMCIsInJpZCI6ImExZTAxZmYzMzk2YzRmMTVhMmRjNjM2NzNkN2ZjYTMzIiwiZ3JhbnRfdHlwZSI6InJlZnJlc2hfdG9rZW4iLCJwZXJtaXNzaW9ucyI6eyJhY3Rpb25zIjpbInJlYWQiLCJ3cml0ZSIsImRlbGV0ZSJdLCJub3RBY3Rpb25zIjpudWxsfSwicm9sZXMiOltdfQ.P0wzSQ0HoadHSNusm4o1DqF7b6f8tNIGzXJxUF-EwSPAxp_UB_IcGsVulX0VoZtP36qhL1EURHPRXi8CtqzCcaxynWGiTAA2E0fPpZ1WkJCe2VZimAkSf129W_mXatWJf9NIZFp9typzSWBoit6iZNg_JgqTjqhbKEX4zojVTtOJta2Q9m8vtZAxkAft4IvVqHYctM8SZAATurvsXpXSDoH61fOW4DpQOg0085-r1FpBPMVoLlKkElfyzPFkn2BpVdBo28-076HyT269wP_PoGfA9F6iyildTkxo_hdZMNBJ5-5l66PPAcrN0nk85cmOi_cGPQz2tz0t0G0a1un6uw
+      refresh_token: REDACTED
       scope: repository:to_be_deleted:delete
       service: seankane.azurecr.io
     headers:
@@ -74,7 +74,7 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 29 Mar 2021 17:22:57 GMT
+      date: Tue, 30 Mar 2021 12:29:18 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -101,7 +101,7 @@ interactions:
       connection: keep-alive
       content-length: '795'
       content-type: application/json; charset=utf-8
-      date: Mon, 29 Mar 2021 17:22:58 GMT
+      date: Tue, 30 Mar 2021 12:29:21 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
