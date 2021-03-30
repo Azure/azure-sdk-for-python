@@ -11,18 +11,9 @@ parameters:
 - name: InjectedPackages
   type: string
   default: ''
-- name: BuildDocs
-  type: boolean
-  default: true
 - name: EmulatorStartParameters
   type: string
   default: ''
-- name: TargetDocRepoOwner
-  type: string
-  default: MicrosoftDocs
-- name: TargetDocRepoName
-  type: string
-  default: azure-docs-sdk-python
 
 stages:
   - template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
@@ -30,11 +21,11 @@ stages:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       # Skip emulator tests in the CI run
       TestMarkArgument: not cosmosEmulator
-      BuildDocs: ${{parameters.BuildDocs}}
       InjectedPackages: ${{parameters.InjectedPackages}}
+      Artifacts: ${{parameters.Artifacts}}
 
   - stage: Test_Emulator
-    dependsOn: 'Build'
+    dependsOn: []
     jobs:
     - job: Emulator
       strategy:
@@ -54,7 +45,7 @@ stages:
             EmulatorMsiUrl: ${{ parameters.EmulatorMsiUrl }}
             StartParameters: ${{ parameters.EmulatorStartParameters }}
 
-        - template: ../steps/build-test.yml
+        - template: /eng/pipelines/templates/steps/build-test.yml
           parameters:
             TestMarkArgument: not globaldb
             EnvVars:
@@ -63,5 +54,4 @@ stages:
             PythonVersion: $(PythonVersion)
             OSVmImage: $(OSVmImage)
             ToxTestEnv: 'whl,sdist'
-            BuildDocs: ${{parameters.BuildDocs}}
             InjectedPackages: ${{parameters.InjectedPackages}}
