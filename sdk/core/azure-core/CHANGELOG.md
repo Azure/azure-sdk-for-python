@@ -7,6 +7,8 @@ Azure core requires Python 2.7 or Python 3.6+ since this release.
 ### New Features
 
 - Supported adding custom policies  #16519
+- Added `~azure.core.tracing.Link` that should be used while passing `Links` to  `AbstractSpan`.
+- `AbstractSpan` constructor can now take in additional keyword only args.
 
 ### Bug fixes
 
