@@ -231,7 +231,7 @@ class SecurityPoliciesOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -240,6 +240,9 @@ class SecurityPoliciesOperations(object):
             deserialized = self._deserialize('SecurityPolicy', pipeline_response)
 
         if response.status_code == 201:
+            deserialized = self._deserialize('SecurityPolicy', pipeline_response)
+
+        if response.status_code == 202:
             deserialized = self._deserialize('SecurityPolicy', pipeline_response)
 
         if cls:
@@ -330,7 +333,7 @@ class SecurityPoliciesOperations(object):
         resource_group_name,  # type: str
         profile_name,  # type: str
         security_policy_name,  # type: str
-        security_policy_parameters,  # type: "_models.SecurityPolicyWebApplicationFirewallParameters"
+        security_policy_properties,  # type: "_models.SecurityPolicyProperties"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.SecurityPolicy"
@@ -363,7 +366,7 @@ class SecurityPoliciesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(security_policy_parameters, 'SecurityPolicyWebApplicationFirewallParameters')
+        body_content = self._serialize.body(security_policy_properties, 'SecurityPolicyProperties')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -391,7 +394,7 @@ class SecurityPoliciesOperations(object):
         resource_group_name,  # type: str
         profile_name,  # type: str
         security_policy_name,  # type: str
-        security_policy_parameters,  # type: "_models.SecurityPolicyWebApplicationFirewallParameters"
+        security_policy_properties,  # type: "_models.SecurityPolicyProperties"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller["_models.SecurityPolicy"]
@@ -403,8 +406,8 @@ class SecurityPoliciesOperations(object):
         :type profile_name: str
         :param security_policy_name: Name of the security policy under the profile.
         :type security_policy_name: str
-        :param security_policy_parameters: Security policy update properties.
-        :type security_policy_parameters: ~azure.mgmt.cdn.models.SecurityPolicyWebApplicationFirewallParameters
+        :param security_policy_properties: Security policy update properties.
+        :type security_policy_properties: ~azure.mgmt.cdn.models.SecurityPolicyProperties
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -427,7 +430,7 @@ class SecurityPoliciesOperations(object):
                 resource_group_name=resource_group_name,
                 profile_name=profile_name,
                 security_policy_name=security_policy_name,
-                security_policy_parameters=security_policy_parameters,
+                security_policy_properties=security_policy_properties,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -501,7 +504,7 @@ class SecurityPoliciesOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
