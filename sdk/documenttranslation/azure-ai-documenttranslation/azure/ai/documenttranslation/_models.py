@@ -23,7 +23,9 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
         not present in the glossary, it will not be applied.
     :param str file_format: Required. Format of the glossary file. To see supported formats,
         call the :func:`~DocumentTranslationClient.get_glossary_formats()` client method.
-    :keyword str format_version: File format version.
+    :keyword str format_version: File format version. If not specified, the service will
+        use the default_version for the file format returned from the
+        :func:`~DocumentTranslationClient.get_glossary_formats()` client method.
     :keyword str storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
     """
@@ -62,7 +64,7 @@ class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
         you want your documents to be translated to. See supported languages here:
         https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
     :keyword str category_id: Category / custom model ID for using custom translation.
-    :keyword glossaries: Optional glossaries to apply to translation.
+    :keyword glossaries: Glossaries to apply to translation.
     :paramtype glossaries: list[~azure.ai.documenttranslation.TranslationGlossary]
     :keyword str storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
@@ -101,13 +103,12 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
     """Input for translation. This requires that you have your source document or
     documents in an Azure Blob Storage container. Provide a SAS URL to the source file or
     source container containing the documents for translation. The source document(s) are
-    translated and written to the location provided by the target container SAS URL.
+    translated and written to the location provided by the TranslationTargets.
 
     :param str source_url: Required. Location of the folder / container or single file with your
         documents.
-    :param targets: Required. Location of the destination for the output. This is a container
-        SAS URL to your target container (or containers if more than 1). A target
-        container is required for each language code specified.
+    :param targets: Required. Location of the destination for the output. This is a list of
+        TranslationTargets. Note that a TranslationTarget is required for each language code specified.
     :type targets: list[~azure.ai.documenttranslation.TranslationTarget]
     :keyword str source_language_code: Language code for the source documents.
         If none is specified, the source language will be auto-detected for each document.

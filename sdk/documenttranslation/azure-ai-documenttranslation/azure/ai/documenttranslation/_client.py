@@ -89,16 +89,16 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
     def create_translation_job(self, inputs, **kwargs):
         # type: (List[DocumentTranslationInput], **Any) -> JobStatusResult
         """Create a document translation job which translates the document(s) in your source container
-        to your target container in the given language.
+        to your TranslationTarget(s) in the given language.
 
         For supported languages and document formats, see the service documentation:
         https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
 
         :param inputs: A list of translation inputs. Each individual input has a single
-            source URL to documents and can contain multiple target URLs (one for each language)
+            source URL to documents and can contain multiple TranslationTargets (one for each language)
             for the destination to write translated documents.
         :type inputs: List[~azure.ai.documenttranslation.DocumentTranslationInput]
-        :return: A JobStatusResult with information on the status of the job.
+        :return: A JobStatusResult with information on the status of the translation job.
         :rtype: ~azure.ai.documenttranslation.JobStatusResult
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -136,10 +136,10 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         """Gets the status of a translation job.
 
         The status includes the overall job status, as well as a summary of
-        the documents that are being translated as part of that job.
+        the documents that are being translated as part of that translation job.
 
         :param str job_id: The translation job ID.
-        :return: A JobStatusResult with information on the status of the job.
+        :return: A JobStatusResult with information on the status of the translation job.
         :rtype: ~azure.ai.documenttranslation.JobStatusResult
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
@@ -154,7 +154,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
         A job will not be cancelled if it is already completed, failed, or cancelling.
         All documents that have completed translation will not be cancelled and will be charged.
-        All pending documents will be cancelled if possible.
+        If possible, all pending documents will be cancelled.
 
         :param str job_id: The translation job ID.
         :return: None
@@ -173,7 +173,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         Succeeded, Failed, Cancelled.
 
         :param str job_id: The translation job ID.
-        :return: A JobStatusResult with information on the status of the job.
+        :return: A JobStatusResult with information on the status of the translation job.
         :rtype: ~azure.ai.documenttranslation.JobStatusResult
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
             Will raise if validation fails on the input. E.g. insufficient permissions on the blob containers.
