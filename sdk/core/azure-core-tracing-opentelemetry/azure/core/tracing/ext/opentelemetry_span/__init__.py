@@ -47,6 +47,8 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     :param name: The name of the OpenTelemetry span to create if a new span is needed
     :type name: str
     :keyword SpanKind kind: The span kind of this span.
+    :keyword links: The list of links to be added to the span.
+    :paramtype links: list[Link]
     """
 
     def __init__(self, span=None, name="span", **kwargs):
@@ -84,6 +86,9 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         Create a child span for the current span and append it to the child spans list in the span instance.
         :param name: Name of the child span
         :type name: str
+        :keyword SpanKind kind: The span kind of this span.
+        :keyword links: The list of links to be added to the span.
+        :paramtype links: list[Link]
         :return: The OpenTelemetrySpan that is wrapping the child span instance
         """
         return self.__class__(name=name, **kwargs)
