@@ -77,8 +77,8 @@ class ContainerClient(StorageAccountHostsMixin):
     retrieved using the :func:`~get_blob_client` function.
 
     For more optional configuration, please click
-    :code:`<a href="https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob
-    #optional-configuration">here</a>`.
+    `here <https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob
+    #optional-configuration>`_.
 
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the container,
