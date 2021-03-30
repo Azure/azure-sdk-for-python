@@ -33,7 +33,7 @@ except ImportError:
 from uamqp import authentication, types
 
 from azure.core.settings import settings
-from azure.core.tracing import SpanKind
+from azure.core.tracing import SpanKind, Link
 
 from .._version import VERSION
 from .constants import (
@@ -275,7 +275,7 @@ def receive_trace_context_manager(receiver, message=None, span_name=SPAN_NAME_RE
         yield
     else:
         if links:
-            links = [span_impl_type.create_link_from_headers(**l) for l in links]
+            links = [Link(**l) for l in links]
         receive_span = span_impl_type(name=span_name, kind=SpanKind.CONSUMER, links=links)
         receiver._add_span_request_attributes(receive_span)  # type: ignore  # pylint: disable=protected-access
 
@@ -319,7 +319,7 @@ def trace_message(message, parent_span=None):
             current_span = parent_span or span_impl_type(
                 span_impl_type.get_current_span()
             )
-            link = span_impl_type.create_link_from_headers({
+            link = Link({
                 'traceparent': parent_span.get_trace_parent()
             })
             with current_span.span(name=SPAN_NAME_MESSAGE, kind=SpanKind.PRODUCER, links=link) as message_span:
