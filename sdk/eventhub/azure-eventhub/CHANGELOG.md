@@ -2,6 +2,12 @@
 
 ## 5.3.2 (Unreleased)
 
+**Bug Fixes**
+
+* Updated uAMQP dependency to 1.3.0.
+  - Fixed bug that sending message of large size triggering segmentation fault when the underlying socket connection is lost (#13739, #14543).
+  - Fixed bug in link flow control where link credit and delivery count should be calculated based on per message instead of per transfer frame (#16934).
+  - Fixed memory leaks in the process of link attach where source and target cython objects are not properly deallocated (#15747).
 
 ## 5.3.1 (2021-03-09)
 

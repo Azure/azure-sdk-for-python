@@ -6,6 +6,7 @@ stages:
       AllocateResourceGroup: false
       ServiceDirectory: eventhub
       BuildTargetingString: azure-eventhub*
+      InjectedPackages: $(WheelLocationsList)
       DeployArmTemplate: true
       TestSamples: true
       MatrixFilters:
