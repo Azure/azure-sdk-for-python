@@ -23,6 +23,9 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import copy
+import os
+import binascii
 import codecs
 import cgi
 import json
@@ -130,6 +133,9 @@ def _set_body(content, data, files, json_body, internal_request):
         _set_content_type_header("application/json", internal_request)
     elif files is not None:
         internal_request.set_formdata_body(files)
+        # if you don't supply your content type, we'll create a boundary for you with multipart/form-data
+        boundary = binascii.hexlify(os.urandom(16)).decode("ascii")  # got logic from httpx, thanks httpx!
+        # _set_content_type_header("multipart/form-data; boundary={}".format(boundary), internal_request)
     elif data:
         _set_content_type_header("application/x-www-form-urlencoded", internal_request)
         internal_request.set_formdata_body(data)
@@ -180,11 +186,11 @@ class HttpRequest(object):
         json_body = kwargs.pop("json", None)
         files = kwargs.pop("files", None)
 
-        self._internal_request = _PipelineTransportHttpRequest(
+        self._internal_request = kwargs.pop("_internal_request", _PipelineTransportHttpRequest(
             method=method,
             url=url,
             headers=kwargs.pop("headers", None),
-        )
+        ))
         params = kwargs.pop("params", None)
 
         if params:
@@ -242,7 +248,11 @@ class HttpRequest(object):
         return self._internal_request.__repr__()
 
     def __deepcopy__(self, memo=None):
-        return self._internal_request.__deepcopy__(memo)
+        return HttpRequest(
+            self.method,
+            self.url,
+            _internal_request=self._internal_request.__deepcopy__(memo)
+        )
 
 class _HttpResponseBase(object):
     """Base class for HttpResponse and AsyncHttpResponse.
