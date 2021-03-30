@@ -148,7 +148,7 @@ class FeatureFlagConfigurationSetting(
         self.key = key
         if not key.startswith(self.key_prefix):
             self.key = self.key_prefix + key
-        self.enabled = enabled
+        self._enabled = enabled
         self.label = kwargs.get("label", None)
         self.content_type = kwargs.get("content_type", self._feature_flag_content_type)
         self.last_modified = kwargs.get("last_modified", None)
@@ -158,6 +158,40 @@ class FeatureFlagConfigurationSetting(
         self.description = kwargs.get("description", None)
         self.display_name = kwargs.get("display_name", None)
         self.filters = filters or []
+        self._value = kwargs.get("value", {})
+
+    @property
+    def enabled(self):
+        # type: () -> bool
+        if self._value is None:
+            self._value = {"enabled": self._enabled}
+        elif isinstance(self._value, dict):
+            self._value["enabled"] = self._enabled
+        return self._enabled
+
+    @enabled.setter
+    def enabled(self, value):
+        # type: (bool) -> bool
+        if self._value is None:
+            self._value = {"enabled": value}
+        elif isinstance(self._value, dict):
+            self._value["enabled"] = self._enabled
+        self._enabled = value
+
+    @property
+    def value(self):
+        # type: () -> Dict[str, Any]
+        self._enabled = self._value.get("enabled", self._enabled)
+        return self._value
+
+    @value.setter
+    def value(self, new_value):
+        # type: (Dict[str, Any]) -> None
+        try:
+            self._enabled = new_value.get("enabled", self._enabled)
+        except AttributeError:
+            pass
+        self._value = new_value
 
     @classmethod
     def _from_generated(cls, key_value):
@@ -165,6 +199,7 @@ class FeatureFlagConfigurationSetting(
         try:
             if key_value is None:
                 return None
+            temp_value = None
             if key_value.value:
                 try:
                     key_value.value = json.loads(key_value.value)
@@ -183,6 +218,7 @@ class FeatureFlagConfigurationSetting(
                 read_only=key_value.locked,
                 etag=key_value.etag,
                 filters=filters,
+                value=key_value.value,
             )
         except (KeyError, AttributeError):
             return ConfigurationSetting._from_generated(key_value)
@@ -192,7 +228,7 @@ class FeatureFlagConfigurationSetting(
         value = {
             u"id": self.key,
             u"description": self.description,
-            u"enabled": self.enabled,
+            u"enabled": self._enabled,
             u"conditions": {u"client_filters": self.filters},
         }
         value = json.dumps(value)
