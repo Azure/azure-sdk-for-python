@@ -60,15 +60,15 @@ extends:
       common_root: azure/storage
       checkout:
         - package: azure-storage-blob
-          checkout_path: sdk/storage/azure-storage-blob
+          checkout_path: sdk/storage
           version: 12.8.0
         - package: azure-storage-queue
-          checkout_path: sdk/storage/azure-storage-queue
+          checkout_path: sdk/storage
           version: 12.1.5
         - package: azure-storage-file-share
-          checkout_path: sdk/storage/azure-storage-file-share
+          checkout_path: sdk/storage
           version: 12.4.1
         - package: azure-storage-file-datalake
-          checkout_path: sdk/storage/azure-storage-file-datalake
+          checkout_path: sdk/storage
           version: 12.3.0
 

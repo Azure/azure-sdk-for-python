@@ -52,7 +52,7 @@ steps:
 
       - template: /eng/pipelines/templates/steps/get-tagged-code.yml
         parameters:
-          DestinationDirectory: $(conda.output)/${{checkout.package}}
+          DestinationDirectory: $(conda.build)/${{checkout.package}}
           Package: ${{checkout.package}}
           CheckoutPath: ${{checkout.checkout_path}}
           Version: ${{checkout.version}}

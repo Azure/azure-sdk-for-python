@@ -50,5 +50,5 @@ extends:
       common_root: azure
       checkout:
         - package: azure-core
-          checkout_path: sdk/core/azure-core
+          checkout_path: sdk/core
           version: 1.12.0
