@@ -32,6 +32,7 @@ import asyncio
 
 async def sample_translation_async():
     import os
+    # [START wait_until_done_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation.aio import DocumentTranslationClient
     from azure.ai.documenttranslation import (
@@ -70,7 +71,9 @@ async def sample_translation_async():
         print("\nOf total documents...")
         print("{} failed".format(job_result.documents_failed_count))
         print("{} succeeded".format(job_result.documents_succeeded_count))
+        # [END wait_until_done_async]
 
+        # [START list_all_document_statuses_async]
         doc_results = client.list_all_document_statuses(job_result.id)  # type: AsyncItemPaged[DocumentStatusResult]
         async for document in doc_results:
             print("Document ID: {}".format(document.id))
@@ -80,6 +83,7 @@ async def sample_translation_async():
                 print("Translated to language: {}\n".format(document.translate_to))
             else:
                 print("Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
+        # [END list_all_document_statuses_async]
 
 
 async def main():

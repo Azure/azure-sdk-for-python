@@ -27,6 +27,7 @@ import asyncio
 
 async def sample_list_all_submitted_jobs_async():
     import os
+    # [START list_all_jobs_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation.aio import DocumentTranslationClient
 
@@ -52,6 +53,7 @@ async def sample_list_all_submitted_jobs_async():
             print("{} failed".format(job.documents_failed_count))
             print("{} succeeded".format(job.documents_succeeded_count))
             print("{} cancelled\n".format(job.documents_cancelled_count))
+    # [END list_all_jobs_async]
 
 
 async def main():
