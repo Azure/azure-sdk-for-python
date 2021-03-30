@@ -253,7 +253,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         super(SecretReferenceConfigurationSetting, self).__init__(**kwargs)
         self.key = key
         self.label = label
-        self.secret_uri = secret_uri
+        self._secret_uri = secret_uri
         self.content_type = kwargs.get(
             "content_type", self._secret_reference_content_type
         )
@@ -261,6 +261,34 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         self.last_modified = kwargs.get("last_modified", None)
         self.read_only = kwargs.get("read_only", None)
         self.tags = kwargs.get("tags", {})
+        self._value = {"secret_uri": self._secret_uri}
+
+    @property
+    def secret_uri(self):
+        # type: () -> str
+        self._value['secret_uri'] = self._secret_uri
+        return self._secret_uri
+
+    @secret_uri.setter
+    def secret_uri(self, value):
+        self._value['secret_uri'] = value
+        self._secret_uri = value
+
+    @property
+    def value(self):
+        # type: () -> str
+        self._secret_uri = self._value['secret_uri']
+        return self._value
+
+    @value.setter
+    def value(self, value):
+        # type: (dict) -> None
+        try:
+            self._secret_uri = value.get("secret_uri", self._secret_uri)
+            self._value = value
+        except AttributeError:
+            self._secret_uri = None
+            self._value = value
 
     @classmethod
     def _from_generated(cls, key_value):

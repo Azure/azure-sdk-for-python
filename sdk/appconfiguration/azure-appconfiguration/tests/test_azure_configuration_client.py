@@ -550,6 +550,15 @@ class AppConfigurationClientTest(AzureTestCase):
         updated_flag = client.set_configuration_setting(set_flag)
         self._assert_same_keys(set_flag, updated_flag)
 
+        assert isinstance(updated_flag, SecretReferenceConfigurationSetting)
+        new_uri = "https://aka.ms/azsdk"
+        new_uri2 = "https://aka.ms/azsdk/python"
+        updated_flag.secret_uri = new_uri
+        assert updated_flag.value['secret_uri'] == new_uri
+
+        updated_flag.value = {'secret_uri': new_uri2}
+        assert updated_flag.secret_uri == new_uri2
+
         client.delete_configuration_setting(secret_reference.key)
 
     @app_config_decorator

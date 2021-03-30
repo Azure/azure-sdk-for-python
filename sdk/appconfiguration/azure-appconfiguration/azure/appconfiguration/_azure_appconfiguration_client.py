@@ -45,7 +45,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional, Union
+    from typing import Any, Optional
     from azure.core.paging import ItemPaged
 
 
@@ -282,12 +282,12 @@ class AzureAppConfigurationClient:
     @distributed_trace
     def add_configuration_setting(
         self,
-        configuration_setting,  # type: Union[ConfigurationSetting,SecretReferenceConfigurationSetting,FeatureFlagConfigurationSetting] # pylint: disable=line-too-long
+        configuration_setting,  # type: ConfigurationSetting
         **kwargs  # type: dict
     ):
         # type: (...) -> ConfigurationSetting
 
-        """Add a ConfigurationSetting into the Azure App Configuration service.
+        """Add a ConfigurationSetting instance into the Azure App Configuration service.
 
         :param configuration_setting: the ConfigurationSetting object to be added
         :type configuration_setting: :class:`ConfigurationSetting<azure.appconfiguration.ConfigurationSetting>`
