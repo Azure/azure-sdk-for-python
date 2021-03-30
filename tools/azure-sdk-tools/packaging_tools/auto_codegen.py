@@ -1,14 +1,17 @@
 import argparse
 import json
 import logging
+import os
 from pathlib import Path
 import re
 from subprocess import check_call
 
 from .swaggertosdk.SwaggerToSdkCore import (
+    read_config,
     CONFIG_FILE,
 )
 from azure_devtools.ci_tools.git_tools import get_diff_file_list
+from .swaggertosdk.autorest_tools  import build_autorest_options
 from .generate_sdk import generate
 
 _LOGGER = logging.getLogger(__name__)
@@ -37,6 +40,57 @@ def init_new_service(package_name, folder_name):
             with open(str(ci), 'w') as file_out:
                 file_out.writelines(content)
 
+def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, spec_folder, input_readme):
+
+    readme_file = str(Path(spec_folder, input_readme))
+    global_conf = config["meta"]
+    local_conf = config["projects"][readme_file]
+
+    cmd = ["autorest", input_readme]
+    cmd += build_autorest_options(global_conf, local_conf)
+
+    # metadata
+    metadata = {
+        "autorest": global_conf["autorest_options"]["version"],
+        "use": global_conf["autorest_options"]["use"],
+        "commit": data["headSha"],
+        "repository_url": data["repoHttpsUrl"],
+        "autorest_command": " ".join(cmd),
+        "readme": input_readme
+    }
+
+    _LOGGER.info("Metadata json:\n {}".format(json.dumps(metadata, indent=2)))
+
+    package_folder = Path(sdk_folder, folder_name, package_name).expanduser()
+    if not os.path.exists(package_folder):
+        _LOGGER.info(f"Package folder doesn't exist: {package_folder}")
+        _LOGGER.info("Failed to save metadata.")
+        return
+
+    metadata_file_path = os.path.join(package_folder, "_meta.json")
+    with open(metadata_file_path, "w") as writer:
+        json.dump(metadata, writer, indent=2)
+    _LOGGER.info(f"Saved metadata to {metadata_file_path}")
+
+    # Check whether MANIFEST.in includes _meta.json
+    require_meta = "include _meta.json\n"
+    manifest_file = os.path.join(package_folder, "MANIFEST.in")
+    if not os.path.exists(manifest_file):
+        _LOGGER.info(f"MANIFEST.in doesn't exist: {manifest_file}")
+        return
+
+    includes = []
+    write_flag = False
+    with open(manifest_file, "r") as f:
+        includes = f.readlines()
+        if require_meta not in includes:
+            includes = [require_meta] + includes
+            write_flag = True
+
+    if write_flag:
+        with open(manifest_file, "w") as f:
+            f.write("".join(includes))
+
 
 def main(generate_input, generate_output):
     with open(generate_input, "r") as reader:
@@ -49,7 +103,7 @@ def main(generate_input, generate_output):
     for input_readme in data["relatedReadmeMdFiles"]:
         relative_path_readme = str(Path(spec_folder, input_readme))
         _LOGGER.info(f'[CODEGEN]({input_readme})codegen begin')
-        generate(CONFIG_FILE,
+        config = generate(CONFIG_FILE,
                  sdk_folder,
                  [],
                  relative_path_readme,
@@ -58,6 +112,7 @@ def main(generate_input, generate_output):
                  )
         package_names = get_package_names(sdk_folder)
         _LOGGER.info(f'[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]')
+
 
         for folder_name, package_name in package_names:
             if package_name in package_total:
@@ -76,6 +131,12 @@ def main(generate_input, generate_output):
 
             # Generate some necessary file for new service
             init_new_service(package_name, folder_name)
+
+            # Update metadata
+            try:
+                update_servicemetadata(sdk_folder, data, config, folder_name, package_name, spec_folder, input_readme)
+            except Exception as e:
+                _LOGGER.info(str(e))
 
             # Setup package locally
             check_call(f'pip install --ignore-requires-python -e {str(Path(sdk_folder, folder_name, package_name))}',
