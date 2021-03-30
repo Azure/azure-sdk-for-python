@@ -12,121 +12,95 @@ from ._generated.models import (
     MicrosoftTeamsUserIdentifierModel
 )
 from ._shared.models import (
+    CommunicationIdentifier,
     CommunicationUserIdentifier,
     PhoneNumberIdentifier,
     MicrosoftTeamsUserIdentifier,
     UnknownIdentifier,
+    CommunicationIdentifierKind
 )
 
-class _IdentifierType(Enum):
-    COMMUNICATION_USER_IDENTIFIER = "COMMUNICATION_USER_IDENTIFIER"
-    PHONE_NUMBER_IDENTIFIER = "PHONE_NUMBER_IDENTIFIER"
-    UNKNOWN_IDENTIFIER = "UNKNOWN_IDENTIFIER"
-    MICROSOFT_TEAMS_IDENTIFIER = "MICROSOFT_TEAMS_IDENTIFIER"
 
-class CommunicationUserIdentifierSerializer(object):
+def _assert_maximum_one_nested_model(identifier_model):
+    models = [
+        identifier_model.communication_user,
+        identifier_model.phone_number,
+        identifier_model.microsoft_teams_user
+    ]
+    present_properties = [p for p in models if p]
+    if len(present_properties) > 1:
+        raise ValueError("Only one of the properties in identifier model should be present.")
+        
 
-    @classmethod
-    def serialize(cls, communicationIdentifier):
-        """ Serialize the Communication identifier into CommunicationIdentifierModel
-        :param identifier: Identifier object
-        :type identifier: Union[CommunicationUserIdentifier,
-           PhoneNumberIdentifier, MicrosoftTeamsUserIdentifier, UnknownIdentifier]
-        :return: CommunicationIdentifierModel
-        :rtype: ~azure.communication.chat.CommunicationIdentifierModel
-        :raises Union[TypeError, ValueError]
-        """
-        identifierType = CommunicationUserIdentifierSerializer._getIdentifierType(communicationIdentifier)
+def serialize_identifier(identifier):
+    # type: (CommunicationIdentifier) -> CommunicationIdentifierModel
+    """Serialize the Communication identifier into CommunicationIdentifierModel
 
-        if identifierType == _IdentifierType.COMMUNICATION_USER_IDENTIFIER:
-            return CommunicationIdentifierModel(
-                communication_user=CommunicationUserIdentifierModel(id=communicationIdentifier.identifier)
+    :param identifier: Identifier object
+    :type identifier: CommunicationIdentifier
+    :return: CommunicationIdentifierModel
+    """
+    if identifier.kind == CommunicationIdentifierKind.COMMUNICATION_USER:
+        return CommunicationIdentifierModel(
+            raw_id=identifier.id,
+            communication_user=CommunicationUserIdentifierModel(
+                id=communicationIdentifier.identifier
             )
-        if identifierType == _IdentifierType.PHONE_NUMBER_IDENTIFIER:
-            return CommunicationIdentifierModel(
-                raw_id=communicationIdentifier.raw_id,
-                phone_number=PhoneNumberIdentifierModel(value=communicationIdentifier.phone_number)
+        )
+    if identifier.kind == CommunicationIdentifierKind.PHONE_NUMBER:
+        return CommunicationIdentifierModel(
+            raw_id=identifier.id,
+            phone_number=PhoneNumberIdentifierModel(
+                value=identifier.properties['phone_number'])
+        )
+    if identifier.kind == CommunicationIdentifierKind.MICROSOFT_TEAMS_USER:
+        return CommunicationIdentifierModel(
+            raw_id=identifier.id,
+            microsoft_teams_user=MicrosoftTeamsUserIdentifierModel(
+                user_id=identifier.properties['user_id'],
+                is_anonymous=identifier.properties['is_anonymous'],
+                cloud=identifier.properties['cloud']
             )
-        if identifierType == _IdentifierType.MICROSOFT_TEAMS_IDENTIFIER:
-            return CommunicationIdentifierModel(
-                raw_id=communicationIdentifier.raw_id,
-                microsoft_teams_user=MicrosoftTeamsUserIdentifierModel(user_id=communicationIdentifier.user_id,
-                is_anonymous=communicationIdentifier.is_anonymous,
-                cloud=communicationIdentifier.cloud)
-            )
+        )
+    else:
+        return CommunicationIdentifierModel(
+            raw_id=identifier.id
+        )
 
-        if identifierType == _IdentifierType.UNKNOWN_IDENTIFIER:
-            return CommunicationIdentifierModel(
-                raw_id=communicationIdentifier.raw_id
-            )
 
-        raise TypeError("Unsupported identifier type " + communicationIdentifier.__class__.__name__)
+def deserialize(identifier_model):
+    # type: (CommunicationIdentifierModel) -> CommunicationIdentifier
+    """
+    Deserialize the CommunicationIdentifierModel into Communication Identifier
 
-    @classmethod
-    def assertMaximumOneNestedModel(cls, identifierModel):
-        presentPropertiesCount = 0
-        if identifierModel.communication_user is not None:
-            presentPropertiesCount += 1
-        if identifierModel.phone_number is not None:
-            presentPropertiesCount += 1
-        if identifierModel.microsoft_teams_user is not None:
-            presentPropertiesCount += 1
+    :param identifier_model: CommunicationIdentifierModel
+    :type identifier_model: CommunicationIdentifierModel
+    :return: CommunicationIdentifier
+    """
 
-        if presentPropertiesCount > 1:
-            raise ValueError("Only one of the properties in identifier model should be present.")
+    raw_id = identifier_model.raw_id
+    if not raw_id:
+        raise ValueError("Identifier must have a valid id")
 
-    @classmethod
-    def deserialize(cls, identifierModel):
-        """
-        Deserialize the CommunicationIdentifierModel into Communication Identifier
-        :param identifierModel: CommunicationIdentifierModel
-        :type identifierModel: CommunicationIdentifierModel
-        :return: Union[CommunicationUserIdentifier, CommunicationPhoneNumberIdentifier]
-        :rtype: Union[CommunicationUserIdentifier, CommunicationPhoneNumberIdentifier]
-        :rasies: ValueError
-        """
+    _assert_maximum_one_nested_model(identifier_model)
 
-        raw_id = identifierModel.raw_id
-        if not raw_id:
-            raise ValueError("Identifier must have a valid id")
-
-        CommunicationUserIdentifierSerializer.assertMaximumOneNestedModel(identifierModel)
-
-        if identifierModel.communication_user is not None:
-            return CommunicationUserIdentifier(raw_id)
-        if identifierModel.phone_number is not None:
-            if not identifierModel.phone_number:
-                raise ValueError("PhoneNumberIdentifier must have a valid attribute - phone_number")
-            return PhoneNumberIdentifier(identifierModel.phone_number.value, raw_id=raw_id)
-        if identifierModel.microsoft_teams_user is not None:
-            if identifierModel.microsoft_teams_user.is_anonymous not in [True, False]:
-                raise ValueError("MicrosoftTeamsUser must have a valid attribute - is_anonymous")
-            if not identifierModel.microsoft_teams_user.user_id:
-                raise ValueError("MicrosoftTeamsUser must have a valid attribute - user_id")
-            if not identifierModel.microsoft_teams_user.cloud:
-                raise ValueError("MicrosoftTeamsUser must have a valid attribute - cloud")
-            return MicrosoftTeamsUserIdentifier(
-                raw_id=raw_id,
-                user_id=identifierModel.microsoft_teams_user.user_id,
-                is_anonymous=identifierModel.microsoft_teams_user.is_anonymous,
-                cloud=identifierModel.microsoft_teams_user.cloud
-            )
-
-        return UnknownIdentifier(raw_id)
-
-    @classmethod
-    def _getIdentifierType(cls, communicationIdentifier):
-        def has_attributes(obj, attributes):
-            return all([hasattr(obj, attr) for attr in attributes])
-
-        if has_attributes(communicationIdentifier, ["identifier"]):
-            return _IdentifierType.COMMUNICATION_USER_IDENTIFIER
-
-        if has_attributes(communicationIdentifier, ['phone_number', 'raw_id']):
-            return _IdentifierType.PHONE_NUMBER_IDENTIFIER
-
-        if has_attributes(communicationIdentifier, ["raw_id", "user_id", "is_anonymous", "cloud"]):
-            return _IdentifierType.MICROSOFT_TEAMS_IDENTIFIER
-
-        if has_attributes(communicationIdentifier, ["raw_id"]):
-            return _IdentifierType.UNKNOWN_IDENTIFIER
+    if identifier_model.communication_user:
+        return CommunicationUserIdentifier(raw_id)
+    if identifier_model.phone_number:
+        if not identifier_model.phone_number:
+            raise ValueError("PhoneNumberIdentifier must have a valid attribute - phone_number")
+        return PhoneNumberIdentifier(identifier_model.phone_number.value, identifier=raw_id)
+    if identifier_model.microsoft_teams_user is not None:
+        if identifier_model.microsoft_teams_user.is_anonymous not in [True, False]:
+            raise ValueError("MicrosoftTeamsUser must have a valid attribute - is_anonymous")
+        if not identifier_model.microsoft_teams_user.user_id:
+            raise ValueError("MicrosoftTeamsUser must have a valid attribute - user_id")
+        if not identifier_model.microsoft_teams_user.cloud:
+            raise ValueError("MicrosoftTeamsUser must have a valid attribute - cloud")
+        return MicrosoftTeamsUserIdentifier(
+            identifier=raw_id,
+            user_id=identifierModel.microsoft_teams_user.user_id,
+            is_anonymous=identifierModel.microsoft_teams_user.is_anonymous,
+            cloud=identifierModel.microsoft_teams_user.cloud
+        )
+    return UnknownIdentifier(raw_id)
