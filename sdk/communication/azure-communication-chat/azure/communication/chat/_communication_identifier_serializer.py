@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from enum import Enum
-
 from ._generated.models import (
     CommunicationIdentifierModel,
     CommunicationUserIdentifierModel,
@@ -30,7 +28,7 @@ def _assert_maximum_one_nested_model(identifier_model):
     present_properties = [p for p in models if p]
     if len(present_properties) > 1:
         raise ValueError("Only one of the properties in identifier model should be present.")
-        
+
 
 def serialize_identifier(identifier):
     # type: (CommunicationIdentifier) -> CommunicationIdentifierModel
@@ -62,10 +60,9 @@ def serialize_identifier(identifier):
                 cloud=identifier.properties['cloud']
             )
         )
-    else:
-        return CommunicationIdentifierModel(
-            raw_id=identifier.id
-        )
+    return CommunicationIdentifierModel(
+        raw_id=identifier.id
+    )
 
 
 def deserialize_identifier(identifier_model):
@@ -77,7 +74,6 @@ def deserialize_identifier(identifier_model):
     :type identifier_model: CommunicationIdentifierModel
     :return: CommunicationIdentifier
     """
-
     raw_id = identifier_model.raw_id
     if not raw_id:
         raise ValueError("Identifier must have a valid id")
@@ -99,8 +95,8 @@ def deserialize_identifier(identifier_model):
             raise ValueError("MicrosoftTeamsUser must have a valid attribute - cloud")
         return MicrosoftTeamsUserIdentifier(
             identifier=raw_id,
-            user_id=identifierModel.microsoft_teams_user.user_id,
-            is_anonymous=identifierModel.microsoft_teams_user.is_anonymous,
-            cloud=identifierModel.microsoft_teams_user.cloud
+            user_id=identifier_model.microsoft_teams_user.user_id,
+            is_anonymous=identifier_model.microsoft_teams_user.is_anonymous,
+            cloud=identifier_model.microsoft_teams_user.cloud
         )
     return UnknownIdentifier(raw_id)
