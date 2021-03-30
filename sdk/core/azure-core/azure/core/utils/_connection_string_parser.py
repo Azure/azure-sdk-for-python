@@ -4,17 +4,18 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import Mapping
-from .._utils import _case_insensitive_dict
 
 
 def parse_connection_string(conn_str, case_sensitive_keys=False):
     # type: (str, bool) -> Mapping[str, str]
-    """Parses the connection string into its component parts. Checks that each
-    key in the connection string has a provided value.
+    """Parses the connection string into a dict of its component parts, with the option of preserving case
+    of keys, and validates that each key in the connection string has a provided value. If case of keys
+    is not preserved (ie. `case_sensitive_keys=False`), then a dict with LOWERCASE KEYS will be returned.
     :param conn_str: String with connection details provided by Azure services.
     :type conn_str: str
     :param case_sensitive_keys: Indicates whether returned object should retrieve
-        keys with case sensitive checking. Default is False.
+        keys with case sensitive checking. True means that case of keys will be preserved.
+        Default is False.
     :type case_sensitive_keys: bool
     :rtype: Mapping
     :raises:
@@ -33,13 +34,14 @@ def parse_connection_string(conn_str, case_sensitive_keys=False):
 
     if not case_sensitive_keys:
         # if duplicate case insensitive keys are passed in, raise error
-        duplicate_keys = set()
+        new_args_dict = {}
         for key in args_dict.keys():
-            if key.lower() in duplicate_keys:
+            new_key = key.lower()
+            if new_key in new_args_dict:
                 raise ValueError(
-                    "Duplicate key in connection string: {}".format(key.lower())
+                    "Duplicate key in connection string: {}".format(new_key)
                 )
-            duplicate_keys.add(key.lower())
-        args_dict = _case_insensitive_dict(**args_dict)
+            new_args_dict[new_key] = args_dict[key]
+        return new_args_dict
 
     return args_dict

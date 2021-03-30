@@ -23,6 +23,12 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+"""
+
+This `utils` module provides functionality that is intended to be used by developers
+building on top of `azure-core`.
+
+"""
 from ._connection_string_parser import (
     parse_connection_string
 )
