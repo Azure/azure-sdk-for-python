@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b5 (Unreleased)
+## 1.0.0b5 (2021-03-29)
 
 ### Breaking Changes
 - Renamed AcquiredPhoneNumber to PurchasedPhoneNumber

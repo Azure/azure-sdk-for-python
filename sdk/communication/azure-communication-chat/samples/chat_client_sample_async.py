@@ -51,6 +51,7 @@ class ChatClientSamplesAsync(object):
         # [START create_chat_client]
         from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential
 
+        # set `endpoint` to an existing ACS endpoint
         chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
         # [END create_chat_client]
         print("chat_client created")
@@ -65,6 +66,7 @@ class ChatClientSamplesAsync(object):
         from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential
         from azure.communication.chat import ChatThreadParticipant
 
+        # set `endpoint` to an existing ACS endpoint
         chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
         async with chat_client:
 
@@ -96,7 +98,10 @@ class ChatClientSamplesAsync(object):
         # [START get_chat_thread_client]
         from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential
 
+        # set `endpoint` to an existing ACS endpoint
         chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
+
+        # set `thread_id` to an existing chat thread id
         chat_thread_client = chat_client.get_chat_thread_client(thread_id)
         # [END get_chat_thread_client]
 
@@ -111,6 +116,7 @@ class ChatClientSamplesAsync(object):
         # [START list_threads]
         from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential
 
+        # set `endpoint` to an existing ACS endpoint
         chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
         async with chat_client:
 
@@ -131,10 +137,11 @@ class ChatClientSamplesAsync(object):
         # [START delete_thread]
         from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential
 
+        # set `endpoint` to an existing ACS endpoint
         chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
         async with chat_client:
-
-            await chat_client.delete_chat_thread(self._thread_id)
+            # set `thread_id` to an existing chat thread id
+            await chat_client.delete_chat_thread(thread_id)
         # [END delete_thread]
             print("delete_thread succeeded")
 

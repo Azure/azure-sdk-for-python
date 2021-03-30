@@ -23,7 +23,7 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
      supplied.
      If the translation language pair is not present in the glossary, it will not be applied.
     :type glossary_url: str
-    :keyword str format: Format.
+    :param str file_format: Format.
     :keyword str format_version: Format version.
     :keyword storage_source: Storage Source. Default value: "AzureBlob".
     :paramtype storage_source: str
@@ -32,35 +32,26 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
     def __init__(
             self,
             glossary_url,
+            file_format,
             **kwargs
     ):
-        # type: (str, **Any) -> None
+        # type: (str, str, **Any) -> None
         self.glossary_url = glossary_url
-        self.format = kwargs.get("format", None)
+        self.file_format = file_format
         self.format_version = kwargs.get("format_version", None)
         self.storage_source = kwargs.get("storage_source", None)
 
     def _to_generated(self):
         return _Glossary(
                 glossary_url=self.glossary_url,
-                format=self.format,
+                format=self.file_format,
                 version=self.format_version,
                 storage_source=self.storage_source
             )
 
     @staticmethod
-    def _to_generated_unknown_type(glossary):
-        if isinstance(glossary, TranslationGlossary):
-            return glossary._to_generated()  # pylint: disable=protected-access
-        if isinstance(glossary, six.string_types):
-            return _Glossary(
-                    glossary_url=glossary,
-                )
-        return None
-
-    @staticmethod
     def _to_generated_list(glossaries):
-        return [TranslationGlossary._to_generated_unknown_type(glossary) for glossary in glossaries]
+        return [glossary._to_generated() for glossary in glossaries]  # pylint: disable=protected-access
 
 
 class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
@@ -72,7 +63,7 @@ class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
     :type language_code: str
     :keyword str category_id: Category / custom system for translation request.
     :keyword glossaries: List of TranslationGlossary.
-    :paramtype glossaries: Union[list[str], list[~azure.ai.documenttranslation.TranslationGlossary]]
+    :paramtype glossaries: list[~azure.ai.documenttranslation.TranslationGlossary]
     :keyword storage_source: Storage Source. Default value: "AzureBlob".
     :paramtype storage_source: str
     """
@@ -329,8 +320,8 @@ class DocumentTranslationError(object):  # pylint: disable=useless-object-inheri
 class FileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
     """FileFormat.
 
-    :ivar format: Name of the format.
-    :vartype format: str
+    :ivar file_format: Name of the format.
+    :vartype file_format: str
     :ivar file_extensions: Supported file extension for this format.
     :vartype file_extensions: list[str]
     :ivar content_types: Supported Content-Types for this format.
@@ -344,7 +335,7 @@ class FileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
         **kwargs
     ):
         # type: (**Any) -> None
-        self.format = kwargs.get('format', None)
+        self.file_format = kwargs.get('file_format', None)
         self.file_extensions = kwargs.get('file_extensions', None)
         self.content_types = kwargs.get('content_types', None)
         self.format_versions = kwargs.get('format_versions', None)
@@ -352,7 +343,7 @@ class FileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
     @classmethod
     def _from_generated(cls, file_format):
         return cls(
-            format=file_format.format,
+            file_format=file_format.format,
             file_extensions=file_format.file_extensions,
             content_types=file_format.content_types,
             format_versions=file_format.versions

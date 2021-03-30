@@ -3,7 +3,11 @@
 
 -------------------
 
-## 1.1.2 (Unreleased)
+## 1.2.0b1 (Unreleased)
+
+### Features
+
+- Adds method `update_sync_token` to include sync tokens from EventGrid notifications.
 
 ### Dependency Updates
 
