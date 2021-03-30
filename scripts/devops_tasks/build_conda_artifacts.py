@@ -12,9 +12,13 @@
 import argparse
 import sys
 import os
+import shutil
+import pdb
 
 from common_tasks import process_glob_string, run_check_call, str_to_bool, parse_setup
 from subprocess import check_call
+from distutils.dir_util import copy_tree
+
 
 NAMESPACE_EXTENSION_TEMPLATE = """__path__ = __import__('pkgutil').extend_path(__path__, __name__)  # type: str
 """
@@ -22,8 +26,8 @@ NAMESPACE_EXTENSION_TEMPLATE = """__path__ = __import__('pkgutil').extend_path(_
 CONDA_PKG_SETUP_TEMPLATE = """from setuptools import find_packages, setup
 
 setup(
-    name={conda_package_name},
-    version={version},
+    name=\"{conda_package_name}\",
+    version=\"{version}\",
     description='Microsoft Azure SDK For Python {service} Combined Conda Library',
     license='MIT License',
     author='Microsoft Corporation',
@@ -51,31 +55,71 @@ setup(
 def create_package(pkg_directory, output_directory):
     check_call([sys.executable, 'setup.py', "sdist", "--format", "zip", '-d', output_directory], cwd=pkg_directory)
 
+
+def create_namespace_extension(target_directory):
+    with open(os.path.join(target_directory, '__init__.py'), 'w') as f:
+        f.write(NAMESPACE_EXTENSION_TEMPLATE)
+
+
 def create_sdist_skeleton(build_directory, artifact_name, common_root):
-    # clean
+    sdist_directory = os.path.join(build_directory, artifact_name)
 
-    # create existing
+    if os.path.exists(sdist_directory):
+        shutil.rmtree(sdist_directory)
+    os.makedirs(sdist_directory)
+    namespaces = common_root.split('/')
 
-    # given the common root, create a folder for each level, populating with a __init__ that has content from 
-    # NAMESPACE_EXTENSION_TEMPLATE
-    pass
+    # after the below function, ns_dir will be the target destination for copying from our pkgs_from_consumption
+    ns_dir = sdist_directory
+    for ns in namespaces:
+        ns_dir = os.path.join(ns_dir, ns)
+        if not os.path.exists(ns_dir):
+            os.mkdir(ns_dir)
+        create_namespace_extension(ns_dir)
+
+    # get all the directories in the build folder, we will pull in all of them
+    pkgs_for_consumption = [os.path.join(build_directory, p) for p in os.listdir(build_directory) if p != artifact_name]
+
+    for pkg in pkgs_for_consumption:
+        pkg_till_common_root = os.path.join(pkg, common_root)
+
+        if os.path.exists(pkg_till_common_root):
+            directories_for_copy = [file for file in os.listdir(pkg_till_common_root) if os.path.isdir(os.path.join(pkg_till_common_root, file))]
+
+            for directory in directories_for_copy:
+                src = os.path.join(pkg_till_common_root, directory)
+                dest = os.path.join(ns_dir, directory)
+                shutil.copytree(src, dest)
+
 
 def create_sdist_setup(build_directory, artifact_name, service):
-    # populate a setup.py in the root of the build_directory/artifact_name
-    # resolve to 0.0.0
-    pass
+    sdist_directory = os.path.join(build_directory, artifact_name)
+    setup_location = os.path.join(sdist_directory, 'setup.py')
 
-def resolve_common_namespaces(build_directory, artifact_name, common_root):
-    pass
+    template = CONDA_PKG_SETUP_TEMPLATE.format(
+        conda_package_name = artifact_name,
+        version = "0.0.0",
+        service = service,
+        package_excludes = "'azure', 'tests'"
+    )
 
-def create_combined_sdist(output_directory, build_directory, artifact_name, common_root):
-    
+    with open(setup_location, 'w') as f:
+        f.write(template)
+
+
+def create_combined_sdist(output_directory, build_directory, artifact_name, common_root, service):
     create_sdist_skeleton(build_directory, artifact_name, common_root)
-    resolve_common_namespaces(build_directory, artifact_name, common_root)
     create_sdist_setup(build_directory, artifact_name, service)
 
-    print('{}/{}/{}.zip'.format(output_directory, artifact_name, artifact_name))
-    return '{}/{}/{}.zip'.format(output_directory, artifact_name, artifact_name)
+    sdist_location = os.path.join(build_directory, artifact_name)
+    output_sdist_location = os.path.join(output_directory, "sdist", artifact_name)
+
+    create_package(sdist_location, output_sdist_location)
+    output_location = os.path.join(output_sdist_location, os.listdir(output_sdist_location)[0])
+
+    print('Generated Sdist for artifact {} is present at {}'.format(artifact_name, output_location))
+    return output_location
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -108,7 +152,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "-r",
-        "--common_root",
+        "--common-root",
         dest="common_root",
         help="The common root namespace. For instance, when outputting the artifact 'azure-storage', the common root will be azure/storage.",
         required=False,
@@ -116,9 +160,17 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "-n",
-        "--artifact_name",
+        "--artifact-name",
         dest="artifact_name",
         help="The name of the output conda package.",
+        required=True,
+    )
+
+    parser.add_argument(
+        "-s",
+        "--service-name",
+        dest="service",
+        help="The name of the service this package is being generated for.",
         required=True,
     )
 
@@ -131,7 +183,7 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    output_source_location = create_combined_sdist(output_directory, args.build_directory, args.artifact_name, args.common_root)
+    output_source_location = create_combined_sdist(args.distribution_directory, args.build_directory, args.artifact_name, args.common_root, args.service)
 
     if args.output_var:
         print("##vso[task.setvariable variable={}]{}".format(args.output_var, output_source_location))

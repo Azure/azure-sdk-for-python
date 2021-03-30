@@ -47,6 +47,7 @@ extends:
     CondaArtifacts:
     - name: azure-core
       meta_source: meta.yml
+      common_root: azure
       checkout:
         - package: azure-core
           checkout_path: sdk/core/azure-core

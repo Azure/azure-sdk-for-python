@@ -13,8 +13,6 @@ parameters:
     default: ''
           
 steps:
-
-  
   # sparse checkout the target version of Azure/azure-sdk-for-python with path CheckoutPath/Package
 
   - pwsh: |
