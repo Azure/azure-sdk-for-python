@@ -303,11 +303,15 @@ class RetryPolicyBase(object):
             request.context.options["connection_timeout"] = min(connection_timeout, absolute_timeout)
 
         # otherwise, try to ensure the transport's configured connection_timeout doesn't exceed absolute_timeout
-        # ("connection_config" isn't defined on HttpTransport but all implementations in this library have it)
+        # ("connection_config" isn't defined on Async/HttpTransport but all implementations in this library have it)
         elif hasattr(request.context.transport, "connection_config"):
             default_timeout = getattr(request.context.transport.connection_config, "timeout", absolute_timeout)
-            if absolute_timeout < default_timeout:
-                request.context.options["connection_timeout"] = absolute_timeout
+            try:
+                if absolute_timeout < default_timeout:
+                    request.context.options["connection_timeout"] = absolute_timeout
+            except TypeError:
+                # transport.connection_config.timeout is something unexpected (not a number)
+                pass
 
     def _configure_positions(self, request, retry_settings):
         body_position = None
