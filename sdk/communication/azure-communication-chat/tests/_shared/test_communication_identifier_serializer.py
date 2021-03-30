@@ -122,7 +122,7 @@ class CommunicationUserIdentifierSerializerTest(unittest.TestCase):
             MicrosoftTeamsUserIdentifier(
                 user_id="teamsid",
                 cloud=CommunicationCloudEnvironment.Public,
-                raw_id="someid"
+                identifier="someid"
             )
         )
 

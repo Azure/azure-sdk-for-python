@@ -38,31 +38,34 @@ def serialize_identifier(identifier):
     :type identifier: CommunicationIdentifier
     :return: CommunicationIdentifierModel
     """
-    if identifier.kind == CommunicationIdentifierKind.COMMUNICATION_USER:
-        return CommunicationIdentifierModel(
-            raw_id=identifier.id,
-            communication_user=CommunicationUserIdentifierModel(
-                id=identifier.properties['identifier']
+    try:
+        if identifier.kind == CommunicationIdentifierKind.COMMUNICATION_USER:
+            return CommunicationIdentifierModel(
+                raw_id=identifier.id,
+                communication_user=CommunicationUserIdentifierModel(
+                    id=identifier.properties['identifier']
+                )
             )
-        )
-    if identifier.kind == CommunicationIdentifierKind.PHONE_NUMBER:
-        return CommunicationIdentifierModel(
-            raw_id=identifier.id,
-            phone_number=PhoneNumberIdentifierModel(
-                value=identifier.properties['phone_number'])
-        )
-    if identifier.kind == CommunicationIdentifierKind.MICROSOFT_TEAMS_USER:
-        return CommunicationIdentifierModel(
-            raw_id=identifier.id,
-            microsoft_teams_user=MicrosoftTeamsUserIdentifierModel(
-                user_id=identifier.properties['user_id'],
-                is_anonymous=identifier.properties['is_anonymous'],
-                cloud=identifier.properties['cloud']
+        if identifier.kind == CommunicationIdentifierKind.PHONE_NUMBER:
+            return CommunicationIdentifierModel(
+                raw_id=identifier.id,
+                phone_number=PhoneNumberIdentifierModel(
+                    value=identifier.properties['phone_number'])
             )
+        if identifier.kind == CommunicationIdentifierKind.MICROSOFT_TEAMS_USER:
+            return CommunicationIdentifierModel(
+                raw_id=identifier.id,
+                microsoft_teams_user=MicrosoftTeamsUserIdentifierModel(
+                    user_id=identifier.properties['user_id'],
+                    is_anonymous=identifier.properties['is_anonymous'],
+                    cloud=identifier.properties['cloud']
+                )
+            )
+        return CommunicationIdentifierModel(
+            raw_id=identifier.id
         )
-    return CommunicationIdentifierModel(
-        raw_id=identifier.id
-    )
+    except AttributeError:
+        raise TypeError("Unsupported identifier type " + identifier.__class__.__name__)
 
 
 def deserialize_identifier(identifier_model):

@@ -71,7 +71,7 @@ class CommunicationUserIdentifier(object):
     def __init__(self, identifier):
         # type: (str) -> None
         self.id = identifier
-        self.properties = CommunicationUserProperties(identifier)
+        self.properties = CommunicationUserProperties(identifier=identifier)
 
 
 PhoneNumberProperties = TypedDict(
@@ -97,7 +97,7 @@ class PhoneNumberIdentifier(object):
     def __init__(self, phone_number, **kwargs):
         # type: (str, Any) -> None
         self.id = kwargs.get('identifier')
-        self.properties = PhoneNumberProperties(phone_number)
+        self.properties = PhoneNumberProperties(phone_number=phone_number)
 
 
 class UnknownIdentifier(object):
