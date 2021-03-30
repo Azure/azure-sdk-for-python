@@ -49,7 +49,6 @@ if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
 
 
-
 class AzureAppConfigurationClient:
     """Represents an client that calls restful API of Azure App Configuration service.
 

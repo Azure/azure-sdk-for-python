@@ -64,7 +64,7 @@ class ConfigurationSetting(Model):
         if key_value.content_type is not None:
             if key_value.content_type.startswith(
                 FeatureFlagConfigurationSetting._feature_flag_content_type  # pylint:disable=protected-access
-            ):
+            ) and key_value.key.startswith(FeatureFlagConfigurationSetting.key_prefix):
                 return FeatureFlagConfigurationSetting._from_generated(  # pylint: disable=protected-access
                     key_value
                 )

@@ -459,6 +459,20 @@ class AppConfigurationClientTest(AzureTestCase):
             new[k] = str(v)
         return new
 
+    def _assert_same_keys(self, key1, key2):
+        assert type(key1) == type(key2)
+        assert key1.key == key2.key
+        assert key1.label == key2.label
+        assert key1.content_type == key2.content_type
+        assert key1.tags == key2.tags
+        assert key1.etag != key2.etag
+        if isinstance(key1, FeatureFlagConfigurationSetting):
+            assert key1.enabled == key2.enabled
+            assert len(key1.filters) == len(key2.filters)
+        elif isinstance(key1, SecretReferenceConfigurationSetting):
+            assert key1.secret_uri == key2.secret_uri
+        else:
+            assert key1.value == key2.value
 
     @app_config_decorator
     def test_sync_tokens(self, client):
