@@ -52,6 +52,10 @@ class AuthenticationRecord(object):
 
         deserialized = json.loads(data)
 
+        version = deserialized.get("version")
+        if version != "1.0":
+            raise ValueError('Unexpected version "{}"'.format(version))
+
         return cls(
             authority=deserialized["authority"],
             client_id=deserialized["clientId"],
@@ -73,6 +77,7 @@ class AuthenticationRecord(object):
             "homeAccountId": self._home_account_id,
             "tenantId": self._tenant_id,
             "username": self._username,
+            "version": "1.0",
         }
 
         return json.dumps(record)
