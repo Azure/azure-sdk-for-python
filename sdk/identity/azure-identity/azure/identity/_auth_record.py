@@ -54,9 +54,9 @@ class AuthenticationRecord(object):
 
         return cls(
             authority=deserialized["authority"],
-            client_id=deserialized["client_id"],
-            home_account_id=deserialized["home_account_id"],
-            tenant_id=deserialized["tenant_id"],
+            client_id=deserialized["clientId"],
+            home_account_id=deserialized["homeAccountId"],
+            tenant_id=deserialized["tenantId"],
             username=deserialized["username"],
         )
 
@@ -69,9 +69,9 @@ class AuthenticationRecord(object):
 
         record = {
             "authority": self._authority,
-            "client_id": self._client_id,
-            "home_account_id": self._home_account_id,
-            "tenant_id": self._tenant_id,
+            "clientId": self._client_id,
+            "homeAccountId": self._home_account_id,
+            "tenantId": self._tenant_id,
             "username": self._username,
         }
 
