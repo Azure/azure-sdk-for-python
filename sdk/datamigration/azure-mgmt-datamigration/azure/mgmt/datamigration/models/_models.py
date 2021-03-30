@@ -2998,6 +2998,9 @@ class DataMigrationService(TrackedResource):
      Microsoft.Network/virtualNetworks/subnets resource to which the service
      should be joined
     :type virtual_subnet_id: str
+    :param virtual_nic_id: The ID of the Microsoft.Network/networkInterfaces
+     resource which the service have
+    :type virtual_nic_id: str
     :param sku: Service SKU
     :type sku: ~azure.mgmt.datamigration.models.ServiceSku
     """
@@ -3022,6 +3025,7 @@ class DataMigrationService(TrackedResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'public_key': {'key': 'properties.publicKey', 'type': 'str'},
         'virtual_subnet_id': {'key': 'properties.virtualSubnetId', 'type': 'str'},
+        'virtual_nic_id': {'key': 'properties.virtualNicId', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'ServiceSku'},
     }
 
@@ -3032,6 +3036,7 @@ class DataMigrationService(TrackedResource):
         self.provisioning_state = None
         self.public_key = kwargs.get('public_key', None)
         self.virtual_subnet_id = kwargs.get('virtual_subnet_id', None)
+        self.virtual_nic_id = kwargs.get('virtual_nic_id', None)
         self.sku = kwargs.get('sku', None)
 
 
