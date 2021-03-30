@@ -120,6 +120,8 @@ class AppConfigurationClientTest(AzureTestCase):
             and created_kv.last_modified is not None
             and created_kv.read_only is False
         )
+        created_kv.value = None
+        created_kv.value = ""
         client.delete_configuration_setting(
             created_kv.key, created_kv.label
         )
