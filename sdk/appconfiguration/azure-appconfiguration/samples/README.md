@@ -36,6 +36,7 @@ pip install azure-appconfiguration
 | conditional_operation_sample.py / conditional_operation_async_sample.py | demos conditional set/get/delete operations |
 | read_only_sample.py / read_only_async_sample.py | demos set_read_only operations |
 | list_revision_sample.py / list_revision_async_sample.py | demos list revision operations |
+| sync_token_samples.py / sync_token_async_samples.py | demos the `update_sync_token` method |
 
 <!-- LINKS -->
 [azure_sub]: https://azure.microsoft.com/free/
