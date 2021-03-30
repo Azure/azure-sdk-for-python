@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Mar 2021 19:12:28 GMT
+      - Tue, 30 Mar 2021 12:42:07 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Mar 2021 19:12:30 GMT
+      - Tue, 30 Mar 2021 12:42:11 GMT
       server:
       - openresty
       strict-transport-security:
@@ -107,7 +107,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Mar 2021 19:12:30 GMT
+      - Tue, 30 Mar 2021 12:42:11 GMT
       server:
       - openresty
       strict-transport-security:
@@ -132,7 +132,7 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","tags":[{"name":"first","digest":"sha256:90659bf80b44ce6be8234e6ff90a1ac34acbeb826903b02cfa0da11c82cbc042","createdTime":"2021-03-16T15:14:35.3014161Z","lastUpdateTime":"2021-03-16T15:14:35.3014161Z","signed":false,"quarantineState":"Passed","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}},{"name":"latest","digest":"sha256:90659bf80b44ce6be8234e6ff90a1ac34acbeb826903b02cfa0da11c82cbc042","createdTime":"2021-03-16T15:16:49.3869143Z","lastUpdateTime":"2021-03-16T15:16:49.3869143Z","signed":false,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}]}
+      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","tags":[{"name":"latest","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-03-30T12:18:52.8272444Z","lastUpdateTime":"2021-03-30T12:18:52.8272444Z","signed":false,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}]}
 
         '
     headers:
@@ -144,11 +144,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '722'
+      - '383'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Mar 2021 19:12:30 GMT
+      - Tue, 30 Mar 2021 12:42:12 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

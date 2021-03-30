@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Mar 2021 19:12:09 GMT
+      - Tue, 30 Mar 2021 12:41:37 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Mar 2021 19:12:11 GMT
+      - Tue, 30 Mar 2021 12:41:38 GMT
       server:
       - openresty
       strict-transport-security:
@@ -107,7 +107,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Mar 2021 19:12:11 GMT
+      - Tue, 30 Mar 2021 12:41:38 GMT
       server:
       - openresty
       strict-transport-security:
@@ -132,7 +132,7 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/hello-world
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","createdTime":"2021-03-16T15:14:35.1042371Z","lastUpdateTime":"2021-03-16T15:16:49.2531522Z","manifestCount":1,"tagCount":2,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}
+      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","createdTime":"2021-03-30T12:18:47.4147491Z","lastUpdateTime":"2021-03-30T12:41:04.6237803Z","manifestCount":10,"tagCount":1,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}
 
         '
     headers:
@@ -144,11 +144,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '289'
+      - '290'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Mar 2021 19:12:11 GMT
+      - Tue, 30 Mar 2021 12:41:39 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

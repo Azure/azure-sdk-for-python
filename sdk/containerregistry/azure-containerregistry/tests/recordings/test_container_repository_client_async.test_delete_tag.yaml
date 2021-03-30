@@ -19,7 +19,7 @@ interactions:
       connection: keep-alive
       content-length: '214'
       content-type: application/json; charset=utf-8
-      date: Fri, 26 Mar 2021 21:41:54 GMT
+      date: Tue, 30 Mar 2021 12:43:17 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -31,7 +31,7 @@ interactions:
     url: https://seankane.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
 - request:
     body:
-      access_token: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJpYXQiOjE2MTY3OTQ2MTQsIm5iZiI6MTYxNjc5NDYxNCwiZXhwIjoxNjE2ODgxMzE0LCJhaW8iOiJFMlpnWUpncjd5M0NLR295ZGVVbEUxL09mck5jQUE9PSIsImFwcGlkIjoiZjg1MDY1MGMtMWZjZi00NDg5LWI0NmYtNzFhZjJlMzBkMzYwIiwiYXBwaWRhY3IiOiIxIiwiaWRwIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsIm9pZCI6IjMwNTExYzlkLWJhMWEtNGM3Yi1iNDIyLTViNTQzZGExMWIzZiIsInJoIjoiMC5BUm9BdjRqNWN2R0dyMEdScXkxODBCSGJSd3hsVVBqUEg0bEV0Rzl4cnk0dzAyQWFBQUEuIiwic3ViIjoiMzA1MTFjOWQtYmExYS00YzdiLWI0MjItNWI1NDNkYTExYjNmIiwidGlkIjoiNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3IiwidXRpIjoibVg0SmFGTUU2VU9aQmtEd2lHQ3FBQSIsInZlciI6IjEuMCIsInhtc190Y2R0IjoxMjg5MjQxNTQ3fQ.NVBIvW3PyYFC8QQG4x4_XkzWHYrJHvz_6LGIrV7r6K_nsoUDY2iwzY4wF44O0voATg8ta4fND8YdL9cqtLdmLrtfkNpj3RM81XY73Ui0zHJa5cO8UNJnkUHG_XlIM3sZ6sSw57mOmSUce4MBl9JOQr_p2HCRQwbQVNMafCacfmqtFhKGbmSZMztL33rNZDF7pAaPQc5GutIl4COjQNUTigBWKynAOMiiG2pfpkWIh20P3WZTGtD-AH0kkL5pyRAjLByaHOvk0tydhL0MTOKBT7CFXDVF_N9wDDHYy9J8RjreWLSuIHwwaea_D7mvmp2bAVL4lkuIFgjJmGDAxtfn5w
+      access_token: REDACTED
       grant_type: access_token
       service: seankane.azurecr.io
     headers:
@@ -47,7 +47,7 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Fri, 26 Mar 2021 21:41:55 GMT
+      date: Tue, 30 Mar 2021 12:43:18 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -58,7 +58,7 @@ interactions:
 - request:
     body:
       grant_type: refresh_token
-      refresh_token: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ikk2NVk6VEVDUzpLTEhMOjZCVlE6SUJaRjpGRVhCOlk0VUg6SlRJUzo2VFBYOkNWWEE6SkxUSzpRS0RRIn0.eyJqdGkiOiJjNjExMjA3OS1lMTA4LTQ1YzQtOGZlMC0yMWM3YjQ3ZjZiYzciLCJzdWIiOiIzMDUxMWM5ZC1iYTFhLTRjN2ItYjQyMi01YjU0M2RhMTFiM2YiLCJuYmYiOjE2MTY3OTQwMTUsImV4cCI6MTYxNjgwNTcxNSwiaWF0IjoxNjE2Nzk0MDE1LCJpc3MiOiJBenVyZSBDb250YWluZXIgUmVnaXN0cnkiLCJhdWQiOiJzZWFua2FuZS5henVyZWNyLmlvIiwidmVyc2lvbiI6IjEuMCIsInJpZCI6ImExZTAxZmYzMzk2YzRmMTVhMmRjNjM2NzNkN2ZjYTMzIiwiZ3JhbnRfdHlwZSI6InJlZnJlc2hfdG9rZW4iLCJwZXJtaXNzaW9ucyI6eyJhY3Rpb25zIjpbInJlYWQiLCJ3cml0ZSIsImRlbGV0ZSJdLCJub3RBY3Rpb25zIjpudWxsfSwicm9sZXMiOltdfQ.WcYJOqzx7Y8cKsUV5vNXFR1RwDbhH80Eeo2dKj4aTi4Dyh9JvyldhreUYgTssUDR99tXjPPDw4MxGN9S9M5mPy-b4e_HiEi8fMSFe7PJh4RH6KIydW9sxyBqzLoKaM7WHiBrH7KwhAyDliPD8uRXg_ICgABPnuBYlSdGzmi-9HyIWh6_9oC7nQgMwK0JlETYCkNxaPxbjmVAiXEK5h52-Sx1ADCpjF5Epx56AdZ11oJ1MYeSDQXPBa01k6E1aRwGttaasoJNJx7LnwWKeIPgHLb534kWS-6O9rYEod4YSU4GS-c374YcHH2NBxkH7JVA7Iio4xcR8Eue7esLB13_Vw
+      refresh_token: REDACTED
       scope: repository:hello-world:metadata_read
       service: seankane.azurecr.io
     headers:
@@ -74,7 +74,7 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Fri, 26 Mar 2021 21:41:55 GMT
+      date: Tue, 30 Mar 2021 12:43:18 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -93,7 +93,7 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","tag":{"name":"to_be_deleted","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-03-26T21:41:44.7917402Z","lastUpdateTime":"2021-03-26T21:41:44.7917402Z","signed":false,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}}
+      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","tag":{"name":"to_be_deleted","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-03-30T12:43:07.6805353Z","lastUpdateTime":"2021-03-30T12:43:07.6805353Z","signed":false,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}}
 
         '
     headers:
@@ -101,7 +101,7 @@ interactions:
       connection: keep-alive
       content-length: '387'
       content-type: application/json; charset=utf-8
-      date: Fri, 26 Mar 2021 21:41:55 GMT
+      date: Tue, 30 Mar 2021 12:43:18 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -130,7 +130,7 @@ interactions:
       connection: keep-alive
       content-length: '207'
       content-type: application/json; charset=utf-8
-      date: Fri, 26 Mar 2021 21:41:55 GMT
+      date: Tue, 30 Mar 2021 12:43:18 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -142,7 +142,7 @@ interactions:
     url: https://seankane.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
 - request:
     body:
-      access_token: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJpYXQiOjE2MTY3OTQ2MTQsIm5iZiI6MTYxNjc5NDYxNCwiZXhwIjoxNjE2ODgxMzE0LCJhaW8iOiJFMlpnWUpncjd5M0NLR295ZGVVbEUxL09mck5jQUE9PSIsImFwcGlkIjoiZjg1MDY1MGMtMWZjZi00NDg5LWI0NmYtNzFhZjJlMzBkMzYwIiwiYXBwaWRhY3IiOiIxIiwiaWRwIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsIm9pZCI6IjMwNTExYzlkLWJhMWEtNGM3Yi1iNDIyLTViNTQzZGExMWIzZiIsInJoIjoiMC5BUm9BdjRqNWN2R0dyMEdScXkxODBCSGJSd3hsVVBqUEg0bEV0Rzl4cnk0dzAyQWFBQUEuIiwic3ViIjoiMzA1MTFjOWQtYmExYS00YzdiLWI0MjItNWI1NDNkYTExYjNmIiwidGlkIjoiNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3IiwidXRpIjoibVg0SmFGTUU2VU9aQmtEd2lHQ3FBQSIsInZlciI6IjEuMCIsInhtc190Y2R0IjoxMjg5MjQxNTQ3fQ.NVBIvW3PyYFC8QQG4x4_XkzWHYrJHvz_6LGIrV7r6K_nsoUDY2iwzY4wF44O0voATg8ta4fND8YdL9cqtLdmLrtfkNpj3RM81XY73Ui0zHJa5cO8UNJnkUHG_XlIM3sZ6sSw57mOmSUce4MBl9JOQr_p2HCRQwbQVNMafCacfmqtFhKGbmSZMztL33rNZDF7pAaPQc5GutIl4COjQNUTigBWKynAOMiiG2pfpkWIh20P3WZTGtD-AH0kkL5pyRAjLByaHOvk0tydhL0MTOKBT7CFXDVF_N9wDDHYy9J8RjreWLSuIHwwaea_D7mvmp2bAVL4lkuIFgjJmGDAxtfn5w
+      access_token: REDACTED
       grant_type: access_token
       service: seankane.azurecr.io
     headers:
@@ -158,7 +158,7 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Fri, 26 Mar 2021 21:41:55 GMT
+      date: Tue, 30 Mar 2021 12:43:19 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -169,7 +169,7 @@ interactions:
 - request:
     body:
       grant_type: refresh_token
-      refresh_token: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ikk2NVk6VEVDUzpLTEhMOjZCVlE6SUJaRjpGRVhCOlk0VUg6SlRJUzo2VFBYOkNWWEE6SkxUSzpRS0RRIn0.eyJqdGkiOiJhZTg0ZWE3My1hMTE4LTQ2ZDktYWI1MC03Mzg2YThlMzMzODUiLCJzdWIiOiIzMDUxMWM5ZC1iYTFhLTRjN2ItYjQyMi01YjU0M2RhMTFiM2YiLCJuYmYiOjE2MTY3OTQwMTUsImV4cCI6MTYxNjgwNTcxNSwiaWF0IjoxNjE2Nzk0MDE1LCJpc3MiOiJBenVyZSBDb250YWluZXIgUmVnaXN0cnkiLCJhdWQiOiJzZWFua2FuZS5henVyZWNyLmlvIiwidmVyc2lvbiI6IjEuMCIsInJpZCI6ImExZTAxZmYzMzk2YzRmMTVhMmRjNjM2NzNkN2ZjYTMzIiwiZ3JhbnRfdHlwZSI6InJlZnJlc2hfdG9rZW4iLCJwZXJtaXNzaW9ucyI6eyJhY3Rpb25zIjpbInJlYWQiLCJ3cml0ZSIsImRlbGV0ZSJdLCJub3RBY3Rpb25zIjpudWxsfSwicm9sZXMiOltdfQ.pa6UocvH_9D6cJ-he7bc7nhiBEr2GumCc0MO0ap00o94OKf574PG8RhYTekCTf2yedgbzR0nSnZXvTai73qgZuSQaH_O_2aGcaWz9efJjvgc-REjePgWBRB2FSGK7u4EeYdIFLIeATjMzGhgna1udExE5SZhbVt7VkCP78GvmypPB5g5-CZ2FW37Mo7j5i3l8G6Jvbk_wI-yhGEAIZxa0jIrKugFLQ0B4UHko5FA6t9_c0BtJosGHPB5B71KiTKtECmG-Am1Loiw0ASadA7oFaaff5EhtcDrZlDLlSW9dyEN8IeFVVPdIqY1mHdNHw3qp2sjz32jLz_dSK3U1fj2KQ
+      refresh_token: REDACTED
       scope: repository:hello-world:delete
       service: seankane.azurecr.io
     headers:
@@ -185,7 +185,7 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Fri, 26 Mar 2021 21:41:56 GMT
+      date: Tue, 30 Mar 2021 12:43:19 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -209,7 +209,7 @@ interactions:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '0'
-      date: Fri, 26 Mar 2021 21:41:56 GMT
+      date: Tue, 30 Mar 2021 12:43:19 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -239,7 +239,7 @@ interactions:
       connection: keep-alive
       content-length: '214'
       content-type: application/json; charset=utf-8
-      date: Fri, 26 Mar 2021 21:42:06 GMT
+      date: Tue, 30 Mar 2021 12:43:29 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -251,7 +251,7 @@ interactions:
     url: https://seankane.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
 - request:
     body:
-      access_token: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJpYXQiOjE2MTY3OTQ2MTQsIm5iZiI6MTYxNjc5NDYxNCwiZXhwIjoxNjE2ODgxMzE0LCJhaW8iOiJFMlpnWUpncjd5M0NLR295ZGVVbEUxL09mck5jQUE9PSIsImFwcGlkIjoiZjg1MDY1MGMtMWZjZi00NDg5LWI0NmYtNzFhZjJlMzBkMzYwIiwiYXBwaWRhY3IiOiIxIiwiaWRwIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsIm9pZCI6IjMwNTExYzlkLWJhMWEtNGM3Yi1iNDIyLTViNTQzZGExMWIzZiIsInJoIjoiMC5BUm9BdjRqNWN2R0dyMEdScXkxODBCSGJSd3hsVVBqUEg0bEV0Rzl4cnk0dzAyQWFBQUEuIiwic3ViIjoiMzA1MTFjOWQtYmExYS00YzdiLWI0MjItNWI1NDNkYTExYjNmIiwidGlkIjoiNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3IiwidXRpIjoibVg0SmFGTUU2VU9aQmtEd2lHQ3FBQSIsInZlciI6IjEuMCIsInhtc190Y2R0IjoxMjg5MjQxNTQ3fQ.NVBIvW3PyYFC8QQG4x4_XkzWHYrJHvz_6LGIrV7r6K_nsoUDY2iwzY4wF44O0voATg8ta4fND8YdL9cqtLdmLrtfkNpj3RM81XY73Ui0zHJa5cO8UNJnkUHG_XlIM3sZ6sSw57mOmSUce4MBl9JOQr_p2HCRQwbQVNMafCacfmqtFhKGbmSZMztL33rNZDF7pAaPQc5GutIl4COjQNUTigBWKynAOMiiG2pfpkWIh20P3WZTGtD-AH0kkL5pyRAjLByaHOvk0tydhL0MTOKBT7CFXDVF_N9wDDHYy9J8RjreWLSuIHwwaea_D7mvmp2bAVL4lkuIFgjJmGDAxtfn5w
+      access_token: REDACTED
       grant_type: access_token
       service: seankane.azurecr.io
     headers:
@@ -267,7 +267,7 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Fri, 26 Mar 2021 21:42:06 GMT
+      date: Tue, 30 Mar 2021 12:43:29 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -278,7 +278,7 @@ interactions:
 - request:
     body:
       grant_type: refresh_token
-      refresh_token: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ikk2NVk6VEVDUzpLTEhMOjZCVlE6SUJaRjpGRVhCOlk0VUg6SlRJUzo2VFBYOkNWWEE6SkxUSzpRS0RRIn0.eyJqdGkiOiIxMTMyZTY5OS03MDMwLTRkNTktYjE3Ni01Nzc3NDJkZTQzNmIiLCJzdWIiOiIzMDUxMWM5ZC1iYTFhLTRjN2ItYjQyMi01YjU0M2RhMTFiM2YiLCJuYmYiOjE2MTY3OTQwMjYsImV4cCI6MTYxNjgwNTcyNiwiaWF0IjoxNjE2Nzk0MDI2LCJpc3MiOiJBenVyZSBDb250YWluZXIgUmVnaXN0cnkiLCJhdWQiOiJzZWFua2FuZS5henVyZWNyLmlvIiwidmVyc2lvbiI6IjEuMCIsInJpZCI6ImExZTAxZmYzMzk2YzRmMTVhMmRjNjM2NzNkN2ZjYTMzIiwiZ3JhbnRfdHlwZSI6InJlZnJlc2hfdG9rZW4iLCJwZXJtaXNzaW9ucyI6eyJhY3Rpb25zIjpbInJlYWQiLCJ3cml0ZSIsImRlbGV0ZSJdLCJub3RBY3Rpb25zIjpudWxsfSwicm9sZXMiOltdfQ.YG3fFy8fTJt2YVRPQ1p5yXr8BO0NoUhD-wroVo-NBbEHBm8wP6zi-zqMP_epwOuPtYd3fjtehsX31ETFECTNwQs8reSyEI6_0_PppzgIH3chcapOKVOlfAnPIggyOgYtHw3If4etNytqBaALEMJvDuThepxVGxXB5Y4zitTA1yAbdUSLBytThnSjENHHPxl8BCSCKrP2clO5e9yU10TdoIk9rNf5SVs11-VwYMbUkEel96IbK685a5FIgcVtyn8Kk-qT2-YApMCT6j3EYQG6apDtyuQhorNU1X6oWYgNg746glL6Wwth5iuoed5nRrPSrVYndyFQ-ANsZHJmbe10yQ
+      refresh_token: REDACTED
       scope: repository:hello-world:metadata_read
       service: seankane.azurecr.io
     headers:
@@ -294,7 +294,7 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Fri, 26 Mar 2021 21:42:07 GMT
+      date: Tue, 30 Mar 2021 12:43:29 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -322,7 +322,7 @@ interactions:
       connection: keep-alive
       content-length: '81'
       content-type: application/json; charset=utf-8
-      date: Fri, 26 Mar 2021 21:42:07 GMT
+      date: Tue, 30 Mar 2021 12:43:30 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains

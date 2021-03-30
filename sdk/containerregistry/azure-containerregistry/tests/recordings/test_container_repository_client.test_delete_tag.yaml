@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 14:47:29 GMT
+      - Tue, 30 Mar 2021 12:41:18 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 14:47:31 GMT
+      - Tue, 30 Mar 2021 12:41:22 GMT
       server:
       - openresty
       strict-transport-security:
@@ -107,7 +107,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 14:47:31 GMT
+      - Tue, 30 Mar 2021 12:41:23 GMT
       server:
       - openresty
       strict-transport-security:
@@ -132,7 +132,7 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","tag":{"name":"to_be_deleted","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-03-29T14:47:20.2311587Z","lastUpdateTime":"2021-03-29T14:47:20.2311587Z","signed":false,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}}
+      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","tag":{"name":"to_be_deleted","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-03-30T12:41:05.011498Z","lastUpdateTime":"2021-03-30T12:41:05.011498Z","signed":false,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}}
 
         '
     headers:
@@ -144,11 +144,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '387'
+      - '385'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 14:47:31 GMT
+      - Tue, 30 Mar 2021 12:41:23 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -195,7 +195,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 14:47:31 GMT
+      - Tue, 30 Mar 2021 12:41:23 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -235,7 +235,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 14:47:31 GMT
+      - Tue, 30 Mar 2021 12:41:24 GMT
       server:
       - openresty
       strict-transport-security:
@@ -271,7 +271,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 14:47:31 GMT
+      - Tue, 30 Mar 2021 12:41:24 GMT
       server:
       - openresty
       strict-transport-security:
@@ -310,7 +310,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 29 Mar 2021 14:47:32 GMT
+      - Tue, 30 Mar 2021 12:41:25 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -357,7 +357,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 14:47:42 GMT
+      - Tue, 30 Mar 2021 12:41:35 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -397,7 +397,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 14:47:42 GMT
+      - Tue, 30 Mar 2021 12:41:36 GMT
       server:
       - openresty
       strict-transport-security:
@@ -433,7 +433,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 14:47:42 GMT
+      - Tue, 30 Mar 2021 12:41:36 GMT
       server:
       - openresty
       strict-transport-security:
@@ -475,7 +475,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 14:47:43 GMT
+      - Tue, 30 Mar 2021 12:41:36 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
