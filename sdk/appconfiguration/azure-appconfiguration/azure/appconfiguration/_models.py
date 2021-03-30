@@ -157,7 +157,7 @@ class FeatureFlagConfigurationSetting(
         self.etag = kwargs.get("etag", None)
         self.description = kwargs.get("description", None)
         self.display_name = kwargs.get("display_name", None)
-        self.filters = filters or []
+        self._filters = filters or []
         self._value = kwargs.get("value", {})
 
     @property
@@ -193,13 +193,47 @@ class FeatureFlagConfigurationSetting(
             pass
         self._value = new_value
 
+    @property
+    def filters(self):
+        # type: () -> List[Any]
+        if self._value is None:
+            self._value = {
+                "conditions": {
+                    "client_filters": [
+                        self._filters
+                    ]
+                }
+            }
+        elif isinstance(self._value, dict):
+            try:
+                self._value['conditions']['client_filters'] = self._filters
+            except KeyError:
+                self._value['conditions'] = {'client_filters': [self._filters]}
+        return self._filters
+
+    @filters.setter
+    def filters(self, new_filters):
+        if self._value is None:
+            self._value = {
+                "conditions": {
+                    "client_filters": [
+                        self._filters
+                    ]
+                }
+            }
+        elif isinstance(self._value, dict):
+            try:
+                self._value['conditions']['client_filters'] = new_filters
+            except KeyError:
+                self._value['conditions'] = {'client_filters': [new_filters]}
+        self._filters = new_filters
+
     @classmethod
     def _from_generated(cls, key_value):
         # type: (KeyValue) -> FeatureFlagConfigurationSetting
         try:
             if key_value is None:
                 return None
-            temp_value = None
             if key_value.value:
                 try:
                     key_value.value = json.loads(key_value.value)
@@ -229,7 +263,7 @@ class FeatureFlagConfigurationSetting(
             u"id": self.key,
             u"description": self.description,
             u"enabled": self._enabled,
-            u"conditions": {u"client_filters": self.filters},
+            u"conditions": {u"client_filters": self._filters},
         }
         value = json.dumps(value)
 
