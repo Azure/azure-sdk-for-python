@@ -4,19 +4,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
-from azure.core import PipelineClient
+from azure.core import AsyncPipelineClient
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
+    from azure.core.credentials_async import AsyncTokenCredential
 
-    from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
-
-from ._configuration import AzureAgFoodPlatformDataPlaneServiceConfiguration
+from ._configuration import FarmBeatsClientConfiguration
 from .operations import ApplicationDataOperations
 from .operations import AttachmentsOperations
 from .operations import BoundariesOperations
@@ -38,56 +36,56 @@ from .operations import SeasonalFieldsOperations
 from .operations import SeasonsOperations
 from .operations import TillageDataOperations
 from .operations import WeatherOperations
-from . import models
+from .. import models
 
 
-class AzureAgFoodPlatformDataPlaneService(object):
+class FarmBeatsClient(object):
     """APIs documentation for Azure AgPlatform DataPlane Service.
 
     :ivar application_data: ApplicationDataOperations operations
-    :vartype application_data: azure.farmbeats.operations.ApplicationDataOperations
+    :vartype application_data: azure.farmbeats.aio.operations.ApplicationDataOperations
     :ivar attachments: AttachmentsOperations operations
-    :vartype attachments: azure.farmbeats.operations.AttachmentsOperations
+    :vartype attachments: azure.farmbeats.aio.operations.AttachmentsOperations
     :ivar boundaries: BoundariesOperations operations
-    :vartype boundaries: azure.farmbeats.operations.BoundariesOperations
+    :vartype boundaries: azure.farmbeats.aio.operations.BoundariesOperations
     :ivar crops: CropsOperations operations
-    :vartype crops: azure.farmbeats.operations.CropsOperations
+    :vartype crops: azure.farmbeats.aio.operations.CropsOperations
     :ivar crop_varieties: CropVarietiesOperations operations
-    :vartype crop_varieties: azure.farmbeats.operations.CropVarietiesOperations
+    :vartype crop_varieties: azure.farmbeats.aio.operations.CropVarietiesOperations
     :ivar events: EventsOperations operations
-    :vartype events: azure.farmbeats.operations.EventsOperations
+    :vartype events: azure.farmbeats.aio.operations.EventsOperations
     :ivar farmers: FarmersOperations operations
-    :vartype farmers: azure.farmbeats.operations.FarmersOperations
+    :vartype farmers: azure.farmbeats.aio.operations.FarmersOperations
     :ivar farms: FarmsOperations operations
-    :vartype farms: azure.farmbeats.operations.FarmsOperations
+    :vartype farms: azure.farmbeats.aio.operations.FarmsOperations
     :ivar fields: FieldsOperations operations
-    :vartype fields: azure.farmbeats.operations.FieldsOperations
+    :vartype fields: azure.farmbeats.aio.operations.FieldsOperations
     :ivar harvest_data: HarvestDataOperations operations
-    :vartype harvest_data: azure.farmbeats.operations.HarvestDataOperations
+    :vartype harvest_data: azure.farmbeats.aio.operations.HarvestDataOperations
     :ivar jobs: JobsOperations operations
-    :vartype jobs: azure.farmbeats.operations.JobsOperations
+    :vartype jobs: azure.farmbeats.aio.operations.JobsOperations
     :ivar oauth_callbacks: OAuthCallbacksOperations operations
-    :vartype oauth_callbacks: azure.farmbeats.operations.OAuthCallbacksOperations
+    :vartype oauth_callbacks: azure.farmbeats.aio.operations.OAuthCallbacksOperations
     :ivar oauth_configs: OAuthConfigsOperations operations
-    :vartype oauth_configs: azure.farmbeats.operations.OAuthConfigsOperations
+    :vartype oauth_configs: azure.farmbeats.aio.operations.OAuthConfigsOperations
     :ivar oauth_providers: OAuthProvidersOperations operations
-    :vartype oauth_providers: azure.farmbeats.operations.OAuthProvidersOperations
+    :vartype oauth_providers: azure.farmbeats.aio.operations.OAuthProvidersOperations
     :ivar oauth_token_infos: OAuthTokenInfosOperations operations
-    :vartype oauth_token_infos: azure.farmbeats.operations.OAuthTokenInfosOperations
+    :vartype oauth_token_infos: azure.farmbeats.aio.operations.OAuthTokenInfosOperations
     :ivar planting_data: PlantingDataOperations operations
-    :vartype planting_data: azure.farmbeats.operations.PlantingDataOperations
+    :vartype planting_data: azure.farmbeats.aio.operations.PlantingDataOperations
     :ivar scenes: ScenesOperations operations
-    :vartype scenes: azure.farmbeats.operations.ScenesOperations
+    :vartype scenes: azure.farmbeats.aio.operations.ScenesOperations
     :ivar seasonal_fields: SeasonalFieldsOperations operations
-    :vartype seasonal_fields: azure.farmbeats.operations.SeasonalFieldsOperations
+    :vartype seasonal_fields: azure.farmbeats.aio.operations.SeasonalFieldsOperations
     :ivar seasons: SeasonsOperations operations
-    :vartype seasons: azure.farmbeats.operations.SeasonsOperations
+    :vartype seasons: azure.farmbeats.aio.operations.SeasonsOperations
     :ivar tillage_data: TillageDataOperations operations
-    :vartype tillage_data: azure.farmbeats.operations.TillageDataOperations
+    :vartype tillage_data: azure.farmbeats.aio.operations.TillageDataOperations
     :ivar weather: WeatherOperations operations
-    :vartype weather: azure.farmbeats.operations.WeatherOperations
+    :vartype weather: azure.farmbeats.aio.operations.WeatherOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param str base_url: Service URL
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
@@ -95,12 +93,11 @@ class AzureAgFoodPlatformDataPlaneService(object):
     def __init__(
         self,
         base_url,
-        credential,  # type: "TokenCredential"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        self._config = AzureAgFoodPlatformDataPlaneServiceConfiguration(credential, **kwargs)
-        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
+        credential: "AsyncTokenCredential",
+        **kwargs: Any
+    ) -> None:
+        self._config = FarmBeatsClientConfiguration(credential, **kwargs)
+        self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -150,30 +147,26 @@ class AzureAgFoodPlatformDataPlaneService(object):
         self.weather = WeatherOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, http_request, **kwargs):
-        # type: (HttpRequest, Any) -> HttpResponse
+    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
         """Runs the network request through the client's chained policies.
 
         :param http_request: The network request you want to make. Required.
         :type http_request: ~azure.core.pipeline.transport.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
         """
         http_request.url = self._client.format_url(http_request.url)
         stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
         return pipeline_response.http_response
 
-    def close(self):
-        # type: () -> None
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self):
-        # type: () -> AzureAgFoodPlatformDataPlaneService
-        self._client.__enter__()
+    async def __aenter__(self) -> "FarmBeatsClient":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)

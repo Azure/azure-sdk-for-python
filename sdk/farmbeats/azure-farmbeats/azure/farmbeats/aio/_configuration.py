@@ -15,8 +15,8 @@ if TYPE_CHECKING:
 
 VERSION = "unknown"
 
-class AzureAgFoodPlatformDataPlaneServiceConfiguration(Configuration):
-    """Configuration for AzureAgFoodPlatformDataPlaneService.
+class FarmBeatsClientConfiguration(Configuration):
+    """Configuration for FarmBeatsClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -32,12 +32,12 @@ class AzureAgFoodPlatformDataPlaneServiceConfiguration(Configuration):
     ) -> None:
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
-        super(AzureAgFoodPlatformDataPlaneServiceConfiguration, self).__init__(**kwargs)
+        super(FarmBeatsClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.api_version = "2020-12-31-preview"
         self.credential_scopes = kwargs.pop('credential_scopes', [])
-        kwargs.setdefault('sdk_moniker', 'azureagfoodplatformdataplaneservice/{}'.format(VERSION))
+        kwargs.setdefault('sdk_moniker', 'farmbeatsclient/{}'.format(VERSION))
         self._configure(**kwargs)
 
     def _configure(

@@ -143,7 +143,7 @@ except (SyntaxError, ImportError):
     from ._models import WeatherIngestionJobResponse  # type: ignore
     from ._models import WeatherMeasure  # type: ignore
 
-from ._azure_ag_food_platform_data_plane_service_enums import (
+from ._farm_beats_client_enums import (
     DataProvider,
     FieldOperationType,
     GeoJsonObjectType,

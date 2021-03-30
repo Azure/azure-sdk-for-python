@@ -10,7 +10,7 @@ from typing import Dict, IO, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._azure_ag_food_platform_data_plane_service_enums import *
+from ._farm_beats_client_enums import *
 
 
 class ApplicationData(msrest.serialization.Model):

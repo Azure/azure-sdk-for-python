@@ -4,7 +4,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_ag_food_platform_data_plane_service import AzureAgFoodPlatformDataPlaneService as FarmBeatsClient
+from ._farm_beats_client import FarmBeatsClient
 __all__ = ['FarmBeatsClient']
 
 try:
