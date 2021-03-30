@@ -36,5 +36,5 @@ steps:
       Write-Host $pathForCopy
       Write-Host ${{ parameters.DestinationDirectory }}
 
-      Copy-Item -Path $copyTarget -Destination ${{ parameters.DestinationDirectory }} -Recurse 
+      Copy-Item -Path $pathForCopy -Destination ${{ parameters.DestinationDirectory }} -Recurse
     displayName: 'Copy Source to Target Directory'
