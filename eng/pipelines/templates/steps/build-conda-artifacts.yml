@@ -28,6 +28,7 @@ steps:
     displayName: 'Prep Environment'
 
   - pwsh: |
+      mkdir $(Agent.BuildDirectory)/conda/
       mkdir $(Agent.BuildDirectory)/conda/output
       mkdir $(Agent.BuildDirectory)/conda/build
 
@@ -39,6 +40,7 @@ steps:
     # there may be multiple CondaArtifacts. Be certain $(conda.build) is clean just in case!
     - pwsh:
         Write-Host "Clean up Conda Build Directory $(conda.build)"
+        Remove-Item $(conda.build)/* -Recurse -Force
       displayName: Clean Conda Build Directory
 
     - ${{ each checkout in artifact.checkout }}:
