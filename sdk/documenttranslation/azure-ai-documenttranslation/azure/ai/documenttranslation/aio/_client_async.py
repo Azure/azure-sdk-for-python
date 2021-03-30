@@ -222,7 +222,7 @@ class DocumentTranslationClient(object):
             this is sorted by descending start time.
         :keyword int results_per_page: Use results_per_page to indicate the maximum number
             of results returned in a page.
-        :return: AsyncItemPaged[:class:`~azure.ai.documenttranslation.JobStatusResult`]
+        :return: ~azure.core.paging.AsyncItemPaged[:class:`~azure.ai.documenttranslation.JobStatusResult`]
         :rtype: ~azure.core.paging.AsyncItemPaged
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -267,7 +267,7 @@ class DocumentTranslationClient(object):
             this is sorted by descending start time.
         :keyword int results_per_page: Use results_per_page to indicate the maximum number
             of results returned in a page.
-        :return: AsyncItemPaged[:class:`~azure.ai.documenttranslation.DocumentStatusResult`]
+        :return: ~azure.core.paging.AsyncItemPaged[:class:`~azure.ai.documenttranslation.DocumentStatusResult`]
         :rtype: ~azure.core.paging.AsyncItemPaged
         :raises ~azure.core.exceptions.HttpResponseError:
 

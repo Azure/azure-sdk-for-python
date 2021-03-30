@@ -28,6 +28,17 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
         :func:`~DocumentTranslationClient.get_glossary_formats()` client method.
     :keyword str storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
+
+    :ivar str glossary_url: Required. Location of the glossary file. This should be a SAS URL to
+        the glossary file in the storage blob container. If the translation language pair is
+        not present in the glossary, it will not be applied.
+    :ivar str file_format: Required. Format of the glossary file. To see supported formats,
+        call the :func:`~DocumentTranslationClient.get_glossary_formats()` client method.
+    :ivar str format_version: File format version. If not specified, the service will
+        use the default_version for the file format returned from the
+        :func:`~DocumentTranslationClient.get_glossary_formats()` client method.
+    :ivar str storage_source: Storage Source. Default value: "AzureBlob".
+        Currently only "AzureBlob" is supported.
     """
 
     def __init__(
@@ -67,6 +78,17 @@ class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
     :keyword glossaries: Glossaries to apply to translation.
     :paramtype glossaries: list[~azure.ai.documenttranslation.TranslationGlossary]
     :keyword str storage_source: Storage Source. Default value: "AzureBlob".
+        Currently only "AzureBlob" is supported.
+
+    :ivar str target_url: Required. The target location for your translated documents.
+        This should be a container SAS URL to your target container.
+    :ivar str language_code: Required. Target Language Code. This is the language
+        you want your documents to be translated to. See supported languages here:
+        https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
+    :ivar str category_id: Category / custom model ID for using custom translation.
+    :ivar glossaries: Glossaries to apply to translation.
+    :vartype glossaries: list[~azure.ai.documenttranslation.TranslationGlossary]
+    :ivar str storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
     """
 
@@ -121,6 +143,24 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
         include: "Folder", "File".
     :paramtype storage_type: str or ~azure.ai.documenttranslation.StorageInputType
     :keyword str storage_source: Storage Source. Default value: "AzureBlob".
+        Currently only "AzureBlob" is supported.
+
+    :ivar str source_url: Required. Location of the folder / container or single file with your
+        documents.
+    :ivar targets: Required. Location of the destination for the output. This is a list of
+        TranslationTargets. Note that a TranslationTarget is required for each language code specified.
+    :vartype targets: list[~azure.ai.documenttranslation.TranslationTarget]
+    :ivar str source_language_code: Language code for the source documents.
+        If none is specified, the source language will be auto-detected for each document.
+    :ivar str prefix: A case-sensitive prefix string to filter documents in the source path for
+        translation. For example, when using a Azure storage blob Uri, use the prefix to restrict
+        sub folders for translation.
+    :ivar str suffix: A case-sensitive suffix string to filter documents in the source path for
+        translation. This is most often use for file extensions.
+    :ivar storage_type: Storage type of the input documents source string. Possible values
+        include: "Folder", "File".
+    :vartype storage_type: str or ~azure.ai.documenttranslation.StorageInputType
+    :ivar str storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
     """
 
