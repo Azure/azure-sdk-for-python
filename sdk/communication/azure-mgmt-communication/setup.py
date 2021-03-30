@@ -82,9 +82,7 @@ setup(
     ]),
     install_requires=[
         'msrest>=0.5.0',
-        'azure-mgmt-core>=1.2.0,<2.0.0',
         'azure-common~=1.1',
-        'azure-core>=1.9.0,<2.0.0',
         'azure-mgmt-core>=1.2.0,<2.0.0',
     ],
     extras_require={
