@@ -472,7 +472,7 @@ class SearchIndexerDataSourceConnection(msrest.serialization.Model):
     :type name: str
     :param description: The description of the datasource connection.
     :type description: str
-    :param type: Required. The type of the datasource. Possible values include: "azuresql",
+    :param type: Required. The type of the datasource connection. Possible values include: "azuresql",
      "cosmosdb", "azureblob", "azuretable", "mysql", "adlsgen2".
     :type type: str or ~azure.search.documents.indexes.models.SearchIndexerDataSourceType
     :param connection_string: The connection string for the datasource connection.
