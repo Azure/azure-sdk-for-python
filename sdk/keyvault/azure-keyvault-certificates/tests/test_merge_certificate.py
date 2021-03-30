@@ -5,16 +5,17 @@
 import base64
 import os
 
-from azure.keyvault.certificates import ApiVersion, CertificateClient, CertificatePolicy, WellKnownIssuerNames
+from azure.keyvault.certificates import ApiVersion, CertificatePolicy, WellKnownIssuerNames
 from devtools_testutils import PowerShellPreparer
 from OpenSSL import crypto
 from parameterized import parameterized, param
 
 from _shared.json_attribute_matcher import json_attribute_matcher
+from _shared.test_case import KeyVaultTestCase
 from _test_case import CertificatesTestCase, suffixed_test_name
 
 
-class MergeCertificateTest(CertificatesTestCase):
+class MergeCertificateTest(CertificatesTestCase, KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
         kwargs["match_body"] = False
         kwargs["custom_request_matchers"] = [json_attribute_matcher]

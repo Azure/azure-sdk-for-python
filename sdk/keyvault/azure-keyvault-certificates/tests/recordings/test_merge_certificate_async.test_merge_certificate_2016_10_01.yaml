@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-certificates/4.3.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/create?api-version=2016-10-01
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -20,7 +20,7 @@ interactions:
       cache-control: no-cache
       content-length: '87'
       content-type: application/json; charset=utf-8
-      date: Thu, 25 Mar 2021 00:46:36 GMT
+      date: Tue, 30 Mar 2021 02:10:17 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -34,10 +34,10 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://mcpatinokv.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/create?api-version=7.1
+    url: https://mcpatinokv.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/create?api-version=2016-10-01
 - request:
-    body: '{"policy": {"issuer": {"name": "Unknown", "cert_transparency": false},
-      "x509_props": {"sans": {}, "subject": "CN=MyCert"}}}'
+    body: '{"policy": {"x509_props": {"sans": {}, "subject": "CN=MyCert"}, "issuer":
+      {"name": "Unknown", "cert_transparency": false}}}'
     headers:
       Accept:
       - application/json
@@ -48,18 +48,18 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-certificates/4.3.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/create?api-version=2016-10-01
   response:
     body:
-      string: '{"id":"https://vaultname.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/pending","issuer":{"name":"Unknown"},"csr":"MIICoTCCAYkCAQAwETEPMA0GA1UEAxMGTXlDZXJ0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzu5J5Pmh+A9BmBDk5JCBoP8m9F+0fydt8FJFStAEDyRVMJhmu3i8vdmSKFwFBqF8IRtGPAePnHCLKP1axmS0yyCtRmZYmy1/vhqktS2JNoxMI8cqF8alUHw0XsAzwRERvDKZEijaTlX3vrqKTGv+1GYZWqPhEFNSSaY15PeAX27FaRX7q4nhN71cOqwjBXsHgKSg+Y/tO/fW0zze9bc/lT0lLR5/jp9vuijYuDtrbkYf68v1uBKg/bS0gcCCcApcgx9352am7lS3fVnTg7O0h6q54fxmT368QIaOmL4zWpgDqEwKN2dYfWPXoIl0QZ/mNHGevlHVvDharDLk3wq8GQIDAQABoEswSQYJKoZIhvcNAQkOMTwwOjAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAFCNG0cNedVOao/AON35zfkqNoY/jzhudDtk+F+cW984D9A6YT0kxxsup/t9m6LjNuvypa0rYrw8a8MrYhGGQ3fgFz4xZf1PKBhXYqqb0gW+BcdPzDk8VtClzfqT5DdDIZoF3uOicpDIM/TaFvC7HkAuOQ1gNVY0y4donh6eIsBKVHKdrO1tra6u7hRWYDAHdvA3+5oChyZWf6J204oI/vC4PYL8Z/YC+fiQZg7Q0/21V8wVyWgYiRZiWCVO7WLNUPHik6me6Ltidz+ho60b7a5FV2EXTsnfNefzbLTB3h58G9L7zG3S5qfRsaN77xZUUtWYfzccfTeqbn84qdN6/Fk=","cancellation_requested":false,"status":"inProgress","status_details":"Pending
-        certificate created. Please Perform Merge to complete the request.","request_id":"4f826523d9aa40a1b9ac8db74fb7a576"}'
+      string: '{"id":"https://vaultname.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/pending","issuer":{"name":"Unknown"},"csr":"MIICoTCCAYkCAQAwETEPMA0GA1UEAxMGTXlDZXJ0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAshxxOv2eeJdETxpwXtJpCTSBEdAkYpgK8ZvYAq5EsltOiyf+P6vzyr/isRIUE0sBXgit+X9z12+kDDzT8QdsLEtJ18Xmf4HQR4bReOvAbvVB87kvgovZbKqgb6Bif7MKkaIYXp9pAWFRgllXu1DAfJqojrRnSe+q3z+dhBIVPli4MQkn1xFYuqCKBU6d4xMLLZEDXHobH79o1bIAZ+uJKr1s5bLMCQVw4BaRNSCVKv+OSnN4ItnakVmd8cjeSsxzzgmArcWS7tBds+6YG1kmmHqxHWrALZRk73Kgo4nj5bnpqGWBsuc4H5z7Brr7flczzHsKn3y7Pg3AEllFT3yuIQIDAQABoEswSQYJKoZIhvcNAQkOMTwwOjAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAH9Lrz8mDHUpNEBUA4zkeLsz/E8ZgK/0k3xZOwqQfdYRgOQdPYa66O0+RakUrCf3jeaZ+612JsbVOmN97ScPM9zDZReqSKQoZEs5Qroja2GsyV7aExXhnrd0JsKe32Qy+bJcSUCMMhAiOMskHDK6aahmdheHCBykK/y7sAPhXmKcvxpcef7ZZel6zESFA+arRZYQDNF31NMFA2jl3EUVN0yn+MfF3CSnNbKmwIDsdTk+KBoRrqHd0lryTrv994udwHXp6IB07axWrf1NpbDEm6t2OFt5O0eqsZG5/ID+40NqgChJx93V6Eo/p8idUKkZAG1J9CiYCSvt6rYlrKlOIZQ=","cancellation_requested":false,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"e7ee1736e28645a8bf847096a7d683a6"}'
     headers:
       cache-control: no-cache
       content-length: '1235'
       content-type: application/json; charset=utf-8
-      date: Thu, 25 Mar 2021 00:46:37 GMT
+      date: Tue, 30 Mar 2021 02:10:18 GMT
       expires: '-1'
-      location: https://vaultname.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/pending?api-version=7.1&request_id=4f826523d9aa40a1b9ac8db74fb7a576
+      location: https://vaultname.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/pending?api-version=2016-10-01&request_id=e7ee1736e28645a8bf847096a7d683a6
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
@@ -70,7 +70,7 @@ interactions:
     status:
       code: 202
       message: Accepted
-    url: https://mcpatinokv.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/create?api-version=7.1
+    url: https://mcpatinokv.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/create?api-version=2016-10-01
 - request:
     body: null
     headers:
@@ -79,16 +79,16 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-certificates/4.3.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/pending?api-version=7.1
+    uri: https://vaultname.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/pending?api-version=2016-10-01
   response:
     body:
-      string: '{"id":"https://vaultname.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/pending","issuer":{"name":"Unknown"},"csr":"MIICoTCCAYkCAQAwETEPMA0GA1UEAxMGTXlDZXJ0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzu5J5Pmh+A9BmBDk5JCBoP8m9F+0fydt8FJFStAEDyRVMJhmu3i8vdmSKFwFBqF8IRtGPAePnHCLKP1axmS0yyCtRmZYmy1/vhqktS2JNoxMI8cqF8alUHw0XsAzwRERvDKZEijaTlX3vrqKTGv+1GYZWqPhEFNSSaY15PeAX27FaRX7q4nhN71cOqwjBXsHgKSg+Y/tO/fW0zze9bc/lT0lLR5/jp9vuijYuDtrbkYf68v1uBKg/bS0gcCCcApcgx9352am7lS3fVnTg7O0h6q54fxmT368QIaOmL4zWpgDqEwKN2dYfWPXoIl0QZ/mNHGevlHVvDharDLk3wq8GQIDAQABoEswSQYJKoZIhvcNAQkOMTwwOjAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAFCNG0cNedVOao/AON35zfkqNoY/jzhudDtk+F+cW984D9A6YT0kxxsup/t9m6LjNuvypa0rYrw8a8MrYhGGQ3fgFz4xZf1PKBhXYqqb0gW+BcdPzDk8VtClzfqT5DdDIZoF3uOicpDIM/TaFvC7HkAuOQ1gNVY0y4donh6eIsBKVHKdrO1tra6u7hRWYDAHdvA3+5oChyZWf6J204oI/vC4PYL8Z/YC+fiQZg7Q0/21V8wVyWgYiRZiWCVO7WLNUPHik6me6Ltidz+ho60b7a5FV2EXTsnfNefzbLTB3h58G9L7zG3S5qfRsaN77xZUUtWYfzccfTeqbn84qdN6/Fk=","cancellation_requested":false,"status":"inProgress","status_details":"Pending
-        certificate created. Please Perform Merge to complete the request.","request_id":"4f826523d9aa40a1b9ac8db74fb7a576"}'
+      string: '{"id":"https://vaultname.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/pending","issuer":{"name":"Unknown"},"csr":"MIICoTCCAYkCAQAwETEPMA0GA1UEAxMGTXlDZXJ0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAshxxOv2eeJdETxpwXtJpCTSBEdAkYpgK8ZvYAq5EsltOiyf+P6vzyr/isRIUE0sBXgit+X9z12+kDDzT8QdsLEtJ18Xmf4HQR4bReOvAbvVB87kvgovZbKqgb6Bif7MKkaIYXp9pAWFRgllXu1DAfJqojrRnSe+q3z+dhBIVPli4MQkn1xFYuqCKBU6d4xMLLZEDXHobH79o1bIAZ+uJKr1s5bLMCQVw4BaRNSCVKv+OSnN4ItnakVmd8cjeSsxzzgmArcWS7tBds+6YG1kmmHqxHWrALZRk73Kgo4nj5bnpqGWBsuc4H5z7Brr7flczzHsKn3y7Pg3AEllFT3yuIQIDAQABoEswSQYJKoZIhvcNAQkOMTwwOjAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAH9Lrz8mDHUpNEBUA4zkeLsz/E8ZgK/0k3xZOwqQfdYRgOQdPYa66O0+RakUrCf3jeaZ+612JsbVOmN97ScPM9zDZReqSKQoZEs5Qroja2GsyV7aExXhnrd0JsKe32Qy+bJcSUCMMhAiOMskHDK6aahmdheHCBykK/y7sAPhXmKcvxpcef7ZZel6zESFA+arRZYQDNF31NMFA2jl3EUVN0yn+MfF3CSnNbKmwIDsdTk+KBoRrqHd0lryTrv994udwHXp6IB07axWrf1NpbDEm6t2OFt5O0eqsZG5/ID+40NqgChJx93V6Eo/p8idUKkZAG1J9CiYCSvt6rYlrKlOIZQ=","cancellation_requested":false,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"e7ee1736e28645a8bf847096a7d683a6"}'
     headers:
       cache-control: no-cache
       content-length: '1235'
       content-type: application/json; charset=utf-8
-      date: Thu, 25 Mar 2021 00:46:37 GMT
+      date: Tue, 30 Mar 2021 02:10:18 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -100,9 +100,9 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://mcpatinokv.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/pending?api-version=7.1
+    url: https://mcpatinokv.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/pending?api-version=2016-10-01
 - request:
-    body: '{"x5c": ["TUlJQ3lqQ0NBYklDQVFFd0RRWUpLb1pJaHZjTkFRRUxCUUF3UlRFTE1Ba0dBMVVFQmhNQ1FWVXhFekFSQmdOVkJBZ01DbE52YldVdFUzUmhkR1V4SVRBZkJnTlZCQW9NR0VsdWRHVnlibVYwSUZkcFpHZHBkSE1nVUhSNUlFeDBaREFlRncweU1UQXpNalV3TURRMk16aGFGdzB5TVRBek1qVXdNRFEzTXpoYU1CRXhEekFOQmdOVkJBTVRCazE1UTJWeWREQ0NBU0l3RFFZSktvWklodmNOQVFFQkJRQURnZ0VQQURDQ0FRb0NnZ0VCQU03dVNlVDVvZmdQUVpnUTVPU1FnYUQvSnZSZnRIOG5iZkJTUlVyUUJBOGtWVENZWnJ0NHZMM1praWhjQlFhaGZDRWJSandIajV4d2l5ajlXc1prdE1zZ3JVWm1XSnN0Zjc0YXBMVXRpVGFNVENQSEtoZkdwVkI4TkY3QU04RVJFYnd5bVJJbzJrNVY5NzY2aWt4ci90Um1HVnFqNFJCVFVrbW1OZVQzZ0Y5dXhXa1YrNnVKNFRlOVhEcXNJd1Y3QjRDa29QbVA3VHYzMXRNODN2VzNQNVU5SlMwZWY0NmZiN29vMkxnN2EyNUdIK3ZMOWJnU29QMjB0SUhBZ25BS1hJTWZkK2RtcHU1VXQzMVowNE96dEllcXVlSDhaazkrdkVDR2pwaStNMXFZQTZoTUNqZG5XSDFqMTZDSmRFR2Y1alJ4bnI1UjFidzRXcXd5NU44S3ZCa0NBd0VBQVRBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQVR1NGtiRTNJRk1IUFllWDE3WWJ5Yyt6MDJFMmZnZ1Vja0xUT0FtYWhxU0txU2FkZmZ2aDR4Z0REdXEvTW94aFNuMGFyMVVldFo2VjhBazJkTU01VmZ0bG5wcUgvTTFXaCtSMW1tbUc4ajdINnhma2VzUDIzT09VeDBkQWx2UzJuRjlvMDNBTDVvZTY3SkpaLzVJb1hqQkh2MFpOZURzc0x3bGRKWnU2bVlXWHQvQ2xSN3RrYk1MV0o4MzRaY3dFRDhvRnJvL3dVZm9NbWZlMHdtd2wxRzQxdG1lczlrNmhTOGpCNmVROW9MZU9aa0psdm5JbGZrZEdZUGxuVkh3WW9kQndSRkltZDRodlB5MGo0WFRPZXc3Z1QyRnNhd3dWZ1lFMjFkckVuNUIwdngrKzY3Z3duSWJtLzlBcFRlbCtib2Q1M1dNVEpqSWd4ak96TGNvVldyUT09"]}'
+    body: '{"x5c": ["TUlJQ3lqQ0NBYklDQVFFd0RRWUpLb1pJaHZjTkFRRUxCUUF3UlRFTE1Ba0dBMVVFQmhNQ1FWVXhFekFSQmdOVkJBZ01DbE52YldVdFUzUmhkR1V4SVRBZkJnTlZCQW9NR0VsdWRHVnlibVYwSUZkcFpHZHBkSE1nVUhSNUlFeDBaREFlRncweU1UQXpNekF3TWpFd01UaGFGdzB5TVRBek16QXdNakV4TVRoYU1CRXhEekFOQmdOVkJBTVRCazE1UTJWeWREQ0NBU0l3RFFZSktvWklodmNOQVFFQkJRQURnZ0VQQURDQ0FRb0NnZ0VCQUxJY2NUcjlubmlYUkU4YWNGN1NhUWswZ1JIUUpHS1lDdkdiMkFLdVJMSmJUb3NuL2orcjg4cS80ckVTRkJOTEFWNElyZmwvYzlkdnBBdzgwL0VIYkN4TFNkZkY1bitCMEVlRzBYanJ3RzcxUWZPNUw0S0wyV3lxb0crZ1luK3pDcEdpR0Y2ZmFRRmhVWUpaVjd0UXdIeWFxSTYwWjBudnF0OC9uWVFTRlQ1WXVERUpKOWNSV0xxZ2lnVk9uZU1UQ3kyUkExeDZHeCsvYU5XeUFHZnJpU3E5Yk9XeXpBa0ZjT0FXa1RVZ2xTci9qa3B6ZUNMWjJwRlpuZkhJM2tyTWM4NEpnSzNGa3U3UVhiUHVtQnRaSnBoNnNSMXF3QzJVWk85eW9LT0o0K1c1NmFobGdiTG5PQitjK3dhNiszNVhNOHg3Q3A5OHV6NE53QkpaUlU5OHJpRUNBd0VBQVRBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQXZ0SkFQMTB2NlQ4ZkFaQzVENGhiVnJ1L1hTbWhZWUVwclh1UW1SdktSRDV6bHJrSEZaVzVSdWIvR21ramJlZnRCTmxTcGVWaU4xQWk4RHBnNWxkbzVQUjl5c1JVc0hxWG5RVDhyckpCUGxDeHBEMjlSUnhHT0FnWnFiRWFEc05HNVVZRHBJZzBVOW9lN0dTbmNTWmFObVozb2Y4cnkxRTRCdER0NDF4RFRWUG5NS0xlVDdybVA0eWFTeUpsM3lNeUxZREhJZkZVMmpBMGlobnJ3aXh2aEtjY251bzFSSTNlcFgwaFVlUEhsK21JWGpDS2M5QlQxN2tlNjVLbmlrSDRrM09DMkV4eXVxR09vZFVtTGJnQVN2T0Vna1dCbEJqWFhjN0Uyd3VtQ09FeVRTOEpWaTJJMlRyQUJFYTJBL21TdkhpM01NZDR5Z1l5VnZEaGVLSmNwQT09"]}'
     headers:
       Accept:
       - application/json
@@ -113,17 +113,17 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-certificates/4.3.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/pending/merge?api-version=7.1
+    uri: https://vaultname.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/pending/merge?api-version=2016-10-01
   response:
     body:
-      string: '{"id":"https://vaultname.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/07b9c6d030364fd29f6fa6e26595e8d5","kid":"https://vaultname.vault.azure.net/keys/livekvtestmergeCertificate14a51776/07b9c6d030364fd29f6fa6e26595e8d5","sid":"https://vaultname.vault.azure.net/secrets/livekvtestmergeCertificate14a51776/07b9c6d030364fd29f6fa6e26595e8d5","x5t":"J6h4TA6MpnD8wnIFvajnaVlxNRo","cer":"MIICyjCCAbICAQEwDQYJKoZIhvcNAQELBQAwRTELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxITAfBgNVBAoMGEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZDAeFw0yMTAzMjUwMDQ2MzhaFw0yMTAzMjUwMDQ3MzhaMBExDzANBgNVBAMTBk15Q2VydDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAM7uSeT5ofgPQZgQ5OSQgaD/JvRftH8nbfBSRUrQBA8kVTCYZrt4vL3ZkihcBQahfCEbRjwHj5xwiyj9WsZktMsgrUZmWJstf74apLUtiTaMTCPHKhfGpVB8NF7AM8EREbwymRIo2k5V9766ikxr/tRmGVqj4RBTUkmmNeT3gF9uxWkV+6uJ4Te9XDqsIwV7B4CkoPmP7Tv31tM83vW3P5U9JS0ef46fb7oo2Lg7a25GH+vL9bgSoP20tIHAgnAKXIMfd+dmpu5Ut31Z04OztIequeH8Zk9+vECGjpi+M1qYA6hMCjdnWH1j16CJdEGf5jRxnr5R1bw4Wqwy5N8KvBkCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEATu4kbE3IFMHPYeX17Ybyc+z02E2fggUckLTOAmahqSKqSadffvh4xgDDuq/MoxhSn0ar1UetZ6V8Ak2dMM5VftlnpqH/M1Wh+R1mmmG8j7H6xfkesP23OOUx0dAlvS2nF9o03AL5oe67JJZ/5IoXjBHv0ZNeDssLwldJZu6mYWXt/ClR7tkbMLWJ834ZcwED8oFro/wUfoMmfe0wmwl1G41tmes9k6hS8jB6eQ9oLeOZkJlvnIlfkdGYPlnVHwYodBwRFImd4hvPy0j4XTOew7gT2FsawwVgYE21drEn5B0vx++67gwnIbm/9ApTel+bod53WMTJjIgxjOzLcoVWrQ==","attributes":{"enabled":true,"nbf":1616633198,"exp":1616633258,"created":1616633198,"updated":1616633198,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"policy":{"id":"https://vaultname.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=MyCert","sans":{},"ekus":["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],"key_usage":["digitalSignature","keyEncipherment"],"validity_months":12,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"EmailContacts"}}],"issuer":{"name":"Unknown","cert_transparency":false},"attributes":{"enabled":true,"created":1616633197,"updated":1616633197}},"pending":{"id":"https://vaultname.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/pending"}}'
+      string: '{"id":"https://vaultname.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/340108671c4a476db5045a3f073be5df","kid":"https://vaultname.vault.azure.net/keys/livekvtestmergeCertificate14a51776/340108671c4a476db5045a3f073be5df","sid":"https://vaultname.vault.azure.net/secrets/livekvtestmergeCertificate14a51776/340108671c4a476db5045a3f073be5df","x5t":"9VvtZLSjeJb4_Z6vxewqiarQPsY","cer":"MIICyjCCAbICAQEwDQYJKoZIhvcNAQELBQAwRTELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxITAfBgNVBAoMGEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZDAeFw0yMTAzMzAwMjEwMThaFw0yMTAzMzAwMjExMThaMBExDzANBgNVBAMTBk15Q2VydDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALIccTr9nniXRE8acF7SaQk0gRHQJGKYCvGb2AKuRLJbTosn/j+r88q/4rESFBNLAV4Irfl/c9dvpAw80/EHbCxLSdfF5n+B0EeG0XjrwG71QfO5L4KL2WyqoG+gYn+zCpGiGF6faQFhUYJZV7tQwHyaqI60Z0nvqt8/nYQSFT5YuDEJJ9cRWLqgigVOneMTCy2RA1x6Gx+/aNWyAGfriSq9bOWyzAkFcOAWkTUglSr/jkpzeCLZ2pFZnfHI3krMc84JgK3Fku7QXbPumBtZJph6sR1qwC2UZO9yoKOJ4+W56ahlgbLnOB+c+wa6+35XM8x7Cp98uz4NwBJZRU98riECAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAvtJAP10v6T8fAZC5D4hbVru/XSmhYYEprXuQmRvKRD5zlrkHFZW5Rub/GmkjbeftBNlSpeViN1Ai8Dpg5ldo5PR9ysRUsHqXnQT8rrJBPlCxpD29RRxGOAgZqbEaDsNG5UYDpIg0U9oe7GSncSZaNmZ3of8ry1E4BtDt41xDTVPnMKLeT7rmP4yaSyJl3yMyLYDHIfFU2jA0ihnrwixvhKccnuo1RI3epX0hUePHl+mIXjCKc9BT17ke65KnikH4k3OC2ExyuqGOodUmLbgASvOEgkWBlBjXXc7E2wumCOEyTS8JVi2I2TrABEa2A/mSvHi3MMd4ygYyVvDheKJcpA==","attributes":{"enabled":true,"nbf":1617070218,"exp":1617070278,"created":1617070218,"updated":1617070218,"recoveryLevel":"Recoverable+Purgeable"},"policy":{"id":"https://vaultname.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=MyCert","sans":{},"ekus":["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],"key_usage":["digitalSignature","keyEncipherment"],"validity_months":12,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"EmailContacts"}}],"issuer":{"name":"Unknown","cert_transparency":false},"attributes":{"enabled":true,"created":1617070218,"updated":1617070218}},"pending":{"id":"https://vaultname.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/pending"}}'
     headers:
       cache-control: no-cache
-      content-length: '2309'
+      content-length: '2288'
       content-type: application/json; charset=utf-8
-      date: Thu, 25 Mar 2021 00:46:37 GMT
+      date: Tue, 30 Mar 2021 02:10:19 GMT
       expires: '-1'
-      location: https://vaultname.vault.azure.net/certificates/livekvtestmergeCertificate14a51776?api-version=7.1
+      location: https://vaultname.vault.azure.net/certificates/livekvtestmergeCertificate14a51776?api-version=2016-10-01
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
@@ -134,5 +134,5 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://mcpatinokv.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/pending/merge?api-version=7.1
+    url: https://mcpatinokv.vault.azure.net/certificates/livekvtestmergeCertificate14a51776/pending/merge?api-version=2016-10-01
 version: 1

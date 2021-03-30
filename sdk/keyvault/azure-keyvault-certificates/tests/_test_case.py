@@ -2,26 +2,30 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.keyvault.certificates import ApiVersion, CertificateClient
+from azure.keyvault.certificates import ApiVersion
 from azure.keyvault.certificates._shared import HttpChallengeCache
+from devtools_testutils import AzureTestCase
 from parameterized import parameterized
 import pytest
-
-from _shared.test_case import KeyVaultTestCase
 
 
 def suffixed_test_name(testcase_func, param_num, param):
     return "{}_{}".format(testcase_func.__name__, parameterized.to_safe_name(param.kwargs.get("api_version")))
 
 
-class CertificatesTestCase(KeyVaultTestCase):
+class CertificatesTestCase(AzureTestCase):
     def tearDown(self):
         HttpChallengeCache.clear()
         assert len(HttpChallengeCache._cache) == 0
         super(CertificatesTestCase, self).tearDown()
 
     def create_client(self, vault_uri, **kwargs):
-        credential = self.get_credential(CertificateClient)
+        if kwargs.pop("is_async", False):
+            from azure.keyvault.certificates.aio import CertificateClient
+            credential = self.get_credential(CertificateClient, is_async=True)
+        else:
+            from azure.keyvault.certificates import CertificateClient
+            credential = self.get_credential(CertificateClient)
         return self.create_client_from_credential(
             CertificateClient, credential=credential, vault_url=vault_uri, **kwargs
         )
