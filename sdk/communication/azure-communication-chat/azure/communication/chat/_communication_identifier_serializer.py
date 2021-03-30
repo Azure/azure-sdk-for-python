@@ -68,7 +68,7 @@ def serialize_identifier(identifier):
         )
 
 
-def deserialize(identifier_model):
+def deserialize_identifier(identifier_model):
     # type: (CommunicationIdentifierModel) -> CommunicationIdentifier
     """
     Deserialize the CommunicationIdentifierModel into Communication Identifier

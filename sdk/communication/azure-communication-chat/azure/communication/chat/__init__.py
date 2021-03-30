@@ -18,6 +18,14 @@ from ._models import (
 )
 
 from ._shared.user_credential import CommunicationTokenCredential
+from ._shared.models import (
+    CommunicationIdentifier,
+    CommunicationIdentifierKind,
+    CommunicationUserIdentifier,
+    PhoneNumberIdentifier,
+    MicrosoftTeamsUserIdentifier,
+    UnknownIdentifier
+)
 
 __all__ = [
     'ChatClient',
@@ -32,6 +40,12 @@ __all__ = [
     'ChatMessageType',
     'CreateChatThreadResult',
     'ChatError',
-    'CommunicationTokenCredential'
+    'CommunicationTokenCredential',
+    'CommunicationIdentifier',
+    'CommunicationIdentifierKind',
+    'CommunicationUserIdentifier',
+    'PhoneNumberIdentifier',
+    'MicrosoftTeamsUserIdentifier',
+    'UnknownIdentifier'
 ]
 __version__ = VERSION
