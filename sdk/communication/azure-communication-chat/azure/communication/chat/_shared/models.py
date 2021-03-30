@@ -6,12 +6,11 @@
 
 from enum import Enum, EnumMeta
 from six import with_metaclass
-from typing import Mapping, Optional, Union
+from typing import Mapping, Optional, Union, Any
 try:
-    from typing import Protocol
+    from typing import Protocol, TypedDict
 except ImportError:
-    from typing_extensions import Protocol
-
+    from typing_extensions import Protocol, TypedDict
 
 from azure.core import CaseInsensitiveEnumMeta
 
@@ -39,44 +38,66 @@ class CommunicationIdentifier(Protocol):
     """
     Communication Identifier.
 
-    :ivar str id: The ID
+    :ivar str id: The identifier.
     :ivar kind: The type of identifier.
-    :ivar Mapping properties: The properties of the 
+    :vartype kind: str or CommunicationIdentifierKind
+    :ivar Mapping[str, Any] properties: The properties of the identifier.
     """
     id = None  # type: Optional[str]
     kind = None  # type: Optional[Union[CommunicationIdentifierKind, str]]
-    properties = {}  # type: Mapping[str, str]
+    properties = {}  # type: Mapping[str, Any]
+
+
+CommunicationUserProperties = TypedDict(
+    'CommunicationUserProperties',
+    identifier=str
+)
 
 
 class CommunicationUserIdentifier(object):
     """
     Represents a user in Azure Communication Service.
 
-    :ivar identifier: Communication user identifier.
-    :vartype identifier: str
-    :param identifier: Identifier to initialize CommunicationUserIdentifier.
-    :type identifier: str
+    :ivar str id: The identifier.
+    :ivar kind: The type of identifier.
+    :vartype kind: str or CommunicationIdentifierKind
+    :ivar Mapping[str, Any] properties: The properties of the identifier.
+     The keys in this mapping include:
+        - `identifier`(str): Identifier to initialize CommunicationUserIdentifier.
+
     """
     kind = CommunicationIdentifierKind.COMMUNICATION_USER
 
     def __init__(self, identifier):
+        # type: (str) -> None
         self.id = identifier
-        self.properties = {'identifier', identifier}
+        self.properties = CommunicationUserProperties(identifier)
+
+
+PhoneNumberProperties = TypedDict(
+    'CommunicationUserProperties',
+    phone_number=str
+)
 
 
 class PhoneNumberIdentifier(object):
     """
     Represents a phone number.
-    :param phone_number: The phone number in E.164 format.
-    :type phone_number: str
-    :param raw_id: The full id of the phone number.
-    :type raw_id: str
+
+    :ivar str id: The identifier.
+    :ivar kind: The type of identifier.
+    :vartype kind: str or CommunicationIdentifierKind
+    :ivar Mapping properties: The properties of the identifier.
+     The keys in this mapping include:
+        - `phone_number`(str): The phone number in E.164 format.
+
     """
     kind = CommunicationIdentifierKind.PHONE_NUMBER
 
     def __init__(self, phone_number, **kwargs):
+        # type: (str, Any) -> None
         self.id = kwargs.get('identifier')
-        self.properties = {'phone_number', phone_number}
+        self.properties = PhoneNumberProperties(phone_number)
 
 
 class UnknownIdentifier(object):
@@ -84,40 +105,51 @@ class UnknownIdentifier(object):
     Represents an identifier of an unknown type.
     It will be encountered in communications with endpoints that are not
     identifiable by this version of the SDK.
-    :ivar raw_id: Unknown communication identifier.
-    :vartype raw_id: str
-    :param identifier: Value to initialize UnknownIdentifier.
-    :type identifier: str
+
+    :ivar str id: The identifier
+    :ivar kind: The type of identifier.
+    :vartype kind: str or CommunicationIdentifierKind
+    :ivar Mapping properties: The properties of the identifier.
     """
     kind = CommunicationIdentifierKind.UNKOWN
 
-    def __init__(self, identifier, **kwargs):
+    def __init__(self, identifier):
+        # type: (str) -> None
         self.id = identifier
-        self.properties = kwargs.get('properties') or {}
+        self.properties = {}
+
+
+MicrosoftTeamsUserProperties = TypedDict(
+    'MicrosoftTeamsUserProperties',
+    user_id=str,
+    is_anonymous=bool,
+    cloud=Union[CommunicationCloudEnvironment, str]
+)
 
 
 class MicrosoftTeamsUserIdentifier(object):
     """
     Represents an identifier for a Microsoft Teams user.
-    :ivar user_id: The id of the Microsoft Teams user. If the user isn't anonymous, the id is the AAD object id of the user.
-    :vartype user_id: str
-    :param user_id: Value to initialize MicrosoftTeamsUserIdentifier.
-    :type user_id: str
-    :ivar raw_id: Raw id of the Microsoft Teams user.
-    :vartype raw_id: str
-    :ivar cloud: Cloud environment that this identifier belongs to
-    :vartype cloud: CommunicationCloudEnvironment
-    :ivar is_anonymous: set this to true if the user is anonymous for example when joining a meeting with a share link
-    :vartype is_anonymous: bool
-    :param is_anonymous: Value to initialize MicrosoftTeamsUserIdentifier.
-    :type is_anonymous: bool
+
+    :ivar str id: The identifier.
+    :ivar kind: The type of identifier.
+    :vartype kind: str or CommunicationIdentifierKind
+    :ivar Mapping properties: The properties of the identifier.
+     The keys in this mapping include:
+        - `user_id`(str): The id of the Microsoft Teams user. If the user isn't anonymous,
+          the id is the AAD object id of the user.
+        - `is_anonymous` (bool): Set this to true if the user is anonymous for example when joining
+          a meeting with a share link.
+        - `cloud` (str): Cloud environment that this identifier belongs to.
+
     """
     kind = CommunicationIdentifierKind.MICROSOFT_TEAMS_USER
 
     def __init__(self, user_id, **kwargs):
+        # type: (str, Any) -> None
         self.id = kwargs.get('identifier')
-        self.properties = {
-            'user_id': user_id,
-            'is_anonymous': kwargs.get('is_anonymous', False),
-            'cloud': kwargs.get('cloud') or CommunicationCloudEnvironment.Public
-        }
+        self.properties = MicrosoftTeamsUserProperties(
+            user_id=user_id,
+            is_anonymous=kwargs.get('is_anonymous', False),
+            cloud=kwargs.get('cloud') or CommunicationCloudEnvironment.Public
+        )

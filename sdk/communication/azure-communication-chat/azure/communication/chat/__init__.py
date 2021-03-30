@@ -22,8 +22,11 @@ from ._shared.models import (
     CommunicationIdentifier,
     CommunicationIdentifierKind,
     CommunicationUserIdentifier,
+    CommunicationUserProperties,
     PhoneNumberIdentifier,
+    PhoneNumberProperties,
     MicrosoftTeamsUserIdentifier,
+    MicrosoftTeamsUserProperties,
     UnknownIdentifier
 )
 
@@ -44,8 +47,11 @@ __all__ = [
     'CommunicationIdentifier',
     'CommunicationIdentifierKind',
     'CommunicationUserIdentifier',
+    'CommunicationUserProperties',
     'PhoneNumberIdentifier',
+    'PhoneNumberProperties',
     'MicrosoftTeamsUserIdentifier',
+    'MicrosoftTeamsUserProperties',
     'UnknownIdentifier'
 ]
 __version__ = VERSION
