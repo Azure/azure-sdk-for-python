@@ -256,7 +256,7 @@ def strip_protocol_from_uri(uri):
 
 
 @contextmanager
-def send_trace_context_manager(span_name=SPAN_NAME_SEND, traceparent=None, attributes=None):
+def send_trace_context_manager(span_name=SPAN_NAME_SEND):
     span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
 
     if span_impl_type is not None:
