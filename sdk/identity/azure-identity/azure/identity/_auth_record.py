@@ -6,7 +6,13 @@ import json
 
 
 class AuthenticationRecord(object):
-    """A record which can initialize :class:`DeviceCodeCredential` or :class:`InteractiveBrowserCredential`"""
+    """Non-secret account information for an authenticated user
+
+    This class enables :class:`DeviceCodeCredential` and :class:`InteractiveBrowserCredential` to access
+    previously cached authentication data. Applications shouldn't construct instances of this class. They should
+    instead acquire one from a credential's **authenticate** method, such as
+    :func:`InteractiveBrowserCredential.authenticate`. See the user_authentication sample for more details.
+    """
 
     def __init__(self, tenant_id, client_id, authority, home_account_id, username):
         # type: (str, str, str, str, str) -> None
