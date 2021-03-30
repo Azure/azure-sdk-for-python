@@ -1,8 +1,10 @@
 # Release History
 
-## 1.13.0 (Unreleased)
+## 1.13.0 (2021-04-02)
 
-### Features
+Azure core requires Python 2.7 or Python 3.6+ since this release.
+
+### New Features
 
 - Supported adding custom policies  #16519
 

@@ -31,6 +31,7 @@ import asyncio
 
 
 async def sample_authentication_api_key_async():
+    # [START create_dt_client_with_key_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation.aio import DocumentTranslationClient
 
@@ -38,6 +39,7 @@ async def sample_authentication_api_key_async():
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
 
     document_translation_client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
+    # [END create_dt_client_with_key_async]
 
     # make calls with authenticated client
     async with document_translation_client:
