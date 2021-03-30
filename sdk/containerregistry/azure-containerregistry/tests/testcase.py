@@ -106,7 +106,7 @@ class ContainerRegistryTestClass(AzureTestCase):
         return ContainerRegistryClient(
             endpoint=endpoint,
             credential=self.get_credential(),
-            **kwargs,
+            **kwargs
         )
 
     def create_repository_client(self, endpoint, name, **kwargs):
@@ -114,7 +114,7 @@ class ContainerRegistryTestClass(AzureTestCase):
             endpoint=endpoint,
             repository=name,
             credential=self.get_credential(),
-            **kwargs,
+            **kwargs
         )
 
     def assert_content_permission(self, content_perm, content_perm2):

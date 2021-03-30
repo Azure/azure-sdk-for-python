@@ -41,9 +41,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         result = await self._client.container_registry.delete_repository(
             repository, **kwargs
         )
-        return DeletedRepositoryResult._from_generated(
+        return DeletedRepositoryResult._from_generated(  # pylint: disable=protected-access
             result
-        )  # pylint: disable=protected-access
+        )
 
     def list_repositories(self, **kwargs) -> AsyncItemPaged[str]:
 

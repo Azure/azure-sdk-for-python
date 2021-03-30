@@ -147,8 +147,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             n=n,
             orderby=orderby,
             cls=lambda objs: [
-                RegistryArtifactProperties._from_generated(x)
-                for x in objs  # pylint: disable=protected-access
+                RegistryArtifactProperties._from_generated(x)  # pylint: disable=protected-access
+                for x in objs
             ],
         )
 
@@ -170,8 +170,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             orderby=kwargs.pop("order_by", None),
             digest=kwargs.pop("digest", None),
             cls=lambda objs: [
-                TagProperties._from_generated(o) for o in objs
-            ],  # pylint: disable=protected-access
+                TagProperties._from_generated(o) for o in objs  # pylint: disable=protected-access
+            ],
             **kwargs
         )
 
@@ -190,8 +190,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         await self._client.container_registry_repository.update_manifest_attributes(
             self.repository,
             digest,
-            value=permissions._to_generated(),
-            **kwargs  # pylint: disable=protected-access
+            value=permissions._to_generated(),  # pylint: disable=protected-access
+            **kwargs
         )
 
     async def set_tag_properties(self, tag_or_digest, permissions, **kwargs):
@@ -211,6 +211,6 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         await self._client.container_registry_repository.update_manifest_attributes(
             self.repository,
             tag_or_digest,
-            value=permissions._to_generated(),
-            **kwargs  # pylint: disable=protected-access
+            value=permissions._to_generated(),  # pylint: disable=protected-access
+            **kwargs
         )
