@@ -11,6 +11,9 @@ parameters:
 - name: ToxEnvParallel
   type: string
   default: --tenvparallel
+- name: TestMarkArgument
+  type: string
+  default: ''
 - name: InjectedPackages
   type: string
   default: ''
