@@ -153,7 +153,7 @@ class DocumentTranslationTest(AzureTestCase):
         self.assertEqual(job_details.documents_failed_count, failed) if failed else self.assertIsNotNone(job_details.documents_failed_count)
         self.assertEqual(job_details.documents_succeeded_count, succeeded) if succeeded else self.assertIsNotNone(job_details.documents_succeeded_count)
         self.assertEqual(job_details.documents_in_progress_count, inprogress) if inprogress else self.assertIsNotNone(job_details.documents_in_progress_count)
-        self.assertEqual(job_details.documents_not_yet_started_count, notstarted) if notstarted else self.assertIsNotNone(job_details.documents_in_progress_count)
+        self.assertEqual(job_details.documents_not_yet_started_count, notstarted) if notstarted else self.assertIsNotNone(job_details.documents_not_yet_started_count)
         self.assertEqual(job_details.documents_cancelled_count, cancelled) if cancelled else self.assertIsNotNone(job_details.documents_cancelled_count)
         # generic assertions
         self.assertIsNotNone(job_details.id)
@@ -162,10 +162,9 @@ class DocumentTranslationTest(AzureTestCase):
         self.assertIsNotNone(job_details.total_characters_charged)
 
     def _validate_format(self, format):
-        #self.assertIsNotNone(format.format)
+        self.assertIsNotNone(format.file_format)
         self.assertIsNotNone(format.file_extensions)
         self.assertIsNotNone(format.content_types)
-        #self.assertIsNotNone(format.format_versions)
 
 
     # client helpers
