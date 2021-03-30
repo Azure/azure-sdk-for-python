@@ -110,23 +110,3 @@ jobs:
             parameters:
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
               BuildTargetingString: ${{ parameters.BuildTargetingString }}
-
-  - job:
-    condition: and(succeededOrFailed(), or(eq(variables['Run.Regression'], 'true'), and(eq(variables['Build.Reason'], 'Schedule'), eq(variables['System.TeamProject'],'internal'))))
-    displayName: 'Run Regression'
-    timeoutInMinutes: 120
-    variables:
-    - template: ../variables/globals.yml
-
-    dependsOn:
-      - 'Build'
-
-    pool:
-      name: azsdk-pool-mms-ubuntu-1804-general
-      vmImage: MMSUbuntu18.04
-
-    steps:
-    - template: ../steps/test_regression.yml
-      parameters:
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}

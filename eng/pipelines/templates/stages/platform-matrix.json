@@ -1,4 +1,7 @@
 {
+  "displayNames": {
+      "--disablecov": ""
+  },
   "matrix": {
     "Agent": {
       "windows-2019": { "OSVmImage": "MMS2019", "Pool": "azsdk-pool-mms-win-2019-general" },
@@ -16,11 +19,14 @@
       "CoverageArg": "--disablecov"
     },
     {
-      "Agent": {
-          "ubuntu-18.04": { "OSVmImage": "MMSUbuntu18.04", "Pool": "azsdk-pool-mms-ubuntu-1804-general" }
-      },
-      "PythonVersion": "3.9",
-      "CoverageArg": ""
+      "CoverageConfig": {
+          "ubuntu_18.04_3.9_coverage": {
+              "OSVmImage": "MMSUbuntu18.04",
+              "Pool": "azsdk-pool-mms-ubuntu-1804-general",
+              "PythonVersion": "3.9",
+              "CoverageArg": ""
+          }
+      }
     }
   ]
 }
