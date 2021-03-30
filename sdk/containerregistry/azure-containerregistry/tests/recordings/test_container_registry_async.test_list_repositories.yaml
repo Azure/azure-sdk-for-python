@@ -19,7 +19,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Fri, 26 Mar 2021 19:11:59 GMT
+      date: Tue, 30 Mar 2021 12:19:03 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -31,7 +31,7 @@ interactions:
     url: https://seankane.azurecr.io/acr/v1/_catalog
 - request:
     body:
-      access_token: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJpYXQiOjE2MTY3ODU2MTgsIm5iZiI6MTYxNjc4NTYxOCwiZXhwIjoxNjE2ODcyMzE4LCJhaW8iOiJFMlpnWUdqbnVGZ2xuWDdtdGpKendSNWxZYVd2QUE9PSIsImFwcGlkIjoiZjg1MDY1MGMtMWZjZi00NDg5LWI0NmYtNzFhZjJlMzBkMzYwIiwiYXBwaWRhY3IiOiIxIiwiaWRwIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsIm9pZCI6IjMwNTExYzlkLWJhMWEtNGM3Yi1iNDIyLTViNTQzZGExMWIzZiIsInJoIjoiMC5BUm9BdjRqNWN2R0dyMEdScXkxODBCSGJSd3hsVVBqUEg0bEV0Rzl4cnk0dzAyQWFBQUEuIiwic3ViIjoiMzA1MTFjOWQtYmExYS00YzdiLWI0MjItNWI1NDNkYTExYjNmIiwidGlkIjoiNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3IiwidXRpIjoiVktCMGlIbFFLVWVGYjdpc2RJR0lBUSIsInZlciI6IjEuMCIsInhtc190Y2R0IjoxMjg5MjQxNTQ3fQ.RGuKi7DkUI1nKj9UhaW9VzXbk6c5pCfHmlv2WtG-TPJrxs-RKevTiRXic35bEUmbQZbXqg4QEDPnKqKc_N8-k1piOXC9U3emicNM4O6jLHx4IFLhFddt14sEvD1ZP3a0DC0taDiJ9uSbrafRgnSfr426iI4B8hXLxmumvIE1CjZ0NwMFZBvqv8Dn0KDCSWHQZXPcBadqCI0c99QN_Fddu1YDTLN43qOdTEdi_lCe7jUTgWaRCcJ-0awB7HKddPaUQpF6a77Kk84rHVyCETFXtZrocyKbxoAVkr41bKXVhEV2BJ_j93BxJ9X_1Q4pYuOQIQq8iejzsZNV8HQy2QmI9A
+      access_token: REDACTED
       grant_type: access_token
       service: seankane.azurecr.io
     headers:
@@ -47,7 +47,7 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Fri, 26 Mar 2021 19:12:01 GMT
+      date: Tue, 30 Mar 2021 12:19:04 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -58,7 +58,7 @@ interactions:
 - request:
     body:
       grant_type: refresh_token
-      refresh_token: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ikk2NVk6VEVDUzpLTEhMOjZCVlE6SUJaRjpGRVhCOlk0VUg6SlRJUzo2VFBYOkNWWEE6SkxUSzpRS0RRIn0.eyJqdGkiOiI5YWNmMWFlYy0xZDBiLTRhOWItOWMyYy05MjBlZmY5OTdlOGEiLCJzdWIiOiIzMDUxMWM5ZC1iYTFhLTRjN2ItYjQyMi01YjU0M2RhMTFiM2YiLCJuYmYiOjE2MTY3ODUwMjEsImV4cCI6MTYxNjc5NjcyMSwiaWF0IjoxNjE2Nzg1MDIxLCJpc3MiOiJBenVyZSBDb250YWluZXIgUmVnaXN0cnkiLCJhdWQiOiJzZWFua2FuZS5henVyZWNyLmlvIiwidmVyc2lvbiI6IjEuMCIsInJpZCI6ImExZTAxZmYzMzk2YzRmMTVhMmRjNjM2NzNkN2ZjYTMzIiwiZ3JhbnRfdHlwZSI6InJlZnJlc2hfdG9rZW4iLCJwZXJtaXNzaW9ucyI6eyJhY3Rpb25zIjpbInJlYWQiLCJ3cml0ZSIsImRlbGV0ZSJdLCJub3RBY3Rpb25zIjpudWxsfSwicm9sZXMiOltdfQ.dFO8g1vmv5HLuLdhyF-Tpe-EhN_hbssAKpoHpdZywdYuUjygQTgN49sso312wB54leXVx7ZPayNGjDNkvUmKr9Za9sqW3dvtmwaTeAfWBeL9TvwZ2hC7UOqX4OyecPtNa21g5_8ngp_B2tVsKfsBJlWnlwm8bxjZJaeCJqTna8I3AGxwPlrMZlit-g1rnaCoLlVhIbaFjqtwUjXMuA3C26S-ICSDN92U1nXLvRNtjFmtAuyCk_kOvE_b3e3ssYOUlBAWrR5j_TFxmx0JW3Apg3WQgooUM42hZ44_fumF1gIUks2mH2nZD6wEE2S_2JJanWJL696Fco4RZQntS5BZQA
+      refresh_token: REDACTED
       scope: registry:catalog:*
       service: seankane.azurecr.io
     headers:
@@ -74,7 +74,7 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Fri, 26 Mar 2021 19:12:01 GMT
+      date: Tue, 30 Mar 2021 12:19:04 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -93,15 +93,15 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
-      string: '{"repositories":["alpine","alpine/git","busybox","debian","docker101tutorial","hello-world","library/hello-world","ubuntu"]}
+      string: '{"repositories":["alpine/git","debian","hello-world","library/hello-world","ubuntu"]}
 
         '
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '125'
+      content-length: '86'
       content-type: application/json; charset=utf-8
-      date: Fri, 26 Mar 2021 19:12:02 GMT
+      date: Tue, 30 Mar 2021 12:19:04 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains

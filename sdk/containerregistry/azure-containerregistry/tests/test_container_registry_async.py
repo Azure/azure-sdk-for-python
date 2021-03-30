@@ -35,8 +35,6 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     async def test_list_repositories(self, containerregistry_baseurl):
         client = self.create_registry_client(containerregistry_baseurl)
 
-        repositories = client.list_repositories()
-
         count = 0
         prev = None
         async for repo in client.list_repositories():

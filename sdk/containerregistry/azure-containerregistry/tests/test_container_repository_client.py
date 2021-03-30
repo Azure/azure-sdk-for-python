@@ -47,14 +47,12 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
         assert repo_attribs is not None
         assert repo_attribs.content_permissions is not None
 
-
     @acr_preparer()
     def test_get_properties(self, containerregistry_baseurl):
         repo_client = self.create_repository_client(containerregistry_baseurl, "hello-world")
 
         properties = repo_client.get_properties()
         assert isinstance(properties.content_permissions, ContentPermissions)
-
 
     @acr_preparer()
     def test_get_tag(self, containerregistry_baseurl):
@@ -64,7 +62,6 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
         assert tag is not None
         assert isinstance(tag, TagProperties)
-
 
     @acr_preparer()
     def test_list_registry_artifacts(self, containerregistry_baseurl):
@@ -77,9 +74,6 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
             assert isinstance(artifact.created_on, datetime)
             assert artifact.last_updated_on is not None
             assert isinstance(artifact.last_updated_on, datetime)
-            assert artifact.tags is not None
-            assert isinstance(artifact.tags, list)
-
 
     @acr_preparer()
     def test_get_registry_artifact_properties(self, containerregistry_baseurl):
@@ -91,7 +85,6 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
         assert isinstance(properties, RegistryArtifactProperties)
         assert isinstance(properties.created_on, datetime)
         assert isinstance(properties.last_updated_on, datetime)
-
 
     @acr_preparer()
     def test_list_tags(self, containerregistry_baseurl):
@@ -105,7 +98,6 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
             print(tag)
 
         assert count > 0
-
 
     @acr_preparer()
     def test_list_tags_descending(self, containerregistry_baseurl):

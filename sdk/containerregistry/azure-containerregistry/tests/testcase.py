@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import copy
 from datetime import datetime
 import json
 import os
@@ -34,6 +35,8 @@ class AcrBodyReplacer(RecordingProcessor):
 
     def _scrub_body(self, body):
         # type: (bytes) -> bytes
+        if isinstance(body, dict):
+            return self._scrub_body_dict(body)
         if not isinstance(body, six.binary_type):
             return body
         s = body.decode("utf-8")
@@ -48,8 +51,15 @@ class AcrBodyReplacer(RecordingProcessor):
         s = "&".join(s)
         return bytes(s, "utf-8")
 
+    def _scrub_body_dict(self, body):
+        new_body = copy.deepcopy(body)
+        for k in ["access_token", "refresh_token"]:
+            if k in new_body.keys():
+                new_body[k] = REDACTED
+        return new_body
+
     def process_request(self, request):
-        if request.body:# and isinstance(request.body, six.binary_type):
+        if request.body:
             request.body = self._scrub_body(request.body)
 
         return request
