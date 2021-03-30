@@ -27,11 +27,11 @@ steps:
       git sparse-checkout set ${{ parameters.CheckoutPath }}/${{ parameters.Package }}
       git checkout ${{ parameters.Package }}_${{ parameters.Version }}
 
-      ##vso[task.setvariable variable=Package.Clone]$targetPath
+      Write-Host "##vso[task.setvariable variable=Package.Clone]$targetPath"
     displayName: 'Sparse Checkout Code into Temp Directory'
 
   - pwsh: |
-      $pathForCopy = Join-Path -Path $(Package.Clone) -ChildPath "${{ parameters.CheckoutPath }}/${{ parameters.Package }}"
+      $pathForCopy = Join-Path -Path "$(Package.Clone)" -ChildPath "${{ parameters.CheckoutPath }}/${{ parameters.Package }}"
       
       Write-Host $pathForCopy
       Write-Host ${{ parameters.DestinationDirectory }}
