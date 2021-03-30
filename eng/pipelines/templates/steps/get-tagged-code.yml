@@ -16,7 +16,7 @@ steps:
     # TODO, re-use eng/common sparse-checkout.yml
   - pwsh: |
       $targetPath = "$(Agent.TempDirectory)/cln"
-      if (-not Test-Path $targetPath) {
+      if (!(Test-Path $targetPath)) {
         mkdir $targetPath
       }
       Remove-Item -Path $targetPath/* -Recurse
