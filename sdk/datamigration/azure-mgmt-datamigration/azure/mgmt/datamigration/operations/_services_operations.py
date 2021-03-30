@@ -91,7 +91,7 @@ class ServicesOperations(object):
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -134,8 +134,8 @@ class ServicesOperations(object):
         :type parameters: ~azure.mgmt.datamigration.models.DataMigrationService
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either DataMigrationService or the result of cls(response)
@@ -240,7 +240,7 @@ class ServicesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DataMigrationService', pipeline_response)
@@ -292,7 +292,7 @@ class ServicesOperations(object):
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -321,8 +321,8 @@ class ServicesOperations(object):
         :type delete_running_tasks: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -416,7 +416,7 @@ class ServicesOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -452,8 +452,8 @@ class ServicesOperations(object):
         :type parameters: ~azure.mgmt.datamigration.models.DataMigrationService
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either DataMigrationService or the result of cls(response)
@@ -559,7 +559,7 @@ class ServicesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DataMigrationServiceStatusResponse', pipeline_response)
@@ -608,7 +608,7 @@ class ServicesOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -634,8 +634,8 @@ class ServicesOperations(object):
         :type service_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -722,7 +722,7 @@ class ServicesOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -749,8 +749,8 @@ class ServicesOperations(object):
         :type service_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -867,7 +867,7 @@ class ServicesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ApiError, response)
+                error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -882,8 +882,7 @@ class ServicesOperations(object):
         self,
         group_name,  # type: str
         service_name,  # type: str
-        name=None,  # type: Optional[str]
-        type=None,  # type: Optional[str]
+        parameters,  # type: "_models.NameAvailabilityRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.NameAvailabilityResponse"
@@ -895,10 +894,8 @@ class ServicesOperations(object):
         :type group_name: str
         :param service_name: Name of the service.
         :type service_name: str
-        :param name: The proposed resource name.
-        :type name: str
-        :param type: The resource type chain (e.g. virtualMachines/extensions).
-        :type type: str
+        :param parameters: Requested name to validate.
+        :type parameters: ~azure.mgmt.datamigration.models.NameAvailabilityRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NameAvailabilityResponse, or the result of cls(response)
         :rtype: ~azure.mgmt.datamigration.models.NameAvailabilityResponse
@@ -909,8 +906,6 @@ class ServicesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = _models.NameAvailabilityRequest(name=name, type=type)
         api_version = "2018-07-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -934,7 +929,7 @@ class ServicesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'NameAvailabilityRequest')
+        body_content = self._serialize.body(parameters, 'NameAvailabilityRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -942,7 +937,7 @@ class ServicesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('NameAvailabilityResponse', pipeline_response)
@@ -1017,7 +1012,7 @@ class ServicesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ApiError, response)
+                error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1088,7 +1083,7 @@ class ServicesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ApiError, response)
+                error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1102,8 +1097,7 @@ class ServicesOperations(object):
     def check_name_availability(
         self,
         location,  # type: str
-        name=None,  # type: Optional[str]
-        type=None,  # type: Optional[str]
+        parameters,  # type: "_models.NameAvailabilityRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.NameAvailabilityResponse"
@@ -1113,10 +1107,8 @@ class ServicesOperations(object):
 
         :param location: The Azure region of the operation.
         :type location: str
-        :param name: The proposed resource name.
-        :type name: str
-        :param type: The resource type chain (e.g. virtualMachines/extensions).
-        :type type: str
+        :param parameters: Requested name to validate.
+        :type parameters: ~azure.mgmt.datamigration.models.NameAvailabilityRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NameAvailabilityResponse, or the result of cls(response)
         :rtype: ~azure.mgmt.datamigration.models.NameAvailabilityResponse
@@ -1127,8 +1119,6 @@ class ServicesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = _models.NameAvailabilityRequest(name=name, type=type)
         api_version = "2018-07-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -1151,7 +1141,7 @@ class ServicesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'NameAvailabilityRequest')
+        body_content = self._serialize.body(parameters, 'NameAvailabilityRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -1159,7 +1149,7 @@ class ServicesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('NameAvailabilityResponse', pipeline_response)

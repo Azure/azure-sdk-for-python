@@ -112,7 +112,7 @@ class FilesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ApiError, response)
+                error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -182,7 +182,7 @@ class FilesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ProjectFile', pipeline_response)
@@ -199,8 +199,7 @@ class FilesOperations:
         service_name: str,
         project_name: str,
         file_name: str,
-        etag: Optional[str] = None,
-        properties: Optional["_models.ProjectFileProperties"] = None,
+        parameters: "_models.ProjectFile",
         **kwargs
     ) -> "_models.ProjectFile":
         """Create a file resource.
@@ -215,10 +214,8 @@ class FilesOperations:
         :type project_name: str
         :param file_name: Name of the File.
         :type file_name: str
-        :param etag: HTTP strong entity tag value. This is ignored if submitted.
-        :type etag: str
-        :param properties: Custom file properties.
-        :type properties: ~azure.mgmt.datamigration.models.ProjectFileProperties
+        :param parameters: Information about the file.
+        :type parameters: ~azure.mgmt.datamigration.models.ProjectFile
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProjectFile, or the result of cls(response)
         :rtype: ~azure.mgmt.datamigration.models.ProjectFile
@@ -229,8 +226,6 @@ class FilesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = _models.ProjectFile(etag=etag, properties=properties)
         api_version = "2018-07-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -256,7 +251,7 @@ class FilesOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'ProjectFile')
+        body_content = self._serialize.body(parameters, 'ProjectFile')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -264,7 +259,7 @@ class FilesOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -337,7 +332,7 @@ class FilesOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -351,8 +346,7 @@ class FilesOperations:
         service_name: str,
         project_name: str,
         file_name: str,
-        etag: Optional[str] = None,
-        properties: Optional["_models.ProjectFileProperties"] = None,
+        parameters: "_models.ProjectFile",
         **kwargs
     ) -> "_models.ProjectFile":
         """Update a file.
@@ -367,10 +361,8 @@ class FilesOperations:
         :type project_name: str
         :param file_name: Name of the File.
         :type file_name: str
-        :param etag: HTTP strong entity tag value. This is ignored if submitted.
-        :type etag: str
-        :param properties: Custom file properties.
-        :type properties: ~azure.mgmt.datamigration.models.ProjectFileProperties
+        :param parameters: Information about the file.
+        :type parameters: ~azure.mgmt.datamigration.models.ProjectFile
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProjectFile, or the result of cls(response)
         :rtype: ~azure.mgmt.datamigration.models.ProjectFile
@@ -381,8 +373,6 @@ class FilesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = _models.ProjectFile(etag=etag, properties=properties)
         api_version = "2018-07-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -408,7 +398,7 @@ class FilesOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'ProjectFile')
+        body_content = self._serialize.body(parameters, 'ProjectFile')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -416,7 +406,7 @@ class FilesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ProjectFile', pipeline_response)
@@ -486,7 +476,7 @@ class FilesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('FileStorageInfo', pipeline_response)
@@ -555,7 +545,7 @@ class FilesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('FileStorageInfo', pipeline_response)
