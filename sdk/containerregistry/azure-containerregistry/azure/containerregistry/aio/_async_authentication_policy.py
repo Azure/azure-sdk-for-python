@@ -11,7 +11,7 @@ from azure.core.pipeline.policies import AsyncHTTPPolicy
 from ._async_exchange_client import ACRExchangeClient
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.pipeline import PipelineRequest, PipelineResponse
     from typing import Optional, Dict, Any, Union
 
@@ -38,12 +38,9 @@ def _enforce_https(request):
 class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
     """Authentication policy for ACR which accepts a challenge"""
 
-    def __init__(self, credential, endpoint):
-        # type: (TokenCredential, str) -> None
-        super(ContainerRegistryChallengePolicy, self).__init__()
-        self._scopes = "https://management.core.windows.net/.default"
+    def __init__(self, credential: "AsyncTokenCredential", endpoint: str) -> None:
+        super().__init__()
         self._credential = credential
-        self._token = None  # type: Union[AccessToken]
         self._exchange_client = ACRExchangeClient(endpoint, self._credential)
 
     async def on_request(self, request):
@@ -67,7 +64,6 @@ class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
         response = await self.next.send(request)
 
         if response.http_response.status_code == 401:
-            self._token = None  # any cached token is invalid
             challenge = response.http_response.headers.get("WWW-Authenticate")
             if challenge and await self.on_challenge(request, response, challenge):
                 response = await self.next.send(request)
@@ -86,6 +82,5 @@ class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
         # pylint:disable=unused-argument,no-self-use
 
         access_token = await self._exchange_client.get_acr_access_token(challenge)
-        self._token = access_token
-        request.http_request.headers["Authorization"] = "Bearer " + self._token
+        request.http_request.headers["Authorization"] = "Bearer " + access_token
         return access_token is not None

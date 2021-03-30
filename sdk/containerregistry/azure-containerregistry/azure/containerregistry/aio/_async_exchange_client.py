@@ -35,17 +35,12 @@ class ACRExchangeClient(object):
 
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str
-    :param credential: Azure Token Credential to authenticate requests with
-    :type credential: :class:~azure.core.TokenCredential
-    :param credential: AAD Token for authenticating requests with Azure
-    :type credential: :class:`azure.identity.DefaultTokenCredential`
+    :param credential: Credential which provides tokens to authenticate requests
+    :type credential: :class:`azure.core.credentials.TokenCredential`
     """
 
     BEARER = "Bearer"
     AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
-    WWW_AUTHENTICATE = "WWW-Authenticate"
-    SCOPE_PARAMETER = "scope"
-    SERVICE_PARAMETER = "service"
     AUTHORIZATION = "Authorization"
 
     def __init__(self, endpoint, credential, **kwargs):

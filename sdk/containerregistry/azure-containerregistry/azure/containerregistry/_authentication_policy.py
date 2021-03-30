@@ -42,9 +42,7 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
     def __init__(self, credential, endpoint):
         # type: (TokenCredential, str) -> None
         super(ContainerRegistryChallengePolicy, self).__init__()
-        self._scopes = "https://management.core.windows.net/.default"
         self._credential = credential
-        self._token = None  # type: Optional[AccessToken]
         self._exchange_client = ACRExchangeClient(endpoint, self._credential)
 
     def on_request(self, request):
@@ -68,7 +66,6 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         response = self.next.send(request)
 
         if response.http_response.status_code == 401:
-            self._token = None  # any cached token is invalid
             challenge = response.http_response.headers.get("WWW-Authenticate")
             if challenge and self.on_challenge(request, response, challenge):
                 response = self.next.send(request)
@@ -87,6 +84,5 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         # pylint:disable=unused-argument,no-self-use
 
         access_token = self._exchange_client.get_acr_access_token(challenge)
-        self._token = access_token
-        request.http_request.headers["Authorization"] = "Bearer " + self._token
+        request.http_request.headers["Authorization"] = "Bearer " + access_token
         return access_token is not None
