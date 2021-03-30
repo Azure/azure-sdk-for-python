@@ -5,6 +5,8 @@
 
 ## 1.2.0b1 (Unreleased)
 
+Azure Appconfiguratin requires Python 2.7 or Python 3.6+ since this release.
+
 ### Features
 
 - Adds method `update_sync_token` to include sync tokens from EventGrid notifications.
