@@ -26,7 +26,7 @@ async def handle_event_grid_notifications(event_grid_events):
 
     async with AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING) as client:
 
-        async for event_grid_event in event_grid_events:
+        for event_grid_event in event_grid_events:
             if event_grid_event["eventType"] == 'Microsoft.KeyValueModified':
                 sync_token = event['data']['syncToken']
                 client.update_sync_token(sync_token)
