@@ -23,7 +23,7 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
      supplied.
      If the translation language pair is not present in the glossary, it will not be applied.
     :type glossary_url: str
-    :keyword str format: Format.
+    :param str file_format: Format.
     :keyword str format_version: Format version.
     :keyword storage_source: Storage Source. Default value: "AzureBlob".
     :paramtype storage_source: str
@@ -32,47 +32,38 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
     def __init__(
             self,
             glossary_url,
+            file_format,
             **kwargs
     ):
-        # type: (str, **Any) -> None
+        # type: (str, str, **Any) -> None
         self.glossary_url = glossary_url
-        self.format = kwargs.get("format", None)
+        self.file_format = file_format
         self.format_version = kwargs.get("format_version", None)
         self.storage_source = kwargs.get("storage_source", None)
 
     def _to_generated(self):
         return _Glossary(
                 glossary_url=self.glossary_url,
-                format=self.format,
+                format=self.file_format,
                 version=self.format_version,
                 storage_source=self.storage_source
             )
 
     @staticmethod
-    def _to_generated_unknown_type(glossary):
-        if isinstance(glossary, TranslationGlossary):
-            return glossary._to_generated()  # pylint: disable=protected-access
-        if isinstance(glossary, six.string_types):
-            return _Glossary(
-                    glossary_url=glossary,
-                )
-        return None
-
-    @staticmethod
     def _to_generated_list(glossaries):
-        return [TranslationGlossary._to_generated_unknown_type(glossary) for glossary in glossaries]
+        return [glossary._to_generated() for glossary in glossaries]  # pylint: disable=protected-access
 
 
-class StorageTarget(object):  # pylint: disable=useless-object-inheritance
+class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
     """Destination for the finished translated documents.
 
     :param target_url: Required. Location of the folder / container with your documents.
     :type target_url: str
-    :param language: Required. Target Language.
-    :type language: str
+    :param language_code: Required. Target Language Code.
+    :type language_code: str
     :keyword str category_id: Category / custom system for translation request.
     :keyword glossaries: List of TranslationGlossary.
-    :paramtype glossaries: Union[list[str], list[~azure.ai.documenttranslation.TranslationGlossary]]
+    :paramtype glossaries: list[~azure.ai.documenttranslation.TranslationGlossary]
     :keyword storage_source: Storage Source. Default value: "AzureBlob".
     :paramtype storage_source: str
     """
@@ -80,12 +71,12 @@ class StorageTarget(object):  # pylint: disable=useless-object-inheritance
     def __init__(
         self,
         target_url,
-        language,
+        language_code,
         **kwargs
     ):
         # type: (str, str, **Any) -> None
         self.target_url = target_url
-        self.language = language
+        self.language_code = language_code
         self.category_id = kwargs.get("category_id", None)
         self.glossaries = kwargs.get("glossaries", None)
         self.storage_source = kwargs.get("storage_source", None)
@@ -94,7 +85,7 @@ class StorageTarget(object):  # pylint: disable=useless-object-inheritance
         return _TargetInput(
             target_url=self.target_url,
             category=self.category_id,
-            language=self.language,
+            language=self.language_code,
             storage_source=self.storage_source,
             glossaries=TranslationGlossary._to_generated_list(self.glossaries)  # pylint: disable=protected-access
             if self.glossaries else None
@@ -105,7 +96,7 @@ class StorageTarget(object):  # pylint: disable=useless-object-inheritance
         return [target._to_generated() for target in targets]  # pylint: disable=protected-access
 
 
-class BatchDocumentInput(object):  # pylint: disable=useless-object-inheritance
+class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheritance
     # pylint: disable=C0301
     """Definition for the input batch translation request.
 
@@ -113,8 +104,8 @@ class BatchDocumentInput(object):  # pylint: disable=useless-object-inheritance
      documents.
     :type source_url: str
     :param targets: Required. Location of the destination for the output.
-    :type targets: list[StorageTarget]
-    :keyword str source_language: Language code
+    :type targets: list[TranslationTarget]
+    :keyword str source_language_code: Language code
      If none is specified, we will perform auto detect on the document.
     :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
      translation. For example, when using a Azure storage blob Uri, use the prefix to restrict sub folders for
@@ -133,10 +124,10 @@ class BatchDocumentInput(object):  # pylint: disable=useless-object-inheritance
         targets,
         **kwargs
     ):
-        # type: (str, List[StorageTarget], **Any) -> None
+        # type: (str, List[TranslationTarget], **Any) -> None
         self.source_url = source_url
         self.targets = targets
-        self.source_language = kwargs.get("source_language", None)
+        self.source_language_code = kwargs.get("source_language_code", None)
         self.storage_type = kwargs.get("storage_type", None)
         self.storage_source = kwargs.get("storage_source", None)
         self.prefix = kwargs.get("prefix", None)
@@ -150,10 +141,10 @@ class BatchDocumentInput(object):  # pylint: disable=useless-object-inheritance
                     prefix=self.prefix,
                     suffix=self.suffix
                 ),
-                language=self.source_language,
+                language=self.source_language_code,
                 storage_source=self.storage_source
             ),
-            targets=StorageTarget._to_generated_list(self.targets),  # pylint: disable=protected-access
+            targets=TranslationTarget._to_generated_list(self.targets),  # pylint: disable=protected-access
             storage_type=self.storage_type
         )
 
@@ -165,7 +156,7 @@ class BatchDocumentInput(object):  # pylint: disable=useless-object-inheritance
         ]
 
 
-class JobStatusDetail(object):  # pylint: disable=useless-object-inheritance, too-many-instance-attributes
+class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, too-many-instance-attributes
     """Job status response.
 
     :ivar id: Required. Id of the job.
@@ -229,11 +220,11 @@ class JobStatusDetail(object):  # pylint: disable=useless-object-inheritance, to
         )
 
 
-class DocumentStatusDetail(object):  # pylint: disable=useless-object-inheritance, R0903
-    """DocumentStatusDetail.
+class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritance, R0903
+    """DocumentStatusResult.
 
-    :ivar url: Required. Location of the document or folder.
-    :vartype url: str
+    :ivar translated_document_url: Required. Location of the translated document.
+    :vartype translated_document_url: str
     :ivar created_on: Required. Operation created date time.
     :vartype created_on: ~datetime.datetime
     :ivar last_updated_on: Required. Date time in which the operation's status has been
@@ -260,7 +251,7 @@ class DocumentStatusDetail(object):  # pylint: disable=useless-object-inheritanc
         **kwargs
     ):
         # type: (**Any) -> None
-        self.url = kwargs['url']
+        self.translated_document_url = kwargs.get('translated_document_url', None)
         self.created_on = kwargs['created_on']
         self.last_updated_on = kwargs['last_updated_on']
         self.status = kwargs['status']
@@ -274,7 +265,7 @@ class DocumentStatusDetail(object):  # pylint: disable=useless-object-inheritanc
     @classmethod
     def _from_generated(cls, doc_status):
         return cls(
-            url=doc_status.path,
+            translated_document_url=doc_status.path,
             created_on=doc_status.created_date_time_utc,
             last_updated_on=doc_status.last_action_date_time_utc,
             status=doc_status.status,
@@ -307,11 +298,18 @@ class DocumentTranslationError(object):  # pylint: disable=useless-object-inheri
     ):
         # type: (**Any) -> None
         self.code = kwargs.get('code', None)
-        self.message = None
-        self.target = None
+        self.message = kwargs.get('message', None)
+        self.target = kwargs.get('target', None)
 
     @classmethod
     def _from_generated(cls, error):
+        if error.inner_error:
+            inner_error = error.inner_error
+            return cls(
+                code=inner_error.code,
+                message=inner_error.message,
+                target=inner_error.target if inner_error.target is not None else error.target
+            )
         return cls(
             code=error.code,
             message=error.message,
@@ -322,14 +320,14 @@ class DocumentTranslationError(object):  # pylint: disable=useless-object-inheri
 class FileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
     """FileFormat.
 
-    :ivar format: Name of the format.
-    :vartype format: str
+    :ivar file_format: Name of the format.
+    :vartype file_format: str
     :ivar file_extensions: Supported file extension for this format.
     :vartype file_extensions: list[str]
     :ivar content_types: Supported Content-Types for this format.
     :vartype content_types: list[str]
-    :ivar versions: Supported Version.
-    :vartype versions: list[str]
+    :ivar format_versions: Supported Version.
+    :vartype format_versions: list[str]
     """
 
     def __init__(
@@ -337,18 +335,18 @@ class FileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
         **kwargs
     ):
         # type: (**Any) -> None
-        self.format = kwargs.get('format', None)
+        self.file_format = kwargs.get('file_format', None)
         self.file_extensions = kwargs.get('file_extensions', None)
         self.content_types = kwargs.get('content_types', None)
-        self.versions = kwargs.get('versions', None)
+        self.format_versions = kwargs.get('format_versions', None)
 
     @classmethod
     def _from_generated(cls, file_format):
         return cls(
-            format=file_format.format,
+            file_format=file_format.format,
             file_extensions=file_format.file_extensions,
             content_types=file_format.content_types,
-            versions=file_format.versions
+            format_versions=file_format.versions
         )
 
     @staticmethod

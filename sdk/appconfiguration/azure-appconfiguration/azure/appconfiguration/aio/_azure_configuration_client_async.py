@@ -85,10 +85,13 @@ class AzureAppConfigurationClient:
             base_user_agent=USER_AGENT, **kwargs
         )
 
+        self._sync_token_policy = None
+
         pipeline = kwargs.get("pipeline")
         self._sync_token_policy = SyncTokenPolicy()
 
         if pipeline is None:
+            self._sync_token_policy = SyncTokenPolicy()
             aad_mode = not isinstance(credential, AppConfigConnectionStringCredential)
             pipeline = self._create_appconfig_pipeline(
                 credential=credential, aad_mode=aad_mode, base_url=base_url, **kwargs

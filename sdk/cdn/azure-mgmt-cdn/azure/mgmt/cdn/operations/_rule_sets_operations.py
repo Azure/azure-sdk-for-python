@@ -193,7 +193,6 @@ class RuleSetsOperations(object):
         resource_group_name,  # type: str
         profile_name,  # type: str
         rule_set_name,  # type: str
-        rule_set,  # type: "_models.RuleSet"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.RuleSet"
@@ -203,7 +202,6 @@ class RuleSetsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-09-01"
-        content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
@@ -222,17 +220,13 @@ class RuleSetsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(rule_set, 'RuleSet')
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+        request = self._client.put(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -241,6 +235,9 @@ class RuleSetsOperations(object):
             deserialized = self._deserialize('RuleSet', pipeline_response)
 
         if response.status_code == 201:
+            deserialized = self._deserialize('RuleSet', pipeline_response)
+
+        if response.status_code == 202:
             deserialized = self._deserialize('RuleSet', pipeline_response)
 
         if cls:
@@ -254,7 +251,6 @@ class RuleSetsOperations(object):
         resource_group_name,  # type: str
         profile_name,  # type: str
         rule_set_name,  # type: str
-        rule_set,  # type: "_models.RuleSet"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller["_models.RuleSet"]
@@ -266,8 +262,6 @@ class RuleSetsOperations(object):
         :type profile_name: str
         :param rule_set_name: Name of the rule set under the profile which is unique globally.
         :type rule_set_name: str
-        :param rule_set: RuleSet properties.
-        :type rule_set: ~azure.mgmt.cdn.models.RuleSet
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -290,7 +284,6 @@ class RuleSetsOperations(object):
                 resource_group_name=resource_group_name,
                 profile_name=profile_name,
                 rule_set_name=rule_set_name,
-                rule_set=rule_set,
                 cls=lambda x,y,z: x,
                 **kwargs
             )

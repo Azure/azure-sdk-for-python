@@ -107,6 +107,7 @@ known_content_issues:
   - ['sdk/digitaltwins/azure-digitaltwins-core/swagger/README.md', '#4554']
   - ['sdk/textanalytics/azure-ai-textanalytics/swagger/README.md', '#4554']
   - ['sdk/media/azure-media-nspkg/README.md', '#4554']
+  - ['sdk/containerregistry/azure-containerregistry/swagger/README.md', '#4554']
 
   # nspckg and common.
   - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'nspkg and common']

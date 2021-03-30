@@ -83,9 +83,12 @@ class AzureAppConfigurationClient:
         )
         self._sync_token_policy = SyncTokenPolicy()
 
+        self._sync_token_policy = None
+
         pipeline = kwargs.get("pipeline")
 
         if pipeline is None:
+            self._sync_token_policy = SyncTokenPolicy()
             aad_mode = not isinstance(credential, AppConfigConnectionStringCredential)
             pipeline = self._create_appconfig_pipeline(
                 credential=credential, aad_mode=aad_mode, base_url=base_url, **kwargs
@@ -582,7 +585,10 @@ class AzureAppConfigurationClient:
         :param token: The sync token to be added to the internal list of tokens
         :type token: str
         """
-
+        if not self._sync_token_policy:
+            raise AttributeError(
+                "Client has no sync token policy, possibly because it was not provided during instantiation."
+            )
         self._sync_token_policy.add_token(token)
 
     def close(self):

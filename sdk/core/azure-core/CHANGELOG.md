@@ -1,7 +1,14 @@
 # Release History
 
-## 1.12.1 (Unreleased)
+## 1.13.0 (Unreleased)
 
+### Features
+
+- Supported adding custom policies  #16519
+
+### Bug fixes
+
+- Make NetworkTraceLoggingPolicy show the auth token in plain text. #14191
 
 ## 1.12.0 (2021-03-08)
 

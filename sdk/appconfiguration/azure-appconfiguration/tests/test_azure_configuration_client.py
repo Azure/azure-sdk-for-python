@@ -470,85 +470,48 @@ class AppConfigurationClientTest(AzureTestCase):
         with pytest.raises(ResourceModifiedError):
             client.set_read_only(set_kv, True, match_condition=MatchConditions.IfNotModified)
 
+    def _order_dict(self, d):
+        from collections import OrderedDict
+        new = OrderedDict()
+        for k, v in d.items():
+            new[k] = str(v)
+        return new
+
     @app_config_decorator
     def test_sync_tokens(self, client):
-        new = FeatureFlagConfigurationSetting(
-            'custom',
-            True,
-            filters = [
-                {
-                    "name": "Microsoft.Percentage",
-                    "parameters": {
-                        "Value": 10,
-                        "User": "user1",
-                    }
-                }
-            ]
-        )
 
         sync_tokens = copy.deepcopy(client._sync_token_policy._sync_tokens)
-        keys = list(sync_tokens.keys())
-        seq_num = sync_tokens[keys[0]].sequence_number
-        sent = client.set_configuration_setting(new)
+        sync_token_header = self._order_dict(sync_tokens)
+        sync_token_header = ",".join(str(x) for x in sync_token_header.values())
 
-        new = FeatureFlagConfigurationSetting(
-            'time_window',
-            True,
-            filters = [
-                {
-                    u"name": TIME_WINDOW,
-                    u"parameters": {
-                        "Start": "Wed, 10 Mar 2021 05:00:00 GMT",
-                        "End": "Fri, 02 Apr 2021 04:00:00 GMT"
-                    }
-                },
-            ]
+        new = ConfigurationSetting(
+                key="KEY1",
+                label=None,
+                value="TEST_VALUE1",
+                content_type=TEST_CONTENT_TYPE,
+                tags={"tag1": "tag1", "tag2": "tag2"},
         )
 
         sent = client.set_configuration_setting(new)
         sync_tokens2 = copy.deepcopy(client._sync_token_policy._sync_tokens)
-        keys = list(sync_tokens2.keys())
-        seq_num2 = sync_tokens2[keys[0]].sequence_number
+        sync_token_header2 = self._order_dict(sync_tokens2)
+        sync_token_header2 = ",".join(str(x) for x in sync_token_header2.values())
+        assert sync_token_header != sync_token_header2
 
-        new = FeatureFlagConfigurationSetting(
-            "newflag",
-            True,
-            filters=[
-                {
-                    "name": TARGETING,
-                    "parameters": {
-                        u"Audience": {
-                            u"Users": [u"abc", u"def"],
-                            u"Groups": [u"ghi", u"jkl"],
-                            u"DefaultRolloutPercentage": 75
-                        }
-                    }
-                },
-            ]
+        new = ConfigurationSetting(
+                key="KEY2",
+                label=None,
+                value="TEST_VALUE2",
+                content_type=TEST_CONTENT_TYPE,
+                tags={"tag1": "tag1", "tag2": "tag2"},
         )
 
         sent = client.set_configuration_setting(new)
         sync_tokens3 = copy.deepcopy(client._sync_token_policy._sync_tokens)
-        keys = list(sync_tokens3.keys())
-        seq_num3 = sync_tokens3[keys[0]].sequence_number
-
-        assert seq_num < seq_num2
-        assert seq_num2 < seq_num3
-
-    def _assert_same_keys(self, key1, key2):
-        assert type(key1) == type(key2)
-        assert key1.key == key2.key
-        assert key1.label == key2.label
-        assert key1.content_type == key2.content_type
-        assert key1.tags == key2.tags
-        assert key1.etag != key2.etag
-        if isinstance(key1, FeatureFlagConfigurationSetting):
-            assert key1.enabled == key2.enabled
-            assert len(key1.filters) == len(key2.filters)
-        elif isinstance(key1, SecretReferenceConfigurationSetting):
-            assert key1.secret_uri == key2.secret_uri
-        else:
-            assert key1.value == key2.value
+        sync_token_header3 = self._order_dict(sync_tokens3)
+        sync_token_header3 = ",".join(str(x) for x in sync_token_header3.values())
+        assert sync_token_header2 != sync_token_header3
+        client.close()
 
     @app_config_decorator
     def test_config_setting_feature_flag(self, client):
@@ -559,7 +522,6 @@ class AppConfigurationClientTest(AzureTestCase):
 
         set_flag.enabled = not set_flag.enabled
         changed_flag = client.set_configuration_setting(set_flag)
-        self._assert_same_keys(set_flag, changed_flag)
 
         client.delete_configuration_setting(changed_flag.key)
 
@@ -570,7 +532,6 @@ class AppConfigurationClientTest(AzureTestCase):
         set_flag = client.set_configuration_setting(secret_reference)
         self._assert_same_keys(secret_reference, set_flag)
 
-        set_flag.secret_uri = "https://test-test.vault.azure.net/new_secrets/connectionString"
         updated_flag = client.set_configuration_setting(set_flag)
         self._assert_same_keys(set_flag, updated_flag)
 

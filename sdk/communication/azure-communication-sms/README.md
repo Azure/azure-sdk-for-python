@@ -1,5 +1,3 @@
-[![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/azure-sdk-for-python.client?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=46?branchName=master)
-
 # Azure Communication SMS Package client library for Python
 
 This package contains a Python SDK for Azure Communication Services for SMS.
@@ -36,8 +34,8 @@ Azure Communication SMS package is used to do following:
 The following section provides several code snippets covering some of the most common Azure Communication Services tasks, including:
 
 - [Client Initialization](#client-initialization)
-- [Send a 1:1 SMS Message](#send-a-1:1-sms-message)
-- [Send a 1:N SMS Message](#send-a-1:n-sms-message)
+- [Send a 1:1 SMS Message](#send-a-11-sms-message)
+- [Send a 1:N SMS Message](#send-a-1n-sms-message)
 
 ### Client Initialization
 

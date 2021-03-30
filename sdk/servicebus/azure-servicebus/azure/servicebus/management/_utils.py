@@ -10,18 +10,27 @@ import six
 
 from . import _constants as constants
 from ._handle_response_error import _handle_response_error
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import, ungrouped-imports
     from typing import TypeVar
-    from ._models import QueueProperties, TopicProperties, \
-        SubscriptionProperties, RuleProperties, InternalQueueDescription, InternalTopicDescription, \
-        InternalSubscriptionDescription, InternalRuleDescription
-    PropertiesType = TypeVar(
-        'PropertiesType',
+    from ._models import (
         QueueProperties,
         TopicProperties,
         SubscriptionProperties,
-        RuleProperties
+        RuleProperties,
+        InternalQueueDescription,
+        InternalTopicDescription,
+        InternalSubscriptionDescription,
+        InternalRuleDescription,
+    )
+
+    PropertiesType = TypeVar(
+        "PropertiesType",
+        QueueProperties,
+        TopicProperties,
+        SubscriptionProperties,
+        RuleProperties,
     )
 
 # Refer to the async version of this module under ..\aio\management\_utils.py for detailed explanation.
@@ -30,6 +39,7 @@ try:
     import urllib.parse as urlparse
 except ImportError:
     import urlparse  # type: ignore  # for python 2.7
+
 
 def extract_rule_data_template(feed_class, convert, feed_element):
     """Special version of function extrat_data_template for Rule.
@@ -319,6 +329,22 @@ def _validate_topic_subscription_and_rule_types(
                 type(topic_name), type(subscription_name), type(rule_name)
             )
         )
+
+
+def _normalize_entity_path_to_full_path_if_needed(
+    entity_path, fully_qualified_namespace
+):
+    # type: (str, str) -> str
+    if not entity_path:
+        return entity_path
+    parsed = urlparse.urlparse(entity_path)
+    entity_path = (
+        ("sb://" + fully_qualified_namespace + "/" + entity_path)
+        if not parsed.netloc
+        else entity_path
+    )
+    return entity_path
+
 
 def create_properties_from_dict_if_needed(properties, sb_resource_type):
     # type: (Union[PropertiesType, Mapping[str, Any]], Type[PropertiesType]) -> PropertiesType
