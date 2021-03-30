@@ -144,11 +144,11 @@ class FeatureFlagConfigurationSetting(
 
     def __init__(self, key, enabled, filters=None, **kwargs):
         # type: (str, bool, Optional[List[Dict[str, Any]]]) -> None
+        self._enabled = enabled
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
         self.key = key
         if not key.startswith(self.key_prefix):
             self.key = self.key_prefix + key
-        self._enabled = enabled
         self.label = kwargs.get("label", None)
         self.content_type = kwargs.get("content_type", self._feature_flag_content_type)
         self.last_modified = kwargs.get("last_modified", None)
@@ -165,7 +165,9 @@ class FeatureFlagConfigurationSetting(
         # type: () -> bool
         if self._value is None:
             self._value = {"enabled": self._enabled}
-        elif isinstance(self._value, dict):
+        elif not isinstance(self._value, dict):
+            raise AttributeError("value parameter is expected to be a dictionary")
+        else:
             self._value["enabled"] = self._enabled
         return self._enabled
 
@@ -174,23 +176,24 @@ class FeatureFlagConfigurationSetting(
         # type: (bool) -> bool
         if self._value is None:
             self._value = {"enabled": value}
-        elif isinstance(self._value, dict):
+        elif not isinstance(self._value, dict):
+            raise AttributeError("value parameter is expected to be a dictionary")
+        else:
             self._value["enabled"] = self._enabled
         self._enabled = value
 
     @property
     def value(self):
         # type: () -> Dict[str, Any]
-        self._enabled = self._value.get("enabled", self._enabled)
+        self._enabled = self._value.get("enabled") or self._enabled
         return self._value
 
     @value.setter
     def value(self, new_value):
         # type: (Dict[str, Any]) -> None
-        try:
-            self._enabled = new_value.get("enabled", self._enabled)
-        except AttributeError:
-            pass
+        if not new_value:
+            new_value = {}
+        self._enabled = new_value.get("enabled") or self._enabled
         self._value = new_value
 
     @property
@@ -204,7 +207,9 @@ class FeatureFlagConfigurationSetting(
                     ]
                 }
             }
-        elif isinstance(self._value, dict):
+        elif not isinstance(self._value, dict):
+            raise AttributeError("value parameter is expected to be a dictionary")
+        else:
             try:
                 self._value['conditions']['client_filters'] = self._filters
             except KeyError:
@@ -221,7 +226,9 @@ class FeatureFlagConfigurationSetting(
                     ]
                 }
             }
-        elif isinstance(self._value, dict):
+        elif not isinstance(self._value, dict):
+            raise AttributeError("value parameter is expected to be a dictionary")
+        else:
             try:
                 self._value['conditions']['client_filters'] = new_filters
             except KeyError:
@@ -320,10 +327,10 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
 
     def __init__(self, key, secret_uri, label=None, **kwargs):
         # type: (str, str, str) -> None
+        self._secret_uri = secret_uri
         super(SecretReferenceConfigurationSetting, self).__init__(**kwargs)
         self.key = key
         self.label = label
-        self._secret_uri = secret_uri
         self.content_type = kwargs.get(
             "content_type", self._secret_reference_content_type
         )
@@ -351,14 +358,12 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         return self._value
 
     @value.setter
-    def value(self, value):
+    def value(self, new_value):
         # type: (dict) -> None
-        try:
-            self._secret_uri = value.get("secret_uri", self._secret_uri)
-            self._value = value
-        except AttributeError:
-            self._secret_uri = None
-            self._value = value
+        if not new_value:
+            new_value = {"secret_uri": None}
+        self._secret_uri = new_value.get("secret_uri") or self._secret_uri
+        self._value = new_value
 
     @classmethod
     def _from_generated(cls, key_value):
@@ -389,7 +394,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         return KeyValue(
             key=self.key,
             label=self.label,
-            value=json.dumps({u"secret_uri": self.secret_uri}),
+            value=json.dumps(self._value),
             content_type=self.content_type,
             last_modified=self.last_modified,
             tags=self.tags,

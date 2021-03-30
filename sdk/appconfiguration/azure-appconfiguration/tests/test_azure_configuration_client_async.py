@@ -563,6 +563,9 @@ class AppConfigurationClientTest(AzureTestCase):
         assert changed_flag.enabled == True
         assert changed_flag.value == {'enabled': True}
 
+        with pytest.raises(AttributeError):
+            set_flag.value = "bad_value"
+
         client.delete_configuration_setting(changed_flag.key)
 
     @app_config_decorator
@@ -584,6 +587,9 @@ class AppConfigurationClientTest(AzureTestCase):
 
         updated_flag.value = {'secret_uri': new_uri2}
         assert updated_flag.secret_uri == new_uri2
+
+        with pytest.raises(AttributeError):
+            set_flag.value = "bad_value"
 
         client.delete_configuration_setting(secret_reference.key)
 
