@@ -71,12 +71,17 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
 
         links = kwargs.pop('links', None)
         if links:
-            ot_links = []
-            for link in links:
-                ctx = extract(link.headers)
-                span_ctx = get_span_from_context(ctx).get_span_context()
-                ot_links.append(OpenTelemetryLink(span_ctx, link.attributes))
-            kwargs.setdefault('links', ot_links)
+            try:
+                ot_links = []
+                for link in links:
+                    ctx = extract(link.headers)
+                    span_ctx = get_span_from_context(ctx).get_span_context()
+                    ot_links.append(OpenTelemetryLink(span_ctx, link.attributes))
+                    kwargs.setdefault('links', ot_links)
+            except AttributeError:
+                # we will just send the links as is if it's not ~azure.core.tracing.Link without any validation
+                # assuming user knows what they are doing.
+                kwargs.setdefault('links', links)
         self._span_instance = span or current_tracer.start_span(name=name, kind=kind, **kwargs)
         self._current_ctxt_manager = None
 
