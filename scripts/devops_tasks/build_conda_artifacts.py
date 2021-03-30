@@ -5,8 +5,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-# Used to 
-# 
+# Used to
+#
 
 
 import argparse
@@ -52,12 +52,24 @@ setup(
 )
 """
 
+
 def create_package(pkg_directory, output_directory):
-    check_call([sys.executable, 'setup.py', "sdist", "--format", "zip", '-d', output_directory], cwd=pkg_directory)
+    check_call(
+        [
+            sys.executable,
+            "setup.py",
+            "sdist",
+            "--format",
+            "zip",
+            "-d",
+            output_directory,
+        ],
+        cwd=pkg_directory,
+    )
 
 
 def create_namespace_extension(target_directory):
-    with open(os.path.join(target_directory, '__init__.py'), 'w') as f:
+    with open(os.path.join(target_directory, "__init__.py"), "w") as f:
         f.write(NAMESPACE_EXTENSION_TEMPLATE)
 
 
@@ -67,7 +79,7 @@ def create_sdist_skeleton(build_directory, artifact_name, common_root):
     if os.path.exists(sdist_directory):
         shutil.rmtree(sdist_directory)
     os.makedirs(sdist_directory)
-    namespaces = common_root.split('/')
+    namespaces = common_root.split("/")
 
     # after the below function, ns_dir will be the target destination for copying from our pkgs_from_consumption
     ns_dir = sdist_directory
@@ -78,13 +90,21 @@ def create_sdist_skeleton(build_directory, artifact_name, common_root):
         create_namespace_extension(ns_dir)
 
     # get all the directories in the build folder, we will pull in all of them
-    pkgs_for_consumption = [os.path.join(build_directory, p) for p in os.listdir(build_directory) if p != artifact_name]
+    pkgs_for_consumption = [
+        os.path.join(build_directory, p)
+        for p in os.listdir(build_directory)
+        if p != artifact_name
+    ]
 
     for pkg in pkgs_for_consumption:
         pkg_till_common_root = os.path.join(pkg, common_root)
 
         if os.path.exists(pkg_till_common_root):
-            directories_for_copy = [file for file in os.listdir(pkg_till_common_root) if os.path.isdir(os.path.join(pkg_till_common_root, file))]
+            directories_for_copy = [
+                file
+                for file in os.listdir(pkg_till_common_root)
+                if os.path.isdir(os.path.join(pkg_till_common_root, file))
+            ]
 
             for directory in directories_for_copy:
                 src = os.path.join(pkg_till_common_root, directory)
@@ -94,20 +114,22 @@ def create_sdist_skeleton(build_directory, artifact_name, common_root):
 
 def create_sdist_setup(build_directory, artifact_name, service):
     sdist_directory = os.path.join(build_directory, artifact_name)
-    setup_location = os.path.join(sdist_directory, 'setup.py')
+    setup_location = os.path.join(sdist_directory, "setup.py")
 
     template = CONDA_PKG_SETUP_TEMPLATE.format(
-        conda_package_name = artifact_name,
-        version = "0.0.0",
-        service = service,
-        package_excludes = "'azure', 'tests'"
+        conda_package_name=artifact_name,
+        version="0.0.0",
+        service=service,
+        package_excludes="'azure', 'tests'",
     )
 
-    with open(setup_location, 'w') as f:
+    with open(setup_location, "w") as f:
         f.write(template)
 
 
-def create_combined_sdist(output_directory, build_directory, artifact_name, common_root, service):
+def create_combined_sdist(
+    output_directory, build_directory, artifact_name, common_root, service
+):
     create_sdist_skeleton(build_directory, artifact_name, common_root)
     create_sdist_setup(build_directory, artifact_name, service)
 
@@ -115,9 +137,15 @@ def create_combined_sdist(output_directory, build_directory, artifact_name, comm
     output_sdist_location = os.path.join(output_directory, "sdist", artifact_name)
 
     create_package(sdist_location, output_sdist_location)
-    output_location = os.path.join(output_sdist_location, os.listdir(output_sdist_location)[0])
+    output_location = os.path.join(
+        output_sdist_location, os.listdir(output_sdist_location)[0]
+    )
 
-    print('Generated Sdist for artifact {} is present at {}'.format(artifact_name, output_location))
+    print(
+        "Generated Sdist for artifact {} is present at {}".format(
+            artifact_name, output_location
+        )
+    )
     return output_location
 
 
@@ -183,7 +211,17 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    output_source_location = create_combined_sdist(args.distribution_directory, args.build_directory, args.artifact_name, args.common_root, args.service)
+    output_source_location = create_combined_sdist(
+        args.distribution_directory,
+        args.build_directory,
+        args.artifact_name,
+        args.common_root,
+        args.service,
+    )
 
     if args.output_var:
-        print("##vso[task.setvariable variable={}]{}".format(args.output_var, output_source_location))
+        print(
+            "##vso[task.setvariable variable={}]{}".format(
+                args.output_var, output_source_location
+            )
+        )
