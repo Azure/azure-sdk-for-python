@@ -14,18 +14,18 @@ parameters:
           
 steps:
     # TODO, re-use eng/common sparse-checkout.yml
-    - pwsh: |
-        $targetPath = $(Agent.TempDirectory)/cln
-        Remove-Item -Path $targetPath/* -Recurse
-        
-        git clone --no-checkout --filter=tree:0 git://github.com/Azure/azure-sdk-for-python $targetPath
-        cd $targetPath
-        git sparse-checkout init
-        git sparse-checkout set ${{ parameters.CheckoutPath }}/${{ parameters.Package }}
-        git checkout ${{ parameters.Package }}_${{ parameters.Version }}
+  - pwsh: |
+      $targetPath = $(Agent.TempDirectory)/cln
+      Remove-Item -Path $targetPath/* -Recurse
+      
+      git clone --no-checkout --filter=tree:0 git://github.com/Azure/azure-sdk-for-python $targetPath
+      cd $targetPath
+      git sparse-checkout init
+      git sparse-checkout set ${{ parameters.CheckoutPath }}/${{ parameters.Package }}
+      git checkout ${{ parameters.Package }}_${{ parameters.Version }}
 
-        ##vso[task.setvariable variable=Package.Clone]$targetPath
-      displayName: 'Sparse Checkout Code into Temp Directory'
+      ##vso[task.setvariable variable=Package.Clone]$targetPath
+    displayName: 'Sparse Checkout Code into Temp Directory'
 
   - pwsh: |
       $pathForCopy = Join-Path -Path $(Package.Clone) -ChildPath "${{ parameters.CheckoutPath }}/${{ parameters.Package }}"
