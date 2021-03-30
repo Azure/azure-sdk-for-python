@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -25,7 +24,7 @@ class OperationOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-12-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-12-01".
     """
 
     models = models
@@ -35,7 +34,7 @@ class OperationOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-12-01"
+        self.api_version = "2020-12-01"
 
         self.config = config
 
@@ -51,18 +50,18 @@ class OperationOperations(object):
          API Management service instance. Non-current revision has ;rev=n as a
          suffix where n is the revision number.
         :type api_id: str
-        :param filter: |   Field     |     Usage     |     Supported operators
-         |     Supported functions
+        :param filter: |     Field     |     Usage     |     Supported
+         operators     |     Supported functions
          |</br>|-------------|-------------|-------------|-------------|</br>|
          name | filter | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith | </br>| displayName | filter | ge, le, eq, ne,
-         gt, lt | substringof, contains, startswith, endswith | </br>| apiName
-         | filter | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
-         endswith | </br>| description | filter | ge, le, eq, ne, gt, lt |
-         substringof, contains, startswith, endswith | </br>| method | filter |
-         ge, le, eq, ne, gt, lt | substringof, contains, startswith, endswith |
-         </br>| urlTemplate | filter | ge, le, eq, ne, gt, lt | substringof,
-         contains, startswith, endswith | </br>
+         startswith, endswith |</br>| displayName | filter | ge, le, eq, ne,
+         gt, lt | substringof, contains, startswith, endswith |</br>| apiName |
+         filter | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
+         endswith |</br>| description | filter | ge, le, eq, ne, gt, lt |
+         substringof, contains, startswith, endswith |</br>| method | filter |
+         ge, le, eq, ne, gt, lt | substringof, contains, startswith, endswith
+         |</br>| urlTemplate | filter | ge, le, eq, ne, gt, lt | substringof,
+         contains, startswith, endswith |</br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
@@ -78,7 +77,8 @@ class OperationOperations(object):
         :return: An iterator like instance of TagResourceContract
         :rtype:
          ~azure.mgmt.apimanagement.models.TagResourceContractPaged[~azure.mgmt.apimanagement.models.TagResourceContract]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -128,9 +128,7 @@ class OperationOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 

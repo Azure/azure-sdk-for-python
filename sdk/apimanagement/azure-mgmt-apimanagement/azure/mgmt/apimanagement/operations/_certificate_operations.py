@@ -24,7 +24,7 @@ class CertificateOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-12-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-12-01".
     """
 
     models = models
@@ -34,12 +34,12 @@ class CertificateOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-12-01"
+        self.api_version = "2020-12-01"
 
         self.config = config
 
     def list_by_service(
-            self, resource_group_name, service_name, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, filter=None, top=None, skip=None, is_key_vault_refresh_failed=None, custom_headers=None, raw=False, **operation_config):
         """Lists a collection of all certificates in the specified service
         instance.
 
@@ -47,20 +47,23 @@ class CertificateOperations(object):
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param filter: |   Field     |     Usage     |     Supported operators
-         |     Supported functions
+        :param filter: |     Field     |     Usage     |     Supported
+         operators     |     Supported functions
          |</br>|-------------|-------------|-------------|-------------|</br>|
          name | filter | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith | </br>| subject | filter | ge, le, eq, ne, gt,
-         lt | substringof, contains, startswith, endswith | </br>| thumbprint |
+         startswith, endswith |</br>| subject | filter | ge, le, eq, ne, gt, lt
+         | substringof, contains, startswith, endswith |</br>| thumbprint |
          filter | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
-         endswith | </br>| expirationDate | filter | ge, le, eq, ne, gt, lt |
-         | </br>
+         endswith |</br>| expirationDate | filter | ge, le, eq, ne, gt, lt |
+         |</br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
         :param skip: Number of records to skip.
         :type skip: int
+        :param is_key_vault_refresh_failed: When set to true, the response
+         contains only certificates entities which failed refresh.
+        :type is_key_vault_refresh_failed: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -91,6 +94,8 @@ class CertificateOperations(object):
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
+                if is_key_vault_refresh_failed is not None:
+                    query_parameters['isKeyVaultRefreshFailed'] = self._serialize.query("is_key_vault_refresh_failed", is_key_vault_refresh_failed, 'bool')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -260,7 +265,7 @@ class CertificateOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/certificates/{certificateId}'}
 
     def create_or_update(
-            self, resource_group_name, service_name, certificate_id, data, password, if_match=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, certificate_id, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
         """Creates or updates the certificate being used for authentication with
         the backend.
 
@@ -271,11 +276,9 @@ class CertificateOperations(object):
         :param certificate_id: Identifier of the certificate entity. Must be
          unique in the current API Management service instance.
         :type certificate_id: str
-        :param data: Base 64 encoded certificate using the
-         application/x-pkcs12 representation.
-        :type data: str
-        :param password: Password for the Certificate
-        :type password: str
+        :param parameters: Create or Update parameters.
+        :type parameters:
+         ~azure.mgmt.apimanagement.models.CertificateCreateOrUpdateParameters
         :param if_match: ETag of the Entity. Not required when creating an
          entity, but required when updating an entity.
         :type if_match: str
@@ -290,8 +293,6 @@ class CertificateOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
-        parameters = models.CertificateCreateOrUpdateParameters(data=data, password=password)
-
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -410,3 +411,73 @@ class CertificateOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/certificates/{certificateId}'}
+
+    def refresh_secret(
+            self, resource_group_name, service_name, certificate_id, custom_headers=None, raw=False, **operation_config):
+        """From KeyVault, Refresh the certificate being used for authentication
+        with the backend.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param service_name: The name of the API Management service.
+        :type service_name: str
+        :param certificate_id: Identifier of the certificate entity. Must be
+         unique in the current API Management service instance.
+        :type certificate_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: CertificateContract or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.apimanagement.models.CertificateContract or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.refresh_secret.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+            'certificateId': self._serialize.url("certificate_id", certificate_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        header_dict = {}
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('CertificateContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
+            return client_raw_response
+
+        return deserialized
+    refresh_secret.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/certificates/{certificateId}/refreshSecret'}

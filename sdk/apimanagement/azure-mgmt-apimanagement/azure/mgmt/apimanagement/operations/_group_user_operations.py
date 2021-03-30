@@ -24,7 +24,7 @@ class GroupUserOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-12-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-12-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class GroupUserOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-12-01"
+        self.api_version = "2020-12-01"
 
         self.config = config
 
@@ -49,18 +49,17 @@ class GroupUserOperations(object):
         :param group_id: Group identifier. Must be unique in the current API
          Management service instance.
         :type group_id: str
-        :param filter: |   Field     |     Usage     |     Supported operators
-         |     Supported functions
+        :param filter: |     Field     |     Usage     |     Supported
+         operators     |     Supported functions
          |</br>|-------------|-------------|-------------|-------------|</br>|
          name | filter | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith | </br>| firstName | filter | ge, le, eq, ne, gt,
-         lt | substringof, contains, startswith, endswith | </br>| lastName |
+         startswith, endswith |</br>| firstName | filter | ge, le, eq, ne, gt,
+         lt | substringof, contains, startswith, endswith |</br>| lastName |
          filter | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
-         endswith | </br>| email | filter | ge, le, eq, ne, gt, lt |
-         substringof, contains, startswith, endswith | </br>| registrationDate
-         | filter | ge, le, eq, ne, gt, lt |     | </br>| note | filter | ge,
-         le, eq, ne, gt, lt | substringof, contains, startswith, endswith |
-         </br>
+         endswith |</br>| email | filter | ge, le, eq, ne, gt, lt |
+         substringof, contains, startswith, endswith |</br>| registrationDate |
+         filter | ge, le, eq, ne, gt, lt |     |</br>| note | filter | ge, le,
+         eq, ne, gt, lt | substringof, contains, startswith, endswith |</br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int

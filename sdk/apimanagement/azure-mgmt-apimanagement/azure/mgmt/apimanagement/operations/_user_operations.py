@@ -24,7 +24,7 @@ class UserOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-12-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-12-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class UserOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-12-01"
+        self.api_version = "2020-12-01"
 
         self.config = config
 
@@ -47,19 +47,19 @@ class UserOperations(object):
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param filter: |   Field     |     Usage     |     Supported operators
-         |     Supported functions
+        :param filter: |     Field     |     Usage     |     Supported
+         operators     |     Supported functions
          |</br>|-------------|-------------|-------------|-------------|</br>|
          name | filter | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith | </br>| firstName | filter | ge, le, eq, ne, gt,
-         lt | substringof, contains, startswith, endswith | </br>| lastName |
+         startswith, endswith |</br>| firstName | filter | ge, le, eq, ne, gt,
+         lt | substringof, contains, startswith, endswith |</br>| lastName |
          filter | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
-         endswith | </br>| email | filter | ge, le, eq, ne, gt, lt |
-         substringof, contains, startswith, endswith | </br>| state | filter |
-         eq |     | </br>| registrationDate | filter | ge, le, eq, ne, gt, lt |
-         | </br>| note | filter | ge, le, eq, ne, gt, lt | substringof,
-         contains, startswith, endswith | </br>| groups | expand |     |     |
-         </br>
+         endswith |</br>| email | filter | ge, le, eq, ne, gt, lt |
+         substringof, contains, startswith, endswith |</br>| state | filter |
+         eq |     |</br>| registrationDate | filter | ge, le, eq, ne, gt, lt |
+         |</br>| note | filter | ge, le, eq, ne, gt, lt | substringof,
+         contains, startswith, endswith |</br>| groups | expand |     |
+         |</br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
@@ -268,7 +268,7 @@ class UserOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{userId}'}
 
     def create_or_update(
-            self, resource_group_name, service_name, user_id, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, user_id, parameters, notify=None, if_match=None, custom_headers=None, raw=False, **operation_config):
         """Creates or Updates a user.
 
         :param resource_group_name: The name of the resource group.
@@ -281,6 +281,8 @@ class UserOperations(object):
         :param parameters: Create or update parameters.
         :type parameters:
          ~azure.mgmt.apimanagement.models.UserCreateParameters
+        :param notify: Send an Email notification to the User.
+        :type notify: bool
         :param if_match: ETag of the Entity. Not required when creating an
          entity, but required when updating an entity.
         :type if_match: str
@@ -307,6 +309,8 @@ class UserOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if notify is not None:
+            query_parameters['notify'] = self._serialize.query("notify", notify, 'bool')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -376,8 +380,9 @@ class UserOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :return: UserContract or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.apimanagement.models.UserContract or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
@@ -397,6 +402,7 @@ class UserOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -413,16 +419,27 @@ class UserOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
+        header_dict = {}
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('UserContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
+
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
+
+        return deserialized
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{userId}'}
 
     def delete(
-            self, resource_group_name, service_name, user_id, if_match, delete_subscriptions=None, notify=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, user_id, if_match, delete_subscriptions=None, notify=None, app_type="portal", custom_headers=None, raw=False, **operation_config):
         """Deletes specific user.
 
         :param resource_group_name: The name of the resource group.
@@ -441,6 +458,10 @@ class UserOperations(object):
         :type delete_subscriptions: bool
         :param notify: Send an Account Closed Email notification to the User.
         :type notify: bool
+        :param app_type: Determines the type of application which send the
+         create user request. Default is legacy publisher portal. Possible
+         values include: 'portal', 'developerPortal'
+        :type app_type: str or ~azure.mgmt.apimanagement.models.AppType
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -468,6 +489,8 @@ class UserOperations(object):
         if notify is not None:
             query_parameters['notify'] = self._serialize.query("notify", notify, 'bool')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        if app_type is not None:
+            query_parameters['appType'] = self._serialize.query("app_type", app_type, 'str')
 
         # Construct headers
         header_parameters = {}
