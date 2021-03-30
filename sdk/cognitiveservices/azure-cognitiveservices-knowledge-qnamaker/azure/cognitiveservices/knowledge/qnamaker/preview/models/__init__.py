@@ -12,6 +12,8 @@
 try:
     from ._models_py3 import ActiveLearningSettingsDTO
     from ._models_py3 import AlterationsDTO
+    from ._models_py3 import AnswerSpanRequestDTO
+    from ._models_py3 import AnswerSpanResponseDTO
     from ._models_py3 import ContextDTO
     from ._models_py3 import CreateKbDTO
     from ._models_py3 import CreateKbInputDTO
@@ -22,18 +24,32 @@ try:
     from ._models_py3 import Error
     from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import ErrorResponseError
+    from ._models_py3 import FeedbackRecordDTO
+    from ._models_py3 import FeedbackRecordsDTO
     from ._models_py3 import FileDTO
+    from ._models_py3 import GenerateAnswerBatchResultItem
+    from ._models_py3 import GenerateAnswerBatchResultItemAnswerSpan
     from ._models_py3 import InnerErrorModel
     from ._models_py3 import KnowledgebaseDTO
     from ._models_py3 import KnowledgebasesDTO
     from ._models_py3 import MetadataDTO
     from ._models_py3 import Operation
+    from ._models_py3 import PrebuiltQuery
     from ._models_py3 import PromptDTO
     from ._models_py3 import PromptDTOQna
     from ._models_py3 import QnADocumentsDTO
     from ._models_py3 import QnADTO
     from ._models_py3 import QnADTOContext
+    from ._models_py3 import QnASearchResult
+    from ._models_py3 import QnASearchResultAnswerSpan
+    from ._models_py3 import QnASearchResultContext
+    from ._models_py3 import QnASearchResultList
+    from ._models_py3 import QueryContextDTO
+    from ._models_py3 import QueryDTO
+    from ._models_py3 import QueryDTOAnswerSpanRequest
+    from ._models_py3 import QueryDTOContext
     from ._models_py3 import ReplaceKbDTO
+    from ._models_py3 import TextInput
     from ._models_py3 import UpdateContextDTO
     from ._models_py3 import UpdateKbContentsDTO
     from ._models_py3 import UpdateKbOperationDTO
@@ -50,6 +66,8 @@ try:
 except (SyntaxError, ImportError):
     from ._models import ActiveLearningSettingsDTO
     from ._models import AlterationsDTO
+    from ._models import AnswerSpanRequestDTO
+    from ._models import AnswerSpanResponseDTO
     from ._models import ContextDTO
     from ._models import CreateKbDTO
     from ._models import CreateKbInputDTO
@@ -60,18 +78,32 @@ except (SyntaxError, ImportError):
     from ._models import Error
     from ._models import ErrorResponse, ErrorResponseException
     from ._models import ErrorResponseError
+    from ._models import FeedbackRecordDTO
+    from ._models import FeedbackRecordsDTO
     from ._models import FileDTO
+    from ._models import GenerateAnswerBatchResultItem
+    from ._models import GenerateAnswerBatchResultItemAnswerSpan
     from ._models import InnerErrorModel
     from ._models import KnowledgebaseDTO
     from ._models import KnowledgebasesDTO
     from ._models import MetadataDTO
     from ._models import Operation
+    from ._models import PrebuiltQuery
     from ._models import PromptDTO
     from ._models import PromptDTOQna
     from ._models import QnADocumentsDTO
     from ._models import QnADTO
     from ._models import QnADTOContext
+    from ._models import QnASearchResult
+    from ._models import QnASearchResultAnswerSpan
+    from ._models import QnASearchResultContext
+    from ._models import QnASearchResultList
+    from ._models import QueryContextDTO
+    from ._models import QueryDTO
+    from ._models import QueryDTOAnswerSpanRequest
+    from ._models import QueryDTOContext
     from ._models import ReplaceKbDTO
+    from ._models import TextInput
     from ._models import UpdateContextDTO
     from ._models import UpdateKbContentsDTO
     from ._models import UpdateKbOperationDTO
@@ -89,11 +121,14 @@ from ._qn_amaker_client_enums import (
     EnvironmentType,
     ErrorCodeType,
     OperationStateType,
+    StrictFiltersCompoundOperationType,
 )
 
 __all__ = [
     'ActiveLearningSettingsDTO',
     'AlterationsDTO',
+    'AnswerSpanRequestDTO',
+    'AnswerSpanResponseDTO',
     'ContextDTO',
     'CreateKbDTO',
     'CreateKbInputDTO',
@@ -104,18 +139,32 @@ __all__ = [
     'Error',
     'ErrorResponse', 'ErrorResponseException',
     'ErrorResponseError',
+    'FeedbackRecordDTO',
+    'FeedbackRecordsDTO',
     'FileDTO',
+    'GenerateAnswerBatchResultItem',
+    'GenerateAnswerBatchResultItemAnswerSpan',
     'InnerErrorModel',
     'KnowledgebaseDTO',
     'KnowledgebasesDTO',
     'MetadataDTO',
     'Operation',
+    'PrebuiltQuery',
     'PromptDTO',
     'PromptDTOQna',
     'QnADocumentsDTO',
     'QnADTO',
     'QnADTOContext',
+    'QnASearchResult',
+    'QnASearchResultAnswerSpan',
+    'QnASearchResultContext',
+    'QnASearchResultList',
+    'QueryContextDTO',
+    'QueryDTO',
+    'QueryDTOAnswerSpanRequest',
+    'QueryDTOContext',
     'ReplaceKbDTO',
+    'TextInput',
     'UpdateContextDTO',
     'UpdateKbContentsDTO',
     'UpdateKbOperationDTO',
@@ -131,5 +180,6 @@ __all__ = [
     'WordAlterationsDTO',
     'ErrorCodeType',
     'OperationStateType',
+    'StrictFiltersCompoundOperationType',
     'EnvironmentType',
 ]

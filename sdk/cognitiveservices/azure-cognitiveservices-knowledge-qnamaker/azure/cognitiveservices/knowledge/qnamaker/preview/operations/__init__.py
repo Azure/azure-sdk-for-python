@@ -14,6 +14,7 @@ from ._endpoint_keys_operations import EndpointKeysOperations
 from ._alterations_operations import AlterationsOperations
 from ._knowledgebase_operations import KnowledgebaseOperations
 from ._operations import Operations
+from ._prebuilt_operations import PrebuiltOperations
 
 __all__ = [
     'EndpointSettingsOperations',
@@ -21,4 +22,5 @@ __all__ = [
     'AlterationsOperations',
     'KnowledgebaseOperations',
     'Operations',
+    'PrebuiltOperations',
 ]
