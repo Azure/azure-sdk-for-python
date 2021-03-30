@@ -129,18 +129,6 @@ class AbstractSpan(Protocol):
         Returns the span the class is wrapping.
         """
 
-    @staticmethod
-    def create_link_from_headers(headers, attributes=None):
-        # type: (Dict[str, str], Attributes) -> Any
-        """
-        Given a dictionary, extracts the context and creates a link that can be added to spans.
-
-        :param headers: A dictionary of the request header as key value pairs.
-        :type headers: dict
-        :param attributes: Any additional attributes that should be added to link
-        :type attributes: dict
-        """
-
     @classmethod
     def link(cls, traceparent, attributes=None):
         # type: (str, Attributes) -> None
@@ -244,3 +232,16 @@ class HttpSpanMixin(_MIXIN_BASE):
             self.add_attribute(self._HTTP_STATUS_CODE, response.status_code)
         else:
             self.add_attribute(self._HTTP_STATUS_CODE, 504)
+
+class Link(object):
+    """
+    This is a wrapper link the context to the current tracer.
+    :param headers: A dictionary of the request header as key value pairs.
+    :type headers: dict
+    :param attributes: Any additional attributes that should be added to link
+    :type attributes: dict
+    """
+    def __init__(self, headers, attributes=None):
+        # type: (Dict[str, str], Attributes) -> None
+        self.headers = headers
+        self.attributes = attributes

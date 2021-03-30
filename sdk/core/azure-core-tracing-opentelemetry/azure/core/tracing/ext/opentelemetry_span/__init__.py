@@ -6,7 +6,7 @@
 
 import warnings
 from opentelemetry import trace
-from opentelemetry.trace import Span, Link, Tracer, SpanKind as OpenTelemetrySpanKind
+from opentelemetry.trace import Span, Tracer, SpanKind as OpenTelemetrySpanKind, Link as OpenTelemetryLink
 from opentelemetry.context import attach, detach, get_current
 from opentelemetry.propagate import extract, inject
 from opentelemetry.trace.propagation import get_current_span as get_span_from_context
@@ -48,7 +48,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     :type name: str
     :keyword SpanKind kind: The span kind of this span.
     :keyword links: The list of links to be added to the span.
-    :paramtype links: list[Link]
+    :paramtype links: list[~azure.core.tracing.Link]
     """
 
     def __init__(self, span=None, name="span", **kwargs):
@@ -69,6 +69,14 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         if value and kind is None:
             raise ValueError("Kind {} is not supported in OpenTelemetry".format(value))
 
+        links = kwargs.pop('links', None)
+        if links:
+            ot_links = []
+            for link in links:
+                ctx = extract(link.headers)
+                span_ctx = get_span_from_context(ctx).get_span_context()
+                ot_links.append(OpenTelemetryLink(span_ctx, link.attributes))
+            kwargs.setdefault('links', ot_links)
         self._span_instance = span or current_tracer.start_span(name=name, kind=kind, **kwargs)
         self._current_ctxt_manager = None
 
@@ -202,21 +210,6 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
             'traceparent': traceparent
         }, attributes)
 
-    @staticmethod
-    def create_link_from_headers(headers, attributes=None):
-        # type: (Dict[str, str], Attributes) -> Link
-        """
-        Given a dictionary, extracts the context and creates a link that can be added to spans.
-
-        :param headers: A dictionary of the request header as key value pairs.
-        :type headers: dict
-        :param attributes: Any additional attributes that should be added to link
-        :type attributes: dict
-        """
-        ctx = extract(headers)
-        span_ctx = get_span_from_context(ctx).get_span_context()
-        return Link(span_ctx, attributes)
-
     @classmethod
     def link_from_headers(cls, headers, attributes=None):
         # type: (Dict[str, str], Attributes) -> None
@@ -234,7 +227,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         ctx = extract(headers)
         span_ctx = get_span_from_context(ctx).get_span_context()
         current_span = cls.get_current_span()
-        current_span._links.append(Link(span_ctx, attributes)) # pylint: disable=protected-access
+        current_span._links.append(OpenTelemetryLink(span_ctx, attributes)) # pylint: disable=protected-access
 
     @classmethod
     def get_current_span(cls):
