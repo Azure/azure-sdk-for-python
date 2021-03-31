@@ -36,6 +36,9 @@ class DocumentTranslationClientPreparer(AzureMgmtPreparer):
         doctranslation_test_endpoint = kwargs.get("documenttranslation_test_endpoint")
         doctranslation_test_api_key = kwargs.get("documenttranslation_test_api_key")
 
+        # set polling interval to 0 for recorded tests
+        if not self.is_live:
+            self.client_kwargs["polling_interval"] = 0
 
         client = self.client_cls(
             doctranslation_test_endpoint,
