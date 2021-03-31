@@ -34,6 +34,7 @@ def _clean(matches):
 def _parse_challenge(header):
     # type: (str) -> Dict[str, str]
     """Parse challenge header into service and scope"""
+    ret = {}
     if header.startswith(BEARER):
         challenge_params = header[len(BEARER) + 1 :]
 

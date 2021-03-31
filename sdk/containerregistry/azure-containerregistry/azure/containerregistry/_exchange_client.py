@@ -41,7 +41,6 @@ class ACRExchangeClient(object):
 
     BEARER = "Bearer"
     AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
-    AUTHORIZATION = "Authorization"
 
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, TokenCredential, Dict[str, Any]) -> None

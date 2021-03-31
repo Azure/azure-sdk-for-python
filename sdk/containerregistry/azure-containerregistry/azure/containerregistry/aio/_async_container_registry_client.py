@@ -19,7 +19,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     def __init__(
         self, endpoint: str, credential: "AsyncTokenCredential", **kwargs
     ):  # pylint: disable=client-method-missing-type-annotations
-        if not endpoint.startswith("https://"):
+        if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
         self._credential = credential
