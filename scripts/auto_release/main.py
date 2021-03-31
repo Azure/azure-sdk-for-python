@@ -295,7 +295,6 @@ def edit_useless_file():
 
 def commit_test():
     print_exec('git add sdk/')
-    print_exec('git add shared_requirements.txt')
     print_exec('git commit -m \"test"')
     print_exec('git push -f origin HEAD')
     my_print(f'== {SERVICE_NAME}(track{TRACK}) Automatic Release live test done !!! ==')
@@ -359,6 +358,7 @@ def create_branch():
 
 def commit_file():
     print_exec('git add sdk/')
+    print_exec('git add shared_requirements.txt')
     print_exec('git commit -m \"version,CHANGELOG\"')
     print_exec('git push -f origin HEAD')
     my_print(f'== {SERVICE_NAME}(track{TRACK}) Automatic Release file-edit done !!! ==')
