@@ -26,7 +26,7 @@ class CommunicationUserIdentifierSerializerTest(unittest.TestCase):
         self.testPhoneNumberModel = PhoneNumberIdentifierModel(value=self.testPhoneNumber)
         self.testTeamsUserModel = MicrosoftTeamsUserIdentifierModel(user_id="Microsoft Teams User Id",
                                                                    is_anonymous=True,
-                                                                   cloud=CommunicationCloudEnvironment.Public)
+                                                                   cloud=CommunicationCloudEnvironment.PUBLIC)
 
 
     def test_missing_property_deserializer_throws(self):
@@ -39,12 +39,12 @@ class CommunicationUserIdentifierSerializerTest(unittest.TestCase):
             CommunicationIdentifierModel(
                 raw_id="someid",
                 microsoft_teams_user=MicrosoftTeamsUserIdentifierModel(user_id="teamsid",
-                cloud=CommunicationCloudEnvironment.Public)
+                cloud=CommunicationCloudEnvironment.PUBLIC)
             ), # missing is_anonymous
             CommunicationIdentifierModel(
                 microsoft_teams_user=MicrosoftTeamsUserIdentifierModel(user_id="teamsid",
                 is_anonymous=True,
-                cloud=CommunicationCloudEnvironment.Public)
+                cloud=CommunicationCloudEnvironment.PUBLIC)
             ), # missing id
             CommunicationIdentifierModel(
                 raw_id="someid",
@@ -94,7 +94,7 @@ class CommunicationUserIdentifierSerializerTest(unittest.TestCase):
         unknown_identifier_expected = UnknownIdentifier("an id")
 
         assert isinstance(unknown_identifier_actual, UnknownIdentifier)
-        assert unknown_identifier_actual.id == unknown_identifier_expected.id
+        assert unknown_identifier_actual.raw_id == unknown_identifier_expected.raw_id
 
     def test_serialize_phone_number(self):
         phone_number_identifier_model = serialize_identifier(
@@ -111,23 +111,23 @@ class CommunicationUserIdentifierSerializerTest(unittest.TestCase):
             )
         )
 
-        phone_number_identifier_expected = PhoneNumberIdentifier(self.testPhoneNumber, identifier="someid")
+        phone_number_identifier_expected = PhoneNumberIdentifier(self.testPhoneNumber, raw_id="someid")
 
         assert isinstance(phone_number_identifier_actual, PhoneNumberIdentifier)
         assert phone_number_identifier_actual.properties['phone_number'] == phone_number_identifier_expected.properties['phone_number']
-        assert phone_number_identifier_actual.id == phone_number_identifier_expected.id
+        assert phone_number_identifier_actual.raw_id == phone_number_identifier_expected.raw_id
 
     def test_serialize_teams_user(self):
         teams_user_identifier_model = serialize_identifier(
             MicrosoftTeamsUserIdentifier(
                 user_id="teamsid",
-                cloud=CommunicationCloudEnvironment.Public,
-                identifier="someid"
+                cloud=CommunicationCloudEnvironment.PUBLIC,
+                raw_id="someid"
             )
         )
 
         assert teams_user_identifier_model.microsoft_teams_user.user_id is "teamsid"
-        assert teams_user_identifier_model.microsoft_teams_user.cloud is CommunicationCloudEnvironment.Public
+        assert teams_user_identifier_model.microsoft_teams_user.cloud is CommunicationCloudEnvironment.PUBLIC
         assert teams_user_identifier_model.raw_id is "someid"
 
     def test_deserialize_teams_user(self):
@@ -139,14 +139,14 @@ class CommunicationUserIdentifierSerializerTest(unittest.TestCase):
         )
 
         teams_user_identifier_expected = MicrosoftTeamsUserIdentifier(
-            identifier="someid",
+            raw_id="someid",
             user_id="Microsoft Teams User Id",
-            cloud=CommunicationCloudEnvironment.Public,
+            cloud=CommunicationCloudEnvironment.PUBLIC,
             is_anonymous=True
         )
 
         assert isinstance(teams_user_identifier_actual, MicrosoftTeamsUserIdentifier)
-        assert teams_user_identifier_actual.id == teams_user_identifier_expected.id
+        assert teams_user_identifier_actual.raw_id == teams_user_identifier_expected.raw_id
         assert teams_user_identifier_actual.properties['user_id'] == teams_user_identifier_expected.properties['user_id']
         assert teams_user_identifier_actual.properties['is_anonymous'] == teams_user_identifier_expected.properties['is_anonymous']
         assert teams_user_identifier_actual.properties['cloud'] == teams_user_identifier_expected.properties['cloud']

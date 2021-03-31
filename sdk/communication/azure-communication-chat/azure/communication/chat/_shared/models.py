@@ -29,21 +29,21 @@ class CommunicationCloudEnvironment(with_metaclass(CaseInsensitiveEnumMeta, str,
     The cloud enviornment that the identifier belongs to
     """
 
-    Public = "PUBLIC"
-    Dod = "DOD"
-    Gcch = "GCCH"
+    PUBLIC = "PUBLIC"
+    DOD = "DOD"
+    GCCH = "GCCH"
 
 
 class CommunicationIdentifier(Protocol):
     """
     Communication Identifier.
 
-    :ivar str id: The identifier.
+    :ivar str raw_id: The service identifier.
     :ivar kind: The type of identifier.
     :vartype kind: str or CommunicationIdentifierKind
     :ivar Mapping[str, Any] properties: The properties of the identifier.
     """
-    id = None  # type: Optional[str]
+    raw_id = None  # type: Optional[str]
     kind = None  # type: Optional[Union[CommunicationIdentifierKind, str]]
     properties = {}  # type: Mapping[str, Any]
 
@@ -58,7 +58,7 @@ class CommunicationUserIdentifier(object):
     """
     Represents a user in Azure Communication Service.
 
-    :ivar str id: The identifier.
+    :ivar str raw_id: The service identifier.
     :ivar kind: The type of identifier.
     :vartype kind: str or CommunicationIdentifierKind
     :ivar Mapping[str, Any] properties: The properties of the identifier.
@@ -68,9 +68,9 @@ class CommunicationUserIdentifier(object):
     """
     kind = CommunicationIdentifierKind.COMMUNICATION_USER
 
-    def __init__(self, identifier):
-        # type: (str) -> None
-        self.id = identifier
+    def __init__(self, identifier, **kwargs):
+        # type: (str, Any) -> None
+        self.raw_id = kwargs.get('raw_id')
         self.properties = CommunicationUserProperties(identifier=identifier)
 
 
@@ -84,7 +84,7 @@ class PhoneNumberIdentifier(object):
     """
     Represents a phone number.
 
-    :ivar str id: The identifier.
+    :ivar str raw_id: The service identifier.
     :ivar kind: The type of identifier.
     :vartype kind: str or CommunicationIdentifierKind
     :ivar Mapping properties: The properties of the identifier.
@@ -96,7 +96,7 @@ class PhoneNumberIdentifier(object):
 
     def __init__(self, phone_number, **kwargs):
         # type: (str, Any) -> None
-        self.id = kwargs.get('identifier')
+        self.raw_id = kwargs.get('raw_id')
         self.properties = PhoneNumberProperties(phone_number=phone_number)
 
 
@@ -106,7 +106,7 @@ class UnknownIdentifier(object):
     It will be encountered in communications with endpoints that are not
     identifiable by this version of the SDK.
 
-    :ivar str id: The identifier
+    :ivar str raw_id: The service identifier.
     :ivar kind: The type of identifier.
     :vartype kind: str or CommunicationIdentifierKind
     :ivar Mapping properties: The properties of the identifier.
@@ -115,7 +115,7 @@ class UnknownIdentifier(object):
 
     def __init__(self, identifier):
         # type: (str) -> None
-        self.id = identifier
+        self.raw_id = identifier
         self.properties = {}
 
 
@@ -131,7 +131,7 @@ class MicrosoftTeamsUserIdentifier(object):
     """
     Represents an identifier for a Microsoft Teams user.
 
-    :ivar str id: The identifier.
+    :ivar str raw_id: The service identifier.
     :ivar kind: The type of identifier.
     :vartype kind: str or CommunicationIdentifierKind
     :ivar Mapping properties: The properties of the identifier.
@@ -147,9 +147,9 @@ class MicrosoftTeamsUserIdentifier(object):
 
     def __init__(self, user_id, **kwargs):
         # type: (str, Any) -> None
-        self.id = kwargs.get('identifier')
+        self.raw_id = kwargs.get('raw_id')
         self.properties = MicrosoftTeamsUserProperties(
             user_id=user_id,
             is_anonymous=kwargs.get('is_anonymous', False),
-            cloud=kwargs.get('cloud') or CommunicationCloudEnvironment.Public
+            cloud=kwargs.get('cloud') or CommunicationCloudEnvironment.PUBLIC
         )

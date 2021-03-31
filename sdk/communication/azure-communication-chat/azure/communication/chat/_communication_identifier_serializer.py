@@ -41,20 +41,19 @@ def serialize_identifier(identifier):
     try:
         if identifier.kind == CommunicationIdentifierKind.COMMUNICATION_USER:
             return CommunicationIdentifierModel(
-                raw_id=identifier.id,
                 communication_user=CommunicationUserIdentifierModel(
                     id=identifier.properties['identifier']
                 )
             )
         if identifier.kind == CommunicationIdentifierKind.PHONE_NUMBER:
             return CommunicationIdentifierModel(
-                raw_id=identifier.id,
+                raw_id=identifier.raw_id,
                 phone_number=PhoneNumberIdentifierModel(
                     value=identifier.properties['phone_number'])
             )
         if identifier.kind == CommunicationIdentifierKind.MICROSOFT_TEAMS_USER:
             return CommunicationIdentifierModel(
-                raw_id=identifier.id,
+                raw_id=identifier.raw_id,
                 microsoft_teams_user=MicrosoftTeamsUserIdentifierModel(
                     user_id=identifier.properties['user_id'],
                     is_anonymous=identifier.properties['is_anonymous'],
@@ -62,7 +61,7 @@ def serialize_identifier(identifier):
                 )
             )
         return CommunicationIdentifierModel(
-            raw_id=identifier.id
+            raw_id=identifier.raw_id
         )
     except AttributeError:
         raise TypeError("Unsupported identifier type " + identifier.__class__.__name__)
@@ -79,16 +78,16 @@ def deserialize_identifier(identifier_model):
     """
     raw_id = identifier_model.raw_id
     if not raw_id:
-        raise ValueError("Identifier must have a valid id")
+        raise ValueError("Identifier must have a valid ID")
 
     _assert_maximum_one_nested_model(identifier_model)
 
     if identifier_model.communication_user:
-        return CommunicationUserIdentifier(raw_id)
+        return CommunicationUserIdentifier(raw_id, raw_id=raw_id)
     if identifier_model.phone_number:
         if not identifier_model.phone_number:
             raise ValueError("PhoneNumberIdentifier must have a valid attribute - phone_number")
-        return PhoneNumberIdentifier(identifier_model.phone_number.value, identifier=raw_id)
+        return PhoneNumberIdentifier(identifier_model.phone_number.value, raw_id=raw_id)
     if identifier_model.microsoft_teams_user is not None:
         if identifier_model.microsoft_teams_user.is_anonymous not in [True, False]:
             raise ValueError("MicrosoftTeamsUser must have a valid attribute - is_anonymous")
@@ -97,7 +96,7 @@ def deserialize_identifier(identifier_model):
         if not identifier_model.microsoft_teams_user.cloud:
             raise ValueError("MicrosoftTeamsUser must have a valid attribute - cloud")
         return MicrosoftTeamsUserIdentifier(
-            identifier=raw_id,
+            raw_id=raw_id,
             user_id=identifier_model.microsoft_teams_user.user_id,
             is_anonymous=identifier_model.microsoft_teams_user.is_anonymous,
             cloud=identifier_model.microsoft_teams_user.cloud

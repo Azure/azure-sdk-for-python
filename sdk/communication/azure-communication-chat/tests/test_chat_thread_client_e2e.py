@@ -194,7 +194,7 @@ class ChatThreadClientTest(CommunicationTestCase):
             li = list(chat_thread_participant_page)
             assert len(li) <= 1
             participant_count += len(li)
-            li[0].user.id = self.user.id
+            li[0].user.properties['identifier'] = self.user.properties['identifier']
         assert participant_count == 1
 
 

@@ -46,7 +46,7 @@ class CommunicationErrorResponseConverter(object):
             """
             result = {}
             for participant in participants:
-                result[participant.user.id] = participant
+                result[participant.user.properties['identifier']] = participant
             return result
 
         _thread_participants_dict = create_dict(participants=participants)
