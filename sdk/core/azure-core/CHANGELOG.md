@@ -12,6 +12,7 @@ Azure core requires Python 2.7 or Python 3.6+ since this release.
 ### Bug fixes
 
 - Make NetworkTraceLoggingPolicy show the auth token in plain text. #14191
+- Fixed RetryPolicy overriding default connection timeout with an extreme value #17481
 
 ## 1.12.0 (2021-03-08)
 
