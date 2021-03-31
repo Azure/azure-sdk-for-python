@@ -65,18 +65,17 @@ steps:
 
     - pwsh: |
         Write-Host "##vso[task.prependpath]$CONDA/bin"
-        conda init powershell
-      displayName: 'Prepend PATH with Conda'
+      displayName: 'Prepend PATH with Conda and INIT'
 
-    - pwsh: |
+    - bash: |
         Write-Host "$env:${{ upper(parameters.ServiceDirectory) }}_SOURCE_DISTRIBUTION"
         conda create --yes --quiet --name build
-        conda activate build
+        source activate build
         conda install --yes --quiet --name build conda-build
       displayName: 'Prepare Conda Environment for building ${{ artifact.name }}'
 
-    - pwsh: |
-        conda activate build
+    - bash: |
+        source activate build
         conda-build . --output-folder "$(Agent.BuildDirectory)/conda/output"
       displayName: 'Activate Conda Environment and Build ${{ artifact.name }}'
       workingDirectory: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
