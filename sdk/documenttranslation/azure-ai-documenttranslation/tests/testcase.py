@@ -151,7 +151,7 @@ class DocumentTranslationTest(AzureTestCase):
         
         has_completed = False
         if status:
-            has_completed = True if status not in ["NotStarted", "Running"] else False
+            has_completed = True if status not in ["NotStarted", "Running", "Cancelling"] else False
         # status
         self.assertEqual(job_details.status, status) if status else self.assertIsNotNone(job_details.status)
         # docs count
