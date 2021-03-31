@@ -70,16 +70,15 @@ steps:
     - pwsh: |
         Write-Host "$env:${{ upper(parameters.ServiceDirectory) }}_SOURCE_DISTRIBUTION"
         conda create --yes --quiet --name build
-        call activate build
+        activate build
         conda install --yes --quiet --name build conda-build
       displayName: 'Prepare Conda Environment for building ${{ artifact.name }}'
 
     - pwsh: |
-        call activate build
+        activate build
         conda-build . --output-folder "$(Agent.BuildDirectory)/conda/output"
       displayName: 'Activate Conda Environment and Build ${{ artifact.name }}'
       workingDirectory: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
-      
   
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
