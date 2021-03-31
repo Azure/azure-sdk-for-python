@@ -65,6 +65,7 @@ steps:
 
     - pwsh: |
         Write-Host "##vso[task.prependpath]$CONDA/bin"
+        conda init powershell
       displayName: 'Prepend PATH with Conda'
 
     - pwsh: |
