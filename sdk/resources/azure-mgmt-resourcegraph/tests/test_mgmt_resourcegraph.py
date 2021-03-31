@@ -148,7 +148,7 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
         query_response = self.resourcegraph_client.resources(query)
 
         # Top-level response fields
-        self.assertEqual(query_response.count, 8)
+        self.assertEqual(query_response.count, 10)
         self.assertEqual(query_response.total_records, 8)
         self.assertIsNone(query_response.skip_token)
         self.assertEqual(query_response.result_truncated, ResultTruncated.false)
