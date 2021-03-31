@@ -182,7 +182,7 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
             break
 
-    @pytest.mark.xfail
+    # @pytest.mark.xfail
     @acr_preparer()
     def test_set_tag_properties(
         self, containerregistry_baseurl, containerregistry_resource_group
@@ -207,16 +207,13 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
         ))
         self.sleep(10)
 
-        received = client.get_tag_properties(tag_props.name)
+        received = client.get_tag_properties(tag_identifier)
 
-        try:
-            assert received.content_permissions.can_write == False
-            assert received.content_permissions.can_read == False
-            assert received.content_permissions.can_list == False
-            assert received.content_permissions.can_delete == False
+        assert received.content_permissions.can_write == False
+        assert received.content_permissions.can_read == False
+        assert received.content_permissions.can_list == False
+        assert received.content_permissions.can_delete == False
 
-        finally:
-            self._clean_up(containerregistry_baseurl)
 
     @pytest.mark.xfail
     @acr_preparer()
@@ -244,10 +241,10 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
             received_permissions = client.get_registry_artifact_properties(artifact.digest)
 
-            assert received_permissions.content_permissions.can_delete = False
-            assert received_permissions.content_permissions.can_read = False
-            assert received_permissions.content_permissions.can_list = False
-            assert received_permissions.content_permissions.can_write = False
+            assert received_permissions.content_permissions.can_delete == False
+            assert received_permissions.content_permissions.can_read == False
+            assert received_permissions.content_permissions.can_list == False
+            assert received_permissions.content_permissions.can_write == False
 
             break
 
