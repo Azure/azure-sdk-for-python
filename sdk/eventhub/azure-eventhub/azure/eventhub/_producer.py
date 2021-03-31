@@ -154,6 +154,7 @@ class EventHubProducer(
 
     def _send_event_data(self, timeout_time=None, last_exception=None):
         # type: (Optional[float], Optional[Exception]) -> None
+        # pylint: disable=protected-access
         if self._unsent_events:
             self._back_up_events = self._unsent_events
             self._open()

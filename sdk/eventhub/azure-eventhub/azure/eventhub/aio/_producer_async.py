@@ -140,6 +140,7 @@ class EventHubProducer(
         last_exception: Optional[Exception] = None,
     ) -> None:
         # TODO: Correct uAMQP type hints
+        # pylint: disable=protected-access
         if self._unsent_events:
             self._back_up_events = self._unsent_events
             await self._open()
