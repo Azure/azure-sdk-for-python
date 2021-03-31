@@ -16,30 +16,31 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz?api-version=2021-03-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz","name":"myaccountxxyyzzz","location":"East
-        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"systemData":{"createdAt":"2021-02-24T08:01:45.1783769Z"},"properties":{"provisioningState":"Creating","publicNetworkAccess":"Enabled","enableAutomaticFailover":false,"enableMultipleWriteLocations":false,"enablePartitionKeyMonitor":false,"isVirtualNetworkFilterEnabled":false,"virtualNetworkRules":[],"EnabledApiTypes":"Cassandra","disableKeyBasedMetadataWriteAccess":false,"enableFreeTier":false,"enableAnalyticalStorage":false,"instanceId":"5b4d44a9-a248-42be-a67e-1b7fa4de10e7","createMode":"Default","databaseAccountOfferType":"Standard","networkAclBypass":"None","consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"configurationOverrides":{},"writeLocations":[{"id":"myaccountxxyyzzz-eastus","locationName":"East
+        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"systemData":{"createdAt":"2021-03-31T07:52:08.1035035Z"},"properties":{"provisioningState":"Creating","publicNetworkAccess":"Enabled","enableAutomaticFailover":false,"enableMultipleWriteLocations":false,"enablePartitionKeyMonitor":false,"isVirtualNetworkFilterEnabled":false,"virtualNetworkRules":[],"EnabledApiTypes":"Cassandra","disableKeyBasedMetadataWriteAccess":false,"enableFreeTier":false,"enableAnalyticalStorage":false,"instanceId":"15a2b007-667a-4a7c-8180-640b681d2595","createMode":"Default","databaseAccountOfferType":"Standard","defaultIdentity":"","networkAclBypass":"None","consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"configurationOverrides":{},"writeLocations":[{"id":"myaccountxxyyzzz-eastus","locationName":"East
         US","provisioningState":"Creating","failoverPriority":0,"isZoneRedundant":false}],"readLocations":[{"id":"myaccountxxyyzzz-eastus","locationName":"East
         US","provisioningState":"Creating","failoverPriority":0,"isZoneRedundant":false}],"locations":[{"id":"myaccountxxyyzzz-eastus","locationName":"East
         US","provisioningState":"Creating","failoverPriority":0,"isZoneRedundant":false}],"failoverPolicies":[{"id":"myaccountxxyyzzz-eastus","locationName":"East
-        US","failoverPriority":0}],"cors":[],"capabilities":[{"name":"EnableCassandra"}],"ipRules":[],"backupPolicy":{"type":"Periodic","periodicModeProperties":{"backupIntervalInMinutes":240,"backupRetentionIntervalInHours":8,"backupStorageRedundancy":1}},"networkAclBypassResourceIds":[]},"identity":{"type":"None"}}'
+        US","failoverPriority":0}],"cors":[],"capabilities":[{"name":"EnableCassandra"}],"ipRules":[],"backupPolicy":{"type":"Periodic","periodicModeProperties":{"backupIntervalInMinutes":240,"backupRetentionIntervalInHours":8,"backupStorageRedundancy":"Geo"}},"networkAclBypassResourceIds":[]},"identity":{"type":"None"}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/42c23552-8f7c-489c-a27e-cf09f15384bd?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/9d26763a-5b45-417b-9a86-f80fe6ce06ed?api-version=2021-03-15
       cache-control:
       - no-store, no-cache
       content-length:
-      - '1875'
+      - '1900'
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:01:47 GMT
+      - Wed, 31 Mar 2021 07:52:09 GMT
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/operationResults/42c23552-8f7c-489c-a27e-cf09f15384bd?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/operationResults/9d26763a-5b45-417b-9a86-f80fe6ce06ed?api-version=2021-03-15
       pragma:
       - no-cache
       server:
@@ -69,9 +70,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/42c23552-8f7c-489c-a27e-cf09f15384bd?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/9d26763a-5b45-417b-9a86-f80fe6ce06ed?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -83,7 +85,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:02:19 GMT
+      - Wed, 31 Mar 2021 07:52:39 GMT
       pragma:
       - no-cache
       server:
@@ -111,9 +113,96 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/42c23552-8f7c-489c-a27e-cf09f15384bd?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/9d26763a-5b45-417b-9a86-f80fe6ce06ed?api-version=2021-03-15
+  response:
+    body:
+      string: '{"status":"Dequeued"}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json
+      date:
+      - Wed, 31 Mar 2021 07:53:10 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-gatewayversion:
+      - version=2.11.0
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/9d26763a-5b45-417b-9a86-f80fe6ce06ed?api-version=2021-03-15
+  response:
+    body:
+      string: '{"status":"Dequeued"}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json
+      date:
+      - Wed, 31 Mar 2021 07:53:40 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-gatewayversion:
+      - version=2.11.0
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/9d26763a-5b45-417b-9a86-f80fe6ce06ed?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -125,7 +214,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:02:49 GMT
+      - Wed, 31 Mar 2021 07:54:09 GMT
       pragma:
       - no-cache
       server:
@@ -153,26 +242,27 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz?api-version=2021-03-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz","name":"myaccountxxyyzzz","location":"East
-        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"systemData":{"createdAt":"2021-02-24T08:02:40.9076714Z"},"properties":{"provisioningState":"Succeeded","documentEndpoint":"https://myaccountxxyyzzz.documents.azure.com:443/","cassandraEndpoint":"https://myaccountxxyyzzz.cassandra.cosmos.azure.com:443/","publicNetworkAccess":"Enabled","enableAutomaticFailover":false,"enableMultipleWriteLocations":false,"enablePartitionKeyMonitor":false,"isVirtualNetworkFilterEnabled":false,"virtualNetworkRules":[],"EnabledApiTypes":"Cassandra","disableKeyBasedMetadataWriteAccess":false,"enableFreeTier":false,"enableAnalyticalStorage":false,"instanceId":"5b4d44a9-a248-42be-a67e-1b7fa4de10e7","createMode":"Default","databaseAccountOfferType":"Standard","networkAclBypass":"None","consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"configurationOverrides":{},"writeLocations":[{"id":"myaccountxxyyzzz-eastus","locationName":"East
+        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"systemData":{"createdAt":"2021-03-31T07:53:18.5582813Z"},"properties":{"provisioningState":"Succeeded","documentEndpoint":"https://myaccountxxyyzzz.documents.azure.com:443/","cassandraEndpoint":"https://myaccountxxyyzzz.cassandra.cosmos.azure.com:443/","publicNetworkAccess":"Enabled","enableAutomaticFailover":false,"enableMultipleWriteLocations":false,"enablePartitionKeyMonitor":false,"isVirtualNetworkFilterEnabled":false,"virtualNetworkRules":[],"EnabledApiTypes":"Cassandra","disableKeyBasedMetadataWriteAccess":false,"enableFreeTier":false,"enableAnalyticalStorage":false,"instanceId":"15a2b007-667a-4a7c-8180-640b681d2595","createMode":"Default","databaseAccountOfferType":"Standard","defaultIdentity":"FirstPartyIdentity","networkAclBypass":"None","consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"configurationOverrides":{},"writeLocations":[{"id":"myaccountxxyyzzz-eastus","locationName":"East
         US","documentEndpoint":"https://myaccountxxyyzzz-eastus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0,"isZoneRedundant":false}],"readLocations":[{"id":"myaccountxxyyzzz-eastus","locationName":"East
         US","documentEndpoint":"https://myaccountxxyyzzz-eastus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0,"isZoneRedundant":false}],"locations":[{"id":"myaccountxxyyzzz-eastus","locationName":"East
         US","documentEndpoint":"https://myaccountxxyyzzz-eastus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0,"isZoneRedundant":false}],"failoverPolicies":[{"id":"myaccountxxyyzzz-eastus","locationName":"East
-        US","failoverPriority":0}],"cors":[],"capabilities":[{"name":"EnableCassandra"}],"ipRules":[],"backupPolicy":{"type":"Periodic","periodicModeProperties":{"backupIntervalInMinutes":240,"backupRetentionIntervalInHours":8,"backupStorageRedundancy":1}},"networkAclBypassResourceIds":[]},"identity":{"type":"None"}}'
+        US","failoverPriority":0}],"cors":[],"capabilities":[{"name":"EnableCassandra"}],"ipRules":[],"backupPolicy":{"type":"Periodic","periodicModeProperties":{"backupIntervalInMinutes":240,"backupRetentionIntervalInHours":8,"backupStorageRedundancy":"Geo"}},"networkAclBypassResourceIds":[]},"identity":{"type":"None"}}'
     headers:
       cache-control:
       - no-store, no-cache
       content-length:
-      - '2263'
+      - '2306'
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:02:50 GMT
+      - Wed, 31 Mar 2021 07:54:10 GMT
       pragma:
       - no-cache
       server:
@@ -205,15 +295,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Enqueued"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/6b84a258-45a9-4b35-8c61-dbda1e88ac01?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/30a374b3-ea08-4eb0-ab1e-5dfd06dba5fa?api-version=2021-03-15
       cache-control:
       - no-store, no-cache
       content-length:
@@ -221,9 +312,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:02:51 GMT
+      - Wed, 31 Mar 2021 07:54:10 GMT
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/operationResults/6b84a258-45a9-4b35-8c61-dbda1e88ac01?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/operationResults/30a374b3-ea08-4eb0-ab1e-5dfd06dba5fa?api-version=2021-03-15
       pragma:
       - no-cache
       server:
@@ -235,7 +326,7 @@ interactions:
       x-ms-gatewayversion:
       - version=2.11.0
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1198'
     status:
       code: 202
       message: Accepted
@@ -249,9 +340,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/6b84a258-45a9-4b35-8c61-dbda1e88ac01?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/30a374b3-ea08-4eb0-ab1e-5dfd06dba5fa?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -263,7 +355,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:03:21 GMT
+      - Wed, 31 Mar 2021 07:54:41 GMT
       pragma:
       - no-cache
       server:
@@ -291,12 +383,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace?api-version=2021-03-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces","name":"myKeyspace","properties":{"resource":{"id":"myKeyspace","_rid":"zKYtAA==","_etag":"\"00004105-0000-0100-0000-603608300000\"","_ts":1614153776}}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces","name":"myKeyspace","properties":{"resource":{"id":"myKeyspace","_rid":"oa5yAA==","_etag":"\"00009003-0000-0100-0000-60642aa90000\"","_ts":1617177257}}}'
     headers:
       cache-control:
       - no-store, no-cache
@@ -305,7 +398,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:03:22 GMT
+      - Wed, 31 Mar 2021 07:54:41 GMT
       pragma:
       - no-cache
       server:
@@ -339,15 +432,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Enqueued"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/2c845fb1-dc49-4277-a11b-7c48077265f3?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/c7fe21b9-1dab-4431-90e4-26a0720ef87e?api-version=2021-03-15
       cache-control:
       - no-store, no-cache
       content-length:
@@ -355,141 +449,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:03:23 GMT
+      - Wed, 31 Mar 2021 07:54:41 GMT
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/operationResults/2c845fb1-dc49-4277-a11b-7c48077265f3?api-version=2021-01-15
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-gatewayversion:
-      - version=2.11.0
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/2c845fb1-dc49-4277-a11b-7c48077265f3?api-version=2021-01-15
-  response:
-    body:
-      string: '{"status":"Succeeded"}'
-    headers:
-      cache-control:
-      - no-store, no-cache
-      content-length:
-      - '22'
-      content-type:
-      - application/json
-      date:
-      - Wed, 24 Feb 2021 08:03:54 GMT
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-gatewayversion:
-      - version=2.11.0
-    status:
-      code: 200
-      message: Ok
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable?api-version=2021-01-15
-  response:
-    body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces/tables","name":"myTable","properties":{"resource":{"id":"myTable","_rid":"zKYtAMwXBMM=","_etag":"\"00004505-0000-0100-0000-603608500000\"","_ts":1614153808,"defaultTtl":100,"schema":{"columns":[{"name":"columnA","type":"ascii"}],"partitionKeys":[{"name":"columnA"}]}}}}'
-    headers:
-      cache-control:
-      - no-store, no-cache
-      content-length:
-      - '584'
-      content-type:
-      - application/json
-      date:
-      - Wed, 24 Feb 2021 08:03:54 GMT
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-gatewayversion:
-      - version=2.11.0
-    status:
-      code: 200
-      message: Ok
-- request:
-    body: '{"location": "eastus", "properties": {"resource": {"throughput": 400}}}'
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '71'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default?api-version=2021-01-15
-  response:
-    body:
-      string: '{"status":"Enqueued"}'
-    headers:
-      azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/efbc7bf5-5aeb-4bfb-94a5-2fbce177ed90?api-version=2021-01-15
-      cache-control:
-      - no-store, no-cache
-      content-length:
-      - '21'
-      content-type:
-      - application/json
-      date:
-      - Wed, 24 Feb 2021 08:03:55 GMT
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default/operationResults/efbc7bf5-5aeb-4bfb-94a5-2fbce177ed90?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/operationResults/c7fe21b9-1dab-4431-90e4-26a0720ef87e?api-version=2021-03-15
       pragma:
       - no-cache
       server:
@@ -515,9 +477,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/efbc7bf5-5aeb-4bfb-94a5-2fbce177ed90?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/c7fe21b9-1dab-4431-90e4-26a0720ef87e?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -529,7 +492,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:04:25 GMT
+      - Wed, 31 Mar 2021 07:55:11 GMT
       pragma:
       - no-cache
       server:
@@ -557,21 +520,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable?api-version=2021-03-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces/throughputSettings","name":"28eN","properties":{"resource":{"throughput":400,"minimumThroughput":"400"}}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces/tables","name":"myTable","properties":{"resource":{"id":"myTable","_rid":"oa5yAKDaG5I=","_etag":"\"00009403-0000-0100-0000-60642ac80000\"","_ts":1617177288,"defaultTtl":100,"schema":{"columns":[{"name":"columnA","type":"ascii"}],"partitionKeys":[{"name":"columnA"}]}}}}'
     headers:
       cache-control:
       - no-store, no-cache
       content-length:
-      - '432'
+      - '584'
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:04:26 GMT
+      - Wed, 31 Mar 2021 07:55:11 GMT
       pragma:
       - no-cache
       server:
@@ -603,15 +567,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Enqueued"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/02fa3080-2b11-4e0b-849a-a2751d80a902?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/a6ebb7a5-177c-4889-a781-7af0d17eca65?api-version=2021-03-15
       cache-control:
       - no-store, no-cache
       content-length:
@@ -619,9 +584,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:04:27 GMT
+      - Wed, 31 Mar 2021 07:55:12 GMT
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default/operationResults/02fa3080-2b11-4e0b-849a-a2751d80a902?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default/operationResults/a6ebb7a5-177c-4889-a781-7af0d17eca65?api-version=2021-03-15
       pragma:
       - no-cache
       server:
@@ -647,9 +612,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/02fa3080-2b11-4e0b-849a-a2751d80a902?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/a6ebb7a5-177c-4889-a781-7af0d17eca65?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -661,7 +627,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:04:57 GMT
+      - Wed, 31 Mar 2021 07:55:42 GMT
       pragma:
       - no-cache
       server:
@@ -689,96 +655,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default?api-version=2021-03-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces/tables/throughputSettings","name":"AHC1","properties":{"resource":{"throughput":400,"minimumThroughput":"400"}}}'
-    headers:
-      cache-control:
-      - no-store, no-cache
-      content-length:
-      - '454'
-      content-type:
-      - application/json
-      date:
-      - Wed, 24 Feb 2021 08:04:58 GMT
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-gatewayversion:
-      - version=2.11.0
-    status:
-      code: 200
-      message: Ok
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default?api-version=2021-01-15
-  response:
-    body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces/tables/throughputSettings","name":"AHC1","properties":{"resource":{"throughput":400,"minimumThroughput":"400"}}}'
-    headers:
-      cache-control:
-      - no-store, no-cache
-      content-length:
-      - '454'
-      content-type:
-      - application/json
-      date:
-      - Wed, 24 Feb 2021 08:04:58 GMT
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-gatewayversion:
-      - version=2.11.0
-    status:
-      code: 200
-      message: Ok
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default?api-version=2021-01-15
-  response:
-    body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces/throughputSettings","name":"28eN","properties":{"resource":{"throughput":400,"minimumThroughput":"400"}}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces/throughputSettings","name":"wwzH","properties":{"resource":{"throughput":400,"minimumThroughput":"400"}}}'
     headers:
       cache-control:
       - no-store, no-cache
@@ -787,7 +670,142 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:04:59 GMT
+      - Wed, 31 Mar 2021 07:55:43 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-gatewayversion:
+      - version=2.11.0
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: '{"location": "eastus", "properties": {"resource": {"throughput": 400}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '71'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default?api-version=2021-03-15
+  response:
+    body:
+      string: '{"status":"Enqueued"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/afa393f0-2f7b-4e05-9795-b9773d84d85c?api-version=2021-03-15
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json
+      date:
+      - Wed, 31 Mar 2021 07:55:43 GMT
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default/operationResults/afa393f0-2f7b-4e05-9795-b9773d84d85c?api-version=2021-03-15
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-gatewayversion:
+      - version=2.11.0
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1195'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/afa393f0-2f7b-4e05-9795-b9773d84d85c?api-version=2021-03-15
+  response:
+    body:
+      string: '{"status":"Succeeded"}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '22'
+      content-type:
+      - application/json
+      date:
+      - Wed, 31 Mar 2021 07:56:13 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-gatewayversion:
+      - version=2.11.0
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default?api-version=2021-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces/tables/throughputSettings","name":"WXp5","properties":{"resource":{"throughput":400,"minimumThroughput":"400"}}}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '454'
+      content-type:
+      - application/json
+      date:
+      - Wed, 31 Mar 2021 07:56:13 GMT
       pragma:
       - no-cache
       server:
@@ -815,12 +833,99 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default?api-version=2021-03-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces/tables","name":"myTable","properties":{"resource":{"id":"myTable","_rid":"zKYtAMwXBMM=","_etag":"\"00004505-0000-0100-0000-603608500000\"","_ts":1614153808,"defaultTtl":100,"schema":{"columns":[{"name":"columnA","type":"ascii"}],"partitionKeys":[{"name":"columnA"}]}}}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces/tables/throughputSettings","name":"WXp5","properties":{"resource":{"throughput":400,"minimumThroughput":"400"}}}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '454'
+      content-type:
+      - application/json
+      date:
+      - Wed, 31 Mar 2021 07:56:13 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-gatewayversion:
+      - version=2.11.0
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default?api-version=2021-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces/throughputSettings","name":"wwzH","properties":{"resource":{"throughput":400,"minimumThroughput":"400"}}}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '432'
+      content-type:
+      - application/json
+      date:
+      - Wed, 31 Mar 2021 07:56:14 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-gatewayversion:
+      - version=2.11.0
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable?api-version=2021-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces/tables","name":"myTable","properties":{"resource":{"id":"myTable","_rid":"oa5yAKDaG5I=","_etag":"\"00009403-0000-0100-0000-60642ac80000\"","_ts":1617177288,"defaultTtl":100,"schema":{"columns":[{"name":"columnA","type":"ascii"}],"partitionKeys":[{"name":"columnA"}]}}}}'
     headers:
       cache-control:
       - no-store, no-cache
@@ -829,7 +934,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:04:59 GMT
+      - Wed, 31 Mar 2021 07:56:14 GMT
       pragma:
       - no-cache
       server:
@@ -857,12 +962,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace?api-version=2021-03-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces","name":"myKeyspace","properties":{"resource":{"id":"myKeyspace","_rid":"zKYtAA==","_etag":"\"00004105-0000-0100-0000-603608300000\"","_ts":1614153776}}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces","name":"myKeyspace","properties":{"resource":{"id":"myKeyspace","_rid":"oa5yAA==","_etag":"\"00009003-0000-0100-0000-60642aa90000\"","_ts":1617177257}}}'
     headers:
       cache-control:
       - no-store, no-cache
@@ -871,7 +977,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:04:59 GMT
+      - Wed, 31 Mar 2021 07:56:14 GMT
       pragma:
       - no-cache
       server:
@@ -901,15 +1007,16 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default/migrateToAutoscale?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default/migrateToAutoscale?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Enqueued"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/05b190af-d975-4b38-abd3-fb46b857db6e?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/5ee32566-d1ac-4949-8a41-16dec9eaefd7?api-version=2021-03-15
       cache-control:
       - no-store, no-cache
       content-length:
@@ -917,9 +1024,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:05:00 GMT
+      - Wed, 31 Mar 2021 07:56:14 GMT
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default/migrateToAutoscale/operationResults/05b190af-d975-4b38-abd3-fb46b857db6e?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default/migrateToAutoscale/operationResults/5ee32566-d1ac-4949-8a41-16dec9eaefd7?api-version=2021-03-15
       pragma:
       - no-cache
       server:
@@ -945,9 +1052,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/05b190af-d975-4b38-abd3-fb46b857db6e?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/5ee32566-d1ac-4949-8a41-16dec9eaefd7?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -959,7 +1067,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:05:31 GMT
+      - Wed, 31 Mar 2021 07:56:45 GMT
       pragma:
       - no-cache
       server:
@@ -987,12 +1095,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default/migrateToAutoscale/operationResults/05b190af-d975-4b38-abd3-fb46b857db6e?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default/migrateToAutoscale/operationResults/5ee32566-d1ac-4949-8a41-16dec9eaefd7?api-version=2021-03-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default/migrateToAutoscale","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces/tables/throughputSettings/migrateToAutoscale","name":"AHC1","properties":{"resource":{"throughput":400,"autoscaleSettings":{"maxThroughput":4000},"minimumThroughput":"4000"}}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default/migrateToAutoscale","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces/tables/throughputSettings/migrateToAutoscale","name":"WXp5","properties":{"resource":{"throughput":400,"autoscaleSettings":{"maxThroughput":4000},"minimumThroughput":"4000"}}}'
     headers:
       cache-control:
       - no-store, no-cache
@@ -1001,7 +1110,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:05:31 GMT
+      - Wed, 31 Mar 2021 07:56:45 GMT
       pragma:
       - no-cache
       server:
@@ -1031,15 +1140,16 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default/migrateToManualThroughput?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default/migrateToManualThroughput?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Enqueued"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/661ad703-d944-45c3-8ae7-25f6b2efeba3?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/f44da270-caad-4820-bb20-2f5548bb2173?api-version=2021-03-15
       cache-control:
       - no-store, no-cache
       content-length:
@@ -1047,9 +1157,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:05:32 GMT
+      - Wed, 31 Mar 2021 07:56:46 GMT
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default/migrateToManualThroughput/operationResults/661ad703-d944-45c3-8ae7-25f6b2efeba3?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default/migrateToManualThroughput/operationResults/f44da270-caad-4820-bb20-2f5548bb2173?api-version=2021-03-15
       pragma:
       - no-cache
       server:
@@ -1075,9 +1185,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/661ad703-d944-45c3-8ae7-25f6b2efeba3?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/f44da270-caad-4820-bb20-2f5548bb2173?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -1089,7 +1200,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:06:02 GMT
+      - Wed, 31 Mar 2021 07:57:16 GMT
       pragma:
       - no-cache
       server:
@@ -1117,12 +1228,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default/migrateToManualThroughput/operationResults/661ad703-d944-45c3-8ae7-25f6b2efeba3?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default/migrateToManualThroughput/operationResults/f44da270-caad-4820-bb20-2f5548bb2173?api-version=2021-03-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default/migrateToManualThroughput","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces/tables/throughputSettings/migrateToManualThroughput","name":"AHC1","properties":{"resource":{"throughput":4000,"minimumThroughput":"400"}}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/throughputSettings/default/migrateToManualThroughput","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces/tables/throughputSettings/migrateToManualThroughput","name":"WXp5","properties":{"resource":{"throughput":4000,"minimumThroughput":"400"}}}'
     headers:
       cache-control:
       - no-store, no-cache
@@ -1131,7 +1243,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:06:03 GMT
+      - Wed, 31 Mar 2021 07:57:16 GMT
       pragma:
       - no-cache
       server:
@@ -1161,15 +1273,16 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default/migrateToAutoscale?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default/migrateToAutoscale?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Enqueued"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/ec19c774-6085-4e1e-b7cc-8ab77dbab070?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/d2f966fd-0f04-43f0-85e7-3c8408e035d3?api-version=2021-03-15
       cache-control:
       - no-store, no-cache
       content-length:
@@ -1177,9 +1290,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:06:03 GMT
+      - Wed, 31 Mar 2021 07:57:17 GMT
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default/migrateToAutoscale/operationResults/ec19c774-6085-4e1e-b7cc-8ab77dbab070?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default/migrateToAutoscale/operationResults/d2f966fd-0f04-43f0-85e7-3c8408e035d3?api-version=2021-03-15
       pragma:
       - no-cache
       server:
@@ -1205,9 +1318,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/ec19c774-6085-4e1e-b7cc-8ab77dbab070?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/d2f966fd-0f04-43f0-85e7-3c8408e035d3?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -1219,7 +1333,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:06:33 GMT
+      - Wed, 31 Mar 2021 07:57:47 GMT
       pragma:
       - no-cache
       server:
@@ -1247,12 +1361,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default/migrateToAutoscale/operationResults/ec19c774-6085-4e1e-b7cc-8ab77dbab070?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default/migrateToAutoscale/operationResults/d2f966fd-0f04-43f0-85e7-3c8408e035d3?api-version=2021-03-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default/migrateToAutoscale","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces/throughputSettings/migrateToAutoscale","name":"28eN","properties":{"resource":{"throughput":400,"autoscaleSettings":{"maxThroughput":4000},"minimumThroughput":"4000"}}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default/migrateToAutoscale","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces/throughputSettings/migrateToAutoscale","name":"wwzH","properties":{"resource":{"throughput":400,"autoscaleSettings":{"maxThroughput":4000},"minimumThroughput":"4000"}}}'
     headers:
       cache-control:
       - no-store, no-cache
@@ -1261,7 +1376,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:06:34 GMT
+      - Wed, 31 Mar 2021 07:57:48 GMT
       pragma:
       - no-cache
       server:
@@ -1291,15 +1406,16 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default/migrateToManualThroughput?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default/migrateToManualThroughput?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Enqueued"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/a15ade18-8ba9-41f3-a757-004fd844275d?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/cc5be1e4-e9f5-4c27-870a-7209dc759b19?api-version=2021-03-15
       cache-control:
       - no-store, no-cache
       content-length:
@@ -1307,9 +1423,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:06:35 GMT
+      - Wed, 31 Mar 2021 07:57:48 GMT
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default/migrateToManualThroughput/operationResults/a15ade18-8ba9-41f3-a757-004fd844275d?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default/migrateToManualThroughput/operationResults/cc5be1e4-e9f5-4c27-870a-7209dc759b19?api-version=2021-03-15
       pragma:
       - no-cache
       server:
@@ -1335,9 +1451,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/a15ade18-8ba9-41f3-a757-004fd844275d?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/cc5be1e4-e9f5-4c27-870a-7209dc759b19?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -1349,7 +1466,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:07:05 GMT
+      - Wed, 31 Mar 2021 07:58:18 GMT
       pragma:
       - no-cache
       server:
@@ -1377,12 +1494,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default/migrateToManualThroughput/operationResults/a15ade18-8ba9-41f3-a757-004fd844275d?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default/migrateToManualThroughput/operationResults/cc5be1e4-e9f5-4c27-870a-7209dc759b19?api-version=2021-03-15
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default/migrateToManualThroughput","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces/throughputSettings/migrateToManualThroughput","name":"28eN","properties":{"resource":{"throughput":4000,"minimumThroughput":"400"}}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/throughputSettings/default/migrateToManualThroughput","type":"Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces/throughputSettings/migrateToManualThroughput","name":"wwzH","properties":{"resource":{"throughput":4000,"minimumThroughput":"400"}}}'
     headers:
       cache-control:
       - no-store, no-cache
@@ -1391,7 +1509,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:07:05 GMT
+      - Wed, 31 Mar 2021 07:58:18 GMT
       pragma:
       - no-cache
       server:
@@ -1421,15 +1539,16 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Enqueued"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/5b637669-c5c7-4304-8dd6-91ee3d5f61a4?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/9f639caf-3d50-4ee9-9df0-fa1a6f9a952e?api-version=2021-03-15
       cache-control:
       - no-store, no-cache
       content-length:
@@ -1437,9 +1556,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:07:06 GMT
+      - Wed, 31 Mar 2021 07:58:18 GMT
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/operationResults/5b637669-c5c7-4304-8dd6-91ee3d5f61a4?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/tables/myTable/operationResults/9f639caf-3d50-4ee9-9df0-fa1a6f9a952e?api-version=2021-03-15
       pragma:
       - no-cache
       server:
@@ -1465,9 +1584,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/5b637669-c5c7-4304-8dd6-91ee3d5f61a4?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/9f639caf-3d50-4ee9-9df0-fa1a6f9a952e?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -1479,7 +1599,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:07:36 GMT
+      - Wed, 31 Mar 2021 07:58:49 GMT
       pragma:
       - no-cache
       server:
@@ -1509,15 +1629,16 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Enqueued"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/9c275bb6-436d-4f7f-b0fc-4a2852273c72?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/8cfe2ac5-2649-46cf-ab0f-599e4177b1a2?api-version=2021-03-15
       cache-control:
       - no-store, no-cache
       content-length:
@@ -1525,9 +1646,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:07:36 GMT
+      - Wed, 31 Mar 2021 07:58:49 GMT
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/operationResults/9c275bb6-436d-4f7f-b0fc-4a2852273c72?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/cassandraKeyspaces/myKeyspace/operationResults/8cfe2ac5-2649-46cf-ab0f-599e4177b1a2?api-version=2021-03-15
       pragma:
       - no-cache
       server:
@@ -1553,9 +1674,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/9c275bb6-436d-4f7f-b0fc-4a2852273c72?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/8cfe2ac5-2649-46cf-ab0f-599e4177b1a2?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -1567,7 +1689,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:08:07 GMT
+      - Wed, 31 Mar 2021 07:59:20 GMT
       pragma:
       - no-cache
       server:
@@ -1597,15 +1719,16 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_cassandra_test_cassandra_resource8f5f16f8/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Enqueued"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/15c9a2ac-7cac-4363-b21d-d2fbad972e76?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
       cache-control:
       - no-store, no-cache
       content-length:
@@ -1613,9 +1736,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:08:09 GMT
+      - Wed, 31 Mar 2021 07:59:21 GMT
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationResults/15c9a2ac-7cac-4363-b21d-d2fbad972e76?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationResults/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
       pragma:
       - no-cache
       server:
@@ -1641,9 +1764,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/15c9a2ac-7cac-4363-b21d-d2fbad972e76?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -1655,7 +1779,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:08:39 GMT
+      - Wed, 31 Mar 2021 07:59:51 GMT
       pragma:
       - no-cache
       server:
@@ -1683,9 +1807,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/15c9a2ac-7cac-4363-b21d-d2fbad972e76?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -1697,7 +1822,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:09:10 GMT
+      - Wed, 31 Mar 2021 08:00:21 GMT
       pragma:
       - no-cache
       server:
@@ -1725,9 +1850,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/15c9a2ac-7cac-4363-b21d-d2fbad972e76?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -1739,7 +1865,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:09:43 GMT
+      - Wed, 31 Mar 2021 08:00:52 GMT
       pragma:
       - no-cache
       server:
@@ -1767,9 +1893,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/15c9a2ac-7cac-4363-b21d-d2fbad972e76?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -1781,7 +1908,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:10:13 GMT
+      - Wed, 31 Mar 2021 08:01:21 GMT
       pragma:
       - no-cache
       server:
@@ -1809,9 +1936,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/15c9a2ac-7cac-4363-b21d-d2fbad972e76?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -1823,7 +1951,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:10:44 GMT
+      - Wed, 31 Mar 2021 08:01:52 GMT
       pragma:
       - no-cache
       server:
@@ -1851,9 +1979,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/15c9a2ac-7cac-4363-b21d-d2fbad972e76?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -1865,7 +1994,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:11:15 GMT
+      - Wed, 31 Mar 2021 08:02:22 GMT
       pragma:
       - no-cache
       server:
@@ -1893,9 +2022,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/15c9a2ac-7cac-4363-b21d-d2fbad972e76?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -1907,7 +2037,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:11:46 GMT
+      - Wed, 31 Mar 2021 08:02:52 GMT
       pragma:
       - no-cache
       server:
@@ -1935,9 +2065,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/15c9a2ac-7cac-4363-b21d-d2fbad972e76?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -1949,7 +2080,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:12:16 GMT
+      - Wed, 31 Mar 2021 08:03:22 GMT
       pragma:
       - no-cache
       server:
@@ -1977,9 +2108,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/15c9a2ac-7cac-4363-b21d-d2fbad972e76?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -1991,7 +2123,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:12:47 GMT
+      - Wed, 31 Mar 2021 08:03:53 GMT
       pragma:
       - no-cache
       server:
@@ -2019,9 +2151,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/15c9a2ac-7cac-4363-b21d-d2fbad972e76?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -2033,7 +2166,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:13:20 GMT
+      - Wed, 31 Mar 2021 08:04:22 GMT
       pragma:
       - no-cache
       server:
@@ -2061,9 +2194,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/15c9a2ac-7cac-4363-b21d-d2fbad972e76?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -2075,7 +2209,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:13:50 GMT
+      - Wed, 31 Mar 2021 08:04:52 GMT
       pragma:
       - no-cache
       server:
@@ -2103,9 +2237,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/15c9a2ac-7cac-4363-b21d-d2fbad972e76?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -2117,7 +2252,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:14:20 GMT
+      - Wed, 31 Mar 2021 08:05:22 GMT
       pragma:
       - no-cache
       server:
@@ -2145,9 +2280,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/15c9a2ac-7cac-4363-b21d-d2fbad972e76?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -2159,7 +2295,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:14:50 GMT
+      - Wed, 31 Mar 2021 08:05:52 GMT
       pragma:
       - no-cache
       server:
@@ -2187,9 +2323,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/15c9a2ac-7cac-4363-b21d-d2fbad972e76?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -2201,7 +2338,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:15:21 GMT
+      - Wed, 31 Mar 2021 08:06:23 GMT
       pragma:
       - no-cache
       server:
@@ -2229,9 +2366,311 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/0.8.0 Python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/15c9a2ac-7cac-4363-b21d-d2fbad972e76?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
+  response:
+    body:
+      string: '{"status":"Dequeued"}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json
+      date:
+      - Wed, 31 Mar 2021 08:06:53 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-gatewayversion:
+      - version=2.11.0
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
+  response:
+    body:
+      string: '{"status":"Dequeued"}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json
+      date:
+      - Wed, 31 Mar 2021 08:07:23 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-gatewayversion:
+      - version=2.11.0
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
+  response:
+    body:
+      string: '{"status":"Dequeued"}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json
+      date:
+      - Wed, 31 Mar 2021 08:07:54 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-gatewayversion:
+      - version=2.11.0
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
+  response:
+    body:
+      string: '{"status":"Dequeued"}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json
+      date:
+      - Wed, 31 Mar 2021 08:08:23 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-gatewayversion:
+      - version=2.11.0
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
+  response:
+    body:
+      string: '{"status":"Dequeued"}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json
+      date:
+      - Wed, 31 Mar 2021 08:08:54 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-gatewayversion:
+      - version=2.11.0
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
+  response:
+    body:
+      string: '{"status":"Dequeued"}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json
+      date:
+      - Wed, 31 Mar 2021 08:09:23 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-gatewayversion:
+      - version=2.11.0
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
+  response:
+    body:
+      string: '{"status":"Dequeued"}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json
+      date:
+      - Wed, 31 Mar 2021 08:09:54 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-gatewayversion:
+      - version=2.11.0
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/21c38129-42b1-40fc-8811-4cfe2e1af930?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -2243,7 +2682,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 24 Feb 2021 08:15:52 GMT
+      - Wed, 31 Mar 2021 08:10:23 GMT
       pragma:
       - no-cache
       server:
