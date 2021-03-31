@@ -96,6 +96,9 @@ def create_sdist_skeleton(build_directory, artifact_name, common_root):
         if p != artifact_name
     ]
 
+    print('I see the following packages in the build directory')
+    print(pkgs_for_consumption)
+
     for pkg in pkgs_for_consumption:
         pkg_till_common_root = os.path.join(pkg, common_root)
 
