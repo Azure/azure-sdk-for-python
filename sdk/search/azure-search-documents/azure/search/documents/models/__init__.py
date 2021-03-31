@@ -24,12 +24,25 @@
 #
 # --------------------------------------------------------------------------
 
-from .._generated.models import IndexAction, IndexingResult
+from .._generated.models import (
+    Answers,
+    IndexAction,
+    IndexingResult,
+    QueryLanguage,
+    QueryType,
+    SearchMode,
+    Speller,
+)
 from .._search_client import odata
 
 
 __all__ = (
+    "Answers",
     "IndexAction",
     "IndexingResult",
     "odata",
+    "QueryLanguage",
+    "QueryType",
+    "SearchMode",
+    "Speller",
 )

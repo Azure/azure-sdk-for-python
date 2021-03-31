@@ -5,6 +5,7 @@
 ### New features
 
 - Added new data source type ADLS gen2  #16852
+- Added support for semantic search    #17638
 
 ## 11.1.0 (2021-02-10)
 
