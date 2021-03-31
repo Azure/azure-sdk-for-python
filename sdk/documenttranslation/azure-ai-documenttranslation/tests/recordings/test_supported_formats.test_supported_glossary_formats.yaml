@@ -17,7 +17,7 @@ interactions:
       string: '{"value":[{"format":"XLIFF","fileExtensions":[".xlf"],"contentTypes":["application/xliff+xml"],"defaultVersion":"1.2","versions":["1.0","1.1","1.2"]},{"format":"TSV","fileExtensions":[".tsv",".tab"],"contentTypes":["text/tab-separated-values"]}]}'
     headers:
       apim-request-id:
-      - cdc8a083-0de2-490e-a279-edabfb7aea7e
+      - 968ea42d-65ce-47b0-b298-2e303d9ea09f
       cache-control:
       - public,max-age=1
       content-length:
@@ -25,12 +25,12 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 31 Mar 2021 00:57:42 GMT
+      - Wed, 31 Mar 2021 01:41:05 GMT
       etag:
       - '"E45B28E0479C2E4442005F96664ED8DE0001CBFEE34F87F4E4C6D25064CECB2F"'
       set-cookie:
-      - ARRAffinity=52534756bc24481c0848ee2def3c54a057fd0e51707d9dcf782aa603bbaa9f24;Path=/;HttpOnly;Secure;Domain=doctrans.northeu.microsofttranslator.com
-      - ARRAffinitySameSite=52534756bc24481c0848ee2def3c54a057fd0e51707d9dcf782aa603bbaa9f24;Path=/;HttpOnly;SameSite=None;Secure;Domain=doctrans.northeu.microsofttranslator.com
+      - ARRAffinity=36da0e643e19b219e9cc242244bbb17606f2f9cdc98871c377756b22cded58cb;Path=/;HttpOnly;Secure;Domain=doctrans.northeu.microsofttranslator.com
+      - ARRAffinitySameSite=36da0e643e19b219e9cc242244bbb17606f2f9cdc98871c377756b22cded58cb;Path=/;HttpOnly;SameSite=None;Secure;Domain=doctrans.northeu.microsofttranslator.com
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -42,7 +42,7 @@ interactions:
       x-powered-by:
       - ASP.NET
       x-requestid:
-      - cdc8a083-0de2-490e-a279-edabfb7aea7e
+      - 968ea42d-65ce-47b0-b298-2e303d9ea09f
     status:
       code: 200
       message: OK

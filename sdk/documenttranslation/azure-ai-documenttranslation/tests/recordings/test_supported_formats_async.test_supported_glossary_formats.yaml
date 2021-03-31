@@ -12,11 +12,11 @@ interactions:
     body:
       string: '{"value":[{"format":"XLIFF","fileExtensions":[".xlf"],"contentTypes":["application/xliff+xml"],"defaultVersion":"1.2","versions":["1.0","1.1","1.2"]},{"format":"TSV","fileExtensions":[".tsv",".tab"],"contentTypes":["text/tab-separated-values"]}]}'
     headers:
-      apim-request-id: 3846b135-6b60-4c6b-959f-21875546f313
+      apim-request-id: fd5b0e8c-1e73-49e9-8686-ffbd8e6418c2
       cache-control: public,max-age=1
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 00:57:44 GMT
+      date: Wed, 31 Mar 2021 01:41:06 GMT
       etag: '"E45B28E0479C2E4442005F96664ED8DE0001CBFEE34F87F4E4C6D25064CECB2F"'
       set-cookie: ARRAffinitySameSite=52534756bc24481c0848ee2def3c54a057fd0e51707d9dcf782aa603bbaa9f24;Path=/;HttpOnly;SameSite=None;Secure;Domain=doctrans.northeu.microsofttranslator.com
       strict-transport-security: max-age=31536000; includeSubDomains; preload
@@ -24,7 +24,7 @@ interactions:
       vary: Accept-Encoding
       x-content-type-options: nosniff
       x-powered-by: ASP.NET
-      x-requestid: 3846b135-6b60-4c6b-959f-21875546f313
+      x-requestid: fd5b0e8c-1e73-49e9-8686-ffbd8e6418c2
     status:
       code: 200
       message: OK
