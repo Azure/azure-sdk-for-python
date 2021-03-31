@@ -136,18 +136,6 @@ class DatasetReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DATASET_REFERENCE = "DatasetReference"
 
 class DayOfWeek(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The days of the week.
-    """
-
-    SUNDAY = "Sunday"
-    MONDAY = "Monday"
-    TUESDAY = "Tuesday"
-    WEDNESDAY = "Wednesday"
-    THURSDAY = "Thursday"
-    FRIDAY = "Friday"
-    SATURDAY = "Saturday"
-
-class DaysOfWeek(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     SUNDAY = "Sunday"
     MONDAY = "Monday"

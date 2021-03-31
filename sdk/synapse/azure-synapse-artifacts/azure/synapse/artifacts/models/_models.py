@@ -25409,7 +25409,7 @@ class RecurrenceSchedule(msrest.serialization.Model):
     :param hours: The hours.
     :type hours: list[int]
     :param week_days: The days of the week.
-    :type week_days: list[str or ~azure.synapse.artifacts.models.DaysOfWeek]
+    :type week_days: list[str or ~azure.synapse.artifacts.models.DayOfWeek]
     :param month_days: The month days.
     :type month_days: list[int]
     :param monthly_occurrences: The monthly occurrences.
