@@ -17,6 +17,10 @@ from azure.core.credentials import AccessToken
 
 def parse_connection_str(conn_str):
     # type: (str) -> Tuple[str, str, str, str]
+    if conn_str is None:
+        raise ValueError(
+            "Connection string is undefined."
+        )
     endpoint = None
     shared_access_key = None
     for element in conn_str.split(";"):
@@ -27,8 +31,8 @@ def parse_connection_str(conn_str):
             shared_access_key = value
     if not all([endpoint, shared_access_key]):
         raise ValueError(
-            "Invalid connection string. Should be in the format: "
-            "endpoint=sb://<FQDN>/;accesskey=<KeyValue>"
+            "Invalid connection string. You can get the connection string from you resource page in the Azure Portal. "
+            "The format should be as follows: endpoint=https://<ResourceUrl>/;accesskey=<KeyValue>"
         )
     left_slash_pos = cast(str, endpoint).find("//")
     if left_slash_pos != -1:
@@ -70,11 +74,6 @@ def create_access_token(token):
             _convert_expires_on_datetime_to_utc_int(datetime.fromtimestamp(payload['exp']).replace(tzinfo=TZ_UTC)))
     except ValueError:
         raise ValueError(token_parse_err_msg)
-
-def _convert_expires_on_datetime_to_utc_int(expires_on):
-    epoch = time.mktime(datetime(1970, 1, 1).timetuple())
-    return epoch-time.mktime(expires_on.timetuple())
-
 
 def get_authentication_policy(
         endpoint, # type: str
