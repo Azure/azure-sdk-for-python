@@ -274,7 +274,7 @@ class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, to
             documents_not_yet_started_count=batch_status_details.summary.not_yet_started,
             documents_cancelled_count=batch_status_details.summary.cancelled,
             total_characters_charged=batch_status_details.summary.total_character_charged,
-            has_completed=bool(batch_status_details.status not in ["NotStarted", "Running"])
+            has_completed=bool(batch_status_details.status not in ["NotStarted", "Running", "Cancelling"])
         )
 
 
@@ -343,7 +343,7 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
             translation_progress=doc_status.progress,
             id=doc_status.id,
             characters_charged=doc_status.character_charged,
-            has_completed=bool(doc_status.status not in ["NotStarted", "Running"])
+            has_completed=bool(doc_status.status not in ["NotStarted", "Running", "Cancelling"])
         )
 
 
