@@ -203,7 +203,7 @@ class DocumentTranslationClient(object):
             initial_response=pipeline_response,
             deserialization_callback=callback,
             polling_method=AsyncLROBasePolling(
-                timeout=self._client._config.polling_interval,
+                timeout=self._client._config.polling_interval,  # pylint: disable=protected-access
                 lro_algorithms=[TranslationPolling()],
                 **kwargs
             ),
