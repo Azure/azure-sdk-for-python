@@ -233,7 +233,7 @@ class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, to
     :ivar int documents_not_yet_started_count: Number of documents that have not yet started being translated.
     :ivar int documents_cancelled_count: Number of documents that were cancelled for translation.
     :ivar int total_characters_charged: Total characters charged across all documents within the job.
-    :ivar bool has_completed: boolean to check whether a document finished translation or not.
+    :ivar bool has_completed: boolean to check whether a job has finished or not.
         If the status returned indicates that the translation job has completed.
         A translation job is considered 'complete' if it has reached
         a terminal state like 'Succeeded', 'Cancelled', or 'Failed'."
