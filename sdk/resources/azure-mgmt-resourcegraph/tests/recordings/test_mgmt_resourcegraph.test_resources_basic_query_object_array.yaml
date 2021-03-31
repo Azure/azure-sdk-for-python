@@ -1,7 +1,8 @@
 interactions:
 - request:
     body: '{"subscriptions": ["00000000-0000-0000-0000-000000000000"], "query": "project
-      id, tags, properties | limit 2", "options": {"resultFormat": "objectArray"}}'
+      id, tags, properties | limit 2", "options": {"resultFormat": "objectArray",
+      "allowPartialScopes": false}}'
     headers:
       Accept:
       - application/json
@@ -10,25 +11,26 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '154'
+      - '183'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-resourcegraph/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resourcegraph/8.0.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
-    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2020-04-01-preview
+    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01
   response:
     body:
-      string: '{"totalRecords":2,"count":2,"data":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/move_resource_name/providers/Microsoft.Migrate/moveCollections/move-collection-test6","tags":{},"properties":{"provisioningState":"Succeeded","targetRegion":"eastus","sourceRegion":"eastus2","errors":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/networkInterfaces/anf-sdknettestqa2vnet464-nic-2JBDNX","tags":null,"properties":{"provisioningState":"Succeeded","primary":true,"resourceGuid":"94219f98-9158-4ef7-ad73-93bc7df3acad","enableAcceleratedNetworking":false,"ipConfigurations":[{"properties":{"provisioningState":"Succeeded","privateIPAddressVersion":"IPv4","privateIPAllocationMethod":"Dynamic","privateIPAddress":"10.1.0.4","subnet":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/virtualNetworks/sdknettestqa2vnet464/subnets/default"},"primary":true},"type":"Microsoft.Network/networkInterfaces/ipConfigurations","name":"ipconfig1","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/networkInterfaces/anf-sdknettestqa2vnet464-nic-2JBDNX/ipConfigurations/ipconfig1","etag":"W/\"5a0cb003-a7fe-4d87-bcf4-cded6e155953\""}],"enableIPForwarding":false,"tapConfigurations":[],"hostedWorkloads":["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1"],"dnsSettings":{"internalDomainNameSuffix":"m0jm1iggslrejebzfdjidfxjxe.bx.internal.cloudapp.net","appliedDnsServers":[],"dnsServers":[]},"macAddress":"","nicType":"Standard","linkedResourceType":"Microsoft.Netapp/volumes"}}],"facets":[],"resultTruncated":"false"}'
+      string: '{"totalRecords":2,"count":2,"data":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/yyc-eastus2/providers/Microsoft.MixedReality/spatialAnchorsAccounts/saa","tags":{"tag1":"myTag1"},"properties":{"storageAccountName":"san0","accountId":"809f15cd-e50b-4bb8-a2bb-0b3c87c8336e","accountDomain":"mixedreality.azure.com"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitest.rgc5n3jqpfxbfwma5wufo7spusf5iy7t7ridd2enjhhcl7exugqooidgqgi5ydpuwds/providers/Microsoft.KeyVault/vaults/clitestv4dmu76nmw72mcmoj","tags":{},"properties":{"provisioningState":"Succeeded","sku":{"name":"standard","family":"A"},"tenantId":"00000000-0000-0000-0000-000000000000","enabledForDeployment":false,"accessPolicies":[{"permissions":{"secrets":["get","list","set","delete","backup","restore","recover"],"certificates":["get","list","delete","create","import","update","managecontacts","getissuers","listissuers","setissuers","deleteissuers","manageissuers","recover"],"keys":["get","create","delete","list","update","import","backup","restore","recover"],"storage":["get","list","delete","set","update","regeneratekey","setsas","listsas","getsas","deletesas"]},"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"21cd756e-e290-4a26-9547-93e8cc1a8923"}],"softDeleteRetentionInDays":90,"enableSoftDelete":true,"vaultUri":"https://clitestv4dmu76nmw72mcmoj.vault.azure.net/"}}],"facets":[],"resultTruncated":"false"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1896'
+      - '1452'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 15 Dec 2020 09:46:55 GMT
+      - Wed, 31 Mar 2021 05:52:18 GMT
       expires:
       - '-1'
       pragma:
