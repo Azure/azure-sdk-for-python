@@ -6,7 +6,7 @@
     "Agent": {
       "ubuntu-18.04": { "OSVmImage": "MMSUbuntu18.04", "Pool": "azsdk-pool-mms-ubuntu-1804-general" }
     },
-    "PythonVersion": [ "3.7", "3.8", "3.9", "pypy3" ],
+    "PythonVersion": [ "2.7", "3.6", "3.8", "3.9", "pypy3" ],
     "CoverageArg": "--disablecov"
   },
   "include": [

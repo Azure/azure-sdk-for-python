@@ -4,7 +4,11 @@
   },
   "exclude": [
       {
-          "PythonVersion": [ "2.7", "3.6", "pypy3" ]
+          "OSVmImage": "MMSUbuntu18.04",
+          "PythonVersion": [ "3.6", "pypy3" ]
+      },
+      {
+          "OSVmImage": "macOS-10.15"
       }
   ]
 }
