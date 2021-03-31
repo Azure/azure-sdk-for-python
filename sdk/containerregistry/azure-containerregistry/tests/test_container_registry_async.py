@@ -37,13 +37,34 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
 
         count = 0
         prev = None
-        async for repo in client.list_repositories():
+        async for repo in await client.list_repositories():
             count += 1
             assert isinstance(repo, six.string_types)
             assert prev != repo
             prev = repo
 
         assert count > 0
+
+    @acr_preparer()
+    async def test_list_repositories_by_page(self, containerregistry_baseurl):
+        client = self.create_registry_client(containerregistry_baseurl)
+        page_size = 2
+        total_pages = 0
+
+        repository_pages = await client.list_repositories(page_size=page_size)
+
+        prev = None
+        async for page in repository_pages.by_page():
+            page_count = 0
+            async for repo in page:
+                assert isinstance(repo, six.string_types)
+                assert prev != repo
+                prev = repo
+                page_count += 1
+            assert page_count <= page_size
+            total_pages += 1
+
+        assert total_pages > 1
 
     @pytest.mark.skip("Don't want to delete for now")
     @acr_preparer()
