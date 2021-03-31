@@ -1,8 +1,8 @@
 # Release History
 
-## 1.0.0b9 (Unreleased)
+## 1.0.0b9 (2021-04-05)
 
-- Pinned opentelemetry-api to version 1.0.0
+- Updated opentelemetry-api to version 1.0.0
 - `Link` and `SpanKind` can now be added while creating the span instance.
 
 ## 1.0.0b8 (2021-02-08)
