@@ -13,7 +13,7 @@ and PhoneNumbersAsyncClient.list_purchased_phone_numbers
 - Dropped support for Python 3.5
 
 ### Added
-- Added PhoneNumbersAdministrationClient (originally was part of the azure.communication.administration package).
+- Added PhoneNumbersClient (originally was part of the azure.communication.administration package).
 
 
 
