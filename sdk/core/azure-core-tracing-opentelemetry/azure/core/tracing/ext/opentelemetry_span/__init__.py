@@ -77,7 +77,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
                     ctx = extract(link.headers)
                     span_ctx = get_span_from_context(ctx).get_span_context()
                     ot_links.append(OpenTelemetryLink(span_ctx, link.attributes))
-                    kwargs.setdefault('links', ot_links)
+                kwargs.setdefault('links', ot_links)
             except AttributeError:
                 # we will just send the links as is if it's not ~azure.core.tracing.Link without any validation
                 # assuming user knows what they are doing.
