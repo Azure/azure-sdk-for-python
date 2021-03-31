@@ -8,7 +8,7 @@ import logging
 from typing import Iterable, Union, Optional, Any, AnyStr, List, TYPE_CHECKING
 import time
 
-from uamqp import types, constants, errors, c_uamqp
+from uamqp import types, constants, errors
 from uamqp import SendClientAsync
 
 from azure.core.tracing import AbstractSpan
@@ -140,7 +140,6 @@ class EventHubProducer(
         last_exception: Optional[Exception] = None,
     ) -> None:
         # TODO: Correct uAMQP type hints
-        # pylint: disable=protected-access
         if self._unsent_events:
             await self._open()
             self._set_msg_timeout(timeout_time, last_exception)

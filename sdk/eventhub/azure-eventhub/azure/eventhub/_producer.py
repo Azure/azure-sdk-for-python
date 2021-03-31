@@ -18,7 +18,7 @@ from typing import (
     TYPE_CHECKING,
 )  # pylint: disable=unused-import
 
-from uamqp import types, constants, errors, c_uamqp
+from uamqp import types, constants, errors
 from uamqp import SendClient
 
 from azure.core.tracing import AbstractSpan
@@ -154,7 +154,6 @@ class EventHubProducer(
 
     def _send_event_data(self, timeout_time=None, last_exception=None):
         # type: (Optional[float], Optional[Exception]) -> None
-        # pylint: disable=protected-access
         if self._unsent_events:
             self._open()
             self._set_msg_timeout(timeout_time, last_exception)
