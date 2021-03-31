@@ -54,7 +54,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        await self._client.container_registry_repository.delete_manifest(self.repository, digest)
+        await self._client.container_registry_repository.delete_manifest(self.repository, digest, **kwargs)
 
     async def delete_tag(self, tag, **kwargs):
         # type: (str) -> None

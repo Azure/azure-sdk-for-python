@@ -159,6 +159,7 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
         assert count > 0
 
+    @pytest.mark.live_test_only  # Recordings error, recieves more than 100 headers, not that many present
     @acr_preparer()
     def test_set_tag_properties(
         self, containerregistry_baseurl, containerregistry_resource_group
@@ -189,6 +190,7 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
         assert received.content_permissions.can_list == False
         assert received.content_permissions.can_delete == False
 
+    @pytest.mark.live_test_only  # Recordings error, recieves more than 100 headers, not that many present
     @acr_preparer()
     def test_set_tag_properties_does_not_exist(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.get_resource_name("repo"))
@@ -196,6 +198,7 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
         with pytest.raises(ResourceNotFoundError):
             client.set_tag_properties("does_not_exist", ContentPermissions(can_delete=False))
 
+    @pytest.mark.live_test_only  # Recordings error, recieves more than 100 headers, not that many present
     @acr_preparer()
     def test_set_manifest_properties(
         self, containerregistry_baseurl, containerregistry_resource_group
@@ -228,6 +231,7 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
             break
 
+    @pytest.mark.live_test_only  # Recordings error, recieves more than 100 headers, not that many present
     @acr_preparer()
     def test_set_manifest_properties_does_not_exist(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.get_resource_name("repo"))
