@@ -75,7 +75,7 @@ class CommunicationUserIdentifier(object):
 
 
 PhoneNumberProperties = TypedDict(
-    'CommunicationUserProperties',
+    'PhoneNumberProperties',
     phone_number=str
 )
 
