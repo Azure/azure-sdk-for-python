@@ -275,6 +275,8 @@ class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, to
 class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritance, R0903
     """Status information about a particular document within a translation job.
 
+    :ivar str source_document_url: Location of the source document in the source
+        container. Note that any SAS tokens are removed from this path.
     :ivar str translated_document_url: Location of the translated document in the target
         container. Note that any SAS tokens are removed from this path.
     :ivar created_on: The date time when the document was created.
@@ -305,6 +307,7 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
         **kwargs
     ):
         # type: (**Any) -> None
+        self.source_document_url = kwargs.get('source_document_url', None)
         self.translated_document_url = kwargs.get('translated_document_url', None)
         self.created_on = kwargs['created_on']
         self.last_updated_on = kwargs['last_updated_on']
@@ -319,6 +322,7 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
     @classmethod
     def _from_generated(cls, doc_status):
         return cls(
+            source_document_url=doc_status.source_path,
             translated_document_url=doc_status.path,
             created_on=doc_status.created_date_time_utc,
             last_updated_on=doc_status.last_action_date_time_utc,
