@@ -8,7 +8,7 @@ import logging
 from typing import Iterable, Union, Optional, Any, AnyStr, List, TYPE_CHECKING
 import time
 
-from uamqp import types, constants, errors
+from uamqp import types, constants, errors, c_uamqp
 from uamqp import SendClientAsync
 
 from azure.core.tracing import AbstractSpan
@@ -141,6 +141,7 @@ class EventHubProducer(
     ) -> None:
         # TODO: Correct uAMQP type hints
         if self._unsent_events:
+            self._back_up_events = self._unsent_events
             await self._open()
             self._set_msg_timeout(timeout_time, last_exception)
             self._handler.queue_message(*self._unsent_events)  # type: ignore
@@ -150,6 +151,13 @@ class EventHubProducer(
                 if self._outcome == constants.MessageSendResult.Timeout:
                     self._condition = OperationTimeoutError("Send operation timed out")
                 if self._condition:
+                    if "Message sender failed to add message data to outgoing queue." in str(self._condition) and \
+                            self._handler._connection._state in \
+                            (c_uamqp.ConnectionState.END, c_uamqp.ConnectionState.DISCARDING):
+                        self._unsent_events = self._back_up_events
+                        for msg in self._unsent_events:
+                            msg._response = None
+                        raise errors.ConnectionClose(b"The underlying connection is either closing or closed.")
                     raise self._condition
 
     async def _send_event_data_with_retry(
