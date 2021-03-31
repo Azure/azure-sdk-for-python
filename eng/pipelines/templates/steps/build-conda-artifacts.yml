@@ -41,14 +41,14 @@ steps:
     - pwsh:
         Write-Host "Clean up Conda Build Directory $(conda.build)"
         Remove-Item $(conda.build)/* -Recurse -Force
-      displayName: Clean Conda Build Directory
+      displayName: 'Clean Up Before Building ${{ artifact.name }}'
 
     - ${{ each checkout in artifact.checkout }}:
-      - pwsh: |
-          Write-Host "${{checkout.package}}"
-          Write-Host "${{checkout.checkout_path}}"
-          Write-Host "${{checkout.version}}"
-        displayName: Write Variables for Debug
+      # - pwsh: |
+      #     Write-Host "${{checkout.package}}"
+      #     Write-Host "${{checkout.checkout_path}}"
+      #     Write-Host "${{checkout.version}}"
+      #   displayName: Write Variables for Debug
 
       - template: /eng/pipelines/templates/steps/get-tagged-code.yml
         parameters:
@@ -58,13 +58,12 @@ steps:
           Version: ${{checkout.version}}
 
     - task: PythonScript@0
-      displayName: 'Build Combined SDIST'
+      displayName: 'Build Source Distribution for ${{ artifact.name }}'
       inputs:
         scriptPath: 'scripts/devops_tasks/build_conda_artifacts.py'
         arguments: '-d "$(conda.output)" -b "$(conda.build)" -m "$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.meta_source }}" -r "${{ artifact.common_root }}" -n "${{ artifact.name }}" -s "${{ parameters.ServiceDirectory }}" -o "${{ upper(parameters.ServiceDirectory) }}_SOURCE_DISTRIBUTION"'
   
     - pwsh: |
-        Write-Host "Does the environment variable have a properly set output location?"
         Write-Host "$env:${{ upper(parameters.ServiceDirectory) }}_SOURCE_DISTRIBUTION"
       displayName: 'Conda Build ${{ artifact.name }}'
       
