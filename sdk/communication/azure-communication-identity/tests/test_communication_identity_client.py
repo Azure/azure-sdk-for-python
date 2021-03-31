@@ -5,6 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
+import datetime
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.identity import CommunicationTokenScope
 from azure.core.credentials import AccessToken
@@ -32,7 +33,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
             BodyReplacerProcessor(keys=["id", "token"]),
             URIIdentityReplacer()])
     
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
     @CommunicationServicePreparer()
     def test_create_user_from_managed_identity(self, connection_string):
         endpoint, access_key = parse_connection_str(connection_string)
@@ -46,7 +47,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
 
         assert user.identifier is not None
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
     @CommunicationServicePreparer()
     def test_create_user(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -55,7 +56,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
 
         assert user.identifier is not None
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
     @CommunicationServicePreparer()
     def test_create_user_and_token(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
@@ -64,7 +65,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert user.identifier is not None
         assert token_response.token is not None
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
     @CommunicationServicePreparer()
     def test_get_token_from_managed_identity(self, connection_string):
         endpoint, access_key = parse_connection_str(connection_string)
@@ -81,7 +82,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert user.identifier is not None
         assert token_response.token is not None
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
     @CommunicationServicePreparer()
     def test_get_token(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -93,7 +94,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert user.identifier is not None
         assert token_response.token is not None
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
     @CommunicationServicePreparer()
     def test_revoke_tokens_from_managed_identity(self, connection_string):
         endpoint, access_key = parse_connection_str(connection_string)
@@ -111,7 +112,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert user.identifier is not None
         assert token_response.token is not None
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
     @CommunicationServicePreparer()
     def test_revoke_tokens(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -124,7 +125,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert user.identifier is not None
         assert token_response.token is not None
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
     @CommunicationServicePreparer()
     def test_delete_user_from_managed_identity(self, connection_string):
         endpoint, access_key = parse_connection_str(connection_string)
@@ -140,7 +141,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
 
         assert user.identifier is not None
 
-    @ResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
     @CommunicationServicePreparer()
     def test_delete_user(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
