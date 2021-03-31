@@ -56,6 +56,9 @@ class OpenCensusSpan(HttpSpanMixin, object):
         :type span: :class: opencensus.trace.Span
         :param name: The name of the OpenCensus span to create if a new span is needed
         :type name: str
+        :keyword SpanKind kind: The span kind of this span.
+        :keyword links: The list of links to be added to the span.
+        :paramtype links: list[~azure.core.tracing.Link]
         """
         tracer = self.get_current_tracer()
         self._span_instance = span or tracer.start_span(name=name, **kwargs)
@@ -74,6 +77,9 @@ class OpenCensusSpan(HttpSpanMixin, object):
         Create a child span for the current span and append it to the child spans list in the span instance.
         :param name: Name of the child span
         :type name: str
+        :keyword SpanKind kind: The span kind of this span.
+        :keyword links: The list of links to be added to the span.
+        :paramtype links: list[~azure.core.tracing.Link]
         :return: The OpenCensusSpan that is wrapping the child span instance
         """
         return self.__class__(name=name, **kwargs)
