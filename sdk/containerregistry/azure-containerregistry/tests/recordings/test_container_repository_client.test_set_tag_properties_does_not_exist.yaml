@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: null
+    body: '{"deleteEnabled": false}'
     headers:
       Accept:
       - application/json
@@ -9,15 +9,17 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '0'
+      - '24'
+      Content-Type:
+      - application/json
       User-Agent:
       - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: DELETE
-    uri: https://fake_url.azurecr.io/acr/v1/not_real_repo
+    method: PATCH
+    uri: https://fake_url.azurecr.io/acr/v1/repo2b291da6/_tags/does_not_exist
   response:
     body:
       string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"not_real_repo","Action":"delete"}]}]}
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"repo2b291da6","Action":"metadata_write"}]}]}
 
         '
     headers:
@@ -29,11 +31,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '209'
+      - '216'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 31 Mar 2021 15:48:29 GMT
+      - Wed, 31 Mar 2021 15:48:35 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -73,7 +75,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 31 Mar 2021 15:48:31 GMT
+      - Wed, 31 Mar 2021 15:48:37 GMT
       server:
       - openresty
       strict-transport-security:
@@ -84,7 +86,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Anot_real_repo%3Adelete&refresh_token=REDACTED
+    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Arepo2b291da6%3Ametadata_write&refresh_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -93,7 +95,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1074'
+      - '1081'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -109,7 +111,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 31 Mar 2021 15:48:31 GMT
+      - Wed, 31 Mar 2021 15:48:37 GMT
       server:
       - openresty
       strict-transport-security:
@@ -120,7 +122,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: null
+    body: '{"deleteEnabled": false}'
     headers:
       Accept:
       - application/json
@@ -129,15 +131,17 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '0'
+      - '24'
+      Content-Type:
+      - application/json
       User-Agent:
       - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: DELETE
-    uri: https://fake_url.azurecr.io/acr/v1/not_real_repo
+    method: PATCH
+    uri: https://fake_url.azurecr.io/acr/v1/repo2b291da6/_tags/does_not_exist
   response:
     body:
-      string: '{"errors":[{"code":"NAME_UNKNOWN","message":"repository name not known
-        to registry","detail":{"name":"not_real_repo"}}]}
+      string: '{"errors":[{"code":"TAG_UNKNOWN","message":"the specified tag does
+        not exist"}]}
 
         '
     headers:
@@ -149,11 +153,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '121'
+      - '81'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 31 Mar 2021 15:48:31 GMT
+      - Wed, 31 Mar 2021 15:48:37 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

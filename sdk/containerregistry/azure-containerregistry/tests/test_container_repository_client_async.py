@@ -135,6 +135,13 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert received.content_permissions.can_delete == False
 
     @acr_preparer()
+    async def test_set_tag_properties_does_not_exist(self, containerregistry_baseurl):
+        client = self.create_repository_client(containerregistry_baseurl, self.get_resource_name("repo"))
+
+        with pytest.raises(ResourceNotFoundError):
+            await client.set_tag_properties("does_not_exist", ContentPermissions(can_delete=False))
+
+    @acr_preparer()
     async def test_set_manifest_properties(
         self, containerregistry_baseurl, containerregistry_resource_group
     ):
@@ -165,3 +172,10 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
             assert received_permissions.content_permissions.can_write == False
 
             break
+
+    @acr_preparer()
+    async def test_set_manifest_properties_does_not_exist(self, containerregistry_baseurl):
+        client = self.create_repository_client(containerregistry_baseurl, self.get_resource_name("repo"))
+
+        with pytest.raises(ResourceNotFoundError):
+            await client.set_manifest_properties("sha256:abcdef", ContentPermissions(can_delete=False))
