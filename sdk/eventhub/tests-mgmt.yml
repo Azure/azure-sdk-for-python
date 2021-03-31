@@ -6,8 +6,6 @@ stages:
       AllocateResourceGroup: false
       ServiceDirectory: eventhub
       BuildTargetingString: azure-mgmt-eventhub
-      MatrixFilters:
-        - PythonVersion=^(?!pypy3).*
       EnvVars:
         AZURE_CLIENT_ID: $(python-eh-livetest-event-hub-aad-client-id)
         AZURE_TENANT_ID: $(python-eh-livetest-event-hub-aad-tenant-id)
