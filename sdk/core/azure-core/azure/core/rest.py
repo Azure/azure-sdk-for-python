@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import copy
+import six
 import os
 import binascii
 import codecs
@@ -33,7 +33,7 @@ from enum import Enum
 import xml.etree.ElementTree as ET
 from typing import TYPE_CHECKING, Iterable, AsyncIterable
 
-from .pipeline.transport import (
+from azure.core.pipeline.transport import (
     HttpRequest as _PipelineTransportHttpRequest,
 )
 
@@ -48,7 +48,7 @@ if TYPE_CHECKING:
         Sequence[Tuple[str, str]]
     ]
     ContentType = Union[str, bytes, ByteStream]
-    from .pipeline.transport._base import (
+    from azure.core.pipeline.transport._base import (
         _HttpResponseBase as _PipelineTransportHttpResponseBase
     )
 
@@ -101,7 +101,7 @@ def _set_content_body(content, internal_request):
         internal_request.set_streamed_data_body(content)
         if isinstance(content, (str, bytes)) and content:
             _set_content_length_header("Content-Length", str(len(internal_request.data)), internal_request)
-            if isinstance(content, str):
+            if isinstance(content, six.string_types):
                 _set_content_type_header("text/plain", internal_request)
             else:
                 _set_content_type_header("application/octet-stream", internal_request)

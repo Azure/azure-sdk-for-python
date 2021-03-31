@@ -29,7 +29,7 @@ def test_rest_iterable_content():
             yield b"test 123"  # pragma: nocover
 
     request = HttpRequest("POST", "http://example.org", content=Content())
-    assert request.headers == {"Transfer-Encoding": "chunked"}
+    assert request.headers == {"Transfer-Encoding": "chunked", "Content-Type": "application/octet-stream"}
 
 
 def test_rest_generator_with_transfer_encoding_header():
@@ -37,7 +37,7 @@ def test_rest_generator_with_transfer_encoding_header():
         yield b"test 123"  # pragma: nocover
 
     request = HttpRequest("POST", "http://example.org", content=content())
-    assert request.headers == {"Transfer-Encoding": "chunked"}
+    assert request.headers == {"Transfer-Encoding": "chunked", "Content-Type": "application/octet-stream"}
 
 
 def test_rest_generator_with_content_length_header():
@@ -48,7 +48,7 @@ def test_rest_generator_with_content_length_header():
     request = HttpRequest(
         "POST", "http://example.org", content=content(), headers=headers
     )
-    assert request.headers == {"Content-Length": "8"}
+    assert request.headers == {"Content-Length": "8", "Content-Type": "application/octet-stream"}
 
 
 def test_rest_url_encoded_data():
@@ -123,22 +123,40 @@ def test_rest_empty_content():
     request = HttpRequest("GET", "http://example.org")
     assert request.content == None
 
+def test_rest_string_content():
+    request = HttpRequest("PUT", "http://example.org", content="Hello, world!")
+    assert request.headers == {"Content-Length": "13", "Content-Type": "text/plain"}
+    assert request.content == "Hello, world!"
+
+    # Support 'data' for compat with requests.
+    request = HttpRequest("PUT", "http://example.org", data="Hello, world!")
+
+    assert request.headers == {"Content-Length": "13", "Content-Type": "text/plain"}
+    assert request.content == "Hello, world!"
+
+    # content length should not be set for GET requests
+
+    request = HttpRequest("GET", "http://example.org", data="Hello, world!")
+
+    assert request.headers == {"Content-Type": "text/plain"}
+    assert request.content == "Hello, world!"
+
 def test_rest_bytes_content():
     request = HttpRequest("PUT", "http://example.org", content=b"Hello, world!")
-    assert request.headers == {"Content-Length": "13"}
+    assert request.headers == {"Content-Length": "13", "Content-Type": "application/octet-stream"}
     assert request.content == b"Hello, world!"
 
     # Support 'data' for compat with requests.
     request = HttpRequest("PUT", "http://example.org", data=b"Hello, world!")
 
-    assert request.headers == {"Content-Length": "13"}
+    assert request.headers == {"Content-Length": "13", "Content-Type": "application/octet-stream"}
     assert request.content == b"Hello, world!"
 
     # content length should not be set for GET requests
 
     request = HttpRequest("GET", "http://example.org", data=b"Hello, world!")
 
-    assert request.headers == {}
+    assert request.headers == {"Content-Type": "application/octet-stream"}
     assert request.content == b"Hello, world!"
 
 def test_rest_iterator_content():
@@ -149,19 +167,19 @@ def test_rest_iterator_content():
 
     request = HttpRequest("POST", url="http://example.org", content=hello_world())
 
-    assert request.headers == {"Transfer-Encoding": "chunked"}
+    assert request.headers == {"Transfer-Encoding": "chunked", "Content-Type": "application/octet-stream"}
     assert isinstance(request.content, Generator)
 
     # Support 'data' for compat with requests.
     request = HttpRequest("POST", url="http://example.org", data=hello_world())
 
-    assert request.headers == {"Transfer-Encoding": "chunked"}
+    assert request.headers == {"Transfer-Encoding": "chunked", "Content-Type": "application/octet-stream"}
     assert isinstance(request.content, Generator)
 
     # transfer encoding should not be set for GET requests
     request = HttpRequest("GET", url="http://example.org", data=hello_world())
 
-    assert request.headers == {}
+    assert request.headers == {"Content-Type": "application/octet-stream"}
     assert isinstance(request.content, Generator)
 
 
@@ -173,19 +191,19 @@ async def test_rest_aiterator_content():
 
     request = HttpRequest("POST", url="http://example.org", content=hello_world())
 
-    assert request.headers == {"Transfer-Encoding": "chunked"}
+    assert request.headers == {"Transfer-Encoding": "chunked", "Content-Type": "application/octet-stream"}
     assert isinstance(request.content, AsyncGenerator)
 
     # Support 'data' for compat with requests.
     request = HttpRequest("POST", url="http://example.org", data=hello_world())
 
-    assert request.headers == {"Transfer-Encoding": "chunked"}
+    assert request.headers == {"Transfer-Encoding": "chunked", "Content-Type": "application/octet-stream"}
     assert isinstance(request.content, AsyncGenerator)
 
     # transfer encoding should not be set for GET requests
     request = HttpRequest("GET", url="http://example.org", data=hello_world())
 
-    assert request.headers == {}
+    assert request.headers == {"Content-Type": "application/octet-stream"}
     assert isinstance(request.content, AsyncGenerator)
 
 
