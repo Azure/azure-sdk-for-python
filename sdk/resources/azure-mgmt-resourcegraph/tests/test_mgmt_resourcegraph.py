@@ -149,7 +149,7 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
 
         # Top-level response fields
         self.assertEqual(query_response.count, 10)
-        self.assertEqual(query_response.total_records, 8)
+        self.assertEqual(query_response.total_records, 10)
         self.assertIsNone(query_response.skip_token)
         self.assertEqual(query_response.result_truncated, ResultTruncated.false)
         self.assertIsNotNone(query_response.data)
