@@ -64,7 +64,7 @@ steps:
         arguments: '-d "$(conda.output)" -b "$(conda.build)" -m "$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.meta_source }}" -r "${{ artifact.common_root }}" -n "${{ artifact.name }}" -s "${{ parameters.ServiceDirectory }}" -o "${{ upper(parameters.ServiceDirectory) }}_SOURCE_DISTRIBUTION"'
 
     - bash: |
-        Write-Host "##vso[task.prependpath]$CONDA/bin"
+        echo "##vso[task.prependpath]$CONDA/bin"
       displayName: 'Prepend PATH with Conda and INIT'
 
     - bash: |
