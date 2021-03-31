@@ -233,6 +233,7 @@ class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, to
     :ivar int documents_not_yet_started_count: Number of documents that have not yet started being translated.
     :ivar int documents_cancelled_count: Number of documents that were cancelled for translation.
     :ivar int total_characters_charged: Total characters charged across all documents within the job.
+    :ivar int has_completed: boolean to check whether a document finished translation or not.
     """
 
     def __init__(
@@ -252,6 +253,7 @@ class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, to
         self.documents_not_yet_started_count = kwargs.get('documents_not_yet_started_count', None)
         self.documents_cancelled_count = kwargs.get('documents_cancelled_count', None)
         self.total_characters_charged = kwargs.get('total_characters_charged', None)
+        self.has_completed = kwargs.get('has_completed', False)
 
     @classmethod
     def _from_generated(cls, batch_status_details):
@@ -268,7 +270,8 @@ class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, to
             documents_in_progress_count=batch_status_details.summary.in_progress,
             documents_not_yet_started_count=batch_status_details.summary.not_yet_started,
             documents_cancelled_count=batch_status_details.summary.cancelled,
-            total_characters_charged=batch_status_details.summary.total_character_charged
+            total_characters_charged=batch_status_details.summary.total_character_charged,
+            has_completed=True if batch_status_details.status not in ["NotStarted", "Running"] else False
         )
 
 
@@ -300,6 +303,7 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
         Value is between [0.0, 1.0].
     :ivar str id: Document Id.
     :ivar int characters_charged: Characters charged for the document.
+    :ivar int has_completed: boolean to check whether a document finished translation or not.
     """
 
     def __init__(
@@ -317,6 +321,7 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
         self.translation_progress = kwargs.get('translation_progress', None)
         self.id = kwargs.get('id', None)
         self.characters_charged = kwargs.get('characters_charged', None)
+        self.has_completed = kwargs.get('has_completed', False)
 
 
     @classmethod
@@ -331,7 +336,8 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
             error=DocumentTranslationError._from_generated(doc_status.error) if doc_status.error else None,  # pylint: disable=protected-access
             translation_progress=doc_status.progress,
             id=doc_status.id,
-            characters_charged=doc_status.character_charged
+            characters_charged=doc_status.character_charged,
+            has_completed=True if doc_status.status not in ["NotStarted", "Running"] else False
         )
 
 
