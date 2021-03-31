@@ -132,6 +132,7 @@ class DocumentTranslationTest(AzureTestCase):
         self.assertIsNotNone(doc_details.translate_to, target_language)
         # generic assertions
         self.assertIsNotNone(doc_details.id)
+        self.assertIsNotNone(doc_details.source_document_url)
         self.assertIsNotNone(doc_details.translated_document_url)
         self.assertIsNotNone(doc_details.translation_progress)
         self.assertIsNotNone(doc_details.characters_charged)
