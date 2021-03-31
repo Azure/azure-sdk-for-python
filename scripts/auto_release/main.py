@@ -150,6 +150,17 @@ def edit_file_setup():
     with open(f'{path}/setup.py', 'w') as file_out:
         file_out.writelines(list_in)
 
+    # avoid pipeline check fail
+    with open(f'shared_requirements.txt', 'r') as file_in:
+        list_in = file_in.readlines()
+    new_line = f'#override azure-mgmt-{SERVICE_NAME} msrest>=0.6.21'
+    for i in range(0, len(list_in)):
+        if list_in[i].find('new_line') > -1:
+            return
+    list_in.append(f'{new_line}\n')
+    with open(f'shared_requirements.txt', 'w') as file_out:
+        file_out.writelines(list_in)
+
 
 def edit_file_readme():
     path = f'sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}'
@@ -284,6 +295,7 @@ def edit_useless_file():
 
 def commit_test():
     print_exec('git add sdk/')
+    print_exec('git add shared_requirements.txt')
     print_exec('git commit -m \"test"')
     print_exec('git push -f origin HEAD')
     my_print(f'== {SERVICE_NAME}(track{TRACK}) Automatic Release live test done !!! ==')
