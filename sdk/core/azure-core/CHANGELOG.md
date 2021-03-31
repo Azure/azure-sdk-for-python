@@ -6,6 +6,7 @@ Azure core requires Python 2.7 or Python 3.6+ since this release.
 
 ### New Features
 
+- Added `azure.core.utils.parse_connection_string` function to parse connection strings across SDKs, with common validation and support for case insensitive keys.
 - Supported adding custom policies  #16519
 
 ### Bug fixes

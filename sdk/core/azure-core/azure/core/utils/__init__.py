@@ -23,23 +23,14 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+"""
 
-from ._version import VERSION
-__version__ = VERSION
+This `utils` module provides functionality that is intended to be used by developers
+building on top of `azure-core`.
 
-from ._pipeline_client import PipelineClient
-from ._match_conditions import MatchConditions
-from ._enum_meta import CaseInsensitiveEnumMeta
+"""
+from ._connection_string_parser import (
+    parse_connection_string
+)
 
-
-__all__ = [
-    "PipelineClient",
-    "MatchConditions",
-    "CaseInsensitiveEnumMeta",
-]
-
-try:
-    from ._pipeline_client_async import AsyncPipelineClient #pylint: disable=unused-import
-    __all__.extend(["AsyncPipelineClient"])
-except (ImportError, SyntaxError): # Python <= 3.5
-    pass
+__all__ = ["parse_connection_string"]
