@@ -13,6 +13,7 @@ import time
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 
 from azure.containerregistry import (
+    ContentPermissions,
     DeletedRepositoryResult,
     RepositoryProperties,
 )
@@ -102,3 +103,65 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
 
         assert len(artifacts) > 0
         assert len(artifacts) == count - 1
+
+    @acr_preparer()
+    async def test_set_tag_properties(
+        self, containerregistry_baseurl, containerregistry_resource_group
+    ):
+        repository = self.get_resource_name("repo")
+        tag_identifier = self.get_resource_name("tag")
+        self.import_repo_to_be_deleted(
+            containerregistry_baseurl,
+            resource_group=containerregistry_resource_group,
+            tag=tag_identifier,
+            repository=repository,
+        )
+
+        client = self.create_repository_client(containerregistry_baseurl, repository)
+
+        tag_props = await client.get_tag_properties(tag_identifier)
+        permissions = tag_props.content_permissions
+
+        await client.set_tag_properties(tag_identifier, ContentPermissions(
+            can_delete=False, can_list=False, can_read=False, can_write=False,
+        ))
+        self.sleep(10)
+
+        received = await client.get_tag_properties(tag_identifier)
+
+        assert received.content_permissions.can_write == False
+        assert received.content_permissions.can_read == False
+        assert received.content_permissions.can_list == False
+        assert received.content_permissions.can_delete == False
+
+    @acr_preparer()
+    async def test_set_manifest_properties(
+        self, containerregistry_baseurl, containerregistry_resource_group
+    ):
+        repository = self.get_resource_name("repo")
+        tag_identifier = self.get_resource_name("tag")
+        self.import_repo_to_be_deleted(
+            containerregistry_baseurl,
+            resource_group=containerregistry_resource_group,
+            tag=tag_identifier,
+            repository=repository,
+        )
+
+        client = self.create_repository_client(containerregistry_baseurl, repository)
+
+        async for artifact in client.list_registry_artifacts():
+            permissions = artifact.content_permissions
+
+            await client.set_manifest_properties(artifact.digest, ContentPermissions(
+                can_delete=False, can_list=False, can_read=False, can_write=False,
+            ))
+            self.sleep(10)
+
+            received_permissions = await client.get_registry_artifact_properties(artifact.digest)
+
+            assert received_permissions.content_permissions.can_delete == False
+            assert received_permissions.content_permissions.can_read == False
+            assert received_permissions.content_permissions.can_list == False
+            assert received_permissions.content_permissions.can_write == False
+
+            break

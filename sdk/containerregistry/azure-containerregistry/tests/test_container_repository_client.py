@@ -159,37 +159,12 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
         assert count > 0
 
-    @pytest.mark.live_test_only
-    @acr_preparer()
-    def test_set_manifest_properties(self, containerregistry_baseurl):
-        client = self.create_repository_client(
-            containerregistry_baseurl, self.repository
-        )
-
-        for manifest in client.list_registry_artifacts():
-
-            permissions = manifest.content_permissions
-            permissions.can_delete = not permissions.can_delete
-
-            client.set_manifest_properties(manifest.digest, permissions)
-
-            received = client.get_registry_artifact_properties(manifest.digest)
-
-            assert received.content_permissions.can_write == permissions.can_write
-            assert received.content_permissions.can_read == permissions.can_read
-            assert received.content_permissions.can_list == permissions.can_list
-            assert received.content_permissions.can_delete == permissions.can_delete
-
-            break
-
-    # @pytest.mark.xfail
     @acr_preparer()
     def test_set_tag_properties(
         self, containerregistry_baseurl, containerregistry_resource_group
     ):
         repository = self.get_resource_name("repo")
         tag_identifier = self.get_resource_name("tag")
-        print(tag_identifier, repository)
         self.import_repo_to_be_deleted(
             containerregistry_baseurl,
             resource_group=containerregistry_resource_group,
@@ -202,7 +177,7 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
         tag_props = client.get_tag_properties(tag_identifier)
         permissions = tag_props.content_permissions
 
-        client.set_tag_properties(tag_props.digest, ContentPermissions(
+        client.set_tag_properties(tag_identifier, ContentPermissions(
             can_delete=False, can_list=False, can_read=False, can_write=False,
         ))
         self.sleep(10)
@@ -214,8 +189,6 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
         assert received.content_permissions.can_list == False
         assert received.content_permissions.can_delete == False
 
-
-    @pytest.mark.xfail
     @acr_preparer()
     def test_set_manifest_properties(
         self, containerregistry_baseurl, containerregistry_resource_group
@@ -247,7 +220,6 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
             assert received_permissions.content_permissions.can_write == False
 
             break
-
 
     @acr_preparer()
     def test_delete_repository(

@@ -79,7 +79,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             await self._client.container_registry_repository.get_properties(self.repository, **kwargs)
         )
 
-    def get_registry_artifact_properties(self, tag_or_digest, **kwargs):
+    async def get_registry_artifact_properties(self, tag_or_digest, **kwargs):
         # type: (str, Dict[str, Any]) -> RegistryArtifactProperties
         """Get the properties of a registry artifact
 
@@ -92,7 +92,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             tag_or_digest = self._get_digest_from_tag(tag_or_digest)
 
         return RegistryArtifactProperties._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry_repository.get_registry_artifact_properties(
+            await self._client.container_registry_repository.get_registry_artifact_properties(
                 self.repository, tag_or_digest, **kwargs
             )
         )
@@ -174,7 +174,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             self.repository, digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
         )
 
-    async def set_tag_properties(self, tag_or_digest, permissions, **kwargs):
+    async def set_tag_properties(self, tag, permissions, **kwargs):
         # type: (str, ContentPermissions) -> None
         """Set the properties for a tag
 
@@ -185,9 +185,6 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: None
         """
-        if _is_tag(tag_or_digest):
-            tag_or_digest = self._get_digest_from_tag(tag_or_digest)
-
-        await self._client.container_registry_repository.update_manifest_attributes(
-            self.repository, tag_or_digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
+        await self._client.container_registry_repository.update_tag_attributes(
+            self.repository, tag, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
         )

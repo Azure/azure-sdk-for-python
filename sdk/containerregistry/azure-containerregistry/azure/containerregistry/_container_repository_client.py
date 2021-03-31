@@ -180,7 +180,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             self.repository, digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
         )
 
-    def set_tag_properties(self, tag_or_digest, permissions, **kwargs):
+    def set_tag_properties(self, tag, permissions, **kwargs):
         # type: (str, ContentPermissions) -> None
         """Set the properties for a tag
 
@@ -191,9 +191,6 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: None
         """
-        if _is_tag(tag_or_digest):
-            tag_or_digest = self._get_digest_from_tag(tag_or_digest)
-
-        self._client.container_registry_repository.update_manifest_attributes(
-            self.repository, tag_or_digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
+        self._client.container_registry_repository.update_tag_attributes(
+            self.repository, tag, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
         )
