@@ -129,6 +129,7 @@ class DocumentTranslationTest(AzureTestCase):
     def _validate_doc_status(self, doc_details, target_language):
         # specific assertions
         self.assertEqual(doc_details.status, "Succeeded")
+        self.assertEqual(doc_details.has_completed, True)
         self.assertIsNotNone(doc_details.translate_to, target_language)
         # generic assertions
         self.assertIsNotNone(doc_details.id)
@@ -147,6 +148,10 @@ class DocumentTranslationTest(AzureTestCase):
         inprogress = kwargs.pop('inprogress', None)
         notstarted = kwargs.pop('notstarted', None)
         cancelled = kwargs.pop('cancelled', None)
+        
+        has_completed = False
+        if status:
+            has_completed = True if status not in ["NotStarted", "Running"] else False
         # status
         self.assertEqual(job_details.status, status) if status else self.assertIsNotNone(job_details.status)
         # docs count
@@ -156,6 +161,7 @@ class DocumentTranslationTest(AzureTestCase):
         self.assertEqual(job_details.documents_in_progress_count, inprogress) if inprogress else self.assertIsNotNone(job_details.documents_in_progress_count)
         self.assertEqual(job_details.documents_not_yet_started_count, notstarted) if notstarted else self.assertIsNotNone(job_details.documents_not_yet_started_count)
         self.assertEqual(job_details.documents_cancelled_count, cancelled) if cancelled else self.assertIsNotNone(job_details.documents_cancelled_count)
+        self.assertEqual(job_details.has_completed, has_completed) if status else self.assertIsNotNone(job_details.has_completed)
         # generic assertions
         self.assertIsNotNone(job_details.id)
         self.assertIsNotNone(job_details.created_on)
