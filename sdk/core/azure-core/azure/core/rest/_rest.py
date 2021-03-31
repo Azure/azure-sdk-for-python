@@ -23,6 +23,12 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+
+__all__ = [
+    "HttpRequest",
+    "HttpResponse",
+]
+import sys
 import six
 import os
 import binascii
@@ -31,7 +37,7 @@ import cgi
 import json
 from enum import Enum
 import xml.etree.ElementTree as ET
-from typing import TYPE_CHECKING, Iterable, AsyncIterable
+from typing import TYPE_CHECKING, Iterable
 
 from azure.core.pipeline.transport import (
     HttpRequest as _PipelineTransportHttpRequest,
@@ -41,9 +47,9 @@ if TYPE_CHECKING:
     from typing import (
         Any, Optional, Union, Mapping, Sequence, Tuple,
     )
-    ByteStream = Union[Iterable[bytes], AsyncIterable[bytes]]
+    ByteStream = Iterable[bytes]
 
-    HeaderType = Union[
+    HeadersType = Union[
         Mapping[str, str],
         Sequence[Tuple[str, str]]
     ]
@@ -105,12 +111,13 @@ def _set_content_body(content, internal_request):
                 _set_content_type_header("text/plain", internal_request)
             else:
                 _set_content_type_header("application/octet-stream", internal_request)
-        elif isinstance(content, (Iterable, AsyncIterable)):
+        elif isinstance(content, Iterable):
             _set_content_length_header("Transfer-Encoding", "chunked", internal_request)
             _set_content_type_header("application/octet-stream", internal_request)
     elif isinstance(content, ET.Element):
         # XML body
         internal_request.set_xml_body(content)
+        _set_content_type_header("application/xml", internal_request)
         _set_content_length_header("Content-Length", str(len(internal_request.data)), internal_request)
     elif content_type and content_type.startswith("text/"):
         # Text body
@@ -170,7 +177,6 @@ class HttpRequest(object):
      if your data doesn't fit into `json`, `data`, or `files`. Accepts a bytes type, or a generator
      that yields bytes.
     :paramtype content: str or bytes or iterable[bytes] or asynciterable[bytes]
-    :keyword
     :ivar str url: The URL this request is against.
     :ivar str method: The method type of this request.
     :ivar headers: The HTTP headers you passed in to your request
@@ -234,7 +240,7 @@ class HttpRequest(object):
 
     @property
     def headers(self):
-        # type: (...) -> HeaderType
+        # type: (...) -> HeadersType
         return self._internal_request.headers
 
     @property
@@ -292,7 +298,7 @@ class _HttpResponseBase(object):
 
     @property
     def headers(self):
-        # type: (...) -> HeaderType
+        # type: (...) -> HeadersType
         """Returns the response headers"""
         return self._internal_response.headers
 
@@ -338,7 +344,8 @@ class _HttpResponseBase(object):
         return encoding
 
     @encoding.setter
-    def encoding(self, value: str) -> None:
+    def encoding(self, value):
+        # type: (str) -> None
         """Sets the response encoding"""
         self._encoding = value
 
@@ -414,34 +421,5 @@ class HttpResponse(_HttpResponseBase):
         Will remove once we have stream handling worked out.
 
         :rtype: iterator[bytes]
-        """
-        return self._internal_response.stream_download(pipeline=pipeline)
-
-class AsyncHttpResponse(_HttpResponseBase):
-
-    @property
-    def content(self):
-        # type: (...) -> bytes
-        if self._internal_response._body is None:  # pylint: disable=protected-access
-            raise ValueError("Body is not available. Call async method load_body, or do your call with stream=False.")
-        return self._internal_response.body()
-
-    async def load_body(self):
-        # type: () -> None
-        """Load in memory the body, so it could be accessible from sync methods.
-
-        Will remove once we have the async stream handling worked out
-        """
-        return await self._internal_response.load_body()
-
-    def stream_download(self, pipeline=None):
-        """Generator for streaming response body data.
-
-        Will return an asynchronous generator.
-
-        Will remove once we have async stream handling worked out.
-
-        :param pipeline: The pipeline object
-        :type pipeline: azure.core.pipeline
         """
         return self._internal_response.stream_download(pipeline=pipeline)

@@ -7,7 +7,8 @@
 # NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
 # Thank you httpx for your wonderful tests!
 import pytest
-from typing import Generator, AsyncGenerator
+import sys
+from typing import Generator
 from azure.core.rest import HttpRequest
 
 def test_rest_request_repr():
@@ -74,17 +75,6 @@ def test_rest_headers():
     }
 
 
-def test_rest_transfer_encoding_header():
-    async def streaming_body(data):
-        yield data  # pragma: nocover
-
-    data = streaming_body(b"test 123")
-
-    request = HttpRequest("POST", "http://example.org", data=data)
-    assert "Content-Length" not in request.headers
-    assert request.headers["Transfer-Encoding"] == "chunked"
-
-
 def test_rest_ignore_transfer_encoding_header_if_content_length_exists():
     """
     `Transfer-Encoding` should be ignored if `Content-Length` has been set explicitly.
@@ -106,17 +96,6 @@ def test_rest_override_accept_encoding_header():
 
     request = HttpRequest("GET", "http://example.org", headers=headers)
     assert request.headers["Accept-Encoding"] == "identity"
-
-
-def test_rest_override_content_length_header():
-    async def streaming_body(data):
-        yield data  # pragma: nocover
-
-    data = streaming_body(b"test 123")
-    headers = {"Content-Length": "0"}
-
-    request = HttpRequest("POST", "http://example.org", data=data, headers=headers)
-    assert request.headers["Content-Length"] == "0"
 
 """Test request body"""
 def test_rest_empty_content():
@@ -141,6 +120,8 @@ def test_rest_string_content():
     assert request.headers == {"Content-Type": "text/plain"}
     assert request.content == "Hello, world!"
 
+@pytest.mark.skipif(sys.version_info < (3, 0),
+                    reason="In 2.7, b'' is the same as a string, so will have text/plain content type")
 def test_rest_bytes_content():
     request = HttpRequest("PUT", "http://example.org", content=b"Hello, world!")
     assert request.headers == {"Content-Length": "13", "Content-Type": "application/octet-stream"}
@@ -181,30 +162,6 @@ def test_rest_iterator_content():
 
     assert request.headers == {"Content-Type": "application/octet-stream"}
     assert isinstance(request.content, Generator)
-
-
-@pytest.mark.asyncio
-async def test_rest_aiterator_content():
-    async def hello_world():
-        yield b"Hello, "
-        yield b"world!"
-
-    request = HttpRequest("POST", url="http://example.org", content=hello_world())
-
-    assert request.headers == {"Transfer-Encoding": "chunked", "Content-Type": "application/octet-stream"}
-    assert isinstance(request.content, AsyncGenerator)
-
-    # Support 'data' for compat with requests.
-    request = HttpRequest("POST", url="http://example.org", data=hello_world())
-
-    assert request.headers == {"Transfer-Encoding": "chunked", "Content-Type": "application/octet-stream"}
-    assert isinstance(request.content, AsyncGenerator)
-
-    # transfer encoding should not be set for GET requests
-    request = HttpRequest("GET", url="http://example.org", data=hello_world())
-
-    assert request.headers == {"Content-Type": "application/octet-stream"}
-    assert isinstance(request.content, AsyncGenerator)
 
 
 def test_rest_json_content():

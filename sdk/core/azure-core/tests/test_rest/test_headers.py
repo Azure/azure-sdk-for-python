@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import sys
 
 # NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
 # Thank you httpx for your wonderful tests!
@@ -59,13 +60,19 @@ def test_rest_header_mutations():
 def test_rest_headers_insert_retains_ordering():
     h = _get_headers({"a": "a", "b": "b", "c": "c"})
     h["b"] = "123"
-    assert list(h.values()) == ["a", "123", "c"]
+    if sys.version_info >= (3, 6):
+        assert list(h.values()) == ["a", "123", "c"]
+    else:
+        assert set(list(h.values())) == set(["a", "123", "c"])
 
 
 def test_rest_headers_insert_appends_if_new():
     h = _get_headers({"a": "a", "b": "b", "c": "c"})
     h["d"] = "123"
-    assert list(h.values()) == ["a", "b", "c", "123"]
+    if sys.version_info >= (3, 6):
+        assert list(h.values()) == ["a", "b", "c", "123"]
+    else:
+        assert set(list(h.values())) == set(["a", "b", "c", "123"])
 
 
 def test_rest_headers_insert_removes_all_existing():
