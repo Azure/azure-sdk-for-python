@@ -74,7 +74,7 @@ def _parse_claims_challenge(challenge):
         return None
 
     encoded_claims = parsed_challenges[0].parameters["claims"]
-    padding_needed = 4 - len(encoded_claims) % 4
+    padding_needed = -len(encoded_claims) % 4
     try:
         return base64.urlsafe_b64decode(encoded_claims + "=" * padding_needed).decode()
     except Exception:  # pylint:disable=broad-except
