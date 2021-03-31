@@ -45,15 +45,15 @@ class SpanKind(Enum):
 class AbstractSpan(Protocol):
     """Wraps a span from a distributed tracing implementation."""
 
-    def __init__(self, span=None, name=None):  # pylint: disable=super-init-not-called
-        # type: (Optional[Any], Optional[str]) -> None
+    def __init__(self, span=None, name=None, **kwargs):  # pylint: disable=super-init-not-called
+        # type: (Optional[Any], Optional[str], Any) -> None
         """
         If a span is given wraps the span. Else a new span is created.
         The optional arguement name is given to the new span.
         """
 
-    def span(self, name="child_span"):
-        # type: (Optional[str]) -> AbstractSpan
+    def span(self, name="child_span", **kwargs):
+        # type: (Optional[str], Any) -> AbstractSpan
         """
         Create a child span for the current span and append it to the child spans list.
         The child span must be wrapped by an implementation of AbstractSpan
@@ -232,3 +232,16 @@ class HttpSpanMixin(_MIXIN_BASE):
             self.add_attribute(self._HTTP_STATUS_CODE, response.status_code)
         else:
             self.add_attribute(self._HTTP_STATUS_CODE, 504)
+
+class Link(object):
+    """
+    This is a wrapper link the context to the current tracer.
+    :param headers: A dictionary of the request header as key value pairs.
+    :type headers: dict
+    :param attributes: Any additional attributes that should be added to link
+    :type attributes: dict
+    """
+    def __init__(self, headers, attributes=None):
+        # type: (Dict[str, str], Attributes) -> None
+        self.headers = headers
+        self.attributes = attributes
