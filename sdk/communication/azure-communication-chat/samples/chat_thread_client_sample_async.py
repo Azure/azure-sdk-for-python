@@ -344,14 +344,14 @@ class ChatThreadClientSamplesAsync(object):
                 async for chat_thread_participant_page in chat_thread_participants.by_page():
                     async for chat_thread_participant in chat_thread_participant_page:
                         print("ChatThreadParticipant: ", chat_thread_participant)
-                        if chat_thread_participant.user.properties['identifier'] == user1.properties['identifier']:
+                        if chat_thread_participant.user.properties['id'] == user1.properties['id']:
                             print("Found Fred!")
                             await chat_thread_client.remove_participant(chat_thread_participant.user)
                             print("Fred has been removed from the thread...")
                             break
 
                 # Option 2: Directly remove Wilma Flinstone
-                unique_identifier = user2.properties['identifier']  # in real scenario the identifier would need to be retrieved from elsewhere
+                unique_identifier = user2.properties['id']  # in real scenario the identifier would need to be retrieved from elsewhere
                 await chat_thread_client.remove_participant(CommunicationUserIdentifier(unique_identifier))
                 print("Wilma has been removed from the thread...")
                 # [END remove_participant]

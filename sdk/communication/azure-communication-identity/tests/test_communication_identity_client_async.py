@@ -43,7 +43,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
         async with identity_client:
             user = await identity_client.create_user()
 
-        assert user.properties.get('identifier') is not None
+        assert user.properties.get('id') is not None
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
@@ -52,7 +52,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
         async with identity_client:
             user = await identity_client.create_user()
 
-        assert user.properties.get('identifier') is not None
+        assert user.properties.get('id') is not None
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
@@ -61,7 +61,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
         async with identity_client:
             user, token_response = await identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
 
-        assert user.properties.get('identifier') is not None
+        assert user.properties.get('id') is not None
         assert token_response.token is not None
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -78,7 +78,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
             user = await identity_client.create_user()
             token_response = await identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
 
-        assert user.properties.get('identifier') is not None
+        assert user.properties.get('id') is not None
         assert token_response.token is not None
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -89,7 +89,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
             user = await identity_client.create_user()
             token_response = await identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
 
-        assert user.properties.get('identifier') is not None
+        assert user.properties.get('id') is not None
         assert token_response.token is not None
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -107,7 +107,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
             token_response = await identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
             await identity_client.revoke_tokens(user)
 
-        assert user.properties.get('identifier') is not None
+        assert user.properties.get('id') is not None
         assert token_response.token is not None
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -119,7 +119,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
             token_response = await identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
             await identity_client.revoke_tokens(user)
 
-        assert user.properties.get('identifier') is not None
+        assert user.properties.get('id') is not None
         assert token_response.token is not None
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -136,7 +136,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
             user = await identity_client.create_user()
             await identity_client.delete_user(user)
 
-        assert user.properties.get('identifier') is not None
+        assert user.properties.get('id') is not None
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
@@ -146,4 +146,4 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
             user = await identity_client.create_user()
             await identity_client.delete_user(user)
 
-        assert user.properties.get('identifier') is not None
+        assert user.properties.get('id') is not None

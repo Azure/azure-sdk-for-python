@@ -44,7 +44,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         identity_client = CommunicationIdentityClient(endpoint, credential)
         user = identity_client.create_user()
 
-        assert user.properties.get('identifier') is not None
+        assert user.properties.get('id') is not None
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
@@ -53,7 +53,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
             connection_string)
         user = identity_client.create_user()
 
-        assert user.properties.get('identifier') is not None
+        assert user.properties.get('id') is not None
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
@@ -61,7 +61,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
         user, token_response = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
 
-        assert user.properties.get('identifier') is not None
+        assert user.properties.get('id') is not None
         assert token_response.token is not None
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -78,7 +78,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
 
         token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
 
-        assert user.properties.get('identifier') is not None
+        assert user.properties.get('id') is not None
         assert token_response.token is not None
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -90,7 +90,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
 
         token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
 
-        assert user.properties.get('identifier') is not None
+        assert user.properties.get('id') is not None
         assert token_response.token is not None
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -108,7 +108,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
         identity_client.revoke_tokens(user)
 
-        assert user.properties.get('identifier') is not None
+        assert user.properties.get('id') is not None
         assert token_response.token is not None
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -121,7 +121,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
         identity_client.revoke_tokens(user)
 
-        assert user.properties.get('identifier') is not None
+        assert user.properties.get('id') is not None
         assert token_response.token is not None
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -138,7 +138,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
 
         identity_client.delete_user(user)
 
-        assert user.properties.get('identifier') is not None
+        assert user.properties.get('id') is not None
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
@@ -149,4 +149,4 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
 
         identity_client.delete_user(user)
 
-        assert user.properties.get('identifier') is not None
+        assert user.properties.get('id') is not None

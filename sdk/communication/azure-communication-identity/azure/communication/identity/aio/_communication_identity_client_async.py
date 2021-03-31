@@ -125,7 +125,7 @@ class CommunicationIdentityClient:
         :rtype: None
         """
         await self._identity_service_client.communication_identity.delete(
-            user.properties['identifier'], **kwargs)
+            user.properties['id'], **kwargs)
 
     @distributed_trace_async
     async def get_token(
@@ -145,7 +145,7 @@ class CommunicationIdentityClient:
         :rtype: ~azure.core.credentials.AccessToken
         """
         return await self._identity_service_client.communication_identity.issue_access_token(
-            user.properties['identifier'],
+            user.properties['id'],
             scopes,
             cls=lambda pr, u, e: AccessToken(u.token, u.expires_on),
             **kwargs)
@@ -164,7 +164,7 @@ class CommunicationIdentityClient:
         :rtype: None
         """
         return await self._identity_service_client.communication_identity.revoke_access_tokens(
-            user.properties['identifier'] if user else None,
+            user.properties['id'] if user else None,
             **kwargs)
 
     async def __aenter__(self) -> "CommunicationIdentityClient":

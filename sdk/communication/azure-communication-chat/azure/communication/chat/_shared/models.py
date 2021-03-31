@@ -16,8 +16,8 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class CommunicationIdentifierKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Communication Identifier Kind.
-    """
+    """Communication Identifier Kind."""
+
     UNKOWN = "unknown"
     COMMUNICATION_USER = "communication_user"
     PHONE_NUMBER = "phone_number"
@@ -25,9 +25,7 @@ class CommunicationIdentifierKind(with_metaclass(CaseInsensitiveEnumMeta, str, E
 
 
 class CommunicationCloudEnvironment(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """
-    The cloud enviornment that the identifier belongs to
-    """
+    """The cloud enviornment that the identifier belongs to"""
 
     PUBLIC = "PUBLIC"
     DOD = "DOD"
@@ -35,10 +33,9 @@ class CommunicationCloudEnvironment(with_metaclass(CaseInsensitiveEnumMeta, str,
 
 
 class CommunicationIdentifier(Protocol):
-    """
-    Communication Identifier.
+    """Communication Identifier.
 
-    :ivar str raw_id: The service identifier.
+    :ivar str raw_id: Optional raw ID of the identifier.
     :ivar kind: The type of identifier.
     :vartype kind: str or CommunicationIdentifierKind
     :ivar Mapping[str, Any] properties: The properties of the identifier.
@@ -50,28 +47,28 @@ class CommunicationIdentifier(Protocol):
 
 CommunicationUserProperties = TypedDict(
     'CommunicationUserProperties',
-    identifier=str
+    id=str
 )
 
 
 class CommunicationUserIdentifier(object):
-    """
-    Represents a user in Azure Communication Service.
+    """Represents a user in Azure Communication Service.
 
-    :ivar str raw_id: The service identifier.
+    :ivar str raw_id: Optional raw ID of the identifier.
     :ivar kind: The type of identifier.
     :vartype kind: str or CommunicationIdentifierKind
     :ivar Mapping[str, Any] properties: The properties of the identifier.
      The keys in this mapping include:
-        - `identifier`(str): Identifier to initialize CommunicationUserIdentifier.
+        - `id`(str): ID of the Communication user as returned from Azure Communication Identity.
 
+    :param str identifier: ID of the Communication user as returned from Azure Communication Identity.
     """
     kind = CommunicationIdentifierKind.COMMUNICATION_USER
 
     def __init__(self, identifier, **kwargs):
         # type: (str, Any) -> None
         self.raw_id = kwargs.get('raw_id')
-        self.properties = CommunicationUserProperties(identifier=identifier)
+        self.properties = CommunicationUserProperties(id=identifier)
 
 
 PhoneNumberProperties = TypedDict(
@@ -81,16 +78,16 @@ PhoneNumberProperties = TypedDict(
 
 
 class PhoneNumberIdentifier(object):
-    """
-    Represents a phone number.
+    """Represents a phone number.
 
-    :ivar str raw_id: The service identifier.
+    :ivar str raw_id: Optional raw ID of the identifier.
     :ivar kind: The type of identifier.
     :vartype kind: str or CommunicationIdentifierKind
     :ivar Mapping properties: The properties of the identifier.
      The keys in this mapping include:
         - `phone_number`(str): The phone number in E.164 format.
 
+    :param str phone_number: The phone number.
     """
     kind = CommunicationIdentifierKind.PHONE_NUMBER
 
@@ -101,15 +98,16 @@ class PhoneNumberIdentifier(object):
 
 
 class UnknownIdentifier(object):
-    """
-    Represents an identifier of an unknown type.
+    """Represents an identifier of an unknown type.
+
     It will be encountered in communications with endpoints that are not
     identifiable by this version of the SDK.
 
-    :ivar str raw_id: The service identifier.
+    :ivar str raw_id: Optional raw ID of the identifier.
     :ivar kind: The type of identifier.
     :vartype kind: str or CommunicationIdentifierKind
     :ivar Mapping properties: The properties of the identifier.
+    :param str identifier: The ID of the identifier.
     """
     kind = CommunicationIdentifierKind.UNKOWN
 
@@ -128,10 +126,9 @@ MicrosoftTeamsUserProperties = TypedDict(
 
 
 class MicrosoftTeamsUserIdentifier(object):
-    """
-    Represents an identifier for a Microsoft Teams user.
+    """Represents an identifier for a Microsoft Teams user.
 
-    :ivar str raw_id: The service identifier.
+    :ivar str raw_id: Optional raw ID of the identifier.
     :ivar kind: The type of identifier.
     :vartype kind: str or CommunicationIdentifierKind
     :ivar Mapping properties: The properties of the identifier.
@@ -142,6 +139,10 @@ class MicrosoftTeamsUserIdentifier(object):
           a meeting with a share link.
         - `cloud` (str): Cloud environment that this identifier belongs to.
 
+    :param str user_id: Microsoft Teams user id.
+    :keyword str is_anonymous: `True` if the identifier is anonymous. Default value is `False`.
+    :keyword cloud: Cloud environment that the user belongs to. Default value is `PUBLIC`.
+    :paramtype cloud: str or ~azure.communication.chat.CommunicationCloudEnvironment
     """
     kind = CommunicationIdentifierKind.MICROSOFT_TEAMS_USER
 

@@ -522,7 +522,7 @@ async def test_add_participants_w_failed_participants_returns_nonempty_list():
     failed_participant = result[0][0]
     communication_error = result[0][1]
 
-    assert new_participant.user.properties['identifier'] == failed_participant.user.properties['identifier']
+    assert new_participant.user.properties['id'] == failed_participant.user.properties['id']
     assert new_participant.display_name == failed_participant.display_name
     assert new_participant.share_history_time == failed_participant.share_history_time
     assert error_message == communication_error.message

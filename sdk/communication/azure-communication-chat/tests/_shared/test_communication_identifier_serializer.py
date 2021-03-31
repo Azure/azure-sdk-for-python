@@ -75,7 +75,7 @@ class CommunicationUserIdentifierSerializerTest(unittest.TestCase):
         communication_identifier_expected = CommunicationUserIdentifier(identifier="an id")
 
         assert isinstance(communication_identifier_actual, CommunicationUserIdentifier)
-        assert communication_identifier_actual.properties['identifier'] == communication_identifier_expected.properties['identifier']
+        assert communication_identifier_actual.properties['id'] == communication_identifier_expected.properties['id']
 
     def test_serialize_unknown_identifier(self):
         unknown_identifier_model = serialize_identifier(
