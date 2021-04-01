@@ -2,6 +2,8 @@
 
 ## 7.1.1 (Unreleased)
 
+This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported.
+
 **New Features**
 
 * Updated `forward_to` and `forward_dead_lettered_messages_to` parameters in `create_queue`, `update_queue`, `create_subscription`, and `update_subscription` methods on sync and async `ServiceBusAdministrationClient` to accept entities as well, rather than only full paths. In the case that an entity is passed in, it is assumed that the entity exists within the same namespace used for constructing the `ServiceBusAdministrationClient`.
