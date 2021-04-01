@@ -186,5 +186,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             tag_or_digest = self._get_digest_from_tag(tag_or_digest)
 
         await self._client.container_registry_repository.update_manifest_attributes(
-            self.repository, tag_or_digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
+            self.repository,
+            tag_or_digest,
+            value=permissions._to_generated(),  # pylint: disable=protected-access
+            **kwargs
         )

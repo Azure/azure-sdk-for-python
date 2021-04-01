@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest, PipelineResponse
     from typing import Optional
 
+
 class ContainerRegistryChallengePolicy(HTTPPolicy):
     """Authentication policy for ACR which accepts a challenge"""
 

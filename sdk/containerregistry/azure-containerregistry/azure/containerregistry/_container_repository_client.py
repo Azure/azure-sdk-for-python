@@ -70,8 +70,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        self._client.container_registry_repository.delete_tag(
-            self.repository, tag, **kwargs)
+        self._client.container_registry_repository.delete_tag(self.repository, tag, **kwargs)
 
     def get_properties(self, **kwargs):
         # type: (...) -> RepositoryProperties
@@ -195,5 +194,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             tag_or_digest = self._get_digest_from_tag(tag_or_digest)
 
         self._client.container_registry_repository.update_manifest_attributes(
-            self.repository, tag_or_digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
+            self.repository,
+            tag_or_digest,
+            value=permissions._to_generated(),  # pylint: disable=protected-access
+            **kwargs
         )
