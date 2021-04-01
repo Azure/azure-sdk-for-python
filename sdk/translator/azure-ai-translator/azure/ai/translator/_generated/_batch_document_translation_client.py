@@ -27,7 +27,7 @@ class BatchDocumentTranslationClient(object):
     """BatchDocumentTranslationClient.
 
     :ivar document_translation: DocumentTranslationOperations operations
-    :vartype document_translation: azure.ai.documenttranslation.operations.DocumentTranslationOperations
+    :vartype document_translation: azure.ai.translator.operations.DocumentTranslationOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus.api.cognitive.microsoft.com).

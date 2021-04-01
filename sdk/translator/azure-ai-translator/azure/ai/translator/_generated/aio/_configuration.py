@@ -44,7 +44,7 @@ class BatchDocumentTranslationClientConfiguration(Configuration):
         self.credential = credential
         self.endpoint = endpoint
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://cognitiveservices.azure.com/.default'])
-        kwargs.setdefault('sdk_moniker', 'ai-documenttranslation/{}'.format(VERSION))
+        kwargs.setdefault('sdk_moniker', 'ai-translator/{}'.format(VERSION))
         self._configure(**kwargs)
 
     def _configure(
