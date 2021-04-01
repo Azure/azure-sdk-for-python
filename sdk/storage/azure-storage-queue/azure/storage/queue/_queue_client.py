@@ -41,6 +41,10 @@ if TYPE_CHECKING:
 class QueueClient(StorageAccountHostsMixin):
     """A client to interact with a specific Queue.
 
+    For more optional configuration, please click
+    `here <https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue
+    #optional-configuration>`_.
+
     :param str account_url:
         The URL to the storage account. In order to create a client given the full URI to the queue,
         use the :func:`from_queue_url` classmethod.

@@ -18,6 +18,11 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 from ._configuration import ComputeManagementClientConfiguration
+from .operations import DisksOperations
+from .operations import SnapshotsOperations
+from .operations import DiskEncryptionSetsOperations
+from .operations import DiskAccessesOperations
+from .operations import DiskRestorePointOperations
 from .operations import Operations
 from .operations import AvailabilitySetsOperations
 from .operations import ProximityPlacementGroupsOperations
@@ -46,6 +51,16 @@ from . import models
 class ComputeManagementClient(object):
     """Compute Client.
 
+    :ivar disks: DisksOperations operations
+    :vartype disks: azure.mgmt.compute.v2020_12_01.operations.DisksOperations
+    :ivar snapshots: SnapshotsOperations operations
+    :vartype snapshots: azure.mgmt.compute.v2020_12_01.operations.SnapshotsOperations
+    :ivar disk_encryption_sets: DiskEncryptionSetsOperations operations
+    :vartype disk_encryption_sets: azure.mgmt.compute.v2020_12_01.operations.DiskEncryptionSetsOperations
+    :ivar disk_accesses: DiskAccessesOperations operations
+    :vartype disk_accesses: azure.mgmt.compute.v2020_12_01.operations.DiskAccessesOperations
+    :ivar disk_restore_point: DiskRestorePointOperations operations
+    :vartype disk_restore_point: azure.mgmt.compute.v2020_12_01.operations.DiskRestorePointOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.compute.v2020_12_01.operations.Operations
     :ivar availability_sets: AvailabilitySetsOperations operations
@@ -113,8 +128,19 @@ class ComputeManagementClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
+        self.disks = DisksOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.snapshots = SnapshotsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.disk_encryption_sets = DiskEncryptionSetsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.disk_accesses = DiskAccessesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.disk_restore_point = DiskRestorePointOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
         self.availability_sets = AvailabilitySetsOperations(

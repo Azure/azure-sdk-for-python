@@ -247,7 +247,7 @@ class EnvironmentsOperations(object):
         self,
         resource_group_name,  # type: str
         environment_name,  # type: str
-        tags=None,  # type: Optional[Dict[str, str]]
+        environment_update_parameters,  # type: "_models.EnvironmentUpdateParameters"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.EnvironmentResource"
@@ -256,8 +256,6 @@ class EnvironmentsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _environment_update_parameters = _models.EnvironmentUpdateParameters(tags=tags)
         api_version = "2020-05-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -281,7 +279,7 @@ class EnvironmentsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_environment_update_parameters, 'EnvironmentUpdateParameters')
+        body_content = self._serialize.body(environment_update_parameters, 'EnvironmentUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -303,7 +301,7 @@ class EnvironmentsOperations(object):
         self,
         resource_group_name,  # type: str
         environment_name,  # type: str
-        tags=None,  # type: Optional[Dict[str, str]]
+        environment_update_parameters,  # type: "_models.EnvironmentUpdateParameters"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller["_models.EnvironmentResource"]
@@ -315,8 +313,9 @@ class EnvironmentsOperations(object):
         :param environment_name: The name of the Time Series Insights environment associated with the
          specified resource group.
         :type environment_name: str
-        :param tags: Key-value pairs of additional properties for the environment.
-        :type tags: dict[str, str]
+        :param environment_update_parameters: Request object that contains the updated information for
+         the environment.
+        :type environment_update_parameters: ~azure.mgmt.timeseriesinsights.models.EnvironmentUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -338,7 +337,7 @@ class EnvironmentsOperations(object):
             raw_result = self._update_initial(
                 resource_group_name=resource_group_name,
                 environment_name=environment_name,
-                tags=tags,
+                environment_update_parameters=environment_update_parameters,
                 cls=lambda x,y,z: x,
                 **kwargs
             )

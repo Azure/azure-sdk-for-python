@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 30 Mar 2021 12:45:47 GMT
+      - Thu, 01 Apr 2021 17:32:22 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -71,13 +71,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 30 Mar 2021 12:45:49 GMT
+      - Thu, 01 Apr 2021 17:32:24 GMT
       server:
       - openresty
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
+      x-ms-ratelimit-remaining-calls-per-second:
+      - '333.05'
     status:
       code: 200
       message: OK
@@ -107,13 +109,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 30 Mar 2021 12:45:49 GMT
+      - Thu, 01 Apr 2021 17:32:24 GMT
       server:
       - openresty
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
+      x-ms-ratelimit-remaining-calls-per-second:
+      - '333.033333'
     status:
       code: 200
       message: OK
@@ -132,7 +136,7 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/hello-world
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","createdTime":"2021-03-30T12:18:47.4147491Z","lastUpdateTime":"2021-03-30T12:45:32.8225412Z","manifestCount":10,"tagCount":1,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}
+      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","createdTime":"2021-03-30T12:18:47.4147491Z","lastUpdateTime":"2021-04-01T17:32:09.0713887Z","manifestCount":10,"tagCount":1,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}
 
         '
     headers:
@@ -148,7 +152,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 30 Mar 2021 12:45:49 GMT
+      - Thu, 01 Apr 2021 17:32:24 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

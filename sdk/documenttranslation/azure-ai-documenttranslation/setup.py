@@ -4,7 +4,7 @@ from io import open
 import re
 
 PACKAGE_NAME = "azure-ai-documenttranslation"
-PACKAGE_PPRINT_NAME = "Document Translation Package"
+PACKAGE_PPRINT_NAME = "Azure Document Translation Package"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -52,7 +52,7 @@ setup(
         'azure.ai',
     ]),
     install_requires=[
-        "azure-core<2.0.0,>=1.8.2",
+        "azure-core<2.0.0,>=1.10.0",
         "msrest>=0.6.21",
         'six>=1.11.0',
         'azure-common~=1.1',

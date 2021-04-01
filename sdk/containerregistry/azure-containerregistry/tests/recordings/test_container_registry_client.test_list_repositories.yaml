@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 30 Mar 2021 12:45:06 GMT
+      - Thu, 01 Apr 2021 17:31:45 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -71,13 +71,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 30 Mar 2021 12:45:07 GMT
+      - Thu, 01 Apr 2021 17:31:47 GMT
       server:
       - openresty
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
+      x-ms-ratelimit-remaining-calls-per-second:
+      - '333.316667'
     status:
       code: 200
       message: OK
@@ -107,13 +109,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 30 Mar 2021 12:45:08 GMT
+      - Thu, 01 Apr 2021 17:31:47 GMT
       server:
       - openresty
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
+      x-ms-ratelimit-remaining-calls-per-second:
+      - '333.3'
     status:
       code: 200
       message: OK
@@ -132,7 +136,7 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
-      string: '{"repositories":["alpine/git","debian","hello-world","library/hello-world","ubuntu"]}
+      string: '{"repositories":["alpine/git","debian","hello-world","library/hello-world","repo160e197b","repo308e19dd","repo9b321760","repob7cc1bf8","ubuntu"]}
 
         '
     headers:
@@ -144,11 +148,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '86'
+      - '146'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 30 Mar 2021 12:45:08 GMT
+      - Thu, 01 Apr 2021 17:31:47 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

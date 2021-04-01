@@ -49,6 +49,7 @@ class ChatClientSamples(object):
         # [START create_chat_client]
         from azure.communication.chat import ChatClient, CommunicationTokenCredential
 
+        # set `endpoint` to an existing ACS endpoint
         chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
         # [END create_chat_client]
 
@@ -67,6 +68,7 @@ class ChatClientSamples(object):
             CommunicationTokenCredential
         )
 
+        # set `endpoint` to an existing ACS endpoint
         chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
 
         topic = "test topic"
@@ -99,7 +101,10 @@ class ChatClientSamples(object):
         # [START get_chat_thread_client]
         from azure.communication.chat import ChatClient, CommunicationTokenCredential
 
+        # set `endpoint` to an existing ACS endpoint
         chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
+
+        # set `thread_id` to an existing chat thread id
         chat_thread_client = chat_client.get_chat_thread_client(thread_id)
         # [END get_chat_thread_client]
 
@@ -114,6 +119,7 @@ class ChatClientSamples(object):
         from azure.communication.chat import ChatClient, CommunicationTokenCredential
         from datetime import datetime, timedelta
 
+        # set `endpoint` to an existing ACS endpoint
         chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
         start_time = datetime.utcnow() - timedelta(days=2)
         chat_threads = chat_client.list_chat_threads(results_per_page=5, start_time=start_time)
@@ -131,7 +137,10 @@ class ChatClientSamples(object):
         # [START delete_thread]
         from azure.communication.chat import ChatClient, CommunicationTokenCredential
 
+        # set `endpoint` to an existing ACS endpoint
         chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
+
+        # set `thread_id` to an existing chat thread id
         chat_client.delete_chat_thread(thread_id)
         # [END delete_thread]
 

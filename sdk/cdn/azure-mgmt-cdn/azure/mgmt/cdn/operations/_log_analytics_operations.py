@@ -49,15 +49,15 @@ class LogAnalyticsOperations(object):
         self,
         resource_group_name,  # type: str
         profile_name,  # type: str
-        metrics,  # type: List[Union[str, "_models.Get4ItemsItem"]]
+        metrics,  # type: List[Union[str, "_models.LogMetric"]]
         date_time_begin,  # type: datetime.datetime
         date_time_end,  # type: datetime.datetime
-        granularity,  # type: Union[str, "_models.Enum31"]
-        group_by=None,  # type: Optional[List[Union[str, "_models.Get8ItemsItem"]]]
+        granularity,  # type: Union[str, "_models.LogMetricsGranularity"]
+        custom_domains,  # type: List[str]
+        protocols,  # type: List[str]
+        group_by=None,  # type: Optional[List[Union[str, "_models.LogMetricsGroupBy"]]]
         continents=None,  # type: Optional[List[str]]
         country_or_regions=None,  # type: Optional[List[str]]
-        custom_domains=None,  # type: Optional[List[str]]
-        protocols=None,  # type: Optional[List[str]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.MetricsResponse"
@@ -68,23 +68,23 @@ class LogAnalyticsOperations(object):
         :param profile_name: Name of the CDN profile which is unique within the resource group.
         :type profile_name: str
         :param metrics:
-        :type metrics: list[str or ~azure.mgmt.cdn.models.Get4ItemsItem]
+        :type metrics: list[str or ~azure.mgmt.cdn.models.LogMetric]
         :param date_time_begin:
         :type date_time_begin: ~datetime.datetime
         :param date_time_end:
         :type date_time_end: ~datetime.datetime
         :param granularity:
-        :type granularity: str or ~azure.mgmt.cdn.models.Enum31
-        :param group_by:
-        :type group_by: list[str or ~azure.mgmt.cdn.models.Get8ItemsItem]
-        :param continents:
-        :type continents: list[str]
-        :param country_or_regions:
-        :type country_or_regions: list[str]
+        :type granularity: str or ~azure.mgmt.cdn.models.LogMetricsGranularity
         :param custom_domains:
         :type custom_domains: list[str]
         :param protocols:
         :type protocols: list[str]
+        :param group_by:
+        :type group_by: list[str or ~azure.mgmt.cdn.models.LogMetricsGroupBy]
+        :param continents:
+        :type continents: list[str]
+        :param country_or_regions:
+        :type country_or_regions: list[str]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MetricsResponse, or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.MetricsResponse
@@ -110,20 +110,18 @@ class LogAnalyticsOperations(object):
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['metrics'] = self._serialize.query("metrics", metrics, '[str]', div=',')
+        query_parameters['metrics'] = [self._serialize.query("metrics", q, 'str') if q is not None else '' for q in metrics]
         query_parameters['dateTimeBegin'] = self._serialize.query("date_time_begin", date_time_begin, 'iso-8601')
         query_parameters['dateTimeEnd'] = self._serialize.query("date_time_end", date_time_end, 'iso-8601')
         query_parameters['granularity'] = self._serialize.query("granularity", granularity, 'str')
         if group_by is not None:
-            query_parameters['groupBy'] = self._serialize.query("group_by", group_by, '[str]', div=',')
+            query_parameters['groupBy'] = [self._serialize.query("group_by", q, 'str') if q is not None else '' for q in group_by]
         if continents is not None:
-            query_parameters['continents'] = self._serialize.query("continents", continents, '[str]', div=',')
+            query_parameters['continents'] = [self._serialize.query("continents", q, 'str') if q is not None else '' for q in continents]
         if country_or_regions is not None:
-            query_parameters['countryOrRegions'] = self._serialize.query("country_or_regions", country_or_regions, '[str]', div=',')
-        if custom_domains is not None:
-            query_parameters['customDomains'] = self._serialize.query("custom_domains", custom_domains, '[str]', div=',')
-        if protocols is not None:
-            query_parameters['protocols'] = self._serialize.query("protocols", protocols, '[str]', div=',')
+            query_parameters['countryOrRegions'] = [self._serialize.query("country_or_regions", q, 'str') if q is not None else '' for q in country_or_regions]
+        query_parameters['customDomains'] = [self._serialize.query("custom_domains", q, 'str') if q is not None else '' for q in custom_domains]
+        query_parameters['protocols'] = [self._serialize.query("protocols", q, 'str') if q is not None else '' for q in protocols]
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -150,9 +148,9 @@ class LogAnalyticsOperations(object):
         self,
         resource_group_name,  # type: str
         profile_name,  # type: str
-        rankings,  # type: List[Union[str, "_models.Enum35"]]
-        metrics,  # type: List[Union[str, "_models.Get5ItemsItem"]]
-        max_ranking,  # type: float
+        rankings,  # type: List[Union[str, "_models.LogRanking"]]
+        metrics,  # type: List[Union[str, "_models.LogRankingMetric"]]
+        max_ranking,  # type: int
         date_time_begin,  # type: datetime.datetime
         date_time_end,  # type: datetime.datetime
         custom_domains=None,  # type: Optional[List[str]]
@@ -166,11 +164,11 @@ class LogAnalyticsOperations(object):
         :param profile_name: Name of the CDN profile which is unique within the resource group.
         :type profile_name: str
         :param rankings:
-        :type rankings: list[str or ~azure.mgmt.cdn.models.Enum35]
+        :type rankings: list[str or ~azure.mgmt.cdn.models.LogRanking]
         :param metrics:
-        :type metrics: list[str or ~azure.mgmt.cdn.models.Get5ItemsItem]
+        :type metrics: list[str or ~azure.mgmt.cdn.models.LogRankingMetric]
         :param max_ranking:
-        :type max_ranking: float
+        :type max_ranking: int
         :param date_time_begin:
         :type date_time_begin: ~datetime.datetime
         :param date_time_end:
@@ -202,13 +200,13 @@ class LogAnalyticsOperations(object):
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['rankings'] = self._serialize.query("rankings", rankings, '[str]', div=',')
-        query_parameters['metrics'] = self._serialize.query("metrics", metrics, '[str]', div=',')
-        query_parameters['maxRanking'] = self._serialize.query("max_ranking", max_ranking, 'float')
+        query_parameters['rankings'] = [self._serialize.query("rankings", q, 'str') if q is not None else '' for q in rankings]
+        query_parameters['metrics'] = [self._serialize.query("metrics", q, 'str') if q is not None else '' for q in metrics]
+        query_parameters['maxRanking'] = self._serialize.query("max_ranking", max_ranking, 'int')
         query_parameters['dateTimeBegin'] = self._serialize.query("date_time_begin", date_time_begin, 'iso-8601')
         query_parameters['dateTimeEnd'] = self._serialize.query("date_time_end", date_time_end, 'iso-8601')
         if custom_domains is not None:
-            query_parameters['customDomains'] = self._serialize.query("custom_domains", custom_domains, '[str]', div=',')
+            query_parameters['customDomains'] = [self._serialize.query("custom_domains", q, 'str') if q is not None else '' for q in custom_domains]
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -355,13 +353,13 @@ class LogAnalyticsOperations(object):
         self,
         resource_group_name,  # type: str
         profile_name,  # type: str
-        metrics,  # type: List[str]
+        metrics,  # type: List[Union[str, "_models.WafMetric"]]
         date_time_begin,  # type: datetime.datetime
         date_time_end,  # type: datetime.datetime
-        granularity,  # type: Union[str, "_models.Enum37"]
-        actions=None,  # type: Optional[List[Union[str, "_models.Enum38"]]]
-        group_by=None,  # type: Optional[List[Union[str, "_models.Enum39"]]]
-        rule_types=None,  # type: Optional[List[Union[str, "_models.Enum40"]]]
+        granularity,  # type: Union[str, "_models.WafGranularity"]
+        actions=None,  # type: Optional[List[Union[str, "_models.WafAction"]]]
+        group_by=None,  # type: Optional[List[Union[str, "_models.WafRankingGroupBy"]]]
+        rule_types=None,  # type: Optional[List[Union[str, "_models.WafRuleType"]]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.WafMetricsResponse"
@@ -372,19 +370,19 @@ class LogAnalyticsOperations(object):
         :param profile_name: Name of the CDN profile which is unique within the resource group.
         :type profile_name: str
         :param metrics:
-        :type metrics: list[str]
+        :type metrics: list[str or ~azure.mgmt.cdn.models.WafMetric]
         :param date_time_begin:
         :type date_time_begin: ~datetime.datetime
         :param date_time_end:
         :type date_time_end: ~datetime.datetime
         :param granularity:
-        :type granularity: str or ~azure.mgmt.cdn.models.Enum37
+        :type granularity: str or ~azure.mgmt.cdn.models.WafGranularity
         :param actions:
-        :type actions: list[str or ~azure.mgmt.cdn.models.Enum38]
+        :type actions: list[str or ~azure.mgmt.cdn.models.WafAction]
         :param group_by:
-        :type group_by: list[str or ~azure.mgmt.cdn.models.Enum39]
+        :type group_by: list[str or ~azure.mgmt.cdn.models.WafRankingGroupBy]
         :param rule_types:
-        :type rule_types: list[str or ~azure.mgmt.cdn.models.Enum40]
+        :type rule_types: list[str or ~azure.mgmt.cdn.models.WafRuleType]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: WafMetricsResponse, or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.WafMetricsResponse
@@ -410,16 +408,16 @@ class LogAnalyticsOperations(object):
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['metrics'] = self._serialize.query("metrics", metrics, '[str]', div=',')
+        query_parameters['metrics'] = [self._serialize.query("metrics", q, 'str') if q is not None else '' for q in metrics]
         query_parameters['dateTimeBegin'] = self._serialize.query("date_time_begin", date_time_begin, 'iso-8601')
         query_parameters['dateTimeEnd'] = self._serialize.query("date_time_end", date_time_end, 'iso-8601')
         query_parameters['granularity'] = self._serialize.query("granularity", granularity, 'str')
         if actions is not None:
-            query_parameters['actions'] = self._serialize.query("actions", actions, '[str]', div=',')
+            query_parameters['actions'] = [self._serialize.query("actions", q, 'str') if q is not None else '' for q in actions]
         if group_by is not None:
-            query_parameters['groupBy'] = self._serialize.query("group_by", group_by, '[str]', div=',')
+            query_parameters['groupBy'] = [self._serialize.query("group_by", q, 'str') if q is not None else '' for q in group_by]
         if rule_types is not None:
-            query_parameters['ruleTypes'] = self._serialize.query("rule_types", rule_types, '[str]', div=',')
+            query_parameters['ruleTypes'] = [self._serialize.query("rule_types", q, 'str') if q is not None else '' for q in rule_types]
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -446,13 +444,13 @@ class LogAnalyticsOperations(object):
         self,
         resource_group_name,  # type: str
         profile_name,  # type: str
-        metrics,  # type: List[str]
+        metrics,  # type: List[Union[str, "_models.WafMetric"]]
         date_time_begin,  # type: datetime.datetime
         date_time_end,  # type: datetime.datetime
-        max_ranking,  # type: float
-        rankings,  # type: List[Union[str, "_models.Enum42"]]
-        actions=None,  # type: Optional[List[Union[str, "_models.Enum43"]]]
-        rule_types=None,  # type: Optional[List[Union[str, "_models.Enum44"]]]
+        max_ranking,  # type: int
+        rankings,  # type: List[Union[str, "_models.WafRankingType"]]
+        actions=None,  # type: Optional[List[Union[str, "_models.WafAction"]]]
+        rule_types=None,  # type: Optional[List[Union[str, "_models.WafRuleType"]]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.WafRankingsResponse"
@@ -463,19 +461,19 @@ class LogAnalyticsOperations(object):
         :param profile_name: Name of the CDN profile which is unique within the resource group.
         :type profile_name: str
         :param metrics:
-        :type metrics: list[str]
+        :type metrics: list[str or ~azure.mgmt.cdn.models.WafMetric]
         :param date_time_begin:
         :type date_time_begin: ~datetime.datetime
         :param date_time_end:
         :type date_time_end: ~datetime.datetime
         :param max_ranking:
-        :type max_ranking: float
+        :type max_ranking: int
         :param rankings:
-        :type rankings: list[str or ~azure.mgmt.cdn.models.Enum42]
+        :type rankings: list[str or ~azure.mgmt.cdn.models.WafRankingType]
         :param actions:
-        :type actions: list[str or ~azure.mgmt.cdn.models.Enum43]
+        :type actions: list[str or ~azure.mgmt.cdn.models.WafAction]
         :param rule_types:
-        :type rule_types: list[str or ~azure.mgmt.cdn.models.Enum44]
+        :type rule_types: list[str or ~azure.mgmt.cdn.models.WafRuleType]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: WafRankingsResponse, or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.WafRankingsResponse
@@ -501,15 +499,15 @@ class LogAnalyticsOperations(object):
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['metrics'] = self._serialize.query("metrics", metrics, '[str]', div=',')
+        query_parameters['metrics'] = [self._serialize.query("metrics", q, 'str') if q is not None else '' for q in metrics]
         query_parameters['dateTimeBegin'] = self._serialize.query("date_time_begin", date_time_begin, 'iso-8601')
         query_parameters['dateTimeEnd'] = self._serialize.query("date_time_end", date_time_end, 'iso-8601')
-        query_parameters['maxRanking'] = self._serialize.query("max_ranking", max_ranking, 'float')
-        query_parameters['rankings'] = self._serialize.query("rankings", rankings, '[str]', div=',')
+        query_parameters['maxRanking'] = self._serialize.query("max_ranking", max_ranking, 'int')
+        query_parameters['rankings'] = [self._serialize.query("rankings", q, 'str') if q is not None else '' for q in rankings]
         if actions is not None:
-            query_parameters['actions'] = self._serialize.query("actions", actions, '[str]', div=',')
+            query_parameters['actions'] = [self._serialize.query("actions", q, 'str') if q is not None else '' for q in actions]
         if rule_types is not None:
-            query_parameters['ruleTypes'] = self._serialize.query("rule_types", rule_types, '[str]', div=',')
+            query_parameters['ruleTypes'] = [self._serialize.query("rule_types", q, 'str') if q is not None else '' for q in rule_types]
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]

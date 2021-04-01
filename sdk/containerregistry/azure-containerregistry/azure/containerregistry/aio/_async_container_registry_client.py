@@ -16,10 +16,17 @@ if TYPE_CHECKING:
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
-    def __init__(
-        self, endpoint: str, credential: "AsyncTokenCredential", **kwargs
-    ):  # pylint: disable=client-method-missing-type-annotations
-        if not endpoint.startswith("https://"):
+    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Dict[str, Any]) -> None:
+        """Create a ContainerRegistryClient from an endpoint and a credential
+
+        :param endpoint: An ACR endpoint
+        :type endpoint: str
+        :param credential: The credential with which to authenticate
+        :type credential: AsyncTokenCredential
+        :returns: None
+        :raises: None
+        """
+        if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
         self._credential = credential

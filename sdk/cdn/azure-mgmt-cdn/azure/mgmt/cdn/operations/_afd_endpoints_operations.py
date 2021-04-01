@@ -232,7 +232,7 @@ class AFDEndpointsOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -241,6 +241,9 @@ class AFDEndpointsOperations(object):
             deserialized = self._deserialize('AFDEndpoint', pipeline_response)
 
         if response.status_code == 201:
+            deserialized = self._deserialize('AFDEndpoint', pipeline_response)
+
+        if response.status_code == 202:
             deserialized = self._deserialize('AFDEndpoint', pipeline_response)
 
         if cls:
@@ -506,7 +509,7 @@ class AFDEndpointsOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize(_models.AfdErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
