@@ -52,31 +52,31 @@ class ACRExchangeClient(object):
             credential=credential,
             url=endpoint,
             sdk_moniker=USER_AGENT,
-            authentication_policy=SansIOHTTPPolicy(),
+            authentication_policy=ExchangeClientAuthenticationPolicy(),
             credential_scopes=kwargs.pop("credential_scopes", self._credential_scopes),
             **kwargs
         )
         self._credential = credential
 
-    def get_acr_access_token(self, challenge):
-        # type: (str) -> str
+    def get_acr_access_token(self, challenge, **kwargs):
+        # type: (str, Dict[str, Any]) -> str
         parsed_challenge = _parse_challenge(challenge)
         refresh_token = self.exchange_aad_token_for_refresh_token(service=parsed_challenge["service"])
         return self.exchange_refresh_token_for_access_token(
-            refresh_token, service=parsed_challenge["service"], scope=parsed_challenge["scope"]
+            refresh_token, service=parsed_challenge["service"], scope=parsed_challenge["scope"], **kwargs
         )
 
-    def exchange_aad_token_for_refresh_token(self, service=None):
+    def exchange_aad_token_for_refresh_token(self, service=None, **kwargs):
         # type: (str, Dict[str, Any]) -> str
         refresh_token = self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
-            service=service, access_token=self._credential.get_token(self._credential_scopes).token
+            service=service, access_token=self._credential.get_token(self._credential_scopes).token, **kwargs
         )
         return refresh_token.refresh_token
 
-    def exchange_refresh_token_for_access_token(self, refresh_token, service=None, scope=None):
-        # type: (str, str, str) -> str
+    def exchange_refresh_token_for_access_token(self, refresh_token, service=None, scope=None, **kwargs):
+        # type: (str, str, str, Dict[str, Any]) -> str
         access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
-            service=service, scope=scope, refresh_token=refresh_token
+            service=service, scope=scope, refresh_token=refresh_token, **kwargs
         )
         return access_token.access_token
 

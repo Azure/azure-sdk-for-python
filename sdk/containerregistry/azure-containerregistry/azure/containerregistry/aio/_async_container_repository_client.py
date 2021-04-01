@@ -29,7 +29,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :param repository: The name of a repository
         :type repository: str
         :param credential: The credential with which to authenticate
-        :type credential: TokenCredential
+        :type credential: AsyncTokenCredential
         :returns: None
         :raises: None
         """
@@ -117,16 +117,15 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
         :keyword last: Query parameter for the last item in the previous query
         :type last: str
-        :keyword n: Max number of items to be returned
-        :type n: int
+        :keyword page_size: Number of items per page
+        :type page_size: int
         :keyword orderby: Order by query parameter
         :type orderby: :class:~azure.containerregistry.RegistryArtifactOrderBy
         :returns: ~azure.core.paging.AsyncItemPaged[RegistryArtifactProperties]
         :raises: None
         """
-        # GET /acr/v1/{name}/_manifests
         last = kwargs.pop("last", None)
-        n = kwargs.pop("top", None)
+        n = kwargs.pop("page_size", None)
         orderby = kwargs.pop("order_by", None)
         return await self._client.container_registry_repository.get_manifests(
             self.repository,

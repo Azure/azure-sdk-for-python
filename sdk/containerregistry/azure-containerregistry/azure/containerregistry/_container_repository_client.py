@@ -123,7 +123,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
         :keyword last: Query parameter for the last item in the previous query
         :type last: str
-        :keyword page_size: Max number of items to be returned
+        :keyword page_size: Number of items per page
         :type page_size: int
         :keyword orderby: Order by query parameter
         :type orderby: :class:~azure.containerregistry.RegistryArtifactOrderBy
