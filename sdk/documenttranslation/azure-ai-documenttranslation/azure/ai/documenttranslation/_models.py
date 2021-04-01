@@ -65,6 +65,10 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
     def _to_generated_list(glossaries):
         return [glossary._to_generated() for glossary in glossaries]  # pylint: disable=protected-access
 
+    def __repr__(self):
+        return "TranslationGlossary(glossary_url={}, file_format={}, format_version={}, storage_source={})" \
+            .format(self.glossary_url, self.file_format, self.format_version, self.storage_source)[:1024]
+
 
 class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
     """Destination for the finished translated documents.
@@ -118,6 +122,11 @@ class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
     @staticmethod
     def _to_generated_list(targets):
         return [target._to_generated() for target in targets]  # pylint: disable=protected-access
+
+
+    def __repr__(self):
+        return "TranslationTarget(target_url={}, language_code={}, category_id={}, glossaries={}, storage_source={})" \
+            .format(self.target_url, self.language_code, self.category_id, self.glossaries.__repr__(), self.storage_source)[:1024]
 
 
 class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheritance
@@ -201,6 +210,10 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
             for batch_document_input in batch_document_inputs
         ]
 
+    def __repr__(self):
+        return "DocumentTranslationInput(source_url={}, targets={}, source_language_code={}, storage_type={}, storage_source={}, prefix={}, suffix={})" \
+            .format(self.source_url, self.targets.__repr__(), self.source_language_code, self.storage_type, self.storage_source, self.prefix, self.suffix)[:1024]
+
 
 class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, too-many-instance-attributes
     """Status information about the translation job.
@@ -277,6 +290,14 @@ class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, to
             has_completed=bool(batch_status_details.status not in ["NotStarted", "Running", "Cancelling"])
         )
 
+    def __repr__(self):
+        return '''JobStatusResult(id={}, created_on={}, last_updated_on={}, status={}, error={},
+            documents_total_count={}, documents_failed_count={}, documents_succeeded_count={}, documents_in_progress_count={},
+            documents_not_yet_started_count={}, documents_cancelled_count={}. total_characters_charged={})''' \
+            .format(self.id, self.created_on, self.last_updated_on, self.status, self.error,
+                self.documents_total_count, self.documents_failed_count, self.documents_succeeded_count, self.documents_in_progress_count,
+                self.documents_not_yet_started_count, self.documents_cancelled_count, self.total_characters_charged)[:1024]
+
 
 class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritance, R0903, R0902
     """Status information about a particular document within a translation job.
@@ -346,6 +367,12 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
             has_completed=bool(doc_status.status not in ["NotStarted", "Running", "Cancelling"])
         )
 
+    def __repr__(self):
+        return '''DocumentStatusResult(translated_document_url={}, created_on={}, last_updated_on={}, status={}, translate_to={},
+            error={}, translation_progress={}, id={}, characters_charged={}''' \
+            .format(self.translated_document_url, self.created_on, self.last_updated_on, self.status, self.translate_to,
+                self.error, self.translation_progress, self.id, self.characters_charged)[:1024]
+
 
 class DocumentTranslationError(object):  # pylint: disable=useless-object-inheritance, R0903
     """This contains the error code, message, and target with descriptive details on why
@@ -382,6 +409,10 @@ class DocumentTranslationError(object):  # pylint: disable=useless-object-inheri
             message=error.message,
             target=error.target
         )
+
+    def __repr__(self):
+        return "DocumentTranslationError(code={}, message={}, target={}" \
+            .format(self.code, self.message, self.target)[:1024]
 
 
 class FileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
@@ -423,3 +454,7 @@ class FileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
     @staticmethod
     def _from_generated_list(file_formats):
         return [FileFormat._from_generated(file_formats) for file_formats in file_formats]
+
+    def __repr__(self):
+        return "FileFormat(file_format={}, file_extensions={}, content_types={}, format_versions={}, default_format_version={}" \
+            .format(self.file_format, self.file_extensions, self.content_types, self.format_versions, self.default_format_version)[:1024]
