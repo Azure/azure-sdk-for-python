@@ -51,7 +51,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        # NOTE: DELETE `/acr/v1/{name}`
         return DeletedRepositoryResult._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.delete_repository(repository, **kwargs)
         )

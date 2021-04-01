@@ -95,9 +95,25 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
         count = 0
         for tag in tags:
             count += 1
-            print(tag)
 
         assert count > 0
+
+    @pytest.mark.skip("results_per_page is not valid yet for list_tags")
+    @acr_preparer()
+    def test_list_tags_by_page(self, containerregistry_baseurl):
+        client = self.create_repository_client(containerregistry_baseurl, self.repository)
+
+        results_per_page = 2
+
+        pages = client.list_tags(results_per_page=results_per_page)
+        page_count = 0
+        for page in pages:
+            tag_count = 0
+            for tag in page:
+                tag_count += 1
+            assert tag_count <= results_per_page
+
+        assert page >= 1
 
     @acr_preparer()
     def test_list_tags_descending(self, containerregistry_baseurl):
