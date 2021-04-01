@@ -221,9 +221,7 @@ class FeatureFlagConfigurationSetting(
         if self._value is None:
             self._value = {
                 "conditions": {
-                    "client_filters": [
-                        self._filters
-                    ]
+                    "client_filters": new_filters
                 }
             }
         elif not isinstance(self._value, dict):
@@ -232,7 +230,7 @@ class FeatureFlagConfigurationSetting(
             try:
                 self._value['conditions']['client_filters'] = new_filters
             except KeyError:
-                self._value['conditions'] = {'client_filters': [new_filters]}
+                self._value['conditions'] = {'client_filters': new_filters}
         self._filters = new_filters
 
     @classmethod
