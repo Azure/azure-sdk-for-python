@@ -80,7 +80,7 @@ class CommunicationIdentityClient:
         return cls(endpoint, access_key, **kwargs)
 
     @distributed_trace_async
-    async def create_user(self, **kwargs) -> CommunicationIdentifier:
+    async def create_user(self, **kwargs) -> 'CommunicationIdentifier':
         """create a single Communication user
 
         :return: CommunicationIdentifier
@@ -93,9 +93,9 @@ class CommunicationIdentityClient:
     @distributed_trace_async
     async def create_user_and_token(
             self,
-            scopes: List[Union[str, CommunicationTokenScope]],
+            scopes: List[Union[str, 'CommunicationTokenScope']],
             **kwargs
-        ) -> Tuple[CommunicationIdentifier, AccessToken]:
+        ) -> Tuple['CommunicationIdentifier', AccessToken]:
         """create a single Communication user with an identity token.
         :param scopes:
             List of scopes to be added to the token.
@@ -131,7 +131,7 @@ class CommunicationIdentityClient:
     async def get_token(
             self,
             user: CommunicationUserIdentifier,
-            scopes: List[Union[str, CommunicationTokenScope]],
+            scopes: List[Union[str, 'CommunicationTokenScope']],
             **kwargs
         ) -> AccessToken:
         """Generates a new token for an identity.
