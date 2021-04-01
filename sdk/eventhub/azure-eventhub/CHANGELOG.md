@@ -2,6 +2,9 @@
 
 ## 5.3.2 (Unreleased)
 
+**New Features**
+
+- Add support for `~azure.core.credentials.AzureSasCredential` for producer and consumer clients.
 
 ## 5.3.1 (2021-03-09)
 

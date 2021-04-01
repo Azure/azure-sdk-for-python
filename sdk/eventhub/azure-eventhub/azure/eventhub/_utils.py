@@ -262,3 +262,12 @@ def get_last_enqueued_event_properties(event_data):
         }
         return event_data._last_enqueued_event_properties
     return None
+
+def parse_sas_credential(credential):
+    # type: (AzureSasCredential) -> EventHubSASTokenCredential
+    try:
+        sas = credential.signature
+        expiry = (3600 - 900) * 1000
+        return (sas, expiry)
+    except AttributeError:
+        pass
