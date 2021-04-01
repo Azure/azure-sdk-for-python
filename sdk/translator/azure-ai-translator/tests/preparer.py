@@ -14,12 +14,12 @@ from azure.core.credentials import AzureKeyCredential
 
 DocumentTranslationPreparer = functools.partial(
     PowerShellPreparer,
-    'documenttranslation',
-    documenttranslation_test_endpoint="https://redacted.cognitiveservices.azure.com/",
-    documenttranslation_test_api_key="fakeZmFrZV9hY29jdW50X2tleQ==",
-    documenttranslation_name="redacted",
-    documenttranslation_storage_name="redacted",
-    documenttranslation_storage_key="fakeZmFrZV9hY29jdW50X2tleQ=="
+    'translator',
+    translator_document_test_endpoint="https://redacted.cognitiveservices.azure.com/",
+    translator_document_test_api_key="fakeZmFrZV9hY29jdW50X2tleQ==",
+    translator_document_name="redacted",
+    translator_document_storage_name="redacted",
+    translator_document_storage_key="fakeZmFrZV9hY29jdW50X2tleQ=="
 )
 
 
@@ -33,8 +33,8 @@ class DocumentTranslationClientPreparer(AzureMgmtPreparer):
         self.client_cls = client_cls
 
     def create_resource(self, name, **kwargs):
-        doctranslation_test_endpoint = kwargs.get("documenttranslation_test_endpoint")
-        doctranslation_test_api_key = kwargs.get("documenttranslation_test_api_key")
+        doctranslation_test_endpoint = kwargs.get("translator_document_test_endpoint")
+        doctranslation_test_api_key = kwargs.get("translator_document_test_api_key")
 
         # set polling interval to 0 for recorded tests
         if not self.is_live:
