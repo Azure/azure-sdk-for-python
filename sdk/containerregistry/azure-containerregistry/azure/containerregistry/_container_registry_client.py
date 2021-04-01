@@ -27,7 +27,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: None
         """
-        if not endpoint.startswith("https://"):
+        if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
         self._credential = credential
@@ -43,8 +43,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
         # NOTE: DELETE `/acr/v1/{name}`
-        deleted_repository = self._client.container_registry.delete_repository(repository, **kwargs)
-        return DeletedRepositoryResult._from_generated(deleted_repository)  # pylint: disable=protected-access
+        return DeletedRepositoryResult._from_generated(  # pylint: disable=protected-access
+            self._client.container_registry.delete_repository(repository, **kwargs)
+        )
 
     def list_repositories(self, **kwargs):
         # type: (Dict[str, Any]) -> ItemPaged[str]

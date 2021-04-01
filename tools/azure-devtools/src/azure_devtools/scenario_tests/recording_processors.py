@@ -191,9 +191,12 @@ class GeneralNameReplacer(RecordingProcessor):
             request.uri = request.uri.replace(old, new)
 
             if is_text_payload(request) and request.body:
-                body = six.ensure_str(request.body)
-                if old in body:
-                    request.body = body.replace(old, new)
+                if isinstance(request.body, dict):
+                    pass
+                else:
+                    body = six.ensure_str(request.body)
+                    if old in body:
+                        request.body = body.replace(old, new)
 
             if request.body and request.uri and is_batch_payload(request):
                 import re
