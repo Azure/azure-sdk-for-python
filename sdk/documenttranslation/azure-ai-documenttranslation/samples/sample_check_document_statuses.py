@@ -67,8 +67,8 @@ def sample_document_status_checks():
         for document in doc_statuses:
             if document.id not in completed_docs:
                 if document.status == "Succeeded":
-                    print("Document at {} was translated to {} language".format(
-                        document.translated_document_url, document.translate_to
+                    print("Document at {} was translated to {} language. You can find translated document at {}".format(
+                        document.source_document_url, document.translate_to, document.translated_document_url
                     ))
                     completed_docs.append(document.id)
                 if document.status == "Failed":
