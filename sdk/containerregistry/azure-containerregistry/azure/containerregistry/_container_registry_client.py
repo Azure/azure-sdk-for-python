@@ -67,7 +67,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: ~azure.core.paging.ItemPaged[str]
         :raises: None
         """
-        n = kwargs.pop("page_size", None)
+        n = kwargs.pop("results_per_page", None)
         last = kwargs.pop("last", None)
 
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.Repositories"]
@@ -88,9 +88,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
                         "self._config.url",
-                        self._client._config.url,
+                        self._client._config.url,  # pylint: disable=protected-access
                         "str",
-                        skip_quote=True,  # pylint: disable=protected-access
+                        skip_quote=True,
                     ),
                 }
                 url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
@@ -114,9 +114,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
                         "self._config.url",
-                        self._client._config.url,
+                        self._client._config.url,  # pylint: disable=protected-access
                         "str",
-                        skip_quote=True,  # pylint: disable=protected-access
+                        skip_quote=True,
                     ),
                 }
                 url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access

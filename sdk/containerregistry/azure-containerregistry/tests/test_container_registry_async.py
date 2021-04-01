@@ -48,10 +48,10 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     @acr_preparer()
     async def test_list_repositories_by_page(self, containerregistry_baseurl):
         client = self.create_registry_client(containerregistry_baseurl)
-        page_size = 2
+        results_per_page = 2
         total_pages = 0
 
-        repository_pages = client.list_repositories(page_size=page_size)
+        repository_pages = client.list_repositories(results_per_page=results_per_page)
 
         prev = None
         async for page in repository_pages.by_page():
@@ -61,7 +61,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
                 assert prev != repo
                 prev = repo
                 page_count += 1
-            assert page_count <= page_size
+            assert page_count <= results_per_page
             total_pages += 1
 
         assert total_pages > 1

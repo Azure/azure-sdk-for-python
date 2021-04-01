@@ -62,7 +62,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: ~azure.core.paging.AsyncItemPaged[str]
         :raises: ResourceNotFoundError
         """
-        n = kwargs.pop("page_size", None)
+        n = kwargs.pop("results_per_page", None)
         last = kwargs.pop("last", None)
 
         cls = kwargs.pop("cls", None)
@@ -83,9 +83,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
                         "self._config.url",
-                        self._client._config.url,
+                        self._client._config.url,  # pylint: disable=protected-access
                         "str",
-                        skip_quote=True,  # pylint: disable=protected-access
+                        skip_quote=True,
                     ),
                 }
                 url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
@@ -109,9 +109,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
                         "self._config.url",
-                        self._client._config.url,
+                        self._client._config.url,  # pylint: disable=protected-access
                         "str",
-                        skip_quote=True,  # pylint: disable=protected-access
+                        skip_quote=True,
                     ),
                 }
                 url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
@@ -121,9 +121,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._client._deserialize(
+            deserialized = self._client._deserialize(# pylint: disable=protected-access
                 "Repositories", pipeline_response
-            )  # pylint: disable=protected-access
+            )
             list_of_elem = deserialized.repositories
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -152,5 +152,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return AsyncItemPaged(get_next, extract_data)
 
     def get_repository_client(self, name: str, **kwargs) -> ContainerRepositoryClient:
+        """Get a repository client
 
+        :param repository: The repository to create a client for
+        :type repository: str
+        :returns: :class:~azure.containerregistry.ContainerRepositoryClient
+        """
         return ContainerRepositoryClient(self._endpoint, name, self._credential, **kwargs)

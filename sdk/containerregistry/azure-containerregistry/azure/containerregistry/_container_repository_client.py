@@ -123,8 +123,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
         :keyword last: Query parameter for the last item in the previous query
         :type last: str
-        :keyword page_size: Number of items per page
-        :type page_size: int
+        :keyword results_per_page: Number of items per page
+        :type results_per_page: int
         :keyword orderby: Order by query parameter
         :type orderby: :class:~azure.containerregistry.RegistryArtifactOrderBy
         :returns: ~azure.core.paging.ItemPaged[RegistryArtifactProperties]
@@ -132,7 +132,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         # GET /acr/v1/{name}/_manifests
         last = kwargs.pop("last", None)
-        n = kwargs.pop("page_size", None)
+        n = kwargs.pop("results_per_page", None)
         orderby = kwargs.pop("order_by", None)
         return self._client.container_registry_repository.get_manifests(
             self.repository,
@@ -158,7 +158,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         return self._client.container_registry_repository.get_tags(
             self.repository,
             last=kwargs.pop("last", None),
-            n=kwargs.pop("page_size", None),
+            n=kwargs.pop("results_per_page", None),
             orderby=kwargs.pop("order_by", None),
             digest=kwargs.pop("digest", None),
             cls=lambda objs: [TagProperties._from_generated(o) for o in objs],  # pylint: disable=protected-access

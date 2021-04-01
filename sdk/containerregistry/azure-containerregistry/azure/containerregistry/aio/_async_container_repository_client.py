@@ -117,15 +117,15 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
         :keyword last: Query parameter for the last item in the previous query
         :type last: str
-        :keyword page_size: Number of items per page
-        :type page_size: int
+        :keyword results_per_page: Number of items per page
+        :type results_per_page: int
         :keyword orderby: Order by query parameter
         :type orderby: :class:~azure.containerregistry.RegistryArtifactOrderBy
         :returns: ~azure.core.paging.AsyncItemPaged[RegistryArtifactProperties]
         :raises: None
         """
         last = kwargs.pop("last", None)
-        n = kwargs.pop("page_size", None)
+        n = kwargs.pop("results_per_page", None)
         orderby = kwargs.pop("order_by", None)
         return self._client.container_registry_repository.get_manifests(
             self.repository,
