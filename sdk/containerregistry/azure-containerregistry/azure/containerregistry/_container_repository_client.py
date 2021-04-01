@@ -30,7 +30,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: None
         """
-        if not endpoint.startswith("https://"):
+        if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
         self.repository = repository
@@ -70,8 +70,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        self._client.container_registry_repository.delete_tag(
-            self.repository, tag, **kwargs)
+        self._client.container_registry_repository.delete_tag(self.repository, tag, **kwargs)
 
     def get_properties(self, **kwargs):
         # type: (...) -> RepositoryProperties
@@ -122,7 +121,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
         :keyword last: Query parameter for the last item in the previous query
         :type last: str
-        :keyword page_size: Max number of items to be returned
+        :keyword page_size: Number of items per page
         :type page_size: int
         :keyword orderby: Order by query parameter
         :type orderby: :class:~azure.containerregistry.RegistryArtifactOrderBy
@@ -195,5 +194,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             tag_or_digest = self._get_digest_from_tag(tag_or_digest)
 
         self._client.container_registry_repository.update_manifest_attributes(
-            self.repository, tag_or_digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
+            self.repository,
+            tag_or_digest,
+            value=permissions._to_generated(),  # pylint: disable=protected-access
+            **kwargs
         )

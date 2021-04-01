@@ -2,6 +2,7 @@
 
 In order to run the performance tests, the `azure-devtools` package must be installed. This is done as part of the `dev_requirements`.
 Start by creating a new virtual environment for your perf tests. This will need to be a Python 3 environment, preferably >=3.7.
+Note that tests for T1 and T2 SDKs cannot be run from the same environment, and will need to be setup separately.
 
 ### Setup for test resources
 
@@ -11,11 +12,18 @@ AZURE_EVENTHUB_CONNECTION_STRING=<the connection string of an Event Hub.>
 AZURE_EVENTHUB_NAME=<the path of the specific Event Hub to connect to>
 ```
 
-### Setup for perf test runs
+### Setup for T2 perf test runs
 
 ```cmd
 (env) ~/azure-eventhub> pip install -r dev_requirements.txt
 (env) ~/azure-eventhub> pip install .
+```
+
+### Setup for T1 perf test runs
+
+```cmd
+(env) ~/azure-servicebus> pip install -r dev_requirements.txt
+(env) ~/azure-servicebus> pip install tests/perfstress_tests/T1_legacy_tests/t1_test_requirements.txt
 ```
 
 ## Test commands
@@ -51,6 +59,12 @@ The tests currently written for the T2 SDK:
 - `SendEventBatchTest` Sends `num-events` in a batch per run.
 - `ReceiveEventTest` Receives `num-events` using the `receive` method. Receive command options apply. 
 - `ReceiveEventBatchTest` Receives `num-events` using the `receive_batch` method. Receive command options apply.
+
+### T1 Tests
+The tests currently written for the T1 SDK:
+- `LegacySendEventTest` Sends a single event per run.
+- `LegacySendEventBatchTest` Sends `num-events` in a batch per run.
+- `LegacyReceiveEventBatchTest` Receives `num-events` using the `receive` method. Receive command options apply.
 
 ## Example command
 ```cmd

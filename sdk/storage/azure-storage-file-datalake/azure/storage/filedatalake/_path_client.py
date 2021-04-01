@@ -210,7 +210,6 @@ class PathClient(StorageAccountHostsMixin):
         mod_conditions = get_mod_conditions(kwargs)
 
         options = {
-            'recursive': True,
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
             'timeout': kwargs.pop('timeout', None)}

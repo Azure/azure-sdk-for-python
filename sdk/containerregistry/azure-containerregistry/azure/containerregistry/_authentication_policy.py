@@ -6,34 +6,15 @@
 
 from typing import TYPE_CHECKING
 
-from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline.policies import HTTPPolicy
 
 from ._exchange_client import ACRExchangeClient
+from ._helpers import _enforce_https
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline import PipelineRequest, PipelineResponse
     from typing import Optional
-
-
-def _enforce_https(request):
-    # type: (PipelineRequest) -> None
-    """Raise ServiceRequestError if the request URL is non-HTTPS and the sender did not specify enforce_https=False"""
-
-    # move 'enforce_https' from options to context so it persists
-    # across retries but isn't passed to a transport implementation
-    option = request.context.options.pop("enforce_https", None)
-
-    # True is the default setting; we needn't preserve an explicit opt in to the default behavior
-    if option is False:
-        request.context["enforce_https"] = option
-
-    enforce_https = request.context.get("enforce_https", True)
-    if enforce_https and not request.http_request.url.lower().startswith("https"):
-        raise ServiceRequestError(
-            "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
-        )
 
 
 class ContainerRegistryChallengePolicy(HTTPPolicy):
@@ -42,9 +23,7 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
     def __init__(self, credential, endpoint):
         # type: (TokenCredential, str) -> None
         super(ContainerRegistryChallengePolicy, self).__init__()
-        self._scopes = "https://management.core.windows.net/.default"
         self._credential = credential
-        self._token = None  # type: Optional[AccessToken]
         self._exchange_client = ACRExchangeClient(endpoint, self._credential)
 
     def on_request(self, request):
@@ -68,7 +47,6 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         response = self.next.send(request)
 
         if response.http_response.status_code == 401:
-            self._token = None  # any cached token is invalid
             challenge = response.http_response.headers.get("WWW-Authenticate")
             if challenge and self.on_challenge(request, response, challenge):
                 response = self.next.send(request)
@@ -87,6 +65,5 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         # pylint:disable=unused-argument,no-self-use
 
         access_token = self._exchange_client.get_acr_access_token(challenge)
-        self._token = access_token
-        request.http_request.headers["Authorization"] = "Bearer " + self._token
+        request.http_request.headers["Authorization"] = "Bearer " + access_token
         return access_token is not None
