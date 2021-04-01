@@ -9,12 +9,8 @@
 # running checks without the presence of "optional" packages like aiohttp. 
 
 
-from subprocess import check_call, CalledProcessError
 import argparse
-import os
 import logging
-import sys
-import pdb
 
 logging.getLogger().setLevel(logging.INFO)
 
