@@ -11,6 +11,10 @@
   when instructed to by a Retry-After header
 - ManagedIdentityCredential caches tokens correctly
 
+### Added
+- `InteractiveBrowserCredential` functions in more WSL environments
+  ([#17615](https://github.com/Azure/azure-sdk-for-python/issues/17615))
+
 ## 1.6.0b2 (2021-03-09)
 ### Breaking Changes
 > These changes do not impact the API of stable versions such as 1.5.0.
