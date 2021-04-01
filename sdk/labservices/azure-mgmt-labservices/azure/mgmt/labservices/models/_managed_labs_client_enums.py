@@ -30,37 +30,52 @@ class AddRemove(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Enum indicating if user is adding or removing a favorite lab
     """
 
-    ADD = "Add"  #: Indicates that a user is adding a favorite lab.
-    REMOVE = "Remove"  #: Indicates that a user is removing a favorite lab.
+    #: Indicates that a user is adding a favorite lab.
+    ADD = "Add"
+    #: Indicates that a user is removing a favorite lab.
+    REMOVE = "Remove"
 
 class ConfigurationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Describes the user's progress in configuring their environment setting
     """
 
-    NOT_APPLICABLE = "NotApplicable"  #: User either hasn't started configuring their template or they haven't started the configuration process.
-    COMPLETED = "Completed"  #: User is finished modifying the template.
+    #: User either hasn't started configuring their template
+    #: or they haven't started the configuration process.
+    NOT_APPLICABLE = "NotApplicable"
+    #: User is finished modifying the template.
+    COMPLETED = "Completed"
 
 class LabUserAccessMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Lab user access mode (open to all vs. restricted to those listed on the lab).
     """
 
-    RESTRICTED = "Restricted"  #: Only users registered with the lab can access VMs.
-    OPEN = "Open"  #: Any user can register with the lab and access its VMs.
+    #: Only users registered with the lab can access VMs.
+    RESTRICTED = "Restricted"
+    #: Any user can register with the lab and access its VMs.
+    OPEN = "Open"
 
 class ManagedLabVmSize(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The size category
     """
 
-    BASIC = "Basic"  #: The base VM size.
-    STANDARD = "Standard"  #: The standard or default VM size.
-    PERFORMANCE = "Performance"  #: The most performant VM size.
+    #: The base VM size.
+    BASIC = "Basic"
+    #: The standard or default VM size.
+    STANDARD = "Standard"
+    #: The most performant VM size.
+    PERFORMANCE = "Performance"
 
 class PublishingState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Describes the readiness of this environment setting
     """
 
-    DRAFT = "Draft"  #: Initial state of an environment setting.
-    PUBLISHING = "Publishing"  #: Currently provisioning resources.
-    PUBLISHED = "Published"  #: All resources are currently provisioned.
-    PUBLISH_FAILED = "PublishFailed"  #: Failed to provision all the necessary resources.
-    SCALING = "Scaling"  #: Currently provisioning resources without recreating VM image.
+    #: Initial state of an environment setting.
+    DRAFT = "Draft"
+    #: Currently provisioning resources.
+    PUBLISHING = "Publishing"
+    #: All resources are currently provisioned.
+    PUBLISHED = "Published"
+    #: Failed to provision all the necessary resources.
+    PUBLISH_FAILED = "PublishFailed"
+    #: Currently provisioning resources without recreating VM image.
+    SCALING = "Scaling"
