@@ -6,4 +6,4 @@
 
 from ._version import VERSION
 
-USER_AGENT = "ai-translatortext/{}".format(VERSION)
+USER_AGENT = "ai-translator/{}".format(VERSION)
