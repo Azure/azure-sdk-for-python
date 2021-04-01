@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import copy
 from datetime import datetime
 import json
 import os
@@ -25,6 +26,7 @@ from devtools_testutils import AzureTestCase
 
 
 REDACTED = "REDACTED"
+
 
 class AcrBodyReplacer(RecordingProcessor):
     """Replace request body for oauth2 exchanges"""

@@ -93,11 +93,9 @@ class DeviceCodeCredential(InteractiveCredential):
             # MSAL will stop polling when the device code expires
             result = app.acquire_token_by_device_flow(flow, claims_challenge=kwargs.get("claims"))
 
-        if "access_token" not in result:
-            if result.get("error") == "authorization_pending":
-                message = "Timed out waiting for user to authenticate"
-            else:
-                message = "Authentication failed: {}".format(result.get("error_description") or result.get("error"))
-            raise ClientAuthenticationError(message=message)
+        # raise for a timeout here because the error is particular to this class
+        if "access_token" not in result and result.get("error") == "authorization_pending":
+            raise ClientAuthenticationError(message="Timed out waiting for user to authenticate")
 
+        # base class will raise for other errors
         return result

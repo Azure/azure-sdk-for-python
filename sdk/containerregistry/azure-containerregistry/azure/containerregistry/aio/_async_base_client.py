@@ -1,16 +1,16 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
 from enum import Enum
-
-from azure.core.pipeline.transport import AsyncHttpTransport
+from typing import TYPE_CHECKING
 
 from ._async_authentication_policy import ContainerRegistryChallengePolicy
 from .._generated.aio import ContainerRegistry
 from .._user_agent import USER_AGENT
+
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class ContainerRegistryApiVersion(str, Enum):
@@ -29,18 +29,14 @@ class ContainerRegistryBaseClient(object):
 
     """
 
-    def __init__(
-        self, endpoint, credential, **kwargs
-    ):  # pylint:disable=client-method-missing-type-annotations
+    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs) -> None:
         auth_policy = ContainerRegistryChallengePolicy(credential, endpoint)
         self._client = ContainerRegistry(
             credential=credential,
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=auth_policy,
-            credential_scopes=kwargs.pop(
-                "credential_scopes", ["https://management.core.windows.net/.default"]
-            ),
+            credential_scopes="https://management.core.windows.net/.default",
             **kwargs
         )
 
@@ -51,38 +47,12 @@ class ContainerRegistryBaseClient(object):
     async def __aexit__(self, *args):
         await self._client.__aexit__(*args)
 
-    def close(self):
-        # type: () -> None
+    async def close(self) -> None:
         """Close sockets opened by the client.
         Calling this method is unnecessary when using the client as a context manager.
         """
-        self._client.close()
+        await self._client.close()
 
-    def _is_tag(self, tag_or_digest):  # pylint: disable=no-self-use
+    def _is_tag(self, tag_or_digest: str) -> bool:  # pylint: disable=no-self-use
         tag = tag_or_digest.split(":")
         return not (len(tag) == 2 and tag[0].startswith(u"sha"))
-
-
-class AsyncTransportWrapper(AsyncHttpTransport):
-    """Wrapper class that ensures that an inner client created
-    by a `get_client` method does not close the outer transport for the parent
-    when used in a context manager.
-    """
-
-    def __init__(self, async_transport):
-        self._transport = async_transport
-
-    async def send(self, request, **kwargs):
-        return await self._transport.send(request, **kwargs)
-
-    async def open(self):
-        pass
-
-    async def close(self):
-        pass
-
-    async def __aenter__(self):
-        pass
-
-    async def __aexit__(self, *args):  # pylint: disable=arguments-differ
-        pass

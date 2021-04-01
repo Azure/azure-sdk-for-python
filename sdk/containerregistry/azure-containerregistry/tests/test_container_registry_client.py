@@ -59,7 +59,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         assert len(deleted_result.deleted_registry_artifact_digests) == 1
         assert len(deleted_result.deleted_tags) == 1
 
-    # @pytest.mark.skip("Don't want to for now")
     @acr_preparer()
     def test_delete_repository_does_not_exist(self, containerregistry_baseurl):
         client = self.create_registry_client(containerregistry_baseurl)

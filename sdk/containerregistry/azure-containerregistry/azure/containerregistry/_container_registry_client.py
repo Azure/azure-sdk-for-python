@@ -29,13 +29,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: None
         """
-        if not endpoint.startswith("https://"):
+        if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
         self._credential = credential
-        super(ContainerRegistryClient, self).__init__(
-            endpoint=endpoint, credential=credential, **kwargs
-        )
+        super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, **kwargs)
 
     def delete_repository(self, repository, **kwargs):
         # type: (str, Dict[str, Any]) -> DeletedRepositoryResult
@@ -46,11 +44,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        # NOTE: DELETE `/acr/v1/{name}`
-        return (
-            DeletedRepositoryResult._from_generated(  # pylint: disable=protected-access
-                self._client.container_registry.delete_repository(repository, **kwargs)
-            )
+        return DeletedRepositoryResult._from_generated(  # pylint: disable=protected-access
+            self._client.container_registry.delete_repository(repository, **kwargs)
         )
 
     def list_repositories(self, **kwargs):
@@ -77,15 +72,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: :class:~azure.containerregistry.ContainerRepositoryClient
         """
         _pipeline = Pipeline(
-            transport=TransportWrapper(
-                self._client._client._pipeline._transport  # pylint: disable=protected-access
-            ),
+            transport=TransportWrapper(self._client._client._pipeline._transport),  # pylint: disable=protected-access
             policies=self._client._client._pipeline._impl_policies,  # pylint: disable=protected-access
         )
         return ContainerRepositoryClient(
-            self._endpoint,
-            repository,
-            credential=self._credential,
-            pipeline=_pipeline,
-            **kwargs
+            self._endpoint, repository, credential=self._credential, pipeline=_pipeline, **kwargs
         )

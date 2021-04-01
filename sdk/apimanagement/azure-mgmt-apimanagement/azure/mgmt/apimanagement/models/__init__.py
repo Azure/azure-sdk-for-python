@@ -7,7 +7,10 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AccessInformationCollection
     from ._models_py3 import AccessInformationContract
+    from ._models_py3 import AccessInformationCreateParameters
+    from ._models_py3 import AccessInformationSecretsContract
     from ._models_py3 import AccessInformationUpdateParameters
     from ._models_py3 import AdditionalLocation
     from ._models_py3 import ApiCollection
@@ -24,6 +27,7 @@ try:
     from ._models_py3 import ApiManagementServiceBackupRestoreParameters
     from ._models_py3 import ApiManagementServiceBaseProperties
     from ._models_py3 import ApiManagementServiceCheckNameAvailabilityParameters
+    from ._models_py3 import ApiManagementServiceGetDomainOwnershipIdentifierResult
     from ._models_py3 import ApiManagementServiceGetSsoTokenResult
     from ._models_py3 import ApiManagementServiceIdentity
     from ._models_py3 import ApiManagementServiceListResult
@@ -33,6 +37,15 @@ try:
     from ._models_py3 import ApiManagementServiceSkuProperties
     from ._models_py3 import ApiManagementServiceUpdateParameters
     from ._models_py3 import ApiManagementServiceUpdateProperties
+    from ._models_py3 import ApiManagementSku
+    from ._models_py3 import ApiManagementSkuCapabilities
+    from ._models_py3 import ApiManagementSkuCapacity
+    from ._models_py3 import ApiManagementSkuCosts
+    from ._models_py3 import ApiManagementSkuLocationInfo
+    from ._models_py3 import ApiManagementSkuRestrictionInfo
+    from ._models_py3 import ApiManagementSkuRestrictions
+    from ._models_py3 import ApiManagementSkuZoneDetails
+    from ._models_py3 import ApiManagementSkusResult
     from ._models_py3 import ApiReleaseCollection
     from ._models_py3 import ApiReleaseContract
     from ._models_py3 import ApiRevisionCollection
@@ -100,6 +113,8 @@ try:
     from ._models_py3 import ErrorFieldContract
     from ._models_py3 import ErrorResponse
     from ._models_py3 import ErrorResponseBody
+    from ._models_py3 import GatewayCertificateAuthorityCollection
+    from ._models_py3 import GatewayCertificateAuthorityContract
     from ._models_py3 import GatewayCollection
     from ._models_py3 import GatewayContract
     from ._models_py3 import GatewayHostnameConfigurationCollection
@@ -180,6 +195,8 @@ try:
     from ._models_py3 import PortalRevisionCollection
     from ._models_py3 import PortalRevisionContract
     from ._models_py3 import PortalSettingValidationKeyContract
+    from ._models_py3 import PortalSettingsCollection
+    from ._models_py3 import PortalSettingsContract
     from ._models_py3 import PortalSigninSettings
     from ._models_py3 import PortalSignupSettings
     from ._models_py3 import ProductCollection
@@ -238,6 +255,8 @@ try:
     from ._models_py3 import TagResourceContract
     from ._models_py3 import TagResourceContractProperties
     from ._models_py3 import TenantConfigurationSyncStateContract
+    from ._models_py3 import TenantSettingsCollection
+    from ._models_py3 import TenantSettingsContract
     from ._models_py3 import TermsOfServiceProperties
     from ._models_py3 import TokenBodyParameterContract
     from ._models_py3 import UserCollection
@@ -256,7 +275,10 @@ try:
     from ._models_py3 import VirtualNetworkConfiguration
     from ._models_py3 import X509CertificateName
 except (SyntaxError, ImportError):
+    from ._models import AccessInformationCollection  # type: ignore
     from ._models import AccessInformationContract  # type: ignore
+    from ._models import AccessInformationCreateParameters  # type: ignore
+    from ._models import AccessInformationSecretsContract  # type: ignore
     from ._models import AccessInformationUpdateParameters  # type: ignore
     from ._models import AdditionalLocation  # type: ignore
     from ._models import ApiCollection  # type: ignore
@@ -273,6 +295,7 @@ except (SyntaxError, ImportError):
     from ._models import ApiManagementServiceBackupRestoreParameters  # type: ignore
     from ._models import ApiManagementServiceBaseProperties  # type: ignore
     from ._models import ApiManagementServiceCheckNameAvailabilityParameters  # type: ignore
+    from ._models import ApiManagementServiceGetDomainOwnershipIdentifierResult  # type: ignore
     from ._models import ApiManagementServiceGetSsoTokenResult  # type: ignore
     from ._models import ApiManagementServiceIdentity  # type: ignore
     from ._models import ApiManagementServiceListResult  # type: ignore
@@ -282,6 +305,15 @@ except (SyntaxError, ImportError):
     from ._models import ApiManagementServiceSkuProperties  # type: ignore
     from ._models import ApiManagementServiceUpdateParameters  # type: ignore
     from ._models import ApiManagementServiceUpdateProperties  # type: ignore
+    from ._models import ApiManagementSku  # type: ignore
+    from ._models import ApiManagementSkuCapabilities  # type: ignore
+    from ._models import ApiManagementSkuCapacity  # type: ignore
+    from ._models import ApiManagementSkuCosts  # type: ignore
+    from ._models import ApiManagementSkuLocationInfo  # type: ignore
+    from ._models import ApiManagementSkuRestrictionInfo  # type: ignore
+    from ._models import ApiManagementSkuRestrictions  # type: ignore
+    from ._models import ApiManagementSkuZoneDetails  # type: ignore
+    from ._models import ApiManagementSkusResult  # type: ignore
     from ._models import ApiReleaseCollection  # type: ignore
     from ._models import ApiReleaseContract  # type: ignore
     from ._models import ApiRevisionCollection  # type: ignore
@@ -349,6 +381,8 @@ except (SyntaxError, ImportError):
     from ._models import ErrorFieldContract  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import ErrorResponseBody  # type: ignore
+    from ._models import GatewayCertificateAuthorityCollection  # type: ignore
+    from ._models import GatewayCertificateAuthorityContract  # type: ignore
     from ._models import GatewayCollection  # type: ignore
     from ._models import GatewayContract  # type: ignore
     from ._models import GatewayHostnameConfigurationCollection  # type: ignore
@@ -429,6 +463,8 @@ except (SyntaxError, ImportError):
     from ._models import PortalRevisionCollection  # type: ignore
     from ._models import PortalRevisionContract  # type: ignore
     from ._models import PortalSettingValidationKeyContract  # type: ignore
+    from ._models import PortalSettingsCollection  # type: ignore
+    from ._models import PortalSettingsContract  # type: ignore
     from ._models import PortalSigninSettings  # type: ignore
     from ._models import PortalSignupSettings  # type: ignore
     from ._models import ProductCollection  # type: ignore
@@ -487,6 +523,8 @@ except (SyntaxError, ImportError):
     from ._models import TagResourceContract  # type: ignore
     from ._models import TagResourceContractProperties  # type: ignore
     from ._models import TenantConfigurationSyncStateContract  # type: ignore
+    from ._models import TenantSettingsCollection  # type: ignore
+    from ._models import TenantSettingsContract  # type: ignore
     from ._models import TermsOfServiceProperties  # type: ignore
     from ._models import TokenBodyParameterContract  # type: ignore
     from ._models import UserCollection  # type: ignore
@@ -508,6 +546,9 @@ except (SyntaxError, ImportError):
 from ._api_management_client_enums import (
     AccessIdName,
     AlwaysLog,
+    ApiManagementSkuCapacityScaleType,
+    ApiManagementSkuRestrictionsReasonCode,
+    ApiManagementSkuRestrictionsType,
     ApiType,
     ApiVersionSetContractDetailsVersioningScheme,
     ApimIdentityType,
@@ -546,6 +587,7 @@ from ._api_management_client_enums import (
     Protocol,
     ResourceSkuCapacityScaleType,
     SamplingType,
+    SettingsTypeName,
     SkuType,
     SoapApiType,
     State,
@@ -558,7 +600,10 @@ from ._api_management_client_enums import (
 )
 
 __all__ = [
+    'AccessInformationCollection',
     'AccessInformationContract',
+    'AccessInformationCreateParameters',
+    'AccessInformationSecretsContract',
     'AccessInformationUpdateParameters',
     'AdditionalLocation',
     'ApiCollection',
@@ -575,6 +620,7 @@ __all__ = [
     'ApiManagementServiceBackupRestoreParameters',
     'ApiManagementServiceBaseProperties',
     'ApiManagementServiceCheckNameAvailabilityParameters',
+    'ApiManagementServiceGetDomainOwnershipIdentifierResult',
     'ApiManagementServiceGetSsoTokenResult',
     'ApiManagementServiceIdentity',
     'ApiManagementServiceListResult',
@@ -584,6 +630,15 @@ __all__ = [
     'ApiManagementServiceSkuProperties',
     'ApiManagementServiceUpdateParameters',
     'ApiManagementServiceUpdateProperties',
+    'ApiManagementSku',
+    'ApiManagementSkuCapabilities',
+    'ApiManagementSkuCapacity',
+    'ApiManagementSkuCosts',
+    'ApiManagementSkuLocationInfo',
+    'ApiManagementSkuRestrictionInfo',
+    'ApiManagementSkuRestrictions',
+    'ApiManagementSkuZoneDetails',
+    'ApiManagementSkusResult',
     'ApiReleaseCollection',
     'ApiReleaseContract',
     'ApiRevisionCollection',
@@ -651,6 +706,8 @@ __all__ = [
     'ErrorFieldContract',
     'ErrorResponse',
     'ErrorResponseBody',
+    'GatewayCertificateAuthorityCollection',
+    'GatewayCertificateAuthorityContract',
     'GatewayCollection',
     'GatewayContract',
     'GatewayHostnameConfigurationCollection',
@@ -731,6 +788,8 @@ __all__ = [
     'PortalRevisionCollection',
     'PortalRevisionContract',
     'PortalSettingValidationKeyContract',
+    'PortalSettingsCollection',
+    'PortalSettingsContract',
     'PortalSigninSettings',
     'PortalSignupSettings',
     'ProductCollection',
@@ -789,6 +848,8 @@ __all__ = [
     'TagResourceContract',
     'TagResourceContractProperties',
     'TenantConfigurationSyncStateContract',
+    'TenantSettingsCollection',
+    'TenantSettingsContract',
     'TermsOfServiceProperties',
     'TokenBodyParameterContract',
     'UserCollection',
@@ -808,6 +869,9 @@ __all__ = [
     'X509CertificateName',
     'AccessIdName',
     'AlwaysLog',
+    'ApiManagementSkuCapacityScaleType',
+    'ApiManagementSkuRestrictionsReasonCode',
+    'ApiManagementSkuRestrictionsType',
     'ApiType',
     'ApiVersionSetContractDetailsVersioningScheme',
     'ApimIdentityType',
@@ -846,6 +910,7 @@ __all__ = [
     'Protocol',
     'ResourceSkuCapacityScaleType',
     'SamplingType',
+    'SettingsTypeName',
     'SkuType',
     'SoapApiType',
     'State',

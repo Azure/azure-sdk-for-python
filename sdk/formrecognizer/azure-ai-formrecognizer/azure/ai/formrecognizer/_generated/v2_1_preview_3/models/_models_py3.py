@@ -588,7 +588,7 @@ class FieldValue(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param type: Required. Type of field value. Possible values include: "string", "date", "time",
-     "phoneNumber", "number", "integer", "array", "object", "selectionMark".
+     "phoneNumber", "number", "integer", "array", "object", "selectionMark", "gender", "country".
     :type type: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.FieldValueType
     :param value_string: String value.
     :type value_string: str
@@ -610,6 +610,10 @@ class FieldValue(msrest.serialization.Model):
      "unselected".
     :type value_selection_mark: str or
      ~azure.ai.formrecognizer.v2_1_preview_3.models.FieldValueSelectionMark
+    :param value_gender: Gender value: M, F, or X. Possible values include: "M", "F", "X".
+    :type value_gender: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.FieldValueGender
+    :param value_country: 3-letter country code (ISO 3166-1 alpha-3).
+    :type value_country: str
     :param text: Text content of the extracted field.
     :type text: str
     :param bounding_box: Bounding box of the field value, if appropriate.
@@ -641,6 +645,8 @@ class FieldValue(msrest.serialization.Model):
         'value_array': {'key': 'valueArray', 'type': '[FieldValue]'},
         'value_object': {'key': 'valueObject', 'type': '{FieldValue}'},
         'value_selection_mark': {'key': 'valueSelectionMark', 'type': 'str'},
+        'value_gender': {'key': 'valueGender', 'type': 'str'},
+        'value_country': {'key': 'valueCountry', 'type': 'str'},
         'text': {'key': 'text', 'type': 'str'},
         'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
         'confidence': {'key': 'confidence', 'type': 'float'},
@@ -661,6 +667,8 @@ class FieldValue(msrest.serialization.Model):
         value_array: Optional[List["FieldValue"]] = None,
         value_object: Optional[Dict[str, "FieldValue"]] = None,
         value_selection_mark: Optional[Union[str, "FieldValueSelectionMark"]] = None,
+        value_gender: Optional[Union[str, "FieldValueGender"]] = None,
+        value_country: Optional[str] = None,
         text: Optional[str] = None,
         bounding_box: Optional[List[float]] = None,
         confidence: Optional[float] = None,
@@ -679,6 +687,8 @@ class FieldValue(msrest.serialization.Model):
         self.value_array = value_array
         self.value_object = value_object
         self.value_selection_mark = value_selection_mark
+        self.value_gender = value_gender
+        self.value_country = value_country
         self.text = text
         self.bounding_box = bounding_box
         self.confidence = confidence

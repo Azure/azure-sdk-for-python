@@ -17,6 +17,12 @@ stages:
         JobName: ${{ replace(service, '-', '_') }}
         DeployArmTemplate: true
         AllocateResourceGroup: true
+        ${{ if eq(service, 'azure-keyvault-keys') }}:
+          AdditionalMatrixConfigs:
+            - Name: keyvault_test_matrix_addons
+              Path: sdk/keyvault/azure-keyvault-keys/platform-matrix.json
+              Selection: sparse
+              GenerateVMJobs: true
         EnvVars:
           AZURE_TEST_RUN_LIVE: true
           AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
