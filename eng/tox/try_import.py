@@ -5,8 +5,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-# This script is used to execute bandit within a tox environment. Depending on which package is being executed against,
-# a failure may be suppressed.
+# This script is used to verify that packages are not importable. This is especially useful when 
+# running checks without the presence of "optional" packages like aiohttp. 
 
 
 from subprocess import check_call, CalledProcessError
@@ -28,7 +28,7 @@ if __name__ == "__main__":
         metavar="N",
         type=str,
         nargs="+",
-        help="an integer for the accumulator",
+        help="The set of packages that we shouldn't be able to import.",
     )
 
     args = parser.parse_args()
