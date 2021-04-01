@@ -37,7 +37,7 @@ class CommunicationIdentityClient:
     def __init__(
             self,
             endpoint: str,
-            credential: AsyncTokenCredential,
+            credential: 'AsyncTokenCredential',
             **kwargs
         ) -> None:
         try:
