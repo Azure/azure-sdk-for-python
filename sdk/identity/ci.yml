@@ -31,14 +31,11 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: identity
-
     Artifacts:
-    - name: azure-identity
-      safeName: azureidentity
-
-    ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
-      AdditionalMatrixConfigs:
-        - Name: Identity_ci_test
-          Path: sdk/identity/platform-matrix.json
-          Selection: sparse
-          GenerateVMJobs: true
+     - name: azure-identity
+       safeName: azureidentity
+    AdditionalMatrixConfigs:
+      - Name: Identity_ci_test
+        Path: sdk/identity/platform-matrix.json
+        Selection: sparse
+        GenerateVMJobs: true

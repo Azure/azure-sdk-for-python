@@ -45,13 +45,6 @@ parameters:
       Path: eng/pipelines/templates/stages/platform-matrix.json
       Selection: sparse
       GenerateVMJobs: true
-- name: PRMatrixConfigs
-  type: object
-  default:
-    - Name: Python_ci_test_pr
-      Path: eng/pipelines/templates/stages/pr.platform-matrix.json
-      Selection: sparse
-      GenerateVMJobs: true
 - name: AdditionalMatrixConfigs
   type: object
   default: []
@@ -80,12 +73,8 @@ stages:
         BuildDocs: ${{ parameters.BuildDocs }}
         DevFeedName: ${{ parameters.DevFeedName }}
         MatrixConfigs:
-          - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
-            - ${{ each config in parameters.MatrixConfigs }}:
-              -  ${{ config }}
-          - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-            - ${{ each config in parameters.PRMatrixConfigs }}:
-              -  ${{ config }}
+          - ${{ each config in parameters.MatrixConfigs }}:
+            -  ${{ config }}
           - ${{ each config in parameters.AdditionalMatrixConfigs }}:
             -  ${{ config }}
         MatrixFilters: ${{ parameters.MatrixFilters }}
