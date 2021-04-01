@@ -190,8 +190,8 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-communication azure-core<2.0.0,>=1.9.0
 #override azure-ai-metricsadvisor azure-core<2.0.0,>=1.6.0
 #override azure-ai-metricsadvisor msrest>=0.6.21
-#override azure-ai-documenttranslation azure-core<2.0.0,>=1.10.0
-#override azure-ai-documenttranslation msrest>=0.6.21
+#override azure-ai-translator azure-core<2.0.0,>=1.10.0
+#override azure-ai-translator msrest>=0.6.21
 #override azure-monitor-opentelemetry-exporter azure-core<2.0.0,>=1.6.0
 #override azure-monitor-opentelemetry-exporter msrest>=0.6.10
 #override azure-monitor-opentelemetry-exporter opentelemetry-api==1.0.0rc1
