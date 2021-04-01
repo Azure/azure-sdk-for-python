@@ -5,6 +5,7 @@
 # ------------------------------------
 
 import functools
+from testcase import Document
 from testcase import DocumentTranslationTest
 from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
 from azure.ai.translator import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
@@ -18,7 +19,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     def test_list_statuses(self, client):
         # prepare containers and test data
-        blob_data = [b'This is some text']
+        blob_data = [Document(data=b'This is some text')]
         source_container_sas_url = self.create_source_container(data=blob_data)
         target_container_sas_url = self.create_target_container()
         target_language = "es"
@@ -52,7 +53,9 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     def test_list_statuses_with_pagination(self, client):
         # prepare containers and test data
-        blob_data = [b'text 1', b'text 2', b'text 3', b'text 4', b'text 5', b'text 6']
+        blob_text = b'blob text'
+        blob_data = [Document(data=blob_text), Document(data=blob_text), Document(data=blob_text),
+                     Document(data=blob_text), Document(data=blob_text), Document(data=blob_text)]
         source_container_sas_url = self.create_source_container(data=blob_data)
         target_container_sas_url = self.create_target_container()
         result_per_page = 2
@@ -92,7 +95,9 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     def test_list_statuses_with_skip(self, client):
         # prepare containers and test data
-        blob_data = [b'text 1', b'text 2', b'text 3', b'text 4', b'text 5', b'text 6']
+        blob_text = b'blob text'
+        blob_data = [Document(data=blob_text), Document(data=blob_text), Document(data=blob_text),
+                     Document(data=blob_text), Document(data=blob_text), Document(data=blob_text)]
         source_container_sas_url = self.create_source_container(data=blob_data)
         target_container_sas_url = self.create_target_container()
         docs_len = len(blob_data)

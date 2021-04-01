@@ -5,19 +5,19 @@
 # ------------------------------------
 
 import functools
-from testcase import DocumentTranslationTest
+from testcase import DocumentTranslationTest, Document
 from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
 from azure.ai.translator import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
 
-class TestDocumentStatus(DocumentTranslationTest):
+class DocumentStatus(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_statuses(self, client):
         # prepare containers and test data
-        blob_data = [b'This is some text']
+        blob_data = [Document(data=b'This is some text')]
         source_container_sas_url = self.create_source_container(data=blob_data)
         target_container_sas_url = self.create_target_container()
         target_language = "es"
