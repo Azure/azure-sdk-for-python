@@ -152,7 +152,7 @@
             "type": "string",
             "value": "[parameters('blobStorageAccount')]"
         },
-        "TRANSLATOR_DOCUMENT_TORAGE_KEY": {
+        "TRANSLATOR_DOCUMENT_STORAGE_KEY": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), variables('storageMgmtApiVersion')).keys[0].value]"
         }
