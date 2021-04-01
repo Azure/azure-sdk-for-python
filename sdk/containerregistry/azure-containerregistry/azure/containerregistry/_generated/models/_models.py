@@ -191,7 +191,7 @@ class Annotations(msrest.serialization.Model):
 
 
 class ContentProperties(msrest.serialization.Model):
-    """Changeable attributes.
+    """ContentProperties.
 
     :param can_delete: Delete enabled.
     :type can_delete: bool
@@ -448,6 +448,8 @@ class ManifestAttributesBase(msrest.serialization.Model):
 
     _validation = {
         'digest': {'required': True},
+        'tags': {'required': True},
+        'manifest_properties': {'required': True},
     }
 
     _attribute_map = {
@@ -457,9 +459,9 @@ class ManifestAttributesBase(msrest.serialization.Model):
         'last_updated_on': {'key': 'lastUpdateTime', 'type': 'iso-8601'},
         'cpu_architecture': {'key': 'architecture', 'type': 'str'},
         'operating_system': {'key': 'os', 'type': 'str'},
-        'references': {'key': 'references', 'type': '[ManifestAttributesManifestReferences]'},
+        'registry_artifacts': {'key': 'references', 'type': '[ManifestAttributesManifestReferences]'},
         'tags': {'key': 'tags', 'type': '[str]'},
-        'writeable_properties': {'key': 'changeableAttributes', 'type': 'ContentProperties'},
+        'manifest_properties': {'key': 'changeableAttributes', 'type': 'ContentProperties'},
     }
 
     def __init__(
@@ -473,9 +475,9 @@ class ManifestAttributesBase(msrest.serialization.Model):
         self.last_updated_on = kwargs.get('last_updated_on', None)
         self.cpu_architecture = kwargs.get('cpu_architecture', None)
         self.operating_system = kwargs.get('operating_system', None)
-        self.references = kwargs.get('references', None)
-        self.tags = kwargs.get('tags', None)
-        self.writeable_properties = kwargs.get('writeable_properties', None)
+        self.registry_artifacts = kwargs.get('registry_artifacts', None)
+        self.tags = kwargs['tags']
+        self.manifest_properties = kwargs['manifest_properties']
 
 
 class ManifestAttributesManifest(msrest.serialization.Model):
@@ -885,9 +887,11 @@ class Platform(msrest.serialization.Model):
 class RegistryArtifactProperties(msrest.serialization.Model):
     """Manifest attributes details.
 
-    :param repository: Image name.
+    All required parameters must be populated in order to send to Azure.
+
+    :param repository: Required. Image name.
     :type repository: str
-    :param digest: Manifest.
+    :param digest: Required. Manifest.
     :type digest: str
     :param size: Image size.
     :type size: long
@@ -907,6 +911,13 @@ class RegistryArtifactProperties(msrest.serialization.Model):
     :type manifest_properties: ~container_registry.models.ContentProperties
     """
 
+    _validation = {
+        'repository': {'required': True},
+        'digest': {'required': True},
+        'tags': {'required': True},
+        'manifest_properties': {'required': True},
+    }
+
     _attribute_map = {
         'repository': {'key': 'imageName', 'type': 'str'},
         'digest': {'key': 'manifest.digest', 'type': 'str'},
@@ -915,9 +926,9 @@ class RegistryArtifactProperties(msrest.serialization.Model):
         'last_updated_on': {'key': 'manifest.lastUpdateTime', 'type': 'iso-8601'},
         'cpu_architecture': {'key': 'manifest.architecture', 'type': 'str'},
         'operating_system': {'key': 'manifest.os', 'type': 'str'},
-        'references': {'key': 'manifest.references', 'type': '[ManifestAttributesManifestReferences]'},
+        'registry_artifacts': {'key': 'manifest.references', 'type': '[ManifestAttributesManifestReferences]'},
         'tags': {'key': 'manifest.tags', 'type': '[str]'},
-        'writeable_properties': {'key': 'manifest.changeableAttributes', 'type': 'ContentProperties'},
+        'manifest_properties': {'key': 'manifest.changeableAttributes', 'type': 'ContentProperties'},
     }
 
     def __init__(
@@ -925,16 +936,16 @@ class RegistryArtifactProperties(msrest.serialization.Model):
         **kwargs
     ):
         super(RegistryArtifactProperties, self).__init__(**kwargs)
-        self.repository = kwargs.get('repository', None)
-        self.digest = kwargs.get('digest', None)
+        self.repository = kwargs['repository']
+        self.digest = kwargs['digest']
         self.size = kwargs.get('size', None)
         self.created_on = kwargs.get('created_on', None)
         self.last_updated_on = kwargs.get('last_updated_on', None)
         self.cpu_architecture = kwargs.get('cpu_architecture', None)
         self.operating_system = kwargs.get('operating_system', None)
-        self.references = kwargs.get('references', None)
-        self.tags = kwargs.get('tags', None)
-        self.writeable_properties = kwargs.get('writeable_properties', None)
+        self.registry_artifacts = kwargs.get('registry_artifacts', None)
+        self.tags = kwargs['tags']
+        self.manifest_properties = kwargs['manifest_properties']
 
 
 class Repositories(msrest.serialization.Model):
@@ -969,7 +980,7 @@ class RepositoryProperties(msrest.serialization.Model):
     :type name: str
     :param created_on: Required. Image created time.
     :type created_on: ~datetime.datetime
-    :param last_updated_on: Required. Image last update time.
+    :param last_updated_on: Image last update time.
     :type last_updated_on: ~datetime.datetime
     :param registry_artifact_count: Required. Number of the manifests.
     :type registry_artifact_count: int
@@ -982,7 +993,6 @@ class RepositoryProperties(msrest.serialization.Model):
     _validation = {
         'name': {'required': True},
         'created_on': {'required': True},
-        'last_updated_on': {'required': True},
         'registry_artifact_count': {'required': True},
         'tag_count': {'required': True},
         'writeable_properties': {'required': True},
@@ -1004,7 +1014,7 @@ class RepositoryProperties(msrest.serialization.Model):
         super(RepositoryProperties, self).__init__(**kwargs)
         self.name = kwargs['name']
         self.created_on = kwargs['created_on']
-        self.last_updated_on = kwargs['last_updated_on']
+        self.last_updated_on = kwargs.get('last_updated_on', None)
         self.registry_artifact_count = kwargs['registry_artifact_count']
         self.tag_count = kwargs['tag_count']
         self.writeable_properties = kwargs['writeable_properties']
@@ -1113,7 +1123,7 @@ class TagList(msrest.serialization.Model):
 
     _attribute_map = {
         'repository': {'key': 'imageName', 'type': 'str'},
-        'tag_attribute_bases': {'key': 'tags', 'type': '[TagAttributesBase]'},
+        'tags': {'key': 'tags', 'type': '[TagAttributesBase]'},
         'link': {'key': 'link', 'type': 'str'},
     }
 
@@ -1123,7 +1133,7 @@ class TagList(msrest.serialization.Model):
     ):
         super(TagList, self).__init__(**kwargs)
         self.repository = kwargs['repository']
-        self.tag_attribute_bases = kwargs.get('tag_attribute_bases', None)
+        self.tags = kwargs.get('tags', None)
         self.link = kwargs.get('link', None)
 
 

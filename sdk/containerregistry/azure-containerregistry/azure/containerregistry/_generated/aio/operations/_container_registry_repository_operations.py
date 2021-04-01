@@ -413,7 +413,7 @@ class ContainerRegistryRepositoryOperations:
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize('TagList', pipeline_response)
-            list_of_elem = deserialized.tag_attribute_bases
+            list_of_elem = deserialized.tags
             if cls:
                 list_of_elem = cls(list_of_elem)
             return deserialized.link or None, AsyncList(list_of_elem)
