@@ -1,8 +1,8 @@
 # Release History
 
-## 5.3.2 (Unreleased)
+## 5.4.0 (Unreleased)
 
-This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported.
+This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported. This version also follows from version 5.3.1, rather than 5.4.0b1.
 
 ## 5.3.1 (2021-03-09)
 
