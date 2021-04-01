@@ -212,7 +212,7 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
 
     def __repr__(self):
         return "DocumentTranslationInput(source_url={}, targets={}, source_language_code={}, storage_type={}, storage_source={}, prefix={}, suffix={})" \
-            .format(self.source_url, self.targets.__repr__(), self.source_language_code, self.storage_type, self.storage_source, self.prefix, self.suffix)[:1024]
+            .format(self.source_url, self.targets.__repr__(), self.source_language_code, self.storage_type.__repr__(), self.storage_source, self.prefix, self.suffix)[:1024]
 
 
 class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, too-many-instance-attributes
@@ -293,10 +293,10 @@ class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, to
     def __repr__(self):
         return '''JobStatusResult(id={}, created_on={}, last_updated_on={}, status={}, error={},
             documents_total_count={}, documents_failed_count={}, documents_succeeded_count={}, documents_in_progress_count={},
-            documents_not_yet_started_count={}, documents_cancelled_count={}. total_characters_charged={})''' \
-            .format(self.id, self.created_on, self.last_updated_on, self.status, self.error,
+            documents_not_yet_started_count={}, documents_cancelled_count={}. total_characters_charged={}, has_completed={})''' \
+            .format(self.id, self.created_on, self.last_updated_on, self.status, self.error.__repr__(),
                 self.documents_total_count, self.documents_failed_count, self.documents_succeeded_count, self.documents_in_progress_count,
-                self.documents_not_yet_started_count, self.documents_cancelled_count, self.total_characters_charged)[:1024]
+                self.documents_not_yet_started_count, self.documents_cancelled_count, self.total_characters_charged, self.has_completed)[:1024]
 
 
 class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritance, R0903, R0902
@@ -368,10 +368,10 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
         )
 
     def __repr__(self):
-        return '''DocumentStatusResult(translated_document_url={}, created_on={}, last_updated_on={}, status={}, translate_to={},
-            error={}, translation_progress={}, id={}, characters_charged={}''' \
-            .format(self.translated_document_url, self.created_on, self.last_updated_on, self.status, self.translate_to,
-                self.error, self.translation_progress, self.id, self.characters_charged)[:1024]
+        return '''DocumentStatusResult(id={}, source_document_url={}, translated_document_url={}, created_on={}, last_updated_on={}, status={}, translate_to={},
+            error={}, translation_progress={}, characters_charged={}''' \
+            .format(self.id, self.source_document_url, self.translated_document_url, self.created_on, self.last_updated_on, self.status, self.translate_to,
+                self.error.__repr__(), self.translation_progress, self.characters_charged)[:1024]
 
 
 class DocumentTranslationError(object):  # pylint: disable=useless-object-inheritance, R0903
