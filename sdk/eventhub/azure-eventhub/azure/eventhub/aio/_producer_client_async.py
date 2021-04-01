@@ -43,7 +43,9 @@ class EventHubProducerClient(ClientBaseAsync):
      if there is no activity. By default the value is None, meaning that the client will not shutdown due to inactivity
      unless initiated by the service.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
-     the Event Hubs service. Default is `TransportType.Amqp`.
+     the Event Hubs service. Default is `TransportType.Amqp` in which case port 5671 is used.
+     If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
+     be used instead which uses port 443 for communication.
     :paramtype transport_type: ~azure.eventhub.TransportType
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
@@ -191,7 +193,9 @@ class EventHubProducerClient(ClientBaseAsync):
          if there is no activity. By default the value is None, meaning that the client will not shutdown due to
          inactivity unless initiated by the service.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
-         the Event Hubs service. Default is `TransportType.Amqp`.
+         the Event Hubs service. Default is `TransportType.Amqp` in which case port 5671 is used.
+         If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
+         be used instead which uses port 443 for communication.
         :paramtype transport_type: ~azure.eventhub.TransportType
         :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
          the Event Hubs service, allowing network requests to be routed through any application gateways or

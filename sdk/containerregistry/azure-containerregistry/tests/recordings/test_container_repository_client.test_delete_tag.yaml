@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 14:47:29 GMT
+      - Thu, 01 Apr 2021 20:13:36 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -71,13 +71,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 14:47:31 GMT
+      - Thu, 01 Apr 2021 20:13:37 GMT
       server:
       - openresty
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
+      x-ms-ratelimit-remaining-calls-per-second:
+      - '332.383333'
     status:
       code: 200
       message: OK
@@ -107,13 +109,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 14:47:31 GMT
+      - Thu, 01 Apr 2021 20:13:38 GMT
       server:
       - openresty
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
+      x-ms-ratelimit-remaining-calls-per-second:
+      - '332.366667'
     status:
       code: 200
       message: OK
@@ -132,7 +136,7 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","tag":{"name":"to_be_deleted","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-03-29T14:47:20.2311587Z","lastUpdateTime":"2021-03-29T14:47:20.2311587Z","signed":false,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}}
+      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","tag":{"name":"to_be_deleted","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-04-01T20:13:27.5836711Z","lastUpdateTime":"2021-04-01T20:13:27.5836711Z","signed":false,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}}
 
         '
     headers:
@@ -148,7 +152,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 14:47:31 GMT
+      - Thu, 01 Apr 2021 20:13:38 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -195,7 +199,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 14:47:31 GMT
+      - Thu, 01 Apr 2021 20:13:38 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -235,13 +239,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 14:47:31 GMT
+      - Thu, 01 Apr 2021 20:13:38 GMT
       server:
       - openresty
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
+      x-ms-ratelimit-remaining-calls-per-second:
+      - '332.35'
     status:
       code: 200
       message: OK
@@ -271,13 +277,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 14:47:31 GMT
+      - Thu, 01 Apr 2021 20:13:38 GMT
       server:
       - openresty
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
+      x-ms-ratelimit-remaining-calls-per-second:
+      - '332.333333'
     status:
       code: 200
       message: OK
@@ -310,7 +318,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 29 Mar 2021 14:47:32 GMT
+      - Thu, 01 Apr 2021 20:13:39 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -322,6 +330,8 @@ interactions:
       - nosniff
       x-ms-int-docker-content-digest:
       - sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24
+      x-ms-ratelimit-remaining-calls-per-second:
+      - '32.000000'
     status:
       code: 202
       message: Accepted
@@ -357,7 +367,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 14:47:42 GMT
+      - Thu, 01 Apr 2021 20:13:49 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -397,13 +407,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 14:47:42 GMT
+      - Thu, 01 Apr 2021 20:13:49 GMT
       server:
       - openresty
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
+      x-ms-ratelimit-remaining-calls-per-second:
+      - '332.816667'
     status:
       code: 200
       message: OK
@@ -433,13 +445,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 14:47:42 GMT
+      - Thu, 01 Apr 2021 20:13:50 GMT
       server:
       - openresty
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
+      x-ms-ratelimit-remaining-calls-per-second:
+      - '332.8'
     status:
       code: 200
       message: OK
@@ -475,7 +489,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 29 Mar 2021 14:47:43 GMT
+      - Thu, 01 Apr 2021 20:13:50 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

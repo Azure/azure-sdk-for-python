@@ -61,7 +61,7 @@ class RegistryArtifactProperties(object):
         self.digest = kwargs.get("digest", None)
         self.last_updated_on = kwargs.get("last_updated_on", None)
         self.operating_system = kwargs.get("operating_system", None)
-        self.references = kwargs.get("references", None)
+        self.registry_artifacts = kwargs.get("registry_artifacts", None)
         self.size = kwargs.get("size", None)
         self.tags = kwargs.get("tags", None)
         self.content_permissions = kwargs.get("content_permissions", None)
@@ -77,10 +77,10 @@ class RegistryArtifactProperties(object):
             digest=generated.digest,
             last_updated_on=generated.last_updated_on,
             operating_system=generated.operating_system,
-            references=generated.references,
+            registry_artifacts=generated.registry_artifacts,
             size=generated.size,
             tags=generated.tags,
-            content_permissions=generated.writeable_properties,
+            content_permissions=generated.manifest_properties,
         )
 
 

@@ -23,6 +23,7 @@ import asyncio
 DEST_FILE = 'BlockDestination.txt'
 SOURCE_FILE = 'SampleSource.txt'
 
+
 class BlobSamplesAsync(object):
 
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
@@ -86,6 +87,51 @@ class BlobSamplesAsync(object):
 
             finally:
                 # Delete the container
+                await container_client.delete_container()
+
+    async def stream_block_blob(self):
+
+        import uuid
+        # Instantiate a new BlobServiceClient using a connection string - set chunk size to 1MB
+        from azure.storage.blob import BlobBlock
+        from azure.storage.blob.aio import BlobServiceClient
+        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string,
+                                                                       max_single_get_size=1024*1024,
+                                                                       max_chunk_get_size=1024*1024)
+
+        async with blob_service_client:
+            # Instantiate a new ContainerClient
+            container_client = blob_service_client.get_container_client("containerasync")
+            # Generate 4MB of data
+            data = b'a'*4*1024*1024
+
+            try:
+                # Create new Container in the service
+                await container_client.create_container()
+
+                # Instantiate a new source blob client
+                source_blob_client = container_client.get_blob_client("source_blob")
+                # Upload content to block blob
+                await source_blob_client.upload_blob(data, blob_type="BlockBlob")
+
+                destination_blob_client = container_client.get_blob_client("destination_blob")
+
+                # This returns a StorageStreamDownloader.
+                stream = await source_blob_client.download_blob()
+                block_list = []
+
+                # Read data in chunks to avoid loading all into memory at once
+                async for chunk in stream.chunks():
+                    # process your data (anything can be done here really. `chunk` is a byte array).
+                    block_id = str(uuid.uuid4())
+                    await destination_blob_client.stage_block(block_id=block_id, data=chunk)
+                    block_list.append(BlobBlock(block_id=block_id))
+
+                # Upload the whole chunk to azure storage and make up one blob
+                await destination_blob_client.commit_block_list(block_list)
+
+            finally:
+                # Delete container
                 await container_client.delete_container()
 
     async def page_blob_sample_async(self):
@@ -154,12 +200,14 @@ class BlobSamplesAsync(object):
                 # Delete container
                 await container_client.delete_container()
 
+
 async def main():
     sample = BlobSamplesAsync()
     await sample.create_container_sample_async()
     await sample.block_blob_sample_async()
     await sample.append_blob_sample_async()
     await sample.page_blob_sample_async()
+    await sample.stream_block_blob()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

@@ -75,9 +75,7 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
     @acr_preparer()
     def test_get_properties(self, containerregistry_baseurl):
-        repo_client = self.create_repository_client(
-            containerregistry_baseurl, "hello-world"
-        )
+        repo_client = self.create_repository_client(containerregistry_baseurl, "hello-world")
 
         properties = repo_client.get_properties()
         assert isinstance(properties.content_permissions, ContentPermissions)
@@ -113,9 +111,7 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
     @acr_preparer()
     def test_get_registry_artifact_properties(self, containerregistry_baseurl):
-        client = self.create_repository_client(
-            containerregistry_baseurl, self.repository
-        )
+        client = self.create_repository_client(containerregistry_baseurl, self.repository)
 
         properties = client.get_registry_artifact_properties("latest")
 

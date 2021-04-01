@@ -129,7 +129,7 @@ class AadClientBase(ABC):
                     self._cache.update_rt(cache_entries[0], content["refresh_token"])
                     del content["refresh_token"]  # prevent caching a redundant entry
 
-        _raise_for_error(content)
+        _raise_for_error(response, content)
 
         if "expires_on" in content:
             expires_on = int(content["expires_on"])
@@ -248,14 +248,14 @@ def _scrub_secrets(response):
             response[secret] = "***"
 
 
-def _raise_for_error(response):
-    # type: (dict) -> None
-    if "error" not in response:
+def _raise_for_error(response, content):
+    # type: (PipelineResponse, dict) -> None
+    if "error" not in content:
         return
 
-    _scrub_secrets(response)
-    if "error_description" in response:
-        message = "Azure Active Directory error '({}) {}'".format(response["error"], response["error_description"])
+    _scrub_secrets(content)
+    if "error_description" in content:
+        message = "Azure Active Directory error '({}) {}'".format(content["error"], content["error_description"])
     else:
-        message = "Azure Active Directory error '{}'".format(response)
-    raise ClientAuthenticationError(message=message)
+        message = "Azure Active Directory error '{}'".format(content)
+    raise ClientAuthenticationError(message=message, response=response.http_response)

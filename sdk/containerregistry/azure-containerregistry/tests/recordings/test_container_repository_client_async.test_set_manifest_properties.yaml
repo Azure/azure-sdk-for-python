@@ -19,7 +19,7 @@ interactions:
       connection: keep-alive
       content-length: '215'
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 19:13:20 GMT
+      date: Thu, 01 Apr 2021 20:16:55 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -47,10 +47,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 19:13:21 GMT
+      date: Thu, 01 Apr 2021 20:16:56 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '332.966667'
     status:
       code: 200
       message: OK
@@ -74,10 +75,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 19:13:21 GMT
+      date: Thu, 01 Apr 2021 20:16:56 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '332.95'
     status:
       code: 200
       message: OK
@@ -93,14 +95,14 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/repob7cc1bf8/_manifests
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"repob7cc1bf8","manifests":[{"digest":"sha256:88b2e00179bd6c4064612403c8d42a13de7ca809d61fee966ce9e129860a8a90","imageSize":0,"createdTime":"2021-03-31T15:39:16.453026Z","lastUpdateTime":"2021-03-31T15:39:16.453026Z","architecture":"mips64le","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:963612c5503f3f1674f315c67089dee577d8cc6afc18565e0b4183ae355fb343","imageSize":0,"createdTime":"2021-03-31T15:39:15.7962598Z","lastUpdateTime":"2021-03-31T15:39:15.7962598Z","architecture":"arm64","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:b0408a0f1d74eced127a2658429f336ed8fa48e36d59878f155b19865e5dbd70","imageSize":0,"createdTime":"2021-03-31T15:39:15.6160979Z","lastUpdateTime":"2021-03-31T15:39:15.6160979Z","architecture":"amd64","os":"windows","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:bb7ab0fa94fdd78aca84b27a1bd46c4b811051f9b69905d81f5f267fc6546a9d","imageSize":0,"createdTime":"2021-03-31T15:39:15.7250409Z","lastUpdateTime":"2021-03-31T15:39:15.7250409Z","architecture":"ppc64le","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:cb55d8f7347376e1ba38ca740904b43c9a52f66c7d2ae1ef1a0de1bc9f40df98","imageSize":0,"createdTime":"2021-03-31T15:39:16.3751356Z","lastUpdateTime":"2021-03-31T15:39:16.3751356Z","architecture":"386","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:e49abad529e5d9bd6787f3abeab94e09ba274fe34731349556a850b9aebbf7bf","imageSize":0,"createdTime":"2021-03-31T15:39:15.9554466Z","lastUpdateTime":"2021-03-31T15:39:15.9554466Z","architecture":"s390x","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:e5785cb0c62cebbed4965129bae371f0589cadd6d84798fb58c2c5f9e237efd9","imageSize":0,"createdTime":"2021-03-31T15:39:15.3712065Z","lastUpdateTime":"2021-03-31T15:39:15.3712065Z","architecture":"arm","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}}]}
+      string: '{"registry":"fake_url.azurecr.io","imageName":"repob7cc1bf8","manifests":[{"digest":"sha256:963612c5503f3f1674f315c67089dee577d8cc6afc18565e0b4183ae355fb343","imageSize":0,"createdTime":"2021-03-31T15:39:15.7962598Z","lastUpdateTime":"2021-03-31T15:39:15.7962598Z","architecture":"arm64","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:b0408a0f1d74eced127a2658429f336ed8fa48e36d59878f155b19865e5dbd70","imageSize":0,"createdTime":"2021-03-31T15:39:15.6160979Z","lastUpdateTime":"2021-03-31T15:39:15.6160979Z","architecture":"amd64","os":"windows","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:bb7ab0fa94fdd78aca84b27a1bd46c4b811051f9b69905d81f5f267fc6546a9d","imageSize":0,"createdTime":"2021-03-31T15:39:15.7250409Z","lastUpdateTime":"2021-03-31T15:39:15.7250409Z","architecture":"ppc64le","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:cb55d8f7347376e1ba38ca740904b43c9a52f66c7d2ae1ef1a0de1bc9f40df98","imageSize":0,"createdTime":"2021-03-31T15:39:16.3751356Z","lastUpdateTime":"2021-03-31T15:39:16.3751356Z","architecture":"386","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:e49abad529e5d9bd6787f3abeab94e09ba274fe34731349556a850b9aebbf7bf","imageSize":0,"createdTime":"2021-03-31T15:39:15.9554466Z","lastUpdateTime":"2021-03-31T15:39:15.9554466Z","architecture":"s390x","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:e5785cb0c62cebbed4965129bae371f0589cadd6d84798fb58c2c5f9e237efd9","imageSize":0,"createdTime":"2021-03-31T15:39:15.3712065Z","lastUpdateTime":"2021-03-31T15:39:15.3712065Z","architecture":"arm","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}}]}
 
         '
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 19:13:21 GMT
+      date: Thu, 01 Apr 2021 20:16:57 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -123,7 +125,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: PATCH
-    uri: https://fake_url.azurecr.io/acr/v1/repob7cc1bf8/_manifests/sha256:88b2e00179bd6c4064612403c8d42a13de7ca809d61fee966ce9e129860a8a90
+    uri: https://fake_url.azurecr.io/acr/v1/repob7cc1bf8/_manifests/sha256:963612c5503f3f1674f315c67089dee577d8cc6afc18565e0b4183ae355fb343
   response:
     body:
       string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
@@ -135,7 +137,7 @@ interactions:
       connection: keep-alive
       content-length: '216'
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 19:13:21 GMT
+      date: Thu, 01 Apr 2021 20:16:57 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -144,7 +146,7 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankane.azurecr.io/acr/v1/repob7cc1bf8/_manifests/sha256:88b2e00179bd6c4064612403c8d42a13de7ca809d61fee966ce9e129860a8a90
+    url: https://seankane.azurecr.io/acr/v1/repob7cc1bf8/_manifests/sha256:963612c5503f3f1674f315c67089dee577d8cc6afc18565e0b4183ae355fb343
 - request:
     body:
       access_token: REDACTED
@@ -163,10 +165,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 19:13:22 GMT
+      date: Thu, 01 Apr 2021 20:16:57 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '332.933333'
     status:
       code: 200
       message: OK
@@ -190,10 +193,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 19:13:22 GMT
+      date: Thu, 01 Apr 2021 20:16:57 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '332.916667'
     status:
       code: 200
       message: OK
@@ -211,20 +215,20 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: PATCH
-    uri: https://fake_url.azurecr.io/acr/v1/repob7cc1bf8/_manifests/sha256:88b2e00179bd6c4064612403c8d42a13de7ca809d61fee966ce9e129860a8a90
+    uri: https://fake_url.azurecr.io/acr/v1/repob7cc1bf8/_manifests/sha256:963612c5503f3f1674f315c67089dee577d8cc6afc18565e0b4183ae355fb343
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"repob7cc1bf8","manifest":{"digest":"sha256:88b2e00179bd6c4064612403c8d42a13de7ca809d61fee966ce9e129860a8a90","imageSize":0,"createdTime":"2021-03-31T15:39:16.453026Z","lastUpdateTime":"2021-03-31T15:39:16.453026Z","architecture":"mips64le","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":false,"writeEnabled":false,"readEnabled":false,"listEnabled":false,"quarantineDetails":"{\"state\":\"Scan
+      string: '{"registry":"fake_url.azurecr.io","imageName":"repob7cc1bf8","manifest":{"digest":"sha256:963612c5503f3f1674f315c67089dee577d8cc6afc18565e0b4183ae355fb343","imageSize":0,"createdTime":"2021-03-31T15:39:15.7962598Z","lastUpdateTime":"2021-03-31T15:39:15.7962598Z","architecture":"arm64","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":false,"writeEnabled":false,"readEnabled":false,"listEnabled":false,"quarantineDetails":"{\"state\":\"Scan
         InProgress\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure Security
-        Monitoring-Qualys Scanner\",\"result\":{\"version\":\"3/31/2021 7:13:13 PM\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}","quarantineState":"Passed"}}}
+        Monitoring-Qualys Scanner\",\"result\":{\"version\":\"4/1/2021 8:16:48 PM\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}","quarantineState":"Passed"}}}
 
         '
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '821'
+      content-length: '819'
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 19:13:22 GMT
+      date: Thu, 01 Apr 2021 20:16:58 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -232,7 +236,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/acr/v1/repob7cc1bf8/_manifests/sha256:88b2e00179bd6c4064612403c8d42a13de7ca809d61fee966ce9e129860a8a90
+    url: https://seankane.azurecr.io/acr/v1/repob7cc1bf8/_manifests/sha256:963612c5503f3f1674f315c67089dee577d8cc6afc18565e0b4183ae355fb343
 - request:
     body: null
     headers:
@@ -241,7 +245,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/repob7cc1bf8/_manifests/sha256:88b2e00179bd6c4064612403c8d42a13de7ca809d61fee966ce9e129860a8a90
+    uri: https://fake_url.azurecr.io/acr/v1/repob7cc1bf8/_manifests/sha256:963612c5503f3f1674f315c67089dee577d8cc6afc18565e0b4183ae355fb343
   response:
     body:
       string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
@@ -253,7 +257,7 @@ interactions:
       connection: keep-alive
       content-length: '215'
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 19:13:32 GMT
+      date: Thu, 01 Apr 2021 20:17:08 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -262,7 +266,7 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankane.azurecr.io/acr/v1/repob7cc1bf8/_manifests/sha256:88b2e00179bd6c4064612403c8d42a13de7ca809d61fee966ce9e129860a8a90
+    url: https://seankane.azurecr.io/acr/v1/repob7cc1bf8/_manifests/sha256:963612c5503f3f1674f315c67089dee577d8cc6afc18565e0b4183ae355fb343
 - request:
     body:
       access_token: REDACTED
@@ -281,10 +285,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 19:13:32 GMT
+      date: Thu, 01 Apr 2021 20:17:08 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '332.883333'
     status:
       code: 200
       message: OK
@@ -308,10 +313,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 19:13:32 GMT
+      date: Thu, 01 Apr 2021 20:17:08 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '332.866667'
     status:
       code: 200
       message: OK
@@ -324,20 +330,20 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/repob7cc1bf8/_manifests/sha256:88b2e00179bd6c4064612403c8d42a13de7ca809d61fee966ce9e129860a8a90
+    uri: https://fake_url.azurecr.io/acr/v1/repob7cc1bf8/_manifests/sha256:963612c5503f3f1674f315c67089dee577d8cc6afc18565e0b4183ae355fb343
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"repob7cc1bf8","manifest":{"digest":"sha256:88b2e00179bd6c4064612403c8d42a13de7ca809d61fee966ce9e129860a8a90","imageSize":0,"createdTime":"2021-03-31T15:39:16.453026Z","lastUpdateTime":"2021-03-31T15:39:16.453026Z","architecture":"mips64le","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":false,"writeEnabled":false,"readEnabled":false,"listEnabled":false,"quarantineDetails":"{\"state\":\"Scan
-        Failed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure Security Monitoring-Qualys
-        Scanner\",\"result\":{\"version\":\"3/31/2021 7:13:30 PM\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}","quarantineState":"Passed"}}}
+      string: '{"registry":"fake_url.azurecr.io","imageName":"repob7cc1bf8","manifest":{"digest":"sha256:963612c5503f3f1674f315c67089dee577d8cc6afc18565e0b4183ae355fb343","imageSize":0,"createdTime":"2021-03-31T15:39:15.7962598Z","lastUpdateTime":"2021-03-31T15:39:15.7962598Z","architecture":"arm64","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":false,"writeEnabled":false,"readEnabled":false,"listEnabled":false,"quarantineDetails":"{\"state\":\"Scan
+        InProgress\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure Security
+        Monitoring-Qualys Scanner\",\"result\":{\"version\":\"4/1/2021 8:16:48 PM\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}","quarantineState":"Passed"}}}
 
         '
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '817'
+      content-length: '819'
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 19:13:33 GMT
+      date: Thu, 01 Apr 2021 20:17:08 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -345,5 +351,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/acr/v1/repob7cc1bf8/_manifests/sha256:88b2e00179bd6c4064612403c8d42a13de7ca809d61fee966ce9e129860a8a90
+    url: https://seankane.azurecr.io/acr/v1/repob7cc1bf8/_manifests/sha256:963612c5503f3f1674f315c67089dee577d8cc6afc18565e0b4183ae355fb343
 version: 1

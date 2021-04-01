@@ -19,7 +19,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 15:35:38 GMT
+      date: Thu, 01 Apr 2021 20:15:58 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -47,10 +47,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 15:35:40 GMT
+      date: Thu, 01 Apr 2021 20:15:59 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '332.483333'
     status:
       code: 200
       message: OK
@@ -74,10 +75,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 15:35:40 GMT
+      date: Thu, 01 Apr 2021 20:15:59 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '332.466667'
     status:
       code: 200
       message: OK
@@ -93,15 +95,15 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
-      string: '{"repositories":["alpine/git","debian","hello-world","library/hello-world","repo308e19dd","repo9b321760","to_be_deleted","ubuntu"]}
+      string: '{"repositories":["alpine/git","debian","hello-world","library/hello-world","repo160e197b","repo308e19dd","repo9b321760","repob7cc1bf8","to_be_deleted","ubuntu"]}
 
         '
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '132'
+      content-length: '162'
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 15:35:40 GMT
+      date: Thu, 01 Apr 2021 20:15:59 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -130,7 +132,7 @@ interactions:
       connection: keep-alive
       content-length: '209'
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 15:35:40 GMT
+      date: Thu, 01 Apr 2021 20:15:59 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -158,10 +160,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 15:35:41 GMT
+      date: Thu, 01 Apr 2021 20:16:00 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '333.083333'
     status:
       code: 200
       message: OK
@@ -185,10 +188,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 15:35:41 GMT
+      date: Thu, 01 Apr 2021 20:16:00 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '333.066667'
     status:
       code: 200
       message: OK
@@ -212,11 +216,12 @@ interactions:
       connection: keep-alive
       content-length: '795'
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 15:35:47 GMT
+      date: Thu, 01 Apr 2021 20:16:04 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
+      x-ms-ratelimit-remaining-calls-per-second: '32.000000'
     status:
       code: 202
       message: Accepted
@@ -241,7 +246,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 15:35:52 GMT
+      date: Thu, 01 Apr 2021 20:16:09 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -269,10 +274,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 15:35:52 GMT
+      date: Thu, 01 Apr 2021 20:16:09 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '332.55'
     status:
       code: 200
       message: OK
@@ -296,10 +302,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 15:35:52 GMT
+      date: Thu, 01 Apr 2021 20:16:09 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
+      x-ms-ratelimit-remaining-calls-per-second: '332.4'
     status:
       code: 200
       message: OK
@@ -315,15 +322,15 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
-      string: '{"repositories":["alpine/git","debian","hello-world","library/hello-world","repo308e19dd","repo9b321760","ubuntu"]}
+      string: '{"repositories":["alpine/git","debian","hello-world","library/hello-world","repo160e197b","repo308e19dd","repo9b321760","repob7cc1bf8","ubuntu"]}
 
         '
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '116'
+      content-length: '146'
       content-type: application/json; charset=utf-8
-      date: Wed, 31 Mar 2021 15:35:53 GMT
+      date: Thu, 01 Apr 2021 20:16:10 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
