@@ -377,10 +377,10 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
 
     def __repr__(self):
         # pylint: disable=line-too-long
-        return "DocumentStatusResult(id={}, source_document_url={}, translated_document_url={}, created_on={}, last_updated_on={}, status={}, translate_to={}, error={}, translation_progress={}, characters_charged={}" \
+        return "DocumentStatusResult(id={}, source_document_url={}, translated_document_url={}, created_on={}, last_updated_on={}, status={}, translate_to={}, error={}, translation_progress={}, characters_charged={}, has_completed={}" \
             .format(self.id, self.source_document_url, self.translated_document_url,
                 self.created_on, self.last_updated_on, self.status, self.translate_to,
-                self.error.__repr__(), self.translation_progress, self.characters_charged)[:1024]
+                self.error.__repr__(), self.translation_progress, self.characters_charged, self.has_completed)[:1024]
 
 
 class DocumentTranslationError(object):  # pylint: disable=useless-object-inheritance, R0903
