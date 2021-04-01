@@ -19,7 +19,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Thu, 01 Apr 2021 17:50:38 GMT
+      date: Thu, 01 Apr 2021 17:55:07 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -31,7 +31,7 @@ interactions:
     url: https://seankane.azurecr.io/acr/v1/_catalog
 - request:
     body:
-      access_token: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJpYXQiOjE2MTcyOTkxMzgsIm5iZiI6MTYxNzI5OTEzOCwiZXhwIjoxNjE3Mzg1ODM4LCJhaW8iOiJFMlpnWUpncjd5M0NLR295ZGVVbEUxL09mck5jQUE9PSIsImFwcGlkIjoiZjg1MDY1MGMtMWZjZi00NDg5LWI0NmYtNzFhZjJlMzBkMzYwIiwiYXBwaWRhY3IiOiIxIiwiaWRwIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsIm9pZCI6IjMwNTExYzlkLWJhMWEtNGM3Yi1iNDIyLTViNTQzZGExMWIzZiIsInJoIjoiMC5BUm9BdjRqNWN2R0dyMEdScXkxODBCSGJSd3hsVVBqUEg0bEV0Rzl4cnk0dzAyQWFBQUEuIiwic3ViIjoiMzA1MTFjOWQtYmExYS00YzdiLWI0MjItNWI1NDNkYTExYjNmIiwidGlkIjoiNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3IiwidXRpIjoieEtzbkRUMDEtRTJzVGlpTW4yVUFBQSIsInZlciI6IjEuMCIsInhtc190Y2R0IjoxMjg5MjQxNTQ3fQ.hVt3363xaygAurSnCd0yQ7V9hqIvqSjOrXb6sDdAKiizsl475mcVgwAe0ReWRTRccTrcVOWJL2MTLvui1vFIoy2UlPxRs4TmYjUBi2YYr7ANi5jtusm11MjfNUJ0Xu8JdEyM1IM87niefRdv6GtyuIp6jpc_leWddc36M2tC-f8KlUxO1_oib98V0-r8k1VjN0tD1KzMcBWInTCoDuuE9-QBp2yochDFUt1kmk2cBvqlnSLnghWbNHrOB4v0UJkimjvkdNgSMV1Cna-WhkAcN6YLeIHZMTbK1r8hg2G_RO5XwJ_XKCYPYC3UIpaEExM77Ym7nZ39X91K5dFTofriGA
+      access_token: REDACTED
       grant_type: access_token
       service: seankane.azurecr.io
     headers:
@@ -47,7 +47,7 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 01 Apr 2021 17:50:39 GMT
+      date: Thu, 01 Apr 2021 17:55:08 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -59,7 +59,7 @@ interactions:
 - request:
     body:
       grant_type: refresh_token
-      refresh_token: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ikk2NVk6VEVDUzpLTEhMOjZCVlE6SUJaRjpGRVhCOlk0VUg6SlRJUzo2VFBYOkNWWEE6SkxUSzpRS0RRIn0.eyJqdGkiOiJhZGVkZTlhYS0zMDMwLTQ2ZmItODQ4YS03YWQ2MDhmMTg1ZWYiLCJzdWIiOiIzMDUxMWM5ZC1iYTFhLTRjN2ItYjQyMi01YjU0M2RhMTFiM2YiLCJuYmYiOjE2MTcyOTg1MzksImV4cCI6MTYxNzMxMDIzOSwiaWF0IjoxNjE3Mjk4NTM5LCJpc3MiOiJBenVyZSBDb250YWluZXIgUmVnaXN0cnkiLCJhdWQiOiJzZWFua2FuZS5henVyZWNyLmlvIiwidmVyc2lvbiI6IjEuMCIsInJpZCI6ImExZTAxZmYzMzk2YzRmMTVhMmRjNjM2NzNkN2ZjYTMzIiwiZ3JhbnRfdHlwZSI6InJlZnJlc2hfdG9rZW4iLCJwZXJtaXNzaW9ucyI6eyJhY3Rpb25zIjpbInJlYWQiLCJ3cml0ZSIsImRlbGV0ZSJdLCJub3RBY3Rpb25zIjpudWxsfSwicm9sZXMiOltdfQ.cMXWxU7mKnirq37QBP7ZJ2xXfD9LFwC6Gc926Ur2nAQ3Dgoj6p8yAE-2RKMK9kduloLFtiJuDZm_UnumTDk2PWSPEiDwzgk8g2DE_45OOKFx-GUxwmttY4xVgKdLTbecEkguAT-2OfYGaJ77U19RcH7Fc9ld6_URAcyDQHHIC_dwYl5ibsOHcrx-jPffngfzsGhYjv75qCL8oghPq2wVPs2qvu42JWeeuDLDXLPCIpagOwQpAOz5xwr9NOhjAgdp9pnBHIcjOR78ko4HrU_b3shSzQ1ubawpzQxy0Jj4nr-BfWD8QNtPQRRbJ9fkeL0gB2sAF_XZQC4knJZSBQDAHA
+      refresh_token: REDACTED
       scope: registry:catalog:*
       service: seankane.azurecr.io
     headers:
@@ -75,7 +75,7 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 01 Apr 2021 17:50:39 GMT
+      date: Thu, 01 Apr 2021 17:55:08 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
@@ -103,7 +103,7 @@ interactions:
       connection: keep-alive
       content-length: '146'
       content-type: application/json; charset=utf-8
-      date: Thu, 01 Apr 2021 17:50:39 GMT
+      date: Thu, 01 Apr 2021 17:55:08 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
