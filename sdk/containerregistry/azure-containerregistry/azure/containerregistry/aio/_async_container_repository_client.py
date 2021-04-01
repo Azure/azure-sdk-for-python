@@ -71,8 +71,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        await self._client.container_registry_repository.delete_tag(
-            self.repository, tag, **kwargs)
+        await self._client.container_registry_repository.delete_tag(self.repository, tag, **kwargs)
 
     async def get_properties(self, **kwargs) -> RepositoryProperties:
         """Get the properties of a repository
