@@ -18,39 +18,6 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 from ._configuration import ComputeManagementClientConfiguration
-from .operations import Operations
-from .operations import AvailabilitySetsOperations
-from .operations import ProximityPlacementGroupsOperations
-from .operations import DedicatedHostGroupsOperations
-from .operations import DedicatedHostsOperations
-from .operations import SshPublicKeysOperations
-from .operations import VirtualMachineExtensionImagesOperations
-from .operations import VirtualMachineExtensionsOperations
-from .operations import VirtualMachineImagesOperations
-from .operations import VirtualMachineImagesEdgeZoneOperations
-from .operations import UsageOperations
-from .operations import VirtualMachinesOperations
-from .operations import VirtualMachineScaleSetsOperations
-from .operations import VirtualMachineSizesOperations
-from .operations import ImagesOperations
-from .operations import VirtualMachineScaleSetExtensionsOperations
-from .operations import VirtualMachineScaleSetRollingUpgradesOperations
-from .operations import VirtualMachineScaleSetVMExtensionsOperations
-from .operations import VirtualMachineScaleSetVMsOperations
-from .operations import LogAnalyticsOperations
-from .operations import VirtualMachineRunCommandsOperations
-from .operations import VirtualMachineScaleSetVMRunCommandsOperations
-from .operations import ResourceSkusOperations
-from .operations import DisksOperations
-from .operations import SnapshotsOperations
-from .operations import DiskEncryptionSetsOperations
-from .operations import DiskAccessesOperations
-from .operations import DiskRestorePointOperations
-from .operations import GalleriesOperations
-from .operations import GalleryImagesOperations
-from .operations import GalleryImageVersionsOperations
-from .operations import GalleryApplicationsOperations
-from .operations import GalleryApplicationVersionsOperations
 from .operations import CloudServiceRoleInstancesOperations
 from .operations import CloudServiceRolesOperations
 from .operations import CloudServicesOperations
@@ -62,72 +29,6 @@ from . import models
 class ComputeManagementClient(object):
     """Compute Client.
 
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.compute.v2021_03_01.operations.Operations
-    :ivar availability_sets: AvailabilitySetsOperations operations
-    :vartype availability_sets: azure.mgmt.compute.v2021_03_01.operations.AvailabilitySetsOperations
-    :ivar proximity_placement_groups: ProximityPlacementGroupsOperations operations
-    :vartype proximity_placement_groups: azure.mgmt.compute.v2021_03_01.operations.ProximityPlacementGroupsOperations
-    :ivar dedicated_host_groups: DedicatedHostGroupsOperations operations
-    :vartype dedicated_host_groups: azure.mgmt.compute.v2021_03_01.operations.DedicatedHostGroupsOperations
-    :ivar dedicated_hosts: DedicatedHostsOperations operations
-    :vartype dedicated_hosts: azure.mgmt.compute.v2021_03_01.operations.DedicatedHostsOperations
-    :ivar ssh_public_keys: SshPublicKeysOperations operations
-    :vartype ssh_public_keys: azure.mgmt.compute.v2021_03_01.operations.SshPublicKeysOperations
-    :ivar virtual_machine_extension_images: VirtualMachineExtensionImagesOperations operations
-    :vartype virtual_machine_extension_images: azure.mgmt.compute.v2021_03_01.operations.VirtualMachineExtensionImagesOperations
-    :ivar virtual_machine_extensions: VirtualMachineExtensionsOperations operations
-    :vartype virtual_machine_extensions: azure.mgmt.compute.v2021_03_01.operations.VirtualMachineExtensionsOperations
-    :ivar virtual_machine_images: VirtualMachineImagesOperations operations
-    :vartype virtual_machine_images: azure.mgmt.compute.v2021_03_01.operations.VirtualMachineImagesOperations
-    :ivar virtual_machine_images_edge_zone: VirtualMachineImagesEdgeZoneOperations operations
-    :vartype virtual_machine_images_edge_zone: azure.mgmt.compute.v2021_03_01.operations.VirtualMachineImagesEdgeZoneOperations
-    :ivar usage: UsageOperations operations
-    :vartype usage: azure.mgmt.compute.v2021_03_01.operations.UsageOperations
-    :ivar virtual_machines: VirtualMachinesOperations operations
-    :vartype virtual_machines: azure.mgmt.compute.v2021_03_01.operations.VirtualMachinesOperations
-    :ivar virtual_machine_scale_sets: VirtualMachineScaleSetsOperations operations
-    :vartype virtual_machine_scale_sets: azure.mgmt.compute.v2021_03_01.operations.VirtualMachineScaleSetsOperations
-    :ivar virtual_machine_sizes: VirtualMachineSizesOperations operations
-    :vartype virtual_machine_sizes: azure.mgmt.compute.v2021_03_01.operations.VirtualMachineSizesOperations
-    :ivar images: ImagesOperations operations
-    :vartype images: azure.mgmt.compute.v2021_03_01.operations.ImagesOperations
-    :ivar virtual_machine_scale_set_extensions: VirtualMachineScaleSetExtensionsOperations operations
-    :vartype virtual_machine_scale_set_extensions: azure.mgmt.compute.v2021_03_01.operations.VirtualMachineScaleSetExtensionsOperations
-    :ivar virtual_machine_scale_set_rolling_upgrades: VirtualMachineScaleSetRollingUpgradesOperations operations
-    :vartype virtual_machine_scale_set_rolling_upgrades: azure.mgmt.compute.v2021_03_01.operations.VirtualMachineScaleSetRollingUpgradesOperations
-    :ivar virtual_machine_scale_set_vm_extensions: VirtualMachineScaleSetVMExtensionsOperations operations
-    :vartype virtual_machine_scale_set_vm_extensions: azure.mgmt.compute.v2021_03_01.operations.VirtualMachineScaleSetVMExtensionsOperations
-    :ivar virtual_machine_scale_set_vms: VirtualMachineScaleSetVMsOperations operations
-    :vartype virtual_machine_scale_set_vms: azure.mgmt.compute.v2021_03_01.operations.VirtualMachineScaleSetVMsOperations
-    :ivar log_analytics: LogAnalyticsOperations operations
-    :vartype log_analytics: azure.mgmt.compute.v2021_03_01.operations.LogAnalyticsOperations
-    :ivar virtual_machine_run_commands: VirtualMachineRunCommandsOperations operations
-    :vartype virtual_machine_run_commands: azure.mgmt.compute.v2021_03_01.operations.VirtualMachineRunCommandsOperations
-    :ivar virtual_machine_scale_set_vm_run_commands: VirtualMachineScaleSetVMRunCommandsOperations operations
-    :vartype virtual_machine_scale_set_vm_run_commands: azure.mgmt.compute.v2021_03_01.operations.VirtualMachineScaleSetVMRunCommandsOperations
-    :ivar resource_skus: ResourceSkusOperations operations
-    :vartype resource_skus: azure.mgmt.compute.v2021_03_01.operations.ResourceSkusOperations
-    :ivar disks: DisksOperations operations
-    :vartype disks: azure.mgmt.compute.v2021_03_01.operations.DisksOperations
-    :ivar snapshots: SnapshotsOperations operations
-    :vartype snapshots: azure.mgmt.compute.v2021_03_01.operations.SnapshotsOperations
-    :ivar disk_encryption_sets: DiskEncryptionSetsOperations operations
-    :vartype disk_encryption_sets: azure.mgmt.compute.v2021_03_01.operations.DiskEncryptionSetsOperations
-    :ivar disk_accesses: DiskAccessesOperations operations
-    :vartype disk_accesses: azure.mgmt.compute.v2021_03_01.operations.DiskAccessesOperations
-    :ivar disk_restore_point: DiskRestorePointOperations operations
-    :vartype disk_restore_point: azure.mgmt.compute.v2021_03_01.operations.DiskRestorePointOperations
-    :ivar galleries: GalleriesOperations operations
-    :vartype galleries: azure.mgmt.compute.v2021_03_01.operations.GalleriesOperations
-    :ivar gallery_images: GalleryImagesOperations operations
-    :vartype gallery_images: azure.mgmt.compute.v2021_03_01.operations.GalleryImagesOperations
-    :ivar gallery_image_versions: GalleryImageVersionsOperations operations
-    :vartype gallery_image_versions: azure.mgmt.compute.v2021_03_01.operations.GalleryImageVersionsOperations
-    :ivar gallery_applications: GalleryApplicationsOperations operations
-    :vartype gallery_applications: azure.mgmt.compute.v2021_03_01.operations.GalleryApplicationsOperations
-    :ivar gallery_application_versions: GalleryApplicationVersionsOperations operations
-    :vartype gallery_application_versions: azure.mgmt.compute.v2021_03_01.operations.GalleryApplicationVersionsOperations
     :ivar cloud_service_role_instances: CloudServiceRoleInstancesOperations operations
     :vartype cloud_service_role_instances: azure.mgmt.compute.v2021_03_01.operations.CloudServiceRoleInstancesOperations
     :ivar cloud_service_roles: CloudServiceRolesOperations operations
@@ -164,72 +65,6 @@ class ComputeManagementClient(object):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.availability_sets = AvailabilitySetsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.proximity_placement_groups = ProximityPlacementGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.dedicated_host_groups = DedicatedHostGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.dedicated_hosts = DedicatedHostsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.ssh_public_keys = SshPublicKeysOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_extension_images = VirtualMachineExtensionImagesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_extensions = VirtualMachineExtensionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_images = VirtualMachineImagesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_images_edge_zone = VirtualMachineImagesEdgeZoneOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.usage = UsageOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machines = VirtualMachinesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_scale_sets = VirtualMachineScaleSetsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_sizes = VirtualMachineSizesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.images = ImagesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_scale_set_extensions = VirtualMachineScaleSetExtensionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_scale_set_rolling_upgrades = VirtualMachineScaleSetRollingUpgradesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_scale_set_vm_extensions = VirtualMachineScaleSetVMExtensionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_scale_set_vms = VirtualMachineScaleSetVMsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.log_analytics = LogAnalyticsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_run_commands = VirtualMachineRunCommandsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_scale_set_vm_run_commands = VirtualMachineScaleSetVMRunCommandsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.resource_skus = ResourceSkusOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.disks = DisksOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.snapshots = SnapshotsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.disk_encryption_sets = DiskEncryptionSetsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.disk_accesses = DiskAccessesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.disk_restore_point = DiskRestorePointOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.galleries = GalleriesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.gallery_images = GalleryImagesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.gallery_image_versions = GalleryImageVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.gallery_applications = GalleryApplicationsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.gallery_application_versions = GalleryApplicationVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.cloud_service_role_instances = CloudServiceRoleInstancesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.cloud_service_roles = CloudServiceRolesOperations(

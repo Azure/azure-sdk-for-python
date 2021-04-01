@@ -128,7 +128,7 @@ class SharedGalleriesOperations(object):
         gallery_unique_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.PirSharedGalleryResource"
+        # type: (...) -> "_models.SharedGallery"
         """Get a shared gallery by subscription id or tenant id.
 
         :param location: Resource location.
@@ -136,11 +136,11 @@ class SharedGalleriesOperations(object):
         :param gallery_unique_name: The unique name of the Shared Gallery.
         :type gallery_unique_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PirSharedGalleryResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2020_09_30.models.PirSharedGalleryResource
+        :return: SharedGallery, or the result of cls(response)
+        :rtype: ~azure.mgmt.compute.v2020_09_30.models.SharedGallery
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PirSharedGalleryResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SharedGallery"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -173,7 +173,7 @@ class SharedGalleriesOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('PirSharedGalleryResource', pipeline_response)
+        deserialized = self._deserialize('SharedGallery', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

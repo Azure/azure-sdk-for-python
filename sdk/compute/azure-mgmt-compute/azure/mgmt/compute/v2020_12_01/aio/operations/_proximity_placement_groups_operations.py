@@ -115,7 +115,7 @@ class ProximityPlacementGroupsOperations:
         self,
         resource_group_name: str,
         proximity_placement_group_name: str,
-        parameters: "_models.UpdateResource",
+        parameters: "_models.ProximityPlacementGroupUpdate",
         **kwargs
     ) -> "_models.ProximityPlacementGroup":
         """Update a proximity placement group.
@@ -125,7 +125,7 @@ class ProximityPlacementGroupsOperations:
         :param proximity_placement_group_name: The name of the proximity placement group.
         :type proximity_placement_group_name: str
         :param parameters: Parameters supplied to the Update Proximity Placement Group operation.
-        :type parameters: ~azure.mgmt.compute.v2020_12_01.models.UpdateResource
+        :type parameters: ~azure.mgmt.compute.v2020_12_01.models.ProximityPlacementGroupUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProximityPlacementGroup, or the result of cls(response)
         :rtype: ~azure.mgmt.compute.v2020_12_01.models.ProximityPlacementGroup
@@ -159,7 +159,7 @@ class ProximityPlacementGroupsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'UpdateResource')
+        body_content = self._serialize.body(parameters, 'ProximityPlacementGroupUpdate')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)

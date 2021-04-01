@@ -1355,14 +1355,14 @@ class DiskInstanceView(msrest.serialization.Model):
 class EncryptionImages(msrest.serialization.Model):
     """Optional. Allows users to provide customer managed keys for encrypting the OS and data disks in the gallery artifact.
 
-    :param os_disk_image: This is the disk image encryption base class.
-    :type os_disk_image: ~azure.mgmt.compute.v2019_12_01.models.DiskImageEncryption
+    :param os_disk_image: Contains encryption settings for an OS disk image.
+    :type os_disk_image: ~azure.mgmt.compute.v2019_12_01.models.OSDiskImageEncryption
     :param data_disk_images: A list of encryption specifications for data disk images.
     :type data_disk_images: list[~azure.mgmt.compute.v2019_12_01.models.DataDiskImageEncryption]
     """
 
     _attribute_map = {
-        'os_disk_image': {'key': 'osDiskImage', 'type': 'DiskImageEncryption'},
+        'os_disk_image': {'key': 'osDiskImage', 'type': 'OSDiskImageEncryption'},
         'data_disk_images': {'key': 'dataDiskImages', 'type': '[DataDiskImageEncryption]'},
     }
 
@@ -2321,9 +2321,9 @@ class GalleryImageVersion(Resource):
     :type location: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :param publishing_profile: Describes the basic gallery artifact publishing profile.
+    :param publishing_profile: The publishing profile of a gallery Image Version.
     :type publishing_profile:
-     ~azure.mgmt.compute.v2019_12_01.models.GalleryArtifactPublishingProfileBase
+     ~azure.mgmt.compute.v2019_12_01.models.GalleryImageVersionPublishingProfile
     :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
      values include: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
     :vartype provisioning_state: str or
@@ -2349,7 +2349,7 @@ class GalleryImageVersion(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryArtifactPublishingProfileBase'},
+        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryImageVersionPublishingProfile'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'GalleryImageVersionStorageProfile'},
         'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
@@ -2447,15 +2447,15 @@ class GalleryImageVersionStorageProfile(msrest.serialization.Model):
 
     :param source: The gallery artifact version source.
     :type source: ~azure.mgmt.compute.v2019_12_01.models.GalleryArtifactVersionSource
-    :param os_disk_image: This is the disk image base class.
-    :type os_disk_image: ~azure.mgmt.compute.v2019_12_01.models.GalleryDiskImage
+    :param os_disk_image: This is the OS disk image.
+    :type os_disk_image: ~azure.mgmt.compute.v2019_12_01.models.GalleryOSDiskImage
     :param data_disk_images: A list of data disk images.
     :type data_disk_images: list[~azure.mgmt.compute.v2019_12_01.models.GalleryDataDiskImage]
     """
 
     _attribute_map = {
         'source': {'key': 'source', 'type': 'GalleryArtifactVersionSource'},
-        'os_disk_image': {'key': 'osDiskImage', 'type': 'GalleryDiskImage'},
+        'os_disk_image': {'key': 'osDiskImage', 'type': 'GalleryOSDiskImage'},
         'data_disk_images': {'key': 'dataDiskImages', 'type': '[GalleryDataDiskImage]'},
     }
 
@@ -2482,9 +2482,9 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
     :vartype type: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :param publishing_profile: Describes the basic gallery artifact publishing profile.
+    :param publishing_profile: The publishing profile of a gallery Image Version.
     :type publishing_profile:
-     ~azure.mgmt.compute.v2019_12_01.models.GalleryArtifactPublishingProfileBase
+     ~azure.mgmt.compute.v2019_12_01.models.GalleryImageVersionPublishingProfile
     :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
      values include: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
     :vartype provisioning_state: str or
@@ -2508,7 +2508,7 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryArtifactPublishingProfileBase'},
+        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryImageVersionPublishingProfile'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'GalleryImageVersionStorageProfile'},
         'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
@@ -2785,7 +2785,7 @@ class ImageDisk(msrest.serialization.Model):
     :type storage_account_type: str or ~azure.mgmt.compute.v2019_12_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption set resource id for
      the managed image disk.
-    :type disk_encryption_set: ~azure.mgmt.compute.v2019_12_01.models.SubResource
+    :type disk_encryption_set: ~azure.mgmt.compute.v2019_12_01.models.DiskEncryptionSetParameters
     """
 
     _attribute_map = {
@@ -2795,7 +2795,7 @@ class ImageDisk(msrest.serialization.Model):
         'caching': {'key': 'caching', 'type': 'str'},
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
         'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'SubResource'},
+        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'DiskEncryptionSetParameters'},
     }
 
     def __init__(
@@ -2839,7 +2839,7 @@ class ImageDataDisk(ImageDisk):
     :type storage_account_type: str or ~azure.mgmt.compute.v2019_12_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption set resource id for
      the managed image disk.
-    :type disk_encryption_set: ~azure.mgmt.compute.v2019_12_01.models.SubResource
+    :type disk_encryption_set: ~azure.mgmt.compute.v2019_12_01.models.DiskEncryptionSetParameters
     :param lun: Required. Specifies the logical unit number of the data disk. This value is used to
      identify data disks within the VM and therefore must be unique for each data disk attached to a
      VM.
@@ -2857,7 +2857,7 @@ class ImageDataDisk(ImageDisk):
         'caching': {'key': 'caching', 'type': 'str'},
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
         'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'SubResource'},
+        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'DiskEncryptionSetParameters'},
         'lun': {'key': 'lun', 'type': 'int'},
     }
 
@@ -2926,7 +2926,7 @@ class ImageOSDisk(ImageDisk):
     :type storage_account_type: str or ~azure.mgmt.compute.v2019_12_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption set resource id for
      the managed image disk.
-    :type disk_encryption_set: ~azure.mgmt.compute.v2019_12_01.models.SubResource
+    :type disk_encryption_set: ~azure.mgmt.compute.v2019_12_01.models.DiskEncryptionSetParameters
     :param os_type: Required. This property allows you to specify the type of the OS that is
      included in the disk if creating a VM from a custom image. :code:`<br>`:code:`<br>` Possible
      values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible
@@ -2948,7 +2948,7 @@ class ImageOSDisk(ImageDisk):
         'caching': {'key': 'caching', 'type': 'str'},
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
         'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'SubResource'},
+        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'DiskEncryptionSetParameters'},
         'os_type': {'key': 'osType', 'type': 'str'},
         'os_state': {'key': 'osState', 'type': 'str'},
     }
@@ -3474,13 +3474,13 @@ class ManagedDiskParameters(SubResource):
     :type storage_account_type: str or ~azure.mgmt.compute.v2019_12_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption set resource id for
      the managed disk.
-    :type disk_encryption_set: ~azure.mgmt.compute.v2019_12_01.models.SubResource
+    :type disk_encryption_set: ~azure.mgmt.compute.v2019_12_01.models.DiskEncryptionSetParameters
     """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'SubResource'},
+        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'DiskEncryptionSetParameters'},
     }
 
     def __init__(
@@ -7200,12 +7200,12 @@ class VirtualMachineScaleSetManagedDiskParameters(msrest.serialization.Model):
     :type storage_account_type: str or ~azure.mgmt.compute.v2019_12_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption set resource id for
      the managed disk.
-    :type disk_encryption_set: ~azure.mgmt.compute.v2019_12_01.models.SubResource
+    :type disk_encryption_set: ~azure.mgmt.compute.v2019_12_01.models.DiskEncryptionSetParameters
     """
 
     _attribute_map = {
         'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'SubResource'},
+        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'DiskEncryptionSetParameters'},
     }
 
     def __init__(
@@ -7558,7 +7558,26 @@ class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(msrest.seria
         self.domain_name_label = kwargs['domain_name_label']
 
 
-class VirtualMachineScaleSetReimageParameters(VirtualMachineReimageParameters):
+class VirtualMachineScaleSetVMReimageParameters(VirtualMachineReimageParameters):
+    """Describes a Virtual Machine Scale Set VM Reimage Parameters.
+
+    :param temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This temp
+     disk reimage parameter is only supported for VM/VMSS with Ephemeral OS disk.
+    :type temp_disk: bool
+    """
+
+    _attribute_map = {
+        'temp_disk': {'key': 'tempDisk', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualMachineScaleSetVMReimageParameters, self).__init__(**kwargs)
+
+
+class VirtualMachineScaleSetReimageParameters(VirtualMachineScaleSetVMReimageParameters):
     """Describes a Virtual Machine Scale Set VM Reimage Parameters.
 
     :param temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This temp
@@ -8558,25 +8577,6 @@ class VirtualMachineScaleSetVMProtectionPolicy(msrest.serialization.Model):
         super(VirtualMachineScaleSetVMProtectionPolicy, self).__init__(**kwargs)
         self.protect_from_scale_in = kwargs.get('protect_from_scale_in', None)
         self.protect_from_scale_set_actions = kwargs.get('protect_from_scale_set_actions', None)
-
-
-class VirtualMachineScaleSetVMReimageParameters(VirtualMachineReimageParameters):
-    """Describes a Virtual Machine Scale Set VM Reimage Parameters.
-
-    :param temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This temp
-     disk reimage parameter is only supported for VM/VMSS with Ephemeral OS disk.
-    :type temp_disk: bool
-    """
-
-    _attribute_map = {
-        'temp_disk': {'key': 'tempDisk', 'type': 'bool'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(VirtualMachineScaleSetVMReimageParameters, self).__init__(**kwargs)
 
 
 class VirtualMachineSize(msrest.serialization.Model):
