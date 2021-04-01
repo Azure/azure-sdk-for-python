@@ -37,7 +37,7 @@ import os
 import datetime
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceExistsError
-from azure.ai.documenttranslation import (
+from azure.ai.translator import (
     DocumentTranslationClient,
     DocumentTranslationInput,
     TranslationTarget

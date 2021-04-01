@@ -33,8 +33,8 @@ async def sample_document_status_checks_async():
     import os
     # [START create_translation_job_async]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.documenttranslation.aio import DocumentTranslationClient
-    from azure.ai.documenttranslation import (
+    from azure.ai.translator.aio import DocumentTranslationClient
+    from azure.ai.translator import (
         DocumentTranslationInput,
         TranslationTarget
     )

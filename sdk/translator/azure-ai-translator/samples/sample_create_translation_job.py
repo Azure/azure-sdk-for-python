@@ -31,7 +31,7 @@ def sample_translation():
     import os
     # [START wait_until_done]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.documenttranslation import (
+    from azure.ai.translator import (
         DocumentTranslationClient,
         DocumentTranslationInput,
         TranslationTarget

@@ -3,8 +3,8 @@ import os
 from io import open
 import re
 
-PACKAGE_NAME = "azure-ai-documenttranslation"
-PACKAGE_PPRINT_NAME = "Azure Document Translation Package"
+PACKAGE_NAME = "azure-ai-translator"
+PACKAGE_PPRINT_NAME = "Translator"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -54,8 +54,7 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.10.0",
         "msrest>=0.6.21",
-        'six>=1.11.0',
-        'azure-common~=1.1',
+        'six>=1.11.0'
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-ai-nspkg'],

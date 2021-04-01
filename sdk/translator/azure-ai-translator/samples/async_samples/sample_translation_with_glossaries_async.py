@@ -32,8 +32,8 @@ import asyncio
 async def sample_translation_with_glossaries_async():
     import os
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.documenttranslation.aio import DocumentTranslationClient
-    from azure.ai.documenttranslation import (
+    from azure.ai.translator.aio import DocumentTranslationClient
+    from azure.ai.translator import (
         DocumentTranslationInput,
         TranslationTarget,
         TranslationGlossary

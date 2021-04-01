@@ -16,7 +16,7 @@ from azure_devtools.scenario_tests import (
     ReplayableTest
 )
 from azure.storage.blob import generate_container_sas, ContainerClient
-from azure.ai.documenttranslation import DocumentTranslationInput, TranslationTarget
+from azure.ai.translator import DocumentTranslationInput, TranslationTarget
 
 
 class OperationLocationReplacer(RecordingProcessor):
