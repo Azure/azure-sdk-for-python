@@ -12,7 +12,7 @@ from azure.core.polling.base_polling import (
     OperationFailed
 )
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ODataV4Format
 
 
 class TranslationPolling(LongRunningOperation):
@@ -98,6 +98,8 @@ class TranslationPolling(LongRunningOperation):
         error = body["error"]
         if body["error"].get("innerError", None):
             error = body["error"]["innerError"]
-        raise HttpResponseError(
+        http_response_error = HttpResponseError(
             message="({}): {}".format(error["code"], error["message"])
         )
+        http_response_error.error = ODataV4Format(error)  # set error.code
+        raise http_response_error

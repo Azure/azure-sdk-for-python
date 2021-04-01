@@ -180,6 +180,7 @@ class TestTranslation(DocumentTranslationTest):
         with pytest.raises(HttpResponseError) as e:
             job = client.create_translation_job(translation_inputs)
             job = client.wait_until_done(job.id)
+        assert e.value.error.code == "InvalidDocumentAccessLevel"
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -204,6 +205,7 @@ class TestTranslation(DocumentTranslationTest):
         with pytest.raises(HttpResponseError) as e:
             job = client.create_translation_job(translation_inputs)
             job = client.wait_until_done(job.id)
+        assert e.value.error.code == "InvalidDocumentAccessLevel"
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -290,8 +292,6 @@ class TestTranslation(DocumentTranslationTest):
         for doc in doc_statuses:
             if doc.status == "Failed":
                 assert doc.error.code == "TargetFileAlreadyExists"
-            else:
-                self._validate_doc_status(doc, "es")
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()

@@ -181,6 +181,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
         with pytest.raises(HttpResponseError) as e:
             job = await client.create_translation_job(translation_inputs)
             job = await client.wait_until_done(job.id)
+        assert e.value.error.code == "InvalidDocumentAccessLevel"
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -205,6 +206,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
         with pytest.raises(HttpResponseError) as e:
             job = await client.create_translation_job(translation_inputs)
             job = await client.wait_until_done(job.id)
+        assert e.value.error.code == "InvalidDocumentAccessLevel"
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -291,8 +293,6 @@ class TestTranslation(AsyncDocumentTranslationTest):
         async for doc in doc_statuses:
             if doc.status == "Failed":
                 assert doc.error.code == "TargetFileAlreadyExists"
-            else:
-                self._validate_doc_status(doc, "es")
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
