@@ -52,7 +52,7 @@ async def send_value_message(sender):
     value_body = {b"key": [-123, b'data', False]}
     header = {"priority": 10}
     anno = {"ann_key": "ann_key"}
-    value_app_prop = {"body_type": "sequence"}
+    value_app_prop = {"body_type": "value"}
     value_message = AMQPAnnotatedMessage(
         value_body=value_body,
         header=header,
