@@ -200,3 +200,4 @@ opentelemetry-sdk==0.17b0
 #override azure-keyvault-keys six>=1.12.0
 #override azure-mixedreality-authentication azure-core<2.0.0,>=1.4.0
 #override azure-iot-deviceupdate azure-core<2.0.0,>=1.6.0
+#override azure-mgmt-deviceupdate msrest>=0.6.21
