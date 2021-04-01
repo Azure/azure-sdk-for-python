@@ -2,7 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import platform
 import socket
+import subprocess
 import webbrowser
 
 from six.moves.urllib_parse import urlparse
@@ -101,7 +103,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
         if "auth_uri" not in flow:
             raise CredentialUnavailableError("Failed to begin authentication flow")
 
-        if not webbrowser.open(flow["auth_uri"]):
+        if not _open_browser(flow["auth_uri"]):
             raise CredentialUnavailableError(message="Failed to open a browser")
 
         # block until the server times out or receives the post-authentication redirect
@@ -113,3 +115,25 @@ class InteractiveBrowserCredential(InteractiveCredential):
 
         # redeem the authorization code for a token
         return app.acquire_token_by_auth_code_flow(flow, response, scopes=scopes, claims_challenge=claims)
+
+
+def _open_browser(url):
+    opened = webbrowser.open(url)
+    if not opened:
+        uname = platform.uname()
+        system = uname[0].lower()
+        release = uname[2].lower()
+        if "microsoft" in release and system == "linux":
+            kwargs = {}
+            if platform.python_version() >= "3.3":
+                kwargs["timeout"] = 5
+
+            try:
+                exit_code = subprocess.call(
+                    ["powershell.exe", "-NoProfile", "-Command", 'Start-Process "{}"'.format(url)], **kwargs
+                )
+                opened = exit_code == 0
+            except Exception:  # pylint:disable=broad-except
+                # powershell.exe isn't available, or the subprocess timed out
+                pass
+    return opened
