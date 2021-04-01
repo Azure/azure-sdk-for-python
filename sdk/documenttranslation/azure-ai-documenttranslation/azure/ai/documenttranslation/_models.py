@@ -66,8 +66,8 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
         return [glossary._to_generated() for glossary in glossaries]  # pylint: disable=protected-access
 
     def __repr__(self):
-        return '''TranslationGlossary(glossary_url={}, file_format={},
-            format_version={}, storage_source={})''' \
+        # pylint: disable=line-too-long
+        return "TranslationGlossary(glossary_url={}, file_format={}, format_version={}, storage_source={})" \
             .format(self.glossary_url, self.file_format,
                 self.format_version, self.storage_source)[:1024]
 
@@ -127,8 +127,8 @@ class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
 
 
     def __repr__(self):
-        return '''TranslationTarget(target_url={}, language_code={}, category_id={},
-            glossaries={}, storage_source={})''' \
+        # pylint: disable=line-too-long
+        return "TranslationTarget(target_url={}, language_code={}, category_id={}, glossaries={}, storage_source={})" \
             .format(self.target_url, self.language_code,
                 self.category_id, self.glossaries.__repr__(), self.storage_source)[:1024]
 
@@ -215,9 +215,8 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
         ]
 
     def __repr__(self):
-        return '''DocumentTranslationInput(source_url={}, targets={},
-            source_language_code={}, storage_type={}, storage_source={},
-            prefix={}, suffix={})''' \
+        # pylint: disable=line-too-long
+        return "DocumentTranslationInput(source_url={}, targets={}, source_language_code={}, storage_type={}, storage_source={}, prefix={}, suffix={})" \
             .format(self.source_url, self.targets.__repr__(),
                 self.source_language_code, self.storage_type.__repr__(),
                 self.storage_source, self.prefix, self.suffix)[:1024]
@@ -299,11 +298,8 @@ class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, to
         )
 
     def __repr__(self):
-        return '''JobStatusResult(id={}, created_on={}, last_updated_on={},
-            status={}, error={}, documents_total_count={}, documents_failed_count={},
-            documents_succeeded_count={}, documents_in_progress_count={},
-            documents_not_yet_started_count={}, documents_cancelled_count={},
-            total_characters_charged={}, has_completed={})''' \
+        # pylint: disable=line-too-long
+        return "JobStatusResult(id={}, created_on={}, last_updated_on={}, status={}, error={}, documents_total_count={}, documents_failed_count={}, documents_succeeded_count={}, documents_in_progress_count={}, documents_not_yet_started_count={}, documents_cancelled_count={}, total_characters_charged={}, has_completed={})" \
             .format(self.id, self.created_on, self.last_updated_on, self.status,
                 self.error.__repr__(), self.documents_total_count, self.documents_failed_count,
                 self.documents_succeeded_count, self.documents_in_progress_count,
@@ -380,10 +376,8 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
         )
 
     def __repr__(self):
-        return '''DocumentStatusResult(id={}, source_document_url={},
-            translated_document_url={}, created_on={}, last_updated_on={},
-            status={}, translate_to={}, error={}, translation_progress={},
-            characters_charged={}''' \
+        # pylint: disable=line-too-long
+        return "DocumentStatusResult(id={}, source_document_url={}, translated_document_url={}, created_on={}, last_updated_on={}, status={}, translate_to={}, error={}, translation_progress={}, characters_charged={}" \
             .format(self.id, self.source_document_url, self.translated_document_url,
                 self.created_on, self.last_updated_on, self.status, self.translate_to,
                 self.error.__repr__(), self.translation_progress, self.characters_charged)[:1024]
@@ -471,7 +465,7 @@ class FileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
         return [FileFormat._from_generated(file_formats) for file_formats in file_formats]
 
     def __repr__(self):
-        return '''FileFormat(file_format={}, file_extensions={},
-            content_types={}, format_versions={}, default_format_version={}''' \
+        # pylint: disable=line-too-long
+        return "FileFormat(file_format={}, file_extensions={}, content_types={}, format_versions={}, default_format_version={}" \
             .format(self.file_format, self.file_extensions, self.content_types,
                 self.format_versions, self.default_format_version)[:1024]
