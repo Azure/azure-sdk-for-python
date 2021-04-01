@@ -3,12 +3,16 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from typing import TYPE_CHECKING
 
 from enum import Enum
 
-from ._authentication_policy import ContainerRegistryUserCredentialPolicy
+from ._authentication_policy import ContainerRegistryChallengePolicy
 from ._generated import ContainerRegistry
 from ._user_agent import USER_AGENT
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 
 class ContainerRegistryApiVersion(str, Enum):
@@ -28,13 +32,14 @@ class ContainerRegistryBaseClient(object):
     """
 
     def __init__(self, endpoint, credential, **kwargs):  # pylint:disable=client-method-missing-type-annotations
-        auth_policy = ContainerRegistryUserCredentialPolicy(credential=credential)
+        # type: (str, TokenCredential, Dict[str, Any]) -> None
+        auth_policy = ContainerRegistryChallengePolicy(credential, endpoint)
         self._client = ContainerRegistry(
             credential=credential,
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=auth_policy,
-            credential_scopes=kwargs.pop("credential_scopes", ["https://management.core.windows.net/.default"]),
+            credential_scopes="https://management.core.windows.net/.default",
             **kwargs
         )
 
@@ -51,7 +56,3 @@ class ContainerRegistryBaseClient(object):
         Calling this method is unnecessary when using the client as a context manager.
         """
         self._client.close()
-
-    def _is_tag(self, tag_or_digest):  # pylint: disable=no-self-use
-        tag = tag_or_digest.split(":")
-        return len(tag) == 2 and tag[0] == u"sha"

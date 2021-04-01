@@ -3,37 +3,126 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import copy
 from datetime import datetime
+import json
 import os
+import re
+import six
 
 from azure.containerregistry import (
     ContainerRepositoryClient,
     ContainerRegistryClient,
-    ContainerRegistryUserCredential,
     TagProperties,
     ContentPermissions,
     RegistryArtifactProperties,
 )
 
+from azure.core.credentials import AccessToken
+from azure.identity import DefaultAzureCredential
 
-class ContainerRegistryTestClass(object):
+from azure_devtools.scenario_tests import RecordingProcessor
+from devtools_testutils import AzureTestCase
+
+
+REDACTED = "REDACTED"
+
+class AcrBodyReplacer(RecordingProcessor):
+    """Replace request body for oauth2 exchanges"""
+    def __init__(self, replacement="redacted"):
+        self._replacement = replacement
+        self._401_replacement = 'Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"'
+
+    def _scrub_body(self, body):
+        # type: (bytes) -> bytes
+        if isinstance(body, dict):
+            return self._scrub_body_dict(body)
+        if not isinstance(body, six.binary_type):
+            return body
+        s = body.decode("utf-8")
+        if "access_token" not in s and "refresh_token" not in s:
+            return body
+        s = s.split("&")
+        for idx, pair in enumerate(s):
+            [k, v] = pair.split("=")
+            if k == "access_token" or k == "refresh_token":
+                v = REDACTED
+            s[idx] = "=".join([k, v])
+        s = "&".join(s)
+        return bytes(s, "utf-8")
+
+    def _scrub_body_dict(self, body):
+        new_body = copy.deepcopy(body)
+        for k in ["access_token", "refresh_token"]:
+            if k in new_body.keys():
+                new_body[k] = REDACTED
+        return new_body
+
+    def process_request(self, request):
+        if request.body:
+            request.body = self._scrub_body(request.body)
+
+        return request
+
+    def process_response(self, response):
+        try:
+            headers = response['headers']
+            auth_header = None
+            if "www-authenticate" in headers:
+                response['headers']["www-authenticate"] = self._401_replacement
+
+            body = response['body']
+            try:
+                refresh = json.loads(body['string'])
+                if "refresh_token" in refresh.keys():
+                    refresh['refresh_token'] = REDACTED
+                    body['string'] = json.dumps(refresh)
+                if "access_token" in refresh.keys():
+                    refresh["access_token"] = REDACTED
+                    body['string'] = json.dumps(refresh)
+
+            except json.decoder.JSONDecodeError:
+                pass
+
+            return response
+        except (KeyError, ValueError):
+            return response
+
+
+class FakeTokenCredential(object):
+    """Protocol for classes able to provide OAuth tokens.
+    :param str scopes: Lets you specify the type of access needed.
+    """
+    def __init__(self):
+        self.token = AccessToken("YOU SHALL NOT PASS", 0)
+
+    def get_token(self, *args):
+        return self.token
+
+
+class ContainerRegistryTestClass(AzureTestCase):
+
+    def __init__(self, method_name):
+        super(ContainerRegistryTestClass, self).__init__(method_name)
+        self.vcr.match_on = ["path", "method", "query"]
+        self.recording_processors.append(AcrBodyReplacer())
+
+    def get_credential(self):
+        if self.is_live:
+            return DefaultAzureCredential()
+        return FakeTokenCredential()
+
     def create_registry_client(self, endpoint):
         return ContainerRegistryClient(
             endpoint=endpoint,
-            credential=ContainerRegistryUserCredential(
-                username=os.environ["CONTAINERREGISTRY_USERNAME"],
-                password=os.environ["CONTAINERREGISTRY_PASSWORD"],
-            ),
+            credential=self.get_credential(),
         )
 
     def create_repository_client(self, endpoint, name):
         return ContainerRepositoryClient(
             endpoint=endpoint,
             repository=name,
-            credential=ContainerRegistryUserCredential(
-                username=os.environ["CONTAINERREGISTRY_USERNAME"],
-                password=os.environ["CONTAINERREGISTRY_PASSWORD"],
-            ),
+            credential=self.get_credential(),
         )
 
     def assert_content_permission(self, content_perm, content_perm2):
@@ -56,7 +145,7 @@ class ContainerRegistryTestClass(object):
         repository=None,
     ):
         assert isinstance(tag, TagProperties)
-        assert isinstance(tag.content_permissions, ContentPermissions)
+        assert isinstance(tag.writeable_permissions, ContentPermissions)
         assert isinstance(tag.created_on, datetime)
         assert isinstance(tag.last_updated_on, datetime)
         if content_permission:

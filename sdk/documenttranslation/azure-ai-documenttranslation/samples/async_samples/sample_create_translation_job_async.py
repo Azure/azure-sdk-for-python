@@ -79,7 +79,8 @@ async def sample_translation_async():
             print("Document ID: {}".format(document.id))
             print("Document status: {}".format(document.status))
             if document.status == "Succeeded":
-                print("Document location: {}".format(document.translated_document_url))
+                print("Source document location: {}".format(document.source_document_url))
+                print("Translated document location: {}".format(document.translated_document_url))
                 print("Translated to language: {}\n".format(document.translate_to))
             else:
                 print("Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
