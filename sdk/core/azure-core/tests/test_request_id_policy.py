@@ -54,3 +54,11 @@ def test_request_id_policy(auto_request_id, request_id_init, request_id_set, req
         assert request.headers["x-ms-client-request-id"] == "VALUE"
     else:
         assert not "x-ms-client-request-id" in request.headers
+
+def test_request_id_policy_request_id_set_in_headers():
+    request = HttpRequest('GET', 'http://127.0.0.1/', headers={'x-ms-client-request-id': "should be me"})
+    request_id_policy = RequestIdPolicy()
+    pipeline_request = PipelineRequest(request, PipelineContext(None))
+    with mock.patch('uuid.uuid1', return_value="VALUE"):
+        request_id_policy.on_request(pipeline_request)
+    assert request.headers['x-ms-client-request-id'] == "should be me"

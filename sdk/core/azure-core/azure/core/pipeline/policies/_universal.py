@@ -157,7 +157,10 @@ class RequestIdPolicy(SansIOHTTPPolicy):
             request_id = self._request_id
         elif self._auto_request_id:
             request_id = str(uuid.uuid1())
-        if request_id is not unset:
+        if (
+            request_id is not unset and
+            "x-ms-client-request-id" not in request.http_request.headers
+        ):
             header = {"x-ms-client-request-id": request_id}
             request.http_request.headers.update(header)
 
