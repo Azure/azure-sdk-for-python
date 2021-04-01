@@ -74,7 +74,7 @@ setup(
         'azure.monitor',
         'azure.monitor.opentelemetry'
     ]),
-    python_requires=">=3.5.0",
+    python_requires=">=3.6.0",
     install_requires=[
         "azure-core<2.0.0,>=1.6.0",
         "msrest>=0.6.10",
