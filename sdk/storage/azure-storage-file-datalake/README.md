@@ -127,7 +127,7 @@ from azure.storage.filedatalake import DataLakeFileClient
 data = b"abc"
 file = DataLakeFileClient.from_connection_string("my_connection_string", 
                                                  file_system_name="myfilesystem", file_path="myfile")
-
+file.create_file ()
 file.append_data(data, offset=0, length=len(data))
 file.flush_data(len(data))
 ```
