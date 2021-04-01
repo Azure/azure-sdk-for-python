@@ -127,7 +127,7 @@ class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
 
 
     def __repr__(self):
-        return '''TranslationTarget(target_url={}, language_code={}, category_id={}, 
+        return '''TranslationTarget(target_url={}, language_code={}, category_id={},
             glossaries={}, storage_source={})''' \
             .format(self.target_url, self.language_code,
                 self.category_id, self.glossaries.__repr__(), self.storage_source)[:1024]
