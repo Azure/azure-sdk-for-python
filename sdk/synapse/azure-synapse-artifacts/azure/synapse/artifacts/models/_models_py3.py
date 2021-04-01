@@ -15683,7 +15683,7 @@ class ExecuteDataFlowActivity(ExecutionActivity):
     :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :param policy: Activity policy.
     :type policy: ~azure.synapse.artifacts.models.ActivityPolicy
-    :param dataflow: Data flow reference.
+    :param dataflow: Required. Data flow reference.
     :type dataflow: ~azure.synapse.artifacts.models.DataFlowReference
     :param staging: Staging info for execute data flow activity.
     :type staging: ~azure.synapse.artifacts.models.DataFlowStagingInfo
@@ -15706,6 +15706,7 @@ class ExecuteDataFlowActivity(ExecutionActivity):
     _validation = {
         'name': {'required': True},
         'type': {'required': True},
+        'dataflow': {'required': True},
     }
 
     _attribute_map = {
@@ -15730,13 +15731,13 @@ class ExecuteDataFlowActivity(ExecutionActivity):
         self,
         *,
         name: str,
+        dataflow: "DataFlowReference",
         additional_properties: Optional[Dict[str, object]] = None,
         description: Optional[str] = None,
         depends_on: Optional[List["ActivityDependency"]] = None,
         user_properties: Optional[List["UserProperty"]] = None,
         linked_service_name: Optional["LinkedServiceReference"] = None,
         policy: Optional["ActivityPolicy"] = None,
-        dataflow: Optional["DataFlowReference"] = None,
         staging: Optional["DataFlowStagingInfo"] = None,
         integration_runtime: Optional["IntegrationRuntimeReference"] = None,
         compute: Optional["ExecuteDataFlowActivityTypePropertiesCompute"] = None,
