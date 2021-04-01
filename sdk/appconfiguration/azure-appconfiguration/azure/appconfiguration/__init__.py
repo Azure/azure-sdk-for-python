@@ -10,7 +10,7 @@
 # --------------------------------------------------------------------------
 
 from ._azure_appconfiguration_client import AzureAppConfigurationClient
-from ._constants import PERCENTAGE, TARGETING, TIME_WINDOW, FEATURE_FLAG_PREFIX
+from ._constants import PERCENTAGE, TARGETING, TIME_WINDOW
 from ._models import (
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
@@ -29,5 +29,4 @@ __all__ = [
     "PERCENTAGE",
     "TARGETING",
     "TIME_WINDOW",
-    "FEATURE_FLAG_PREFIX",
 ]

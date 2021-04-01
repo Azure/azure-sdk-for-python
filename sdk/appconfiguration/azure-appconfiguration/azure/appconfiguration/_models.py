@@ -144,10 +144,10 @@ class FeatureFlagConfigurationSetting(
 
     def __init__(self, key, enabled, filters=None, **kwargs):
         # type: (str, bool, Optional[List[Dict[str, Any]]]) -> None
-        if not key.startswith(self.key_prefix):
-            raise ValueError("FeatureFlagConfigurationSettings must start with {}".format(self.key_prefix))
         self._enabled = enabled
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
+        if not key.startswith(self.key_prefix):
+            key = self.key_prefix + key
         self.key = key
         self.label = kwargs.get("label", None)
         self.content_type = kwargs.get("content_type", self._feature_flag_content_type)
