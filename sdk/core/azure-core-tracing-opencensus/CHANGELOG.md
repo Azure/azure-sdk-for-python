@@ -1,7 +1,7 @@
 
 # Release History
 
-## 1.0.0b7 (2021-04-05)
+## 1.0.0b7 (2021-04-02)
 
 - `Link` and `SpanKind` can now be added while creating the span instance.
 
