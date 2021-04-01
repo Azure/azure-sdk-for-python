@@ -235,7 +235,7 @@ class HttpSpanMixin(_MIXIN_BASE):
 
 class Link(object):
     """
-    This is a wrapper link the context to the current tracer.
+    This is a wrapper class to link the context to the current tracer.
     :param headers: A dictionary of the request header as key value pairs.
     :type headers: dict
     :param attributes: Any additional attributes that should be added to link
