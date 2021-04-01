@@ -21,8 +21,6 @@ class ConfigurationSetting(Model):
     :type label: str
     :param content_type:
     :type content_type: str
-    :param value:
-    :type value: str
     :ivar last_modified:
     :vartype last_modified: datetime
     :ivar read_only:
@@ -110,6 +108,8 @@ class FeatureFlagConfigurationSetting(
     :vartype etag: str
     :ivar key:
     :vartype key: str
+    :ivar value: The value of the configuration setting
+    :vartype value: str
     :ivar enabled:
     :vartype enabled: bool
     :param filters:
@@ -300,8 +300,8 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     :type label: str
     :param content_type:
     :type content_type: str
-    :param value:
-    :type value: str
+    :ivar value: The value of the configuration setting
+    :vartype value: str
     :ivar last_modified:
     :vartype last_modified: datetime
     :ivar read_only:
