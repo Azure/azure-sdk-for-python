@@ -20,7 +20,7 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
 
     :param str glossary_url: Required. Location of the glossary file. This should be a SAS URL to
         the glossary file in the storage blob container. If the translation language pair is
-        not present in the glossary, it will not be applied.
+        not present in the glossary, it will not be applied. 
     :param str file_format: Required. Format of the glossary file. To see supported formats,
         call the :func:`~DocumentTranslationClient.get_glossary_formats()` client method.
     :keyword str format_version: File format version. If not specified, the service will
