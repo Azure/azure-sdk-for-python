@@ -8,6 +8,6 @@ stages:
       parameters:
         ToxEnvParallel: '--tenvparallel'
         BuildTargetingString: $(BuildTargetingString)
-        BuildDocs: false
+        BuildDocs: true
         TestTimeoutInMinutes: 300
         TestMarkArgument: not cosmosEmulator
