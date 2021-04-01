@@ -458,3 +458,4 @@ class FileFormat(object):  # pylint: disable=useless-object-inheritance, R0903
     def __repr__(self):
         return "FileFormat(file_format={}, file_extensions={}, content_types={}, format_versions={}, default_format_version={}" \
             .format(self.file_format, self.file_extensions, self.content_types, self.format_versions, self.default_format_version)[:1024]
+            
