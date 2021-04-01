@@ -61,19 +61,19 @@ class CommunicationUserIdentifier(object):
      The keys in this mapping include:
         - `id`(str): ID of the Communication user as returned from Azure Communication Identity.
 
-    :param str identifier: ID of the Communication user as returned from Azure Communication Identity.
+    :param str id: ID of the Communication user as returned from Azure Communication Identity.
     """
     kind = CommunicationIdentifierKind.COMMUNICATION_USER
 
-    def __init__(self, identifier, **kwargs):
+    def __init__(self, id, **kwargs):
         # type: (str, Any) -> None
         self.raw_id = kwargs.get('raw_id')
-        self.properties = CommunicationUserProperties(id=identifier)
+        self.properties = CommunicationUserProperties(id=id)
 
 
 PhoneNumberProperties = TypedDict(
     'PhoneNumberProperties',
-    phone_number=str
+    value=str
 )
 
 
@@ -85,16 +85,16 @@ class PhoneNumberIdentifier(object):
     :vartype kind: str or CommunicationIdentifierKind
     :ivar Mapping properties: The properties of the identifier.
      The keys in this mapping include:
-        - `phone_number`(str): The phone number in E.164 format.
+        - `value`(str): The phone number in E.164 format.
 
-    :param str phone_number: The phone number.
+    :param str value: The phone number.
     """
     kind = CommunicationIdentifierKind.PHONE_NUMBER
 
-    def __init__(self, phone_number, **kwargs):
+    def __init__(self, value, **kwargs):
         # type: (str, Any) -> None
         self.raw_id = kwargs.get('raw_id')
-        self.properties = PhoneNumberProperties(phone_number=phone_number)
+        self.properties = PhoneNumberProperties(value=value)
 
 
 class UnknownIdentifier(object):
