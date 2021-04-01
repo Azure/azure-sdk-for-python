@@ -1,0 +1,2 @@
+azure-schemaregistry-avroserializer = {path = "sdk/schemaregistry/azure-schemaregistry-avroserializer"}
+azure-monitor-opentelemetry-exporter = {path = "sdk/monitor/azure-monitor-opentelemetry-exporter"}
