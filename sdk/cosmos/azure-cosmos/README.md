@@ -103,7 +103,6 @@ Currently the features below are **not supported**.
 **Control Plane Limitations:**
 
 * Get CollectionSizeUsage, DatabaseUsage, and DocumentUsage metrics
-* Create User
 * Create Geospatial Index
 * Provision Autoscale DBs or containers
 * Update Autoscale throughput
