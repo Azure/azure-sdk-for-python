@@ -19,6 +19,15 @@ from azure.storage.blob import generate_container_sas, ContainerClient
 from azure.ai.documenttranslation import DocumentTranslationInput, TranslationTarget
 
 
+class Document(object):
+    """Represents a document to be uploaded to source/target container"""
+    def __init__(self, **kwargs):
+        self.name = kwargs.get("name", str(uuid.uuid4()))
+        self.suffix = kwargs.get("suffix", ".txt")
+        self.prefix = kwargs.get("prefix", "")
+        self.data = kwargs.get("data", b'This is written in english.')
+
+
 class OperationLocationReplacer(RecordingProcessor):
     """Replace the location/operation location uri in a request/response body."""
 
@@ -65,18 +74,14 @@ class DocumentTranslationTest(AzureTestCase):
             self.storage_key, "fakeZmFrZV9hY29jdW50X2tleQ=="
         )
 
-    def _setup(self, data=None, blob_prefix=""):
-        """Creates a source and target container.
+    def upload_documents(self, data, container_client):
+        if isinstance(data, list):
+            for blob in data:
+                container_client.upload_blob(name=blob.prefix + blob.name + blob.suffix, data=blob.data)
+        else:
+            container_client.upload_blob(name=data.prefix + data.name + data.suffix, data=data.data)
 
-        Pass data in as bytes (or as a list[bytes] to create more than one blob) in the source container.
-        """
-        self.source_container_sas_url = self.create_source_container(
-            data=data or b'This is written in english.',
-            blob_prefix=blob_prefix
-        )
-        self.target_container_sas_url = self.create_target_container()
-
-    def create_source_container(self, data, blob_prefix=""):
+    def create_source_container(self, data):
         # for offline tests
         if not self.is_live:
             return "dummy_string"
@@ -86,14 +91,11 @@ class DocumentTranslationTest(AzureTestCase):
         container_client = ContainerClient(self.storage_endpoint, container_name,
                                            self.storage_key)
         container_client.create_container()
-        if isinstance(data, list):
-            for blob in data:
-                container_client.upload_blob(name=blob_prefix+str(uuid.uuid4()) + ".txt", data=blob)
-        else:
-            container_client.upload_blob(name=blob_prefix+str(uuid.uuid4())+".txt", data=data)
+
+        self.upload_documents(data, container_client)
         return self.generate_sas_url(container_name, "rl")
 
-    def create_target_container(self):
+    def create_target_container(self, data=None):
         # for offline tests
         if not self.is_live:
             return "dummy_string"
@@ -103,8 +105,10 @@ class DocumentTranslationTest(AzureTestCase):
         container_client = ContainerClient(self.storage_endpoint, container_name,
                                            self.storage_key)
         container_client.create_container()
+        if data:
+            self.upload_documents(data, container_client)
 
-        return self.generate_sas_url(container_name, "racwdl")
+        return self.generate_sas_url(container_name, "rw")
 
     def generate_sas_url(self, container_name, permission):
 
@@ -191,7 +195,7 @@ class DocumentTranslationTest(AzureTestCase):
                 please update this variable TOTAL_DOC_COUNT_IN_JOB in respective test
             '''
             blob_data = b'This is some text'  # TOTAL_DOC_COUNT_IN_JOB = 1
-            source_container_sas_url = self.create_source_container(data=blob_data)
+            source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
             target_container_sas_url = self.create_target_container()
 
             # prepare translation inputs

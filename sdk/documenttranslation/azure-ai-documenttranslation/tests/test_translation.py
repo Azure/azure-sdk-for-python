@@ -9,7 +9,7 @@ import pytest
 import uuid
 from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import ContainerClient
-from testcase import DocumentTranslationTest
+from testcase import DocumentTranslationTest, Document
 from preparer import DocumentTranslationPreparer, \
     DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
 from azure.ai.documenttranslation import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
@@ -23,7 +23,7 @@ class TestTranslation(DocumentTranslationTest):
     def test_single_source_single_target(self, client):
         # prepare containers and test data
         blob_data = b'This is some text'
-        source_container_sas_url = self.create_source_container(data=blob_data)
+        source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
         target_container_sas_url = self.create_target_container()
 
         # prepare translation inputs
@@ -47,7 +47,7 @@ class TestTranslation(DocumentTranslationTest):
     def test_single_source_two_targets(self, client):
         # prepare containers and test data
         blob_data = b'This is some text'
-        source_container_sas_url = self.create_source_container(data=blob_data)
+        source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
         target_container_sas_url = self.create_target_container()
         additional_target_container_sas_url = self.create_target_container()
 
@@ -76,9 +76,9 @@ class TestTranslation(DocumentTranslationTest):
     def test_multiple_sources_single_target(self, client):
         # prepare containers and test data
         blob_data = b'This is some text'
-        source_container_sas_url = self.create_source_container(data=blob_data)
+        source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
         blob_data = b'This is some text2'
-        additional_source_container_sas_url = self.create_source_container(data=blob_data)
+        additional_source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
         target_container_sas_url = self.create_target_container()
 
         # prepare translation inputs
@@ -112,7 +112,7 @@ class TestTranslation(DocumentTranslationTest):
         # prepare containers and test data
         blob_data = b'This is some text'
         prefix = "xyz"
-        source_container_sas_url = self.create_source_container(data=blob_data, blob_prefix=prefix)
+        source_container_sas_url = self.create_source_container(data=Document(data=blob_data, prefix=prefix))
         target_container_sas_url = self.create_target_container()
 
         # prepare translation inputs
@@ -138,7 +138,7 @@ class TestTranslation(DocumentTranslationTest):
         # prepare containers and test data
         blob_data = b'This is some text'
         suffix = "txt"
-        source_container_sas_url = self.create_source_container(data=blob_data)
+        source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
         target_container_sas_url = self.create_target_container()
 
         # prepare translation inputs
@@ -186,7 +186,7 @@ class TestTranslation(DocumentTranslationTest):
     def test_bad_input_target(self, client):
         # prepare containers and test data
         blob_data = b'This is some text'
-        source_container_sas_url = self.create_source_container(data=blob_data)
+        source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
 
         # prepare translation inputs
         translation_inputs = [
@@ -209,14 +209,12 @@ class TestTranslation(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     def test_use_supported_and_unsupported_files(self, client):
         # prepare containers and test data
-        blob_data = b'This is some text'
-        source_container_sas_url = self.create_target_container()  # has the permissions to add
+        source_container_sas_url = self.create_source_container(data=[
+                Document(suffix=".txt"),
+                Document(suffix=".jpg")
+            ]
+        )
         target_container_sas_url = self.create_target_container()
-
-        if self.is_live:
-            container_client = ContainerClient.from_container_url(source_container_sas_url)
-            container_client.upload_blob(name=str(uuid.uuid4()) + ".txt", data=blob_data)
-            container_client.upload_blob(name=str(uuid.uuid4()) + ".jpg", data=blob_data)
 
         # prepare translation inputs
         translation_inputs = [
@@ -239,16 +237,8 @@ class TestTranslation(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     def test_existing_documents_in_target(self, client):
         # prepare containers and test data
-        blob_data = b'This is some text'
-        source_container_sas_url = self.create_target_container()  # has the permissions to add
-        target_container_sas_url = self.create_target_container()
-
-        if self.is_live:
-            container_client = ContainerClient.from_container_url(source_container_sas_url)
-            container_client.upload_blob(name="document" + ".txt", data=blob_data)
-
-            container_client = ContainerClient.from_container_url(target_container_sas_url)
-            container_client.upload_blob(name="document" + ".txt", data=blob_data)
+        source_container_sas_url = self.create_source_container(data=Document(name="document"))
+        target_container_sas_url = self.create_target_container(data=Document(name="document"))
 
         # prepare translation inputs
         translation_inputs = [
@@ -276,17 +266,8 @@ class TestTranslation(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     def test_existing_documents_in_target_one_valid(self, client):
         # prepare containers and test data
-        blob_data = b'This is some text'
-        source_container_sas_url = self.create_target_container()  # has the permissions to add
-        target_container_sas_url = self.create_target_container()
-
-        if self.is_live:
-            container_client = ContainerClient.from_container_url(source_container_sas_url)
-            container_client.upload_blob(name="document" + ".txt", data=blob_data)
-            container_client.upload_blob(name=str(uuid.uuid4()) + ".txt", data=blob_data)
-
-            container_client = ContainerClient.from_container_url(target_container_sas_url)
-            container_client.upload_blob(name="document" + ".txt", data=blob_data)
+        source_container_sas_url = self.create_source_container(data=[Document(name="document"), Document()])
+        target_container_sas_url = self.create_target_container(data=Document(name="document"))
 
         # prepare translation inputs
         translation_inputs = [
@@ -303,7 +284,7 @@ class TestTranslation(DocumentTranslationTest):
 
         job = client.create_translation_job(translation_inputs)
         job = client.wait_until_done(job.id)
-        self._validate_translation_job(job, status="Succeeded", total=2, succeeded=1)
+        self._validate_translation_job(job, status="Succeeded", total=2, failed=1)
 
         doc_statuses = client.list_all_document_statuses(job.id)
         for doc in doc_statuses:
@@ -316,8 +297,7 @@ class TestTranslation(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     def test_empty_document(self, client):
         # prepare containers and test data
-        blob_data = b''
-        source_container_sas_url = self.create_source_container(data=blob_data)
+        source_container_sas_url = self.create_source_container(Document(data=b''))
         target_container_sas_url = self.create_target_container()
 
         # prepare translation inputs
