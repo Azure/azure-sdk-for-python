@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from datetime import datetime
 import functools
 import os
 import pytest
@@ -12,14 +13,15 @@ from devtools_testutils import AzureTestCase, PowerShellPreparer
 from azure.containerregistry import (
     ContainerRepositoryClient,
     ContainerRegistryClient,
-    RepositoryProperties,
     ContentPermissions,
+    RepositoryProperties,
+    RegistryArtifactProperties,
     TagProperties,
     TagOrderBy,
 )
 from azure.core.paging import ItemPaged
 
-from testcase import ContainerRegistryTestClass
+from testcase import ContainerRegistryTestClass, AcrBodyReplacer, FakeTokenCredential
 
 acr_preparer = functools.partial(
     PowerShellPreparer,
@@ -28,11 +30,14 @@ acr_preparer = functools.partial(
 )
 
 
-class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
+class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
-    repository = "hello-world"
+    def __init__(self, method_name):
+        super(TestContainerRepositoryClient, self).__init__(method_name)
+        self.vcr.match_on = ["path", "method", "query"]
+        self.recording_processors.append(AcrBodyReplacer())
+        self.repository = "hello-world"
 
-    @pytest.mark.live_test_only
     @acr_preparer()
     def test_get_attributes(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
@@ -42,43 +47,45 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
         assert repo_attribs is not None
         assert repo_attribs.content_permissions is not None
 
-    @pytest.mark.live_test_only
     @acr_preparer()
     def test_get_properties(self, containerregistry_baseurl):
-        reg_client = self.create_repository_client(containerregistry_baseurl, "hello-world")
+        repo_client = self.create_repository_client(containerregistry_baseurl, "hello-world")
 
-        properties = reg_client.get_properties()
-
-        assert isinstance(properties, RepositoryProperties)
-        assert properties.name == "hello-world"
-        assert properties.registry == containerregistry_baseurl
-        assert properties.content_permissions is not None
+        properties = repo_client.get_properties()
         assert isinstance(properties.content_permissions, ContentPermissions)
 
-    @pytest.mark.skip("Pending")
-    @acr_preparer()
-    def test_get_registry_artifact_properties(self, containerregistry_baseurl):
-        reg_client = self.create_repository_client(containerregistry_baseurl, "hello-world")
-
-        digest = "sha256:90659bf80b44ce6be8234e6ff90a1ac34acbeb826903b02cfa0da11c82cbc042"
-        tag = "first"
-
-        properties = reg_client.get_registry_artifact_properties(digest)
-        first_properties = reg_client.get_registry_artifact_properties(tag)
-
-        self.assert_registry_artifact(properties, digest)
-        self.assert_registry_artifact(first_properties, tag)
-
-    @pytest.mark.live_test_only
     @acr_preparer()
     def test_get_tag(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
 
         tag = client.get_tag_properties("latest")
 
-        self.assert_tag(tag)
+        assert tag is not None
+        assert isinstance(tag, TagProperties)
 
-    @pytest.mark.live_test_only
+    @acr_preparer()
+    def test_list_registry_artifacts(self, containerregistry_baseurl):
+        client = self.create_repository_client(containerregistry_baseurl, self.repository)
+
+        for artifact in client.list_registry_artifacts():
+            assert artifact is not None
+            assert isinstance(artifact, RegistryArtifactProperties)
+            assert artifact.created_on is not None
+            assert isinstance(artifact.created_on, datetime)
+            assert artifact.last_updated_on is not None
+            assert isinstance(artifact.last_updated_on, datetime)
+
+    @acr_preparer()
+    def test_get_registry_artifact_properties(self, containerregistry_baseurl):
+        client = self.create_repository_client(containerregistry_baseurl, self.repository)
+
+        properties = client.get_registry_artifact_properties("latest")
+
+        assert properties is not None
+        assert isinstance(properties, RegistryArtifactProperties)
+        assert isinstance(properties.created_on, datetime)
+        assert isinstance(properties.last_updated_on, datetime)
+
     @acr_preparer()
     def test_list_tags(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
@@ -92,7 +99,6 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
 
         assert count > 0
 
-    @pytest.mark.live_test_only
     @acr_preparer()
     def test_list_tags_descending(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
@@ -108,18 +114,52 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
             #     assert tag.last_updated_on < last_updated_on
             last_updated_on = tag.last_updated_on
             count += 1
-            # print(tag)
 
         assert count > 0
 
-    @pytest.mark.skip("List pending")
+    @pytest.mark.live_test_only
     @acr_preparer()
-    def test_list_registry_artifacts(self, containerregistry_baseurl):
+    def test_set_manifest_properties(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
 
-        repo_attribs = client.list_registry_artifacts()
+        for manifest in client.list_registry_artifacts():
 
-        print(repo_attribs)
+            permissions = manifest.content_permissions
+            permissions.can_delete = not permissions.can_delete
+
+            client.set_manifest_properties(manifest.digest, permissions)
+
+            received = client.get_registry_artifact_properties(manifest.digest)
+
+            assert received.content_permissions.can_write == permissions.can_write
+            assert received.content_permissions.can_read == permissions.can_read
+            assert received.content_permissions.can_list == permissions.can_list
+            assert received.content_permissions.can_delete == permissions.can_delete
+
+            break
+
+    @pytest.mark.xfail
+    @acr_preparer()
+    def test_set_tag_properties(self, containerregistry_baseurl):
+        client = self.create_repository_client(containerregistry_baseurl, self.repository)
+
+        for tag in client.list_tags():
+
+            permissions = tag.content_permissions
+            permissions.can_write = not permissions.can_write
+
+            client.set_tag_properties(tag.digest, permissions)
+
+            received = client.get_tag_properties(tag.name)
+
+            assert received.content_permissions.can_write == permissions.can_write
+            assert received.content_permissions.can_read == permissions.can_read
+            assert received.content_permissions.can_list == permissions.can_list
+            assert received.content_permissions.can_delete == permissions.can_delete
+
+            break
+
+        tags = client.set_manifest_properties()
 
     @pytest.mark.skip("Don't want to delete right now")
     @acr_preparer()
@@ -127,10 +167,10 @@ class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
         client.delete()
 
-        reg_client = self.create_registry_client(containerregistry_baseurl)
+        repo_client = self.create_registry_client(containerregistry_baseurl)
 
         repo_count = 0
-        for repo in reg_client.list_repositories():
+        for repo in repo_client.list_repositories():
             repo_count += 1
 
         assert repo_count == 0

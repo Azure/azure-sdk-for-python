@@ -11,14 +11,15 @@ import six
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 
 from azure.containerregistry import (
-    ContainerRegistryClient,
     DeletedRepositoryResult,
+    RepositoryProperties,
 )
+from azure.containerregistry.aio import ContainerRegistryClient, ContainerRepositoryClient
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 
-from testcase import ContainerRegistryTestClass
+from asynctestcase import AsyncContainerRegistryTestClass
 
 
 acr_preparer = functools.partial(
@@ -28,18 +29,15 @@ acr_preparer = functools.partial(
 )
 
 
-class TestContainerRegistryClient(ContainerRegistryTestClass):
+class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
-    def test_list_repositories(self, containerregistry_baseurl):
+    async def test_list_repositories(self, containerregistry_baseurl):
         client = self.create_registry_client(containerregistry_baseurl)
-
-        repositories = client.list_repositories()
-        assert isinstance(repositories, ItemPaged)
 
         count = 0
         prev = None
-        for repo in repositories:
+        async for repo in client.list_repositories():
             count += 1
             assert isinstance(repo, six.string_types)
             assert prev != repo
@@ -58,11 +56,9 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         assert len(deleted_result.deleted_registry_artifact_digests) == 1
         assert len(deleted_result.deleted_tags) == 1
 
-    @pytest.mark.skip("Don't want to for now")
-
     @acr_preparer()
-    def test_delete_repository_does_not_exist(self, containerregistry_baseurl):
+    async def test_delete_repository_does_not_exist(self, containerregistry_baseurl):
         client = self.create_registry_client(containerregistry_baseurl)
 
         with pytest.raises(ResourceNotFoundError):
-            deleted_result = client.delete_repository("not_real_repo")
+            deleted_result = await client.delete_repository("not_real_repo")
