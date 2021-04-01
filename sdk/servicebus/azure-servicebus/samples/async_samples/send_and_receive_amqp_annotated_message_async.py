@@ -6,14 +6,14 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Example to show sending amqp annotated message(s) to a Service Bus Queue asynchronously.
+Example to show sending, receiving and parsing amqp annotated message(s) to a Service Bus Queue asynchronously.
 """
 
 # pylint: disable=C0111
 
 import os
 import asyncio
-from azure.servicebus import AMQPAnnotatedMessage
+from azure.servicebus import AMQPAnnotatedMessage, AMQPMessageBodyType
 from azure.servicebus.aio import ServiceBusClient
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
@@ -30,6 +30,7 @@ async def send_data_message(sender):
         application_properties=data_app_prop
     )
     await sender.send_messages(data_message)
+    print("Message of data body sent.")
 
 
 async def send_sequence_message(sender):
@@ -44,6 +45,7 @@ async def send_sequence_message(sender):
         application_properties=seq_app_prop
     )
     await sender.send_messages(sequence_message)
+    print("Message of sequence body sent.")
 
 
 async def send_value_message(sender):
@@ -58,6 +60,23 @@ async def send_value_message(sender):
         application_properties=value_app_prop
     )
     await sender.send_messages(value_message)
+    print("Message of value body sent.")
+
+
+async def receive_and_parse_message(receiver):
+    async for message in receiver:
+        if message.body_type == AMQPMessageBodyType.DATA:
+            print("Message of data body received. Body is:")
+            for data_section in message.body:
+                print(data_section)
+        elif message.body_type == AMQPMessageBodyType.SEQUENCE:
+            print("Message of sequence body received. Body is:")
+            for sequence_section in message.body:
+                print(sequence_section)
+        elif message.body_type == AMQPMessageBodyType.VALUE:
+            print("Message of value body received. Body is:")
+            print(message.body)
+        await receiver.complete_message(message)
 
 
 async def main():
@@ -65,12 +84,12 @@ async def main():
 
     async with servicebus_client:
         sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
-        async with sender:
+        receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, max_wait_time=10)
+        async with sender, receiver:
             await send_data_message(sender)
             await send_sequence_message(sender)
             await send_value_message(sender)
-
-    print("Send message is done.")
+            await receive_and_parse_message(receiver)
 
 
 loop = asyncio.get_event_loop()

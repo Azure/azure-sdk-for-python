@@ -959,7 +959,7 @@ class AMQPAnnotatedMessage(object):
         header = kwargs.get("header")
         footer = kwargs.get("footer")
         properties = kwargs.get("properties")
-        application_properties = kwargs.pop("application_properties")
+        application_properties = kwargs.get("application_properties")
         annotations = kwargs.get("annotations")
         delivery_annotations = kwargs.get("delivery_annotations")
 

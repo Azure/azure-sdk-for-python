@@ -6,15 +6,13 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Example to show sending amqp annotated message(s) to a Service Bus Queue.
+Example to show sending, receiving and parsing amqp annotated message(s) to a Service Bus Queue.
 """
 
 # pylint: disable=C0111
 
 import os
-import logging
-logging.basicConfig(level=logging.INFO)
-from azure.servicebus import ServiceBusClient, AMQPAnnotatedMessage
+from azure.servicebus import ServiceBusClient, AMQPAnnotatedMessage, AMQPMessageBodyType
 
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
@@ -31,6 +29,7 @@ def send_data_message(sender):
         application_properties=data_app_prop
     )
     sender.send_messages(data_message)
+    print("Message of data body sent.")
 
 
 def send_sequence_message(sender):
@@ -45,6 +44,7 @@ def send_sequence_message(sender):
         application_properties=seq_app_prop
     )
     sender.send_messages(sequence_message)
+    print("Message of sequence body sent.")
 
 
 def send_value_message(sender):
@@ -59,14 +59,31 @@ def send_value_message(sender):
         application_properties=value_app_prop
     )
     sender.send_messages(value_message)
+    print("Message of value body sent.")
 
 
-servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, logging_enable=True)
+def receive_and_parse_message(receiver):
+    for message in receiver:
+        if message.body_type == AMQPMessageBodyType.DATA:
+            print("Message of data body received. Body is:")
+            for data_section in message.body:
+                print(data_section)
+        elif message.body_type == AMQPMessageBodyType.SEQUENCE:
+            print("Message of sequence body received. Body is:")
+            for sequence_section in message.body:
+                print(sequence_section)
+        elif message.body_type == AMQPMessageBodyType.VALUE:
+            print("Message of value body received. Body is:")
+            print(message.body)
+        receiver.complete_message(message)
+
+
+servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
 with servicebus_client:
     sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
-    with sender:
+    receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, max_wait_time=10)
+    with sender, receiver:
         send_data_message(sender)
         send_sequence_message(sender)
         send_value_message(sender)
-
-print("Send message is done.")
+        receive_and_parse_message(receiver)

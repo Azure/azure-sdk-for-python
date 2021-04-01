@@ -2425,27 +2425,37 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             with pytest.raises(ValueError):
                 AMQPAnnotatedMessage()
 
-            recv_data_msg = recv_sequence_msg = recv_value_msg = 0
+            content = "normalmessage"
+            dict_message = {"body": content}
+            sb_message = ServiceBusMessage(body=content)
+
+            recv_data_msg = recv_sequence_msg = recv_value_msg = normal_msg = 0
             with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10) as receiver:
                 with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     batch = sender.create_message_batch()
                     batch.add_message(data_message)
                     batch.add_message(value_message)
                     batch.add_message(sequence_message)
+                    batch.add_message(dict_message)
+                    batch.add_message(sb_message)
 
                     sender.send_messages(batch)
-                    sender.send_messages([data_message, value_message, sequence_message])
+                    sender.send_messages([data_message, value_message, sequence_message, dict_message, sb_message])
                     sender.send_messages(data_message)
                     sender.send_messages(value_message)
                     sender.send_messages(sequence_message)
 
                     for message in receiver:
                         if message.body_type == AMQPMessageBodyType.DATA:
-                            body = [data for data in message.body]
-                            assert data_body == body
-                            assert message.message.delivery_annotations[b'delann_key'] == b'delann_value'
-                            assert message.message.application_properties[b'body_type'] == b'data'
-                            recv_data_msg += 1
+                            if message.message.application_properties and message.message.application_properties.get(b'body_type') == b'data':
+                                body = [data for data in message.body]
+                                assert data_body == body
+                                assert message.message.delivery_annotations[b'delann_key'] == b'delann_value'
+                                assert message.message.application_properties[b'body_type'] == b'data'
+                                recv_data_msg += 1
+                            else:
+                                assert str(message) == content
+                                normal_msg += 1
                         elif message.body_type == AMQPMessageBodyType.SEQUENCE:
                             body = [sequence for sequence in message.body]
                             assert [sequence_body] == body
@@ -2459,7 +2469,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                             assert message.message.annotations[b'ann_key'] == b'ann_value'
                             assert message.message.application_properties[b'body_type'] == b'value'
                             recv_value_msg += 1
+                        receiver.complete_message(message)
 
                     assert recv_sequence_msg == 3
                     assert recv_data_msg == 3
                     assert recv_value_msg == 3
+                    assert normal_msg == 4
