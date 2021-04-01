@@ -164,6 +164,30 @@ class EventHubSASTokenCredential(object):
         """
         return AccessToken(self.token, self.expiry)
 
+class AzureSasTokenCredential(object):
+    """The shared access token credential used for authentication
+    when AzureSasCredential is provided.
+
+    :param str token: The shared access token string
+    :param int expiry: The epoch timestamp
+    """
+    def __init__(self, azure_sas_credential):
+        # type: (AzureSasCredential) -> None
+        """
+        :param str token: The shared access token string
+        :param float expiry: The epoch timestamp
+        """
+        self._credential = azure_sas_credential
+        self.token_type = b"servicebus.windows.net:sastoken"
+
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (str, Any) -> AccessToken
+        """
+        This method is automatically called when token is about to expire.
+        """
+        signature, expiry = parse_sas_credential(self._credential)
+        return AccessToken(signature, expiry)
+
 
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
@@ -175,7 +199,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._address = _Address(hostname=fully_qualified_namespace, path=path)
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         if isinstance(credential, AzureSasCredential):
-            self._credential =  EventHubSASTokenCredential(*parse_sas_credential(credential))
+            self._credential =  AzureSasTokenCredential(credential)
         else:
             self._credential = credential
         self._keep_alive = kwargs.get("keep_alive", 30)

@@ -22,7 +22,7 @@ from uamqp import (
 from azure.core.credentials import AccessToken, AzureSasCredential
 
 from .._client_base import ClientBase, _generate_sas_token, _parse_conn_str
-from .._utils import utc_from_timestamp
+from .._utils import utc_from_timestamp, parse_sas_credential
 from ..exceptions import ClientClosedError, ConnectError
 from .._constants import (
     JWT_TOKEN_SCOPE,
@@ -84,6 +84,28 @@ class EventHubSASTokenCredential(object):
         """
         return AccessToken(self.token, self.expiry)
 
+class AzureSasTokenCredential(object):
+    """The shared access token credential used for authentication
+    when AzureSasCredential is provided.
+
+    :param str token: The shared access token string
+    :param int expiry: The epoch timestamp
+    """
+    def __init__(self, azure_sas_credential: AzureSasCredential) -> None:
+        """
+        :param str token: The shared access token string
+        :param float expiry: The epoch timestamp
+        """
+        self._credential = azure_sas_credential
+        self.token_type = b"servicebus.windows.net:sastoken"
+
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
+        """
+        This method is automatically called when token is about to expire.
+        """
+        signature, expiry = parse_sas_credential(self._credential)
+        return AccessToken(signature, expiry)
+
 
 class ClientBaseAsync(ClientBase):
     def __init__(
@@ -95,7 +117,7 @@ class ClientBaseAsync(ClientBase):
     ) -> None:
         self._loop = kwargs.pop("loop", None)
         if isinstance(credential, AzureSasCredential):
-            self._credential =  EventHubSASTokenCredential(*parse_sas_credential(credential))
+            self._credential =  AzureSasTokenCredential(credential)
         else:
             self._credential = credential
         super(ClientBaseAsync, self).__init__(
