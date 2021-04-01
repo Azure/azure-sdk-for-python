@@ -1,0 +1,3 @@
+azure-mgmt-compute==14.0.0
+azure-mgmt-storage==11.2.0
+azure-mgmt-privatedns==0.1.0

@@ -37,7 +37,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
 
         count = 0
         prev = None
-        async for repo in await client.list_repositories():
+        async for repo in client.list_repositories():
             count += 1
             assert isinstance(repo, six.string_types)
             assert prev != repo
@@ -51,7 +51,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         page_size = 2
         total_pages = 0
 
-        repository_pages = await client.list_repositories(page_size=page_size)
+        repository_pages = client.list_repositories(page_size=page_size)
 
         prev = None
         async for page in repository_pages.by_page():

@@ -211,6 +211,9 @@ Use a dict-like representation to send to a topic with custom schema as shown be
 
 ```Python
 import os
+import uuid
+import datetime as dt
+from msrest.serialization import UTC
 from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridPublisherClient
 

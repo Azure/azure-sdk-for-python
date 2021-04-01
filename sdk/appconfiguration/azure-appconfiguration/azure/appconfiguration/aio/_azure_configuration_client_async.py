@@ -84,9 +84,12 @@ class AzureAppConfigurationClient:
             base_user_agent=USER_AGENT, **kwargs
         )
 
+        self._sync_token_policy = None
+
         pipeline = kwargs.get("pipeline")
 
         if pipeline is None:
+            self._sync_token_policy = SyncTokenPolicy()
             aad_mode = not isinstance(credential, AppConfigConnectionStringCredential)
             pipeline = self._create_appconfig_pipeline(
                 credential=credential, aad_mode=aad_mode, base_url=base_url, **kwargs
@@ -148,8 +151,8 @@ class AzureAppConfigurationClient:
                 self._config.headers_policy,
                 self._config.user_agent_policy,
                 self._config.retry_policy,
+                self._sync_token_policy,
                 credential_policy,
-                SyncTokenPolicy(),
                 self._config.logging_policy,  # HTTP request/response log
                 DistributedTracingPolicy(**kwargs),
                 HttpLoggingPolicy(**kwargs),
@@ -597,3 +600,19 @@ class AzureAppConfigurationClient:
             raise HttpResponseError(message=error.message, response=error.response)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
+
+    def update_sync_token(self, token):
+        # type: (str) -> None
+
+        """Add a sync token to the internal list of tokens.
+        :param token: The sync token to be added to the internal list of tokens
+        :type token: str
+        """
+
+        self._sync_token_policy.add_token(token)
+
+    async def close(self):
+        # type: (...) -> None
+
+        """Close all connections made by the client"""
+        await self._impl._client.close()

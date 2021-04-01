@@ -10,7 +10,7 @@ from ._deserialize import (
 from ._shared.response_handlers import return_response_headers
 from ._shared.uploads import (
     upload_data_chunks,
-    DataLakeFileChunkUploader)
+    DataLakeFileChunkUploader, upload_substream_blocks)
 from ...core.exceptions import HttpResponseError
 
 
@@ -30,6 +30,7 @@ def upload_datalake_file(  # pylint: disable=unused-argument
         overwrite=None,
         validate_content=None,
         max_concurrency=None,
+        file_settings=None,
         **kwargs):
     try:
         if length == 0:
@@ -66,15 +67,32 @@ def upload_datalake_file(  # pylint: disable=unused-argument
             modified_access_conditions.if_modified_since = None
             modified_access_conditions.if_unmodified_since = None
 
-        upload_data_chunks(
-            service=client,
-            uploader_class=DataLakeFileChunkUploader,
-            total_size=length,
-            chunk_size=chunk_size,
-            stream=stream,
-            max_concurrency=max_concurrency,
-            validate_content=validate_content,
-            **kwargs)
+        use_original_upload_path = file_settings.use_byte_buffer or \
+            validate_content or chunk_size < file_settings.min_large_block_upload_threshold or \
+            hasattr(stream, 'seekable') and not stream.seekable() or \
+            not hasattr(stream, 'seek') or not hasattr(stream, 'tell')
+
+        if use_original_upload_path:
+            upload_data_chunks(
+                service=client,
+                uploader_class=DataLakeFileChunkUploader,
+                total_size=length,
+                chunk_size=chunk_size,
+                stream=stream,
+                max_concurrency=max_concurrency,
+                validate_content=validate_content,
+                **kwargs)
+        else:
+            upload_substream_blocks(
+                service=client,
+                uploader_class=DataLakeFileChunkUploader,
+                total_size=length,
+                chunk_size=chunk_size,
+                max_concurrency=max_concurrency,
+                stream=stream,
+                validate_content=validate_content,
+                **kwargs
+            )
 
         return client.flush_data(position=length,
                                  path_http_headers=path_http_headers,

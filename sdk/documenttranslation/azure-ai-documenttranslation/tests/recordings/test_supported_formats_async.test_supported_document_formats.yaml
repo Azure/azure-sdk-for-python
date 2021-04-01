@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-translatortext/1.0.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0-preview.1/documents/formats
+  response:
+    body:
+      string: '{"value":[{"format":"PlainText","fileExtensions":[".txt"],"contentTypes":["text/plain"],"versions":[]},{"format":"OpenXmlWord","fileExtensions":[".docx"],"contentTypes":["application/vnd.openxmlformats-officedocument.wordprocessingml.document"],"versions":[]},{"format":"OpenXmlPresentation","fileExtensions":[".pptx"],"contentTypes":["application/vnd.openxmlformats-officedocument.presentationml.presentation"],"versions":[]},{"format":"OpenXmlSpreadsheet","fileExtensions":[".xlsx"],"contentTypes":["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"],"versions":[]},{"format":"OutlookMailMessage","fileExtensions":[".msg"],"contentTypes":["application/vnd.ms-outlook"],"versions":[]},{"format":"HtmlFile","fileExtensions":[".html",".htm"],"contentTypes":["text/html"],"versions":[]},{"format":"PortableDocumentFormat","fileExtensions":[".pdf"],"contentTypes":["application/pdf"],"versions":[]},{"format":"XLIFF","fileExtensions":[".xlf"],"contentTypes":["application/xliff+xml"],"versions":["1.0","1.1","1.2"]},{"format":"TSV","fileExtensions":[".tsv",".tab"],"contentTypes":["text/tab-separated-values"],"versions":[]}]}'
+    headers:
+      apim-request-id: b6e65f73-4b60-4320-a890-a1f5a23eded5
+      cache-control: public,max-age=1
+      content-encoding: gzip
+      content-type: application/json; charset=utf-8
+      date: Wed, 31 Mar 2021 22:14:35 GMT
+      etag: '"F50180F3F7A3DA2AD0976187D2FFC4ACD76EE3CF8049CD8DC1CB04DC7EE88660"'
+      set-cookie: ARRAffinitySameSite=52534756bc24481c0848ee2def3c54a057fd0e51707d9dcf782aa603bbaa9f24;Path=/;HttpOnly;SameSite=None;Secure;Domain=doctrans.northeu.microsofttranslator.com
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      vary: Accept-Encoding
+      x-content-type-options: nosniff
+      x-powered-by: ASP.NET
+      x-requestid: b6e65f73-4b60-4320-a890-a1f5a23eded5
+    status:
+      code: 200
+      message: OK
+    url: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0-preview.1/documents/formats
+version: 1

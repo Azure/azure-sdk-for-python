@@ -1,38 +1,18 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import TYPE_CHECKING
 
-from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 
 from ._async_exchange_client import ACRExchangeClient
+from .._helpers import _enforce_https
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.pipeline import PipelineRequest, PipelineResponse
     from typing import Optional, Dict, Any, Union
-
-
-def _enforce_https(request):
-    # type: (PipelineRequest) -> None
-    """Raise ServiceRequestError if the request URL is non-HTTPS and the sender did not specify enforce_https=False"""
-
-    # move 'enforce_https' from options to context so it persists
-    # across retries but isn't passed to a transport implementation
-    option = request.context.options.pop("enforce_https", None)
-
-    # True is the default setting; we needn't preserve an explicit opt in to the default behavior
-    if option is False:
-        request.context["enforce_https"] = option
-
-    enforce_https = request.context.get("enforce_https", True)
-    if enforce_https and not request.http_request.url.lower().startswith("https"):
-        raise ServiceRequestError(
-            "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
-        )
 
 
 class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):

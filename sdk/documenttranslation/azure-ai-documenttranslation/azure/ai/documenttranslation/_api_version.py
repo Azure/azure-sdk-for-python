@@ -6,7 +6,7 @@
 from enum import Enum
 
 
-class DocumentTranslationVersion(str, Enum):
+class DocumentTranslationApiVersion(str, Enum):
     """Document Translation API versions supported by this package"""
 
     #: This is the default version
@@ -20,9 +20,9 @@ def validate_api_version(api_version):
         return
 
     try:
-        api_version = DocumentTranslationVersion(api_version)
+        api_version = DocumentTranslationApiVersion(api_version)
     except ValueError:
         raise ValueError(
             "Unsupported API version '{}'. Please select from:\n{}".format(
-                api_version, ", ".join(v.value for v in DocumentTranslationVersion))
+                api_version, ", ".join(v.value for v in DocumentTranslationApiVersion))
         )
