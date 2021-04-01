@@ -160,7 +160,7 @@ Create a table in your account and get a `TableClient` to perform operations on 
 ```python
 from azure.data.tables import TableServiceClient
 table_service_client = TableServiceClient.from_connection_string(conn_str="<connection_string>")
-table_name = "myTable
+table_name = "myTable"
 table_client = table_service_client.create_table(table_name=table_name)
 ```
 
@@ -171,19 +171,19 @@ Create entities in the table:
 from azure.data.tables import TableServiceClient
 from datetime import datetime
 
-PRODUCT_ID = '001234'
-PRODUCT_NAME = 'RedMarker'
+PRODUCT_ID = u'001234'
+PRODUCT_NAME = u'RedMarker'
 
 my_entity = {
-    'PartitionKey': PRODUCT_NAME,
-    'RowKey': PRODUCT_ID,
-    'Stock': 15,
-    'Price': 9.99,
-    'Comments': "great product",
-    'OnSale': True,
-    'ReducedPrice': 7.99,
-    'PurchaseDate': datetime(1973, 10, 4),
-    'BinaryRepresentation': b'product_name
+    u'PartitionKey': PRODUCT_NAME,
+    u'RowKey': PRODUCT_ID,
+    u'Stock': 15,
+    u'Price': 9.99,
+    u'Comments': u"great product",
+    u'OnSale': True,
+    u'ReducedPrice': 7.99,
+    u'PurchaseDate': datetime(1973, 10, 4),
+    u'BinaryRepresentation': b'product_name'
 }
 
 table_service_client = TableServiceClient.from_connection_string(conn_str="<connection_string>")
@@ -197,7 +197,7 @@ Querying entities in the table:
 
 ```python
 from azure.data.tables import TableClient
-my_filter = "RowKey eq 'RedMarker'"
+my_filter = "PartitionKey eq 'RedMarker'"
 table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="mytable")
 entities = table_client.query_entities(filter=my_filter)
 for entity in entities:
@@ -307,7 +307,7 @@ These code samples show common scenario operations with the Azure Data tables cl
 * Create and delete tables: [sample_create_delete_table.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_create_delete_table.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_create_delete_table_async.py))
 * List and query tables: [sample_query_tables.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_query_tables.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_query_tables_async.py))
 * Insert and delete entities: [sample_insert_delete_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_insert_delete_entities_async.py))
-* Query and list entities: [sample_query_tables.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_query_tables.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_query_tables_async.py))
+* Query and list entities: [sample_query_tables.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/sample_query_table.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/async_samples/sample_query_table_async.py))
 * Update, upsert, and merge entities: [sample_update_upsert_merge_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_update_upsert_merge_entities_async.py))
 * Committing many requests in a single batch: [sample_batching.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_batching.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_batching_async.py))
 

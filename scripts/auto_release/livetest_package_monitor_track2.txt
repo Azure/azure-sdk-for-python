@@ -1,0 +1,6 @@
+azure-mgmt-storage
+azure-mgmt-eventhub
+azure-mgmt-loganalytics
+azure-mgmt-compute==14.0.0
+azure-mgmt-network
+azure-mgmt-logic

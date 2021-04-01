@@ -91,11 +91,11 @@ class AcrBodyReplacer(RecordingProcessor):
         except (KeyError, ValueError):
             return response
 
+
 class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
     :param str scopes: Lets you specify the type of access needed.
     """
-
     def __init__(self):
         self.token = AccessToken("YOU SHALL NOT PASS", 0)
 

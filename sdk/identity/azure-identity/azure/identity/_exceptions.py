@@ -23,11 +23,10 @@ class AuthenticationRequiredError(CredentialUnavailableError):
     method.
     """
 
-    def __init__(self, scopes, message=None, error_details=None, claims=None, **kwargs):
-        # type: (Iterable[str], Optional[str], Optional[str], Optional[str], **Any) -> None
+    def __init__(self, scopes, message=None, claims=None, **kwargs):
+        # type: (Iterable[str], Optional[str], Optional[str], **Any) -> None
         self._claims = claims
         self._scopes = scopes
-        self._error_details = error_details
         if not message:
             message = "Interactive authentication is required to get a token. Call 'authenticate' to begin."
         super(AuthenticationRequiredError, self).__init__(message=message, **kwargs)
@@ -37,12 +36,6 @@ class AuthenticationRequiredError(CredentialUnavailableError):
         # type: () -> Iterable[str]
         """Scopes requested during the failed authentication"""
         return self._scopes
-
-    @property
-    def error_details(self):
-        # type: () -> Optional[str]
-        """Additional authentication error details from Azure Active Directory"""
-        return self._error_details
 
     @property
     def claims(self):

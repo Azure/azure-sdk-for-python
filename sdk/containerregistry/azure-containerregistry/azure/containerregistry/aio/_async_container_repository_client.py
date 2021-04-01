@@ -5,38 +5,46 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 
+from azure.core.async_paging import AsyncItemPaged
+
 from ._async_base_client import ContainerRegistryBaseClient
 from .._helpers import _is_tag
 from .._models import (
+    ContentPermissions,
     RegistryArtifactProperties,
     RepositoryProperties,
     TagProperties,
 )
 
 if TYPE_CHECKING:
-    from .._models import ContentPermissions
-    from azure.core.async_paging import AsyncItemPaged
     from azure.core.credentials_async import AsyncTokenCredential
-    from typing import Dict, Any
 
 
 class ContainerRepositoryClient(ContainerRegistryBaseClient):
-    def __init__(
-        self, endpoint: str, repository: str, credential: "AsyncTokenCredential", **kwargs
-    ):  # pylint: disable=client-method-missing-type-annotations
-        if not endpoint.startswith("https://"):
+    def __init__(self, endpoint: str, repository: str, credential: "AsyncTokenCredential", **kwargs) -> None:
+        """Create a ContainerRepositoryClient from an endpoint, repository name, and credential
+
+        :param endpoint: An ACR endpoint
+        :type endpoint: str
+        :param repository: The name of a repository
+        :type repository: str
+        :param credential: The credential with which to authenticate
+        :type credential: AsyncTokenCredential
+        :returns: None
+        :raises: None
+        """
+        if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
         self._credential = credential
         self.repository = repository
         super(ContainerRepositoryClient, self).__init__(endpoint=self._endpoint, credential=credential, **kwargs)
 
-    async def _get_digest_from_tag(self, tag):
-        # type: (str) -> str
+    async def _get_digest_from_tag(self, tag: str) -> None:
         tag_props = await self.get_tag_properties(tag)
         return tag_props.digest
 
-    async def delete(self, **kwargs):
+    async def delete(self, **kwargs) -> None:
         # type: (...) -> None
         """Delete a repository
 
@@ -45,8 +53,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         await self._client.container_registry.delete_repository(self.repository, **kwargs)
 
-    async def delete_registry_artifact(self, digest, **kwargs):
-        # type: (str) -> None
+    async def delete_registry_artifact(self, digest: str, **kwargs) -> None:
         """Delete a registry artifact
 
         :param digest: The digest of the artifact to be deleted
@@ -56,8 +63,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         await self._client.container_registry_repository.delete_manifest(self.repository, digest, **kwargs)
 
-    async def delete_tag(self, tag, **kwargs):
-        # type: (str) -> None
+    async def delete_tag(self, tag: str, **kwargs) -> None:
         """Delete a tag
 
         :param tag: The digest of the artifact to be deleted
@@ -68,8 +74,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         await self._client.container_registry_repository.delete_tag(
             self.repository, tag, **kwargs)
 
-    async def get_properties(self, **kwargs):
-        # type: (...) -> RepositoryProperties
+    async def get_properties(self, **kwargs) -> RepositoryProperties:
         """Get the properties of a repository
 
         :returns: :class:~azure.containerregistry.RepositoryProperties
@@ -79,8 +84,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             await self._client.container_registry_repository.get_properties(self.repository, **kwargs)
         )
 
-    def get_registry_artifact_properties(self, tag_or_digest, **kwargs):
-        # type: (str, Dict[str, Any]) -> RegistryArtifactProperties
+    async def get_registry_artifact_properties(self, tag_or_digest: str, **kwargs) -> RegistryArtifactProperties:
         """Get the properties of a registry artifact
 
         :param tag_or_digest: The tag/digest of a registry artifact
@@ -92,13 +96,12 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             tag_or_digest = self._get_digest_from_tag(tag_or_digest)
 
         return RegistryArtifactProperties._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry_repository.get_registry_artifact_properties(
+            await self._client.container_registry_repository.get_registry_artifact_properties(
                 self.repository, tag_or_digest, **kwargs
             )
         )
 
-    async def get_tag_properties(self, tag, **kwargs):
-        # type: (str, Dict[str, Any]) -> TagProperties
+    async def get_tag_properties(self, tag: str, **kwargs) -> TagProperties:
         """Get the properties for a tag
 
         :param tag: The tag to get properties for
@@ -110,22 +113,20 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             await self._client.container_registry_repository.get_tag_properties(self.repository, tag, **kwargs)
         )
 
-    def list_registry_artifacts(self, **kwargs):
-        # type: (...) -> AsyncItemPaged[RegistryArtifactProperties]
+    async def list_registry_artifacts(self, **kwargs) -> AsyncItemPaged[RegistryArtifactProperties]:
         """List the artifacts for a repository
 
         :keyword last: Query parameter for the last item in the previous query
         :type last: str
-        :keyword n: Max number of items to be returned
-        :type n: int
+        :keyword page_size: Number of items per page
+        :type page_size: int
         :keyword orderby: Order by query parameter
         :type orderby: :class:~azure.containerregistry.RegistryArtifactOrderBy
         :returns: ~azure.core.paging.AsyncItemPaged[RegistryArtifactProperties]
         :raises: None
         """
-        # GET /acr/v1/{name}/_manifests
         last = kwargs.pop("last", None)
-        n = kwargs.pop("top", None)
+        n = kwargs.pop("page_size", None)
         orderby = kwargs.pop("order_by", None)
         return self._client.container_registry_repository.get_manifests(
             self.repository,
@@ -135,10 +136,10 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             cls=lambda objs: [
                 RegistryArtifactProperties._from_generated(x) for x in objs  # pylint: disable=protected-access
             ],
+            **kwargs
         )
 
-    def list_tags(self, **kwargs):
-        # type: (...) -> AsyncItemPaged[TagProperties]
+    async def list_tags(self, **kwargs) -> AsyncItemPaged[TagProperties]:
         """List the tags for a repository
 
         :param last: Query parameter for the last item in the previous call. Ensuing
@@ -148,7 +149,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: ~azure.core.paging.AsyncItemPaged[TagProperties]
         :raises: None
         """
-        return self._client.container_registry_repository.get_tags(
+        return await self._client.container_registry_repository.get_tags(
             self.repository,
             last=kwargs.pop("last", None),
             n=kwargs.pop("top", None),
@@ -158,8 +159,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             **kwargs
         )
 
-    async def set_manifest_properties(self, digest, permissions, **kwargs):
-        # type: (str, ContentPermissions) -> None
+    async def set_manifest_properties(self, digest: str, permissions: ContentPermissions, **kwargs) -> None:
         """Set the properties for a manifest
 
         :param digest: Digest of a manifest
@@ -174,8 +174,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             self.repository, digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
         )
 
-    async def set_tag_properties(self, tag_or_digest, permissions, **kwargs):
-        # type: (str, ContentPermissions) -> None
+    async def set_tag_properties(self, tag_or_digest: str, permissions: ContentPermissions, **kwargs) -> None:
         """Set the properties for a tag
 
         :param tag: Tag to set properties for
@@ -189,5 +188,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             tag_or_digest = self._get_digest_from_tag(tag_or_digest)
 
         await self._client.container_registry_repository.update_manifest_attributes(
-            self.repository, tag_or_digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
+            self.repository,
+            tag_or_digest,
+            value=permissions._to_generated(),  # pylint: disable=protected-access
+            **kwargs
         )

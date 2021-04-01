@@ -82,7 +82,7 @@ setup(
         {%- endfor %}
     ]),
     install_requires=[
-        'msrest>=0.5.0',
+        'msrest>=0.6.21',
         {%- if need_msrestazure %}
         'msrestazure>=0.4.32,<2.0.0',
         {%- endif %}

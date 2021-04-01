@@ -502,12 +502,12 @@ class ManifestAttributesBase(msrest.serialization.Model):
     :type cpu_architecture: str
     :param operating_system: Operating system.
     :type operating_system: str
-    :param references: List of manifest attributes details.
-    :type references: list[~container_registry.models.ManifestAttributesManifestReferences]
-    :param tags: A set of tags. List of tags.
+    :param registry_artifacts: List of manifest attributes details.
+    :type registry_artifacts: list[~container_registry.models.ManifestAttributesManifestReferences]
+    :param tags: Required. A set of tags. List of tags.
     :type tags: list[str]
-    :param writeable_properties: Writeable properties of the resource.
-    :type writeable_properties: ~container_registry.models.ContentProperties
+    :param manifest_properties: Required. Changeable attributes.
+    :type manifest_properties: ~container_registry.models.ContentProperties
     """
 
     _validation = {
@@ -1032,12 +1032,12 @@ class RegistryArtifactProperties(msrest.serialization.Model):
     :type cpu_architecture: str
     :param operating_system: Operating system.
     :type operating_system: str
-    :param references: List of manifest attributes details.
-    :type references: list[~container_registry.models.ManifestAttributesManifestReferences]
-    :param tags: A set of tags. List of tags.
+    :param registry_artifacts: List of manifest attributes details.
+    :type registry_artifacts: list[~container_registry.models.ManifestAttributesManifestReferences]
+    :param tags: Required. A set of tags. List of tags.
     :type tags: list[str]
-    :param writeable_properties: Writeable properties of the resource.
-    :type writeable_properties: ~container_registry.models.ContentProperties
+    :param manifest_properties: Required. Changeable attributes.
+    :type manifest_properties: ~container_registry.models.ContentProperties
     """
 
     _attribute_map = {
@@ -1122,7 +1122,7 @@ class RepositoryProperties(msrest.serialization.Model):
     :type registry_artifact_count: int
     :param tag_count: Required. Number of the tags.
     :type tag_count: int
-    :param writeable_properties: Required. Writeable properties of the resource.
+    :param writeable_properties: Required. Changeable attributes.
     :type writeable_properties: ~container_registry.models.ContentProperties
     """
 
@@ -1153,6 +1153,7 @@ class RepositoryProperties(msrest.serialization.Model):
         registry_artifact_count: int,
         tag_count: int,
         writeable_properties: "ContentProperties",
+        last_updated_on: Optional[datetime.datetime] = None,
         **kwargs
     ):
         super(RepositoryProperties, self).__init__(**kwargs)
@@ -1203,7 +1204,7 @@ class TagAttributesBase(msrest.serialization.Model):
     :type created_on: ~datetime.datetime
     :param last_updated_on: Required. Tag last update time.
     :type last_updated_on: ~datetime.datetime
-    :param writeable_properties: Writeable properties of the resource.
+    :param writeable_properties: Changeable attributes.
     :type writeable_properties: ~container_registry.models.ContentProperties
     """
 
@@ -1266,8 +1267,8 @@ class TagList(msrest.serialization.Model):
 
     :param repository: Required. Image name.
     :type repository: str
-    :param tag_attribute_bases: List of tag attribute details.
-    :type tag_attribute_bases: list[~container_registry.models.TagAttributesBase]
+    :param tags: A set of tags. List of tag attribute details.
+    :type tags: list[~container_registry.models.TagAttributesBase]
     :param link:
     :type link: str
     """
@@ -1311,7 +1312,7 @@ class TagProperties(msrest.serialization.Model):
     :type created_on: ~datetime.datetime
     :param last_updated_on: Required. Tag last update time.
     :type last_updated_on: ~datetime.datetime
-    :param writeable_properties: Writeable properties of the resource.
+    :param writeable_properties: Changeable attributes.
     :type writeable_properties: ~container_registry.models.ContentProperties
     """
 

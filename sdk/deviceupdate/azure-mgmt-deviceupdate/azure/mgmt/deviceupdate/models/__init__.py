@@ -10,6 +10,7 @@ try:
     from ._models_py3 import Account
     from ._models_py3 import AccountList
     from ._models_py3 import AccountUpdate
+    from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorDefinition
     from ._models_py3 import ErrorResponse
     from ._models_py3 import Instance
@@ -25,6 +26,7 @@ except (SyntaxError, ImportError):
     from ._models import Account  # type: ignore
     from ._models import AccountList  # type: ignore
     from ._models import AccountUpdate  # type: ignore
+    from ._models import ErrorAdditionalInfo  # type: ignore
     from ._models import ErrorDefinition  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import Instance  # type: ignore
@@ -47,6 +49,7 @@ __all__ = [
     'Account',
     'AccountList',
     'AccountUpdate',
+    'ErrorAdditionalInfo',
     'ErrorDefinition',
     'ErrorResponse',
     'Instance',

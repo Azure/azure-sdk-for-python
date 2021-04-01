@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 30 Mar 2021 12:31:40 GMT
+      - Thu, 01 Apr 2021 18:32:13 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -71,13 +71,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 30 Mar 2021 12:31:44 GMT
+      - Thu, 01 Apr 2021 18:32:14 GMT
       server:
       - openresty
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
+      x-ms-ratelimit-remaining-calls-per-second:
+      - '333.216667'
     status:
       code: 200
       message: OK
@@ -107,13 +109,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 30 Mar 2021 12:31:45 GMT
+      - Thu, 01 Apr 2021 18:32:14 GMT
       server:
       - openresty
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
+      x-ms-ratelimit-remaining-calls-per-second:
+      - '333.15'
     status:
       code: 200
       message: OK
@@ -132,7 +136,7 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags?orderby=0
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","tags":[{"name":"latest","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-03-30T12:18:52.8272444Z","lastUpdateTime":"2021-03-30T12:18:52.8272444Z","signed":false,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}]}
+      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","tags":[{"name":"latest","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-03-30T12:18:52.8272444Z","lastUpdateTime":"2021-03-30T12:18:52.8272444Z","signed":false,"quarantineState":"Passed","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}]}
 
         '
     headers:
@@ -144,11 +148,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '383'
+      - '410'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 30 Mar 2021 12:31:45 GMT
+      - Thu, 01 Apr 2021 18:32:14 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

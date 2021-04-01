@@ -60,15 +60,6 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
             client.get_tag_properties(TO_BE_DELETED)
 
     @acr_preparer()
-    def test_get_attributes(self, containerregistry_baseurl):
-        client = self.create_repository_client(containerregistry_baseurl, self.repository)
-
-        repo_attribs = client.get_properties()
-
-        assert repo_attribs is not None
-        assert repo_attribs.content_permissions is not None
-
-    @acr_preparer()
     def test_get_properties(self, containerregistry_baseurl):
         repo_client = self.create_repository_client(containerregistry_baseurl, "hello-world")
 
@@ -106,7 +97,6 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
         properties = client.get_registry_artifact_properties("latest")
 
-        assert properties is not None
         assert isinstance(properties, RegistryArtifactProperties)
         assert isinstance(properties.created_on, datetime)
         assert isinstance(properties.last_updated_on, datetime)
@@ -183,8 +173,6 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
             assert received.content_permissions.can_delete == permissions.can_delete
 
             break
-
-        tags = client.set_manifest_properties()
 
     @acr_preparer()
     def test_delete_repository(self, containerregistry_baseurl, containerregistry_resource_group):

@@ -81,11 +81,6 @@ except (SyntaxError, ImportError):
     from ._models import V1Manifest  # type: ignore
     from ._models import V2Manifest  # type: ignore
 
-from ._container_registry_enums import (
-    RegistryArtifactOrderBy,
-    TagOrderBy,
-)
-
 __all__ = [
     'AcrAccessToken',
     'AcrErrorInfo',
@@ -124,6 +119,4 @@ __all__ = [
     'TagProperties',
     'V1Manifest',
     'V2Manifest',
-    'RegistryArtifactOrderBy',
-    'TagOrderBy',
 ]
