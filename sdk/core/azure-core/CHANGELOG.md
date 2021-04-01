@@ -2,6 +2,10 @@
 
 ## 1.12.1 (Unreleased)
 
+### Bug Fixes
+
+- Do not override your `x-ms-client-request-id` if you have already explicitly set the value in your request headers  #17758
+
 
 ## 1.12.0 (2021-03-08)
 
