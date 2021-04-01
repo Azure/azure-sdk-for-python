@@ -2,6 +2,7 @@
 
 ## 1.1.4 (Unreleased)
 
+This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported.
 
 ## 1.1.3 (2021-03-09)
 
