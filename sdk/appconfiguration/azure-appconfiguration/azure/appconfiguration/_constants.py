@@ -9,3 +9,5 @@ TIME_WINDOW = u"Microsoft.TimeWindow"
 PERCENTAGE = u"Microsoft.Percentage"
 
 TARGETING = u"Microsoft.Targeting"
+
+FEATURE_FLAG_PREFIX = u".appconfig.featureflag/"

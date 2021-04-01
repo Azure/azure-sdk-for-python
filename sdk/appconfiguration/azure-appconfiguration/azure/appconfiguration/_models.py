@@ -147,8 +147,6 @@ class FeatureFlagConfigurationSetting(
         self._enabled = enabled
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
         self.key = key
-        if not key.startswith(self.key_prefix):
-            self.key = self.key_prefix + key
         self.label = kwargs.get("label", None)
         self.content_type = kwargs.get("content_type", self._feature_flag_content_type)
         self.last_modified = kwargs.get("last_modified", None)

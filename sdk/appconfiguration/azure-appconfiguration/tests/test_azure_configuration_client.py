@@ -20,7 +20,8 @@ from azure.appconfiguration import (
     SecretReferenceConfigurationSetting,
     PERCENTAGE,
     TARGETING,
-    TIME_WINDOW
+    TIME_WINDOW,
+    FEATURE_FLAG_PREFIX,
 )
 from azure.identity import DefaultAzureCredential
 
@@ -532,7 +533,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
     @app_config_decorator
     def test_config_setting_feature_flag(self, client):
-        feature_flag = FeatureFlagConfigurationSetting("test_feature", True)
+        feature_flag = FeatureFlagConfigurationSetting(FEATURE_FLAG_PREFIX + "test_feature", True)
         set_flag = client.set_configuration_setting(feature_flag)
 
         self._assert_same_keys(feature_flag, set_flag)
@@ -584,7 +585,7 @@ class AppConfigurationClientTest(AzureTestCase):
     @app_config_decorator
     def test_feature_filter_targeting(self, client):
         new = FeatureFlagConfigurationSetting(
-            "newflag",
+            FEATURE_FLAG_PREFIX + "newflag",
             True,
             filters=[
                 {
@@ -644,7 +645,7 @@ class AppConfigurationClientTest(AzureTestCase):
     @app_config_decorator
     def test_feature_filter_time_window(self, client):
         new = FeatureFlagConfigurationSetting(
-            'time_window',
+            FEATURE_FLAG_PREFIX + 'time_window',
             True,
             filters=[
                 {
@@ -669,7 +670,7 @@ class AppConfigurationClientTest(AzureTestCase):
     @app_config_decorator
     def test_feature_filter_custom(self, client):
         new = FeatureFlagConfigurationSetting(
-            'custom',
+            FEATURE_FLAG_PREFIX + 'custom',
             True,
             filters=[
                 {
@@ -694,7 +695,7 @@ class AppConfigurationClientTest(AzureTestCase):
     @app_config_decorator
     def test_feature_filter_multiple(self, client):
         new = FeatureFlagConfigurationSetting(
-            'custom',
+            FEATURE_FLAG_PREFIX + 'custom',
             True,
             filters=[
                 {
@@ -742,7 +743,7 @@ class AppConfigurationClientTest(AzureTestCase):
     @app_config_decorator
     def test_breaking1(self, client):
         new = FeatureFlagConfigurationSetting(
-            'breaking1',
+            FEATURE_FLAG_PREFIX + 'breaking1',
             True,
             filters=[
                 {
@@ -758,7 +759,7 @@ class AppConfigurationClientTest(AzureTestCase):
         new1 = client.get_configuration_setting(new.key)
 
         new = FeatureFlagConfigurationSetting(
-            'breaking2',
+            FEATURE_FLAG_PREFIX + 'breaking2',
             True,
             filters=[
                 {
@@ -775,7 +776,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
         # This will show up as a Custom filter
         new = FeatureFlagConfigurationSetting(
-            'breaking3',
+            FEATURE_FLAG_PREFIX + 'breaking3',
             True,
             filters=[
                 {
@@ -791,7 +792,7 @@ class AppConfigurationClientTest(AzureTestCase):
         new1 = client.get_configuration_setting(new.key)
 
         new = FeatureFlagConfigurationSetting(
-            'breaking4',
+            FEATURE_FLAG_PREFIX + 'breaking4',
             True,
             filters=[
                 {
@@ -804,7 +805,7 @@ class AppConfigurationClientTest(AzureTestCase):
         new1 = client.get_configuration_setting(new.key)
 
         new = FeatureFlagConfigurationSetting(
-            'breaking5',
+            FEATURE_FLAG_PREFIX + 'breaking5',
             True,
             filters=[
                 {
@@ -821,7 +822,7 @@ class AppConfigurationClientTest(AzureTestCase):
         new1 = client.get_configuration_setting(new.key)
 
         new = FeatureFlagConfigurationSetting(
-            'breaking6',
+            FEATURE_FLAG_PREFIX + 'breaking6',
             True,
             filters=[
                 {
@@ -834,7 +835,7 @@ class AppConfigurationClientTest(AzureTestCase):
         new1 = client.get_configuration_setting(new.key)
 
         new = FeatureFlagConfigurationSetting(
-            'breaking7',
+            FEATURE_FLAG_PREFIX + 'breaking7',
             True,
             filters=[
                 {
@@ -846,7 +847,7 @@ class AppConfigurationClientTest(AzureTestCase):
         new1 = client.get_configuration_setting(new.key)
 
         new = FeatureFlagConfigurationSetting(
-            'breaking8',
+            FEATURE_FLAG_PREFIX + 'breaking8',
             True,
             filters=[
                 {

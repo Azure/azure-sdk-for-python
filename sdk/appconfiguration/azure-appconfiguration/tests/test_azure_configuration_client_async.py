@@ -18,7 +18,8 @@ from azure.appconfiguration import (
     FeatureFlagConfigurationSetting,
     PERCENTAGE,
     TARGETING,
-    TIME_WINDOW
+    TIME_WINDOW,
+    FEATURE_FLAG_PREFIX,
 )
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 from consts import (
@@ -463,7 +464,7 @@ class AppConfigurationClientTest(AzureTestCase):
     @app_config_decorator
     def test_sync_tokens(self, client):
         new = FeatureFlagConfigurationSetting(
-            'custom',
+            FEATURE_FLAG_PREFIX + 'custom',
             True,
             filters = [
                 {
@@ -482,7 +483,7 @@ class AppConfigurationClientTest(AzureTestCase):
         sent = client.set_configuration_setting(new)
 
         new = FeatureFlagConfigurationSetting(
-            'time_window',
+            FEATURE_FLAG_PREFIX + 'time_window',
             True,
             filters = [
                 {
@@ -501,7 +502,7 @@ class AppConfigurationClientTest(AzureTestCase):
         seq_num2 = sync_tokens2[keys[0]].sequence_number
 
         new = FeatureFlagConfigurationSetting(
-            "newflag",
+            FEATURE_FLAG_PREFIX + "newflag",
             True,
             filters=[
                 {
@@ -542,7 +543,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
     @app_config_decorator
     def test_config_setting_feature_flag(self, client):
-        feature_flag = FeatureFlagConfigurationSetting("test_feature", True)
+        feature_flag = FeatureFlagConfigurationSetting(FEATURE_FLAG_PREFIX + "test_feature", True)
         set_flag = client.set_configuration_setting(feature_flag)
 
         self._assert_same_keys(feature_flag, set_flag)
@@ -596,7 +597,7 @@ class AppConfigurationClientTest(AzureTestCase):
     @app_config_decorator
     def test_feature_filter_targeting(self, client):
         new = FeatureFlagConfigurationSetting(
-            "newflag",
+            FEATURE_FLAG_PREFIX + "newflag",
             True,
             filters=[
                 {
@@ -656,7 +657,7 @@ class AppConfigurationClientTest(AzureTestCase):
     @app_config_decorator
     def test_feature_filter_time_window(self, client):
         new = FeatureFlagConfigurationSetting(
-            'time_window',
+            FEATURE_FLAG_PREFIX + 'time_window',
             True,
             filters=[
                 {
@@ -681,7 +682,7 @@ class AppConfigurationClientTest(AzureTestCase):
     @app_config_decorator
     def test_feature_filter_custom(self, client):
         new = FeatureFlagConfigurationSetting(
-            'custom',
+            FEATURE_FLAG_PREFIX + 'custom',
             True,
             filters=[
                 {
@@ -706,7 +707,7 @@ class AppConfigurationClientTest(AzureTestCase):
     @app_config_decorator
     def test_feature_filter_multiple(self, client):
         new = FeatureFlagConfigurationSetting(
-            'custom',
+            FEATURE_FLAG_PREFIX + 'custom',
             True,
             filters=[
                 {
@@ -790,15 +791,6 @@ class TestAppConfig(object):
             transport=MockTransport()
         )
         client.list_configuration_settings()
-
-        # http_request = HttpRequest('GET', 'http://aka.ms/')
-        # transport = MockTransport()
-
-
-
-        # policies = client._impl._client._pipeline._impl_policies
-        # pipeline = AsyncPipeline(transport, policies)
-        # await pipeline.run(http_request)
 
         # Reset the actual method
         AppConfigRequestsCredentialsPolicy._signed_request = temp
