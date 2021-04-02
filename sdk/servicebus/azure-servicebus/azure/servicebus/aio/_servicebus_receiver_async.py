@@ -46,7 +46,6 @@ from .._common.constants import (
 )
 from .._common import mgmt_handlers
 from .._common.utils import (
-    trace_link_message,
     receive_trace_context_manager,
     utc_from_timestamp,
 )
@@ -176,9 +175,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 original_timeout = self.receiver._handler._timeout
                 self.receiver._handler._timeout = self.max_wait_time * 1000
             try:
-                with receive_trace_context_manager(self.receiver) as receive_span:
-                    message = await self.receiver._inner_anext()
-                    trace_link_message(message, receive_span)
+                message = await self.receiver._inner_anext()
+                links = get_receive_links(message)
+                with receive_trace_context_manager(self.receiver, links=links) as receive_span:
                     return message
             finally:
                 if original_timeout:
@@ -201,9 +200,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 raise
 
     async def __anext__(self):
-        with receive_trace_context_manager(self) as receive_span:
-            message = await self._inner_anext()
-            trace_link_message(message, receive_span)
+        message = await self._inner_anext()
+        links = get_receive_links(message)
+        with receive_trace_context_manager(self, links=links) as receive_span:
             return message
 
     async def _iter_next(self):
@@ -591,14 +590,14 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             raise ValueError("The max_wait_time must be greater than 0.")
         if max_message_count is not None and max_message_count <= 0:
             raise ValueError("The max_message_count must be greater than 0")
-        with receive_trace_context_manager(self) as receive_span:
-            messages = await self._do_retryable_operation(
-                self._receive,
-                max_message_count=max_message_count,
-                timeout=max_wait_time,
-                operation_requires_timeout=True,
-            )
-            trace_link_message(messages, receive_span)
+        messages = await self._do_retryable_operation(
+            self._receive,
+            max_message_count=max_message_count,
+            timeout=max_wait_time,
+            operation_requires_timeout=True,
+        )
+        links = get_receive_links(message)
+        with receive_trace_context_manager(self, links=links) as receive_span:
             if (
                 self._auto_lock_renewer
                 and not self._session
@@ -661,16 +660,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             message_type=ServiceBusReceivedMessage,
             receiver=self,
         )
+        messages = await self._mgmt_request_response_with_retry(
+            REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
+            message,
+            handler,
+            timeout=timeout,
+        )
+        links = get_receive_links(message)
         with receive_trace_context_manager(
-            self, span_name=SPAN_NAME_RECEIVE_DEFERRED
+            self, span_name=SPAN_NAME_RECEIVE_DEFERRED, links=links
         ) as receive_span:
-            messages = await self._mgmt_request_response_with_retry(
-                REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
-                message,
-                handler,
-                timeout=timeout,
-            )
-            trace_link_message(messages, receive_span)
             if (
                 self._auto_lock_renewer
                 and not self._session
@@ -722,15 +721,14 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         }
 
         self._populate_message_properties(message)
-
+        messages = await self._mgmt_request_response_with_retry(
+            REQUEST_RESPONSE_PEEK_OPERATION, message, handler, timeout=timeout
+        )
+        links = get_receive_links(message)
         with receive_trace_context_manager(
-            self, span_name=SPAN_NAME_PEEK
+            self, span_name=SPAN_NAME_PEEK, links=links
         ) as receive_span:
             handler = functools.partial(mgmt_handlers.peek_op, receiver=self)
-            messages = await self._mgmt_request_response_with_retry(
-                REQUEST_RESPONSE_PEEK_OPERATION, message, handler, timeout=timeout
-            )
-            trace_link_message(messages, receive_span)
             return messages
 
     async def complete_message(self, message):
