@@ -604,7 +604,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword str reading_order: Reading order algorithm to sort the text lines returned. Supported
             reading orders include: basic (default), natural. Set 'basic' to sort lines left to right and top
             to bottom, although in some cases proximity is treated with higher priority. Set 'natural' to sort
-            lines by those which are more closely related to each other.
+            lines by using positional information to keep nearby lines together.
         :keyword content_type: Content-type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -695,7 +695,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword str reading_order: Reading order algorithm to sort the text lines returned. Supported
             reading orders include: basic (default), natural. Set 'basic' to sort lines left to right and top
             to bottom, although in some cases proximity is treated with higher priority. Set 'natural' to sort
-            lines by those which are more closely related to each other.
+            lines by using positional information to keep nearby lines together.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
