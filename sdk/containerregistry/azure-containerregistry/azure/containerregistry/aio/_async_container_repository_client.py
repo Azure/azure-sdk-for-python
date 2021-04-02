@@ -63,7 +63,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         raise NotImplementedError("Has not been implemented")
 
     async def delete_tag(self, tag: str, **kwargs) -> None:
-        """Delete a tag
+        """Delete a tag from a repository
 
         :param tag: The digest of the artifact to be deleted
         :type tag: str
