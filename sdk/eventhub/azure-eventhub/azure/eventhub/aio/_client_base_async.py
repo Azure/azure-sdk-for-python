@@ -91,10 +91,6 @@ class AzureSasTokenCredentialAsync(object):
     :type azure_sas_credential: ~azure.core.credentials.AzureSasCredential
     """
     def __init__(self, azure_sas_credential: AzureSasCredential) -> None:
-        """
-        :param str token: The shared access token string
-        :param float expiry: The epoch timestamp
-        """
         self._credential = azure_sas_credential
         self.token_type = b"servicebus.windows.net:sastoken"
 
@@ -116,7 +112,7 @@ class ClientBaseAsync(ClientBase):
     ) -> None:
         self._loop = kwargs.pop("loop", None)
         if isinstance(credential, AzureSasCredential):
-            self._credential = AzureSasTokenCredentialAsync(credential)
+            self._credential = AzureSasTokenCredentialAsync(credential) # type: ignore
         else:
             self._credential = credential # type: ignore
         super(ClientBaseAsync, self).__init__(

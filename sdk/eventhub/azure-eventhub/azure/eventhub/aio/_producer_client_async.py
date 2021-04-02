@@ -18,7 +18,7 @@ from .._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from uamqp.constants import TransportType
+    from uamqp.constants import TransportType # pylint: disable=ungrouped-imports
 
 _LOGGER = logging.getLogger(__name__)
 
