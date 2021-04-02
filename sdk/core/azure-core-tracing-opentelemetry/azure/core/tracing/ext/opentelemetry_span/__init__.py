@@ -125,11 +125,6 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     def kind(self, value):
         # type: (SpanKind) -> None
         """Set the span kind of this span."""
-        warnings.warn(
-            """Kind must be set while creating the span for Opentelemetry. It might be possible
-            that one of the packages you are using doesn't follow the latest Opentelemtry Spec.
-            Try updating the azure pacakges to the latest versions."""
-        )
         kind = (
             OpenTelemetrySpanKind.CLIENT if value == SpanKind.CLIENT else
             OpenTelemetrySpanKind.PRODUCER if value == SpanKind.PRODUCER else
@@ -224,11 +219,6 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         :param headers: A key value pair dictionary
         :type headers: dict
         """
-        warnings.warn(
-            """Link must be added while creating the span for Opentelemetry. It might be possible
-            that one of the packages you are using doesn't follow the latest Opentelemtry Spec.
-            Try updating the azure pacakges to the latest versions."""
-        )
         ctx = extract(headers)
         span_ctx = get_span_from_context(ctx).get_span_context()
         current_span = cls.get_current_span()
