@@ -31,7 +31,7 @@ class ContainerRegistryBaseClient(object):
 
     """
 
-    def __init__(self, endpoint, credential, **kwargs):  # pylint:disable=client-method-missing-type-annotations
+    def __init__(self, endpoint, credential, **kwargs):
         # type: (str, TokenCredential, Dict[str, Any]) -> None
         auth_policy = ContainerRegistryChallengePolicy(credential, endpoint)
         self._client = ContainerRegistry(

@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags
+    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
   response:
     body:
       string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 01 Apr 2021 17:32:42 GMT
+      - Thu, 01 Apr 2021 17:32:06 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 01 Apr 2021 17:32:44 GMT
+      - Thu, 01 Apr 2021 17:32:07 GMT
       server:
       - openresty
       strict-transport-security:
@@ -79,7 +79,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.283333'
+      - '333.183333'
     status:
       code: 200
       message: OK
@@ -109,7 +109,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 01 Apr 2021 17:32:44 GMT
+      - Thu, 01 Apr 2021 17:32:08 GMT
       server:
       - openresty
       strict-transport-security:
@@ -117,7 +117,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.266667'
+      - '333.166667'
     status:
       code: 200
       message: OK
@@ -133,10 +133,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags
+    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","tags":[{"name":"latest","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-03-30T12:18:52.8272444Z","lastUpdateTime":"2021-03-30T12:18:52.8272444Z","signed":false,"quarantineState":"Passed","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}]}
+      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","tag":{"name":"to_be_deleted","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-04-01T17:31:57.7170116Z","lastUpdateTime":"2021-04-01T17:31:57.7170116Z","signed":false,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}}
 
         '
     headers:
@@ -148,11 +148,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '410'
+      - '387'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 01 Apr 2021 17:32:44 GMT
+      - Thu, 01 Apr 2021 17:32:08 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -166,8 +166,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"deleteEnabled": true, "writeEnabled": false, "listEnabled": true, "readEnabled":
-      true}'
+    body: null
     headers:
       Accept:
       - application/json
@@ -176,17 +175,15 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '88'
-      Content-Type:
-      - application/json
+      - '0'
       User-Agent:
       - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: PATCH
-    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_manifests/sha256%3A308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24
+    method: DELETE
+    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
   response:
     body:
       string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"hello-world","Action":"metadata_write"}]}]}
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"hello-world","Action":"delete"}]}]}
 
         '
     headers:
@@ -198,11 +195,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '215'
+      - '207'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 01 Apr 2021 17:32:44 GMT
+      - Thu, 01 Apr 2021 17:32:08 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -242,7 +239,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 01 Apr 2021 17:32:44 GMT
+      - Thu, 01 Apr 2021 17:32:08 GMT
       server:
       - openresty
       strict-transport-security:
@@ -250,12 +247,12 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.25'
+      - '333.15'
     status:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Ahello-world%3Ametadata_write&refresh_token=REDACTED
+    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Ahello-world%3Adelete&refresh_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -264,7 +261,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1080'
+      - '1072'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -280,7 +277,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 01 Apr 2021 17:32:45 GMT
+      - Thu, 01 Apr 2021 17:32:08 GMT
       server:
       - openresty
       strict-transport-security:
@@ -288,58 +285,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.233333'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: '{"deleteEnabled": true, "writeEnabled": false, "listEnabled": true, "readEnabled":
-      true}'
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '88'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: PATCH
-    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_manifests/sha256%3A308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24
-  response:
-    body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","manifest":{"digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","imageSize":0,"createdTime":"2021-03-30T12:18:47.4863064Z","lastUpdateTime":"2021-03-30T12:18:47.4863064Z","mediaType":"application/vnd.docker.distribution.manifest.list.v2+json","tags":["latest"],"changeableAttributes":{"deleteEnabled":true,"writeEnabled":false,"readEnabled":true,"listEnabled":true,"quarantineDetails":"{\"state\":\"Scan
-        Failed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure Security Monitoring-Qualys
-        Scanner\",\"result\":{\"version\":\"3/31/2021 1:55:48 PM\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}","quarantineState":"Passed"},"references":[{"digest":"sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792","architecture":"amd64","os":"linux"},{"digest":"sha256:e5785cb0c62cebbed4965129bae371f0589cadd6d84798fb58c2c5f9e237efd9","architecture":"arm","os":"linux"},{"digest":"sha256:50b8560ad574c779908da71f7ce370c0a2471c098d44d1c8f6b513c5a55eeeb1","architecture":"arm","os":"linux"},{"digest":"sha256:963612c5503f3f1674f315c67089dee577d8cc6afc18565e0b4183ae355fb343","architecture":"arm64","os":"linux"},{"digest":"sha256:cb55d8f7347376e1ba38ca740904b43c9a52f66c7d2ae1ef1a0de1bc9f40df98","architecture":"386","os":"linux"},{"digest":"sha256:88b2e00179bd6c4064612403c8d42a13de7ca809d61fee966ce9e129860a8a90","architecture":"mips64le","os":"linux"},{"digest":"sha256:bb7ab0fa94fdd78aca84b27a1bd46c4b811051f9b69905d81f5f267fc6546a9d","architecture":"ppc64le","os":"linux"},{"digest":"sha256:e49abad529e5d9bd6787f3abeab94e09ba274fe34731349556a850b9aebbf7bf","architecture":"s390x","os":"linux"},{"digest":"sha256:b0408a0f1d74eced127a2658429f336ed8fa48e36d59878f155b19865e5dbd70","architecture":"amd64","os":"windows"}]}}
-
-        '
-    headers:
-      access-control-expose-headers:
-      - Docker-Content-Digest
-      - WWW-Authenticate
-      - Link
-      - X-Ms-Correlation-Request-Id
-      connection:
-      - keep-alive
-      content-length:
-      - '1904'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 01 Apr 2021 17:32:45 GMT
-      docker-distribution-api-version:
-      - registry/2.0
-      server:
-      - openresty
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
+      - '333.133333'
     status:
       code: 200
       message: OK
@@ -352,10 +298,56 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: DELETE
+    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
+  response:
+    body:
+      string: ''
+    headers:
+      access-control-expose-headers:
+      - Docker-Content-Digest
+      - WWW-Authenticate
+      - Link
+      - X-Ms-Correlation-Request-Id
+      connection:
+      - keep-alive
+      content-length:
+      - '0'
+      date:
+      - Thu, 01 Apr 2021 17:32:09 GMT
+      docker-distribution-api-version:
+      - registry/2.0
+      server:
+      - openresty
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-int-docker-content-digest:
+      - sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24
+      x-ms-ratelimit-remaining-calls-per-second:
+      - '32.000000'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       User-Agent:
       - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/latest
+    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
   response:
     body:
       string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
@@ -375,7 +367,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 01 Apr 2021 17:32:45 GMT
+      - Thu, 01 Apr 2021 17:32:19 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -415,7 +407,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 01 Apr 2021 17:32:46 GMT
+      - Thu, 01 Apr 2021 17:32:19 GMT
       server:
       - openresty
       strict-transport-security:
@@ -423,7 +415,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.216667'
+      - '333.083333'
     status:
       code: 200
       message: OK
@@ -453,7 +445,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 01 Apr 2021 17:32:46 GMT
+      - Thu, 01 Apr 2021 17:32:19 GMT
       server:
       - openresty
       strict-transport-security:
@@ -461,7 +453,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.2'
+      - '333.066667'
     status:
       code: 200
       message: OK
@@ -477,10 +469,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/latest
+    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","tag":{"name":"latest","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-03-30T12:18:52.8272444Z","lastUpdateTime":"2021-03-30T12:18:52.8272444Z","signed":false,"quarantineState":"Passed","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}}
+      string: '{"errors":[{"code":"TAG_UNKNOWN","message":"the specified tag does
+        not exist"}]}
 
         '
     headers:
@@ -492,11 +485,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '407'
+      - '81'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 01 Apr 2021 17:32:46 GMT
+      - Thu, 01 Apr 2021 17:32:19 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -507,6 +500,6 @@ interactions:
       x-content-type-options:
       - nosniff
     status:
-      code: 200
-      message: OK
+      code: 404
+      message: Not Found
 version: 1
