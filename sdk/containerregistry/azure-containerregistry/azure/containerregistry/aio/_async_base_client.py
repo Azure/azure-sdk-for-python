@@ -2,9 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
-
 from enum import Enum
+from typing import TYPE_CHECKING
 
 from ._async_authentication_policy import ContainerRegistryChallengePolicy
 from .._generated.aio import ContainerRegistry
@@ -30,10 +29,7 @@ class ContainerRegistryBaseClient(object):
 
     """
 
-    def __init__(
-        self, endpoint: str, credential: "AsyncTokenCredential", **kwargs
-    ):  # pylint:disable=client-method-missing-type-annotations
-        # type: (str, TokenCredential, Dict[str, Any]) -> None
+    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs) -> None:
         auth_policy = ContainerRegistryChallengePolicy(credential, endpoint)
         self._client = ContainerRegistry(
             credential=credential,
