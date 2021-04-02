@@ -17,6 +17,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
 
 from asynctestcase import AsyncContainerRegistryTestClass
+from constants import TO_BE_DELETED
 from preparer import acr_preparer
 
 

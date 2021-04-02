@@ -53,8 +53,3 @@ class ContainerRegistryBaseClient(object):
         Calling this method is unnecessary when using the client as a context manager.
         """
         await self._client.close()
-
-    def _is_tag(self, tag_or_digest):  # pylint: disable=no-self-use
-        # type: (str) -> bool
-        tag = tag_or_digest.split(":")
-        return not (len(tag) == 2 and tag[0].startswith(u"sha"))
