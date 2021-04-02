@@ -160,6 +160,18 @@ class TestContentFromStream(FormRecognizerTest):
         self.assertEqual(layout.tables[0].row_count, 3)
         self.assertEqual(layout.tables[0].column_count, 6)
         self.assertEqual(layout.tables[0].page_number, 1)
+    
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    def test_content_reading_order(self, client):
+        with open(self.invoice_pdf, "rb") as fd:
+            myform = fd.read()
+
+        poller = client.begin_recognize_content(myform, reading_order="natural")
+
+        assert 'natural' == poller._polling_method._initial_response.http_response.request.query['readingOrder']
+        result = poller.result()
+        assert result
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -356,7 +368,8 @@ class TestContentFromStream(FormRecognizerTest):
             myfile = fd.read()
         poller = client.begin_recognize_content(myfile, language="de")
         assert 'de' == poller._polling_method._initial_response.http_response.request.query['language']
-        poller.wait()
+        result = poller.result()
+        assert result
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

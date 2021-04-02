@@ -65,7 +65,7 @@ interactions:
     uri: https://sanitized.communication.azure.com/phoneNumbers/operations/search_7ed48717-bb69-434d-bba2-e31ab2d6489f?api-version=2021-03-07
   response:
     body:
-      string: '{"status": "Succeeded", "resourceLocation": "/availablePhoneNumbers/searchResults/7ed48717-bb69-434d-bba2-e31ab2d6489f?api-version=2021-03-07",
+      string: '{"status": "succeeded", "resourceLocation": "/availablePhoneNumbers/searchResults/7ed48717-bb69-434d-bba2-e31ab2d6489f?api-version=2021-03-07",
         "createdDateTime": "2021-03-16T16:36:40.6037616+00:00", "id": "sanitized",
         "operationType": "Search", "lastActionDateTime": "0001-01-01T00:00:00+00:00"}'
     headers:

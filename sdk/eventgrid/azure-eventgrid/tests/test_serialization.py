@@ -114,3 +114,17 @@ class EventGridSerializationTests(AzureMgmtTestCase):
         assert SystemEventNames.KeyVaultKeyNearExpiryEventName == "Microsoft.KeyVault.KeyNearExpiry"
         var = SystemEventNames.ServiceBusActiveMessagesAvailableWithNoListenersEventName
         assert var == "Microsoft.ServiceBus.ActiveMessagesAvailableWithNoListeners"
+        var = SystemEventNames.AcsChatThreadParticipantAddedEventName
+        assert var == "Microsoft.Communication.ChatThreadParticipantAdded"
+        var = SystemEventNames.AcsChatThreadParticipantRemovedEventName
+        assert var == "Microsoft.Communication.ChatThreadParticipantRemoved"
+
+    def test_eg_event_repr(self):
+        event = EventGridEvent(
+                subject="sample2", 
+                data="eventgridevent2", 
+                event_type="Sample.EventGrid.Event",
+                data_version="2.0"
+            )
+        
+        assert "EventGridEvent(subject=sample2" in event.__repr__()

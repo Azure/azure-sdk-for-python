@@ -26,7 +26,9 @@ from azure.core.exceptions import HttpResponseError
 #
 # 3. Delete a certificate (begin_delete_certificate)
 #
-# 4. Restore a certificate (restore_certificate_backup)
+# 4. Purge a certificate (purge_deleted_certificate)
+#
+# 5. Restore a certificate (restore_certificate_backup)
 # ----------------------------------------------------------------------------------------------------------
 
 # Instantiate a certificate client that will be used to call the service.
@@ -60,13 +62,22 @@ try:
 
     # The storage account certificate is no longer in use, so you can delete it.
     print("\n.. Delete the certificate")
-    client.begin_delete_certificate(cert_name).wait()
-    print("Deleted certificate '{0}'".format(cert_name))
+    delete_operation = client.begin_delete_certificate(cert_name)
+    deleted_certificate = delete_operation.result()
+    print("Deleted certificate with name '{0}'".format(deleted_certificate.name))
 
-    # In future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.
+    # Wait for the deletion to complete before purging the certificate.
+    # The purge will take some time, so wait before restoring the backup to avoid a conflict.
+    delete_operation.wait()
+    print("\n.. Purge the certificate")
+    client.purge_deleted_certificate(deleted_certificate.name)
+    time.sleep(60)
+    print("Purged certificate with name '{0}'".format(deleted_certificate.name))
+
+    # In the future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.
     print("\n.. Restore the certificate from the backup")
     certificate = client.restore_certificate_backup(certificate_backup)
-    print("Restored Certificate with name '{0}'".format(certificate.name))
+    print("Restored certificate with name '{0}'".format(certificate.name))
 
 except HttpResponseError as e:
     print("\nrun_sample has caught an error. {0}".format(e.message))

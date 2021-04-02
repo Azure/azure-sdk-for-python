@@ -12,21 +12,21 @@ from azure.core.async_paging import AsyncItemPaged
 from .._generated.aio import SearchClient as _SearchServiceClient
 from ...aio._search_client_async import SearchClient
 from .._utils import (
-    pack_search_index,
-    unpack_search_index,
-    unpack_synonym_map,
-    pack_synonym_map,
     get_access_conditions,
     normalize_endpoint,
 )
 from ..._api_versions import DEFAULT_VERSION
 from ..._headers_mixin import HeadersMixin
 from ..._version import SDK_MONIKER
+from ..models import (
+    SearchIndex,
+    SynonymMap,
+)
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from .._generated.models import AnalyzeResult, SearchIndex
-    from .._models import AnalyzeTextOptions
+    from .._generated.models import AnalyzeResult
+    from ..models._models import AnalyzeTextOptions
     from typing import Any, Dict, List, Union
     from azure.core.credentials import AzureKeyCredential
 
@@ -92,7 +92,8 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
-        return self._client.indexes.list(cls=lambda objs: [unpack_search_index(x) for x in  objs], **kwargs)
+        # pylint:disable=protected-access
+        return self._client.indexes.list(cls=lambda objs: [SearchIndex._from_generated(x) for x in  objs], **kwargs)
 
     @distributed_trace
     def list_index_names(self, **kwargs):
@@ -130,7 +131,7 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.indexes.get(name, **kwargs)
-        return unpack_search_index(result)
+        return SearchIndex._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def get_index_statistics(self, index_name, **kwargs):
@@ -204,7 +205,7 @@ class SearchIndexClient(HeadersMixin):
                 :caption: Creating a new index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        patched_index = pack_search_index(index)
+        patched_index = index._to_generated()   # pylint:disable=protected-access
         result = await self._client.indexes.create(patched_index, **kwargs)
         return result
 
@@ -247,7 +248,7 @@ class SearchIndexClient(HeadersMixin):
             index, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         kwargs.update(access_condition)
-        patched_index = pack_search_index(index)
+        patched_index = index._to_generated()   # pylint:disable=protected-access
         result = await self._client.indexes.create_or_update(
             index_name=index.name,
             index=patched_index,
@@ -306,7 +307,8 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.synonym_maps.list(**kwargs)
-        return [unpack_synonym_map(x) for x in result.synonym_maps]
+        # pylint:disable=protected-access
+        return [SynonymMap._from_generated(x) for x in result.synonym_maps]
 
     @distributed_trace_async
     async def get_synonym_map_names(self, **kwargs):
@@ -345,7 +347,7 @@ class SearchIndexClient(HeadersMixin):
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.synonym_maps.get(name, **kwargs)
-        return unpack_synonym_map(result)
+        return SynonymMap._from_generated(result)   # pylint:disable=protected-access
 
     @distributed_trace_async
     async def delete_synonym_map(self, synonym_map, **kwargs):
@@ -406,9 +408,9 @@ class SearchIndexClient(HeadersMixin):
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        patched_synonym_map = pack_synonym_map(synonym_map)
+        patched_synonym_map = synonym_map._to_generated()   # pylint:disable=protected-access
         result = await self._client.synonym_maps.create(patched_synonym_map, **kwargs)
-        return unpack_synonym_map(result)
+        return SynonymMap._from_generated(result)   # pylint:disable=protected-access
 
     @distributed_trace_async
     async def create_or_update_synonym_map(self, synonym_map, **kwargs):
@@ -429,14 +431,14 @@ class SearchIndexClient(HeadersMixin):
             synonym_map, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         kwargs.update(access_condition)
-        patched_synonym_map = pack_synonym_map(synonym_map)
+        patched_synonym_map = synonym_map._to_generated()   # pylint:disable=protected-access
         result = await self._client.synonym_maps.create_or_update(
             synonym_map_name=synonym_map.name,
             synonym_map=patched_synonym_map,
             error_map=error_map,
             **kwargs
         )
-        return unpack_synonym_map(result)
+        return SynonymMap._from_generated(result)   # pylint:disable=protected-access
 
     @distributed_trace_async
     async def get_service_statistics(self, **kwargs):

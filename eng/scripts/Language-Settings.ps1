@@ -18,7 +18,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
   try
   {
     Push-Location $RepoRoot
-    pip install packaging==20.4 -q -I
+    pip install packaging==20.4 setuptools==44.1.1 -q -I
     $allPkgPropLines = python (Join-path eng scripts get_package_properties.py) -s $searchPath
   }
   catch
@@ -55,50 +55,6 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
     $allPackageProps += $pkgProp
   }
   return $allPackageProps
-}
-
-function Get-python-PackageInfoFromRepo  ($pkgPath, $serviceDirectory, $pkgName)
-{  
-  $packageName = $pkgName.Replace('_', '-')
-  $pkgDirName = Split-Path $pkgPath -Leaf
-  if ($pkgDirName -ne $packageName)
-  {
-    # Common code triggers this function against each directory but we can skip if it doesn't match package name
-    return $null
-  }
-
-  if (Test-Path (Join-Path $pkgPath "setup.py"))
-  {
-    $setupLocation = $pkgPath.Replace('\','/')
-    pushd $RepoRoot
-    $setupProps = $null
-    try{
-      pip install packaging==20.4 -q -I
-      $setupProps = (python -c "import sys; import os; sys.path.append(os.path.join('scripts', 'devops_tasks')); from common_tasks import get_package_properties; obj=get_package_properties('$setupLocation'); print('{0},{1},{2},{3}'.format(obj[0], obj[1], obj[2], obj[3]));") -split ","
-    }
-    catch
-    {
-      # This is soft error and failure is expected for python metapackages
-      Write-Host "Failed to parse package properties for " $packageName
-    }
-    popd
-    if (($setupProps -ne $null) -and ($setupProps[0] -eq $packageName))
-    {
-      $pkgProp = [PackageProps]::new($setupProps[0], $setupProps[1], $pkgPath, $serviceDirectory)
-      if ($packageName -match "mgmt")
-      {
-        $pkgProp.SdkType = "mgmt"
-      }
-      else
-      {
-        $pkgProp.SdkType = "client"
-      }
-      $pkgProp.IsNewSdk = ($setupProps[2] -eq "True")
-      $pkgProp.ArtifactName = $pkgName
-      return $pkgProp
-    }
-  }
-  return $null
 }
 
 # Returns the pypi publish status of a package id and version.
@@ -304,7 +260,7 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
   return $packages
 }
 
-function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseDate, $BuildType=$null, $GroupId=$null)
+function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseDate)
 {
   if($null -eq $ReleaseDate)
   {

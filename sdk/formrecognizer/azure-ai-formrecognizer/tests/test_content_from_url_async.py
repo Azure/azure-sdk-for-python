@@ -274,11 +274,22 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
+    async def test_content_reading_order(self, client):
+        async with client:
+            poller = await client.begin_recognize_content_from_url(self.form_url_jpg, reading_order="natural")
+
+            assert 'natural' == poller._polling_method._initial_response.http_response.request.query['readingOrder']
+            result = await poller.result()
+            assert result
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
     async def test_content_language_specified(self, client):
         async with client:
             poller = await client.begin_recognize_content_from_url(self.form_url_jpg, language="de")
             assert 'de' == poller._polling_method._initial_response.http_response.request.query['language']
-            await poller.wait()
+            result = await poller.result()
+            assert result
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

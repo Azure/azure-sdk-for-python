@@ -21,12 +21,14 @@ from ._generated.models import (
     SendChatMessageRequest,
     UpdateChatMessageRequest,
     UpdateChatThreadRequest,
-    ChatMessageType
+    ChatMessageType,
+    SendChatMessageResult
 )
 from ._models import (
     ChatThreadParticipant,
     ChatMessage,
-    ChatMessageReadReceipt
+    ChatMessageReadReceipt,
+    ChatThreadProperties
 )
 
 from ._utils import ( # pylint: disable=unused-import
@@ -38,16 +40,16 @@ from ._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
     from datetime import datetime
     from azure.core.paging import ItemPaged
 
 
 class ChatThreadClient(object):
     """A client to interact with the AzureCommunicationService Chat gateway.
-    Instances of this class is normally created by ChatClient.create_chat_thread()
+    Instances of this class is normally retrieved by ChatClient.get_chat_thread_client()
 
-    This client provides operations to add participant to chat thread, remove participant from
+    This client provides operations to add participant(s) to chat thread, remove participant from
     chat thread, send message, delete message, update message, send typing notifications,
     send and list read receipt
 
@@ -118,6 +120,32 @@ class ChatThreadClient(object):
         return self._thread_id
 
     @distributed_trace
+    def get_properties(
+        self,
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> ChatThreadProperties
+        """Gets the properties of the chat thread.
+
+        :return: ChatThreadProperties
+        :rtype: ~azure.communication.chat.ChatThreadProperties
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/chat_thread_client_sample.py
+                :start-after: [START get_thread]
+                :end-before: [END get_thread]
+                :language: python
+                :dedent: 8
+                :caption: Retrieving chat thread properties by chat thread id.
+        """
+
+        chat_thread = self._client.chat_thread.get_chat_thread_properties(self._thread_id, **kwargs)
+        return ChatThreadProperties._from_generated(chat_thread)  # pylint:disable=protected-access
+
+
+    @distributed_trace
     def update_topic(
         self,
         topic=None,  # type: Optional[str]
@@ -126,7 +154,7 @@ class ChatThreadClient(object):
         # type: (...) -> None
         """Updates a thread's properties.
 
-        :param topic: Thread topic. If topic is not specified, the update will succeeded but
+        :param topic: Thread topic. If topic is not specified, the update will succeed but
          chat thread properties will not be changed.
         :type topic: str
         :return: None
@@ -144,7 +172,7 @@ class ChatThreadClient(object):
         """
 
         update_topic_request = UpdateChatThreadRequest(topic=topic)
-        return self._client.chat_thread.update_chat_thread(
+        return self._client.chat_thread.update_chat_thread_properties(
             chat_thread_id=self._thread_id,
             update_chat_thread_request=update_topic_request,
             **kwargs)
@@ -156,7 +184,7 @@ class ChatThreadClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Posts a read receipt event to a thread, on behalf of a user.
+        """Posts a read receipt event to a chat thread, on behalf of a user.
 
         :param message_id: Required. Id of the latest message read by current user.
         :type message_id: str
@@ -234,7 +262,7 @@ class ChatThreadClient(object):
                 :end-before: [END send_typing_notification]
                 :language: python
                 :dedent: 8
-                :caption: Sending typing notification.
+                :caption: Send typing notification.
         """
         return self._client.chat_thread.send_typing_notification(self._thread_id, **kwargs)
 
@@ -244,18 +272,18 @@ class ChatThreadClient(object):
         content,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> str
+        # type: (...) -> SendChatMessageResult
         """Sends a message to a thread.
 
         :param content: Required. Chat message content.
         :type content: str
-        :param chat_message_type: The chat message type. Possible values include: "text", "html".
-        Default: ChatMessageType.TEXT
-        :type chat_message_type: str or ~azure.communication.chat.models.ChatMessageType
+        :keyword chat_message_type:
+            The chat message type. Possible values include: "text", "html". Default: ChatMessageType.TEXT
+        :paramtype chat_message_type: Union[str, ~azure.communication.chat.ChatMessageType]
         :keyword str sender_display_name: The display name of the message sender. This property is used to
-          populate sender name for push notifications.
-        :return: str
-        :rtype: str
+            populate sender name for push notifications.
+        :return: SendChatMessageResult
+        :rtype: ~azure.communication.chat.SendChatMessageResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -296,7 +324,7 @@ class ChatThreadClient(object):
             chat_thread_id=self._thread_id,
             send_chat_message_request=create_message_request,
             **kwargs)
-        return send_chat_message_result.id
+        return send_chat_message_result
 
     @distributed_trace
     def get_message(
@@ -320,7 +348,7 @@ class ChatThreadClient(object):
                 :end-before: [END get_message]
                 :language: python
                 :dedent: 8
-                :caption: Getting a message by message id.
+                :caption: Retrieving a message by message id.
         """
         if not message_id:
             raise ValueError("message_id cannot be None.")
@@ -388,7 +416,7 @@ class ChatThreadClient(object):
                 :end-before: [END update_message]
                 :language: python
                 :dedent: 8
-                :caption: Updating a sent messages.
+                :caption: Updating an already sent message.
         """
         if not message_id:
             raise ValueError("message_id cannot be None.")
@@ -423,7 +451,7 @@ class ChatThreadClient(object):
                 :end-before: [END delete_message]
                 :language: python
                 :dedent: 8
-                :caption: Deleting a messages.
+                :caption: Deleting a message.
         """
         if not message_id:
             raise ValueError("message_id cannot be None.")
@@ -467,76 +495,25 @@ class ChatThreadClient(object):
             cls=lambda objs: [ChatThreadParticipant._from_generated(x) for x in objs],  # pylint:disable=protected-access
             **kwargs)
 
-    @distributed_trace
-    def add_participant(
-            self,
-            thread_participant,  # type: ChatThreadParticipant
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Adds single thread participant to a thread. If participant already exist, no change occurs.
-
-        If participant is added successfully, a tuple of (None, None) is expected.
-        Failure to add participant to thread returns tuple of (chat_thread_participant, communication_error).
-
-        :param thread_participant: Required. Single thread participant to be added to the thread.
-        :type thread_participant: ~azure.communication.chat.ChatThreadParticipant
-        :return: None
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError, RuntimeError
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/chat_thread_client_sample.py
-                :start-after: [START add_participant]
-                :end-before: [END add_participant]
-                :language: python
-                :dedent: 8
-                :caption: Adding single participant to chat thread.
-        """
-        if not thread_participant:
-            raise ValueError("thread_participant cannot be None.")
-
-        participants = [thread_participant._to_generated()]  # pylint:disable=protected-access
-        add_thread_participants_request = AddChatParticipantsRequest(participants=participants)
-
-        add_chat_participants_result = self._client.chat_thread.add_chat_participants(
-            chat_thread_id=self._thread_id,
-            add_chat_participants_request=add_thread_participants_request,
-            **kwargs)
-
-        response = []
-        if hasattr(add_chat_participants_result, 'errors') and \
-                add_chat_participants_result.errors is not None:
-            response = CommunicationErrorResponseConverter._convert(  # pylint:disable=protected-access
-                participants=[thread_participant],
-                communication_errors=add_chat_participants_result.errors.invalid_participants
-            )
-
-        if len(response) != 0:
-            failed_participant = response[0][0]
-            communication_error = response[0][1]
-            raise RuntimeError('Participant: ', failed_participant, ' failed to join thread due to: ',
-                               communication_error.message)
 
     @distributed_trace
     def add_participants(
         self,
-        thread_participants,  # type: list[ChatThreadParticipant]
+        thread_participants,  # type: List[ChatThreadParticipant]
         **kwargs  # type: Any
     ):
-        # type: (...) -> list[(ChatThreadParticipant, CommunicationError)]
+        # type: (...) -> List[Tuple[ChatThreadParticipant, ChatError]]
         """Adds thread participants to a thread. If participants already exist, no change occurs.
 
         If all participants are added successfully, then an empty list is returned;
-        otherwise, a list of tuple(chat_thread_participant, communincation_error) is returned,
+        otherwise, a list of tuple(chat_thread_participant, chat_error) is returned,
         of failed participants and its respective error
 
-        :param thread_participants: Required. Thread participants to be added to the thread.
-        :type thread_participants: list[~azure.communication.chat.ChatThreadParticipant]
-        :return: List[Tuple(ChatThreadParticipant, CommunicationError)]
-        :rtype: list[(~azure.communication.chat.ChatThreadParticipant, ~azure.communication.chat.CommunicationError)]
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError, RuntimeError
+        :param thread_participants: Thread participants to be added to the thread.
+        :type thread_participants: List[~azure.communication.chat.ChatThreadParticipant]
+        :return: List[Tuple[ChatThreadParticipant, ChatError]]
+        :rtype: List[Tuple[~azure.communication.chat.ChatThreadParticipant, ~azure.communication.chat.ChatError]]
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
 
@@ -547,24 +524,23 @@ class ChatThreadClient(object):
                 :dedent: 8
                 :caption: Adding participants to chat thread.
         """
-        if not thread_participants:
-            raise ValueError("thread_participants cannot be None.")
-
-        participants = [m._to_generated() for m in thread_participants]  # pylint:disable=protected-access
-        add_thread_participants_request = AddChatParticipantsRequest(participants=participants)
-
-        add_chat_participants_result = self._client.chat_thread.add_chat_participants(
-            chat_thread_id=self._thread_id,
-            add_chat_participants_request=add_thread_participants_request,
-            **kwargs)
-
         response = []
-        if hasattr(add_chat_participants_result, 'errors') and \
-                add_chat_participants_result.errors is not None:
-            response = CommunicationErrorResponseConverter._convert( # pylint:disable=protected-access
-                participants=thread_participants,
-                communication_errors=add_chat_participants_result.errors.invalid_participants
-            )
+        if thread_participants:
+            participants = [m._to_generated() for m in thread_participants]  # pylint:disable=protected-access
+            add_thread_participants_request = AddChatParticipantsRequest(participants=participants)
+
+            add_chat_participants_result = self._client.chat_thread.add_chat_participants(
+                chat_thread_id=self._thread_id,
+                add_chat_participants_request=add_thread_participants_request,
+                **kwargs)
+
+
+            if hasattr(add_chat_participants_result, 'invalid_participants') and \
+                    add_chat_participants_result.invalid_participants is not None:
+                response = CommunicationErrorResponseConverter._convert( # pylint:disable=protected-access
+                    participants=thread_participants,
+                    chat_errors=add_chat_participants_result.invalid_participants
+                )
 
         return response
 

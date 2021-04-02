@@ -25,14 +25,16 @@ from consts import (
     PAGE_SIZE,
     KEY_UUID,
 )
-from async_proxy import AzureAppConfigurationClientProxy
 import pytest
+import copy
 import datetime
 import os
 import logging
 import re
 import functools
+from uuid import uuid4
 
+from async_proxy import AzureAppConfigurationClientProxy
 from async_wrapper import app_config_decorator
 
 class AppConfigurationClientTest(AzureTestCase):
@@ -408,3 +410,99 @@ class AppConfigurationClientTest(AzureTestCase):
         set_kv.etag = "bad"
         with pytest.raises(ResourceModifiedError):
             client.set_read_only(set_kv, True, match_condition=MatchConditions.IfNotModified)
+
+    def _order_dict(self, d):
+        from collections import OrderedDict
+        new = OrderedDict()
+        for k, v in d.items():
+            new[k] = str(v)
+        return new
+
+
+    @app_config_decorator
+    def test_sync_tokens(self, client):
+
+        sync_tokens = copy.deepcopy(client.obj._sync_token_policy._sync_tokens)
+        sync_token_header = self._order_dict(sync_tokens)
+        sync_token_header = ",".join(str(x) for x in sync_token_header.values())
+
+        new = ConfigurationSetting(
+                key="KEY1",
+                label=None,
+                value="TEST_VALUE1",
+                content_type=TEST_CONTENT_TYPE,
+                tags={"tag1": "tag1", "tag2": "tag2"},
+        )
+
+        sent = client.set_configuration_setting(new)
+        sync_tokens2 = copy.deepcopy(client.obj._sync_token_policy._sync_tokens)
+        sync_token_header2 = self._order_dict(sync_tokens2)
+        sync_token_header2 = ",".join(str(x) for x in sync_token_header2.values())
+        assert sync_token_header != sync_token_header2
+
+        new = ConfigurationSetting(
+                key="KEY2",
+                label=None,
+                value="TEST_VALUE2",
+                content_type=TEST_CONTENT_TYPE,
+                tags={"tag1": "tag1", "tag2": "tag2"},
+        )
+
+        sent = client.set_configuration_setting(new)
+        sync_tokens3 = copy.deepcopy(client.obj._sync_token_policy._sync_tokens)
+        sync_token_header3 = self._order_dict(sync_tokens3)
+        sync_token_header3 = ",".join(str(x) for x in sync_token_header3.values())
+        assert sync_token_header2 != sync_token_header3
+
+class TestAppConfig(object):
+
+    @pytest.mark.live_test_only
+    @pytest.mark.asyncio
+    async def test_mock_policies(self):
+        from azure.core.pipeline.transport import HttpRequest, HttpResponse, AsyncHttpTransport
+        from azure.core.pipeline.policies import RetryPolicy
+        from azure.core.pipeline import AsyncPipeline
+
+        class MockTransport(AsyncHttpTransport):
+            def __init__(self):
+                self._count = 0
+                self.auth_headers = []
+            async def __aexit__(self, exc_type, exc_val, exc_tb):
+                pass
+            async def close(self):
+                pass
+            async def open(self):
+                pass
+
+            async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+                self._count += 1
+                self.auth_headers.append(request.headers['Authorization'])
+                response = HttpResponse(request, None)
+                response.status_code = 429
+                return response
+
+        def new_method(self, request):
+            request.http_request.headers["Authorization"] = uuid4()
+
+        from azure.appconfiguration._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
+        # Store the method to restore later
+        temp = AppConfigRequestsCredentialsPolicy._signed_request
+        AppConfigRequestsCredentialsPolicy._signed_request = new_method
+
+        client = AzureAppConfigurationClient.from_connection_string(
+            os.environ["APPCONFIGURATION_CONNECTION_STRING"],
+            transport=MockTransport()
+        )
+        client.list_configuration_settings()
+
+        # http_request = HttpRequest('GET', 'http://aka.ms/')
+        # transport = MockTransport()
+
+
+
+        # policies = client._impl._client._pipeline._impl_policies
+        # pipeline = AsyncPipeline(transport, policies)
+        # await pipeline.run(http_request)
+
+        # Reset the actual method
+        AppConfigRequestsCredentialsPolicy._signed_request = temp

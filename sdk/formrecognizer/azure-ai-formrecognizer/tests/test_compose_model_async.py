@@ -15,7 +15,6 @@ from asynctestcase import AsyncFormRecognizerTest
 
 GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
-
 class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()

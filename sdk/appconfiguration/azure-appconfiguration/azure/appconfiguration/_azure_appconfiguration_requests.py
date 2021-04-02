@@ -11,10 +11,8 @@ from azure.core.pipeline.policies import HTTPPolicy
 from ._utils import get_current_utc_time
 
 
-
 class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
-    """Implementation of request-oauthlib except and retry logic.
-    """
+    """Implementation of request-oauthlib except and retry logic."""
 
     def __init__(self, credentials):
         super(AppConfigRequestsCredentialsPolicy, self).__init__()
@@ -48,8 +46,6 @@ class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
             + content_hash
         )
 
-        # decode secret
-        # decoded_secret = base64.b64decode(secret, validate=True)
         decoded_secret = base64.b64decode(self._credentials.secret)
         digest = hmac.new(
             decoded_secret, string_to_sign.encode("utf-8"), hashlib.sha256

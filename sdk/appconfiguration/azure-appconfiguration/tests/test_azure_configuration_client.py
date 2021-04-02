@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.core import MatchConditions
+from azure.core.exceptions import HttpResponseError
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 from azure.core.exceptions import (
     ResourceModifiedError,
@@ -16,6 +17,7 @@ from azure.appconfiguration import (
     AzureAppConfigurationClient,
     ConfigurationSetting,
 )
+from azure.identity import DefaultAzureCredential
 
 from consts import (
     KEY,
@@ -29,11 +31,19 @@ from consts import (
 from wrapper import app_config_decorator
 
 import pytest
+import copy
 import datetime
 import os
 import logging
 import re
 import functools
+from uuid import uuid4
+
+try:
+    from unittest import mock
+except ImportError:
+    import mock
+
 
 class AppConfigurationClientTest(AzureTestCase):
     def __init__(self, method_name):
@@ -45,6 +55,43 @@ class AppConfigurationClientTest(AzureTestCase):
 
     def tearDown(self):
         super(AppConfigurationClientTest, self).tearDown()
+
+    @app_config_decorator
+    def test_mock_policies(self, client, appconfiguration_connection_string):
+        from azure.core.pipeline.transport import HttpRequest, HttpResponse, HttpTransport
+        from azure.core.pipeline.policies import RetryPolicy
+        from azure.core.pipeline import Pipeline, PipelineResponse
+
+        class MockTransport(HttpTransport):
+            def __init__(self):
+                self._count = 0
+                self.auth_headers = None
+            def __exit__(self, exc_type, exc_val, exc_tb):
+                pass
+            def close(self):
+                pass
+            def open(self):
+                pass
+
+            def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+                assert request.headers['Authorization'] != self.auth_headers
+                self.auth_headers = request.headers['Authorization']
+                response = HttpResponse(request, None)
+                response.status_code = 429
+                return response
+
+        def new_method(self, request):
+            request.http_request.headers["Authorization"] = uuid4()
+
+        from azure.appconfiguration._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
+        temp = AppConfigRequestsCredentialsPolicy._signed_request
+        AppConfigRequestsCredentialsPolicy._signed_request = new_method
+
+        client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string, transport=MockTransport())
+
+        client.list_configuration_settings()
+
+        AppConfigRequestsCredentialsPolicy._signed_request = temp
 
     # method: add_configuration_setting
     @app_config_decorator
@@ -417,3 +464,47 @@ class AppConfigurationClientTest(AzureTestCase):
         set_kv.etag = "bad"
         with pytest.raises(ResourceModifiedError):
             client.set_read_only(set_kv, True, match_condition=MatchConditions.IfNotModified)
+
+    def _order_dict(self, d):
+        from collections import OrderedDict
+        new = OrderedDict()
+        for k, v in d.items():
+            new[k] = str(v)
+        return new
+
+    @app_config_decorator
+    def test_sync_tokens(self, client):
+
+        sync_tokens = copy.deepcopy(client._sync_token_policy._sync_tokens)
+        sync_token_header = self._order_dict(sync_tokens)
+        sync_token_header = ",".join(str(x) for x in sync_token_header.values())
+
+        new = ConfigurationSetting(
+                key="KEY1",
+                label=None,
+                value="TEST_VALUE1",
+                content_type=TEST_CONTENT_TYPE,
+                tags={"tag1": "tag1", "tag2": "tag2"},
+        )
+
+        sent = client.set_configuration_setting(new)
+        sync_tokens2 = copy.deepcopy(client._sync_token_policy._sync_tokens)
+        sync_token_header2 = self._order_dict(sync_tokens2)
+        sync_token_header2 = ",".join(str(x) for x in sync_token_header2.values())
+        assert sync_token_header != sync_token_header2
+
+        new = ConfigurationSetting(
+                key="KEY2",
+                label=None,
+                value="TEST_VALUE2",
+                content_type=TEST_CONTENT_TYPE,
+                tags={"tag1": "tag1", "tag2": "tag2"},
+        )
+
+        sent = client.set_configuration_setting(new)
+        sync_tokens3 = copy.deepcopy(client._sync_token_policy._sync_tokens)
+        sync_token_header3 = self._order_dict(sync_tokens3)
+        sync_token_header3 = ",".join(str(x) for x in sync_token_header3.values())
+        assert sync_token_header2 != sync_token_header3
+
+        client.close()

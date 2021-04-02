@@ -288,6 +288,36 @@ class FileTest(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_flush_data_with_match_condition())
 
+    async def _test_upload_data_in_substreams(self):
+        # parallel upload cannot be recorded
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        # Get 16MB data
+        raw_data = self.get_random_bytes(16 * 1024 * 1024)
+        # Ensure chunk size is greater than threshold (8MB > 4MB) - for optimized upload
+        await file_client.upload_data(raw_data, chunk_size=8 * 1024 * 1024, overwrite=True, max_concurrency=3)
+        data = await file_client.download_file()
+        downloaded_data = await data.readall()
+        self.assertEqual(raw_data, downloaded_data)
+
+        # Run on single thread
+        await file_client.upload_data(raw_data, chunk_size=8 * 1024 * 1024, overwrite=True)
+        data = await file_client.download_file()
+        downloaded_data = await data.readall()
+        self.assertEqual(raw_data, downloaded_data)
+
+    def test_upload_data_in_substreams(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_upload_data_in_substreams())
+
     async def _test_upload_data(self):
         # parallel upload cannot be recorded
         if TestMode.need_recording_file(self.test_mode):

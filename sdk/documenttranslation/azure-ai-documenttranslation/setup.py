@@ -4,7 +4,7 @@ from io import open
 import re
 
 PACKAGE_NAME = "azure-ai-documenttranslation"
-PACKAGE_PPRINT_NAME = "Document Translation Package"
+PACKAGE_PPRINT_NAME = "Azure Document Translation Package"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -19,24 +19,22 @@ if not version:
     raise RuntimeError('Cannot find version information')
 
 with open('README.md', encoding='utf-8') as f:
-    long_description = f.read()
+    readme = f.read()
+with open('CHANGELOG.md', encoding='utf-8') as f:
+    changelog = f.read()
 
 setup(
     name=PACKAGE_NAME,
     version=version,
     description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
-
-    # ensure that these are updated to reflect the package owners' information
-    long_description=long_description,
+    long_description=readme + '\n\n' + changelog,
+    long_description_content_type='text/markdown',
     url='https://github.com/Azure/azure-sdk-for-python',
     author='Microsoft Corporation',
-    author_email='azuresdkengsysadmins@microsoft.com',
-
+    author_email='azpysdkhelp@microsoft.com',
     license='MIT License',
-    # ensure that the development status reflects the status of your package
     classifiers=[
         "Development Status :: 4 - Beta",
-
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -54,7 +52,7 @@ setup(
         'azure.ai',
     ]),
     install_requires=[
-        "azure-core<2.0.0,>=1.8.2",
+        "azure-core<2.0.0,>=1.10.0",
         "msrest>=0.6.21",
         'six>=1.11.0',
         'azure-common~=1.1',
