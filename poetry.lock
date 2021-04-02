@@ -13,6 +13,17 @@ python-dateutil = ">=2.1.0,<3"
 requests = ">=2.0.0,<3"
 
 [[package]]
+name = "aiocontextvars"
+version = "0.2.2"
+description = "Asyncio support for PEP-567 contextvars backport."
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[package.dependencies]
+contextvars = {version = "2.4", markers = "python_version < \"3.7\""}
+
+[[package]]
 name = "aiohttp"
 version = "3.7.4.post0"
 description = "Async http client/server framework (asyncio)"
@@ -24,6 +35,7 @@ python-versions = ">=3.6"
 async-timeout = ">=3.0,<4.0"
 attrs = ">=17.3.0"
 chardet = ">=2.0,<5.0"
+idna-ssl = {version = ">=1.0", markers = "python_version < \"3.7\""}
 multidict = ">=4.5,<7.0"
 typing-extensions = ">=3.6.5"
 yarl = ">=1.0,<2.0"
@@ -63,6 +75,7 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-ai-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 azure-core = ">=1.6.0,<2.0.0"
 msrest = ">=0.5.0"
@@ -81,10 +94,12 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-ai-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 azure-core = ">=1.10.0,<2.0.0"
 msrest = ">=0.6.21"
 six = ">=1.11.0"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
@@ -100,10 +115,12 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-ai-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 azure-core = ">=1.8.2,<2.0.0"
 msrest = ">=0.6.21"
 six = ">=1.11.0"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
@@ -119,13 +136,26 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-ai-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-core = ">=1.6.0,<2.0.0"
 msrest = ">=0.6.21"
 six = ">=1.11.0"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
 url = "sdk/metricsadvisor/azure-ai-metricsadvisor"
+
+[[package]]
+name = "azure-ai-nspkg"
+version = "1.0.0"
+description = "Microsoft Azure ai Namespace Package [Internal]"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+azure-nspkg = ">=3.0.0"
 
 [[package]]
 name = "azure-ai-textanalytics"
@@ -137,10 +167,12 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-ai-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 azure-core = ">=1.8.2,<2.0.0"
 msrest = ">=0.6.0"
 six = ">=1.11.0"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
@@ -157,7 +189,10 @@ develop = false
 
 [package.dependencies]
 azure-core = ">=1.2.2,<2.0.0"
+azure-nspkg = {version = "*", markers = "python_version < \"3.0\""}
+enum34 = {version = ">=1.0.4", markers = "python_version < \"3.4\""}
 msrest = ">=0.6.10"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.extras]
 async = ["aiohttp (>=3.0)", "aiodns (>=2.0)"]
@@ -177,6 +212,7 @@ develop = false
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
+azure-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -194,6 +230,7 @@ develop = false
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
+azure-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
 
@@ -211,6 +248,7 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-cognitiveservices-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 msrest = ">=0.5.0"
 
@@ -228,6 +266,7 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-cognitiveservices-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 msrest = ">=0.5.0"
 
@@ -261,6 +300,7 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-cognitiveservices-knowledge-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 msrest = ">=0.5.0"
 
@@ -278,6 +318,7 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-cognitiveservices-language-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
@@ -312,6 +353,7 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-cognitiveservices-language-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 msrest = ">=0.5.0"
 
@@ -329,6 +371,7 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-cognitiveservices-language-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 msrest = ">=0.5.0"
 
@@ -362,6 +405,7 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-cognitiveservices-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 msrest = ">=0.5.0"
 
@@ -379,6 +423,7 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-cognitiveservices-search-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
@@ -397,6 +442,7 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-cognitiveservices-search-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 msrest = ">=0.5.0"
 
@@ -414,6 +460,7 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-cognitiveservices-search-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 msrest = ">=0.5.0"
 
@@ -431,6 +478,7 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-cognitiveservices-search-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
@@ -449,6 +497,7 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-cognitiveservices-search-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
@@ -467,6 +516,7 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-cognitiveservices-search-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
@@ -501,6 +551,7 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-cognitiveservices-search-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
@@ -519,6 +570,7 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-cognitiveservices-search-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 msrest = ">=0.5.0"
 
@@ -536,6 +588,7 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-cognitiveservices-search-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
@@ -554,6 +607,7 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-cognitiveservices-vision-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 msrest = ">=0.5.0"
 
@@ -571,6 +625,7 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-cognitiveservices-vision-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 msrest = ">=0.5.0"
 
@@ -588,6 +643,7 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-cognitiveservices-vision-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 msrest = ">=0.5.0"
 
@@ -605,6 +661,7 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-cognitiveservices-vision-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-common = ">=1.1,<2.0"
 msrest = ">=0.5.0"
 
@@ -637,6 +694,9 @@ optional = false
 python-versions = "*"
 develop = false
 
+[package.dependencies]
+azure-nspkg = {version = "*", markers = "python_version < \"3.0\""}
+
 [package.source]
 type = "directory"
 url = "sdk/core/azure-common"
@@ -651,9 +711,11 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-communication-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-core = ">=1.9.0,<2.0.0"
 msrest = ">=0.6.0"
 six = ">=1.11.0"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
@@ -669,6 +731,7 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-communication-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-core = ">=1.9.0,<2.0.0"
 msrest = ">=0.5.0"
 
@@ -702,6 +765,7 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-communication-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-core = ">=1.9.0,<2.0.0"
 msrest = ">=0.6.0"
 
@@ -719,9 +783,11 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-communication-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 azure-core = ">=1.9.0,<2.0.0"
 msrest = ">=0.6.0"
 six = ">=1.11.0"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
@@ -754,8 +820,11 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-nspkg = {version = "*", markers = "python_version < \"3.0\""}
+enum34 = {version = ">=1.0.4", markers = "python_version < \"3.4\""}
 requests = ">=2.18.4"
 six = ">=1.11.0"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
@@ -775,6 +844,7 @@ azure-core = ">=1.0.0,<2.0.0"
 opencensus = ">=0.6.0"
 opencensus-ext-azure = ">=0.3.1"
 opencensus-ext-threading = "*"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
@@ -808,11 +878,25 @@ develop = false
 
 [package.dependencies]
 azure-core = ">=1.0.0,<2.0.0"
+azure-nspkg = {version = "*", markers = "python_version < \"3.0\""}
+enum34 = {version = ">=1.0.4", markers = "python_version < \"3.4\""}
 six = ">=1.11.0"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
 url = "sdk/cosmos/azure-cosmos"
+
+[[package]]
+name = "azure-data-nspkg"
+version = "1.0.0"
+description = "Microsoft Azure Data Namespace Package [Internal]"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+azure-nspkg = ">=3.0.0"
 
 [[package]]
 name = "azure-data-tables"
@@ -825,7 +909,11 @@ develop = false
 
 [package.dependencies]
 azure-core = ">=1.10.0,<2.0.0"
+azure-data-nspkg = {version = ">=1.0.0,<2.0.0", markers = "python_version < \"3.0\""}
+enum34 = {version = ">=1.0.4", markers = "python_version < \"3.4\""}
+futures = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.6.19"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
@@ -842,7 +930,11 @@ develop = false
 
 [package.dependencies]
 azure-core = ">=1.2.2,<2.0.0"
+azure-digitaltwins-nspkg = {version = ">=1.0.0", markers = "python_version < \"3.0\""}
+enum34 = {version = ">=1.0.4", markers = "python_version < \"3.4\""}
+futures = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
@@ -875,6 +967,7 @@ develop = false
 
 [package.dependencies]
 azure-core = ">=1.12.0,<2.0.0"
+azure-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.6.19"
 
 [package.source]
@@ -892,6 +985,8 @@ develop = false
 
 [package.dependencies]
 azure-core = ">=1.5.0,<2.0.0"
+azure-nspkg = {version = "*", markers = "python_version < \"3.0\""}
+typing = {version = "*", markers = "python_version < \"3.5\""}
 uamqp = ">=1.2.14,<2.0.0"
 
 [package.source]
@@ -911,7 +1006,10 @@ develop = false
 azure-core = ">=1.10.0,<2.0.0"
 azure-eventhub = ">=5.0.0,<6.0.0"
 cryptography = ">=2.1.4"
+enum34 = {version = ">=1.0.4", markers = "python_version < \"3.4\""}
+futures = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.6.18"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
@@ -948,6 +1046,7 @@ develop = false
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
+azure-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
 
@@ -966,10 +1065,12 @@ develop = false
 
 [package.dependencies]
 azure-core = ">=1.0.0,<2.0.0"
+azure-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 cryptography = ">=2.1.4"
 msal = ">=1.7.0,<2.0.0"
 msal-extensions = ">=0.3.0,<0.4.0"
 six = ">=1.12.0"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
@@ -987,6 +1088,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-core = ">=1.6.0,<2.0.0"
+azure-iot-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1039,7 +1141,10 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-core = ">=1.7.0,<2.0.0"
+azure-keyvault-nspkg = {version = "*", markers = "python_version < \"3.0\""}
+enum34 = {version = ">=1.0.4", markers = "python_version < \"3.4\""}
 msrest = ">=0.6.21"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
@@ -1057,7 +1162,10 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-core = ">=1.7.0,<2.0.0"
+azure-keyvault-nspkg = {version = "*", markers = "python_version < \"3.0\""}
+enum34 = {version = ">=1.0.4", markers = "python_version < \"3.4\""}
 msrest = ">=0.6.0"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
@@ -1075,9 +1183,12 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-core = ">=1.7.0,<2.0.0"
+azure-keyvault-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 cryptography = ">=2.1.4"
+enum34 = {version = ">=1.0.4", markers = "python_version < \"3.4\""}
 msrest = ">=0.6.21"
 six = ">=1.12.0"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
@@ -1111,7 +1222,10 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-core = ">=1.7.0,<2.0.0"
+azure-keyvault-nspkg = {version = "*", markers = "python_version < \"3.0\""}
+enum34 = {version = ">=1.0.4", markers = "python_version < \"3.4\""}
 msrest = ">=0.6.0"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
@@ -1128,6 +1242,7 @@ develop = false
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
+azure-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1144,7 +1259,10 @@ python-versions = "*"
 develop = false
 
 [package.dependencies]
+azure-media-nspkg = {version = "*", markers = "python_version < \"3.0\""}
+enum34 = {version = ">=1.0.4", markers = "python_version < \"3.4\""}
 msrest = ">=0.5.0"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
@@ -1178,6 +1296,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1196,6 +1315,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1214,6 +1334,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1232,6 +1353,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1250,6 +1372,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1268,6 +1391,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1286,6 +1410,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1304,6 +1429,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1322,6 +1448,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1340,6 +1467,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1358,6 +1486,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1376,6 +1505,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1394,6 +1524,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1412,6 +1543,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1430,6 +1562,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1448,6 +1581,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1466,6 +1600,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1484,6 +1619,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1502,6 +1638,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1520,6 +1657,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1538,6 +1676,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1556,6 +1695,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1574,6 +1714,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1592,6 +1733,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1610,6 +1752,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1628,6 +1771,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1646,6 +1790,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1663,6 +1808,8 @@ develop = false
 
 [package.dependencies]
 azure-core = ">=1.9.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
@@ -1680,6 +1827,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1698,6 +1846,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1716,6 +1865,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1734,6 +1884,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1752,6 +1903,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1770,6 +1922,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1788,6 +1941,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1806,6 +1960,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1823,6 +1978,7 @@ develop = false
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
+azure-mgmt-datalake-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
 
@@ -1858,6 +2014,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-datalake-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1876,6 +2033,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1894,6 +2052,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1912,6 +2071,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1930,6 +2090,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1947,6 +2108,7 @@ develop = false
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
 
@@ -1966,6 +2128,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -1984,6 +2147,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2002,6 +2166,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2036,6 +2201,7 @@ develop = false
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
 
@@ -2055,6 +2221,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2073,6 +2240,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2091,6 +2259,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2109,6 +2278,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2127,6 +2297,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2145,6 +2316,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2163,6 +2335,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2181,6 +2354,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2199,6 +2373,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2217,6 +2392,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2234,6 +2410,7 @@ develop = false
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
 
@@ -2252,6 +2429,7 @@ develop = false
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
 
@@ -2271,6 +2449,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2288,6 +2467,7 @@ develop = false
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
 
@@ -2307,6 +2487,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2325,6 +2506,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2343,6 +2525,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2361,6 +2544,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2379,6 +2563,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2397,6 +2582,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2414,6 +2600,7 @@ develop = false
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
 
@@ -2433,6 +2620,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2451,6 +2639,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2469,6 +2658,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2487,6 +2677,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2505,6 +2696,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2523,6 +2715,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2541,6 +2734,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2559,6 +2753,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2577,6 +2772,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2595,6 +2791,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2612,6 +2809,7 @@ develop = false
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
 
@@ -2631,6 +2829,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2649,6 +2848,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2667,6 +2867,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2701,6 +2902,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2719,6 +2921,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2737,6 +2940,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2755,6 +2959,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2773,6 +2978,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2790,6 +2996,7 @@ develop = false
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
 
@@ -2809,6 +3016,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2827,6 +3035,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2845,6 +3054,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2863,6 +3073,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2881,6 +3092,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2898,6 +3110,7 @@ develop = false
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
 
@@ -2917,6 +3130,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2935,6 +3149,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2953,6 +3168,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -2970,6 +3186,7 @@ develop = false
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
 
@@ -2989,6 +3206,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3007,6 +3225,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3025,6 +3244,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3043,6 +3263,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3061,6 +3282,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3079,6 +3301,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3097,6 +3320,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3115,6 +3339,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3133,6 +3358,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3151,6 +3377,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3168,6 +3395,7 @@ develop = false
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
 
@@ -3187,6 +3415,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3205,6 +3434,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3223,6 +3453,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3241,6 +3472,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3259,6 +3491,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3276,6 +3509,7 @@ develop = false
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
 
@@ -3295,6 +3529,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3312,6 +3547,7 @@ develop = false
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
 
@@ -3330,6 +3566,7 @@ develop = false
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
 
@@ -3349,6 +3586,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3367,6 +3605,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3385,6 +3624,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3403,6 +3643,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3421,6 +3662,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3439,6 +3681,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3456,6 +3699,7 @@ develop = false
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
 
@@ -3474,6 +3718,7 @@ develop = false
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 msrestazure = ">=0.4.32,<2.0.0"
 
@@ -3493,6 +3738,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3511,6 +3757,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-mgmt-core = ">=1.2.0,<2.0.0"
+azure-mgmt-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3528,7 +3775,9 @@ develop = false
 
 [package.dependencies]
 azure-core = ">=1.4.0,<2.0.0"
+azure-mixedreality-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
@@ -3569,6 +3818,7 @@ develop = false
 
 [package.dependencies]
 azure-core = ">=1.2.2,<2.0.0"
+azure-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3587,7 +3837,11 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-core = ">=1.6.0,<2.0.0"
+azure-search-nspkg = {version = "*", markers = "python_version < \"3.0\""}
+enum34 = {version = ">=1.0.4", markers = "python_version < \"3.4\""}
+futures = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.6.21"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 typing-extensions = "*"
 
 [package.source]
@@ -3621,6 +3875,7 @@ develop = false
 
 [package.dependencies]
 azure-core = ">=1.8.2,<2.0.0"
+azure-security-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.6.0"
 
 [package.source]
@@ -3655,6 +3910,8 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-core = ">=1.6.0,<2.0.0"
+azure-nspkg = {version = "*", markers = "python_version < \"3.0\""}
+futures = {version = "*", markers = "python_version < \"3.0\""}
 isodate = ">=0.6.0"
 msrest = ">=0.6.17,<2.0.0"
 six = ">=1.11.0"
@@ -3675,6 +3932,7 @@ develop = false
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
+azure-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3692,8 +3950,12 @@ develop = false
 
 [package.dependencies]
 azure-core = ">=1.10.0,<2.0.0"
+azure-storage-nspkg = {version = ">=3.0.0,<4.0.0", markers = "python_version < \"3.0\""}
 cryptography = ">=2.1.4"
+enum34 = {version = ">=1.0.4", markers = "python_version < \"3.4\""}
+futures = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.6.18"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
@@ -3710,6 +3972,10 @@ develop = false
 
 [package.dependencies]
 azure-storage-blob = ">=12.5.0,<13.0.0"
+azure-storage-nspkg = {version = ">=3.0.0,<4.0.0", markers = "python_version < \"3.0\""}
+enum34 = {version = ">=1.0.4", markers = "python_version < \"3.4\""}
+futures = {version = "*", markers = "python_version < \"3.0\""}
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
@@ -3727,7 +3993,11 @@ develop = false
 [package.dependencies]
 azure-core = ">=1.10.0,<2.0.0"
 azure-storage-blob = ">=12.8.0b1,<13.0.0"
+azure-storage-nspkg = {version = ">=3.0.0,<4.0.0", markers = "python_version < \"3.0\""}
+enum34 = {version = ">=1.0.4", markers = "python_version < \"3.4\""}
+futures = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.6.18"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
@@ -3744,8 +4014,12 @@ develop = false
 
 [package.dependencies]
 azure-core = ">=1.10.0,<2.0.0"
+azure-storage-nspkg = {version = ">=3.0.0,<4.0.0", markers = "python_version < \"3.0\""}
 cryptography = ">=2.1.4"
+enum34 = {version = ">=1.0.4", markers = "python_version < \"3.4\""}
+futures = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.6.18"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
@@ -3778,8 +4052,12 @@ develop = false
 
 [package.dependencies]
 azure-core = ">=1.10.0,<2.0.0"
+azure-storage-nspkg = {version = ">=3.0.0,<4.0.0", markers = "python_version < \"3.0\""}
 cryptography = ">=2.1.4"
+enum34 = {version = ">=1.0.4", markers = "python_version < \"3.4\""}
+futures = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.6.18"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.source]
 type = "directory"
@@ -3796,6 +4074,7 @@ develop = false
 
 [package.dependencies]
 azure-core = ">=1.2.2,<2.0.0"
+azure-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3814,6 +4093,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-core = ">=1.6.0,<2.0.0"
+azure-synapse-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3832,6 +4112,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-core = ">=1.6.0,<2.0.0"
+azure-synapse-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3850,6 +4131,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-core = ">=1.6.0,<2.0.0"
+azure-synapse-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3868,6 +4150,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-core = ">=1.6.0,<2.0.0"
+azure-synapse-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3902,6 +4185,7 @@ develop = false
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
 azure-core = ">=1.6.0,<2.0.0"
+azure-synapse-nspkg = {version = "*", markers = "python_version < \"3.0\""}
 msrest = ">=0.5.0"
 
 [package.source]
@@ -3917,17 +4201,20 @@ optional = false
 python-versions = "*"
 develop = false
 
+[package.dependencies]
+azure-nspkg = {version = "*", markers = "python_version < \"3.0\""}
+
 [package.source]
 type = "directory"
 url = "sdk/template/azure-template"
 
 [[package]]
 name = "cachetools"
-version = "4.2.1"
+version = "3.1.1"
 description = "Extensible memoizing collections and decorators"
 category = "main"
 optional = false
-python-versions = "~=3.5"
+python-versions = "*"
 
 [[package]]
 name = "certifi"
@@ -3957,23 +4244,75 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
+name = "configparser"
+version = "4.0.2"
+description = "Updated configparser from Python 3.7 for Python 2.6+."
+category = "main"
+optional = false
+python-versions = ">=2.6"
+
+[package.extras]
+docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
+testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2)", "pytest-flake8", "pytest-black-multipy"]
+
+[[package]]
+name = "contextvars"
+version = "2.4"
+description = "PEP 567 Backport"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+immutables = ">=0.9"
+
+[[package]]
 name = "cryptography"
-version = "3.4.7"
+version = "3.3.2"
 description = "cryptography is a package which provides cryptographic recipes and primitives to Python developers."
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*"
 
 [package.dependencies]
 cffi = ">=1.12"
+enum34 = {version = "*", markers = "python_version < \"3\""}
+ipaddress = {version = "*", markers = "python_version < \"3\""}
+six = ">=1.4.1"
 
 [package.extras]
 docs = ["sphinx (>=1.6.5,!=1.8.0,!=3.1.0,!=3.1.1)", "sphinx-rtd-theme"]
 docstest = ["doc8", "pyenchant (>=1.6.11)", "twine (>=1.12.0)", "sphinxcontrib-spelling (>=4.0.1)"]
 pep8test = ["black", "flake8", "flake8-import-order", "pep8-naming"]
-sdist = ["setuptools-rust (>=0.11.4)"]
 ssh = ["bcrypt (>=3.1.5)"]
-test = ["pytest (>=6.0)", "pytest-cov", "pytest-subtests", "pytest-xdist", "pretend", "iso8601", "pytz", "hypothesis (>=1.11.4,!=3.79.2)"]
+test = ["pytest (>=3.6.0,!=3.9.0,!=3.9.1,!=3.9.2)", "pretend", "iso8601", "pytz", "hypothesis (>=1.11.4,!=3.79.2)"]
+
+[[package]]
+name = "entrypoints"
+version = "0.3"
+description = "Discover and load entry points from installed packages."
+category = "main"
+optional = false
+python-versions = ">=2.7"
+
+[package.dependencies]
+configparser = {version = ">=3.5", markers = "python_version == \"2.7\""}
+
+[[package]]
+name = "enum34"
+version = "1.1.10"
+description = "Python 3.4 Enum backported to 3.3, 3.2, 3.1, 2.7, 2.6, 2.5, and 2.4"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "futures"
+version = "3.3.0"
+description = "Backport of the concurrent.futures package from Python 3"
+category = "main"
+optional = false
+python-versions = ">=2.6, <3"
 
 [[package]]
 name = "google-api-core"
@@ -3984,6 +4323,7 @@ optional = false
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*"
 
 [package.dependencies]
+futures = {version = ">=3.2.0", markers = "python_version < \"3.2\""}
 google-auth = ">=1.21.1,<2.0dev"
 googleapis-common-protos = ">=1.6.0,<2.0dev"
 packaging = ">=14.3"
@@ -4008,7 +4348,10 @@ python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*"
 [package.dependencies]
 cachetools = ">=2.0.0,<5.0"
 pyasn1-modules = ">=0.2.1"
-rsa = {version = ">=3.1.4,<5", markers = "python_version >= \"3.6\""}
+rsa = [
+    {version = "<4.6", markers = "python_version < \"3.6\""},
+    {version = ">=3.1.4,<5", markers = "python_version >= \"3.6\""},
+]
 six = ">=1.9.0"
 
 [package.extras]
@@ -4017,14 +4360,14 @@ pyopenssl = ["pyopenssl (>=20.0.0)"]
 
 [[package]]
 name = "googleapis-common-protos"
-version = "1.53.0"
+version = "1.52.0"
 description = "Common protobufs used in Google APIs"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
 
 [package.dependencies]
-protobuf = ">=3.12.0"
+protobuf = ">=3.6.0"
 
 [package.extras]
 grpc = ["grpcio (>=1.0.0)"]
@@ -4038,19 +4381,34 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [[package]]
-name = "importlib-metadata"
-version = "3.10.0"
-description = "Read metadata from Python packages"
+name = "idna-ssl"
+version = "1.1.0"
+description = "Patch ssl.match_hostname for Unicode(idna) domains support"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = "*"
 
 [package.dependencies]
-zipp = ">=0.5"
+idna = ">=2.0"
+
+[[package]]
+name = "immutables"
+version = "0.15"
+description = "Immutable Collections"
+category = "main"
+optional = false
+python-versions = ">=3.5"
 
 [package.extras]
-docs = ["sphinx", "jaraco.packaging (>=8.2)", "rst.linker (>=1.9)"]
-testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-cov", "pytest-enabler (>=1.0.1)", "packaging", "pep517", "pyfakefs", "flufl.flake8", "pytest-black (>=0.3.7)", "pytest-mypy", "importlib-resources (>=1.3)"]
+test = ["flake8 (>=3.8.4,<3.9.0)", "pycodestyle (>=2.6.0,<2.7.0)"]
+
+[[package]]
+name = "ipaddress"
+version = "1.0.23"
+description = "IPv4/IPv6 manipulation library"
+category = "main"
+optional = false
+python-versions = "*"
 
 [[package]]
 name = "isodate"
@@ -4076,21 +4434,23 @@ test = ["pytest", "pytest-trio", "pytest-asyncio", "testpath", "trio"]
 
 [[package]]
 name = "keyring"
-version = "23.0.1"
+version = "18.0.1"
 description = "Store and access your passwords safely."
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=2.7"
 
 [package.dependencies]
-importlib-metadata = ">=3.6"
-jeepney = {version = ">=0.4.2", markers = "sys_platform == \"linux\""}
+entrypoints = "*"
 pywin32-ctypes = {version = "<0.1.0 || >0.1.0,<0.1.1 || >0.1.1", markers = "sys_platform == \"win32\""}
-SecretStorage = {version = ">=3.2", markers = "sys_platform == \"linux\""}
+secretstorage = [
+    {version = "<3", markers = "(sys_platform == \"linux2\" or sys_platform == \"linux\") and python_version < \"3.5\""},
+    {version = "*", markers = "sys_platform == \"linux\" and python_version >= \"3.5\""},
+]
 
 [package.extras]
-docs = ["sphinx", "jaraco.packaging (>=8.2)", "rst.linker (>=1.9)"]
-testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-cov", "pytest-enabler (>=1.0.1)", "pytest-black (>=0.3.7)", "pytest-mypy"]
+docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
+testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs", "pytest-flake8"]
 
 [[package]]
 name = "msal"
@@ -4115,6 +4475,7 @@ python-versions = "*"
 
 [package.dependencies]
 msal = ">=0.4.1,<2.0.0"
+pathlib2 = {version = "*", markers = "python_version < \"3.0\""}
 portalocker = [
     {version = ">=1.0,<2.0", markers = "platform_system != \"Windows\""},
     {version = ">=1.6,<2.0", markers = "platform_system == \"Windows\""},
@@ -4130,9 +4491,11 @@ python-versions = "*"
 
 [package.dependencies]
 certifi = ">=2017.4.17"
+enum34 = {version = ">=1.0.4", markers = "python_version < \"3.4\""}
 isodate = ">=0.6.0"
 requests = ">=2.16,<3.0"
 requests-oauthlib = ">=0.5.0"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [package.extras]
 async = ["aiohttp (>=3.0)", "aiodns"]
@@ -4191,6 +4554,9 @@ category = "main"
 optional = false
 python-versions = "*"
 
+[package.dependencies]
+contextvars = {version = "*", markers = "python_version >= \"3.6\" and python_version < \"3.7\""}
+
 [[package]]
 name = "opencensus-ext-azure"
 version = "1.0.7"
@@ -4223,6 +4589,9 @@ category = "main"
 optional = false
 python-versions = ">=3.5"
 
+[package.dependencies]
+aiocontextvars = {version = "*", markers = "python_version < \"3.7\""}
+
 [[package]]
 name = "packaging"
 version = "20.9"
@@ -4233,6 +4602,18 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [package.dependencies]
 pyparsing = ">=2.0.2"
+
+[[package]]
+name = "pathlib2"
+version = "2.3.5"
+description = "Object-oriented filesystem paths"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+scandir = {version = "*", markers = "python_version < \"3.5\""}
+six = "*"
 
 [[package]]
 name = "portalocker"
@@ -4300,20 +4681,19 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [[package]]
 name = "pyjwt"
-version = "2.0.1"
+version = "1.7.1"
 description = "JSON Web Token implementation in Python"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = "*"
 
 [package.dependencies]
-cryptography = {version = ">=3.3.1,<4.0.0", optional = true, markers = "extra == \"crypto\""}
+cryptography = {version = ">=1.4", optional = true, markers = "extra == \"crypto\""}
 
 [package.extras]
-crypto = ["cryptography (>=3.3.1,<4.0.0)"]
-dev = ["sphinx", "sphinx-rtd-theme", "zope.interface", "cryptography (>=3.3.1,<4.0.0)", "pytest (>=6.0.0,<7.0.0)", "coverage[toml] (==5.0.4)", "mypy", "pre-commit"]
-docs = ["sphinx", "sphinx-rtd-theme", "zope.interface"]
-tests = ["pytest (>=6.0.0,<7.0.0)", "coverage[toml] (==5.0.4)"]
+crypto = ["cryptography (>=1.4)"]
+flake8 = ["flake8", "flake8-import-order", "pep8-naming"]
+test = ["pytest (>=4.0.1,<5.0.0)", "pytest-cov (>=2.6.0,<3.0.0)", "pytest-runner (>=4.2,<5.0.0)"]
 
 [[package]]
 name = "pyparsing"
@@ -4393,14 +4773,47 @@ rsa = ["oauthlib[signedtoken] (>=3.0.0)"]
 
 [[package]]
 name = "rsa"
-version = "4.7.2"
+version = "4.4"
 description = "Pure-Python RSA implementation"
 category = "main"
 optional = false
-python-versions = ">=3.5, <4"
+python-versions = "*"
 
 [package.dependencies]
 pyasn1 = ">=0.1.3"
+
+[[package]]
+name = "rsa"
+version = "4.5"
+description = "Pure-Python RSA implementation"
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4"
+
+[package.dependencies]
+pyasn1 = ">=0.1.3"
+
+[[package]]
+name = "scandir"
+version = "1.10.0"
+description = "scandir, a better directory iterator and faster os.walk()"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "secretstorage"
+version = "2.3.1"
+description = "Python bindings to FreeDesktop.org Secret Service API"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+cryptography = "*"
+
+[package.extras]
+dbus-python = ["dbus-python"]
 
 [[package]]
 name = "secretstorage"
@@ -4423,12 +4836,23 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
+name = "typing"
+version = "3.7.4.3"
+description = "Type Hints for Python"
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+
+[[package]]
 name = "typing-extensions"
 version = "3.7.4.3"
 description = "Backported and Experimental Type Hints for Python 3.5+"
 category = "main"
 optional = false
 python-versions = "*"
+
+[package.dependencies]
+typing = {version = ">=3.7.4", markers = "python_version < \"3.5\""}
 
 [[package]]
 name = "uamqp"
@@ -4440,20 +4864,20 @@ python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
 
 [package.dependencies]
 certifi = ">=2017.4.17"
+enum34 = {version = ">=1.0.4", markers = "python_version < \"3.4\""}
 six = ">=1.0,<2.0"
 
 [[package]]
 name = "urllib3"
-version = "1.26.4"
+version = "1.22"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 category = "main"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4"
+python-versions = "*"
 
 [package.extras]
 secure = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "certifi", "ipaddress"]
 socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
-brotli = ["brotlipy (>=0.6.0)"]
 
 [[package]]
 name = "yarl"
@@ -4466,28 +4890,21 @@ python-versions = ">=3.6"
 [package.dependencies]
 idna = ">=2.0"
 multidict = ">=4.0"
-
-[[package]]
-name = "zipp"
-version = "3.4.1"
-description = "Backport of pathlib-compatible object wrapper for zip files"
-category = "main"
-optional = false
-python-versions = ">=3.6"
-
-[package.extras]
-docs = ["sphinx", "jaraco.packaging (>=8.2)", "rst.linker (>=1.9)"]
-testing = ["pytest (>=4.6)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pytest-cov", "pytest-enabler", "jaraco.itertools", "func-timeout", "pytest-black (>=0.3.7)", "pytest-mypy"]
+typing-extensions = {version = ">=3.7.4", markers = "python_version < \"3.8\""}
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.8"
-content-hash = "784c7ba3926ca0e045b7085127a8d22976fd4cac1416146cb98ca1ca340618e6"
+python-versions = "^2.7 || >=3.6"
+content-hash = "e2f7860fe7c8fe1401349576348bccac1e65565d0aa3b3f820be0967cfeeaed5"
 
 [metadata.files]
 adal = [
     {file = "adal-1.2.6-py2.py3-none-any.whl", hash = "sha256:9928f90e4003dc7a41c6995ccb5db79d9769a275cb365b10deb48471002642dc"},
     {file = "adal-1.2.6.tar.gz", hash = "sha256:08b94d30676ceb78df31bce9dd0f05f1bc2b6172e44c437cbf5b968a00ac6489"},
+]
+aiocontextvars = [
+    {file = "aiocontextvars-0.2.2-py2.py3-none-any.whl", hash = "sha256:885daf8261818767d8f7cbd79f9d4482d118f024b6586ef6e67980236a27bfa3"},
+    {file = "aiocontextvars-0.2.2.tar.gz", hash = "sha256:f027372dc48641f683c559f247bd84962becaacdc9ba711d583c3871fb5652aa"},
 ]
 aiohttp = [
     {file = "aiohttp-3.7.4.post0-cp36-cp36m-macosx_10_14_x86_64.whl", hash = "sha256:3cf75f7cdc2397ed4442594b935a11ed5569961333d49b7539ea741be2cc79d5"},
@@ -4540,6 +4957,11 @@ azure-ai-anomalydetector = []
 azure-ai-documenttranslation = []
 azure-ai-formrecognizer = []
 azure-ai-metricsadvisor = []
+azure-ai-nspkg = [
+    {file = "azure-ai-nspkg-1.0.0.zip", hash = "sha256:804f2fc40c663bb1d566cbaf922ae454b17b993400319f6a211cb02e5df95d6f"},
+    {file = "azure_ai_nspkg-1.0.0-py2-none-any.whl", hash = "sha256:2d851d34d598a31340db3d44de12317c794b935e17918f12fcf809acedc19bdf"},
+    {file = "azure_ai_nspkg-1.0.0-py3-none-any.whl", hash = "sha256:903a11b6d23e375d027e56b182b486f952ec39127e5d1f1da93e65358fdd76a9"},
+]
 azure-ai-textanalytics = []
 azure-appconfiguration = []
 azure-applicationinsights = []
@@ -4580,6 +5002,10 @@ azure-core = []
 azure-core-tracing-opencensus = []
 azure-core-tracing-opentelemetry = []
 azure-cosmos = []
+azure-data-nspkg = [
+    {file = "azure-data-nspkg-1.0.0.zip", hash = "sha256:57b49885cd166abad7ff0945a68f0b6f51748e4fa7d9ee8e7ba7314a3fa1e5ee"},
+    {file = "azure_data_nspkg-1.0.0-py2.py3-none-any.whl", hash = "sha256:983cec43ebd4f68686557a2e3377d3b1b7606c2f2fa4cd49d7bad8651d706e9e"},
+]
 azure-data-tables = []
 azure-digitaltwins-core = []
 azure-digitaltwins-nspkg = []
@@ -4760,8 +5186,8 @@ azure-synapse-nspkg = []
 azure-synapse-spark = []
 azure-template = []
 cachetools = [
-    {file = "cachetools-4.2.1-py3-none-any.whl", hash = "sha256:1d9d5f567be80f7c07d765e21b814326d78c61eb0c3a637dffc0e5d1796cb2e2"},
-    {file = "cachetools-4.2.1.tar.gz", hash = "sha256:f469e29e7aa4cff64d8de4aad95ce76de8ea1125a16c68e0d93f65c3c3dc92e9"},
+    {file = "cachetools-3.1.1-py2.py3-none-any.whl", hash = "sha256:428266a1c0d36dc5aca63a2d7c5942e88c2c898d72139fca0e97fdd2380517ae"},
+    {file = "cachetools-3.1.1.tar.gz", hash = "sha256:8ea2d3ce97850f31e4a08b0e2b5e6c34997d7216a9d2c98e0f3978630d4da69a"},
 ]
 certifi = [
     {file = "certifi-2020.12.5-py2.py3-none-any.whl", hash = "sha256:719a74fb9e33b9bd44cc7f3a8d94bc35e4049deebe19ba7d8e108280cfd59830"},
@@ -4810,19 +5236,41 @@ chardet = [
     {file = "chardet-4.0.0-py2.py3-none-any.whl", hash = "sha256:f864054d66fd9118f2e67044ac8981a54775ec5b67aed0441892edb553d21da5"},
     {file = "chardet-4.0.0.tar.gz", hash = "sha256:0d6f53a15db4120f2b08c94f11e7d93d2c911ee118b6b30a04ec3ee8310179fa"},
 ]
+configparser = [
+    {file = "configparser-4.0.2-py2.py3-none-any.whl", hash = "sha256:254c1d9c79f60c45dfde850850883d5aaa7f19a23f13561243a050d5a7c3fe4c"},
+    {file = "configparser-4.0.2.tar.gz", hash = "sha256:c7d282687a5308319bf3d2e7706e575c635b0a470342641c93bea0ea3b5331df"},
+]
+contextvars = [
+    {file = "contextvars-2.4.tar.gz", hash = "sha256:f38c908aaa59c14335eeea12abea5f443646216c4e29380d7bf34d2018e2c39e"},
+]
 cryptography = [
-    {file = "cryptography-3.4.7-cp36-abi3-macosx_10_10_x86_64.whl", hash = "sha256:3d8427734c781ea5f1b41d6589c293089704d4759e34597dce91014ac125aad1"},
-    {file = "cryptography-3.4.7-cp36-abi3-macosx_11_0_arm64.whl", hash = "sha256:8e56e16617872b0957d1c9742a3f94b43533447fd78321514abbe7db216aa250"},
-    {file = "cryptography-3.4.7-cp36-abi3-manylinux2010_x86_64.whl", hash = "sha256:37340614f8a5d2fb9aeea67fd159bfe4f5f4ed535b1090ce8ec428b2f15a11f2"},
-    {file = "cryptography-3.4.7-cp36-abi3-manylinux2014_aarch64.whl", hash = "sha256:240f5c21aef0b73f40bb9f78d2caff73186700bf1bc6b94285699aff98cc16c6"},
-    {file = "cryptography-3.4.7-cp36-abi3-manylinux2014_x86_64.whl", hash = "sha256:1e056c28420c072c5e3cb36e2b23ee55e260cb04eee08f702e0edfec3fb51959"},
-    {file = "cryptography-3.4.7-cp36-abi3-win32.whl", hash = "sha256:0f1212a66329c80d68aeeb39b8a16d54ef57071bf22ff4e521657b27372e327d"},
-    {file = "cryptography-3.4.7-cp36-abi3-win_amd64.whl", hash = "sha256:de4e5f7f68220d92b7637fc99847475b59154b7a1b3868fb7385337af54ac9ca"},
-    {file = "cryptography-3.4.7-pp36-pypy36_pp73-manylinux2010_x86_64.whl", hash = "sha256:26965837447f9c82f1855e0bc8bc4fb910240b6e0d16a664bb722df3b5b06873"},
-    {file = "cryptography-3.4.7-pp36-pypy36_pp73-manylinux2014_x86_64.whl", hash = "sha256:eb8cc2afe8b05acbd84a43905832ec78e7b3873fb124ca190f574dca7389a87d"},
-    {file = "cryptography-3.4.7-pp37-pypy37_pp73-manylinux2010_x86_64.whl", hash = "sha256:7ec5d3b029f5fa2b179325908b9cd93db28ab7b85bb6c1db56b10e0b54235177"},
-    {file = "cryptography-3.4.7-pp37-pypy37_pp73-manylinux2014_x86_64.whl", hash = "sha256:ee77aa129f481be46f8d92a1a7db57269a2f23052d5f2433b4621bb457081cc9"},
-    {file = "cryptography-3.4.7.tar.gz", hash = "sha256:3d10de8116d25649631977cb37da6cbdd2d6fa0e0281d014a5b7d337255ca713"},
+    {file = "cryptography-3.3.2-cp27-cp27m-macosx_10_10_x86_64.whl", hash = "sha256:541dd758ad49b45920dda3b5b48c968f8b2533d8981bcdb43002798d8f7a89ed"},
+    {file = "cryptography-3.3.2-cp27-cp27m-manylinux1_x86_64.whl", hash = "sha256:49570438e60f19243e7e0d504527dd5fe9b4b967b5a1ff21cc12b57602dd85d3"},
+    {file = "cryptography-3.3.2-cp27-cp27m-manylinux2010_x86_64.whl", hash = "sha256:a9a4ac9648d39ce71c2f63fe7dc6db144b9fa567ddfc48b9fde1b54483d26042"},
+    {file = "cryptography-3.3.2-cp27-cp27m-win32.whl", hash = "sha256:aa4969f24d536ae2268c902b2c3d62ab464b5a66bcb247630d208a79a8098e9b"},
+    {file = "cryptography-3.3.2-cp27-cp27m-win_amd64.whl", hash = "sha256:1bd0ccb0a1ed775cd7e2144fe46df9dc03eefd722bbcf587b3e0616ea4a81eff"},
+    {file = "cryptography-3.3.2-cp27-cp27mu-manylinux1_x86_64.whl", hash = "sha256:e18e6ab84dfb0ab997faf8cca25a86ff15dfea4027b986322026cc99e0a892da"},
+    {file = "cryptography-3.3.2-cp27-cp27mu-manylinux2010_x86_64.whl", hash = "sha256:c7390f9b2119b2b43160abb34f63277a638504ef8df99f11cb52c1fda66a2e6f"},
+    {file = "cryptography-3.3.2-cp36-abi3-macosx_10_10_x86_64.whl", hash = "sha256:0d7b69674b738068fa6ffade5c962ecd14969690585aaca0a1b1fc9058938a72"},
+    {file = "cryptography-3.3.2-cp36-abi3-manylinux1_x86_64.whl", hash = "sha256:922f9602d67c15ade470c11d616f2b2364950602e370c76f0c94c94ae672742e"},
+    {file = "cryptography-3.3.2-cp36-abi3-manylinux2010_x86_64.whl", hash = "sha256:a0f0b96c572fc9f25c3f4ddbf4688b9b38c69836713fb255f4a2715d93cbaf44"},
+    {file = "cryptography-3.3.2-cp36-abi3-manylinux2014_aarch64.whl", hash = "sha256:a777c096a49d80f9d2979695b835b0f9c9edab73b59e4ceb51f19724dda887ed"},
+    {file = "cryptography-3.3.2-cp36-abi3-win32.whl", hash = "sha256:3c284fc1e504e88e51c428db9c9274f2da9f73fdf5d7e13a36b8ecb039af6e6c"},
+    {file = "cryptography-3.3.2-cp36-abi3-win_amd64.whl", hash = "sha256:7951a966613c4211b6612b0352f5bf29989955ee592c4a885d8c7d0f830d0433"},
+    {file = "cryptography-3.3.2.tar.gz", hash = "sha256:5a60d3780149e13b7a6ff7ad6526b38846354d11a15e21068e57073e29e19bed"},
+]
+entrypoints = [
+    {file = "entrypoints-0.3-py2.py3-none-any.whl", hash = "sha256:589f874b313739ad35be6e0cd7efde2a4e9b6fea91edcc34e58ecbb8dbe56d19"},
+    {file = "entrypoints-0.3.tar.gz", hash = "sha256:c70dd71abe5a8c85e55e12c19bd91ccfeec11a6e99044204511f9ed547d48451"},
+]
+enum34 = [
+    {file = "enum34-1.1.10-py2-none-any.whl", hash = "sha256:a98a201d6de3f2ab3db284e70a33b0f896fbf35f8086594e8c9e74b909058d53"},
+    {file = "enum34-1.1.10-py3-none-any.whl", hash = "sha256:c3858660960c984d6ab0ebad691265180da2b43f07e061c0f8dca9ef3cffd328"},
+    {file = "enum34-1.1.10.tar.gz", hash = "sha256:cce6a7477ed816bd2542d03d53db9f0db935dd013b70f336a95c73979289f248"},
+]
+futures = [
+    {file = "futures-3.3.0-py2-none-any.whl", hash = "sha256:49b3f5b064b6e3afc3316421a3f25f66c137ae88f068abbf72830170033c5e16"},
+    {file = "futures-3.3.0.tar.gz", hash = "sha256:7e033af76a5e35f58e56da7a91e687706faf4e7bdfb2cbc3f2cca6b9bcda9794"},
 ]
 google-api-core = [
     {file = "google-api-core-1.26.3.tar.gz", hash = "sha256:b914345c7ea23861162693a27703bab804a55504f7e6e9abcaff174d80df32ac"},
@@ -4833,16 +5281,36 @@ google-auth = [
     {file = "google_auth-1.28.0-py2.py3-none-any.whl", hash = "sha256:dcaba3aa9d4e0e96fd945bf25a86b6f878fcb05770b67adbeb50a63ca4d28a5e"},
 ]
 googleapis-common-protos = [
-    {file = "googleapis-common-protos-1.53.0.tar.gz", hash = "sha256:a88ee8903aa0a81f6c3cec2d5cf62d3c8aa67c06439b0496b49048fb1854ebf4"},
-    {file = "googleapis_common_protos-1.53.0-py2.py3-none-any.whl", hash = "sha256:f6d561ab8fb16b30020b940e2dd01cd80082f4762fa9f3ee670f4419b4b8dbd0"},
+    {file = "googleapis-common-protos-1.52.0.tar.gz", hash = "sha256:560716c807117394da12cecb0a54da5a451b5cf9866f1d37e9a5e2329a665351"},
+    {file = "googleapis_common_protos-1.52.0-py2.py3-none-any.whl", hash = "sha256:c8961760f5aad9a711d37b675be103e0cc4e9a39327e0d6d857872f698403e24"},
 ]
 idna = [
     {file = "idna-2.10-py2.py3-none-any.whl", hash = "sha256:b97d804b1e9b523befed77c48dacec60e6dcb0b5391d57af6a65a312a90648c0"},
     {file = "idna-2.10.tar.gz", hash = "sha256:b307872f855b18632ce0c21c5e45be78c0ea7ae4c15c828c20788b26921eb3f6"},
 ]
-importlib-metadata = [
-    {file = "importlib_metadata-3.10.0-py3-none-any.whl", hash = "sha256:d2d46ef77ffc85cbf7dac7e81dd663fde71c45326131bea8033b9bad42268ebe"},
-    {file = "importlib_metadata-3.10.0.tar.gz", hash = "sha256:c9db46394197244adf2f0b08ec5bc3cf16757e9590b02af1fca085c16c0d600a"},
+idna-ssl = [
+    {file = "idna-ssl-1.1.0.tar.gz", hash = "sha256:a933e3bb13da54383f9e8f35dc4f9cb9eb9b3b78c6b36f311254d6d0d92c6c7c"},
+]
+immutables = [
+    {file = "immutables-0.15-cp35-cp35m-macosx_10_14_x86_64.whl", hash = "sha256:6728f4392e3e8e64b593a5a0cd910a1278f07f879795517e09f308daed138631"},
+    {file = "immutables-0.15-cp35-cp35m-manylinux1_x86_64.whl", hash = "sha256:f0836cd3bdc37c8a77b192bbe5f41dbcc3ce654db048ebbba89bdfe6db7a1c7a"},
+    {file = "immutables-0.15-cp36-cp36m-macosx_10_14_x86_64.whl", hash = "sha256:8703d8abfd8687932f2a05f38e7de270c3a6ca3bd1c1efb3c938656b3f2f985a"},
+    {file = "immutables-0.15-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:b8ad986f9b532c026f19585289384b0769188fcb68b37c7f0bd0df9092a6ca54"},
+    {file = "immutables-0.15-cp36-cp36m-win_amd64.whl", hash = "sha256:6f117d9206165b9dab8fd81c5129db757d1a044953f438654236ed9a7a4224ae"},
+    {file = "immutables-0.15-cp37-cp37m-macosx_10_14_x86_64.whl", hash = "sha256:b75ade826920c4e490b1bb14cf967ac14e61eb7c5562161c5d7337d61962c226"},
+    {file = "immutables-0.15-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:b7e13c061785e34f73c4f659861f1b3e4a5fd918e4395c84b21c4e3d449ebe27"},
+    {file = "immutables-0.15-cp37-cp37m-win_amd64.whl", hash = "sha256:3035849accee4f4e510ed7c94366a40e0f5fef9069fbe04a35f4787b13610a4a"},
+    {file = "immutables-0.15-cp38-cp38-macosx_10_14_x86_64.whl", hash = "sha256:b04fa69174e0c8f815f9c55f2a43fc9e5a68452fab459a08e904a74e8471639f"},
+    {file = "immutables-0.15-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:141c2e9ea515a3a815007a429f0b47a578ebeb42c831edaec882a245a35fffca"},
+    {file = "immutables-0.15-cp38-cp38-win_amd64.whl", hash = "sha256:cbe8c64640637faa5535d539421b293327f119c31507c33ca880bd4f16035eb6"},
+    {file = "immutables-0.15-cp39-cp39-macosx_10_14_x86_64.whl", hash = "sha256:a0a4e4417d5ef4812d7f99470cd39347b58cb927365dd2b8da9161040d260db0"},
+    {file = "immutables-0.15-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:3b15c08c71c59e5b7c2470ef949d49ff9f4263bb77f488422eaa157da84d6999"},
+    {file = "immutables-0.15-cp39-cp39-win_amd64.whl", hash = "sha256:2283a93c151566e6830aee0e5bee55fc273455503b43aa004356b50f9182092b"},
+    {file = "immutables-0.15.tar.gz", hash = "sha256:3713ab1ebbb6946b7ce1387bb9d1d7f5e09c45add58c2a2ee65f963c171e746b"},
+]
+ipaddress = [
+    {file = "ipaddress-1.0.23-py2.py3-none-any.whl", hash = "sha256:6e0f4a39e66cb5bb9a137b00276a2eff74f93b71dcbdad6f10ff7df9d3557fcc"},
+    {file = "ipaddress-1.0.23.tar.gz", hash = "sha256:b7f8e0369580bb4a24d5ba1d7cc29660a4a6987763faf1d8a8046830e020e7e2"},
 ]
 isodate = [
     {file = "isodate-0.6.0-py2.py3-none-any.whl", hash = "sha256:aa4d33c06640f5352aca96e4b81afd8ab3b47337cc12089822d6f322ac772c81"},
@@ -4853,8 +5321,8 @@ jeepney = [
     {file = "jeepney-0.6.0.tar.gz", hash = "sha256:7d59b6622675ca9e993a6bd38de845051d315f8b0c72cca3aef733a20b648657"},
 ]
 keyring = [
-    {file = "keyring-23.0.1-py3-none-any.whl", hash = "sha256:8f607d7d1cc502c43a932a275a56fe47db50271904513a379d39df1af277ac48"},
-    {file = "keyring-23.0.1.tar.gz", hash = "sha256:045703609dd3fccfcdb27da201684278823b72af515aedec1a8515719a038cb8"},
+    {file = "keyring-18.0.1-py2.py3-none-any.whl", hash = "sha256:7b29ebfcf8678c4da531b2478a912eea01e80007e5ddca9ee0c7038cb3489ec6"},
+    {file = "keyring-18.0.1.tar.gz", hash = "sha256:67d6cc0132bd77922725fae9f18366bb314fd8f95ff4d323a4df41890a96a838"},
 ]
 msal = [
     {file = "msal-1.10.0-py2.py3-none-any.whl", hash = "sha256:daffb9d21fb45b36419182735fa12a4f9d4071b427188aa114162bd623edd812"},
@@ -4937,6 +5405,10 @@ opentelemetry-api = [
 packaging = [
     {file = "packaging-20.9-py2.py3-none-any.whl", hash = "sha256:67714da7f7bc052e064859c05c595155bd1ee9f69f76557e21f051443c20947a"},
     {file = "packaging-20.9.tar.gz", hash = "sha256:5b327ac1320dc863dca72f4514ecc086f31186744b84a230374cc1fd776feae5"},
+]
+pathlib2 = [
+    {file = "pathlib2-2.3.5-py2.py3-none-any.whl", hash = "sha256:0ec8205a157c80d7acc301c0b18fbd5d44fe655968f5d947b6ecef5290fc35db"},
+    {file = "pathlib2-2.3.5.tar.gz", hash = "sha256:6cd9a47b597b37cc57de1c05e56fb1a1c9cc9fab04fe78c29acd090418529868"},
 ]
 portalocker = [
     {file = "portalocker-1.7.1-py2.py3-none-any.whl", hash = "sha256:34cb36c618d88bcd9079beb36dcdc1848a3e3d92ac4eac59055bdeafc39f9d4a"},
@@ -5029,8 +5501,8 @@ pycparser = [
     {file = "pycparser-2.20.tar.gz", hash = "sha256:2d475327684562c3a96cc71adf7dc8c4f0565175cf86b6d7a404ff4c771f15f0"},
 ]
 pyjwt = [
-    {file = "PyJWT-2.0.1-py3-none-any.whl", hash = "sha256:b70b15f89dc69b993d8a8d32c299032d5355c82f9b5b7e851d1a6d706dffe847"},
-    {file = "PyJWT-2.0.1.tar.gz", hash = "sha256:a5c70a06e1f33d81ef25eecd50d50bd30e34de1ca8b2b9fa3fe0daaabcf69bf7"},
+    {file = "PyJWT-1.7.1-py2.py3-none-any.whl", hash = "sha256:5c6eca3c2940464d106b99ba83b00c6add741c9becaec087fb7ccdefea71350e"},
+    {file = "PyJWT-1.7.1.tar.gz", hash = "sha256:8d59a976fb773f3e6a39c85636357c4f0e242707394cadadd9814f5cbaa20e96"},
 ]
 pyparsing = [
     {file = "pyparsing-2.4.7-py2.py3-none-any.whl", hash = "sha256:ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"},
@@ -5070,16 +5542,36 @@ requests-oauthlib = [
     {file = "requests_oauthlib-1.3.0-py3.7.egg", hash = "sha256:fa6c47b933f01060936d87ae9327fead68768b69c6c9ea2109c48be30f2d4dbc"},
 ]
 rsa = [
-    {file = "rsa-4.7.2-py3-none-any.whl", hash = "sha256:78f9a9bf4e7be0c5ded4583326e7461e3a3c5aae24073648b4bdfa797d78c9d2"},
-    {file = "rsa-4.7.2.tar.gz", hash = "sha256:9d689e6ca1b3038bc82bf8d23e944b6b6037bc02301a574935b2dd946e0353b9"},
+    {file = "rsa-4.4-py2.py3-none-any.whl", hash = "sha256:4afbaaecc3e9550c7351fdf0ab3fea1857ff616b85bab59215f00fb42e0e9582"},
+    {file = "rsa-4.4.tar.gz", hash = "sha256:5d95293bbd0fbee1dd9cb4b72d27b723942eb50584abc8c4f5f00e4bcfa55307"},
+    {file = "rsa-4.5-py2.py3-none-any.whl", hash = "sha256:35c5b5f6675ac02120036d97cf96f1fde4d49670543db2822ba5015e21a18032"},
+    {file = "rsa-4.5.tar.gz", hash = "sha256:4d409f5a7d78530a4a2062574c7bd80311bc3af29b364e293aa9b03eea77714f"},
+]
+scandir = [
+    {file = "scandir-1.10.0-cp27-cp27m-win32.whl", hash = "sha256:92c85ac42f41ffdc35b6da57ed991575bdbe69db895507af88b9f499b701c188"},
+    {file = "scandir-1.10.0-cp27-cp27m-win_amd64.whl", hash = "sha256:cb925555f43060a1745d0a321cca94bcea927c50114b623d73179189a4e100ac"},
+    {file = "scandir-1.10.0-cp34-cp34m-win32.whl", hash = "sha256:2c712840c2e2ee8dfaf36034080108d30060d759c7b73a01a52251cc8989f11f"},
+    {file = "scandir-1.10.0-cp34-cp34m-win_amd64.whl", hash = "sha256:2586c94e907d99617887daed6c1d102b5ca28f1085f90446554abf1faf73123e"},
+    {file = "scandir-1.10.0-cp35-cp35m-win32.whl", hash = "sha256:2b8e3888b11abb2217a32af0766bc06b65cc4a928d8727828ee68af5a967fa6f"},
+    {file = "scandir-1.10.0-cp35-cp35m-win_amd64.whl", hash = "sha256:8c5922863e44ffc00c5c693190648daa6d15e7c1207ed02d6f46a8dcc2869d32"},
+    {file = "scandir-1.10.0-cp36-cp36m-win32.whl", hash = "sha256:2ae41f43797ca0c11591c0c35f2f5875fa99f8797cb1a1fd440497ec0ae4b022"},
+    {file = "scandir-1.10.0-cp36-cp36m-win_amd64.whl", hash = "sha256:7d2d7a06a252764061a020407b997dd036f7bd6a175a5ba2b345f0a357f0b3f4"},
+    {file = "scandir-1.10.0-cp37-cp37m-win32.whl", hash = "sha256:67f15b6f83e6507fdc6fca22fedf6ef8b334b399ca27c6b568cbfaa82a364173"},
+    {file = "scandir-1.10.0-cp37-cp37m-win_amd64.whl", hash = "sha256:b24086f2375c4a094a6b51e78b4cf7ca16c721dcee2eddd7aa6494b42d6d519d"},
+    {file = "scandir-1.10.0.tar.gz", hash = "sha256:4d4631f6062e658e9007ab3149a9b914f3548cb38bfb021c64f39a025ce578ae"},
 ]
 secretstorage = [
+    {file = "SecretStorage-2.3.1.tar.gz", hash = "sha256:3af65c87765323e6f64c83575b05393f9e003431959c9395d1791d51497f29b6"},
     {file = "SecretStorage-3.3.1-py3-none-any.whl", hash = "sha256:422d82c36172d88d6a0ed5afdec956514b189ddbfb72fefab0c8a1cee4eaf71f"},
     {file = "SecretStorage-3.3.1.tar.gz", hash = "sha256:fd666c51a6bf200643495a04abb261f83229dcb6fd8472ec393df7ffc8b6f195"},
 ]
 six = [
     {file = "six-1.15.0-py2.py3-none-any.whl", hash = "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"},
     {file = "six-1.15.0.tar.gz", hash = "sha256:30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259"},
+]
+typing = [
+    {file = "typing-3.7.4.3-py2-none-any.whl", hash = "sha256:283d868f5071ab9ad873e5e52268d611e851c870a2ba354193026f2dfb29d8b5"},
+    {file = "typing-3.7.4.3.tar.gz", hash = "sha256:1187fb9c82fd670d10aa07bbb6cfcfe4bdda42d6fab8d5134f04e8c4d0b71cc9"},
 ]
 typing-extensions = [
     {file = "typing_extensions-3.7.4.3-py2-none-any.whl", hash = "sha256:dafc7639cde7f1b6e1acc0f457842a83e722ccca8eef5270af2d74792619a89f"},
@@ -5122,8 +5614,8 @@ uamqp = [
     {file = "uamqp-1.2.15.tar.gz", hash = "sha256:7573fea8c8af7e75581f96a6b7c1e0180688ed12e8c5fe7a393ce52a269d92f7"},
 ]
 urllib3 = [
-    {file = "urllib3-1.26.4-py2.py3-none-any.whl", hash = "sha256:2f4da4594db7e1e110a944bb1b551fdf4e6c136ad42e4234131391e21eb5b0df"},
-    {file = "urllib3-1.26.4.tar.gz", hash = "sha256:e7b021f7241115872f92f43c6508082facffbd1c048e3c6e2bb9c2a157e28937"},
+    {file = "urllib3-1.22-py2.py3-none-any.whl", hash = "sha256:06330f386d6e4b195fbfc736b297f58c5a892e4440e54d294d7004e3a9bbea1b"},
+    {file = "urllib3-1.22.tar.gz", hash = "sha256:cc44da8e1145637334317feebd728bd869a35285b93cbb4cca2577da7e62db4f"},
 ]
 yarl = [
     {file = "yarl-1.6.3-cp36-cp36m-macosx_10_14_x86_64.whl", hash = "sha256:0355a701b3998dcd832d0dc47cc5dedf3874f966ac7f870e0f3a6788d802d434"},
@@ -5163,8 +5655,4 @@ yarl = [
     {file = "yarl-1.6.3-cp39-cp39-win32.whl", hash = "sha256:5b883e458058f8d6099e4420f0cc2567989032b5f34b271c0827de9f1079a424"},
     {file = "yarl-1.6.3-cp39-cp39-win_amd64.whl", hash = "sha256:4953fb0b4fdb7e08b2f3b3be80a00d28c5c8a2056bb066169de00e6501b986b6"},
     {file = "yarl-1.6.3.tar.gz", hash = "sha256:8a9066529240171b68893d60dca86a763eae2139dd42f42106b03cf4b426bf10"},
-]
-zipp = [
-    {file = "zipp-3.4.1-py3-none-any.whl", hash = "sha256:51cb66cc54621609dd593d1787f286ee42a5c0adbb4b29abea5a63edc3e03098"},
-    {file = "zipp-3.4.1.tar.gz", hash = "sha256:3607921face881ba3e026887d8150cca609d517579abe052ac81fc5aeffdbd76"},
 ]

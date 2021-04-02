@@ -5,7 +5,7 @@ description = "The azure-sdk-for-python leverages poetry to validate its depende
 authors = ["scbedd <45376673+scbedd@users.noreply.github.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^2.7 || >=3.6"
 azure-mgmt-advisor = {path = "sdk/advisor/azure-mgmt-advisor"}
 azure-mgmt-devspaces = {path = "sdk/aks/azure-mgmt-devspaces"}
 azure-mgmt-alertsmanagement = {path = "sdk/alertsmanagement/azure-mgmt-alertsmanagement"}
@@ -76,7 +76,7 @@ azure-mgmt-containerservice = {path = "sdk/containerservice/azure-mgmt-container
 azure-common = {path = "sdk/core/azure-common"}
 azure-core = {path = "sdk/core/azure-core"}
 azure-core-tracing-opencensus = {path = "sdk/core/azure-core-tracing-opencensus"}
-azure-core-tracing-opentelemetry = {path = "sdk/core/azure-core-tracing-opentelemetry"}
+azure-core-tracing-opentelemetry = {path = "sdk/core/azure-core-tracing-opentelemetry", python = ">=3.6"}
 azure-mgmt-core = {path = "sdk/core/azure-mgmt-core"}
 azure-mgmt-datalake-nspkg = {path = "sdk/core/azure-mgmt-datalake-nspkg"}
 azure-mgmt-nspkg = {path = "sdk/core/azure-mgmt-nspkg"}
@@ -107,7 +107,7 @@ azure-eventgrid = {path = "sdk/eventgrid/azure-eventgrid"}
 azure-mgmt-eventgrid = {path = "sdk/eventgrid/azure-mgmt-eventgrid"}
 azure-eventhub = {path = "sdk/eventhub/azure-eventhub"}
 azure-eventhub-checkpointstoreblob = {path = "sdk/eventhub/azure-eventhub-checkpointstoreblob"}
-azure-eventhub-checkpointstoreblob-aio = {path = "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio"}
+azure-eventhub-checkpointstoreblob-aio = {path = "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio", python = ">=3.6"}
 azure-mgmt-eventhub = {path = "sdk/eventhub/azure-mgmt-eventhub"}
 azure-mgmt-extendedlocation = {path = "sdk/extendedlocation/azure-mgmt-extendedlocation"}
 azure-ai-formrecognizer = {path = "sdk/formrecognizer/azure-ai-formrecognizer"}
