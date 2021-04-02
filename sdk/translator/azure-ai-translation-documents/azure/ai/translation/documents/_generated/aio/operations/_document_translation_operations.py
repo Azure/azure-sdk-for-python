@@ -28,7 +28,7 @@ class DocumentTranslationOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.ai.documenttranslation.models
+    :type models: ~azure.ai.translation.documents.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -124,7 +124,7 @@ class DocumentTranslationOperations:
         targetUrl for each target language must be unique.
 
         :param inputs: The input list of documents or folders containing documents.
-        :type inputs: list[~azure.ai.documenttranslation.models.BatchRequest]
+        :type inputs: list[~azure.ai.translation.documents.models.BatchRequest]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
@@ -267,7 +267,7 @@ class DocumentTranslationOperations:
         :type order_by: list[str]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BatchStatusResponse or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.documenttranslation.models.BatchStatusResponse]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.translation.documents.models.BatchStatusResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchStatusResponse"]
@@ -365,7 +365,7 @@ class DocumentTranslationOperations:
         :type document_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DocumentStatusDetail, or the result of cls(response)
-        :rtype: ~azure.ai.documenttranslation.models.DocumentStatusDetail
+        :rtype: ~azure.ai.translation.documents.models.DocumentStatusDetail
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DocumentStatusDetail"]
@@ -430,7 +430,7 @@ class DocumentTranslationOperations:
         :type id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BatchStatusDetail, or the result of cls(response)
-        :rtype: ~azure.ai.documenttranslation.models.BatchStatusDetail
+        :rtype: ~azure.ai.translation.documents.models.BatchStatusDetail
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchStatusDetail"]
@@ -497,7 +497,7 @@ class DocumentTranslationOperations:
         :type id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BatchStatusDetail, or the result of cls(response)
-        :rtype: ~azure.ai.documenttranslation.models.BatchStatusDetail
+        :rtype: ~azure.ai.translation.documents.models.BatchStatusDetail
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchStatusDetail"]
@@ -636,7 +636,7 @@ class DocumentTranslationOperations:
         :type order_by: list[str]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DocumentStatusResponse or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.documenttranslation.models.DocumentStatusResponse]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.translation.documents.models.DocumentStatusResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DocumentStatusResponse"]
@@ -732,7 +732,7 @@ class DocumentTranslationOperations:
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FileFormatListResult, or the result of cls(response)
-        :rtype: ~azure.ai.documenttranslation.models.FileFormatListResult
+        :rtype: ~azure.ai.translation.documents.models.FileFormatListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FileFormatListResult"]
@@ -790,7 +790,7 @@ class DocumentTranslationOperations:
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FileFormatListResult, or the result of cls(response)
-        :rtype: ~azure.ai.documenttranslation.models.FileFormatListResult
+        :rtype: ~azure.ai.translation.documents.models.FileFormatListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FileFormatListResult"]
@@ -847,7 +847,7 @@ class DocumentTranslationOperations:
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageSourceListResult, or the result of cls(response)
-        :rtype: ~azure.ai.documenttranslation.models.StorageSourceListResult
+        :rtype: ~azure.ai.translation.documents.models.StorageSourceListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageSourceListResult"]

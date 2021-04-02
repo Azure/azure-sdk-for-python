@@ -21,12 +21,12 @@ class BatchRequest(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param source: Required. Source of the input documents.
-    :type source: ~azure.ai.documenttranslation.models.SourceInput
+    :type source: ~azure.ai.translation.documents.models.SourceInput
     :param targets: Required. Location of the destination for the output.
-    :type targets: list[~azure.ai.documenttranslation.models.TargetInput]
+    :type targets: list[~azure.ai.translation.documents.models.TargetInput]
     :param storage_type: Storage type of the input documents source string. Possible values
      include: "Folder", "File".
-    :type storage_type: str or ~azure.ai.documenttranslation.models.StorageInputType
+    :type storage_type: str or ~azure.ai.translation.documents.models.StorageInputType
     """
 
     _validation = {
@@ -69,12 +69,12 @@ class BatchStatusDetail(msrest.serialization.Model):
     :param status: Required. List of possible statuses for job or document. Possible values
      include: "NotStarted", "Running", "Succeeded", "Failed", "Cancelled", "Cancelling",
      "ValidationFailed".
-    :type status: str or ~azure.ai.documenttranslation.models.Status
+    :type status: str or ~azure.ai.translation.documents.models.Status
     :param error: This contains an outer error with error code, message, details, target and an
      inner error with more descriptive details.
-    :type error: ~azure.ai.documenttranslation.models.ErrorV2
+    :type error: ~azure.ai.translation.documents.models.ErrorV2
     :param summary: Required.
-    :type summary: ~azure.ai.documenttranslation.models.StatusSummary
+    :type summary: ~azure.ai.translation.documents.models.StatusSummary
     """
 
     _validation = {
@@ -120,7 +120,7 @@ class BatchStatusResponse(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. The summary status of individual operation.
-    :type value: list[~azure.ai.documenttranslation.models.BatchStatusDetail]
+    :type value: list[~azure.ai.translation.documents.models.BatchStatusDetail]
     :param next_link: Url for the next page.  Null if no more pages available.
     :type next_link: str
     """
@@ -152,7 +152,7 @@ class BatchSubmissionRequest(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param inputs: Required. The input list of documents or folders containing documents.
-    :type inputs: list[~azure.ai.documenttranslation.models.BatchRequest]
+    :type inputs: list[~azure.ai.translation.documents.models.BatchRequest]
     """
 
     _validation = {
@@ -221,12 +221,12 @@ class DocumentStatusDetail(msrest.serialization.Model):
     :param status: Required. List of possible statuses for job or document. Possible values
      include: "NotStarted", "Running", "Succeeded", "Failed", "Cancelled", "Cancelling",
      "ValidationFailed".
-    :type status: str or ~azure.ai.documenttranslation.models.Status
+    :type status: str or ~azure.ai.translation.documents.models.Status
     :param to: Required. To language.
     :type to: str
     :param error: This contains an outer error with error code, message, details, target and an
      inner error with more descriptive details.
-    :type error: ~azure.ai.documenttranslation.models.ErrorV2
+    :type error: ~azure.ai.translation.documents.models.ErrorV2
     :param progress: Required. Progress of the translation if available.
     :type progress: float
     :param id: Required. Document Id.
@@ -292,7 +292,7 @@ class DocumentStatusResponse(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. The detail status of individual documents.
-    :type value: list[~azure.ai.documenttranslation.models.DocumentStatusDetail]
+    :type value: list[~azure.ai.translation.documents.models.DocumentStatusDetail]
     :param next_link: Url for the next page.  Null if no more pages available.
     :type next_link: str
     """
@@ -325,7 +325,7 @@ a controller.
 
     :param error: This contains an outer error with error code, message, details, target and an
      inner error with more descriptive details.
-    :type error: ~azure.ai.documenttranslation.models.ErrorV2
+    :type error: ~azure.ai.translation.documents.models.ErrorV2
     """
 
     _attribute_map = {
@@ -352,7 +352,7 @@ class ErrorV2(msrest.serialization.Model):
     :param code: Required. Enums containing high level error codes. Possible values include:
      "InvalidRequest", "InvalidArgument", "InternalServerError", "ServiceUnavailable",
      "ResourceNotFound", "Unauthorized", "RequestRateTooHigh".
-    :type code: str or ~azure.ai.documenttranslation.models.ErrorCodeV2
+    :type code: str or ~azure.ai.translation.documents.models.ErrorCodeV2
     :param message: Required. Gets high level error message.
     :type message: str
     :ivar target: Gets the source of the error.
@@ -363,7 +363,7 @@ class ErrorV2(msrest.serialization.Model):
      https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.
      This contains required properties ErrorCode, message and optional properties target,
      details(key value pair), inner error(this can be nested).
-    :type inner_error: ~azure.ai.documenttranslation.models.InnerErrorV2
+    :type inner_error: ~azure.ai.translation.documents.models.InnerErrorV2
     """
 
     _validation = {
@@ -449,7 +449,7 @@ class FileFormatListResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. list of objects.
-    :type value: list[~azure.ai.documenttranslation.models.FileFormat]
+    :type value: list[~azure.ai.translation.documents.models.FileFormat]
     """
 
     _validation = {
@@ -486,7 +486,7 @@ class Glossary(msrest.serialization.Model):
     :param version: Optional Version.  If not specified, default is used.
     :type version: str
     :param storage_source: Storage Source. Possible values include: "AzureBlob".
-    :type storage_source: str or ~azure.ai.documenttranslation.models.StorageSource
+    :type storage_source: str or ~azure.ai.translation.documents.models.StorageSource
     """
 
     _validation = {
@@ -537,7 +537,7 @@ This contains required properties ErrorCode, message and optional properties tar
      https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.
      This contains required properties ErrorCode, message and optional properties target,
      details(key value pair), inner error(this can be nested).
-    :type inner_error: ~azure.ai.documenttranslation.models.InnerErrorV2
+    :type inner_error: ~azure.ai.translation.documents.models.InnerErrorV2
     """
 
     _validation = {
@@ -577,12 +577,12 @@ class SourceInput(msrest.serialization.Model):
      documents.
     :type source_url: str
     :param filter:
-    :type filter: ~azure.ai.documenttranslation.models.DocumentFilter
+    :type filter: ~azure.ai.translation.documents.models.DocumentFilter
     :param language: Language code
      If none is specified, we will perform auto detect on the document.
     :type language: str
     :param storage_source: Storage Source. Possible values include: "AzureBlob".
-    :type storage_source: str or ~azure.ai.documenttranslation.models.StorageSource
+    :type storage_source: str or ~azure.ai.translation.documents.models.StorageSource
     """
 
     _validation = {
@@ -681,7 +681,7 @@ class StorageSourceListResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. list of objects.
-    :type value: list[str or ~azure.ai.documenttranslation.models.StorageSource]
+    :type value: list[str or ~azure.ai.translation.documents.models.StorageSource]
     """
 
     _validation = {
@@ -714,9 +714,9 @@ class TargetInput(msrest.serialization.Model):
     :param language: Required. Target Language.
     :type language: str
     :param glossaries: List of Glossary.
-    :type glossaries: list[~azure.ai.documenttranslation.models.Glossary]
+    :type glossaries: list[~azure.ai.translation.documents.models.Glossary]
     :param storage_source: Storage Source. Possible values include: "AzureBlob".
-    :type storage_source: str or ~azure.ai.documenttranslation.models.StorageSource
+    :type storage_source: str or ~azure.ai.translation.documents.models.StorageSource
     """
 
     _validation = {
