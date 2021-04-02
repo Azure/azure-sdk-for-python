@@ -25,11 +25,15 @@
 # --------------------------------------------------------------------------
 
 import logging
+from collections.abc import Iterable
 from .configuration import Configuration
 from .pipeline import AsyncPipeline
 from .pipeline.transport._base import PipelineClientBase
 from .pipeline.policies import (
-    ContentDecodePolicy, DistributedTracingPolicy, HttpLoggingPolicy, RequestIdPolicy
+    ContentDecodePolicy,
+    DistributedTracingPolicy,
+    HttpLoggingPolicy,
+    RequestIdPolicy,
 )
 
 try:
@@ -62,8 +66,14 @@ class AsyncPipelineClient(PipelineClientBase):
     :param str base_url: URL for the request.
     :keyword ~azure.core.configuration.Configuration config: If omitted, the standard configuration is used.
     :keyword Pipeline pipeline: If omitted, a Pipeline object is created and returned.
-    :keyword list[HTTPPolicy] policies: If omitted, the standard policies of the configuration object is used.
-    :keyword HttpTransport transport: If omitted, RequestsTransport is used for synchronous transport.
+    :keyword list[AsyncHTTPPolicy] policies: If omitted, the standard policies of the configuration object is used.
+    :keyword per_call_policies: If specified, the policies will be added into the policy list before RetryPolicy
+    :paramtype per_call_policies: Union[AsyncHTTPPolicy, SansIOHTTPPolicy,
+        list[AsyncHTTPPolicy], list[SansIOHTTPPolicy]]
+    :keyword per_retry_policies: If specified, the policies will be added into the policy list after RetryPolicy
+    :paramtype per_retry_policies: Union[AsyncHTTPPolicy, SansIOHTTPPolicy,
+        list[AsyncHTTPPolicy], list[SansIOHTTPPolicy]]
+    :keyword AsyncHttpTransport transport: If omitted, AioHttpTransport is used for synchronous transport.
     :return: An async pipeline object.
     :rtype: ~azure.core.pipeline.AsyncPipeline
 
@@ -101,16 +111,34 @@ class AsyncPipelineClient(PipelineClientBase):
         policies = kwargs.get('policies')
 
         if policies is None:  # [] is a valid policy list
+            per_call_policies = kwargs.get('per_call_policies', [])
+            per_retry_policies = kwargs.get('per_retry_policies', [])
             policies = [
                 RequestIdPolicy(**kwargs),
                 config.headers_policy,
                 config.user_agent_policy,
                 config.proxy_policy,
-                ContentDecodePolicy(**kwargs),
+                ContentDecodePolicy(**kwargs)
+            ]
+            if isinstance(per_call_policies, Iterable):
+                for policy in per_call_policies:
+                    policies.append(policy)
+            else:
+                policies.append(per_call_policies)
+
+            policies = policies + [
                 config.redirect_policy,
                 config.retry_policy,
                 config.authentication_policy,
-                config.custom_hook_policy,
+                config.custom_hook_policy
+            ]
+            if isinstance(per_retry_policies, Iterable):
+                for policy in per_retry_policies:
+                    policies.append(policy)
+            else:
+                policies.append(per_retry_policies)
+
+            policies = policies + [
                 config.logging_policy,
                 DistributedTracingPolicy(**kwargs),
                 config.http_logging_policy or HttpLoggingPolicy(**kwargs)
