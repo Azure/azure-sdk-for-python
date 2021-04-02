@@ -549,8 +549,8 @@ class AppConfigurationClientTest(AzureTestCase):
         assert changed_flag.enabled == True
 
         changed_flag.value = {}
-        assert changed_flag.enabled == True
-        assert changed_flag.value == {'enabled': True}
+        assert changed_flag.enabled == None
+        assert changed_flag.value == {}
 
         with pytest.raises(ValueError):
             set_flag.value = "bad_value"

@@ -142,9 +142,8 @@ class FeatureFlagConfigurationSetting(
     )
     kind = "FeatureFlag"
 
-    def __init__(self, key, enabled, filters=None, **kwargs):
+    def __init__(self, key, enabled, filters=[], **kwargs):  # pylint: disable=dangerous-default-value
         # type: (str, bool, Optional[List[Dict[str, Any]]]) -> None
-        self._enabled = enabled
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
         if not key.startswith(self.key_prefix):
             key = self.key_prefix + key
@@ -157,81 +156,64 @@ class FeatureFlagConfigurationSetting(
         self.etag = kwargs.get("etag", None)
         self.description = kwargs.get("description", None)
         self.display_name = kwargs.get("display_name", None)
-        self._filters = filters or []
-        self._value = kwargs.get("value", {})
+        self._value = kwargs.get("value", {"enabled": enabled, "conditions": {"client_filters": filters}})
+
+    def _validate(self):
+        # type: () -> None
+        if not self.key.startswith(self.key_prefix):
+            raise ValueError("All FeatureFlagConfigurationSettings should be prefixed with {}.".format(self.key_prefix))
+        if not (self._value is None or isinstance(self._value, dict)):
+            raise ValueError("Expect 'value' to be a dictionary.")
 
     @property
     def enabled(self):
-        # type: () -> bool
-        if self._value is None:
-            self._value = {"enabled": self._enabled}
-        elif not isinstance(self._value, dict):
-            raise AttributeError("value parameter is expected to be a dictionary")
-        else:
-            self._value["enabled"] = self._enabled
-        return self._enabled
+        # type: () -> Union[None, bool]
+        self._validate()
+        if self._value is None or "enabled" not in self._value:
+            return None
+        return self._value["enabled"]
 
     @enabled.setter
-    def enabled(self, value):
+    def enabled(self, new_value):
         # type: (bool) -> bool
+        self._validate()
         if self._value is None:
-            self._value = {"enabled": value}
-        elif not isinstance(self._value, dict):
-            raise AttributeError("value parameter is expected to be a dictionary")
-        else:
-            self._value["enabled"] = self._enabled
-        self._enabled = value
+            self._value = {}
+        self._value["enabled"] = new_value
+
+    @property
+    def filters(self):
+        # type: () -> Union[None, List[Any]]
+        self._validate()
+        if self._value is None:
+            return None
+        return self._value["conditions"]["client_filters"]
+
+    @filters.setter
+    def filters(self, new_filters):
+        # type: (List[Dict[str, Any]]) -> None
+        self._validate()
+        if self._value is None:
+            self._value = {}
+        try:
+            self._value["conditions"]["client_filters"] = new_filters
+        except KeyError:
+            self._value["conditions"] = {
+                "client_filters": new_filters
+            }
 
     @property
     def value(self):
         # type: () -> Dict[str, Any]
-        self._enabled = self._value.get("enabled") or self._enabled
+        self._validate()
         return self._value
 
     @value.setter
     def value(self, new_value):
         # type: (Dict[str, Any]) -> None
-        if not new_value:
-            new_value = {}
-        self._enabled = new_value.get("enabled") or self._enabled
+        if not isinstance(new_value, dict) and new_value is not None:
+            raise ValueError("Expect 'value' to be a dictionary.")
         self._value = new_value
-
-    @property
-    def filters(self):
-        # type: () -> List[Any]
-        if self._value is None:
-            self._value = {
-                "conditions": {
-                    "client_filters": [
-                        self._filters
-                    ]
-                }
-            }
-        elif not isinstance(self._value, dict):
-            raise AttributeError("value parameter is expected to be a dictionary")
-        else:
-            try:
-                self._value['conditions']['client_filters'] = self._filters
-            except KeyError:
-                self._value['conditions'] = {'client_filters': [self._filters]}
-        return self._filters
-
-    @filters.setter
-    def filters(self, new_filters):
-        if self._value is None:
-            self._value = {
-                "conditions": {
-                    "client_filters": new_filters
-                }
-            }
-        elif not isinstance(self._value, dict):
-            raise AttributeError("value parameter is expected to be a dictionary")
-        else:
-            try:
-                self._value['conditions']['client_filters'] = new_filters
-            except KeyError:
-                self._value['conditions'] = {'client_filters': new_filters}
-        self._filters = new_filters
 
     @classmethod
     def _from_generated(cls, key_value):
@@ -264,18 +246,18 @@ class FeatureFlagConfigurationSetting(
 
     def _to_generated(self):
         # type: (...) -> KeyValue
-        value = {
-            u"id": self.key,
-            u"description": self.description,
-            u"enabled": self._enabled,
-            u"conditions": {u"client_filters": self._filters},
-        }
-        value = json.dumps(value)
+        # value = {
+        #     u"id": self.key,
+        #     u"description": self.description,
+        #     u"enabled": self._enabled,
+        #     u"conditions": {u"client_filters": self._filters},
+        # }
+        # value = json.dumps(value)
 
         return KeyValue(
             key=self.key,
             label=self.label,
-            value=value,
+            value=self._value,
             content_type=self.content_type,
             last_modified=self.last_modified,
             tags=self.tags,
@@ -355,8 +337,8 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
 
     def _validate(self):
         # type: () -> None
-        if not isinstance(self._value, dict):
-            raise ValueError("Expect 'value' to be a dictionary.")
+        if not (self._value is None or isinstance(self._value, dict)):
+            raise ValueError("Expect 'value' to be a dictionary or None.")
 
     @property
     def value(self):
