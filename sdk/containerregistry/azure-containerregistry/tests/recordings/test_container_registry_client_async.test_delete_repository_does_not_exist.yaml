@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://fake_url.azurecr.io/acr/v1/not_real_repo
   response:
@@ -19,7 +19,7 @@ interactions:
       connection: keep-alive
       content-length: '209'
       content-type: application/json; charset=utf-8
-      date: Thu, 01 Apr 2021 19:12:36 GMT
+      date: Fri, 02 Apr 2021 16:23:59 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -38,7 +38,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/exchange
   response:
@@ -47,11 +47,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 01 Apr 2021 19:12:37 GMT
+      date: Fri, 02 Apr 2021 16:24:00 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.5'
+      x-ms-ratelimit-remaining-calls-per-second: '333.183333'
     status:
       code: 200
       message: OK
@@ -66,7 +66,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -75,11 +75,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 01 Apr 2021 19:12:37 GMT
+      date: Fri, 02 Apr 2021 16:24:00 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.483333'
+      x-ms-ratelimit-remaining-calls-per-second: '333.066667'
     status:
       code: 200
       message: OK
@@ -90,7 +90,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://fake_url.azurecr.io/acr/v1/not_real_repo
   response:
@@ -104,7 +104,7 @@ interactions:
       connection: keep-alive
       content-length: '121'
       content-type: application/json; charset=utf-8
-      date: Thu, 01 Apr 2021 19:12:37 GMT
+      date: Fri, 02 Apr 2021 16:24:00 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains

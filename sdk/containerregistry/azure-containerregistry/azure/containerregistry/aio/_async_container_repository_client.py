@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Any
 
 from azure.core.async_paging import AsyncItemPaged
 
@@ -44,8 +44,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         tag_props = await self.get_tag_properties(tag)
         return tag_props.digest
 
-    async def delete(self, **kwargs) -> None:
-        # type: (...) -> None
+    async def delete(self, **kwargs: Dict[str, Any]) -> None:
         """Delete a repository
 
         :returns: None
@@ -64,7 +63,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         raise NotImplementedError("Has not been implemented")
 
     async def delete_tag(self, tag: str, **kwargs) -> None:
-        """Delete a tag
+        """Delete a tag from a repository
 
         :param tag: The digest of the artifact to be deleted
         :type tag: str
