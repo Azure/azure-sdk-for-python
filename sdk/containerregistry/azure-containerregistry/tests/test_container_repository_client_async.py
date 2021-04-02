@@ -21,7 +21,7 @@ from azure.containerregistry.aio import (
     ContainerRepositoryClient,
     ContainerRegistryClient,
 )
-from azure.core.paging import ItemPaged
+from azure.core.async_paging import AsyncItemPaged
 
 from asynctestcase import AsyncContainerRegistryTestClass
 
@@ -67,7 +67,7 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
 
         tags = client.list_tags()
-        assert isinstance(tags, ItemPaged)
+        assert isinstance(tags, AsyncItemPaged)
         count = 0
         async for tag in tags:
             count += 1
@@ -84,7 +84,7 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
         page_count = 0
         async for page in pages.by_page():
             tag_count = 0
-            for tag in page:
+            async for tag in page:
                 tag_count += 1
             assert tag_count <= results_per_page
             page_count += 1
@@ -97,7 +97,7 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
 
         # TODO: This is giving time in ascending order
         tags = client.list_tags(order_by=TagOrderBy.LAST_UPDATE_TIME_DESCENDING)
-        assert isinstance(tags, ItemPaged)
+        assert isinstance(tags, AsyncItemPaged)
         last_updated_on = None
         count = 0
         async for tag in tags:
