@@ -51,7 +51,7 @@ class AcrBodyReplacer(RecordingProcessor):
                 v = REDACTED
             s[idx] = "=".join([k, v])
         s = "&".join(s)
-        return bytes(s, "utf-8")
+        return s.encode("utf-8")
 
     def _scrub_body_dict(self, body):
         new_body = copy.deepcopy(body)
