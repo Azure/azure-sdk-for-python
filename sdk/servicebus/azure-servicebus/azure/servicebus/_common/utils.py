@@ -267,8 +267,8 @@ def send_trace_context_manager(span_name=SPAN_NAME_SEND):
 
 
 @contextmanager
-def receive_trace_context_manager(receiver, message=None, span_name=SPAN_NAME_RECEIVE, links=None):
-    # type: (ReceiverMixin, Optional[Union[ServiceBusMessage, Iterable[ServiceBusMessage]]], str) -> Iterator[None]
+def receive_trace_context_manager(receiver, span_name=SPAN_NAME_RECEIVE, links=None):
+    # type: (ReceiverMixin, str, Sequence[Link]) -> Iterator[None]
     """Tracing"""
     span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
     if span_impl_type is None:
@@ -293,7 +293,7 @@ def trace_message(message, parent_span=None):
                 span_impl_type.get_current_span()
             )
             link = Link({
-                'traceparent': parent_span.get_trace_parent()
+                'traceparent': current_span.get_trace_parent()
             })
             with current_span.span(name=SPAN_NAME_MESSAGE, kind=SpanKind.PRODUCER, links=[link]) as message_span:
                 message_span.add_attribute(TRACE_NAMESPACE_PROPERTY, TRACE_NAMESPACE)

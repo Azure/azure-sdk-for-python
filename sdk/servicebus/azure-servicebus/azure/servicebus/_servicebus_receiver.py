@@ -174,7 +174,7 @@ class ServiceBusReceiver(
             try:
                 message = self._inner_next()
                 links = get_receive_links(message)
-                with receive_trace_context_manager(self, links=links) as receive_span:
+                with receive_trace_context_manager(self, links=links):
                     yield message
             except StopIteration:
                 break
@@ -199,7 +199,7 @@ class ServiceBusReceiver(
         # Normally this would wrap the yield of the iter, but for a direct next call we just trace imperitively.
         message = self._inner_next()
         links = get_receive_links(message)
-        with receive_trace_context_manager(self, links=links) as receive_span:
+        with receive_trace_context_manager(self, links=links):
             return message
 
     next = __next__  # for python2.7
@@ -599,7 +599,7 @@ class ServiceBusReceiver(
             operation_requires_timeout=True,
         )
         links = get_receive_links(messages)
-        with receive_trace_context_manager(self, links=links) as receive_span:
+        with receive_trace_context_manager(self, links=links):
             if (
                 self._auto_lock_renewer
                 and not self._session
@@ -669,7 +669,7 @@ class ServiceBusReceiver(
         links = get_receive_links(messages)
         with receive_trace_context_manager(
             self, span_name=SPAN_NAME_RECEIVE_DEFERRED, links=links
-        ) as receive_span:
+        ):
             if (
                 self._auto_lock_renewer
                 and not self._session
@@ -721,14 +721,14 @@ class ServiceBusReceiver(
         }
 
         self._populate_message_properties(message)
+        handler = functools.partial(mgmt_handlers.peek_op, receiver=self)
         messages = self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_PEEK_OPERATION, message, handler, timeout=timeout
         )
         links = get_receive_links(messages)
         with receive_trace_context_manager(
             self, span_name=SPAN_NAME_PEEK, links=links
-        ) as receive_span:
-            handler = functools.partial(mgmt_handlers.peek_op, receiver=self)
+        ):
             return messages
 
     def complete_message(self, message):

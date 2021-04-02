@@ -48,6 +48,7 @@ from .._common import mgmt_handlers
 from .._common.utils import (
     receive_trace_context_manager,
     utc_from_timestamp,
+    get_receive_links
 )
 from ._async_utils import create_authentication, get_running_loop
 
@@ -177,7 +178,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             try:
                 message = await self.receiver._inner_anext()
                 links = get_receive_links(message)
-                with receive_trace_context_manager(self.receiver, links=links) as receive_span:
+                with receive_trace_context_manager(self.receiver, links=links):
                     return message
             finally:
                 if original_timeout:
@@ -202,7 +203,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     async def __anext__(self):
         message = await self._inner_anext()
         links = get_receive_links(message)
-        with receive_trace_context_manager(self, links=links) as receive_span:
+        with receive_trace_context_manager(self, links=links):
             return message
 
     async def _iter_next(self):
@@ -597,7 +598,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             operation_requires_timeout=True,
         )
         links = get_receive_links(message)
-        with receive_trace_context_manager(self, links=links) as receive_span:
+        with receive_trace_context_manager(self, links=links):
             if (
                 self._auto_lock_renewer
                 and not self._session
@@ -669,7 +670,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         links = get_receive_links(message)
         with receive_trace_context_manager(
             self, span_name=SPAN_NAME_RECEIVE_DEFERRED, links=links
-        ) as receive_span:
+        ):
             if (
                 self._auto_lock_renewer
                 and not self._session
@@ -721,14 +722,14 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         }
 
         self._populate_message_properties(message)
+        handler = functools.partial(mgmt_handlers.peek_op, receiver=self)
         messages = await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_PEEK_OPERATION, message, handler, timeout=timeout
         )
         links = get_receive_links(message)
         with receive_trace_context_manager(
             self, span_name=SPAN_NAME_PEEK, links=links
-        ) as receive_span:
-            handler = functools.partial(mgmt_handlers.peek_op, receiver=self)
+        ):
             return messages
 
     async def complete_message(self, message):
