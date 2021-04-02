@@ -32,7 +32,7 @@ def sample_document_status_checks():
     import time
     # [START create_translation_job]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.documenttranslation import (
+    from azure.ai.translation.documents import (
         DocumentTranslationClient,
         DocumentTranslationInput,
         TranslationTarget

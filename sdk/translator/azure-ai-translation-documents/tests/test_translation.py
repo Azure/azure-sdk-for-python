@@ -12,7 +12,7 @@ from azure.storage.blob import ContainerClient
 from testcase import DocumentTranslationTest, Document
 from preparer import DocumentTranslationPreparer, \
     DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
-from azure.ai.documenttranslation import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
+from azure.ai.translation.documents import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
 

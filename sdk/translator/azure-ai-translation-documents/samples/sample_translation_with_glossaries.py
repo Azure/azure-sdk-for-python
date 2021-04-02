@@ -30,7 +30,7 @@ USAGE:
 def sample_translation_with_glossaries():
     import os
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.documenttranslation import (
+    from azure.ai.translation.documents import (
         DocumentTranslationClient,
         DocumentTranslationInput,
         TranslationTarget,

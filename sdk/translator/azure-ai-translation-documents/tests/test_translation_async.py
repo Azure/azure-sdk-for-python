@@ -12,8 +12,8 @@ from preparer import DocumentTranslationPreparer, \
     DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
 from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import ContainerClient
-from azure.ai.documenttranslation import DocumentTranslationInput, TranslationTarget
-from azure.ai.documenttranslation.aio import DocumentTranslationClient
+from azure.ai.translation.documents import DocumentTranslationInput, TranslationTarget
+from azure.ai.translation.documents.aio import DocumentTranslationClient
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
 

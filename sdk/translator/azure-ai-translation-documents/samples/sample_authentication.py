@@ -32,7 +32,7 @@ import os
 def sample_authentication_api_key():
     # [START create_dt_client_with_key]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.documenttranslation import DocumentTranslationClient
+    from azure.ai.translation.documents import DocumentTranslationClient
 
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]

@@ -44,7 +44,7 @@ class DocumentTranslationClient(object):
         :keyword api_version:
             The API version of the service to use for requests. It defaults to the latest service version.
             Setting to an older version may result in reduced feature compatibility.
-        :paramtype api_version: str or ~azure.ai.documenttranslation.DocumentTranslationApiVersion
+        :paramtype api_version: str or ~azure.ai.translation.documents.DocumentTranslationApiVersion
 
         .. admonition:: Example:
 
@@ -81,7 +81,7 @@ class DocumentTranslationClient(object):
         await self._client.__aexit__(*args)
 
     async def close(self) -> None:
-        """Close the :class:`~azure.ai.documenttranslation.aio.DocumentTranslationClient` session."""
+        """Close the :class:`~azure.ai.translation.documents.aio.DocumentTranslationClient` session."""
         await self._client.__aexit__()
 
     @distributed_trace_async
@@ -96,9 +96,9 @@ class DocumentTranslationClient(object):
         :param inputs: A list of translation inputs. Each individual input has a single
             source URL to documents and can contain multiple TranslationTargets (one for each language)
             for the destination to write translated documents.
-        :type inputs: List[~azure.ai.documenttranslation.DocumentTranslationInput]
+        :type inputs: List[~azure.ai.translation.documents.DocumentTranslationInput]
         :return: A JobStatusResult with information on the status of the translation job.
-        :rtype: ~azure.ai.documenttranslation.JobStatusResult
+        :rtype: ~azure.ai.translation.documents.JobStatusResult
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -141,7 +141,7 @@ class DocumentTranslationClient(object):
 
         :param str job_id: The translation job ID.
         :return: A JobStatusResult with information on the status of the translation job.
-        :rtype: ~azure.ai.documenttranslation.JobStatusResult
+        :rtype: ~azure.ai.translation.documents.JobStatusResult
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
 
@@ -176,7 +176,7 @@ class DocumentTranslationClient(object):
 
         :param str job_id: The translation job ID.
         :return: A JobStatusResult with information on the status of the translation job.
-        :rtype: ~azure.ai.documenttranslation.JobStatusResult
+        :rtype: ~azure.ai.translation.documents.JobStatusResult
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
             Will raise if validation fails on the input. E.g. insufficient permissions on the blob containers.
 
@@ -215,7 +215,7 @@ class DocumentTranslationClient(object):
         # type: (**Any) -> AsyncItemPaged[JobStatusResult]
         """List all the submitted translation jobs under the Document Translation resource.
 
-        :return: ~azure.core.paging.AsyncItemPaged[:class:`~azure.ai.documenttranslation.JobStatusResult`]
+        :return: ~azure.core.paging.AsyncItemPaged[:class:`~azure.ai.translation.documents.JobStatusResult`]
         :rtype: ~azure.core.paging.AsyncItemPaged
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -249,7 +249,7 @@ class DocumentTranslationClient(object):
         """List all the document statuses under a translation job.
 
         :param str job_id: The translation job ID.
-        :return: ~azure.core.paging.AsyncItemPaged[:class:`~azure.ai.documenttranslation.DocumentStatusResult`]
+        :return: ~azure.core.paging.AsyncItemPaged[:class:`~azure.ai.translation.documents.DocumentStatusResult`]
         :rtype: ~azure.core.paging.AsyncItemPaged
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -286,7 +286,7 @@ class DocumentTranslationClient(object):
         :param str job_id: The translation job ID.
         :param str document_id: The ID for the document.
         :return: A DocumentStatusResult with information on the status of the document.
-        :rtype: ~azure.ai.documenttranslation.DocumentStatusResult
+        :rtype: ~azure.ai.translation.documents.DocumentStatusResult
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
         document_status = await self._client.document_translation.get_document_status(job_id, document_id, **kwargs)

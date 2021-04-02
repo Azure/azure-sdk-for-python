@@ -7,7 +7,7 @@
 import functools
 from asynctestcase import AsyncDocumentTranslationTest
 from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
-from azure.ai.documenttranslation.aio import DocumentTranslationClient
+from azure.ai.translation.documents.aio import DocumentTranslationClient
 import pytest
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 

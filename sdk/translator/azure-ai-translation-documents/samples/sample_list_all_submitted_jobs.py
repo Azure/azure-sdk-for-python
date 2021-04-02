@@ -27,7 +27,7 @@ def sample_list_all_submitted_jobs():
     import os
     # [START list_all_jobs]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.documenttranslation import (
+    from azure.ai.translation.documents import (
         DocumentTranslationClient,
     )
 

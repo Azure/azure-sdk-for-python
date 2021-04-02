@@ -16,7 +16,7 @@ from azure_devtools.scenario_tests import (
     ReplayableTest
 )
 from azure.storage.blob import generate_container_sas, ContainerClient
-from azure.ai.documenttranslation import DocumentTranslationInput, TranslationTarget
+from azure.ai.translation.documents import DocumentTranslationInput, TranslationTarget
 
 
 class Document(object):
@@ -61,9 +61,9 @@ class DocumentTranslationTest(AzureTestCase):
         super(DocumentTranslationTest, self).__init__(method_name)
         self.vcr.match_on = ["path", "method", "query"]
         self.recording_processors.append(OperationLocationReplacer())
-        self.storage_name = os.getenv("DOCUMENTTRANSLATION_STORAGE_NAME", "redacted")
+        self.storage_name = os.getenv("TRANSLATOR_DOCUMENT_STORAGE_NAME", "redacted")
         self.storage_endpoint = "https://" + self.storage_name + ".blob.core.windows.net/"
-        self.storage_key = os.getenv("DOCUMENTTRANSLATION_STORAGE_KEY")
+        self.storage_key = os.getenv("TRANSLATOR_DOCUMENT_STORAGE_KEY")
         self.scrubber.register_name_pair(
             self.storage_endpoint, "https://redacted.blob.core.windows.net/"
         )

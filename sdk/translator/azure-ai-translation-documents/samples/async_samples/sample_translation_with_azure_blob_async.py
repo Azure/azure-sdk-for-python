@@ -38,8 +38,8 @@ import datetime
 import asyncio
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceExistsError
-from azure.ai.documenttranslation.aio import DocumentTranslationClient
-from azure.ai.documenttranslation import (
+from azure.ai.translation.documents.aio import DocumentTranslationClient
+from azure.ai.translation.documents import (
     DocumentTranslationInput,
     TranslationTarget
 )

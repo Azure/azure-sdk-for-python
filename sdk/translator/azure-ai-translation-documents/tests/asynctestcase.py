@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from testcase import DocumentTranslationTest, Document
-from azure.ai.documenttranslation import DocumentTranslationInput, TranslationTarget
+from azure.ai.translation.documents import DocumentTranslationInput, TranslationTarget
 
 class AsyncDocumentTranslationTest(DocumentTranslationTest):
 

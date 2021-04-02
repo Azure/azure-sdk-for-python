@@ -82,7 +82,7 @@ class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
         https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
     :keyword str category_id: Category / custom model ID for using custom translation.
     :keyword glossaries: Glossaries to apply to translation.
-    :paramtype glossaries: list[~azure.ai.documenttranslation.TranslationGlossary]
+    :paramtype glossaries: list[~azure.ai.translation.documents.TranslationGlossary]
     :keyword str storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
 
@@ -93,7 +93,7 @@ class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
         https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
     :ivar str category_id: Category / custom model ID for using custom translation.
     :ivar glossaries: Glossaries to apply to translation.
-    :vartype glossaries: list[~azure.ai.documenttranslation.TranslationGlossary]
+    :vartype glossaries: list[~azure.ai.translation.documents.TranslationGlossary]
     :ivar str storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
     """
@@ -144,7 +144,7 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
         documents.
     :param targets: Required. Location of the destination for the output. This is a list of
         TranslationTargets. Note that a TranslationTarget is required for each language code specified.
-    :type targets: list[~azure.ai.documenttranslation.TranslationTarget]
+    :type targets: list[~azure.ai.translation.documents.TranslationTarget]
     :keyword str source_language_code: Language code for the source documents.
         If none is specified, the source language will be auto-detected for each document.
     :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
@@ -154,7 +154,7 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
         translation. This is most often use for file extensions.
     :keyword storage_type: Storage type of the input documents source string. Possible values
         include: "Folder", "File".
-    :paramtype storage_type: str or ~azure.ai.documenttranslation.StorageInputType
+    :paramtype storage_type: str or ~azure.ai.translation.documents.StorageInputType
     :keyword str storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
 
@@ -162,7 +162,7 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
         documents.
     :ivar targets: Required. Location of the destination for the output. This is a list of
         TranslationTargets. Note that a TranslationTarget is required for each language code specified.
-    :vartype targets: list[~azure.ai.documenttranslation.TranslationTarget]
+    :vartype targets: list[~azure.ai.translation.documents.TranslationTarget]
     :ivar str source_language_code: Language code for the source documents.
         If none is specified, the source language will be auto-detected for each document.
     :ivar str prefix: A case-sensitive prefix string to filter documents in the source path for
@@ -172,7 +172,7 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
         translation. This is most often use for file extensions.
     :ivar storage_type: Storage type of the input documents source string. Possible values
         include: "Folder", "File".
-    :vartype storage_type: str or ~azure.ai.documenttranslation.StorageInputType
+    :vartype storage_type: str or ~azure.ai.translation.documents.StorageInputType
     :ivar str storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
     """
@@ -244,7 +244,7 @@ class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, to
 
     :ivar error: Returned if there is an error with the translation job.
         Includes error code, message, target.
-    :vartype error: ~azure.ai.documenttranslation.DocumentTranslationError
+    :vartype error: ~azure.ai.translation.documents.DocumentTranslationError
     :ivar int documents_total_count: Number of translations to be made on documents in the job.
     :ivar int documents_failed_count: Number of documents that failed translation.
         More details can be found by calling the :func:`~DocumentTranslationClient.list_all_document_statuses`
@@ -334,7 +334,7 @@ class DocumentStatusResult(object):  # pylint: disable=useless-object-inheritanc
         if successful.
     :ivar error: Returned if there is an error with the particular document.
         Includes error code, message, target.
-    :vartype error: ~azure.ai.documenttranslation.DocumentTranslationError
+    :vartype error: ~azure.ai.translation.documents.DocumentTranslationError
     :ivar float translation_progress: Progress of the translation if available.
         Value is between [0.0, 1.0].
     :ivar str id: Document Id.
