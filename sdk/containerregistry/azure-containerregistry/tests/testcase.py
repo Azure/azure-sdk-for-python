@@ -121,6 +121,7 @@ class ContainerRegistryTestClass(AzureTestCase):
     ):
         if not self.is_live:
             return
+
         registry = endpoint.split(".")[0]
         command = [
             "powershell.exe",
@@ -134,7 +135,7 @@ class ContainerRegistryTestClass(AzureTestCase):
             "-SourceRegistryUri",
             "'registry.hub.docker.com'",
             "-TargetTag",
-            "'hello-world:to_be_deleted'",
+            "'{}'".format(repository),
             "-Mode",
             "'Force'",
         ]
