@@ -30,3 +30,6 @@ These options are available for all perf tests:
 ## Tests
 - `BearerTokenPolicyTest` Runs a single request through `BearerTokenCredentialPolicy`,
   and a mock transport
+- `MemoryCacheRead` retrieves an access token from the default, in memory cache.
+  This is useful primarily as a baseline for `PersistentCacheRead`.
+- `PersistentCacheRead` retrives an access token from the persistent cache
