@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from testcase import DocumentTranslationTest
+from testcase import DocumentTranslationTest, Document
 from azure.ai.documenttranslation import DocumentTranslationInput, TranslationTarget
 
 class AsyncDocumentTranslationTest(DocumentTranslationTest):
@@ -39,7 +39,7 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
                 no need for async container clients!
             '''
             blob_data = b'This is some text'  
-            source_container_sas_url = self.create_source_container(data=blob_data)
+            source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
             target_container_sas_url = self.create_target_container()
 
             # prepare translation inputs

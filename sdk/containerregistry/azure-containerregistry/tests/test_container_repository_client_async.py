@@ -3,63 +3,51 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import functools
-import os
 import pytest
-import six
-import subprocess
-import time
 
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureTestCase
 
 from azure.containerregistry import (
-    ContentPermissions,
     DeletedRepositoryResult,
     RepositoryProperties,
+    ContentPermissions,
 )
 from azure.containerregistry.aio import ContainerRegistryClient, ContainerRepositoryClient
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
 
 from asynctestcase import AsyncContainerRegistryTestClass
-from testcase import AcrBodyReplacer
+from preparer import acr_preparer
 from constants import TO_BE_DELETED
 
 
-acr_preparer = functools.partial(
-    PowerShellPreparer,
-    "containerregistry",
-    containerregistry_baseurl="fake_url.azurecr.io",
-    containerregistry_resource_group="fake_rg",
-)
-
-
 class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
-
-    def __init__(self, method_name):
-        super(TestContainerRegistryClient, self).__init__(method_name)
-        self.vcr.match_on = ["path", "method", "query"]
-        self.recording_processors.append(AcrBodyReplacer())
-        self.repository = "hello-world"
-
     @acr_preparer()
     async def test_delete_tag(self, containerregistry_baseurl, containerregistry_resource_group):
-        self._import_tag_to_be_deleted(containerregistry_baseurl, resource_group=containerregistry_resource_group)
+        repo = self.get_resource_name("repo")
+        self._import_tag_to_be_deleted(containerregistry_baseurl, resource_group=containerregistry_resource_group, repository=repo, tag=TO_BE_DELETED)
 
-        client = self.create_repository_client(containerregistry_baseurl, "hello-world")
+        client = self.create_repository_client(containerregistry_baseurl, repo)
 
         tag = await client.get_tag_properties(TO_BE_DELETED)
         assert tag is not None
 
         await client.delete_tag(TO_BE_DELETED)
-        self.sleep(10)
+        self.sleep(5)
 
         with pytest.raises(ResourceNotFoundError):
             await client.get_tag_properties(TO_BE_DELETED)
 
     @acr_preparer()
+    async def test_delete_tag_does_not_exist(self, containerregistry_baseurl):
+        client = self.create_repository_client(containerregistry_baseurl, "hello-world")
+
+        with pytest.raises(ResourceNotFoundError):
+            await client.delete_tag(TO_BE_DELETED)
+
+    @acr_preparer()
     async def test_delete_repository(self, containerregistry_baseurl, containerregistry_resource_group):
-        self.import_repo_to_be_deleted(containerregistry_baseurl, resource_group=containerregistry_resource_group)
+        self.import_repo_to_be_deleted(containerregistry_baseurl, resource_group=containerregistry_resource_group, repository=TO_BE_DELETED)
 
         reg_client = self.create_registry_client(containerregistry_baseurl)
         existing_repos = []
@@ -86,9 +74,10 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     async def test_delete_registry_artifact(self, containerregistry_baseurl, containerregistry_resource_group):
-        self.import_repo_to_be_deleted(containerregistry_baseurl, resource_group=containerregistry_resource_group)
+        repository = self.get_resource_name("repo")
+        self.import_repo_to_be_deleted(containerregistry_baseurl, resource_group=containerregistry_resource_group, repository=repository)
 
-        repo_client = self.create_repository_client(containerregistry_baseurl, TO_BE_DELETED)
+        repo_client = self.create_repository_client(containerregistry_baseurl, repository)
 
         count = 0
         async for artifact in repo_client.list_registry_artifacts():
@@ -129,10 +118,10 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
 
         received = await client.get_tag_properties(tag_identifier)
 
-        assert received.content_permissions.can_write == False
-        assert received.content_permissions.can_read == False
-        assert received.content_permissions.can_list == False
-        assert received.content_permissions.can_delete == False
+        assert not received.content_permissions.can_write
+        assert not received.content_permissions.can_read
+        assert not received.content_permissions.can_list
+        assert not received.content_permissions.can_delete
 
     @acr_preparer()
     async def test_set_tag_properties_does_not_exist(self, containerregistry_baseurl):
@@ -166,10 +155,10 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
 
             received_permissions = await client.get_registry_artifact_properties(artifact.digest)
 
-            assert received_permissions.content_permissions.can_delete == False
-            assert received_permissions.content_permissions.can_read == False
-            assert received_permissions.content_permissions.can_list == False
-            assert received_permissions.content_permissions.can_write == False
+            assert not received_permissions.content_permissions.can_delete
+            assert not received_permissions.content_permissions.can_read
+            assert not received_permissions.content_permissions.can_list
+            assert not received_permissions.content_permissions.can_write
 
             break
 

@@ -5,6 +5,8 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 
+from azure.core.tracing.decorator import distributed_trace
+
 from ._base_client import ContainerRegistryBaseClient
 from ._helpers import _is_tag
 from ._models import RepositoryProperties, TagProperties, RegistryArtifactProperties
@@ -41,6 +43,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         tag_props = self.get_tag_properties(tag)
         return tag_props.digest
 
+    @distributed_trace
     def delete(self, **kwargs):
         # type: (...) -> None
         """Delete a repository
@@ -50,6 +53,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         self._client.container_registry.delete_repository(self.repository, **kwargs)
 
+    @distributed_trace
     def delete_registry_artifact(self, digest, **kwargs):
         # type: (str) -> None
         """Delete a registry artifact. A registry artifact can only be deleted from the digest
@@ -61,6 +65,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         self._client.container_registry_repository.delete_manifest(self.repository, digest, **kwargs)
 
+    @distributed_trace
     def delete_tag(self, tag, **kwargs):
         # type: (str) -> None
         """Delete a tag from a repository
@@ -72,6 +77,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         self._client.container_registry_repository.delete_tag(self.repository, tag, **kwargs)
 
+    @distributed_trace
     def get_properties(self, **kwargs):
         # type: (...) -> RepositoryProperties
         """Get the properties of a repository
@@ -84,6 +90,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             self._client.container_registry_repository.get_properties(self.repository, **kwargs)
         )
 
+    @distributed_trace
     def get_registry_artifact_properties(self, tag_or_digest, **kwargs):
         # type: (str, Dict[str, Any]) -> RegistryArtifactProperties
         """Get the properties of a registry artifact
@@ -102,6 +109,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             )
         )
 
+    @distributed_trace
     def get_tag_properties(self, tag, **kwargs):
         # type: (str, Dict[str, Any]) -> TagProperties
         """Get the properties for a tag
@@ -115,6 +123,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             self._client.container_registry_repository.get_tag_properties(self.repository, tag, **kwargs)
         )
 
+    @distributed_trace
     def list_registry_artifacts(self, **kwargs):
         # type: (...) -> ItemPaged[RegistryArtifactProperties]
         """List the artifacts for a repository
@@ -142,6 +151,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             ],
         )
 
+    @distributed_trace
     def list_tags(self, **kwargs):
         # type: (...) -> ItemPaged[TagProperties]
         """List the tags for a repository
@@ -163,6 +173,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             **kwargs
         )
 
+    @distributed_trace
     def set_manifest_properties(self, digest, permissions, **kwargs):
         # type: (str, ContentPermissions) -> None
         """Set the properties for a manifest
@@ -179,6 +190,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             self.repository, digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
         )
 
+    @distributed_trace
     def set_tag_properties(self, tag, permissions, **kwargs):
         # type: (str, ContentPermissions) -> None
         """Set the properties for a tag

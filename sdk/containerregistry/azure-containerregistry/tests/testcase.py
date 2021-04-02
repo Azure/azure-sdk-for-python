@@ -108,19 +108,21 @@ class ContainerRegistryTestClass(AzureTestCase):
         super(ContainerRegistryTestClass, self).__init__(method_name)
         self.vcr.match_on = ["path", "method", "query"]
         self.recording_processors.append(AcrBodyReplacer())
+        self.repository = "hello-world"
 
     def sleep(self, t):
         if self.is_live:
             time.sleep(t)
 
-    def _fake_sleep(self, *args, **kwargs):
-        pass
-
-    def import_repo_to_be_deleted(
-        self, endpoint, repository="to_be_deleted", resource_group="fake_rg", tag="to_be_deleted"
+    def _import_tag_to_be_deleted(
+        self, endpoint, repository="hello-world", resource_group="fake_rg", tag=None
     ):
         if not self.is_live:
             return
+
+        if tag:
+            repository = "{}:{}".format(repository, tag)
+
         registry = endpoint.split(".")[0]
         command = [
             "powershell.exe",
@@ -134,17 +136,20 @@ class ContainerRegistryTestClass(AzureTestCase):
             "-SourceRegistryUri",
             "'registry.hub.docker.com'",
             "-TargetTag",
-            "'{}:{}'".format(repository, tag),
+            "'{}'".format(repository),
             "-Mode",
             "'Force'",
         ]
         subprocess.check_call(command)
 
-    def _import_tag_to_be_deleted(
-        self, endpoint, repository="hello-world", resource_group="fake_rg"
+    def import_repo_to_be_deleted(
+        self, endpoint, repository="hello-world", resource_group="fake_rg", tag=None
     ):
         if not self.is_live:
             return
+
+        if tag:
+            repository = "{}:{}".format(repository, tag)
         registry = endpoint.split(".")[0]
         command = [
             "powershell.exe",
@@ -158,7 +163,7 @@ class ContainerRegistryTestClass(AzureTestCase):
             "-SourceRegistryUri",
             "'registry.hub.docker.com'",
             "-TargetTag",
-            "'hello-world:to_be_deleted'",
+            "'{}'".format(repository),
             "-Mode",
             "'Force'",
         ]
