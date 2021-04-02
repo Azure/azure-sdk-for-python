@@ -6,6 +6,9 @@
 
 - Added support for using `~azure.core.credentials.AzureSasCredential` as credential for authenticating producer and consumer clients.
 
+**Notes**
+- Updated azure-core dependency to 1.13.0.
+
 ## 5.3.1 (2021-03-09)
 
 This version will be the last version to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
