@@ -5,10 +5,17 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 
-from azure.core.async_paging import AsyncItemPaged
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    ResourceNotFoundError,
+    ResourceExistsError,
+    HttpResponseError,
+    map_error,
+)
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 
 from ._async_base_client import ContainerRegistryBaseClient
-from .._helpers import _is_tag
+from .._helpers import _is_tag, _parse_next_link
 from .._models import (
     ContentPermissions,
     RegistryArtifactProperties,
@@ -124,19 +131,79 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: ~azure.core.paging.AsyncItemPaged[RegistryArtifactProperties]
         :raises: None
         """
+        name = self.repository
         last = kwargs.pop("last", None)
         n = kwargs.pop("results_per_page", None)
         orderby = kwargs.pop("order_by", None)
-        return self._client.container_registry_repository.get_manifests(
-            self.repository,
-            last=last,
-            n=n,
-            orderby=orderby,
-            cls=lambda objs: [
-                RegistryArtifactProperties._from_generated(x) for x in objs  # pylint: disable=protected-access
-            ],
-            **kwargs
+        cls = kwargs.pop("cls", lambda objs: [RegistryArtifactProperties._from_generated(x) for x in objs])
+
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._client._serialize.header("accept", accept, 'str')
+
+            if not next_link:
+                # Construct URL
+                url = "/acr/v1/{name}/_manifests"
+                path_format_arguments = {
+                    'url': self._client._serialize.url("self._client._config.url", self._client._config.url, 'str', skip_quote=True),
+                    'name': self._client._serialize.url("name", name, 'str'),
+                }
+                url = self._client._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                if last is not None:
+                    query_parameters['last'] = self._client._serialize.query("last", last, 'str')
+                if n is not None:
+                    query_parameters['n'] = self._client._serialize.query("n", n, 'int')
+                if orderby is not None:
+                    query_parameters['orderby'] = self._client._serialize.query("orderby", orderby, 'str')
+
+                request = self._client._client.get(url, query_parameters, header_parameters)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                path_format_arguments = {
+                    'url': self._client._serialize.url("self._client._config.url", self._client._config.url, 'str', skip_quote=True),
+                    'name': self._client._serialize.url("name", name, 'str'),
+                }
+                url = self._client._client.format_url(url, **path_format_arguments)
+                request = self._client._client.get(url, query_parameters, header_parameters)
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._client._deserialize('AcrManifests', pipeline_response)
+            list_of_elem = deserialized.manifests
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            link = None
+            if "Link" in pipeline_response.http_response.headers.keys():
+                link = _parse_next_link(pipeline_response.http_response.headers["Link"])
+            return link, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                error = self._client._deserialize.failsafe_deserialize(_models.AcrErrors, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(
+            get_next, extract_data
         )
+
 
     def list_tags(self, **kwargs) -> AsyncItemPaged[TagProperties]:
         """List the tags for a repository

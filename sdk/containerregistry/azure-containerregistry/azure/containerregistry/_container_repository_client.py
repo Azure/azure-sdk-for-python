@@ -139,17 +139,6 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: ~azure.core.paging.ItemPaged[RegistryArtifactProperties]
         :raises: None
         """
-        # GET /acr/v1/{name}/_manifests
-        # last = kwargs.pop("last", None)
-        # n = kwargs.pop("results_per_page", None)
-        # orderby = kwargs.pop("order_by", None)
-        # return self._client.container_registry_repository.get_manifests(
-        #     self.repository,
-        #     last=last,
-        #     n=n,
-        #     orderby=orderby,
-        #     cls=lambda objs: [RegistryArtifactProperties._from_generated(x) for x in objs],
-        # )
         name = self.repository
         last = kwargs.pop("last", None)
         n = kwargs.pop("results_per_page", None)

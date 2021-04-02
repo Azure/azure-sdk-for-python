@@ -106,6 +106,7 @@ class ContainerRegistryTestClass(AzureTestCase):
         super(ContainerRegistryTestClass, self).__init__(method_name)
         self.vcr.match_on = ["path", "method", "query"]
         self.recording_processors.append(AcrBodyReplacer())
+        self.repository = "hello-world"
 
     def get_credential(self):
         if self.is_live:
