@@ -121,7 +121,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._client._deserialize(# pylint: disable=protected-access
+            deserialized = self._client._deserialize(  # pylint: disable=protected-access
                 "Repositories", pipeline_response
             )
             list_of_elem = deserialized.repositories
