@@ -142,12 +142,12 @@ class FeatureFlagConfigurationSetting(
     )
     kind = "FeatureFlag"
 
-    def __init__(self, key, enabled, filters=[], **kwargs):  # pylint: disable=dangerous-default-value
+    def __init__(self, feature_id, enabled, filters=[], **kwargs):  # pylint: disable=dangerous-default-value
         # type: (str, bool, Optional[List[Dict[str, Any]]]) -> None
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
-        if not key.startswith(self.key_prefix):
-            key = self.key_prefix + key
-        self.key = key
+        if not feature_id.startswith(self.key_prefix):
+            feature_id = self.key_prefix + feature_id
+        self.key = feature_id
         self.label = kwargs.get("label", None)
         self.content_type = kwargs.get("content_type", self._feature_flag_content_type)
         self.last_modified = kwargs.get("last_modified", None)
@@ -205,14 +205,11 @@ class FeatureFlagConfigurationSetting(
     @property
     def value(self):
         # type: () -> Dict[str, Any]
-        self._validate()
         return self._value
 
     @value.setter
     def value(self, new_value):
         # type: (Dict[str, Any]) -> None
-        if not isinstance(new_value, dict) and new_value is not None:
-            raise ValueError("Expect 'value' to be a dictionary.")
         self._value = new_value
 
     @classmethod
@@ -230,7 +227,7 @@ class FeatureFlagConfigurationSetting(
             filters = key_value.value["conditions"]["client_filters"]
 
             return cls(
-                key=key_value.key,
+                feature_id=key_value.key,
                 enabled=key_value.value["enabled"],
                 label=key_value.label,
                 content_type=key_value.content_type,
@@ -343,14 +340,11 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     @property
     def value(self):
         # type: () -> Dict[str, Any]
-        self._validate()
         return self._value
 
     @value.setter
     def value(self, value):
         # type: (Dict[str, Any]) -> None
-        if not isinstance(value, dict) and value is not None:
-            raise ValueError("Expect 'value' to be a dictionary.")
         self._value = value
 
     @classmethod

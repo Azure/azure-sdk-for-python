@@ -535,6 +535,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
         with pytest.raises(ValueError):
             set_flag.value = "bad_value"
+            _ = set_flag.enabled
 
         client.delete_configuration_setting(changed_flag.key)
 
@@ -559,6 +560,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
         with pytest.raises(ValueError):
             set_flag.value = "bad_value"
+            _ = set_flag.secret_uri
 
         client.delete_configuration_setting(secret_reference.key)
 
