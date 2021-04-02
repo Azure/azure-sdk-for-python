@@ -5,10 +5,33 @@
 # --------------------------------------------------------------------------
 import base64
 import hashlib
-from datetime import timezone
+import datetime
 import hmac
 from sys import version_info
 import six
+
+
+class UTC(datetime.tzinfo):
+    """Time Zone info for handling UTC"""
+
+    def utcoffset(self, dt):
+        """UTF offset for UTC is 0."""
+        return datetime.timedelta(0)
+
+    def tzname(self, dt):
+        """Timestamp representation."""
+        return "Z"
+
+    def dst(self, dt):
+        """No daylight saving for UTC."""
+        return datetime.timedelta(hours=1)
+
+
+try:
+    from datetime import timezone
+    TZ_UTC = timezone.utc  # type: ignore
+except ImportError:
+    TZ_UTC = UTC()  # type: ignore
 
 
 if version_info < (3,):
@@ -28,9 +51,14 @@ def _to_str(value):
 
 def _to_utc_datetime(value):
     try:
-        return value.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        value = value.astimezone(TZ_UTC)
     except ValueError:
-        return value.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        # Before Python 3.8, this raised for a naive datetime.
+        pass
+    try:
+        return value.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+    except ValueError:
+        return value.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def _encode_base64(data):

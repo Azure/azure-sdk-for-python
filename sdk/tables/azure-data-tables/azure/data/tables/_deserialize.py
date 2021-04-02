@@ -12,7 +12,7 @@ import datetime
 from azure.core.exceptions import ResourceExistsError
 
 from ._entity import EntityProperty, EdmType, TableEntity
-from ._common_conversion import _decode_base64_to_bytes
+from ._common_conversion import _decode_base64_to_bytes, TZ_UTC
 from ._error import TableErrorCode
 
 if TYPE_CHECKING:
@@ -92,13 +92,13 @@ def _from_entity_datetime(value):
     cleaned_value = clean_up_dotnet_timestamps(value)
     try:
         dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(
-            tzinfo=datetime.timezone.utc
+            tzinfo=TZ_UTC
         )
         dt_obj._service_value = value  # pylint:disable=protected-access
         return dt_obj
     except ValueError:
         return TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%SZ").replace(
-            tzinfo=datetime.timezone.utc
+            tzinfo=TZ_UTC
         )
 
 
