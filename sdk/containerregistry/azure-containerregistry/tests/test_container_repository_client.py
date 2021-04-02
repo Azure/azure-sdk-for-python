@@ -4,13 +4,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
-import functools
-import os
 import pytest
-import subprocess
-import time
 
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureTestCase
 
 from azure.containerregistry import (
     ContainerRepositoryClient,
@@ -25,23 +21,10 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
 
 from testcase import ContainerRegistryTestClass, AcrBodyReplacer, FakeTokenCredential
-
-acr_preparer = functools.partial(
-    PowerShellPreparer,
-    "containerregistry",
-    containerregistry_baseurl="fake_url.azurecr.io",
-    containerregistry_resource_group="fake_rg",
-)
+from preparer import acr_preparer
 
 
 class TestContainerRepositoryClient(ContainerRegistryTestClass):
-
-    def __init__(self, method_name):
-        super(TestContainerRepositoryClient, self).__init__(method_name)
-        self.vcr.match_on = ["path", "method", "query"]
-        self.recording_processors.append(AcrBodyReplacer())
-        self.repository = "hello-world"
-
     @acr_preparer()
     def test_delete_tag(self, containerregistry_baseurl, containerregistry_resource_group):
         self._import_tag_to_be_deleted(containerregistry_baseurl, resource_group=containerregistry_resource_group)
