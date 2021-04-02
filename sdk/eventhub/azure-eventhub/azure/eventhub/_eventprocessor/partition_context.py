@@ -88,6 +88,7 @@ class PartitionContext(object):
                             "The provided checkpointstore method 'update_checkpoint' does not accept keyword arguments,"
                             " so keyword arguments will be ignored. Please update method signature to support kwargs."
                         )
+                        self._checkpoint_store.update_checkpoint(checkpoint)
                     else:
                         raise e
         else:
