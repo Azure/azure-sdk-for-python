@@ -101,13 +101,13 @@ class BlobCheckpointStore(CheckpointStore):
         return result
 
     async def _upload_ownership(
-        self, ownership: Dict[str, Any], metadata: Dict[str, str]
+        self, ownership: Dict[str, Any], metadata: Dict[str, str], **kwargs: Any
     ) -> None:
         etag = ownership.get("etag")
         if etag:
-            etag_match = {"if_match": etag}
+            kwargs["if_match"] = etag
         else:
-            etag_match = {"if_none_match": "*"}
+            kwargs["if_none_match"] = "*"
         blob_name = "{}/{}/{}/ownership/{}".format(
             ownership["fully_qualified_namespace"],
             ownership["eventhub_name"],
@@ -117,11 +117,11 @@ class BlobCheckpointStore(CheckpointStore):
         blob_name = blob_name.lower()
         blob_client = self._get_blob_client(blob_name)
         try:
-            uploaded_blob_properties = await blob_client.set_blob_metadata(metadata, **etag_match)
+            uploaded_blob_properties = await blob_client.set_blob_metadata(metadata, **kwargs)
         except ResourceNotFoundError:
             logger.info("Upload ownership blob %r because it hasn't existed in the container yet.", blob_name)
             uploaded_blob_properties = await blob_client.upload_blob(
-                data=UPLOAD_DATA, overwrite=True, metadata=metadata, **etag_match
+                data=UPLOAD_DATA, overwrite=True, metadata=metadata, **kwargs
             )
         ownership["etag"] = uploaded_blob_properties["etag"]
         ownership["last_modified_time"] = uploaded_blob_properties[
@@ -129,7 +129,7 @@ class BlobCheckpointStore(CheckpointStore):
         ].timestamp()
         ownership.update(metadata)
 
-    async def _claim_one_partition(self, ownership: Dict[str, Any]) -> Dict[str, Any]:
+    async def _claim_one_partition(self, ownership: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
         partition_id = ownership["partition_id"]
         namespace = ownership["fully_qualified_namespace"]
         eventhub_name = ownership["eventhub_name"]
@@ -137,7 +137,7 @@ class BlobCheckpointStore(CheckpointStore):
         owner_id = ownership["owner_id"]
         metadata = {"ownerid": owner_id}
         try:
-            await self._upload_ownership(ownership, metadata)
+            await self._upload_ownership(ownership, metadata, **kwargs)
             return ownership
         except (ResourceModifiedError, ResourceExistsError):
             logger.info(
@@ -166,7 +166,7 @@ class BlobCheckpointStore(CheckpointStore):
             return ownership  # Keep the ownership if an unexpected error happens
 
     async def list_ownership(
-        self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str
+        self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str, **kwargs: Any
     ) -> Iterable[Dict[str, Any]]:
         """Retrieves a complete ownership list from the storage blob.
 
@@ -193,7 +193,7 @@ class BlobCheckpointStore(CheckpointStore):
                 fully_qualified_namespace, eventhub_name, consumer_group
             )
             blobs = self._container_client.list_blobs(
-                name_starts_with=blob_prefix.lower(), include=["metadata"]
+                name_starts_with=blob_prefix.lower(), include=["metadata"], **kwargs
             )
             result = []
             async for blob in blobs:
@@ -223,7 +223,7 @@ class BlobCheckpointStore(CheckpointStore):
             raise
 
     async def claim_ownership(
-        self, ownership_list: Iterable[Dict[str, Any]]
+        self, ownership_list: Iterable[Dict[str, Any]], **kwargs: Any
     ) -> Iterable[Dict[str, Any]]:
         """Tries to claim ownership for a list of specified partitions.
 
@@ -242,14 +242,14 @@ class BlobCheckpointStore(CheckpointStore):
                   on storage implementation.
         """
         results = await asyncio.gather(
-            *[self._claim_one_partition(x) for x in ownership_list],
+            *[self._claim_one_partition(x, **kwargs) for x in ownership_list],
             return_exceptions=True
         )
         return [
             ownership for ownership in results if not isinstance(ownership, Exception)
         ]
 
-    async def update_checkpoint(self, checkpoint: Dict[str, Any]) -> None:
+    async def update_checkpoint(self, checkpoint: Dict[str, Any], **kwargs: Any) -> None:
         """Updates the checkpoint using the given information for the offset, associated partition and
         consumer group in the storage blob.
 
@@ -284,7 +284,7 @@ class BlobCheckpointStore(CheckpointStore):
         blob_name = blob_name.lower()
         blob_client = self._get_blob_client(blob_name)
         try:
-            await blob_client.set_blob_metadata(metadata)
+            await blob_client.set_blob_metadata(metadata, **kwargs)
         except ResourceNotFoundError:
             logger.info("Upload checkpoint blob %r because it hasn't existed in the container yet.", blob_name)
             await blob_client.upload_blob(
@@ -292,7 +292,7 @@ class BlobCheckpointStore(CheckpointStore):
             )
 
     async def list_checkpoints(
-        self, fully_qualified_namespace, eventhub_name, consumer_group
+        self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs
     ):
         """List the updated checkpoints from the storage blob.
 
@@ -316,7 +316,7 @@ class BlobCheckpointStore(CheckpointStore):
             fully_qualified_namespace, eventhub_name, consumer_group
         )
         blobs = self._container_client.list_blobs(
-            name_starts_with=blob_prefix.lower(), include=["metadata"]
+            name_starts_with=blob_prefix.lower(), include=["metadata"], **kwargs
         )
         result = []
         async for blob in blobs:
