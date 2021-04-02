@@ -5,6 +5,8 @@
 ### New Features
 
 - Added `azure.core.credentials.AzureNamedKeyCredential` credential #17548.
+- Added `azure.core.pipeline.policies.ChallengeAuthenticationPolicy` and
+  `.AsyncChallengeAuthenticationPolicy`
 
 ## 1.13.0 (2021-04-02)
 
