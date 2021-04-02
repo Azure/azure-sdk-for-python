@@ -6,6 +6,8 @@
 from typing import Any, Dict, TYPE_CHECKING
 
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._async_base_client import ContainerRegistryBaseClient
 from ._async_container_repository_client import ContainerRepositoryClient
@@ -32,6 +34,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         self._credential = credential
         super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, **kwargs)
 
+    @distributed_trace_async
     async def delete_repository(self, repository: str, **kwargs: Dict[str, Any]) -> DeletedRepositoryResult:
         """Delete a repository
 
@@ -43,12 +46,14 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         result = await self._client.container_registry.delete_repository(repository, **kwargs)
         return DeletedRepositoryResult._from_generated(result)  # pylint: disable=protected-access
 
+    @distributed_trace
     def list_repositories(self, **kwargs) -> AsyncItemPaged[str]:
 
         return self._client.container_registry.get_repositories(
             last=kwargs.pop("last", None), n=kwargs.pop("page_size", None), **kwargs
         )
 
+    @distributed_trace_async
     def get_repository_client(self, name: str, **kwargs) -> ContainerRepositoryClient:
 
         return ContainerRepositoryClient(self._endpoint, name, self._credential, **kwargs)

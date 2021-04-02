@@ -71,14 +71,14 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         repo_client = self.create_repository_client(containerregistry_baseurl, TO_BE_DELETED)
 
         count = 0
-        async for artifact in await repo_client.list_registry_artifacts():
+        async for artifact in repo_client.list_registry_artifacts():
             if count == 0:
                 await repo_client.delete_registry_artifact(artifact.digest)
             count += 1
         assert count > 0
 
         artifacts = []
-        async for a in await repo_client.list_registry_artifacts():
+        async for a in repo_client.list_registry_artifacts():
             artifacts.append(a)
 
         assert len(artifacts) > 0
