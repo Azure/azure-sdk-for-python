@@ -184,7 +184,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace_async
-    async def set_tag_properties(self, tag_or_digest: str, permissions: ContentPermissions, **kwargs) -> None:
+    async def set_tag_properties(self, tag: str, permissions: ContentPermissions, **kwargs) -> None:
         """Set the properties for a tag
 
         :param tag: Tag to set properties for
@@ -194,12 +194,6 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: None
         """
-        if _is_tag(tag_or_digest):
-            tag_or_digest = self._get_digest_from_tag(tag_or_digest)
-
-        await self._client.container_registry_repository.update_manifest_attributes(
-            self.repository,
-            tag_or_digest,
-            value=permissions._to_generated(),  # pylint: disable=protected-access
-            **kwargs
+        await self._client.container_registry_repository.update_tag_attributes(
+            self.repository, tag, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
         )

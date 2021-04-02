@@ -76,11 +76,11 @@ class RegistryArtifactProperties(object):
             created_on=generated.created_on,
             digest=generated.digest,
             last_updated_on=generated.last_updated_on,
-            manifest_properties=generated.manifest_properties,
             operating_system=generated.operating_system,
             registry_artifacts=generated.registry_artifacts,
             size=generated.size,
             tags=generated.tags,
+            content_permissions=generated.manifest_properties,
         )
 
 
