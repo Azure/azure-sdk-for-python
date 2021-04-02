@@ -1,25 +1,29 @@
 interactions:
 - request:
-    body: null
+    body: '{"deleteEnabled": false}'
     headers:
       Accept:
       - application/json
+      Content-Length:
+      - '24'
+      Content-Type:
+      - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog
+      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: PATCH
+    uri: https://fake_url.azurecr.io/acr/v1/repoe5c92023/_tags/does_not_exist
   response:
     body:
       string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"registry","Name":"catalog","Action":"*"}]}]}
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"repoe5c92023","Action":"metadata_write"}]}]}
 
         '
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '196'
+      content-length: '216'
       content-type: application/json; charset=utf-8
-      date: Thu, 01 Apr 2021 20:48:49 GMT
+      date: Fri, 02 Apr 2021 19:46:28 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -28,7 +32,7 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankane.azurecr.io/acr/v1/_catalog
+    url: https://seankane.azurecr.io/acr/v1/repoe5c92023/_tags/does_not_exist
 - request:
     body:
       access_token: REDACTED
@@ -38,7 +42,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/exchange
   response:
@@ -47,11 +51,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 01 Apr 2021 20:48:50 GMT
+      date: Fri, 02 Apr 2021 19:46:29 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '333.316667'
+      x-ms-ratelimit-remaining-calls-per-second: '333'
     status:
       code: 200
       message: OK
@@ -60,13 +64,13 @@ interactions:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
-      scope: registry:catalog:*
+      scope: repository:repoe5c92023:metadata_write
       service: seankane.azurecr.io
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -75,41 +79,46 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 01 Apr 2021 20:48:50 GMT
+      date: Fri, 02 Apr 2021 19:46:29 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '333.3'
+      x-ms-ratelimit-remaining-calls-per-second: '332.85'
     status:
       code: 200
       message: OK
     url: https://seankane.azurecr.io/oauth2/token
 - request:
-    body: null
+    body: '{"deleteEnabled": false}'
     headers:
       Accept:
       - application/json
+      Content-Length:
+      - '24'
+      Content-Type:
+      - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/0.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog
+      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: PATCH
+    uri: https://fake_url.azurecr.io/acr/v1/repoe5c92023/_tags/does_not_exist
   response:
     body:
-      string: '{"repositories":["alpine/git","debian","hello-world","library/hello-world","repo160e197b","repo308e19dd","repo9b321760","repob7cc1bf8","ubuntu"]}
+      string: '{"errors":[{"code":"TAG_UNKNOWN","message":"the specified tag does
+        not exist"}]}
 
         '
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '146'
+      content-length: '81'
       content-type: application/json; charset=utf-8
-      date: Thu, 01 Apr 2021 20:48:50 GMT
+      date: Fri, 02 Apr 2021 19:46:29 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
     status:
-      code: 200
-      message: OK
-    url: https://seankane.azurecr.io/acr/v1/_catalog
+      code: 404
+      message: Not Found
+    url: https://seankane.azurecr.io/acr/v1/repoe5c92023/_tags/does_not_exist
 version: 1
