@@ -341,27 +341,35 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     @property
     def secret_uri(self):
         # type: () -> str
-        self._value['secret_uri'] = self._secret_uri
-        return self._secret_uri
+        self._validate()
+        return self._value['secret_uri']
 
     @secret_uri.setter
     def secret_uri(self, value):
-        self._value['secret_uri'] = value
-        self._secret_uri = value
+        if self._value is None or isinstance(self._value, dict):
+            if self._value is None:
+                self._value = {}
+            self._value["secret_uri"] = value
+        else:
+            raise ValueError("Expect 'value' to be a dictionary.")
+
+    def _validate(self):
+        # type: () -> None
+        if not isinstance(self._value, dict):
+            raise ValueError("Expect 'value' to be a dictionary.")
 
     @property
     def value(self):
-        # type: () -> str
-        self._secret_uri = self._value['secret_uri']
+        # type: () -> Dict[str, Any]
+        self._validate()
         return self._value
 
     @value.setter
-    def value(self, new_value):
-        # type: (dict) -> None
-        if not new_value:
-            new_value = {"secret_uri": None}
-        self._secret_uri = new_value.get("secret_uri") or self._secret_uri
-        self._value = new_value
+    def value(self, value):
+        # type: (Dict[str, Any]) -> None
+        if not isinstance(value, dict) and value is not None:
+            raise ValueError("Expect 'value' to be a dictionary.")
+        self._value = value
 
     @classmethod
     def _from_generated(cls, key_value):
