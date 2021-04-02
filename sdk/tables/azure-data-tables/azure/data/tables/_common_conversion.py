@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import base64
 import hashlib
+from datetime import timezone
 import hmac
 from sys import version_info
 import six
@@ -17,8 +18,6 @@ if version_info < (3,):
             return value.encode("utf-8")
 
         return str(value)
-
-
 else:
     _str = str
 
@@ -29,9 +28,9 @@ def _to_str(value):
 
 def _to_utc_datetime(value):
     try:
-        return value.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        return value.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
     except ValueError:
-        return value.strftime("%Y-%m-%dT%H:%M:%SZ")
+        return value.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def _encode_base64(data):
