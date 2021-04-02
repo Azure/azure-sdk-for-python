@@ -548,7 +548,4 @@ class IterStreamer(object):
         if count >= size:
             self.leftover = data[size:]
 
-        if count == size:
-            self.leftover = b""
-
         return data[:size]
