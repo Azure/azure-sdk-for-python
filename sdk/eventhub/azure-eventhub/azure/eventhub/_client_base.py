@@ -173,9 +173,11 @@ class AzureSasTokenCredential(object):
     """
     def __init__(self, azure_sas_credential):
         # type: (AzureSasCredential) -> None
-        """
-        :param str token: The shared access token string
-        :param float expiry: The epoch timestamp
+        """The shared access token credential used for authentication
+         when AzureSasCredential is provided.
+
+        :param azure_sas_credential: The credential to be used for authentication.
+        :type azure_sas_credential: ~azure.core.credentials.AzureSasCredential
         """
         self._credential = azure_sas_credential
         self.token_type = b"servicebus.windows.net:sastoken"

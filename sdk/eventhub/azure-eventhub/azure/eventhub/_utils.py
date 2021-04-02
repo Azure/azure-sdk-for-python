@@ -276,4 +276,4 @@ def parse_sas_credential(credential):
         return (sas, expiry)
     except AttributeError:
         pass
-    return ()
+    raise ValueError("Invalid sas token.")
