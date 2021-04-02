@@ -89,7 +89,6 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         message = message_type(
             message=received, receive_mode=self._receive_mode, receiver=self
         )
-        get_receive_links(message)
         self._last_received_sequenced_number = message.sequence_number
         return message
 
