@@ -35,6 +35,7 @@ if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
     from uamqp import Message
     from azure.core.tracing import AbstractSpan
+    from azure.core.credentials import AzureSasCredential
     from ._common import EventData
 
 _LOGGER = logging.getLogger(__name__)
@@ -275,3 +276,4 @@ def parse_sas_credential(credential):
         return (sas, expiry)
     except AttributeError:
         pass
+    return ()

@@ -191,7 +191,7 @@ class AzureSasTokenCredential(object):
 
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
-        # type: (str, str, TokenCredential, Any) -> None
+        # type: (str, str, Union[AzureSasCredential, TokenCredential], Any) -> None
         self.eventhub_name = eventhub_name
         if not eventhub_name:
             raise ValueError("The eventhub name can not be None or empty.")
@@ -199,9 +199,9 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._address = _Address(hostname=fully_qualified_namespace, path=path)
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         if isinstance(credential, AzureSasCredential):
-            self._credential =  AzureSasTokenCredential(credential)
+            self._credential = AzureSasTokenCredential(credential)
         else:
-            self._credential = credential
+            self._credential = cast(TokenCredential, credential)
         self._keep_alive = kwargs.get("keep_alive", 30)
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
         self._mgmt_target = "amqps://{}/{}".format(

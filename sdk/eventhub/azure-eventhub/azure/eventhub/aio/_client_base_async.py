@@ -112,14 +112,14 @@ class ClientBaseAsync(ClientBase):
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        credential: "TokenCredential",
+        credential: Union[TokenCredential, AzureSasCredential],
         **kwargs: Any
     ) -> None:
         self._loop = kwargs.pop("loop", None)
         if isinstance(credential, AzureSasCredential):
-            self._credential =  AzureSasTokenCredential(credential)
+            self._credential = AzureSasTokenCredential(credential)
         else:
-            self._credential = credential
+            self._credential = cast(TokenCredential, credential)
         super(ClientBaseAsync, self).__init__(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
