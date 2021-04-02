@@ -72,7 +72,7 @@ description = "Microsoft Azure Cognitive Services Anomaly Detector Client Librar
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-ai-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -91,7 +91,7 @@ description = "Microsoft Azure Azure Document Translation Package Client Library
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-ai-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -112,7 +112,7 @@ description = "Microsoft Azure Form Recognizer Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-ai-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -133,7 +133,7 @@ description = "Microsoft Azure Metrics Advisor Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-ai-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -164,7 +164,7 @@ description = "Microsoft Azure Text Analytics Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-ai-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -180,12 +180,12 @@ url = "sdk/textanalytics/azure-ai-textanalytics"
 
 [[package]]
 name = "azure-appconfiguration"
-version = "1.1.2"
+version = "1.2.0b1"
 description = "Microsoft App Configuration Data Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-core = ">=1.2.2,<2.0.0"
@@ -208,7 +208,7 @@ description = "Microsoft Azure Application Insights Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -226,7 +226,7 @@ description = "Microsoft Azure Batch Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -245,7 +245,7 @@ description = "Microsoft Azure Cognitive Services Anomaly Detector Client Librar
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -263,7 +263,7 @@ description = "Microsoft Azure Cognitive Services Form Recognizer Client Library
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -281,7 +281,7 @@ description = ""
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-nspkg = ">=3.0.0"
@@ -297,7 +297,7 @@ description = "Microsoft Azure QnA Maker Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-knowledge-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -315,7 +315,7 @@ description = "Microsoft Azure Cognitive Services LUIS Client Library for Python
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-language-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -334,7 +334,7 @@ description = ""
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-nspkg = ">=3.0.0"
@@ -350,7 +350,7 @@ description = "Microsoft Azure Cognitive Services Spellcheck Client Library for 
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-language-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -368,7 +368,7 @@ description = "Microsoft Azure Cognitive Services Text Analytics Client Library 
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-language-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -386,7 +386,7 @@ description = ""
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-nspkg = ">=3.0.0"
@@ -402,7 +402,7 @@ description = "Microsoft Azure Personalizer Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -420,7 +420,7 @@ description = "Microsoft Azure Auto Suggest Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-search-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -439,7 +439,7 @@ description = "Microsoft Azure Cognitive Services Custom Image Search Client Lib
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-search-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -457,7 +457,7 @@ description = "Microsoft Azure Cognitive Services Custom Search Client Library f
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-search-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -475,7 +475,7 @@ description = "Microsoft Azure Cognitive Services Entity Search Client Library f
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-search-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -494,7 +494,7 @@ description = "Microsoft Azure Cognitive Services Image Search Client Library fo
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-search-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -513,7 +513,7 @@ description = "Microsoft Azure Cognitive Services News Search Client Library for
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-search-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -532,7 +532,7 @@ description = ""
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-nspkg = ">=3.0.0"
@@ -548,7 +548,7 @@ description = "Microsoft Azure Cognitive Services Video Search Client Library fo
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-search-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -567,7 +567,7 @@ description = "Microsoft Azure Cognitive Services Visual Search Client Library f
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-search-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -585,7 +585,7 @@ description = "Microsoft Azure Cognitive Services Web Search Client Library for 
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-search-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -604,7 +604,7 @@ description = "Microsoft Azure Cognitive Services Computer Vision Client Library
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-vision-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -622,7 +622,7 @@ description = "Microsoft Azure Cognitive Services Content Moderator Client Libra
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-vision-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -640,7 +640,7 @@ description = "Microsoft Azure Custom Vision Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-vision-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -658,7 +658,7 @@ description = "Microsoft Azure Cognitive Services Face Client Library for Python
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-vision-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -676,7 +676,7 @@ description = ""
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-cognitiveservices-nspkg = ">=3.0.0"
@@ -692,7 +692,7 @@ description = "Microsoft Azure Client Library for Python (Common)"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -708,7 +708,7 @@ description = "Microsoft Azure Communication Chat Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-communication-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -728,7 +728,7 @@ description = "Microsoft Azure Communication Identity Service Client Library for
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-communication-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -746,7 +746,7 @@ description = ""
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-nspkg = ">=2.0.0"
@@ -762,7 +762,7 @@ description = "Microsoft Azure Communication Phone Numbers Client Library for Py
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-communication-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -780,7 +780,7 @@ description = "Microsoft Azure Communication SMS Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-communication-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -800,7 +800,7 @@ description = "Microsoft Azure Azure Container Registry Client Library for Pytho
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-core = ">=1.4.0,<2.0.0"
@@ -817,7 +817,7 @@ description = "Microsoft Azure Core Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -837,7 +837,7 @@ description = "Microsoft Azure Azure Core Opencensus plugin Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-core = ">=1.0.0,<2.0.0"
@@ -857,7 +857,7 @@ description = "Microsoft Azure Azure Core OpenTelemetry plugin Library for Pytho
 category = "main"
 optional = false
 python-versions = ">=3.5.0"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-core = ">=1.0.0,<2.0.0"
@@ -874,7 +874,7 @@ description = "Microsoft Azure Cosmos Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-core = ">=1.0.0,<2.0.0"
@@ -905,7 +905,7 @@ description = "Microsoft Azure Azure Data Tables Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-core = ">=1.10.0,<2.0.0"
@@ -926,7 +926,7 @@ description = "Microsoft Azure Azure DigitalTwins Core Client Library for Python
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-core = ">=1.2.2,<2.0.0"
@@ -947,7 +947,7 @@ description = ""
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-nspkg = ">=2.0.0"
@@ -963,7 +963,7 @@ description = "Microsoft Azure Event Grid Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-core = ">=1.12.0,<2.0.0"
@@ -981,7 +981,7 @@ description = "Microsoft Azure Event Hubs Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-core = ">=1.5.0,<2.0.0"
@@ -1000,7 +1000,7 @@ description = "Microsoft Azure Event Hubs checkpointer implementation with Blob 
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-core = ">=1.10.0,<2.0.0"
@@ -1022,7 +1022,7 @@ description = "Microsoft Azure Event Hubs checkpointer implementation with Blob 
 category = "main"
 optional = false
 python-versions = ">=3.5.3"
-develop = false
+develop = true
 
 [package.dependencies]
 aiohttp = ">=3.0,<4.0"
@@ -1042,7 +1042,7 @@ description = "Microsoft Azure Graph RBAC Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1061,7 +1061,7 @@ description = "Microsoft Azure Identity Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-core = ">=1.0.0,<2.0.0"
@@ -1083,7 +1083,7 @@ description = "Microsoft Azure Device Update Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1102,7 +1102,7 @@ description = ""
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-nspkg = ">=2.0.0"
@@ -1118,7 +1118,7 @@ description = ""
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-keyvault-certificates = ">=4.1,<5.0"
@@ -1136,7 +1136,7 @@ description = "Microsoft Azure Key Vault Administration Client Library for Pytho
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1157,7 +1157,7 @@ description = "Microsoft Azure Key Vault Certificates Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1178,7 +1178,7 @@ description = "Microsoft Azure Key Vault Keys Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1201,7 +1201,7 @@ description = ""
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-nspkg = ">=3.0.0"
@@ -1217,7 +1217,7 @@ description = "Microsoft Azure Key Vault Secrets Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1238,7 +1238,7 @@ description = "Microsoft Azure Log Analytics Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1256,7 +1256,7 @@ description = "Microsoft Azure Media Live Video Analytics Edge SDK Library for P
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-media-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -1275,7 +1275,7 @@ description = ""
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-nspkg = ">=3.0.0"
@@ -1291,7 +1291,7 @@ description = "Microsoft Azure Advisor Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1310,7 +1310,7 @@ description = "Microsoft Azure Alerts Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1329,7 +1329,7 @@ description = "Microsoft Azure API Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1348,7 +1348,7 @@ description = "Microsoft Azure App Configuration Management Client Library for P
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1367,7 +1367,7 @@ description = "Microsoft Azure Application Insights Management Client Library fo
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1386,7 +1386,7 @@ description = "Microsoft Azure MyService Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1405,7 +1405,7 @@ description = "Microsoft Azure MyService Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1424,7 +1424,7 @@ description = "Microsoft Azure Authorization Management Client Library for Pytho
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1443,7 +1443,7 @@ description = "Microsoft Azure Auto Manage Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1462,7 +1462,7 @@ description = "Microsoft Azure Automation Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1481,7 +1481,7 @@ description = "Microsoft Azure Azureadb2c Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1500,7 +1500,7 @@ description = "Microsoft Azure AzureStack Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1519,7 +1519,7 @@ description = "Microsoft Azure AzureStackHCI Management Client Library for Pytho
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1538,7 +1538,7 @@ description = "Microsoft Azure MyService Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1557,7 +1557,7 @@ description = "Microsoft Azure Batch Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1576,7 +1576,7 @@ description = "Microsoft Azure Billing Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1595,7 +1595,7 @@ description = "Microsoft Azure Bot Service Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1614,7 +1614,7 @@ description = "Microsoft Azure CDN Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1633,7 +1633,7 @@ description = "Microsoft Azure Cognitive Services Management Client Library for 
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1652,7 +1652,7 @@ description = "Microsoft Azure Commerce Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1671,7 +1671,7 @@ description = "Microsoft Azure Communication Management Client Library for Pytho
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1690,7 +1690,7 @@ description = "Microsoft Azure Compute Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1709,7 +1709,7 @@ description = "Microsoft Azure Confluent Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1728,7 +1728,7 @@ description = "Microsoft Azure Consumption Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1747,7 +1747,7 @@ description = "Microsoft Azure Container Instance Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1766,7 +1766,7 @@ description = "Microsoft Azure Container Registry Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1785,7 +1785,7 @@ description = "Microsoft Azure Container Service Management Client Library for P
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1804,7 +1804,7 @@ description = "Microsoft Azure Management Core Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-core = ">=1.9.0,<2.0.0"
@@ -1822,7 +1822,7 @@ description = "Microsoft Azure Cosmos DB Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1841,7 +1841,7 @@ description = "Microsoft Azure Cost Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1860,7 +1860,7 @@ description = "Microsoft Azure CustomProviders Management Client Library for Pyt
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1879,7 +1879,7 @@ description = "Microsoft Azure DataBox Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1898,7 +1898,7 @@ description = "Microsoft Azure MyService Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1917,7 +1917,7 @@ description = "Microsoft Azure Databricks Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1936,7 +1936,7 @@ description = "Microsoft Azure Datadog Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1955,7 +1955,7 @@ description = "Microsoft Azure Data Factory Management Client Library for Python
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1974,7 +1974,7 @@ description = "Microsoft Azure Data Lake Analytics Management Client Library for
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -1993,7 +1993,7 @@ description = ""
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-mgmt-nspkg = ">=3.0.0"
@@ -2009,7 +2009,7 @@ description = "Microsoft Azure Data Lake Store Management Client Library for Pyt
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2028,7 +2028,7 @@ description = "Microsoft Azure Data Migration Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2047,7 +2047,7 @@ description = "Microsoft Azure MyService Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2066,7 +2066,7 @@ description = "Microsoft Azure Deployment Manager Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2085,7 +2085,7 @@ description = "Microsoft Azure Deviceupdate Management Client Library for Python
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2104,7 +2104,7 @@ description = "Microsoft Azure Dev Spaces Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2123,7 +2123,7 @@ description = "Microsoft Azure DevTestLabs Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2142,7 +2142,7 @@ description = "Microsoft Azure DigitalTwins Management Client Library for Python
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2161,7 +2161,7 @@ description = "Microsoft Azure DNS Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2180,7 +2180,7 @@ description = "Microsoft Azure DocumentDB Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1.5,<1.2.0"
@@ -2197,7 +2197,7 @@ description = "Microsoft Azure Data Box Edge / Data Box Gateway Client Library f
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2216,7 +2216,7 @@ description = "Microsoft Azure EventGrid Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2235,7 +2235,7 @@ description = "Microsoft Azure EventHub Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2254,7 +2254,7 @@ description = "Microsoft Azure Extendedlocation Management Client Library for Py
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2273,7 +2273,7 @@ description = "Microsoft Azure Front Door Service Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2292,7 +2292,7 @@ description = "Microsoft Azure SAP Hana on Azure Management Client Library for P
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2311,7 +2311,7 @@ description = "Microsoft Azure HDInsight Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2330,7 +2330,7 @@ description = "Microsoft Azure Health Bot Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2349,7 +2349,7 @@ description = "Microsoft Azure MyService Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2368,7 +2368,7 @@ description = "Microsoft Azure Hybrid Compute Management Client Library for Pyth
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2387,7 +2387,7 @@ description = "Microsoft Azure HybridKubernetes Management Client Library for Py
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2406,7 +2406,7 @@ description = "Microsoft Azure Image Builder Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2425,7 +2425,7 @@ description = "Microsoft Azure IoTCentral Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2444,7 +2444,7 @@ description = "Microsoft Azure IoTHub Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2463,7 +2463,7 @@ description = "Microsoft Azure IoTHub Provisioning Services Client Library for P
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2482,7 +2482,7 @@ description = "Microsoft Azure MyService Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2501,7 +2501,7 @@ description = "Microsoft Azure Kubernetes Configuration Management Client Librar
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2520,7 +2520,7 @@ description = "Microsoft Azure Kusto Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2539,7 +2539,7 @@ description = "Microsoft Azure Lab Services Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2558,7 +2558,7 @@ description = "Microsoft Azure Log Analytics Management Client Library for Pytho
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2577,7 +2577,7 @@ description = "Microsoft Azure Logic Apps Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2596,7 +2596,7 @@ description = "Microsoft Azure Machine Learning Compute Management Client Librar
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2615,7 +2615,7 @@ description = "Microsoft Azure Machine Learning Services Management Client Libra
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2634,7 +2634,7 @@ description = "Microsoft Azure MyService Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2653,7 +2653,7 @@ description = "Microsoft Azure Managed Services Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2672,7 +2672,7 @@ description = "Microsoft Azure Management Groups Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2691,7 +2691,7 @@ description = "Microsoft Azure ManagementPartner Management Client Library for P
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2710,7 +2710,7 @@ description = "Microsoft Azure Maps Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2729,7 +2729,7 @@ description = "Microsoft Azure Market Place Ordering Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2748,7 +2748,7 @@ description = "Microsoft Azure Media Services Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2767,7 +2767,7 @@ description = "Microsoft Azure Mixed Reality Management Client Library for Pytho
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2786,7 +2786,7 @@ description = "Microsoft Azure Monitor Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2805,7 +2805,7 @@ description = "Microsoft Azure MSI Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2824,7 +2824,7 @@ description = "Microsoft Azure NetApp Files Management Client Library for Python
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2843,7 +2843,7 @@ description = "Microsoft Azure Network Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2862,7 +2862,7 @@ description = "Microsoft Azure Notification Hubs Management Client Library for P
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2881,7 +2881,7 @@ description = ""
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-nspkg = ">=3.0.0"
@@ -2897,7 +2897,7 @@ description = "Microsoft Azure MyService Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2916,7 +2916,7 @@ description = "Microsoft Azure Peering Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2935,7 +2935,7 @@ description = "Microsoft Azure Policy Insights Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2954,7 +2954,7 @@ description = "Microsoft Azure Portal Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2973,7 +2973,7 @@ description = "Microsoft Azure PowerBIDedicated Management Client Library for Py
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -2992,7 +2992,7 @@ description = "Microsoft Azure Power BI Embedded Management Client Library for P
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3011,7 +3011,7 @@ description = "Microsoft Azure DNS Private Zones Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3030,7 +3030,7 @@ description = "Microsoft Azure Purview Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3049,7 +3049,7 @@ description = "Microsoft Azure Quantum Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3068,7 +3068,7 @@ description = "Microsoft Azure RDBMS Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3087,7 +3087,7 @@ description = "Microsoft Azure Recovery Services Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3106,7 +3106,7 @@ description = "Microsoft Azure Recovery Services Backup Management Client Librar
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3125,7 +3125,7 @@ description = "Microsoft Azure Red Hat Openshift Management Client Library for P
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3144,7 +3144,7 @@ description = "Microsoft Azure Redis Cache Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3163,7 +3163,7 @@ description = "Microsoft Azure Redisenterprise Management Client Library for Pyt
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3182,7 +3182,7 @@ description = "Microsoft Azure MyService Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3201,7 +3201,7 @@ description = "Microsoft Azure Relay Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3220,7 +3220,7 @@ description = "Microsoft Azure Reservations Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3239,7 +3239,7 @@ description = "Microsoft Azure Resource Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3258,7 +3258,7 @@ description = "Microsoft Azure Resource Graph Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3277,7 +3277,7 @@ description = "Microsoft Azure Resource Mover Management Client Library for Pyth
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3296,7 +3296,7 @@ description = "Microsoft Azure Scheduler Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3315,7 +3315,7 @@ description = "Microsoft Azure Search Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3334,7 +3334,7 @@ description = "Microsoft Azure Security Center Management Client Library for Pyt
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3353,7 +3353,7 @@ description = "Microsoft Azure SecurityInsight Management Client Library for Pyt
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3372,7 +3372,7 @@ description = "Microsoft Azure SerialConsole Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3391,7 +3391,7 @@ description = "Microsoft Azure Server Manager Management Client Library for Pyth
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3410,7 +3410,7 @@ description = "Microsoft Azure Service Bus Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3429,7 +3429,7 @@ description = "Microsoft Azure Service Fabric Management Client Library for Pyth
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3448,7 +3448,7 @@ description = "Microsoft Azure Servicefabricmanagedclusters Management Client Li
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3467,7 +3467,7 @@ description = "Microsoft Azure SignalR Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3486,7 +3486,7 @@ description = "Microsoft Azure SQL Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3505,7 +3505,7 @@ description = "Microsoft Azure SQL Virtual Machine Management Client Library for
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3524,7 +3524,7 @@ description = "Microsoft Azure Storage Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3543,7 +3543,7 @@ description = "Microsoft Azure MyService Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3562,7 +3562,7 @@ description = "Microsoft Azure StorageImportExport Management Client Library for
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3581,7 +3581,7 @@ description = "Microsoft Azure Storage Sync Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3600,7 +3600,7 @@ description = "Microsoft Azure Stream Analytics Management Client Library for Py
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3619,7 +3619,7 @@ description = "Microsoft Azure Subscription Management Client Library for Python
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3638,7 +3638,7 @@ description = "Microsoft Azure Support Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3657,7 +3657,7 @@ description = "Microsoft Azure Synapse Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3676,7 +3676,7 @@ description = "Microsoft Azure TimeSeriesInsights Management Client Library for 
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3695,7 +3695,7 @@ description = "Microsoft Azure Traffic Manager Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3714,7 +3714,7 @@ description = "Microsoft Azure MyService Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3733,7 +3733,7 @@ description = "Microsoft Azure Web Apps Management Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3752,7 +3752,7 @@ description = "Microsoft Azure Workloadmonitor Management Client Library for Pyt
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3771,7 +3771,7 @@ description = "Microsoft Azure Mixed Reality Authentication Client Library for P
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-core = ">=1.4.0,<2.0.0"
@@ -3790,7 +3790,7 @@ description = ""
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-nspkg = ">=2.0.0"
@@ -3814,7 +3814,7 @@ description = "Microsoft Azure Schema Registry Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-core = ">=1.2.2,<2.0.0"
@@ -3832,7 +3832,7 @@ description = "Microsoft Azure Cognitive Search Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3855,7 +3855,7 @@ description = ""
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-nspkg = ">=3.0.0"
@@ -3871,7 +3871,7 @@ description = "Microsoft Azure Attestation Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-core = ">=1.8.2,<2.0.0"
@@ -3889,7 +3889,7 @@ description = ""
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-nspkg = ">=3.0.0"
@@ -3905,7 +3905,7 @@ description = "Microsoft Azure Service Bus Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3928,7 +3928,7 @@ description = "Microsoft Azure Service Fabric Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -3946,7 +3946,7 @@ description = "Microsoft Azure Blob Storage Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-core = ">=1.10.0,<2.0.0"
@@ -3968,7 +3968,7 @@ description = "Microsoft Azure Storage Blob ChangeFeed Client Library for Python
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-storage-blob = ">=12.5.0,<13.0.0"
@@ -3988,7 +3988,7 @@ description = "Microsoft Azure File DataLake Storage Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-core = ">=1.10.0,<2.0.0"
@@ -4010,7 +4010,7 @@ description = "Microsoft Azure Azure File Share Storage Client Library for Pytho
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-core = ">=1.10.0,<2.0.0"
@@ -4032,7 +4032,7 @@ description = ""
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-nspkg = ">=2.0.0"
@@ -4048,7 +4048,7 @@ description = "Microsoft Azure Azure Queue Storage Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-core = ">=1.10.0,<2.0.0"
@@ -4070,7 +4070,7 @@ description = "Microsoft Azure Synapse Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-core = ">=1.2.2,<2.0.0"
@@ -4088,7 +4088,7 @@ description = "Microsoft Azure Synapse AccessControl Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -4107,7 +4107,7 @@ description = "Microsoft Azure Synapse Artifacts Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -4126,7 +4126,7 @@ description = "Microsoft Azure Synapse Managed Private Endpoints Client Library 
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -4145,7 +4145,7 @@ description = "Microsoft Azure Synapse Monitoring Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -4164,7 +4164,7 @@ description = ""
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-nspkg = ">=2.0.0"
@@ -4180,7 +4180,7 @@ description = "Microsoft Azure Synapse Spark Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-common = ">=1.1,<2.0"
@@ -4199,7 +4199,7 @@ description = "Microsoft Azure Template Package Client Library for Python"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
+develop = true
 
 [package.dependencies]
 azure-nspkg = {version = "*", markers = "python_version < \"3.0\""}
@@ -4895,7 +4895,7 @@ typing-extensions = {version = ">=3.7.4", markers = "python_version < \"3.8\""}
 [metadata]
 lock-version = "1.1"
 python-versions = "^2.7 || >=3.6"
-content-hash = "e2f7860fe7c8fe1401349576348bccac1e65565d0aa3b3f820be0967cfeeaed5"
+content-hash = "6696b63773dd5beff6d84a274a2f475a7fe63eafe075dd528ea28d698263a59d"
 
 [metadata.files]
 adal = [
