@@ -50,6 +50,7 @@ setup(
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
         'azure.ai',
+        'azure.ai.translation'
     ]),
     install_requires=[
         "azure-core<2.0.0,>=1.10.0",
@@ -57,7 +58,7 @@ setup(
         'six>=1.11.0'
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-ai-nspkg'],
+        ":python_version<'3.0'": ['azure-ai-translation-nspkg'],
         ":python_version<'3.5'": ['typing'],
     },
     project_urls={
