@@ -136,7 +136,9 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         last = kwargs.pop("last", None)
         n = kwargs.pop("results_per_page", None)
         orderby = kwargs.pop("order_by", None)
-        cls = kwargs.pop("cls", lambda objs: [RegistryArtifactProperties._from_generated(x) for x in objs])  # pylint: disable=protected-access
+        cls = kwargs.pop(
+            "cls", lambda objs: [RegistryArtifactProperties._from_generated(x) for x in objs]  # pylint: disable=protected-access
+        )
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
@@ -145,14 +147,19 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters["Accept"] = self._client._serialize.header("accept", accept, "str")  # pylint: disable=protected-access
+            header_parameters["Accept"] = self._client._serialize.header(  # pylint: disable=protected-access
+                "accept", accept, "str"
+            )
 
             if not next_link:
                 # Construct URL
                 url = "/acr/v1/{name}/_manifests"
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
-                        "self._client._config.url", self._client._config.url, "str", skip_quote=True  # pylint: disable=protected-access
+                        "self._client._config.url",
+                        self._client._config.url,  # pylint: disable=protected-access
+                        "str",
+                        skip_quote=True,
                     ),
                     "name": self._client._serialize.url("name", name, "str"),  # pylint: disable=protected-access
                 }
@@ -160,28 +167,43 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 if last is not None:
-                    query_parameters["last"] = self._client._serialize.query("last", last, "str")  # pylint: disable=protected-access
+                    query_parameters["last"] = self._client._serialize.query(  # pylint: disable=protected-access
+                        "last", last, "str"
+                    )
                 if n is not None:
-                    query_parameters["n"] = self._client._serialize.query("n", n, "int")  # pylint: disable=protected-access
+                    query_parameters["n"] = self._client._serialize.query(  # pylint: disable=protected-access
+                        "n", n, "int"
+                    )
                 if orderby is not None:
-                    query_parameters["orderby"] = self._client._serialize.query("orderby", orderby, "str")  # pylint: disable=protected-access
+                    query_parameters["orderby"] = self._client._serialize.query(  # pylint: disable=protected-access
+                        "orderby", orderby, "str"
+                    )
 
-                request = self._client._client.get(url, query_parameters, header_parameters)  # pylint: disable=protected-access
+                request = self._client._client.get(  # pylint: disable=protected-access
+                    url, query_parameters, header_parameters
+                )
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
-                        "self._client._config.url", self._client._config.url, "str", skip_quote=True  # pylint: disable=protected-access
+                        "self._client._config.url",
+                        self._client._config.url,  # pylint: disable=protected-access
+                        "str",
+                        skip_quote=True,
                     ),
                     "name": self._client._serialize.url("name", name, "str"),  # pylint: disable=protected-access
                 }
                 url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
-                request = self._client._client.get(url, query_parameters, header_parameters)  # pylint: disable=protected-access
+                request = self._client._client.get(  # pylint: disable=protected-access
+                    url, query_parameters, header_parameters
+                )
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._client._deserialize("AcrManifests", pipeline_response)  # pylint: disable=protected-access
+            deserialized = self._client._deserialize(  # pylint: disable=protected-access
+                "AcrManifests", pipeline_response
+            )
             list_of_elem = deserialized.manifests
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -193,11 +215,15 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._client._pipeline.run(request, stream=False, **kwargs)  # pylint: disable=protected-access
+            pipeline_response = await self._client._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._client._deserialize.failsafe_deserialize(AcrErrors, response)  # pylint: disable=protected-access
+                error = self._client._deserialize.failsafe_deserialize(  # pylint: disable=protected-access
+                    AcrErrors, response
+                )
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -220,7 +246,9 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         n = kwargs.pop("results_per_page", None)
         orderby = kwargs.pop("order_by", None)
         digest = kwargs.pop("digest", None)
-        cls = kwargs.pop("cls", lambda objs: [TagProperties._from_generated(o) for o in objs])  # pylint: disable=protected-access
+        cls = kwargs.pop(
+            "cls", lambda objs: [TagProperties._from_generated(o) for o in objs]  # pylint: disable=protected-access
+        )
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
@@ -229,14 +257,19 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters["Accept"] = self._client._serialize.header("accept", accept, "str")  # pylint: disable=protected-access
+            header_parameters["Accept"] = self._client._serialize.header(  # pylint: disable=protected-access
+                "accept", accept, "str"
+            )
 
             if not next_link:
                 # Construct URL
                 url = "/acr/v1/{name}/_tags"
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
-                        "self._client._config.url", self._client._config.url, "str", skip_quote=True  # pylint: disable=protected-access
+                        "self._client._config.url",
+                        self._client._config.url,  # pylint: disable=protected-access
+                        "str",
+                        skip_quote=True,
                     ),
                     "name": self._client._serialize.url("name", name, "str"),  # pylint: disable=protected-access
                 }
@@ -244,26 +277,41 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 if last is not None:
-                    query_parameters["last"] = self._client._serialize.query("last", last, "str")  # pylint: disable=protected-access
+                    query_parameters["last"] = self._client._serialize.query(  # pylint: disable=protected-access
+                        "last", last, "str"
+                    )
                 if n is not None:
-                    query_parameters["n"] = self._client._serialize.query("n", n, "int")  # pylint: disable=protected-access
+                    query_parameters["n"] = self._client._serialize.query(  # pylint: disable=protected-access
+                        "n", n, "int"
+                    )
                 if orderby is not None:
-                    query_parameters["orderby"] = self._client._serialize.query("orderby", orderby, "str")  # pylint: disable=protected-access
+                    query_parameters["orderby"] = self._client._serialize.query(  # pylint: disable=protected-access
+                        "orderby", orderby, "str"
+                    )
                 if digest is not None:
-                    query_parameters["digest"] = self._client._serialize.query("digest", digest, "str")  # pylint: disable=protected-access
+                    query_parameters["digest"] = self._client._serialize.query(  # pylint: disable=protected-access
+                        "digest", digest, "str"
+                    )
 
-                request = self._client._client.get(url, query_parameters, header_parameters)  # pylint: disable=protected-access
+                request = self._client._client.get(  # pylint: disable=protected-access
+                    url, query_parameters, header_parameters
+                )
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
-                        "self._client._config.url", self._client._config.url, "str", skip_quote=True  # pylint: disable=protected-access
+                        "self._client._config.url",
+                        self._client._config.url,  # pylint: disable=protected-access
+                        "str",
+                        skip_quote=True,
                     ),
                     "name": self._client._serialize.url("name", name, "str"),  # pylint: disable=protected-access
                 }
                 url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
-                request = self._client._client.get(url, query_parameters, header_parameters)  # pylint: disable=protected-access
+                request = self._client._client.get(  # pylint: disable=protected-access
+                    url, query_parameters, header_parameters
+                )
             return request
 
         async def extract_data(pipeline_response):
@@ -279,11 +327,15 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._client._pipeline.run(request, stream=False, **kwargs)  # pylint: disable=protected-access
+            pipeline_response = await self._client._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._client._deserialize.failsafe_deserialize(AcrErrors, response)  # pylint: disable=protected-access
+                error = self._client._deserialize.failsafe_deserialize(  # pylint: disable=protected-access
+                    AcrErrors, response
+                )
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
