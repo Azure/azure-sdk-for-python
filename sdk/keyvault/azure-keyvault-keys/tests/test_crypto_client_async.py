@@ -16,6 +16,7 @@ from azure.keyvault.keys.crypto._key_validity import _UTC
 from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local_cryptography_provider
 from azure.keyvault.keys.crypto.aio import CryptographyClient, EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
+from devtools_testutils import PowerShellPreparer
 from parameterized import parameterized, param
 import pytest
 
@@ -134,6 +135,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         return key_vault_key
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
     async def test_ec_key_id(self, **kwargs):
         """When initialized with a key ID, the client should retrieve the key and perform public operations locally"""
         is_hsm = kwargs.pop("is_hsm")
@@ -153,6 +155,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         await crypto_client.verify(SignatureAlgorithm.es256, hashlib.sha256(self.plaintext).digest(), self.plaintext)
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
     async def test_rsa_key_id(self, **kwargs):
         """When initialized with a key ID, the client should retrieve the key and perform public operations locally"""
         is_hsm = kwargs.pop("is_hsm")
@@ -174,6 +177,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         await crypto_client.wrap_key(KeyWrapAlgorithm.rsa_oaep, self.plaintext)
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
     async def test_encrypt_and_decrypt(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(is_hsm)
@@ -194,6 +198,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         self.assertEqual(self.plaintext, result.plaintext)
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
     async def test_sign_and_verify(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(is_hsm)
@@ -218,6 +223,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         self.assertTrue(verified.is_valid)
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
     async def test_wrap_and_unwrap(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(is_hsm)
@@ -238,6 +244,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         result = await crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
         self.assertEqual(key_bytes, result.key)
 
+    @PowerShellPreparer("keyvault")
     async def test_symmetric_encrypt_and_decrypt_mhsm(self, **kwargs):
         """Encrypt and decrypt with the service"""
         is_hsm = True
@@ -282,6 +289,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
                 else:
                     assert result.plaintext == self.plaintext
 
+    @PowerShellPreparer("keyvault")
     async def test_symmetric_wrap_and_unwrap_mhsm(self, **kwargs):
         is_hsm = True
         self._skip_if_not_configured(is_hsm)
@@ -301,6 +309,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         assert result.key == self.plaintext
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
     async def test_encrypt_local(self, **kwargs):
         """Encrypt locally, decrypt with Key Vault"""
         is_hsm = kwargs.pop("is_hsm")
@@ -321,6 +330,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
             self.assertEqual(result.plaintext, self.plaintext)
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
     async def test_encrypt_local_from_jwk(self, **kwargs):
         """Encrypt locally, decrypt with Key Vault"""
         is_hsm = kwargs.pop("is_hsm")
@@ -341,6 +351,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
             result = await crypto_client.decrypt(result.algorithm, result.ciphertext)
             self.assertEqual(result.plaintext, self.plaintext)
 
+    @PowerShellPreparer("keyvault")
     async def test_symmetric_encrypt_local_mhsm(self, **kwargs):
         """Encrypt locally, decrypt with the service"""
         is_hsm = True
@@ -373,6 +384,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         assert decrypt_result.algorithm == algorithm
         assert decrypt_result.plaintext == self.plaintext
 
+    @PowerShellPreparer("keyvault")
     async def test_symmetric_decrypt_local_mhsm(self, **kwargs):
         """Encrypt with the service, decrypt locally"""
         is_hsm = True
@@ -407,6 +419,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         assert decrypt_result.plaintext == self.plaintext
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
     async def test_wrap_local(self, **kwargs):
         """Wrap locally, unwrap with Key Vault"""
         is_hsm = kwargs.pop("is_hsm")
@@ -426,6 +439,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
             self.assertEqual(result.key, self.plaintext)
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
     async def test_wrap_local_from_jwk(self, **kwargs):
         """Wrap locally, unwrap with Key Vault"""
         is_hsm = kwargs.pop("is_hsm")
@@ -446,6 +460,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
             self.assertEqual(result.key, self.plaintext)
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
     async def test_rsa_verify_local(self, **kwargs):
         """Sign with Key Vault, verify locally"""
         is_hsm = kwargs.pop("is_hsm")
@@ -474,6 +489,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
                 self.assertTrue(result.is_valid)
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
     async def test_rsa_verify_local_from_jwk(self, **kwargs):
         """Sign with Key Vault, verify locally"""
         is_hsm = kwargs.pop("is_hsm")
@@ -503,6 +519,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
                 self.assertTrue(result.is_valid)
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
     async def test_ec_verify_local(self, **kwargs):
         """Sign with Key Vault, verify locally"""
         is_hsm = kwargs.pop("is_hsm")
@@ -531,6 +548,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
             self.assertTrue(result.is_valid)
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
     async def test_ec_verify_local_from_jwk(self, **kwargs):
         """Sign with Key Vault, verify locally"""
         is_hsm = kwargs.pop("is_hsm")
@@ -560,6 +578,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
             self.assertTrue(result.is_valid)
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
     async def test_local_validity_period_enforcement(self, **kwargs):
         """Local crypto operations should respect a key's nbf and exp properties"""
         is_hsm = kwargs.pop("is_hsm")
