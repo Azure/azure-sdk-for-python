@@ -168,8 +168,8 @@ class AzureSasTokenCredential(object):
     """The shared access token credential used for authentication
     when AzureSasCredential is provided.
 
-    :param str token: The shared access token string
-    :param int expiry: The epoch timestamp
+    :param azure_sas_credential: The credential to be used for authentication.
+    :type azure_sas_credential: ~azure.core.credentials.AzureSasCredential
     """
     def __init__(self, azure_sas_credential):
         # type: (AzureSasCredential) -> None
