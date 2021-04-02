@@ -42,7 +42,7 @@ FULLY_QUALIFIED_NAMESPACE = os.environ['EVENT_HUB_HOSTNAME']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 CONSUMER_GROUP = "$Default"
 
-# The following part creates a SAS token. Users can use any way to create a SAS token.
+# The following part creates a SAS token. A SAS token is typically given to you after being created.
 SAS_POLICY = os.environ['EVENT_HUB_SAS_POLICY']
 SAS_KEY = os.environ['EVENT_HUB_SAS_KEY']
 

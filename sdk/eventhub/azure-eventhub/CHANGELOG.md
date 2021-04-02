@@ -4,7 +4,7 @@
 
 **New Features**
 
-- Add support for `~azure.core.credentials.AzureSasCredential` for producer and consumer clients.
+- Added support for using `~azure.core.credentials.AzureSasCredential` as credential for authenticating producer and consumer clients.
 
 ## 5.3.1 (2021-03-09)
 

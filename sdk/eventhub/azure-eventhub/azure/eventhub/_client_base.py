@@ -20,7 +20,7 @@ except ImportError:
 
 from uamqp import AMQPClient, Message, authentication, constants, errors, compat, utils
 import six
-from azure.core.credentials import AccessToken, AzureSasCredential, TokenCredential
+from azure.core.credentials import AccessToken, AzureSasCredential
 
 from .exceptions import _handle_exception, ClientClosedError, ConnectError
 from ._configuration import Configuration
@@ -34,6 +34,9 @@ from ._constants import (
     MGMT_STATUS_CODE,
     MGMT_STATUS_DESC
 )
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("Address", "hostname path")
@@ -198,7 +201,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         if isinstance(credential, AzureSasCredential):
             self._credential = AzureSasTokenCredential(credential)
         else:
-            self._credential = cast(TokenCredential, credential)
+            self._credential = credential #type: ignore
         self._keep_alive = kwargs.get("keep_alive", 30)
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
         self._mgmt_target = "amqps://{}/{}".format(

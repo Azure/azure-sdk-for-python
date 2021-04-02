@@ -19,7 +19,7 @@ from uamqp import (
     Message,
     AMQPClientAsync,
 )
-from azure.core.credentials import AccessToken, AzureSasCredential, TokenCredential
+from azure.core.credentials import AccessToken, AzureSasCredential
 
 from .._client_base import ClientBase, _generate_sas_token, _parse_conn_str
 from .._utils import utc_from_timestamp, parse_sas_credential
@@ -35,6 +35,7 @@ from ._connection_manager_async import get_connection_manager
 from ._error_async import _handle_exception
 
 if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
     try:
         from typing_extensions import Protocol
     except ImportError:
@@ -110,14 +111,14 @@ class ClientBaseAsync(ClientBase):
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        credential: Union[TokenCredential, AzureSasCredential],
+        credential: Union["TokenCredential", AzureSasCredential],
         **kwargs: Any
     ) -> None:
         self._loop = kwargs.pop("loop", None)
         if isinstance(credential, AzureSasCredential):
             self._credential = AzureSasTokenCredential(credential)
         else:
-            self._credential = cast(TokenCredential, credential)
+            self._credential = credential # type: ignore
         super(ClientBaseAsync, self).__init__(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,

@@ -18,7 +18,7 @@ from typing import (
     Awaitable,
 )
 
-from azure.core.credentials import TokenCredential, AzureSasCredential
+from azure.core.credentials import AzureSasCredential
 
 from ._eventprocessor.event_processor import EventProcessor
 from ._consumer_async import EventHubConsumer
@@ -28,6 +28,7 @@ from .._eventprocessor.common import LoadBalancingStrategy
 
 
 if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
     from uamqp.constants import TransportType
     from ._eventprocessor.partition_context import PartitionContext
     from ._eventprocessor.checkpoint_store import CheckpointStore
@@ -133,7 +134,7 @@ class EventHubConsumerClient(ClientBaseAsync):
         fully_qualified_namespace: str,
         eventhub_name: str,
         consumer_group: str,
-        credential: Union[TokenCredential, AzureSasCredential],
+        credential: Union["TokenCredential", AzureSasCredential],
         **kwargs
     ) -> None:
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)

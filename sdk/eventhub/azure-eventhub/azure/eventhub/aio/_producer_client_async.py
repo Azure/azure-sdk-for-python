@@ -17,6 +17,7 @@ from .._constants import ALL_PARTITIONS
 from .._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
     from uamqp.constants import TransportType
 
 _LOGGER = logging.getLogger(__name__)
@@ -73,7 +74,7 @@ class EventHubProducerClient(ClientBaseAsync):
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        credential: Union[TokenCredential, AzureSasCredential],
+        credential: Union["TokenCredential", AzureSasCredential],
         **kwargs
     ) -> None:
         super(EventHubProducerClient, self).__init__(
