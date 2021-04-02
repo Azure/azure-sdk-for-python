@@ -8,14 +8,16 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '0'
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/hello-world
+    method: DELETE
+    uri: https://fake_url.azurecr.io/acr/v1/does_not_exist
   response:
     body:
       string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"hello-world","Action":"metadata_read"}]}]}
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"does_not_exist","Action":"delete"}]}]}
 
         '
     headers:
@@ -27,11 +29,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '214'
+      - '210'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 16:11:37 GMT
+      - Fri, 02 Apr 2021 16:24:28 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -71,7 +73,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 16:11:38 GMT
+      - Fri, 02 Apr 2021 16:24:29 GMT
       server:
       - openresty
       strict-transport-security:
@@ -79,12 +81,12 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.266667'
+      - '332.966667'
     status:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Ahello-world%3Ametadata_read&refresh_token=REDACTED
+    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Adoes_not_exist%3Adelete&refresh_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -93,7 +95,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1079'
+      - '1075'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -109,7 +111,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 16:11:38 GMT
+      - Fri, 02 Apr 2021 16:24:29 GMT
       server:
       - openresty
       strict-transport-security:
@@ -117,7 +119,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.1'
+      - '332.883333'
     status:
       code: 200
       message: OK
@@ -130,13 +132,16 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '0'
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/hello-world
+    method: DELETE
+    uri: https://fake_url.azurecr.io/acr/v1/does_not_exist
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","createdTime":"2021-03-30T12:18:47.4147491Z","lastUpdateTime":"2021-04-02T16:11:23.4366473Z","manifestCount":10,"tagCount":1,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}
+      string: '{"errors":[{"code":"NAME_UNKNOWN","message":"repository name not known
+        to registry","detail":{"name":"does_not_exist"}}]}
 
         '
     headers:
@@ -148,11 +153,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '290'
+      - '122'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 16:11:38 GMT
+      - Fri, 02 Apr 2021 16:24:30 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -162,7 +167,9 @@ interactions:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
       - nosniff
+      x-ms-ratelimit-remaining-calls-per-second:
+      - '32.000000'
     status:
-      code: 200
-      message: OK
+      code: 404
+      message: Not Found
 version: 1

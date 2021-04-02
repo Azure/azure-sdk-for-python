@@ -114,15 +114,64 @@ class ContainerRegistryTestClass(AzureTestCase):
         if self.is_live:
             time.sleep(t)
 
-    def _fake_sleep(self, *args, **kwargs):
-        pass
-
     def _import_tag_to_be_deleted(
         self, endpoint, repository="hello-world", resource_group="fake_rg"
     ):
         if not self.is_live:
             return
 
+        registry = endpoint.split(".")[0]
+        command = [
+            "powershell.exe",
+            "Import-AzcontainerRegistryImage",
+            "-ResourceGroupName",
+            "'{}'".format(resource_group),
+            "-RegistryName",
+            "'{}'".format(registry),
+            "-SourceImage",
+            "'library/hello-world'",
+            "-SourceRegistryUri",
+            "'registry.hub.docker.com'",
+            "-TargetTag",
+            "'{}'".format(repository),
+            "-Mode",
+            "'Force'",
+        ]
+        subprocess.check_call(command)
+
+    def sleep(self, t):
+        if self.is_live:
+            time.sleep(t)
+
+    def import_repo_to_be_deleted(
+        self, endpoint, repository="to_be_deleted", resource_group="fake_rg"
+    ):
+        if not self.is_live:
+            return
+        registry = endpoint.split(".")[0]
+        command = [
+            "powershell.exe",
+            "Import-AzcontainerRegistryImage",
+            "-ResourceGroupName",
+            "'{}'".format(resource_group),
+            "-RegistryName",
+            "'{}'".format(registry),
+            "-SourceImage",
+            "'library/hello-world'",
+            "-SourceRegistryUri",
+            "'registry.hub.docker.com'",
+            "-TargetTag",
+            "'{}:to_be_deleted'".format(repository),
+            "-Mode",
+            "'Force'",
+        ]
+        subprocess.check_call(command)
+
+    def _import_tag_to_be_deleted(
+        self, endpoint, repository="hello-world", resource_group="fake_rg"
+    ):
+        if not self.is_live:
+            return
         registry = endpoint.split(".")[0]
         command = [
             "powershell.exe",
