@@ -41,10 +41,10 @@ To begin, check your `ci.yml` for a `CondaArtifact`. Each these artifacts will b
           version: 12.3.0
 ```
 
-`name: azure-storage`: will be the name of the "combined" sdist package that we generate.
-`meta_source: meta.yml`: this is the path (relative to the service directory) to the target conda package meta.yml.
-`common_root: azure/storage`: when generating the combined package, where will we begin combining? This is tightly bound to folder structure within the generated sdist.
-`checkout`: the `checkout` setting is a list of target packages that will go into the combined artifact. These targets will be individually sparse cloned, and copied into the conda build directory. Currently, this is a **manual step** in your local build. Reference `eng/pipelines/templates/get-tagged-code.yml` for exact details on how CI does it.
+- `name: azure-storage`: will be the name of the "combined" sdist package that we generate.
+- `meta_source: meta.yml`: this is the path (relative to the service directory) to the target conda package meta.yml.
+- `common_root: azure/storage`: when generating the combined package, where will we begin combining? This is tightly bound to folder structure within the generated sdist.
+- `checkout`: the `checkout` setting is a list of target packages that will go into the combined artifact. These targets will be individually sparse cloned, and copied into the conda build directory. Currently, this is a **manual step** in your local build. Reference `eng/pipelines/templates/get-tagged-code.yml` for exact details on how CI does it.
 
 Before we continue, you should be aware of two primary locations that are necessary, but not referenced directly in the `ci.yml`.
 
