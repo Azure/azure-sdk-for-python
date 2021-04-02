@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Example to demonstrate utilizing SAS (Shared Access Signature) tokens to authenticate with ServiceBus
+Example to demonstrate utilizing azure.core.credentials.AzureSasCredential to authenticate with EventHub
 """
 
 # pylint: disable=C0111
@@ -51,10 +51,12 @@ async def create_with_sas_token():
     sas_token = generate_sas_token(uri, SAS_POLICY, SAS_KEY, token_ttl)
     # end of creating a SAS token
 
+    credential = AzureSasCredential(sas_token)
+    
     producer_client = EventHubProducerClient(
         fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
         eventhub_name=EVENTHUB_NAME,
-        credential=AzureSasCredential(sas_token),
+        credential=credential,
         logging_enable=True
     )
 
