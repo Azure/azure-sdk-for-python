@@ -545,7 +545,7 @@ class IterStreamer(object):
         except StopIteration:
             self.leftover = b""
 
-        if count > size:
+        if count >= size:
             self.leftover = data[size:]
 
         if count == size:
