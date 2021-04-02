@@ -114,9 +114,6 @@ class ContainerRegistryTestClass(AzureTestCase):
         if self.is_live:
             time.sleep(t)
 
-    def _fake_sleep(self, *args, **kwargs):
-        pass
-
     def _import_tag_to_be_deleted(
         self, endpoint, repository="hello-world", resource_group="fake_rg"
     ):
@@ -145,9 +142,6 @@ class ContainerRegistryTestClass(AzureTestCase):
     def sleep(self, t):
         if self.is_live:
             time.sleep(t)
-
-    def _fake_sleep(self, *args, **kwargs):
-        pass
 
     def import_repo_to_be_deleted(
         self, endpoint, repository="to_be_deleted", resource_group="fake_rg"
