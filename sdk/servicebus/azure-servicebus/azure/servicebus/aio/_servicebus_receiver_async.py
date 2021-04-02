@@ -597,7 +597,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             timeout=max_wait_time,
             operation_requires_timeout=True,
         )
-        links = get_receive_links(message)
+        links = get_receive_links(messages)
         with receive_trace_context_manager(self, links=links):
             if (
                 self._auto_lock_renewer
