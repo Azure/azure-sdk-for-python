@@ -19,7 +19,7 @@ from uamqp import (
     Message,
     AMQPClientAsync,
 )
-from azure.core.credentials import AccessToken, AzureSasCredential
+from azure.core.credentials import AccessToken, AzureSasCredential, TokenCredential
 
 from .._client_base import ClientBase, _generate_sas_token, _parse_conn_str
 from .._utils import utc_from_timestamp, parse_sas_credential
@@ -35,8 +35,6 @@ from ._connection_manager_async import get_connection_manager
 from ._error_async import _handle_exception
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
-
     try:
         from typing_extensions import Protocol
     except ImportError:

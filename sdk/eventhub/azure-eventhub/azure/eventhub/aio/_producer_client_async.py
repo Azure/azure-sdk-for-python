@@ -8,6 +8,8 @@ import logging
 from typing import Any, Union, TYPE_CHECKING, List, Optional, Dict, cast
 from uamqp import constants
 
+from azure.core.credentials import TokenCredential, AzureSasCredential
+
 from ..exceptions import ConnectError, EventHubError
 from ._client_base_async import ClientBaseAsync
 from ._producer_async import EventHubProducer
@@ -16,7 +18,6 @@ from .._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
     from uamqp.constants import TransportType
-    from azure.core.credentials import TokenCredential, AzureSasCredential
 
 _LOGGER = logging.getLogger(__name__)
 

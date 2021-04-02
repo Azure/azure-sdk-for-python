@@ -20,7 +20,7 @@ except ImportError:
 
 from uamqp import AMQPClient, Message, authentication, constants, errors, compat, utils
 import six
-from azure.core.credentials import AccessToken, AzureSasCredential
+from azure.core.credentials import AccessToken, AzureSasCredential, TokenCredential
 
 from .exceptions import _handle_exception, ClientClosedError, ConnectError
 from ._configuration import Configuration
@@ -34,9 +34,6 @@ from ._constants import (
     MGMT_STATUS_CODE,
     MGMT_STATUS_DESC
 )
-
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("Address", "hostname path")

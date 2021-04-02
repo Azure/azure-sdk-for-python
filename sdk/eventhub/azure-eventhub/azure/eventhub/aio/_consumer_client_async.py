@@ -18,6 +18,8 @@ from typing import (
     Awaitable,
 )
 
+from azure.core.credentials import TokenCredential, AzureSasCredential
+
 from ._eventprocessor.event_processor import EventProcessor
 from ._consumer_async import EventHubConsumer
 from ._client_base_async import ClientBaseAsync
@@ -27,7 +29,6 @@ from .._eventprocessor.common import LoadBalancingStrategy
 
 if TYPE_CHECKING:
     from uamqp.constants import TransportType
-    from azure.core.credentials import TokenCredential, AzureSasCredential
     from ._eventprocessor.partition_context import PartitionContext
     from ._eventprocessor.checkpoint_store import CheckpointStore
     from .._common import EventData
