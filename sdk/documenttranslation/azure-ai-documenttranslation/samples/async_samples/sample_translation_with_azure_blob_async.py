@@ -119,7 +119,8 @@ class SampleTranslationWithAzureBlobAsync(object):
             print("Document ID: {}".format(document.id))
             print("Document status: {}".format(document.status))
             if document.status == "Succeeded":
-                print("Document location: {}".format(document.translated_document_url))
+                print("Source document location: {}".format(document.source_document_url))
+                print("Translated document location: {}".format(document.translated_document_url))
                 print("Translated to language: {}\n".format(document.translate_to))
 
                 blob_client = BlobClient.from_blob_url(document.translated_document_url, credential=self.storage_key)

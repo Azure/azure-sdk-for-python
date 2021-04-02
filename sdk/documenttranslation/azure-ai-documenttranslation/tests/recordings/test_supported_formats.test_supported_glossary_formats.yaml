@@ -17,7 +17,7 @@ interactions:
       string: '{"value":[{"format":"XLIFF","fileExtensions":[".xlf"],"contentTypes":["application/xliff+xml"],"defaultVersion":"1.2","versions":["1.0","1.1","1.2"]},{"format":"TSV","fileExtensions":[".tsv",".tab"],"contentTypes":["text/tab-separated-values"]}]}'
     headers:
       apim-request-id:
-      - 968ea42d-65ce-47b0-b298-2e303d9ea09f
+      - 802003cc-01c6-4420-b0d6-1c16c0b1ece9
       cache-control:
       - public,max-age=1
       content-length:
@@ -25,7 +25,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 31 Mar 2021 01:41:05 GMT
+      - Wed, 31 Mar 2021 22:14:35 GMT
       etag:
       - '"E45B28E0479C2E4442005F96664ED8DE0001CBFEE34F87F4E4C6D25064CECB2F"'
       set-cookie:
@@ -42,7 +42,7 @@ interactions:
       x-powered-by:
       - ASP.NET
       x-requestid:
-      - 968ea42d-65ce-47b0-b298-2e303d9ea09f
+      - 802003cc-01c6-4420-b0d6-1c16c0b1ece9
     status:
       code: 200
       message: OK
