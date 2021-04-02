@@ -76,6 +76,22 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
             assert isinstance(artifact.last_updated_on, datetime)
 
     @acr_preparer()
+    def test_list_registry_artifacts_by_page(self, containerregistry_baseurl):
+        client = self.create_repository_client(containerregistry_baseurl, self.repository)
+        results_per_page = 2
+
+        pages = client.list_registry_artifacts(results_per_page=results_per_page)
+        page_count = 0
+        for page in pages.by_page():
+            reg_count = 0
+            for tag in page:
+                reg_count += 1
+            assert reg_count <= results_per_page
+            page_count += 1
+
+        assert page_count >= 1
+
+    @acr_preparer()
     def test_get_registry_artifact_properties(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
 
@@ -98,7 +114,6 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
         assert count > 0
 
-    @pytest.mark.skip("results_per_page is not valid yet for list_tags")
     @acr_preparer()
     def test_list_tags_by_page(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
@@ -107,13 +122,14 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
         pages = client.list_tags(results_per_page=results_per_page)
         page_count = 0
-        for page in pages:
+        for page in pages.by_page():
             tag_count = 0
             for tag in page:
                 tag_count += 1
             assert tag_count <= results_per_page
+            page_count += 1
 
-        assert page >= 1
+        assert page_count >= 1
 
     @acr_preparer()
     def test_list_tags_descending(self, containerregistry_baseurl):

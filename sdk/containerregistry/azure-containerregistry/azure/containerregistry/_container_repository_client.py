@@ -5,8 +5,11 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 
+from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError, ResourceExistsError, HttpResponseError, map_error
+from azure.core.paging import ItemPaged
+
 from ._base_client import ContainerRegistryBaseClient
-from ._helpers import _is_tag
+from ._helpers import _is_tag, _parse_next_link
 from ._models import RepositoryProperties, TagProperties, RegistryArtifactProperties
 
 if TYPE_CHECKING:
@@ -131,17 +134,87 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :raises: None
         """
         # GET /acr/v1/{name}/_manifests
+        # last = kwargs.pop("last", None)
+        # n = kwargs.pop("results_per_page", None)
+        # orderby = kwargs.pop("order_by", None)
+        # return self._client.container_registry_repository.get_manifests(
+        #     self.repository,
+        #     last=last,
+        #     n=n,
+        #     orderby=orderby,
+        #     cls=lambda objs: [RegistryArtifactProperties._from_generated(x) for x in objs],
+        # )
+        name = self.repository
         last = kwargs.pop("last", None)
         n = kwargs.pop("results_per_page", None)
         orderby = kwargs.pop("order_by", None)
-        return self._client.container_registry_repository.get_manifests(
-            self.repository,
-            last=last,
-            n=n,
-            orderby=orderby,
-            cls=lambda objs: [
-                RegistryArtifactProperties._from_generated(x) for x in objs  # pylint: disable=protected-access
-            ],
+        cls = kwargs.pop('cls', lambda objs: [RegistryArtifactProperties._from_generated(x) for x in objs])
+
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._client._serialize.header("accept", accept, 'str')
+
+            if not next_link:
+                # Construct URL
+                url = '/acr/v1/{name}/_manifests'
+                path_format_arguments = {
+                    'url': self._client._serialize.url("self._client._config.url", self._client._config.url, 'str', skip_quote=True),
+                    'name': self._client._serialize.url("name", name, 'str'),
+                }
+                url = self._client._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                if last is not None:
+                    query_parameters['last'] = self._client._serialize.query("last", last, 'str')
+                if n is not None:
+                    query_parameters['n'] = self._client._serialize.query("n", n, 'int')
+                if orderby is not None:
+                    query_parameters['orderby'] = self._client._serialize.query("orderby", orderby, 'str')
+
+                request = self._client._client.get(url, query_parameters, header_parameters)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                path_format_arguments = {
+                    'url': self._client._serialize.url("self._client._config.url", self._client._config.url, 'str', skip_quote=True),
+                    'name': self._client._serialize.url("name", name, 'str'),
+                }
+                url = self._client._client.format_url(url, **path_format_arguments)
+                request = self._client._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._client._deserialize('AcrManifests', pipeline_response)
+            list_of_elem = deserialized.manifests
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            link = None
+            if "Link" in pipeline_response.http_response.headers.keys():
+                link = _parse_next_link(pipeline_response.http_response.headers["Link"])
+            return link, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                error = self._client._deserialize.failsafe_deserialize(_models.AcrErrors, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(
+            get_next, extract_data
         )
 
     def list_tags(self, **kwargs):
@@ -151,19 +224,89 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :param last: Query parameter for the last item in the previous call. Ensuing
             call will return values after last lexically
         :type last: str
-        :param order_by: Query paramter for ordering by time ascending or descending
+        :keyword order_by: Query paramter for ordering by time ascending or descending
+        :type order_by: :class:~azure.containerregistry.TagOrderBy
+        :keyword digest: Digest to filter on
+        :type digest: str
         :returns: ~azure.core.paging.ItemPaged[TagProperties]
         :raises: None
         """
-        return self._client.container_registry_repository.get_tags(
-            self.repository,
-            last=kwargs.pop("last", None),
-            n=kwargs.pop("results_per_page", None),
-            orderby=kwargs.pop("order_by", None),
-            digest=kwargs.pop("digest", None),
-            cls=lambda objs: [TagProperties._from_generated(o) for o in objs],  # pylint: disable=protected-access
-            **kwargs
+        name = self.repository
+        last=kwargs.pop("last", None)
+        n=kwargs.pop("results_per_page", None)
+        orderby=kwargs.pop("order_by", None)
+        digest=kwargs.pop("digest", None)
+        cls = kwargs.pop('cls', lambda objs: [TagProperties._from_generated(o) for o in objs])
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._client._serialize.header("accept", accept, 'str')
+
+            if not next_link:
+                # Construct URL
+                url = '/acr/v1/{name}/_tags'
+                path_format_arguments = {
+                    'url': self._client._serialize.url("self._config.url", self._client._config.url, 'str', skip_quote=True),
+                    'name': self._client._serialize.url("name", name, 'str'),
+                }
+                url = self._client._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                if last is not None:
+                    query_parameters['last'] = self._client._serialize.query("last", last, 'str')
+                if n is not None:
+                    query_parameters['n'] = self._client._serialize.query("n", n, 'int')
+                if orderby is not None:
+                    query_parameters['orderby'] = self._client._serialize.query("orderby", orderby, 'str')
+                if digest is not None:
+                    query_parameters['digest'] = self._client._serialize.query("digest", digest, 'str')
+
+                request = self._client._client.get(url, query_parameters, header_parameters)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                path_format_arguments = {
+                    'url': self._client._serialize.url("self._client._config.url", self._client._config.url, 'str', skip_quote=True),
+                    'name': self._client._serialize.url("name", name, 'str'),
+                }
+                url = self._client._client.format_url(url, **path_format_arguments)
+                request = self._client._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._client._deserialize('TagList', pipeline_response)
+            list_of_elem = deserialized.tags
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            link = None
+            if "Link" in pipeline_response.http_response.headers.keys():
+                link = _parse_next_link(pipeline_response.http_response.headers["Link"])
+            return link, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                error = self._client._deserialize.failsafe_deserialize(_models.AcrErrors, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(
+            get_next, extract_data
         )
+
+
 
     def set_manifest_properties(self, digest, permissions, **kwargs):
         # type: (str, ContentPermissions) -> None
