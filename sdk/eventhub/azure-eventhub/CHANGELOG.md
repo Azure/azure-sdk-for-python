@@ -4,6 +4,12 @@
 
 This version follows from version 5.3.1, rather than 5.4.0b1 so that the preview idempotent producer feature is not included.
 
+**New Features**
+
+- Updated `list_ownership`, `claim_ownership`, `update_checkpoint`, `list_checkpoints` on sync and async `CheckpointStore` to support taking `**kwargs`.
+  - WARNING: Implementing a custom checkpointstore that does not support taking `**kwargs` in the methods listed previously will result in the following pylint error: `W0221: Parameters differ from overridden ________ method (arguments-differ)`.
+- Updated `update_checkpoint` on sync and async `PartitionContext` to support taking `**kwargs`.
+
 ## 5.4.0b1 (2021-03-09)
 
 This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported.
