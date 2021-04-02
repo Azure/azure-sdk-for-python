@@ -314,16 +314,19 @@ def get_receive_links(messages):
     )
 
     links = []
-    for message in trace_messages:  # type: ignore
-        if message.message.application_properties:
-            traceparent = message.message.application_properties.get(
-                TRACE_PARENT_PROPERTY, ""
-            ).decode(TRACE_PROPERTY_ENCODING)
-            if traceparent:
-                links.append(Link({'traceparent': traceparent},
-                    {
-                        SPAN_ENQUEUED_TIME_PROPERTY: message.message.annotations.get(
-                            TRACE_ENQUEUED_TIME_PROPERTY
-                        )
-                    }))
+    try:
+        for message in trace_messages:  # type: ignore
+            if message.message.application_properties:
+                traceparent = message.message.application_properties.get(
+                    TRACE_PARENT_PROPERTY, ""
+                ).decode(TRACE_PROPERTY_ENCODING)
+                if traceparent:
+                    links.append(Link({'traceparent': traceparent},
+                        {
+                            SPAN_ENQUEUED_TIME_PROPERTY: message.message.annotations.get(
+                                TRACE_ENQUEUED_TIME_PROPERTY
+                            )
+                        }))
+    except AttributeError:
+        pass
     return links
