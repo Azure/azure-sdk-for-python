@@ -14,6 +14,55 @@ import msrest.serialization
 from ._search_client_enums import *
 
 
+class AnswerResult(msrest.serialization.Model):
+    """An answer is a text passage extracted from the contents of the most relevant documents that matched the query. Answers are extracted from the top search results. Answer candidates are scored and the top answers are selected.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :ivar score: The score value represents how relevant the answer is to the the query relative to
+     other answers returned for the query.
+    :vartype score: float
+    :ivar key: The key of the document the answer was extracted from.
+    :vartype key: str
+    :ivar text: The text passage extracted from the document contents as the answer.
+    :vartype text: str
+    :ivar highlights: Same text passage as in the Text property with highlighted text phrases most
+     relevant to the query.
+    :vartype highlights: str
+    """
+
+    _validation = {
+        'score': {'readonly': True},
+        'key': {'readonly': True},
+        'text': {'readonly': True},
+        'highlights': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'score': {'key': 'score', 'type': 'float'},
+        'key': {'key': 'key', 'type': 'str'},
+        'text': {'key': 'text', 'type': 'str'},
+        'highlights': {'key': 'highlights', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, object]] = None,
+        **kwargs
+    ):
+        super(AnswerResult, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.score = None
+        self.key = None
+        self.text = None
+        self.highlights = None
+
+
 class AutocompleteItem(msrest.serialization.Model):
     """The result of Autocomplete requests.
 
@@ -239,6 +288,45 @@ class AutocompleteResult(msrest.serialization.Model):
         self.results = None
 
 
+class CaptionResult(msrest.serialization.Model):
+    """Captions are the most representative passages from the document relatively to the search query. They are often used as document summary. Captions are only returned for queries of type 'semantic'..
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :ivar text: A representative text passage extracted from the document most relevant to the
+     search query.
+    :vartype text: str
+    :ivar highlights: Same text passage as in the Text property with highlighted phrases most
+     relevant to the query.
+    :vartype highlights: str
+    """
+
+    _validation = {
+        'text': {'readonly': True},
+        'highlights': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'text': {'key': 'text', 'type': 'str'},
+        'highlights': {'key': 'highlights', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, object]] = None,
+        **kwargs
+    ):
+        super(CaptionResult, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.text = None
+        self.highlights = None
+
+
 class FacetResult(msrest.serialization.Model):
     """A single bucket of a facet query result. Reports the number of documents with a field value falling within a particular range or having a particular value or interval.
 
@@ -441,6 +529,9 @@ class SearchDocumentsResult(msrest.serialization.Model):
     :ivar facets: The facet query results for the search operation, organized as a collection of
      buckets for each faceted field; null if the query did not include any facet expressions.
     :vartype facets: dict[str, list[~azure.search.documents.v2020_06_preview.models.FacetResult]]
+    :ivar answers: The answers query results for the search operation; null if the answers query
+     parameter was not specified or set to 'none'.
+    :vartype answers: dict[str, list[~azure.search.documents.v2020_06_preview.models.AnswerResult]]
     :ivar next_page_parameters: Continuation JSON payload returned when Azure Cognitive Search
      can't return all the requested results in a single Search response. You can use this JSON along
      with @odata.nextLink to formulate another POST Search request to get the next part of the
@@ -459,6 +550,7 @@ class SearchDocumentsResult(msrest.serialization.Model):
         'count': {'readonly': True},
         'coverage': {'readonly': True},
         'facets': {'readonly': True},
+        'answers': {'readonly': True},
         'next_page_parameters': {'readonly': True},
         'results': {'required': True, 'readonly': True},
         'next_link': {'readonly': True},
@@ -468,6 +560,7 @@ class SearchDocumentsResult(msrest.serialization.Model):
         'count': {'key': '@odata\\.count', 'type': 'long'},
         'coverage': {'key': '@search\\.coverage', 'type': 'float'},
         'facets': {'key': '@search\\.facets', 'type': '{[FacetResult]}'},
+        'answers': {'key': '@search\\.answers', 'type': '{[AnswerResult]}'},
         'next_page_parameters': {'key': '@search\\.nextPageParameters', 'type': 'SearchRequest'},
         'results': {'key': 'value', 'type': '[SearchResult]'},
         'next_link': {'key': '@odata\\.nextLink', 'type': 'str'},
@@ -481,6 +574,7 @@ class SearchDocumentsResult(msrest.serialization.Model):
         self.count = None
         self.coverage = None
         self.facets = None
+        self.answers = None
         self.next_page_parameters = None
         self.results = None
         self.next_link = None
@@ -559,7 +653,7 @@ class SearchOptions(msrest.serialization.Model):
     :type order_by: list[str]
     :param query_type: A value that specifies the syntax of the search query. The default is
      'simple'. Use 'full' if your query uses the Lucene query syntax. Possible values include:
-     "simple", "full".
+     "simple", "full", "semantic".
     :type query_type: str or ~azure.search.documents.v2020_06_preview.models.QueryType
     :param scoring_parameters: The list of parameter values to be used in scoring functions (for
      example, referencePointParameter) using the format name-values. For example, if the scoring
@@ -573,6 +667,17 @@ class SearchOptions(msrest.serialization.Model):
      using fielded search (fieldName:searchExpression) in a full Lucene query, the field names of
      each fielded search expression take precedence over any field names listed in this parameter.
     :type search_fields: list[str]
+    :param query_language: The language of the query. Possible values include: "none", "en-us".
+    :type query_language: str or ~azure.search.documents.v2020_06_preview.models.QueryLanguage
+    :param speller: Improve search recall by spell-correcting individual search query terms.
+     Possible values include: "none", "lexicon".
+    :type speller: str or ~azure.search.documents.v2020_06_preview.models.Speller
+    :param answers: This parameter is only valid if the query type is 'semantic'. If set, the query
+     returns answers extracted from key passages in the highest ranked documents. The number of
+     answers returned can be configured by appending the pipe character '|' followed by the
+     'count-:code:`<number of answers>`' option after the answers parameter value, such as
+     'extractive|count-3'. Default count is 1. Possible values include: "none", "extractive".
+    :type answers: str or ~azure.search.documents.v2020_06_preview.models.Answers
     :param search_mode: A value that specifies whether any or all of the search terms must be
      matched in order to count the document as a match. Possible values include: "any", "all".
     :type search_mode: str or ~azure.search.documents.v2020_06_preview.models.SearchMode
@@ -615,6 +720,9 @@ class SearchOptions(msrest.serialization.Model):
         'scoring_parameters': {'key': 'ScoringParameters', 'type': '[str]'},
         'scoring_profile': {'key': 'scoringProfile', 'type': 'str'},
         'search_fields': {'key': 'searchFields', 'type': '[str]'},
+        'query_language': {'key': 'queryLanguage', 'type': 'str'},
+        'speller': {'key': 'speller', 'type': 'str'},
+        'answers': {'key': 'answers', 'type': 'str'},
         'search_mode': {'key': 'searchMode', 'type': 'str'},
         'scoring_statistics': {'key': 'scoringStatistics', 'type': 'str'},
         'session_id': {'key': 'sessionId', 'type': 'str'},
@@ -638,6 +746,9 @@ class SearchOptions(msrest.serialization.Model):
         scoring_parameters: Optional[List[str]] = None,
         scoring_profile: Optional[str] = None,
         search_fields: Optional[List[str]] = None,
+        query_language: Optional[Union[str, "QueryLanguage"]] = None,
+        speller: Optional[Union[str, "Speller"]] = None,
+        answers: Optional[Union[str, "Answers"]] = None,
         search_mode: Optional[Union[str, "SearchMode"]] = None,
         scoring_statistics: Optional[Union[str, "ScoringStatistics"]] = None,
         session_id: Optional[str] = None,
@@ -659,6 +770,9 @@ class SearchOptions(msrest.serialization.Model):
         self.scoring_parameters = scoring_parameters
         self.scoring_profile = scoring_profile
         self.search_fields = search_fields
+        self.query_language = query_language
+        self.speller = speller
+        self.answers = answers
         self.search_mode = search_mode
         self.scoring_statistics = scoring_statistics
         self.session_id = session_id
@@ -703,7 +817,7 @@ class SearchRequest(msrest.serialization.Model):
     :type order_by: str
     :param query_type: A value that specifies the syntax of the search query. The default is
      'simple'. Use 'full' if your query uses the Lucene query syntax. Possible values include:
-     "simple", "full".
+     "simple", "full", "semantic".
     :type query_type: str or ~azure.search.documents.v2020_06_preview.models.QueryType
     :param scoring_statistics: A value that specifies whether we want to calculate scoring
      statistics (such as document frequency) globally for more consistent scoring, or locally, for
@@ -738,6 +852,15 @@ class SearchRequest(msrest.serialization.Model):
     :param search_mode: A value that specifies whether any or all of the search terms must be
      matched in order to count the document as a match. Possible values include: "any", "all".
     :type search_mode: str or ~azure.search.documents.v2020_06_preview.models.SearchMode
+    :param query_language: A value that specifies the language of the search query. Possible values
+     include: "none", "en-us".
+    :type query_language: str or ~azure.search.documents.v2020_06_preview.models.QueryLanguage
+    :param speller: A value that specified the type of the speller to use to spell-correct
+     individual search query terms. Possible values include: "none", "lexicon".
+    :type speller: str or ~azure.search.documents.v2020_06_preview.models.Speller
+    :param answers: A value that specifies whether answers should be returned as part of the search
+     response. Possible values include: "none", "extractive".
+    :type answers: str or ~azure.search.documents.v2020_06_preview.models.Answers
     :param select: The comma-separated list of fields to retrieve. If unspecified, all fields
      marked as retrievable in the schema are included.
     :type select: str
@@ -769,6 +892,9 @@ class SearchRequest(msrest.serialization.Model):
         'search_text': {'key': 'search', 'type': 'str'},
         'search_fields': {'key': 'searchFields', 'type': 'str'},
         'search_mode': {'key': 'searchMode', 'type': 'str'},
+        'query_language': {'key': 'queryLanguage', 'type': 'str'},
+        'speller': {'key': 'speller', 'type': 'str'},
+        'answers': {'key': 'answers', 'type': 'str'},
         'select': {'key': 'select', 'type': 'str'},
         'skip': {'key': 'skip', 'type': 'int'},
         'top': {'key': 'top', 'type': 'int'},
@@ -793,6 +919,9 @@ class SearchRequest(msrest.serialization.Model):
         search_text: Optional[str] = None,
         search_fields: Optional[str] = None,
         search_mode: Optional[Union[str, "SearchMode"]] = None,
+        query_language: Optional[Union[str, "QueryLanguage"]] = None,
+        speller: Optional[Union[str, "Speller"]] = None,
+        answers: Optional[Union[str, "Answers"]] = None,
         select: Optional[str] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
@@ -815,6 +944,9 @@ class SearchRequest(msrest.serialization.Model):
         self.search_text = search_text
         self.search_fields = search_fields
         self.search_mode = search_mode
+        self.query_language = query_language
+        self.speller = speller
+        self.answers = answers
         self.select = select
         self.skip = skip
         self.top = top
@@ -833,20 +965,33 @@ class SearchResult(msrest.serialization.Model):
     :ivar score: Required. The relevance score of the document compared to other documents returned
      by the query.
     :vartype score: float
+    :ivar reranker_score: The relevance score computed by the semantic ranker for the top search
+     results. Search results are sorted by the RerankerScore first and then by the Score.
+     RerankerScore is only returned for queries of type 'semantic'.
+    :vartype reranker_score: float
     :ivar highlights: Text fragments from the document that indicate the matching search terms,
      organized by each applicable field; null if hit highlighting was not enabled for the query.
     :vartype highlights: dict[str, list[str]]
+    :ivar captions: Captions are the most representative passages from the document relatively to
+     the search query. They are often used as document summary. Captions are only returned for
+     queries of type 'semantic'.
+    :vartype captions: dict[str,
+     list[~azure.search.documents.v2020_06_preview.models.CaptionResult]]
     """
 
     _validation = {
         'score': {'required': True, 'readonly': True},
+        'reranker_score': {'readonly': True},
         'highlights': {'readonly': True},
+        'captions': {'readonly': True},
     }
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
         'score': {'key': '@search\\.score', 'type': 'float'},
+        'reranker_score': {'key': '@search\\.rerankerScore', 'type': 'float'},
         'highlights': {'key': '@search\\.highlights', 'type': '{[str]}'},
+        'captions': {'key': '@search\\.captions', 'type': '{[CaptionResult]}'},
     }
 
     def __init__(
@@ -858,7 +1003,9 @@ class SearchResult(msrest.serialization.Model):
         super(SearchResult, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.score = None
+        self.reranker_score = None
         self.highlights = None
+        self.captions = None
 
 
 class SuggestDocumentsResult(msrest.serialization.Model):

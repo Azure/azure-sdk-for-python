@@ -4,13 +4,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
-import functools
-import os
 import pytest
 import subprocess
 import time
 
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureTestCase
 
 from azure.containerregistry import (
     ContainerRepositoryClient,
@@ -25,36 +23,23 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
 
 from testcase import ContainerRegistryTestClass, AcrBodyReplacer, FakeTokenCredential
-from constants import TO_BE_DELETED
-
-
-acr_preparer = functools.partial(
-    PowerShellPreparer,
-    "containerregistry",
-    containerregistry_baseurl="fake_url.azurecr.io",
-    containerregistry_resource_group="fake_rg",
-)
+from constants import TO_BE_DELETED, DOES_NOT_EXIST
+from preparer import acr_preparer
 
 
 class TestContainerRepositoryClient(ContainerRegistryTestClass):
-
-    def __init__(self, method_name):
-        super(TestContainerRepositoryClient, self).__init__(method_name)
-        self.vcr.match_on = ["path", "method", "query"]
-        self.recording_processors.append(AcrBodyReplacer())
-        self.repository = "hello-world"
-
     @acr_preparer()
     def test_delete_tag(self, containerregistry_baseurl, containerregistry_resource_group):
-        self._import_tag_to_be_deleted(containerregistry_baseurl, resource_group=containerregistry_resource_group)
+        repo = self.get_resource_name("repo")
+        self._import_tag_to_be_deleted(containerregistry_baseurl, resource_group=containerregistry_resource_group, repository=repo, tag=TO_BE_DELETED)
 
-        client = self.create_repository_client(containerregistry_baseurl, "hello-world")
+        client = self.create_repository_client(containerregistry_baseurl, repo)
 
         tag = client.get_tag_properties(TO_BE_DELETED)
         assert tag is not None
 
         client.delete_tag(TO_BE_DELETED)
-        self.sleep(10)
+        self.sleep(5)
 
         with pytest.raises(ResourceNotFoundError):
             client.get_tag_properties(TO_BE_DELETED)
@@ -191,8 +176,6 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
     @acr_preparer()
     def test_delete_repository_doesnt_exist(self, containerregistry_baseurl):
-        DOES_NOT_EXIST = "does_not_exist"
-
         repo_client = self.create_repository_client(containerregistry_baseurl, DOES_NOT_EXIST)
         with pytest.raises(ResourceNotFoundError):
             repo_client.delete()
