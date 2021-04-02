@@ -8,7 +8,7 @@ import logging
 from typing import Any, Union, TYPE_CHECKING, List, Optional, Dict, cast
 from uamqp import constants
 
-from azure.core.credentials import TokenCredential, AzureSasCredential
+from azure.core.credentials import AzureSasCredential
 
 from ..exceptions import ConnectError, EventHubError
 from ._client_base_async import ClientBaseAsync
