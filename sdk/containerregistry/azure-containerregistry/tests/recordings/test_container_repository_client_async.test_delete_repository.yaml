@@ -19,7 +19,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Fri, 02 Apr 2021 16:24:45 GMT
+      date: Fri, 02 Apr 2021 16:57:07 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -47,11 +47,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Fri, 02 Apr 2021 16:24:46 GMT
+      date: Fri, 02 Apr 2021 16:57:08 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.966667'
+      x-ms-ratelimit-remaining-calls-per-second: '332.766667'
     status:
       code: 200
       message: OK
@@ -75,11 +75,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Fri, 02 Apr 2021 16:24:46 GMT
+      date: Fri, 02 Apr 2021 16:57:08 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.95'
+      x-ms-ratelimit-remaining-calls-per-second: '332.75'
     status:
       code: 200
       message: OK
@@ -103,7 +103,7 @@ interactions:
       connection: keep-alive
       content-length: '162'
       content-type: application/json; charset=utf-8
-      date: Fri, 02 Apr 2021 16:24:46 GMT
+      date: Fri, 02 Apr 2021 16:57:08 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -132,7 +132,7 @@ interactions:
       connection: keep-alive
       content-length: '209'
       content-type: application/json; charset=utf-8
-      date: Fri, 02 Apr 2021 16:24:46 GMT
+      date: Fri, 02 Apr 2021 16:57:09 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -160,11 +160,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Fri, 02 Apr 2021 16:24:48 GMT
+      date: Fri, 02 Apr 2021 16:57:10 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '333.016667'
+      x-ms-ratelimit-remaining-calls-per-second: '332.85'
     status:
       code: 200
       message: OK
@@ -188,11 +188,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Fri, 02 Apr 2021 16:24:48 GMT
+      date: Fri, 02 Apr 2021 16:57:10 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.783333'
+      x-ms-ratelimit-remaining-calls-per-second: '332.766667'
     status:
       code: 200
       message: OK
@@ -216,7 +216,7 @@ interactions:
       connection: keep-alive
       content-length: '795'
       content-type: application/json; charset=utf-8
-      date: Fri, 02 Apr 2021 16:24:50 GMT
+      date: Fri, 02 Apr 2021 16:57:12 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -246,7 +246,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Fri, 02 Apr 2021 16:24:55 GMT
+      date: Fri, 02 Apr 2021 16:57:17 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -274,11 +274,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Fri, 02 Apr 2021 16:24:56 GMT
+      date: Fri, 02 Apr 2021 16:57:17 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.933333'
+      x-ms-ratelimit-remaining-calls-per-second: '332.95'
     status:
       code: 200
       message: OK
@@ -302,11 +302,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Fri, 02 Apr 2021 16:24:56 GMT
+      date: Fri, 02 Apr 2021 16:57:17 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.916667'
+      x-ms-ratelimit-remaining-calls-per-second: '332.933333'
     status:
       code: 200
       message: OK
@@ -330,7 +330,7 @@ interactions:
       connection: keep-alive
       content-length: '146'
       content-type: application/json; charset=utf-8
-      date: Fri, 02 Apr 2021 16:24:56 GMT
+      date: Fri, 02 Apr 2021 16:57:18 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
