@@ -266,14 +266,10 @@ def get_last_enqueued_event_properties(event_data):
 
 def parse_sas_credential(credential):
     # type: (AzureSasCredential) -> Tuple
-    try:
-        sas = credential.signature
-        parsed_sas = sas.split('&')
-        expiry = None
-        for item in parsed_sas:
-            if item.startswith('se='):
-                expiry = int(item[3:])
-        return (sas, expiry)
-    except AttributeError:
-        pass
-    raise ValueError("Invalid sas token.")
+    sas = credential.signature
+    parsed_sas = sas.split('&')
+    expiry = None
+    for item in parsed_sas:
+        if item.startswith('se='):
+            expiry = int(item[3:])
+    return (sas, expiry)
