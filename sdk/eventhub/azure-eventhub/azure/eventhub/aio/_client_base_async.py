@@ -83,7 +83,7 @@ class EventHubSASTokenCredential(object):
         """
         return AccessToken(self.token, self.expiry)
 
-class AzureSasTokenCredential(object):
+class AzureSasTokenCredentialAsync(object):
     """The shared access token credential used for authentication
     when AzureSasCredential is provided.
 
@@ -116,7 +116,7 @@ class ClientBaseAsync(ClientBase):
     ) -> None:
         self._loop = kwargs.pop("loop", None)
         if isinstance(credential, AzureSasCredential):
-            self._credential = AzureSasTokenCredential(credential)
+            self._credential = AzureSasTokenCredentialAsync(credential)
         else:
             self._credential = credential # type: ignore
         super(ClientBaseAsync, self).__init__(
