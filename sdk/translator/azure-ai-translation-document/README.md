@@ -79,11 +79,11 @@ pass the key as a string into an instance of [AzureKeyCredential][azure-key-cred
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.translation.document import DocumentTranslationClient
+from azure.ai.translation.document import DocumentTranslatorClient
 
 endpoint = "https://<resource-name>.cognitiveservices.azure.com/"
 credential = AzureKeyCredential("<api_key>")
-document_translation_client = DocumentTranslationClient(endpoint, credential)
+document_translation_client = DocumentTranslatorClient(endpoint, credential)
 ```
 
 ## Key concepts
@@ -98,9 +98,9 @@ the service documentation:
 - Generate [SAS tokens][sas_token] to your containers (or files) with the appropriate [permissions][sas_token_permissions]
 
 
-### DocumentTranslationClient
+### DocumentTranslatorClient
 
-Interaction with the Document Translation client library begins with an instance of the `DocumentTranslationClient`.
+Interaction with the Document Translation client library begins with an instance of the `DocumentTranslatorClient`.
 The client provides operations for:
 
  - Creating a translation job to translate documents in your source container(s) and write results to you target container(s).
@@ -184,7 +184,7 @@ Translate the documents in your source container to the target containers.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.translation.document import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
+from azure.ai.translation.document import DocumentTranslatorClient, DocumentTranslationInput, TranslationTarget
 
 endpoint = "https://<resource-name>.cognitiveservices.azure.com/"
 credential = AzureKeyCredential("<api_key>")
@@ -192,7 +192,7 @@ source_container_sas_url_en = "<sas-url-en>"
 target_container_sas_url_es = "<sas-url-es>"
 target_container_sas_url_fr = "<sas-url-fr>"
 
-document_translation_client = DocumentTranslationClient(endpoint, credential)
+document_translation_client = DocumentTranslatorClient(endpoint, credential)
 
 job = document_translation_client.create_translation_job(
     [
@@ -230,13 +230,13 @@ Check status and translation progress of each document under a job.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.translation.document import DocumentTranslationClient
+from azure.ai.translation.document import DocumentTranslatorClient
 
 endpoint = "https://<resource-name>.cognitiveservices.azure.com/"
 credential = AzureKeyCredential("<api_key>")
 job_id = "<job-id>"
 
-document_translation_client = DocumentTranslationClient(endpoint, credential)
+document_translation_client = DocumentTranslatorClient(endpoint, credential)
 
 documents =  document_translation_client.list_all_document_statuses(job_id)  # type: ItemPaged[DocumentStatusResult]
 
@@ -260,12 +260,12 @@ Enumerate over the translation jobs submitted for the resource.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.translation.document import DocumentTranslationClient
+from azure.ai.translation.document import DocumentTranslatorClient
 
 endpoint = "https://<resource-name>.cognitiveservices.azure.com/"
 credential = AzureKeyCredential("<api_key>")
 
-document_translation_client = DocumentTranslationClient(endpoint, credential)
+document_translation_client = DocumentTranslatorClient(endpoint, credential)
 
 jobs = document_translation_client.list_submitted_jobs()  # type: ItemPaged[JobStatusResult]
 
