@@ -386,6 +386,19 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
+    async def test_content_reading_order(self, client):
+        with open(self.invoice_pdf, "rb") as fd:
+            myform = fd.read()
+
+        async with client:
+            poller = await client.begin_recognize_content(myform, reading_order="natural")
+
+            assert 'natural' == poller._polling_method._initial_response.http_response.request.query['readingOrder']
+            result = await poller.result()
+            assert result
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
     async def test_content_language_specified(self, client):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()

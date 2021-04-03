@@ -233,24 +233,3 @@ def test_request_url(authority):
         client.request_token(("scope",))
         request = client.get_refresh_token_grant_request({"secret": "***"}, "scope")
         validate_url(request.url)
-
-
-def test_should_refresh():
-    client = AuthnClient(endpoint="http://foo")
-    now = int(time.time())
-
-    # do not need refresh
-    token = AccessToken("token", now + DEFAULT_REFRESH_OFFSET + 1)
-    should_refresh = client.should_refresh(token)
-    assert not should_refresh
-
-    # need refresh
-    token = AccessToken("token", now + DEFAULT_REFRESH_OFFSET - 1)
-    should_refresh = client.should_refresh(token)
-    assert should_refresh
-
-    # not exceed cool down time, do not refresh
-    token = AccessToken("token", now + DEFAULT_REFRESH_OFFSET - 1)
-    client._last_refresh_time = now - DEFAULT_TOKEN_REFRESH_RETRY_DELAY + 1
-    should_refresh = client.should_refresh(token)
-    assert not should_refresh

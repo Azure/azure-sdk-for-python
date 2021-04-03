@@ -70,10 +70,6 @@ steps:
       twine check $(Build.ArtifactStagingDirectory)/**/*.zip
     displayName: 'Verify Readme'
 
-  - template: /eng/common/pipelines/templates/steps/create-apireview.yml
-    parameters:
-      Artifacts: ${{ parameters.Artifacts }}
-
   - task: PythonScript@0
     displayName: 'Generate Docs'
     condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})
@@ -97,3 +93,6 @@ steps:
       CustomCondition: ${{ parameters.BuildDocs }}
       ArtifactName: 'documentation'
 
+  - template: /eng/common/pipelines/templates/steps/create-apireview.yml
+    parameters:
+      Artifacts: ${{ parameters.Artifacts }}

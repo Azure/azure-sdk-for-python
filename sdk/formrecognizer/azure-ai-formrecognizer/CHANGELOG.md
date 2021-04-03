@@ -1,6 +1,6 @@
 # Release History
 
-## 3.1.0b4 (Unreleased)
+## 3.1.0b4 (2021-04-06)
 
 **New features**
 
@@ -9,6 +9,7 @@
 - Content-type `image/bmp` now supported by custom forms and training methods.
 - Added keyword argument `pages` for business cards, receipts, custom forms, and invoices 
 to specify which page to process of the document.
+- Added keyword argument `reading_order` to `begin_recognize_content` and `begin_recognize_content_from_url`.
 
 **Dependency Updates**
 

@@ -202,7 +202,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             initial_response=pipeline_response,
             deserialization_callback=callback,
             polling_method=LROBasePolling(
-                timeout=30,
+                timeout=self._client._config.polling_interval,  # pylint: disable=protected-access
                 lro_algorithms=[TranslationPolling()],
                 **kwargs
             ),
@@ -214,13 +214,6 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         # type: (**Any) -> ItemPaged[JobStatusResult]
         """List all the submitted translation jobs under the Document Translation resource.
 
-        :keyword int top: Use top to indicate the total number of results you want
-            to be returned across all pages.
-        :keyword int skip: Use skip to indicate the number of results to skip from the list
-            of jobs held by the server based on the sorting method specified. By default,
-            this is sorted by descending start time.
-        :keyword int results_per_page: Use results_per_page to indicate the maximum number
-            of results returned in a page.
         :return: ~azure.core.paging.ItemPaged[:class:`~azure.ai.documenttranslation.JobStatusResult`]
         :rtype: ~azure.core.paging.ItemPaged
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -235,9 +228,6 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
                 :caption: List all submitted jobs under the resource.
         """
 
-        skip = kwargs.pop('skip', None)
-        results_per_page = kwargs.pop('results_per_page', None)
-
         def _convert_from_generated_model(generated_model):  # pylint: disable=protected-access
             return JobStatusResult._from_generated(generated_model)  # pylint: disable=protected-access
 
@@ -248,8 +238,6 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             ])
 
         return self._client.document_translation.get_operations(
-            top=results_per_page,
-            skip=skip,
             cls=model_conversion_function,
             **kwargs
         )
@@ -260,13 +248,6 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         """List all the document statuses under a translation job.
 
         :param str job_id: The translation job ID.
-        :keyword int top: Use top to indicate the total number of results you want
-            to be returned across all pages.
-        :keyword int skip: Use skip to indicate the number of results to skip from the list
-            of document statuses held by the server based on the sorting method specified. By default,
-            this is sorted by descending start time.
-        :keyword int results_per_page: Use results_per_page to indicate the maximum number
-            of results returned in a page.
         :return: ~azure.core.paging.ItemPaged[:class:`~azure.ai.documenttranslation.DocumentStatusResult`]
         :rtype: ~azure.core.paging.ItemPaged
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -281,9 +262,6 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
                 :caption: List all the document statuses under the translation job.
         """
 
-        skip = kwargs.pop('skip', None)
-        results_per_page = kwargs.pop('results_per_page', None)
-
         def _convert_from_generated_model(generated_model):
             return DocumentStatusResult._from_generated(generated_model)  # pylint: disable=protected-access
 
@@ -295,12 +273,9 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
         return self._client.document_translation.get_operation_documents_status(
             id=job_id,
-            top=results_per_page,
-            skip=skip,
             cls=model_conversion_function,
             **kwargs
         )
-
 
     @distributed_trace
     def get_document_status(self, job_id, document_id, **kwargs):
