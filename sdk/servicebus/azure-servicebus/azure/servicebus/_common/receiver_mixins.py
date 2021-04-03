@@ -26,7 +26,7 @@ from .constants import (
     MESSAGE_DEFER,
 )
 from ..exceptions import _ServiceBusErrorPolicy, MessageAlreadySettled
-from .utils import utc_from_timestamp, utc_now, get_receive_links
+from .utils import utc_from_timestamp, utc_now
 
 
 class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
