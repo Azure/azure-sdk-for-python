@@ -10,7 +10,7 @@ import platform
 import datetime
 import calendar
 import logging
-from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any, Iterable
+from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any, Iterable, Tuple
 
 import six
 
@@ -35,6 +35,7 @@ if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
     from uamqp import Message
     from azure.core.tracing import AbstractSpan
+    from azure.core.credentials import AzureSasCredential
     from ._common import EventData
 
 _LOGGER = logging.getLogger(__name__)
@@ -262,3 +263,13 @@ def get_last_enqueued_event_properties(event_data):
         }
         return event_data._last_enqueued_event_properties
     return None
+
+def parse_sas_credential(credential):
+    # type: (AzureSasCredential) -> Tuple
+    sas = credential.signature
+    parsed_sas = sas.split('&')
+    expiry = None
+    for item in parsed_sas:
+        if item.startswith('se='):
+            expiry = int(item[3:])
+    return (sas, expiry)
