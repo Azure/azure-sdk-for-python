@@ -4,7 +4,7 @@ stages:
   - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       DeployArmTemplate: true
-      BuildTargetingString: azure-ai-translation-documents
+      BuildTargetingString: azure-ai-translation-document
       ServiceDirectory: translator
       EnvVars:
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
