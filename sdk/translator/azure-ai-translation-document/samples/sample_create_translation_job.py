@@ -32,7 +32,7 @@ def sample_translation():
     # [START wait_until_done]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document import (
-        DocumentTranslationClient,
+        DocumentTranslatorClient,
         DocumentTranslationInput,
         TranslationTarget
     )
@@ -42,7 +42,7 @@ def sample_translation():
     source_container_url = os.environ["AZURE_SOURCE_CONTAINER_URL"]
     target_container_url = os.environ["AZURE_TARGET_CONTAINER_URL"]
 
-    client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
+    client = DocumentTranslatorClient(endpoint, AzureKeyCredential(key))
 
     job = client.create_translation_job(inputs=[
             DocumentTranslationInput(

@@ -38,7 +38,7 @@ import datetime
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceExistsError
 from azure.ai.translation.document import (
-    DocumentTranslationClient,
+    DocumentTranslatorClient,
     DocumentTranslationInput,
     TranslationTarget
 )
@@ -59,7 +59,7 @@ class SampleTranslationWithAzureBlob(object):
 
     def sample_translation_with_azure_blob(self):
 
-        translation_client = DocumentTranslationClient(
+        translation_client = DocumentTranslatorClient(
             self.endpoint, AzureKeyCredential(self.key)
         )
 

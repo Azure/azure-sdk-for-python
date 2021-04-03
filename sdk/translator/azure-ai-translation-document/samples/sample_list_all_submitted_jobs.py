@@ -28,13 +28,13 @@ def sample_list_all_submitted_jobs():
     # [START list_all_jobs]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document import (
-        DocumentTranslationClient,
+        DocumentTranslatorClient,
     )
 
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
 
-    client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
+    client = DocumentTranslatorClient(endpoint, AzureKeyCredential(key))
     translation_jobs = client.list_submitted_jobs()  # type: ItemPaged[JobStatusResult]
 
     for job in translation_jobs:

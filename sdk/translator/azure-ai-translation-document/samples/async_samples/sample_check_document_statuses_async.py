@@ -33,7 +33,7 @@ async def sample_document_status_checks_async():
     import os
     # [START create_translation_job_async]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.translation.document.aio import DocumentTranslationClient
+    from azure.ai.translation.document.aio import DocumentTranslatorClient
     from azure.ai.translation.document import (
         DocumentTranslationInput,
         TranslationTarget
@@ -44,7 +44,7 @@ async def sample_document_status_checks_async():
     source_container_url = os.environ["AZURE_SOURCE_CONTAINER_URL"]
     target_container_url = os.environ["AZURE_TARGET_CONTAINER_URL"]
 
-    client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
+    client = DocumentTranslatorClient(endpoint, AzureKeyCredential(key))
     async with client:
         job_result = await client.create_translation_job(inputs=[
                 DocumentTranslationInput(

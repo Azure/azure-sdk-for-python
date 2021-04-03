@@ -22,10 +22,10 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
         the glossary file in the storage blob container. If the translation language pair is
         not present in the glossary, it will not be applied.
     :param str file_format: Required. Format of the glossary file. To see supported formats,
-        call the :func:`~DocumentTranslationClient.get_glossary_formats()` client method.
+        call the :func:`~DocumentTranslatorClient.get_glossary_formats()` client method.
     :keyword str format_version: File format version. If not specified, the service will
         use the default_version for the file format returned from the
-        :func:`~DocumentTranslationClient.get_glossary_formats()` client method.
+        :func:`~DocumentTranslatorClient.get_glossary_formats()` client method.
     :keyword str storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
 
@@ -33,10 +33,10 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
         the glossary file in the storage blob container. If the translation language pair is
         not present in the glossary, it will not be applied.
     :ivar str file_format: Required. Format of the glossary file. To see supported formats,
-        call the :func:`~DocumentTranslationClient.get_glossary_formats()` client method.
+        call the :func:`~DocumentTranslatorClient.get_glossary_formats()` client method.
     :ivar str format_version: File format version. If not specified, the service will
         use the default_version for the file format returned from the
-        :func:`~DocumentTranslationClient.get_glossary_formats()` client method.
+        :func:`~DocumentTranslatorClient.get_glossary_formats()` client method.
     :ivar str storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
     """
@@ -240,14 +240,14 @@ class JobStatusResult(object):  # pylint: disable=useless-object-inheritance, to
         * `Cancelling` - the job is being cancelled.
         * `ValidationFailed` - the input failed validation. E.g. there was insufficient permissions on blob containers.
         * `Failed` - all the documents within the job failed. To understand the reason for each document failure,
-         call the :func:`~DocumentTranslationClient.list_all_document_statuses()` client method and inspect the error.
+         call the :func:`~DocumentTranslatorClient.list_all_document_statuses()` client method and inspect the error.
 
     :ivar error: Returned if there is an error with the translation job.
         Includes error code, message, target.
     :vartype error: ~azure.ai.translation.document.DocumentTranslationError
     :ivar int documents_total_count: Number of translations to be made on documents in the job.
     :ivar int documents_failed_count: Number of documents that failed translation.
-        More details can be found by calling the :func:`~DocumentTranslationClient.list_all_document_statuses`
+        More details can be found by calling the :func:`~DocumentTranslatorClient.list_all_document_statuses`
         client method.
     :ivar int documents_succeeded_count: Number of successful translations on documents.
     :ivar int documents_in_progress_count: Number of translations on documents in progress.

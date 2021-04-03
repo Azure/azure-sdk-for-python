@@ -5,7 +5,7 @@
 # ------------------------------------
 
 from ._version import VERSION
-from ._client import DocumentTranslationClient
+from ._client import DocumentTranslatorClient
 from ._generated.models import (
     StorageInputType,
 )
@@ -24,7 +24,7 @@ __VERSION__ = VERSION
 
 
 __all__ = [
-    "DocumentTranslationClient",
+    "DocumentTranslatorClient",
     "DocumentTranslationApiVersion",
     "DocumentTranslationInput",
     "TranslationGlossary",

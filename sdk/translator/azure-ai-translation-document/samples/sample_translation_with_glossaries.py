@@ -31,7 +31,7 @@ def sample_translation_with_glossaries():
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document import (
-        DocumentTranslationClient,
+        DocumentTranslatorClient,
         DocumentTranslationInput,
         TranslationTarget,
         TranslationGlossary
@@ -43,7 +43,7 @@ def sample_translation_with_glossaries():
     target_container_url = os.environ["AZURE_TARGET_CONTAINER_URL"]
     glossary_url = os.environ["AZURE_TRANSLATION_GLOSSARY_URL"]
 
-    client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
+    client = DocumentTranslatorClient(endpoint, AzureKeyCredential(key))
 
     inputs = DocumentTranslationInput(
                 source_url=source_container_url,

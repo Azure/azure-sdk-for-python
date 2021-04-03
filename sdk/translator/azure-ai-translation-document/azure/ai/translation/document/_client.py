@@ -26,11 +26,11 @@ if TYPE_CHECKING:
 COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
 
 
-class DocumentTranslationClient(object):  # pylint: disable=r0205
+class DocumentTranslatorClient(object):  # pylint: disable=r0205
 
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, AzureKeyCredential, **Any) -> None
-        """DocumentTranslationClient is your interface to the Document Translation service.
+        """DocumentTranslatorClient is your interface to the Document Translation service.
         Use the client to translate whole documents while preserving source document
         structure and text formatting.
 
@@ -51,7 +51,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
                 :end-before: [END create_dt_client_with_key]
                 :language: python
                 :dedent: 4
-                :caption: Creating the DocumentTranslationClient with an endpoint and API key.
+                :caption: Creating the DocumentTranslatorClient with an endpoint and API key.
         """
         self._endpoint = endpoint
         self._credential = credential
@@ -72,7 +72,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         )
 
     def __enter__(self):
-        # type: () -> DocumentTranslationClient
+        # type: () -> DocumentTranslatorClient
         self._client.__enter__()  # pylint:disable=no-member
         return self
 
@@ -82,7 +82,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
     def close(self):
         # type: () -> None
-        """Close the :class:`~azure.ai.translation.document.DocumentTranslationClient` session."""
+        """Close the :class:`~azure.ai.translation.document.DocumentTranslatorClient` session."""
         return self._client.close()
 
     @distributed_trace
