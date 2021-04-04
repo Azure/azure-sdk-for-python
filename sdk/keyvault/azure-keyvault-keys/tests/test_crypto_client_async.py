@@ -247,9 +247,8 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
     @PowerShellPreparer("keyvault")
     async def test_symmetric_encrypt_and_decrypt_mhsm(self, **kwargs):
         """Encrypt and decrypt with the service"""
-        is_hsm = True
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
+        self._skip_if_not_configured(True)
+        endpoint_url = self.managed_hsm_url
 
         key_client = self.create_key_client(endpoint_url, is_async=True)
         key_name = self.get_resource_name("symmetric-encrypt")
@@ -264,7 +263,9 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         with mock.patch(crypto_client.__module__ + ".get_local_cryptography_provider", lambda *_: supports_nothing):
             for algorithm in symmetric_algorithms:
                 if algorithm.endswith("GCM"):
-                    result = await crypto_client.encrypt(algorithm, self.plaintext, additional_authenticated_data=self.aad)
+                    result = await crypto_client.encrypt(
+                        algorithm, self.plaintext, additional_authenticated_data=self.aad
+                    )
                     assert result.key_id == imported_key.id
                     result = await crypto_client.decrypt(
                         result.algorithm,
@@ -291,9 +292,8 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
 
     @PowerShellPreparer("keyvault")
     async def test_symmetric_wrap_and_unwrap_mhsm(self, **kwargs):
-        is_hsm = True
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
+        self._skip_if_not_configured(True)
+        endpoint_url = self.managed_hsm_url
 
         key_client = self.create_key_client(endpoint_url, is_async=True)
         key_name = self.get_resource_name("symmetric-kw")
@@ -354,9 +354,8 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
     @PowerShellPreparer("keyvault")
     async def test_symmetric_encrypt_local_mhsm(self, **kwargs):
         """Encrypt locally, decrypt with the service"""
-        is_hsm = True
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
+        self._skip_if_not_configured(True)
+        endpoint_url = self.managed_hsm_url
 
         key_client = self.create_key_client(endpoint_url, is_async=True)
         key_name = self.get_resource_name("symmetric-encrypt")
@@ -387,9 +386,8 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
     @PowerShellPreparer("keyvault")
     async def test_symmetric_decrypt_local_mhsm(self, **kwargs):
         """Encrypt with the service, decrypt locally"""
-        is_hsm = True
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
+        self._skip_if_not_configured(True)
+        endpoint_url = self.managed_hsm_url
 
         key_client = self.create_key_client(endpoint_url, is_async=True)
         key_name = self.get_resource_name("symmetric-encrypt")
