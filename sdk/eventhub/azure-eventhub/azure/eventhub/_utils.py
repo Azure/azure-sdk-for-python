@@ -18,7 +18,7 @@ from uamqp import types
 from uamqp.message import MessageHeader
 
 from azure.core.settings import settings
-from azure.core.tracing import SpanKind
+from azure.core.tracing import SpanKind, Link
 
 from ._version import VERSION
 from ._constants import (
@@ -138,18 +138,6 @@ def send_context_manager():
         yield None
 
 
-def add_link_to_send(event, send_span):
-    """Add Diagnostic-Id from event to span as link.
-    """
-    try:
-        if send_span and event.properties:
-            traceparent = event.properties.get(b"Diagnostic-Id", "").decode("ascii")
-            if traceparent:
-                send_span.link(traceparent)
-    except Exception as exp:  # pylint:disable=broad-except
-        _LOGGER.warning("add_link_to_send had an exception %r", exp)
-
-
 def trace_message(event, parent_span=None):
     # type: (EventData, Optional[AbstractSpan]) -> None
     """Add tracing information to this event.
@@ -163,7 +151,14 @@ def trace_message(event, parent_span=None):
             current_span = parent_span or span_impl_type(
                 span_impl_type.get_current_span()
             )
-            with current_span.span(name="Azure.EventHubs.message", kind=SpanKind.PRODUCER) as message_span:
+            link = Link({
+                'traceparent': current_span.get_trace_parent()
+            })
+            with current_span.span(
+                name="Azure.EventHubs.message",
+                kind=SpanKind.PRODUCER,
+                links=[link]
+                ) as message_span:
                 message_span.add_attribute("az.namespace", "Microsoft.EventHub")
                 if not event.properties:
                     event.properties = dict()
