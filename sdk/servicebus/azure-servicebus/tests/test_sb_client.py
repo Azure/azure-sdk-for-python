@@ -12,6 +12,7 @@ import time
 from datetime import datetime, timedelta
 
 from azure.common import AzureHttpError, AzureConflictHttpError
+from azure.core.credentials import AzureSasCredential
 from azure.mgmt.servicebus.models import AccessRights
 from azure.servicebus import ServiceBusClient, ServiceBusSender, ServiceBusReceiver
 from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
@@ -308,6 +309,33 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         ".format(servicebus_namespace.name)
 
         client = ServiceBusClient(hostname, credential)
+        with client:
+            assert len(client._handlers) == 0
+            with client.get_queue_sender(servicebus_queue.name) as sender:
+                sender.send_messages(ServiceBusMessage("foo"))
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer()
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
+    def test_client_sas_credential(self,
+                                   servicebus_queue,
+                                   servicebus_namespace,
+                                   servicebus_namespace_key_name,
+                                   servicebus_namespace_primary_key,
+                                   servicebus_namespace_connection_string,
+                                   **kwargs):
+        # This should "just work" to validate known-good.
+        credential = ServiceBusSharedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
+        hostname = "{}.servicebus.windows.net".format(servicebus_namespace.name)
+        auth_uri = "sb://{}/{}".format(hostname, servicebus_queue.name)
+        token = credential.get_token(auth_uri).token.decode()
+
+        # Finally let's do it with AzureSasCredential
+        credential = AzureSasCredential(token)
+
+        client = ServiceBusClient.from_connection_string(credential)
         with client:
             assert len(client._handlers) == 0
             with client.get_queue_sender(servicebus_queue.name) as sender:

@@ -20,6 +20,7 @@ from typing import (
     Type,
     TYPE_CHECKING,
     Union,
+    Tuple,
     cast
 )
 from contextlib import contextmanager
@@ -57,6 +58,7 @@ from .constants import (
 if TYPE_CHECKING:
     from .message import ServiceBusReceivedMessage, ServiceBusMessage, ServiceBusMessageBatch
     from azure.core.tracing import AbstractSpan
+    from azure.core.credentials import AzureSasCredential
     from .receiver_mixins import ReceiverMixin
     from .._servicebus_session import BaseSession
 
@@ -358,3 +360,13 @@ def trace_link_message(messages, parent_span=None):
                             )
     except Exception as exp:  # pylint:disable=broad-except
         _log.warning("trace_link_message had an exception %r", exp)
+
+def parse_sas_credential(credential):
+    # type: (AzureSasCredential) -> Tuple
+    sas = credential.signature
+    parsed_sas = sas.split('&')
+    expiry = None
+    for item in parsed_sas:
+        if item.startswith('se='):
+            expiry = int(item[3:])
+    return (sas, expiry)
