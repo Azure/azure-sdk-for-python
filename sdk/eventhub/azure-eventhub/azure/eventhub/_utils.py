@@ -132,8 +132,7 @@ def send_context_manager():
     )  # type: Type[AbstractSpan]
 
     if span_impl_type is not None:
-        with span_impl_type(name="Azure.EventHubs.send") as child:
-            child.kind = SpanKind.CLIENT
+        with span_impl_type(name="Azure.EventHubs.send", kind=SpanKind.CLIENT) as child:
             yield child
     else:
         yield None
@@ -164,8 +163,7 @@ def trace_message(event, parent_span=None):
             current_span = parent_span or span_impl_type(
                 span_impl_type.get_current_span()
             )
-            with current_span.span(name="Azure.EventHubs.message") as message_span:
-                message_span.kind = SpanKind.PRODUCER
+            with current_span.span(name="Azure.EventHubs.message", kind=SpanKind.PRODUCER) as message_span:
                 message_span.add_attribute("az.namespace", "Microsoft.EventHub")
                 if not event.properties:
                     event.properties = dict()
