@@ -26,24 +26,10 @@ class _AesCbcCryptoTransform(BlockCryptoTransform):
 
 
 class _AesCbcDecryptor(_AesCbcCryptoTransform):
-    def __init__(self, key, iv):
+    def __init__(self, key, iv, padding):
         super(_AesCbcDecryptor, self).__init__(key, iv)
         self._ctx = self._cipher.decryptor()
-        self._padder = padding.ANSIX923(_CBC_BLOCK_SIZE).unpadder()  # TODO: Update this to zero-padding
-
-    def update(self, data):
-        decrypted = self._ctx.update(data) + self._ctx.finalize()
-        return self._padder.update(decrypted)
-
-    def finalize(self):
-        return self._padder.finalize()
-
-
-class _AesCbcPadDecryptor(_AesCbcCryptoTransform):
-    def __init__(self, key, iv):
-        super(_AesCbcPadDecryptor, self).__init__(key, iv)
-        self._ctx = self._cipher.decryptor()
-        self._padder = padding.PKCS7(_CBC_BLOCK_SIZE).unpadder()
+        self._padder = padding.unpadder()
 
     def update(self, data):
         decrypted = self._ctx.update(data) + self._ctx.finalize()
@@ -54,24 +40,10 @@ class _AesCbcPadDecryptor(_AesCbcCryptoTransform):
 
 
 class _AesCbcEncryptor(_AesCbcCryptoTransform):
-    def __init__(self, key, iv):
+    def __init__(self, key, iv, padding):
         super(_AesCbcEncryptor, self).__init__(key, iv)
         self._ctx = self._cipher.encryptor()
-        self._padder = padding.ANSIX923(_CBC_BLOCK_SIZE).padder()  # TODO: Update this to zero-padding
-
-    def update(self, data):
-        padded = self._padder.update(data) + self._padder.finalize()
-        return self._ctx.update(padded)
-
-    def finalize(self):
-        return self._ctx.finalize()
-
-
-class _AesCbcPadEncryptor(_AesCbcCryptoTransform):
-    def __init__(self, key, iv):
-        super(_AesCbcPadEncryptor, self).__init__(key, iv)
-        self._ctx = self._cipher.encryptor()
-        self._padder = padding.PKCS7(_CBC_BLOCK_SIZE).padder()
+        self._padder = padding.padder()
 
     def update(self, data):
         padded = self._padder.update(data) + self._padder.finalize()
@@ -100,12 +72,12 @@ class _AesCbc(SymmetricEncryptionAlgorithm):
     def create_encryptor(self, key, iv):
         key, iv = self._validate_input(key, iv)
 
-        return _AesCbcEncryptor(key, iv)
+        return _AesCbcEncryptor(key, iv, padding.PKCS7(self._block_size))
 
     def create_decryptor(self, key, iv):
         key, iv = self._validate_input(key, iv)
 
-        return _AesCbcDecryptor(key, iv)
+        return _AesCbcDecryptor(key, iv, padding.PKCS7(self._block_size))
 
     def _validate_input(self, key, iv):
         if not key:
@@ -125,12 +97,12 @@ class _AesCbcPad(_AesCbc):
     def create_encryptor(self, key, iv):
         key, iv = self._validate_input(key, iv)
 
-        return _AesCbcPadEncryptor(key, iv)
+        return _AesCbcEncryptor(key, iv, padding.PKCS7(self._block_size))
 
     def create_decryptor(self, key, iv):
         key, iv = self._validate_input(key, iv)
 
-        return _AesCbcPadDecryptor(key, iv)
+        return _AesCbcDecryptor(key, iv, padding.PKCS7(self._block_size))
 
 
 class Aes128Cbc(_AesCbc):
