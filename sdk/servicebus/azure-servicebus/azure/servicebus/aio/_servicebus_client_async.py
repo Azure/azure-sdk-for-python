@@ -6,6 +6,7 @@ from typing import Any, List, Union, TYPE_CHECKING
 import logging
 
 import uamqp
+from azure.core.credentials import AzureSasCredential
 
 from .._base_handler import _parse_conn_str
 from ._base_handler_async import (
@@ -21,7 +22,7 @@ from .._common.constants import ServiceBusSubQueue
 from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential, AzureSasCredential
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 

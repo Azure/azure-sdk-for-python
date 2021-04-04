@@ -9,6 +9,7 @@ from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast
 
 import uamqp
 from uamqp import SendClientAsync, types
+from azure.core.credentials import AzureSasCredential
 
 from .._common.message import ServiceBusMessage, ServiceBusMessageBatch
 from .._servicebus_sender import SenderMixin
@@ -30,7 +31,7 @@ from .._common.utils import (
 from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential, AzureSasCredential
+    from azure.core.credentials import TokenCredential
 
 
 MessageTypes = Union[

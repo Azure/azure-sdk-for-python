@@ -13,6 +13,7 @@ import six
 
 from uamqp import ReceiveClientAsync, types, Message
 from uamqp.constants import SenderSettleMode
+from azure.core.credentials import AzureSasCredential
 
 from ..exceptions import ServiceBusError
 from ._servicebus_session_async import ServiceBusSession
@@ -53,7 +54,7 @@ from .._common.utils import (
 from ._async_utils import create_authentication, get_running_loop
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential, AzureSasCredential
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
