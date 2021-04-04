@@ -300,7 +300,7 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer()
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
-    async def test_client_sas_credential_async(self,
+    async def test_client_azure_sas_credential_async(self,
                                    servicebus_queue,
                                    servicebus_namespace,
                                    servicebus_namespace_key_name,
@@ -311,7 +311,7 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
         credential = ServiceBusSharedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
         hostname = "{}.servicebus.windows.net".format(servicebus_namespace.name)
         auth_uri = "sb://{}/{}".format(hostname, servicebus_queue.name)
-        token = (await credential.get_token(auth_uri)).token
+        token = (await credential.get_token(auth_uri)).token.decode()
 
         credential = AzureSasCredential(token)
 

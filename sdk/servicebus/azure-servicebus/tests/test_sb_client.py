@@ -319,7 +319,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer()
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
-    def test_client_sas_credential(self,
+    def test_client_azure_sas_credential(self,
                                    servicebus_queue,
                                    servicebus_namespace,
                                    servicebus_namespace_key_name,
