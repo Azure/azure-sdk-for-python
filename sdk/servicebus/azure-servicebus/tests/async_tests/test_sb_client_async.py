@@ -315,7 +315,7 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
 
         credential = AzureSasCredential(token)
 
-        client = ServiceBusClient.from_connection_string(credential)
+        client = ServiceBusClient(hostname, credential)
         async with client:
             assert len(client._handlers) == 0
             async with client.get_queue_sender(servicebus_queue.name) as sender:

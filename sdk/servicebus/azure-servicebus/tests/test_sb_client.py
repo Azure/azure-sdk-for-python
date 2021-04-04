@@ -335,7 +335,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         # Finally let's do it with AzureSasCredential
         credential = AzureSasCredential(token)
 
-        client = ServiceBusClient.from_connection_string(credential)
+        client = ServiceBusClient(hostname, credential)
         with client:
             assert len(client._handlers) == 0
             with client.get_queue_sender(servicebus_queue.name) as sender:
