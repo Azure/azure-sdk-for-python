@@ -10,6 +10,8 @@ from ..algorithm import SymmetricEncryptionAlgorithm
 from ..transform import BlockCryptoTransform
 
 
+# pylint: disable=W0223
+
 _CBC_BLOCK_SIZE = 128
 
 
@@ -20,16 +22,16 @@ class _AesCbcCryptoTransform(BlockCryptoTransform):
 
     def transform(self, data):
         return self.update(data) + self.finalize()
-    
+
     def block_size(self):
         return _CBC_BLOCK_SIZE
 
 
 class _AesCbcDecryptor(_AesCbcCryptoTransform):
-    def __init__(self, key, iv, padding):
+    def __init__(self, key, iv, padding_mode):
         super(_AesCbcDecryptor, self).__init__(key, iv)
         self._ctx = self._cipher.decryptor()
-        self._padder = padding.unpadder()
+        self._padder = padding_mode.unpadder()
 
     def update(self, data):
         decrypted = self._ctx.update(data) + self._ctx.finalize()
@@ -40,10 +42,10 @@ class _AesCbcDecryptor(_AesCbcCryptoTransform):
 
 
 class _AesCbcEncryptor(_AesCbcCryptoTransform):
-    def __init__(self, key, iv, padding):
+    def __init__(self, key, iv, padding_mode):
         super(_AesCbcEncryptor, self).__init__(key, iv)
         self._ctx = self._cipher.encryptor()
-        self._padder = padding.padder()
+        self._padder = padding_mode.padder()
 
     def update(self, data):
         padded = self._padder.update(data) + self._padder.finalize()

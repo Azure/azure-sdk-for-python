@@ -39,7 +39,7 @@ _default_kw_alg_by_size = {
 
 
 def raise_if_incorrect_key_size(algorithm, key_size):
-    if (algorithm._key_size >> 3 != key_size):
+    if algorithm._key_size >> 3 != key_size:  # pylint:disable=protected-access
         raise AzureError("Invalid AES encryption algorithm for key size. The algorithm must match the size of the key.")
 
 
