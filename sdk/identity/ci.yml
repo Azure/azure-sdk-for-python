@@ -34,8 +34,8 @@ extends:
     Artifacts:
      - name: azure-identity
        safeName: azureidentity
-    AdditionalMatrixConfigs:
-      - Name: Identity_ci_test
+    MatrixConfigs:
+      - Name: identity_ci_matrix
         Path: sdk/identity/platform-matrix.json
         Selection: sparse
         GenerateVMJobs: true

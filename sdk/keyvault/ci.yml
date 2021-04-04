@@ -48,3 +48,8 @@ extends:
       safeName: azuremgmtkeyvault
     - name: azure-keyvault
       safeName: azurekeyvault
+    MatrixConfigs:
+      - Name: keyvault_ci_matrix
+        Path: sdk/keyvault/platform-matrix-ci.json
+        Selection: sparse
+        GenerateVMJobs: true
