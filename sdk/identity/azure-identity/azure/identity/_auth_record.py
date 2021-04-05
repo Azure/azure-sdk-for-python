@@ -5,6 +5,9 @@
 import json
 
 
+SUPPORTED_VERSIONS = {"1.0"}
+
+
 class AuthenticationRecord(object):
     """Non-secret account information for an authenticated user
 
@@ -59,8 +62,10 @@ class AuthenticationRecord(object):
         deserialized = json.loads(data)
 
         version = deserialized.get("version")
-        if version != "1.0":
-            raise ValueError('Unexpected version "{}"'.format(version))
+        if version not in SUPPORTED_VERSIONS:
+            raise ValueError(
+                'Unexpected version "{}". This package supports these versions: {}'.format(version, SUPPORTED_VERSIONS)
+            )
 
         return cls(
             authority=deserialized["authority"],

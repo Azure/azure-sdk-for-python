@@ -5,6 +5,7 @@
 import json
 
 from azure.identity import AuthenticationRecord
+from azure.identity._auth_record import SUPPORTED_VERSIONS
 import pytest
 
 
@@ -55,5 +56,6 @@ def test_unknown_version(version):
     if version:
         data["version"] = version
 
-    with pytest.raises(ValueError, match=".*{}.*".format(version)):
+    with pytest.raises(ValueError, match=".*{}.*".format(version)) as ex:
         AuthenticationRecord.deserialize(json.dumps(data))
+    assert str(SUPPORTED_VERSIONS) in str(ex.value)
