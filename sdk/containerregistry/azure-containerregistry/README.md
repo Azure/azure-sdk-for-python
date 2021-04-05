@@ -40,8 +40,10 @@ The [Azure Identity library][identity] provides easy Azure Active Directory supp
 ```python
 # Create a ContainerRegistryClient that will authenticate through Active Directory
 from azure.containerregistry import ContainerRegistryClient
+from azure.identity import DefaultAzureCredential
+
 account_url = "https://MYCONTAINERREGISTRY.azurecr.io"
-client = ContainerRegistryClient(account_url, DefaultAzureCredential)
+client = ContainerRegistryClient(account_url, DefaultAzureCredential())
 ```
 
 ## Key concepts
