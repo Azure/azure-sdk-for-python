@@ -14,5 +14,4 @@ MYPY_HARD_FAILURE_OPTED = [
   "azure-ai-formrecognizer",
   "azure-ai-metricsadvisor",
   "azure-eventgrid",
-  "azure-containerregistry",
 ]

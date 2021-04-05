@@ -57,7 +57,7 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_id_document_url_pass_stream(self, client):
-        with open(self.id_document_jpg, "rb") as id_document:
+        with open(self.id_document_license_jpg, "rb") as id_document:
             with self.assertRaises(HttpResponseError):
                 poller = client.begin_recognize_id_documents_from_url(id_document)
 
@@ -95,6 +95,26 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
 
         # Check page metadata
         self.assertFormPagesTransformCorrect(id_document.pages, read_results, page_results)
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    def test_id_document_jpg_passport(self, client):
+        poller = client.begin_recognize_id_documents_from_url(self.id_document_url_jpg_passport)
+
+        result = poller.result()
+        self.assertEqual(len(result), 1)
+    
+        id_document = result[0]
+        # check dict values
+
+        passport = id_document.fields.get("MachineReadableZone").value
+        self.assertEqual(passport["LastName"].value, "MARTIN")
+        self.assertEqual(passport["FirstName"].value, "SARAH")
+        self.assertEqual(passport["DocumentNumber"].value, "ZE000509")
+        self.assertEqual(passport["DateOfBirth"].value, date(1985,1,1))
+        self.assertEqual(passport["DateOfExpiration"].value, date(2023,1,14))
+        self.assertEqual(passport["Sex"].value, "F")
+        self.assertEqual(passport["Country"].value, "CAN")
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

@@ -1,7 +1,10 @@
 # Release History
 
-## 11.1.1 (Unreleased)
+## 11.2.0b1 (Unreleased)
 
+### New features
+
+- Added new data source type ADLS gen2  #16852
 
 ## 11.1.0 (2021-02-10)
 
