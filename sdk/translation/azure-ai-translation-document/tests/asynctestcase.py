@@ -11,7 +11,7 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
     def __init__(self, method_name):
         super(AsyncDocumentTranslationTest, self).__init__(method_name)
 
-    async def _submit_and_validate_translation_job_async(self, async_client, translation_inputs, total_docs_count):
+    async def _submit_and_validate_translation_job_async(self, async_client, translation_inputs, total_docs_count=None):
         # submit job
         job_details = await async_client.create_translation_job(translation_inputs)
         self.assertIsNotNone(job_details.id)

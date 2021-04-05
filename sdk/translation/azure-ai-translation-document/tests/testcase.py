@@ -179,7 +179,7 @@ class DocumentTranslationTest(AzureTestCase):
 
 
     # client helpers
-    def _submit_and_validate_translation_job(self, client, translation_inputs, total_docs_count):
+    def _submit_and_validate_translation_job(self, client, translation_inputs, total_docs_count=None):
         # submit job
         job_details = client.create_translation_job(translation_inputs)
         self.assertIsNotNone(job_details.id)
