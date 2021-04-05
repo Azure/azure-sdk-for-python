@@ -17,11 +17,13 @@ from ._common.message import (
     ServiceBusMessage,
     ServiceBusMessageBatch,
     ServiceBusReceivedMessage,
+    AMQPAnnotatedMessage
 )
 from ._common.constants import (
     ServiceBusReceiveMode,
     ServiceBusSubQueue,
     NEXT_AVAILABLE_SESSION,
+    AMQPMessageBodyType
 )
 from ._common.auto_lock_renewer import AutoLockRenewer
 from ._common._connection_string_parser import (
@@ -35,6 +37,8 @@ __all__ = [
     "ServiceBusMessage",
     "ServiceBusMessageBatch",
     "ServiceBusReceivedMessage",
+    "AMQPAnnotatedMessage",
+    "AMQPMessageBodyType",
     "NEXT_AVAILABLE_SESSION",
     "ServiceBusSubQueue",
     "ServiceBusReceiveMode",
