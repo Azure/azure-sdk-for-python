@@ -17,7 +17,7 @@ from uamqp import ReceiveClient, Source, Message
 from .exceptions import _error_handler
 from ._common import EventData
 from ._client_base import ConsumerProducerMixin
-from ._utils import create_properties, get_event_links, event_position_selector
+from ._utils import create_properties, event_position_selector
 from ._constants import (
     EPOCH_SYMBOL,
     TIMEOUT_SYMBOL,
