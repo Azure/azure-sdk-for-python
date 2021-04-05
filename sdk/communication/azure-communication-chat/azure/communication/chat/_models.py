@@ -7,22 +7,23 @@ from typing import TYPE_CHECKING
 
 from ._generated.models import ChatParticipant as ChatParticipantAutorest
 from ._generated.models import ChatMessageType
-from ._utils import CommunicationUserIdentifierConverter
+from ._communication_identifier_serializer import serialize_identifier, deserialize_identifier
 
 # pylint: disable=unused-import,ungrouped-imports
-from ._shared.models import CommunicationUserIdentifier
+from ._shared.models import CommunicationIdentifier
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
+
 
 class ChatThreadParticipant(object):
     """A participant of the chat thread.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar user: Required. The CommunicationUserIdentifier.
-    :type user: CommunicationUserIdentifier
+    :ivar user: Required. The communication identifier.
+    :type user: CommunicationIdentifier
     :ivar display_name: Display name for the chat thread participant.
     :type display_name: str
     :ivar share_history_time: Time from which the chat history is shared with the participant. The
@@ -43,15 +44,14 @@ class ChatThreadParticipant(object):
     @classmethod
     def _from_generated(cls, chat_thread_participant):
         return cls(
-            user=CommunicationUserIdentifierConverter.from_identifier_model(
-                chat_thread_participant.communication_identifier),
+            user=deserialize_identifier(chat_thread_participant.communication_identifier),
             display_name=chat_thread_participant.display_name,
             share_history_time=chat_thread_participant.share_history_time
         )
 
     def _to_generated(self):
         return ChatParticipantAutorest(
-            communication_identifier=CommunicationUserIdentifierConverter.to_identifier_model(self.user),
+            communication_identifier=serialize_identifier(self.user),
             display_name=self.display_name,
             share_history_time=self.share_history_time
         )
@@ -80,7 +80,7 @@ class ChatMessage(object):
      in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :type created_on: ~datetime.datetime
     :ivar sender: The chat message sender.
-    :type sender: CommunicationUserIdentifier
+    :type sender: CommunicationIdentifier
     :ivar deleted_on: The timestamp when the chat message was deleted. The timestamp is in RFC3339
      format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :type deleted_on: ~datetime.datetime
@@ -119,8 +119,7 @@ class ChatMessage(object):
 
         sender_communication_identifier = chat_message.sender_communication_identifier
         if sender_communication_identifier is not None:
-            sender_communication_identifier = CommunicationUserIdentifierConverter.from_identifier_model(
-                chat_message.sender_communication_identifier)
+            sender_communication_identifier = deserialize_identifier(chat_message.sender_communication_identifier)
 
         return cls(
             id=chat_message.id,
@@ -148,7 +147,7 @@ class ChatMessageContent(object):
     :type participants: List[~azure.communication.chat.models.ChatThreadParticipant]
     :ivar initiator: Chat message content for messages of types participantAdded or
      participantRemoved.
-    :type initiator: Union[CommunicationUserIdentifier, MicrosoftTeamsUserIdentifier]
+    :type initiator: CommunicationIdentifier
     """
 
     def __init__(
@@ -176,8 +175,7 @@ class ChatMessageContent(object):
         initiator = chat_message_content.initiator_communication_identifier
         # check if initiator is populated
         if initiator is not None:
-            initiator = CommunicationUserIdentifierConverter.from_identifier_model(
-                chat_message_content.initiator_communication_identifier)
+            initiator = deserialize_identifier(chat_message_content.initiator_communication_identifier)
 
         return cls(
             message=chat_message_content.message,
@@ -200,7 +198,7 @@ class ChatThreadProperties(object):
      format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :vartype created_on: ~datetime.datetime
     :ivar created_by: the chat thread owner.
-    :vartype created_by: CommunicationUserIdentifier
+    :vartype created_by: CommunicationIdentifier
     """
 
     # pylint:disable=protected-access
@@ -220,8 +218,7 @@ class ChatThreadProperties(object):
 
         created_by = chat_thread.created_by_communication_identifier
         if created_by is not None:
-            created_by = CommunicationUserIdentifierConverter.from_identifier_model(
-                chat_thread.created_by_communication_identifier)
+            created_by = deserialize_identifier(chat_thread.created_by_communication_identifier)
 
         return cls(
             id=chat_thread.id,
@@ -237,7 +234,7 @@ class ChatMessageReadReceipt(object):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar sender: Read receipt sender.
-    :vartype sender: CommunicationUserIdentifier
+    :vartype sender: CommunicationIdentifier
     :ivar chat_message_id: Id for the chat message that has been read. This id is generated by the
      server.
     :vartype chat_message_id: str
@@ -257,11 +254,9 @@ class ChatMessageReadReceipt(object):
 
     @classmethod
     def _from_generated(cls, read_receipt):
-
         sender = read_receipt.sender_communication_identifier
         if sender is not None:
-            sender = CommunicationUserIdentifierConverter.from_identifier_model(
-                read_receipt.sender_communication_identifier)
+            sender = deserialize_identifier(read_receipt.sender_communication_identifier)
 
         return cls(
             sender=sender,
