@@ -324,7 +324,7 @@ class ServiceBusMessage(
         For ~azure.servicebus.AMQPMessageBodyType.SEQUENCE, the body could be List or Iterable[List]
         For ~azure.servicebus.AMQPMessageBodyType.VALUE, the body could be any type.
 
-        :rtype: Optional[Union[bytes, Iterable[bytes], List, Iterable[List], Any]]
+        :rtype: Any
         """
         return self.message.get_data()
 
