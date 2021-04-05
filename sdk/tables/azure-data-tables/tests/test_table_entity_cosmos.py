@@ -1974,8 +1974,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     @CosmosPreparer()
     def test_datetime_milliseconds(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(tables_cosmos_account_name, "table")
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             entity = self._create_random_entity_dict()
@@ -1994,3 +1992,31 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
+
+    @CosmosPreparer()
+    def test_datetime_str_passthrough(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        partition, row = self._create_pk_rk(None, None)
+
+        dotnet_timestamp = "2013-08-22T01:12:06.2608595Z"
+        entity = {
+            'PartitionKey': partition,
+            'RowKey': row,
+            'datetime1': EntityProperty(dotnet_timestamp, EdmType.DATETIME)
+        }
+        try:
+            self.table.create_entity(entity)
+            received = self.table.get_entity(partition, row)
+            assert isinstance(received['datetime1'], datetime)
+            assert received.datetime1.tables_service_value == dotnet_timestamp
+
+            received['datetime2'] = received.datetime1.replace(year=2020)
+            assert received['datetime2'].tables_service_value == ""
+
+            self.table.update_entity(received, mode=UpdateMode.REPLACE)
+            updated = self.table.get_entity(partition, row)
+            assert isinstance(updated['datetime1'], datetime)
+            assert isinstance(updated['datetime2'], datetime)
+            assert updated.datetime1.tables_service_value == dotnet_timestamp
+        finally:
+            self._tear_down()
