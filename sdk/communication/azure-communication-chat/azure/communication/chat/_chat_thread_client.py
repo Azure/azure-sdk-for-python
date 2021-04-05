@@ -545,14 +545,14 @@ class ChatThreadClient(object):
     @distributed_trace
     def remove_participant(
         self,
-        user,  # type: CommunicationIdentifier
+        identifier,  # type: CommunicationIdentifier
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Remove a participant from a thread.
 
-        :param user: Required. User identity of the thread participant to remove from the thread.
-        :type user: ~azure.communication.chat.CommunicationIdentifier
+        :param identifier: Required. User identity of the thread participant to remove from the thread.
+        :type identifier: ~azure.communication.chat.CommunicationIdentifier
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -566,12 +566,12 @@ class ChatThreadClient(object):
                 :dedent: 8
                 :caption: Removing participant from chat thread.
         """
-        if not user:
+        if not identifier:
             raise ValueError("user cannot be None.")
 
         return self._client.chat_thread.remove_chat_participant(
             chat_thread_id=self._thread_id,
-            participant_communication_identifier=serialize_identifier(user),
+            participant_communication_identifier=serialize_identifier(identifier),
             **kwargs)
 
     def close(self):

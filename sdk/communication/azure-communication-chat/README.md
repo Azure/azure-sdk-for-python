@@ -135,7 +135,7 @@ Perform CRD(Create-Read-Delete) operations on thread participants
 ```Python
 list_participants(**kwargs)
 add_participants(thread_participants, **kwargs)
-remove_participant(participant_id, **kwargs)
+remove_participant(participant_identifier, **kwargs)
 ```
 
 ## Send typing notification
@@ -483,7 +483,7 @@ Use `remove_participant` method to remove thread participant from the thread ide
 and was added into this chat thread.
 - Use `user` to specify the `CommunicationUserIdentifier` you created
 ```python
-chat_thread_client.remove_participant(user=new_user)
+chat_thread_client.remove_participant(identifier=new_user)
 
 # # converesely you can also do the following; provided the user_id is known
 # from azure.communication.identity import CommunicationUserIdentifier
