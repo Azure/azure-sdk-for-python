@@ -567,7 +567,7 @@ class ChatThreadClient(object):
                 :caption: Removing participant from chat thread.
         """
         if not identifier:
-            raise ValueError("user cannot be None.")
+            raise ValueError("identifier cannot be None.")
 
         return self._client.chat_thread.remove_chat_participant(
             chat_thread_id=self._thread_id,
