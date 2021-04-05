@@ -1,9 +1,8 @@
 """
 Examples to show usage of the azure-core-tracing-opentelemetry
-with the storage SDK.
+with the Eventhub SDK.
 
-This example traces calls for publishing cloud data and exports it
-using the ConsoleSpanExporter.
+This example traces calls for senda batch to eventhub.
 
 An alternative path to export using AzureMonitor is also mentioned in the sample. Please take
 a look at the commented code.
@@ -39,20 +38,25 @@ trace.get_tracer_provider().add_span_processor(
     SimpleSpanProcessor(exporter)
 )
 
-# Example with Eventgrid SDKs
+from azure.eventhub import EventHubProducerClient, EventData
 import os
-from azure.core.messaging import CloudEvent
-from azure.eventgrid import EventGridPublisherClient
-from azure.core.credentials import AzureKeyCredential
 
-hostname = os.environ['CLOUD_TOPIC_HOSTNAME']
-key = AzureKeyCredential(os.environ['CLOUD_ACCESS_KEY'])
-cloud_event = CloudEvent(
-    source = 'demo',
-    type = 'sdk.demo',
-    data = {'test': 'hello'},
-    extensions = {'test': 'maybe'}
-)
+FULLY_QUALIFIED_NAMESPACE = os.environ['EVENT_HUB_HOSTNAME']
+EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+
+credential = os.environ['EVENTHUB_CONN_STR']
+
+def on_event(context, event):
+    print(context.partition_id, ":", event)
+
 with tracer.start_as_current_span(name="MyApplication"):
-    client = EventGridPublisherClient(hostname, key)
-    client.send(cloud_event)
+    producer_client = EventHubProducerClient.from_connection_string(
+        conn_str=credential,
+        fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
+        eventhub_name=EVENTHUB_NAME,
+        logging_enable=True
+    )
+    with producer_client:
+        event_data_batch = producer_client.create_batch()
+        event_data_batch.add(EventData('Single message'))
+        producer_client.send_batch(event_data_batch)
