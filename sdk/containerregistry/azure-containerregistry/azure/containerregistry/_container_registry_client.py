@@ -31,10 +31,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         # type: (str, TokenCredential, Dict[str, Any]) -> None
         """Create a ContainerRegistryClient from an ACR endpoint and a credential
 
-        :param endpoint: An ACR endpoint
-        :type endpoint: str
+        :param str endpoint: An ACR endpoint
         :param credential: The credential with which to authenticate
-        :type credential: TokenCredential
+        :type credential: :class:`~azure.core.credentials.TokenCredential`
         :returns: None
         :raises: None
         """
@@ -49,10 +48,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         # type: (str, Dict[str, Any]) -> DeletedRepositoryResult
         """Delete a repository
 
-        :param repository: The repository to delete
-        :type repository: str
-        :returns: None
-        :raises: :class:~azure.core.exceptions.ResourceNotFoundError
+        :param str repository: The repository to delete
+        :returns: Object containing information about the deleted repository
+        :rtype: :class:`~azure.containerregistry.DeletedRepositoryResult`
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         return DeletedRepositoryResult._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.delete_repository(repository, **kwargs)
@@ -65,10 +64,14 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :keyword max: Maximum number of repositories to return
         :type max: int
-        :keyword last: Query parameter for the last item in previous query
+        :keyword last: Query parameter for the last item in the previous call. Ensuing
+            call will return values after last lexically
         :type last: str
-        :returns: ~azure.core.paging.ItemPaged[str]
-        :raises: None
+        :keyword results_per_page: Numer of repositories to return per page
+        :type results_per_page: int
+        :return: ItemPaged[str]
+        :rtype: :class:`~azure.core.paging.ItemPaged`
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         n = kwargs.pop("results_per_page", None)
         last = kwargs.pop("last", None)
@@ -166,9 +169,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         # type: (str, Dict[str, Any]) -> ContainerRepositoryClient
         """Get a repository client
 
-        :param repository: The repository to create a client for
-        :type repository: str
-        :returns: :class:~azure.containerregistry.ContainerRepositoryClient
+        :param str repository: The repository to create a client for
+        :returns: :class:`~azure.containerregistry.ContainerRepositoryClient`
         :raises: None
         """
         _pipeline = Pipeline(

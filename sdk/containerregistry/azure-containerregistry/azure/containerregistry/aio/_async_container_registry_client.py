@@ -34,7 +34,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param endpoint: An ACR endpoint
         :type endpoint: str
         :param credential: The credential with which to authenticate
-        :type credential: AsyncTokenCredential
+        :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
         :returns: None
         :raises: None
         """
@@ -50,22 +50,27 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :param repository: The repository to delete
         :type repository: str
-        :returns: None
-        :raises: :class:~azure.core.exceptions.ResourceNotFoundError
+        :returns: Object containing information about the deleted repository
+        :rtype: :class:`~azure.containerregistry.DeletedRepositoryResult`
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         result = await self._client.container_registry.delete_repository(repository, **kwargs)
         return DeletedRepositoryResult._from_generated(result)  # pylint: disable=protected-access
 
     @distributed_trace
-    def list_repositories(self, **kwargs) -> AsyncItemPaged[str]:
+    def list_repositories(self, **kwargs: Dict[str, Any]) -> AsyncItemPaged[str]:
         """List all repositories
 
+        :keyword last: Query parameter for the last item in the previous call. Ensuing
+            call will return values after last lexicallyy
+        :type last: str
         :keyword max: Maximum number of repositories to return
         :type max: int
-        :keyword last: Query parameter for the last item in previous query
-        :type last: str
-        :returns: ~azure.core.paging.AsyncItemPaged[str]
-        :raises: ResourceNotFoundError
+        :keyword results_per_page: Numer of repositories to return per page
+        :type results_per_page: int
+        :return: ItemPaged[str]
+        :rtype: :class:`~azure.core.async_paging.AsyncItemPaged`
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         n = kwargs.pop("results_per_page", None)
         last = kwargs.pop("last", None)
@@ -157,12 +162,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_repository_client(self, repository: str, **kwargs) -> ContainerRepositoryClient:
+    def get_repository_client(self, repository: str, **kwargs: Dict[str, Any]) -> ContainerRepositoryClient:
         """Get a repository client
 
         :param repository: The repository to create a client for
         :type repository: str
-        :returns: :class:~azure.containerregistry.aio.ContainerRepositoryClient
+        :returns: :class:`~azure.containerregistry.aio.ContainerRepositoryClient`
         """
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(

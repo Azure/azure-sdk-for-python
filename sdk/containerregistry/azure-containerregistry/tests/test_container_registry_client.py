@@ -69,7 +69,11 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         )
         client = self.create_registry_client(containerregistry_baseurl)
 
-        client.delete_repository(repository)
+        result = client.delete_repository(repository)
+        assert isinstance(result, DeletedRepositoryResult)
+        assert result.deleted_registry_artifact_digests is not None
+        assert result.deleted_tags is not None
+
         self.sleep(5)
 
         for repo in client.list_repositories():
