@@ -5,16 +5,16 @@ languages:
 products:
   - azure
   - azure-cognitive-services
-  - azure-documenttranslation
+  - azure-document-translation
 urlFragment: documenttranslation-samples
 ---
 
 # Samples for Azure Document Translator client library for Python
 
 These code samples show common scenario operations with the Azure Document Translator client library.
-The async versions of the samples require Python 3.5 or later.
+The async versions of the samples require Python 3.6 or later.
 
-You can authenticate your client with a Cognitive Services/Document Translator API key or through Azure Active Directory with a token credential from [azure-identity][azure_identity]:
+You can authenticate your client with a Document Translator API key:
 * See [sample_authentication.py][sample_authentication] and [sample_authentication_async.py][sample_authentication_async] for how to authenticate in the above cases.
 
 These sample programs show common scenarios for the Document Translator client's offerings.
@@ -22,16 +22,15 @@ These sample programs show common scenarios for the Document Translator client's
 |**File Name**|**Description**|
 |----------------|-------------|
 |[sample_create_translation_job.py][create_translation_job] and [sample_create_translation_job_async.py][create_translation_job_async]|Create a document translation job|
-|[sample_translation_with_azure_blob.py][create_translation_job_with_azure_blob] and [sample_translation_with_azure_blob_async.py][create_translation_job_with_azure_blob_async]|Create a document translation job with document upload/download help|
-|[sample_translation_with_glossaries.py][create_translation_job_with_glossaries] and [sample_translation_with_glossaries_async.py][create_translation_job_with_glossaries_async]|Create a document translation job using custom glossaries and custom model|
+|[sample_translation_with_glossaries.py][create_translation_job_with_glossaries] and [sample_translation_with_glossaries_async.py][create_translation_job_with_glossaries_async]|Create a document translation job using custom glossaries|
 |[sample_check_document_statuses.py][check_document_statuses] and [sample_check_document_statuses_async.py][check_document_statuses_async]|Check status of submitted documents|
 |[sample_list_all_submitted_jobs.py][list_all_submitted_jobs] and [sample_list_all_submitted_jobs_async.py][list_all_submitted_jobs_async]|Check status of all submitted translation jobs|
 
 
 ## Prerequisites
-* Python 2.7, or 3.5 or later is required to use this package (3.5 or later if using asyncio)
+* Python 2.7, or 3.6 or later is required to use this package (3.6 or later if using asyncio)
 * You must have an [Azure subscription][azure_subscription] and an
-[Azure Translator account][azure_text_analytics_account] to run these samples.
+[Azure Translator account][azure_document_translation_account] to run these samples.
 
 ## Setup
 
@@ -41,11 +40,6 @@ These sample programs show common scenarios for the Document Translator client's
 pip install azure-ai-documenttranslation --pre
 ```
 For more information about how the versioning story of the SDK corresponds to the versioning story of the service's API, see [here][versioning_story_readme].
-
-* If authenticating with Azure Active Directory, make sure you have [azure-identity][azure_identity_pip] installed:
-  ```bash
-  pip install azure-identity
-  ```
 
 2. Clone or download this sample repository
 3. Open the sample folder in Visual Studio Code or your IDE of choice.
@@ -60,6 +54,10 @@ For more information about how the versioning story of the SDK corresponds to th
 
 Check out the [API reference documentation][api_reference_documentation] to learn more about
 what you can do with the Azure Document Translator client library.
+
+|**Advanced Sample File Name**|**Description**|
+|----------------|-------------|
+|[sample_translation_with_azure_blob.py][create_translation_job_with_azure_blob] and [sample_translation_with_azure_blob_async.py][create_translation_job_with_azure_blob_async]|Create a document translation job with document upload/download help|
 
 
 [versioning_story_readme]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/documenttranslation/azure-ai-documenttranslation#install-the-package
@@ -78,6 +76,6 @@ what you can do with the Azure Document Translator client library.
 [list_all_submitted_jobs_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/documenttranslation/azure-ai-documenttranslation/samples/async_samples/sample_list_all_submitted_jobs_async.py
 [pip]: https://pypi.org/project/pip/
 [azure_subscription]: https://azure.microsoft.com/free/
-[azure_text_analytics_account]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=singleservice%2Cwindows
+[azure_document_translation_account]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/get-started-with-document-translation?tabs=python
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
-[api_reference_documentation]: https://docs.microsoft.com/en-us/azure/cognitive-services/translator/quickstart-translator?tabs=csharp
+[api_reference_documentation]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
