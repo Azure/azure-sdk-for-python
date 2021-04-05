@@ -1,5 +1,11 @@
 # Release History
 
+## 7.2.0b1 (2021-04-07)
+
+**New Features**
+
+* Added support for using `~azure.core.credentials.AzureSasCredential` as credential for authenticating the clients.
+
 ## 7.1.1 (2021-04-07)
 
 This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported.
