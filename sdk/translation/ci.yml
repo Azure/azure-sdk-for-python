@@ -10,7 +10,7 @@ trigger:
     - release/*
   paths:
     include:
-    - sdk/translator/
+    - sdk/translation/
     - sdk/core/
 
 pr:
@@ -24,13 +24,13 @@ pr:
     - restapi*
   paths:
     include:
-    - sdk/translator/
+    - sdk/translation/
     - sdk/core/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
-    ServiceDirectory: translator
+    ServiceDirectory: translation
     Artifacts:
     - name: azure-ai-translation-document
       safeName: azureaitranslationdocument

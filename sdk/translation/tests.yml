@@ -5,7 +5,7 @@ stages:
     parameters:
       DeployArmTemplate: true
       BuildTargetingString: azure-ai-translation-document
-      ServiceDirectory: translator
+      ServiceDirectory: translation
       EnvVars:
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)

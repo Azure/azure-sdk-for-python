@@ -136,23 +136,23 @@
             "type": "string",
             "value": "[parameters('testApplicationSecret')]"
         },
-        "TRANSLATOR_DOCUMENT_NAME": {
+        "TRANSLATION_DOCUMENT_NAME": {
             "type": "string",
             "value": "[variables('docTranslationBaseName')]"
         },
-        "TRANSLATOR_DOCUMENT_TEST_API_KEY": {
+        "TRANSLATION_DOCUMENT_TEST_API_KEY": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('docTranslationBaseName')), variables('docTranslationApiVersion')).key1]"
         },
-        "TRANSLATOR_DOCUMENT_TEST_ENDPOINT": {
+        "TRANSLATION_DOCUMENT_TEST_ENDPOINT": {
             "type": "string",
             "value": "[variables('azureDocTranslationUrl')]"
         },
-        "TRANSLATOR_DOCUMENT_STORAGE_NAME": {
+        "TRANSLATION_DOCUMENT_STORAGE_NAME": {
             "type": "string",
             "value": "[parameters('blobStorageAccount')]"
         },
-        "TRANSLATOR_DOCUMENT_STORAGE_KEY": {
+        "TRANSLATION_DOCUMENT_STORAGE_KEY": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), variables('storageMgmtApiVersion')).keys[0].value]"
         }
