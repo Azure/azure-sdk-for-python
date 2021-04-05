@@ -326,8 +326,8 @@ def get_receive_links(messages):
     trace_messages = (
         messages
         if isinstance(
-            messages, Iterable
-        )  # pylint:disable=isinstance-second-argument-not-valid-type
+            messages, Iterable  # pylint:disable=isinstance-second-argument-not-valid-type
+        )
         else (messages,)
     )
 
