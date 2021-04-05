@@ -5,6 +5,8 @@
 from enum import Enum
 from typing import TYPE_CHECKING
 
+from azure.core.pipeline.transport import AsyncHttpTransport
+
 from ._async_authentication_policy import ContainerRegistryChallengePolicy
 from .._generated.aio import ContainerRegistry
 from .._user_agent import USER_AGENT
@@ -47,9 +49,36 @@ class ContainerRegistryBaseClient(object):
     async def __aexit__(self, *args):
         await self._client.__aexit__(*args)
 
-    async def close(self):
-        # type: () -> None
+    async def close(self) -> None:
         """Close sockets opened by the client.
         Calling this method is unnecessary when using the client as a context manager.
         """
         await self._client.close()
+
+    def _is_tag(self, tag_or_digest: str) -> bool:  # pylint: disable=no-self-use
+        tag = tag_or_digest.split(":")
+        return not (len(tag) == 2 and tag[0].startswith(u"sha"))
+
+
+class AsyncTransportWrapper(AsyncHttpTransport):
+    """Wrapper class that ensures that an inner client created
+    by a `get_client` method does not close the outer transport for the parent
+    when used in a context manager.
+    """
+    def __init__(self, async_transport):
+        self._transport = async_transport
+
+    async def send(self, request, **kwargs):
+        return await self._transport.send(request, **kwargs)
+
+    async def open(self):
+        pass
+
+    async def close(self):
+        pass
+
+    async def __aenter__(self):
+        pass
+
+    async def __aexit__(self, *args):  # pylint: disable=arguments-differ
+        pass

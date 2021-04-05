@@ -15,6 +15,7 @@ from azure.containerregistry import (
 from azure.containerregistry.aio import ContainerRegistryClient, ContainerRepositoryClient
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
+from azure.core.pipeline.transport import AioHttpTransport
 
 from asynctestcase import AsyncContainerRegistryTestClass
 from constants import TO_BE_DELETED
@@ -60,3 +61,20 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
 
         with pytest.raises(ResourceNotFoundError):
             deleted_result = await client.delete_repository("not_real_repo")
+
+    @acr_preparer()
+    async def test_transport_closed_only_once(self, containerregistry_baseurl):
+        transport = AioHttpTransport()
+        client = self.create_registry_client(containerregistry_baseurl, transport=transport)
+        async with client:
+            async for r in client.list_repositories():
+                pass
+            assert transport.session is not None
+            
+            repo_client = client.get_repository_client("hello-world")
+            async with repo_client:
+                assert transport.session is not None
+
+            async for r in client.list_repositories():
+                pass
+            assert transport.session is not None
