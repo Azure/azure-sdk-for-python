@@ -168,32 +168,6 @@ def trace_message(event, parent_span=None):
     except Exception as exp:  # pylint:disable=broad-except
         _LOGGER.warning("trace_message had an exception %r", exp)
 
-
-def trace_link_message(events, parent_span=None):
-    # type: (Union[EventData, Iterable[EventData]], Optional[AbstractSpan]) -> None
-    """Link the current event(s) to current span or provided parent span.
-
-    Will extract DiagnosticId if available.
-    """
-    trace_events = events if isinstance(events, Iterable) else (events,)  # pylint:disable=isinstance-second-argument-not-valid-type
-    try:  # pylint:disable=too-many-nested-blocks
-        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
-        if span_impl_type is not None:
-            current_span = parent_span or span_impl_type(
-                span_impl_type.get_current_span()
-            )
-            if current_span:
-                for event in trace_events:  # type: ignore
-                    if event.properties:
-                        traceparent = event.properties.get(b"Diagnostic-Id", "").decode("ascii")
-                        if traceparent:
-                            current_span.link(
-                                traceparent,
-                                attributes={"enqueuedTime": event.message.annotations.get(PROP_TIMESTAMP)}
-                            )
-    except Exception as exp:  # pylint:disable=broad-except
-        _LOGGER.warning("trace_link_message had an exception %r", exp)
-
 def get_event_links(events):
     trace_events = events if isinstance(events, Iterable) else (events,)  # pylint:disable=isinstance-second-argument-not-valid-type
     links = []
