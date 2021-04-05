@@ -5,6 +5,8 @@
 ### Features
 
 - Adds method `update_sync_token` to include sync tokens from EventGrid notifications.
+- Added `SecretReferenceConfigurationSetting` type to represent a configuration setting that references a KeyVault Secret.
+Added `FeatureFlagConfigurationSetting` type to represent a configuration setting that controls a feature flag.
 
 ## 1.1.1 (2020-10-05)
 

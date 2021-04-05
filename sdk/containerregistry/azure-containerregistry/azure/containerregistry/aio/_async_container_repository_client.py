@@ -178,13 +178,14 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: None
         """
-
-        await self._client.container_registry_repository.update_manifest_attributes(
-            self.repository, digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
+        return RegistryArtifactProperties._from_generated(  # pylint: disable=protected-access
+            await self._client.container_registry_repository.update_manifest_attributes(
+                self.repository, digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
+            )
         )
 
     @distributed_trace_async
-    async def set_tag_properties(self, tag: str, permissions: ContentPermissions, **kwargs) -> None:
+    async def set_tag_properties(self, tag: str, permissions: ContentPermissions, **kwargs) -> TagProperties:
         """Set the properties for a tag
 
         :param tag: Tag to set properties for
@@ -194,6 +195,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: None
         """
-        await self._client.container_registry_repository.update_tag_attributes(
-            self.repository, tag, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
+        return TagProperties._from_generated(  # pylint: disable=protected-access
+            await self._client.container_registry_repository.update_tag_attributes(
+                self.repository, tag, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
+            )
         )
