@@ -317,7 +317,7 @@ class ServiceBusMessage(
 
     @property
     def body(self):
-        # type: () -> Optional[Union[bytes, Iterable[bytes], List, Iterable[List], Any]]
+        # type: () -> Any
         """The body of the Message. The format may vary depending
         on the body type:
         For ~azure.servicebus.AMQPMessageBodyType.DATA, the body could be bytes or Iterable[bytes]
