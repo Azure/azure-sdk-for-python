@@ -142,7 +142,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
             warnings.warn(
                 """Kind must be set while creating the span for Opentelemetry. It might be possible
                 that one of the packages you are using doesn't follow the latest Opentelemtry Spec.
-                Try updating the azure pacakges to the latest versions."""
+                Try updating the azure packages to the latest versions."""
             )
 
     def __enter__(self):
@@ -235,7 +235,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
             warnings.warn(
                 """Link must be added while creating the span for Opentelemetry. It might be possible
                 that one of the packages you are using doesn't follow the latest Opentelemtry Spec.
-                Try updating the azure pacakges to the latest versions."""
+                Try updating the azure packages to the latest versions."""
             )
 
     @classmethod
