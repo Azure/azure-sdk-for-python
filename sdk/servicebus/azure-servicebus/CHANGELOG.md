@@ -1,6 +1,6 @@
 # Release History
 
-## 7.2.0b1 (Unreleased)
+## 7.2.0b1 (2021-04-07)
 
 **New features**
 
@@ -12,13 +12,19 @@
   - `VALUE`: The body of message consists of one amqp-value section and the section contains a single AMQP value.
 * Added new property `body_type` on `azure.servicebus.ServiceBusMessage` and `azure.servicebus.ReceivedMessage` which returns `azure.servicebus.AMQPMessageBodyType`.
 
-## 7.1.1 (Unreleased)
+## 7.1.1 (2021-04-07)
 
 This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported.
 
 **New Features**
 
 * Updated `forward_to` and `forward_dead_lettered_messages_to` parameters in `create_queue`, `update_queue`, `create_subscription`, and `update_subscription` methods on sync and async `ServiceBusAdministrationClient` to accept entities as well, rather than only full paths. In the case that an entity is passed in, it is assumed that the entity exists within the same namespace used for constructing the `ServiceBusAdministrationClient`.
+
+**Bug Fixes**
+
+* Updated uAMQP dependency to 1.3.0.
+  - Fixed bug that sending message of large size triggering segmentation fault when the underlying socket connection is lost (#13739, #14543).
+  - Fixed bug in link flow control where link credit and delivery count should be calculated based on per message instead of per transfer frame (#16934).
 
 ## 7.1.0 (2021-03-09)
 
