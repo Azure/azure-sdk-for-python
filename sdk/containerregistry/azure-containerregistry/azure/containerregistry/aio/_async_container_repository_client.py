@@ -53,8 +53,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
         :returns: Object containing information about the deleted repository
         :rtype: :class:`~azure.containerregistry.DeletedRepositoryResult`
-        :rtype: :class:~azure.containerregistry.DeletedRepositoryResult
-        :raises: :class:~azure.core.exceptions.ResourceNotFoundError
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         return DeletedRepositoryResult._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry.delete_repository(self.repository, **kwargs)
@@ -66,7 +65,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :param digest: The digest of the artifact to be deleted
         :type digest: str
         :returns: None
-        :raises: :class:~azure.core.exceptions.ResourceNotFoundError
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         await self._client.container_registry_repository.delete_manifest(self.repository, digest, **kwargs)
 
@@ -74,10 +73,9 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
     async def delete_tag(self, tag: str, **kwargs) -> None:
         """Delete a tag from a repository
 
-        :param tag: The digest of the artifact to be deleted
-        :type tag: str
+        :param str tag: The tag to be deleted
         :returns: None
-        :raises: :class:~azure.core.exceptions.ResourceNotFoundError
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         await self._client.container_registry_repository.delete_tag(self.repository, tag, **kwargs)
 
@@ -85,8 +83,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
     async def get_properties(self, **kwargs) -> RepositoryProperties:
         """Get the properties of a repository
 
-        :returns: :class:~azure.containerregistry.RepositoryProperties
-        :raises: None
+        :returns: :class:`~azure.containerregistry.RepositoryProperties`
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry_repository.get_properties(self.repository, **kwargs)
@@ -98,8 +96,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
         :param tag_or_digest: The tag/digest of a registry artifact
         :type tag_or_digest: str
-        :returns: :class:~azure.containerregistry.RegistryArtifactProperties
-        :raises: :class:~azure.core.exceptions.ResourceNotFoundError
+        :returns: :class:`~azure.containerregistry.RegistryArtifactProperties`
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         if _is_tag(tag_or_digest):
             tag_or_digest = self._get_digest_from_tag(tag_or_digest)
@@ -116,8 +114,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
         :param tag: The tag to get properties for
         :type tag: str
-        :returns: :class:~azure.containerregistry.TagProperties
-        :raises: :class:~azure.core.exceptions.ResourceNotFoundError
+        :returns: :class:`~azure.containerregistry.TagProperties`
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         return TagProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry_repository.get_tag_properties(self.repository, tag, **kwargs)
@@ -127,16 +125,18 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
     def list_registry_artifacts(self, **kwargs) -> AsyncItemPaged[RegistryArtifactProperties]:
         """List the artifacts for a repository
 
-        :keyword last: Query parameter for the last item in the previous query
+        :keyword last: Query parameter for the last item in the previous call. Ensuing
+            call will return values after last lexically
         :type last: str
         :keyword page_size: Number of items per page
         :type page_size: int
-        :keyword orderby: Order by query parameter
-        :type orderby: :class:~azure.containerregistry.RegistryArtifactOrderBy
+        :keyword order_by: Query paramter for ordering by time ascending or descending
+        :type order_by: :class:`~azure.containerregistry.RegistryArtifactOrderBy`
         :keyword results_per_page: Numer of repositories to return in a single page
         :type results_per_page: int
-        :returns: ~azure.core.paging.AsyncItemPaged[RegistryArtifactProperties]
-        :raises: None
+        :return: ItemPaged[:class:`~azure.containerregistry.RegistryArtifactProperties`]
+        :rtype: :class:`~azure.core.async_paging.AsyncItemPaged`
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         last = kwargs.pop("last", None)
         n = kwargs.pop("page_size", None)
@@ -159,12 +159,13 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :param last: Query parameter for the last item in the previous call. Ensuing
             call will return values after last lexically
         :type last: str
-        :keyword orderby: Order by query parameter
-        :type orderby: :class:~azure.containerregistry.RegistryArtifactOrderBy
+        :param order_by: Query paramter for ordering by time ascending or descending
+        :type order_by: :class:`~azure.containerregistry.TagOrderBy`
         :keyword results_per_page: Numer of repositories to return in a single page
         :type results_per_page: int
-        :returns: ~azure.core.paging.AsyncItemPaged[TagProperties]
-        :raises: None
+        :return: ItemPaged[:class:`~azure.containerregistry.TagProperties`]
+        :rtype: :class:`~azure.core.async_paging.AsyncItemPaged`
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         return self._client.container_registry_repository.get_tags(
             self.repository,
@@ -184,8 +185,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :type digest: str
         :param permissions: The property's values to be set
         :type permissions: ContentPermissions
-        :returns: None
-        :raises: None
+        :returns: :class:`~azure.containerregistry.RegistryArtifactProperties`
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         return RegistryArtifactProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry_repository.update_manifest_attributes(
@@ -201,8 +202,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :type tag: str
         :param permissions: The property's values to be set
         :type permissions: ContentPermissions
-        :returns: None
-        :raises: None
+        :returns: :class:`~azure.containerregistry.TagProperties`
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         return TagProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry_repository.update_tag_attributes(

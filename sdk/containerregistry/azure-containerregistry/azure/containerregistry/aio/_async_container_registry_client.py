@@ -43,7 +43,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :type repository: str
         :returns: Object containing information about the deleted repository
         :rtype: :class:`~azure.containerregistry.DeletedRepositoryResult`
-        :raises: :class:~azure.core.exceptions.ResourceNotFoundError
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         result = await self._client.container_registry.delete_repository(repository, **kwargs)
         return DeletedRepositoryResult._from_generated(result)  # pylint: disable=protected-access
@@ -52,14 +52,16 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     def list_repositories(self, **kwargs) -> AsyncItemPaged[str]:
         """List all repositories
 
+        :keyword last: Query parameter for the last item in the previous call. Ensuing
+            call will return values after last lexicallyy
+        :type last: str
         :keyword max: Maximum number of repositories to return
         :type max: int
-        :keyword last: Query parameter for the last item in previous query
-        :type last: str
         :keyword results_per_page: Numer of repositories to return in a single page
         :type results_per_page: int
-        :returns: ~azure.core.paging.AsyncItemPaged[str]
-        :raises: ResourceNotFoundError
+        :return: ItemPaged[str]
+        :rtype: :class:`~azure.core.async_paging.AsyncItemPaged`
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
 
         return self._client.container_registry.get_repositories(
@@ -73,7 +75,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :param repository: The repository to create a client for
         :type repository: str
-        :returns: :class:~azure.containerregistry.aio.ContainerRepositoryClient
+        :returns: :class:`~azure.containerregistry.aio.ContainerRepositoryClient`
         """
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(
