@@ -337,7 +337,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
         def extract_data(pipeline_response):
             deserialized = self._client._deserialize("TagList", pipeline_response)  # pylint: disable=protected-access
-            list_of_elem = deserialized.tags
+            list_of_elem = deserialized.tag_attribute_bases
             if cls:
                 list_of_elem = cls(list_of_elem)
             link = None
@@ -366,33 +366,36 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
     @distributed_trace
     def set_manifest_properties(self, digest, permissions, **kwargs):
-        # type: (str, ContentPermissions) -> None
+        # type: (str, ContentPermissions) -> RegistryArtifactProperties
         """Set the properties for a manifest
 
         :param digest: Digest of a manifest
         :type digest: str
         :param permissions: The property's values to be set
         :type permissions: ContentPermissions
-        :returns: None
-        :raises: None
+        :returns: :class:~azure.containerregistry.RegistryArtifactProperties
+        :raises: ResourceNotFoundError
         """
-
-        self._client.container_registry_repository.update_manifest_attributes(
-            self.repository, digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
+        return RegistryArtifactProperties._from_generated(  # pylint: disable=protected-access
+            self._client.container_registry_repository.update_manifest_attributes(
+                self.repository, digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
+            )
         )
 
     @distributed_trace
     def set_tag_properties(self, tag, permissions, **kwargs):
-        # type: (str, ContentPermissions) -> None
+        # type: (str, ContentPermissions) -> TagProperties
         """Set the properties for a tag
 
         :param tag: Tag to set properties for
         :type tag: str
         :param permissions: The property's values to be set
         :type permissions: ContentPermissions
-        :returns: None
-        :raises: None
+        :returns: TagProperties
+        :raises: ResourceNotFoundError
         """
-        self._client.container_registry_repository.update_tag_attributes(
-            self.repository, tag, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
+        return TagProperties._from_generated(  # pylint: disable=protected-access
+            self._client.container_registry_repository.update_tag_attributes(
+                self.repository, tag, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
+            )
         )

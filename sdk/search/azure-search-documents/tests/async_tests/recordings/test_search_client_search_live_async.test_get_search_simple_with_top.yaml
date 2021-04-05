@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b4 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://searchc16d1bed.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
   response:
@@ -35,13 +35,13 @@ interactions:
       content-encoding: gzip
       content-length: '1174'
       content-type: application/json; odata.metadata=none
-      date: Thu, 05 Nov 2020 23:27:03 GMT
-      elapsed-time: '52'
+      date: Thu, 25 Mar 2021 20:28:14 GMT
+      elapsed-time: '20'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 68d7b05e-1fbe-11eb-961d-a0481ca055a9
+      request-id: 9ff13b9a-8da8-11eb-bfb5-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -58,7 +58,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b4 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://searchc16d1bed.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
   response:
@@ -88,13 +88,13 @@ interactions:
       content-encoding: gzip
       content-length: '1269'
       content-type: application/json; odata.metadata=none
-      date: Thu, 05 Nov 2020 23:27:03 GMT
-      elapsed-time: '12'
+      date: Thu, 25 Mar 2021 20:28:14 GMT
+      elapsed-time: '7'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 68fc4ac1-1fbe-11eb-838b-a0481ca055a9
+      request-id: a012c000-8da8-11eb-b91f-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:

@@ -190,12 +190,9 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
         tag_props = await client.get_tag_properties(tag_identifier)
         permissions = tag_props.content_permissions
 
-        await client.set_tag_properties(tag_identifier, ContentPermissions(
+        received = await client.set_tag_properties(tag_identifier, ContentPermissions(
             can_delete=False, can_list=False, can_read=False, can_write=False,
         ))
-        self.sleep(10)
-
-        received = await client.get_tag_properties(tag_identifier)
 
         assert not received.content_permissions.can_write
         assert not received.content_permissions.can_read
@@ -210,10 +207,8 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
             await client.set_tag_properties("does_not_exist", ContentPermissions(can_delete=False))
 
     @acr_preparer()
-    async def test_set_manifest_properties(
-        self, containerregistry_baseurl, containerregistry_resource_group
-    ):
-        repository = self.get_resource_name("repo")
+    async def test_set_manifest_properties(self, containerregistry_baseurl, containerregistry_resource_group):
+        repository = self.get_resource_name("repo_set_mani")
         tag_identifier = self.get_resource_name("tag")
         self.import_repo_to_be_deleted(
             containerregistry_baseurl,
@@ -227,13 +222,9 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
         async for artifact in client.list_registry_artifacts():
             permissions = artifact.content_permissions
 
-            await client.set_manifest_properties(artifact.digest, ContentPermissions(
+            received_permissions = await client.set_manifest_properties(artifact.digest, ContentPermissions(
                 can_delete=False, can_list=False, can_read=False, can_write=False,
             ))
-            self.sleep(10)
-
-            received_permissions = await client.get_registry_artifact_properties(artifact.digest)
-
             assert not received_permissions.content_permissions.can_delete
             assert not received_permissions.content_permissions.can_read
             assert not received_permissions.content_permissions.can_list
