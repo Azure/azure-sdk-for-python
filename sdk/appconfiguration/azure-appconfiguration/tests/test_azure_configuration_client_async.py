@@ -552,7 +552,7 @@ class AppConfigurationClientTest(AzureTestCase):
         self._assert_same_keys(set_flag, changed_flag)
 
         changed_flag.enabled = False
-        assert changed_flag._value['enabled'] == False
+        assert changed_flag.value['enabled'] == False
 
         c = copy.deepcopy(changed_flag.value)
         c['enabled'] = True

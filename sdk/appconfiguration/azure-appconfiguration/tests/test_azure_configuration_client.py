@@ -541,7 +541,7 @@ class AppConfigurationClientTest(AzureTestCase):
         changed_flag = client.set_configuration_setting(set_flag)
 
         changed_flag.enabled = False
-        assert changed_flag._value['enabled'] == False
+        assert changed_flag.value['enabled'] == False
 
         c = copy.deepcopy(changed_flag.value)
         c['enabled'] = True

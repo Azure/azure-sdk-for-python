@@ -156,61 +156,55 @@ class FeatureFlagConfigurationSetting(
         self.etag = kwargs.get("etag", None)
         self.description = kwargs.get("description", None)
         self.display_name = kwargs.get("display_name", None)
-        self._value = kwargs.get("value", {"enabled": enabled, "conditions": {"client_filters": filters}})
+        self.value = kwargs.get("value", {"enabled": enabled, "conditions": {"client_filters": filters}})
 
     def _validate(self):
         # type: () -> None
         if not self.key.startswith(self.key_prefix):
             raise ValueError("All FeatureFlagConfigurationSettings should be prefixed with {}.".format(self.key_prefix))
-        if not (self._value is None or isinstance(self._value, dict)):
+        if not (self.value is None or isinstance(self.value, dict)):
             raise ValueError("Expect 'value' to be a dictionary.")
 
     @property
     def enabled(self):
         # type: () -> Union[None, bool]
         self._validate()
-        if self._value is None or "enabled" not in self._value:
+        if self.value is None or "enabled" not in self.value:
             return None
-        return self._value["enabled"]
+        return self.value["enabled"]
 
     @enabled.setter
     def enabled(self, new_value):
         # type: (bool) -> bool
         self._validate()
-        if self._value is None:
-            self._value = {}
-        self._value["enabled"] = new_value
+        if self.value is None:
+            self.value = {}
+        self.value["enabled"] = new_value
 
     @property
     def filters(self):
         # type: () -> Union[None, List[Any]]
         self._validate()
-        if self._value is None:
+        if self.value is None:
             return None
-        return self._value["conditions"]["client_filters"]
+        try:
+            return self.value["conditions"]["client_filters"]
+        except KeyError:
+            pass
+        return None
 
     @filters.setter
     def filters(self, new_filters):
         # type: (List[Dict[str, Any]]) -> None
         self._validate()
-        if self._value is None:
-            self._value = {}
+        if self.value is None:
+            self.value = {}
         try:
-            self._value["conditions"]["client_filters"] = new_filters
+            self.value["conditions"]["client_filters"] = new_filters
         except KeyError:
-            self._value["conditions"] = {
+            self.value["conditions"] = {
                 "client_filters": new_filters
             }
-
-    @property
-    def value(self):
-        # type: () -> Dict[str, Any]
-        return self._value
-
-    @value.setter
-    def value(self, new_value):
-        # type: (Dict[str, Any]) -> None
-        self._value = new_value
 
     @classmethod
     def _from_generated(cls, key_value):
@@ -254,7 +248,7 @@ class FeatureFlagConfigurationSetting(
         return KeyValue(
             key=self.key,
             label=self.label,
-            value=self._value,
+            value=self.value,
             content_type=self.content_type,
             last_modified=self.last_modified,
             tags=self.tags,
@@ -315,37 +309,27 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         self.last_modified = kwargs.get("last_modified", None)
         self.read_only = kwargs.get("read_only", None)
         self.tags = kwargs.get("tags", {})
-        self._value = {"secret_uri": self._secret_uri}
+        self.value = {"secret_uri": self._secret_uri}
 
     @property
     def secret_uri(self):
         # type: () -> str
         self._validate()
-        return self._value['secret_uri']
+        return self.value['secret_uri']
 
     @secret_uri.setter
     def secret_uri(self, value):
-        if self._value is None or isinstance(self._value, dict):
-            if self._value is None:
-                self._value = {}
-            self._value["secret_uri"] = value
+        if self.value is None or isinstance(self.value, dict):
+            if self.value is None:
+                self.value = {}
+            self.value["secret_uri"] = value
         else:
             raise ValueError("Expect 'value' to be a dictionary.")
 
     def _validate(self):
         # type: () -> None
-        if not (self._value is None or isinstance(self._value, dict)):
+        if not (self.value is None or isinstance(self.value, dict)):
             raise ValueError("Expect 'value' to be a dictionary or None.")
-
-    @property
-    def value(self):
-        # type: () -> Dict[str, Any]
-        return self._value
-
-    @value.setter
-    def value(self, value):
-        # type: (Dict[str, Any]) -> None
-        self._value = value
 
     @classmethod
     def _from_generated(cls, key_value):
@@ -376,7 +360,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         return KeyValue(
             key=self.key,
             label=self.label,
-            value=json.dumps(self._value),
+            value=json.dumps(self.value),
             content_type=self.content_type,
             last_modified=self.last_modified,
             tags=self.tags,
