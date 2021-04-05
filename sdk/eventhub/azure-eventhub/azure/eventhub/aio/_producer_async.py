@@ -192,6 +192,7 @@ class EventHubProducer(
                         "The partition_key does not match the one of the EventDataBatch"
                     )
                 wrapper_event_data = event_data  # type:ignore
+                trace_message(wrapper_event_data, span)
             else:
                 if partition_key:
                     event_data = _set_partition_key(event_data, partition_key)
