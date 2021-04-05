@@ -222,7 +222,7 @@ class EventProcessor(
             except TypeError:
                 partition_context._last_received_event = event  # type: ignore  # pylint:disable=protected-access
             links = get_event_links(event)
-            with self._context(event, links=links):
+            with self._context(links=links):
                 await self._event_handler(partition_context, event)
         else:
             await self._event_handler(partition_context, event)
