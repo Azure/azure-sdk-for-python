@@ -140,8 +140,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :type last: str
         :keyword results_per_page: Number of items per page
         :type results_per_page: int
-        :keyword orderby: Order by query parameter
-        :type orderby: :class:~azure.containerregistry.RegistryArtifactOrderBy
+        :keyword order_by: Query parameter for ordering by time ascending or descending
+        :type order_by: :class:~azure.containerregistry.RegistryArtifactOrderBy
         :returns: ~azure.core.paging.ItemPaged[RegistryArtifactProperties]
         :raises: None
         """
@@ -252,13 +252,11 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         # type: (...) -> ItemPaged[TagProperties]
         """List the tags for a repository
 
-        :param last: Query parameter for the last item in the previous call. Ensuing
+        :keyword last: Query parameter for the last item in the previous call. Ensuing
             call will return values after last lexically
         :type last: str
-        :keyword order_by: Query paramter for ordering by time ascending or descending
+        :keyword order_by: Query parameter for ordering by time ascending or descending
         :type order_by: :class:~azure.containerregistry.TagOrderBy
-        :keyword digest: Digest to filter on
-        :type digest: str
         :returns: ~azure.core.paging.ItemPaged[TagProperties]
         :raises: None
         """

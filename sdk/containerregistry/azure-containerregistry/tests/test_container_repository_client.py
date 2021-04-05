@@ -5,8 +5,6 @@
 # ------------------------------------
 from datetime import datetime
 import pytest
-import subprocess
-import time
 
 from devtools_testutils import AzureTestCase
 
@@ -15,6 +13,7 @@ from azure.containerregistry import (
     ContainerRegistryClient,
     ContentPermissions,
     RepositoryProperties,
+    RegistryArtifactOrderBy,
     RegistryArtifactProperties,
     TagProperties,
     TagOrderBy,
@@ -73,9 +72,7 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
     @acr_preparer()
     def test_list_registry_artifacts(self, containerregistry_baseurl):
-        client = self.create_repository_client(
-            containerregistry_baseurl, self.repository
-        )
+        client = self.create_repository_client(containerregistry_baseurl, self.repository)
 
         count = 0
         for artifact in client.list_registry_artifacts():
@@ -104,6 +101,34 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
             page_count += 1
 
         assert page_count >= 1
+
+    @acr_preparer()
+    def test_list_registry_artifacts_descending(self, containerregistry_baseurl):
+        client = self.create_repository_client(containerregistry_baseurl, self.repository)
+
+        prev_last_updated_on = None
+        count = 0
+        for artifact in client.list_registry_artifacts(order_by=RegistryArtifactOrderBy.LAST_UPDATE_TIME_DESCENDING):
+            if prev_last_updated_on:
+                assert artifact.last_updated_on < prev_last_updated_on
+            prev_last_updated_on = artifact.last_updated_on
+            count += 1
+
+        assert count > 0
+
+    @acr_preparer()
+    def test_list_registry_artifacts_ascending(self, containerregistry_baseurl):
+        client = self.create_repository_client(containerregistry_baseurl, self.repository)
+
+        prev_last_updated_on = None
+        count = 0
+        for artifact in client.list_registry_artifacts(order_by=RegistryArtifactOrderBy.LAST_UPDATE_TIME_ASCENDING):
+            if prev_last_updated_on:
+                assert artifact.last_updated_on > prev_last_updated_on
+            prev_last_updated_on = artifact.last_updated_on
+            count += 1
+
+        assert count > 0
 
     @acr_preparer()
     def test_get_registry_artifact_properties(self, containerregistry_baseurl):
@@ -148,20 +173,28 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
     @acr_preparer()
     def test_list_tags_descending(self, containerregistry_baseurl):
-        client = self.create_repository_client(
-            containerregistry_baseurl, self.repository
-        )
+        client = self.create_repository_client(containerregistry_baseurl, self.repository)
 
-        # TODO: This is giving time in ascending order
-        tags = client.list_tags(order_by=TagOrderBy.LAST_UPDATE_TIME_DESCENDING)
-        assert isinstance(tags, ItemPaged)
-        last_updated_on = None
+        prev_last_updated_on = None
         count = 0
-        for tag in tags:
-            print(tag.last_updated_on)
-            # if last_updated_on:
-            #     assert tag.last_updated_on < last_updated_on
-            last_updated_on = tag.last_updated_on
+        for tag in client.list_tags(order_by=TagOrderBy.LAST_UPDATE_TIME_DESCENDING):
+            if prev_last_updated_on:
+                assert tag.last_updated_on < prev_last_updated_on
+            prev_last_updated_on = tag.last_updated_on
+            count += 1
+
+        assert count > 0
+
+    @acr_preparer()
+    def test_list_tags_ascending(self, containerregistry_baseurl):
+        client = self.create_repository_client(containerregistry_baseurl, self.repository)
+
+        prev_last_updated_on = None
+        count = 0
+        for tag in client.list_tags(order_by=TagOrderBy.LAST_UPDATE_TIME_ASCENDING):
+            if prev_last_updated_on:
+                assert tag.last_updated_on > prev_last_updated_on
+            prev_last_updated_on = tag.last_updated_on
             count += 1
 
         assert count > 0

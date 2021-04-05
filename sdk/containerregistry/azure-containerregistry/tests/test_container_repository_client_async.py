@@ -12,8 +12,9 @@ from azure.containerregistry import (
     DeletedRepositoryResult,
     RepositoryProperties,
     ContentPermissions,
-    TagOrderBy,
+    RegistryArtifactOrderBy,
     RegistryArtifactProperties,
+    TagOrderBy,
 )
 from azure.containerregistry.aio import ContainerRegistryClient, ContainerRepositoryClient
 from azure.core.exceptions import ResourceNotFoundError
@@ -238,3 +239,76 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
 
         with pytest.raises(ResourceNotFoundError):
             await client.set_manifest_properties("sha256:abcdef", ContentPermissions(can_delete=False))
+
+    @acr_preparer()
+    async def test_list_tags_descending(self, containerregistry_baseurl):
+        client = self.create_repository_client(containerregistry_baseurl, self.repository)
+
+        prev_last_updated_on = None
+        count = 0
+        async for tag in client.list_tags(order_by=TagOrderBy.LAST_UPDATE_TIME_DESCENDING):
+            if prev_last_updated_on:
+                assert tag.last_updated_on < prev_last_updated_on
+            prev_last_updated_on = tag.last_updated_on
+            count += 1
+
+        assert count > 0
+
+    @acr_preparer()
+    async def test_list_tags_ascending(self, containerregistry_baseurl):
+        client = self.create_repository_client(containerregistry_baseurl, self.repository)
+
+        prev_last_updated_on = None
+        count = 0
+        async for tag in client.list_tags(order_by=TagOrderBy.LAST_UPDATE_TIME_ASCENDING):
+            if prev_last_updated_on:
+                assert tag.last_updated_on > prev_last_updated_on
+            prev_last_updated_on = tag.last_updated_on
+            count += 1
+
+        assert count > 0
+
+
+    @acr_preparer()
+    async def test_list_registry_artifacts(self, containerregistry_baseurl):
+        client = self.create_repository_client(containerregistry_baseurl, self.repository)
+
+        count = 0
+        async for artifact in client.list_registry_artifacts():
+            assert artifact is not None
+            assert isinstance(artifact, RegistryArtifactProperties)
+            assert artifact.created_on is not None
+            assert isinstance(artifact.created_on, datetime)
+            assert artifact.last_updated_on is not None
+            assert isinstance(artifact.last_updated_on, datetime)
+            count += 1
+
+        assert count > 0
+
+    @acr_preparer()
+    async def test_list_registry_artifacts_descending(self, containerregistry_baseurl):
+        client = self.create_repository_client(containerregistry_baseurl, self.repository)
+
+        prev_last_updated_on = None
+        count = 0
+        async for artifact in client.list_registry_artifacts(order_by=RegistryArtifactOrderBy.LAST_UPDATE_TIME_DESCENDING):
+            if prev_last_updated_on:
+                assert artifact.last_updated_on < prev_last_updated_on
+            prev_last_updated_on = artifact.last_updated_on
+            count += 1
+
+        assert count > 0
+
+    @acr_preparer()
+    async def test_list_registry_artifacts_ascending(self, containerregistry_baseurl):
+        client = self.create_repository_client(containerregistry_baseurl, self.repository)
+
+        prev_last_updated_on = None
+        count = 0
+        async for artifact in client.list_registry_artifacts(order_by=RegistryArtifactOrderBy.LAST_UPDATE_TIME_ASCENDING):
+            if prev_last_updated_on:
+                assert artifact.last_updated_on > prev_last_updated_on
+            prev_last_updated_on = artifact.last_updated_on
+            count += 1
+
+        assert count > 0

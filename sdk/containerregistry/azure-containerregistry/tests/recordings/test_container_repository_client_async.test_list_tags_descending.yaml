@@ -7,7 +7,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags?orderby=0
+    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags?orderby=timedesc
   response:
     body:
       string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
@@ -19,7 +19,7 @@ interactions:
       connection: keep-alive
       content-length: '214'
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 18:03:22 GMT
+      date: Mon, 05 Apr 2021 21:51:09 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -28,7 +28,7 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankane.azurecr.io/acr/v1/hello-world/_tags?orderby=0
+    url: https://seankane.azurecr.io/acr/v1/hello-world/_tags?orderby=timedesc
 - request:
     body:
       access_token: REDACTED
@@ -47,11 +47,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 18:03:23 GMT
+      date: Mon, 05 Apr 2021 21:51:10 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '333.283333'
+      x-ms-ratelimit-remaining-calls-per-second: '333.15'
     status:
       code: 200
       message: OK
@@ -75,11 +75,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 18:03:23 GMT
+      date: Mon, 05 Apr 2021 21:51:10 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '333.266667'
+      x-ms-ratelimit-remaining-calls-per-second: '333.133333'
     status:
       code: 200
       message: OK
@@ -92,7 +92,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags?orderby=0
+    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags?orderby=timedesc
   response:
     body:
       string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","tags":[{"name":"latest","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-03-30T12:18:52.8272444Z","lastUpdateTime":"2021-03-30T12:18:52.8272444Z","signed":false,"quarantineState":"Passed","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}]}
@@ -103,7 +103,7 @@ interactions:
       connection: keep-alive
       content-length: '410'
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 18:03:24 GMT
+      date: Mon, 05 Apr 2021 21:51:10 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -111,5 +111,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/acr/v1/hello-world/_tags?orderby=0
+    url: https://seankane.azurecr.io/acr/v1/hello-world/_tags?orderby=timedesc
 version: 1
