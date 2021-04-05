@@ -23,6 +23,7 @@ from functools import partial
 from azure.eventhub import EventData
 from ..._eventprocessor.common import CloseReason, LoadBalancingStrategy
 from ..._eventprocessor._eventprocessor_mixin import EventProcessorMixin
+from ..._utils import get_event_links
 from .partition_context import PartitionContext
 from .in_memory_checkpoint_store import InMemoryCheckpointStore
 from .checkpoint_store import CheckpointStore
@@ -220,7 +221,8 @@ class EventProcessor(
                 partition_context._last_received_event = event[-1]  # type: ignore  #pylint:disable=protected-access
             except TypeError:
                 partition_context._last_received_event = event  # type: ignore  # pylint:disable=protected-access
-            with self._context(event):
+            links = get_event_links(event)
+            with self._context(links=links):
                 await self._event_handler(partition_context, event)
         else:
             await self._event_handler(partition_context, event)
