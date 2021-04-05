@@ -59,7 +59,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
             assert page_count <= results_per_page
             total_pages += 1
 
-        assert total_pages > 1
+        assert total_pages >= 1
 
     @acr_preparer()
     async def test_delete_repository(self, containerregistry_baseurl, containerregistry_resource_group):
@@ -91,7 +91,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
             async for r in client.list_repositories():
                 pass
             assert transport.session is not None
-            
+
             repo_client = client.get_repository_client("hello-world")
             async with repo_client:
                 assert transport.session is not None
