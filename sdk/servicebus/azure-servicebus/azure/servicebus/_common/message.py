@@ -605,7 +605,7 @@ class ServiceBusMessageBatch(object):
         )  # parent_span is e.g. if built as part of a send operation.
         message_size = (
             message.message.get_message_encoded_size()
-        )  # pylint: disable=protected-access
+        )
 
         # For a ServiceBusMessageBatch, if the encoded_message_size of event_data is < 256, then the overhead cost to
         # encode that message into the ServiceBusMessageBatch would be 5 bytes, if >= 256, it would be 8 bytes.
@@ -892,7 +892,7 @@ class AMQPAnnotatedMessage(object):
     :paramtype data_body: Union[str, bytes, List[Union[str, bytes]]]
     :keyword sequence_body: The body consists of one or more sequence sections and
      each section contains an arbitrary number of structured data elements.
-    :paramtype sequence_body: Union[List[Any], List[List[Any]]]]
+    :paramtype sequence_body: List[Any]
     :keyword value_body: The body consists of one amqp-value section and the section contains a single AMQP value.
     :paramtype value_body: Any
     :keyword header: The amqp message header. This must be a dictionary with the following
@@ -1003,14 +1003,14 @@ class AMQPAnnotatedMessage(object):
 
     @property
     def body(self):
-        # type: () -> Optional[Union[bytes, Iterable[bytes], List, Iterable[List], Any]]
+        # type: () -> Any
         """The body of the Message. The format may vary depending
         on the body type:
         For ~azure.servicebus.AMQPMessageBodyType.DATA, the body could be bytes or Iterable[bytes]
         For ~azure.servicebus.AMQPMessageBodyType.SEQUENCE, the body could be List or Iterable[List]
         For ~azure.servicebus.AMQPMessageBodyType.VALUE, the body could be any type.
 
-        :rtype: Optional[Union[bytes, Iterable[bytes], List, Iterable[List], Any]]
+        :rtype: Any
         """
         return self._message.get_data()
 

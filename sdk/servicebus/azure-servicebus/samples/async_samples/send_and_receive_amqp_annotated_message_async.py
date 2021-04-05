@@ -22,12 +22,12 @@ QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
 async def send_data_message(sender):
     data_body = [b'aa', b'bb', b'cc']
-    data_app_prop = {"body_type": "data"}
-    del_anno = {"delann_key": "delann_value"}
+    application_properties = {"body_type": "data"}
+    delivery_annotations = {"delivery_annotation_key": "value"}
     data_message = AMQPAnnotatedMessage(
         data_body=data_body,
-        delivery_annotations=del_anno,
-        application_properties=data_app_prop
+        delivery_annotations=delivery_annotations,
+        application_properties=application_properties
     )
     await sender.send_messages(data_message)
     print("Message of data body sent.")
@@ -36,13 +36,13 @@ async def send_data_message(sender):
 async def send_sequence_message(sender):
     sequence_body = [b'message', 123.456, True]
     footer = {'footer_key': 'footer_value'}
-    prop = {"subject": "sequence"}
-    seq_app_prop = {"body_type": "sequence"}
+    properties = {"subject": "sequence"}
+    application_properties = {"body_type": "sequence"}
     sequence_message = AMQPAnnotatedMessage(
         sequence_body=sequence_body,
         footer=footer,
-        properties=prop,
-        application_properties=seq_app_prop
+        properties=properties,
+        application_properties=application_properties
     )
     await sender.send_messages(sequence_message)
     print("Message of sequence body sent.")
@@ -51,13 +51,13 @@ async def send_sequence_message(sender):
 async def send_value_message(sender):
     value_body = {b"key": [-123, b'data', False]}
     header = {"priority": 10}
-    anno = {"ann_key": "ann_key"}
-    value_app_prop = {"body_type": "value"}
+    annotations = {"annotation_key": "value"}
+    application_properties = {"body_type": "value"}
     value_message = AMQPAnnotatedMessage(
         value_body=value_body,
         header=header,
-        annotations=anno,
-        application_properties=value_app_prop
+        annotations=annotations,
+        application_properties=application_properties
     )
     await sender.send_messages(value_message)
     print("Message of value body sent.")
