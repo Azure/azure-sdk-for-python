@@ -49,6 +49,7 @@ from typing import (
     Tuple,
     List,
 )
+from abc import abstractmethod
 
 ################################### TYPES SECTION #########################
 
@@ -87,6 +88,8 @@ from azure.core.pipeline.transport._base import (
     _HttpResponseBase as _PipelineTransportHttpResponseBase
 )
 
+from azure.core._pipeline_client import PipelineClient as _PipelineClient
+from azure.core._pipeline_client_async import AsyncPipelineClient as _AsyncPipelineClient
 
 class HttpVerbs(str, Enum):
     GET = "GET"
@@ -180,7 +183,76 @@ def _set_body(
 
 ################################## CLASSES ######################################
 
-class HttpRequest(object):
+class _StreamContextManagerBase:
+    def __init__(
+        self,
+        client: Union[_PipelineClient, _AsyncPipelineClient],
+        request: "HttpRequest",
+        **kwargs
+    ):
+        """Used so we can treat stream requests and responses as a context manager.
+
+        In Autorest, we only return a `StreamContextManager` if users pass in `stream_response` True
+
+        Actually sends request when we enter the context manager, closes response when we exit.
+
+        Heavily inspired from httpx, we want the same behavior for it to feel consistent for users
+        """
+        self.client = client
+        self.request = request
+        self.kwargs = kwargs
+
+    @abstractmethod
+    def close(self):
+        ...
+
+class _StreamContextManager(_StreamContextManagerBase):
+    def __enter__(self) -> "HttpResponse":
+        """Actually make the call only when we enter. For sync stream_response calls"""
+        pipeline_transport_response = self.client._pipeline.run(
+            self.request._internal_request,
+            stream=True,
+            **self.kwargs
+        ).http_response
+        self.response = HttpResponse(
+            request=self.request,
+            _internal_response=pipeline_transport_response
+        )
+        return self.response
+
+    def __exit__(self, *args):
+        """Close our stream connection. For sync calls"""
+        self.response.__exit__(*args)
+
+    def close(self):
+        self.response.close()
+
+class _AsyncStreamContextManager(_StreamContextManagerBase):
+    async def __aenter__(self) -> "AsyncHttpResponse":
+        """Actually make the call only when we enter. For async stream_response calls."""
+        if not isinstance(self.client, _AsyncPipelineClient):
+            raise TypeError(
+                "Only sync calls should enter here. If you mean to do a sync call, "
+                "make sure to use 'with' instead."
+            )
+        pipeline_transport_response = (await self.client._pipeline.run(
+            self.request._internal_request,
+            stream=True,
+            **self.kwargs
+        )).http_response
+        self.response = AsyncHttpResponse(
+            request=self.request,
+            _internal_response=pipeline_transport_response
+        )
+        return self.response
+
+    async def __aexit__(self, *args):
+        await self.response.__aexit__(*args)
+
+    async def close(self):
+        await self.response.close()
+
+class HttpRequest:
     """Represents an HTTP request.
 
     :param method: HTTP method (GET, HEAD, etc.)
@@ -288,7 +360,7 @@ class HttpRequest(object):
             _internal_request=self._internal_request.__deepcopy__(memo)
         )
 
-class _HttpResponseBase(object):
+class _HttpResponseBase:
     """Base class for HttpResponse and AsyncHttpResponse.
 
     :keyword request: The request that resulted in this response.
@@ -442,6 +514,11 @@ class HttpResponse(_HttpResponseBase):
         """
         return self._internal_response.stream_download(pipeline=pipeline)
 
+    def close(self) -> None:
+        self._internal_response.internal_response.close()
+
+    def __exit__(self, *args) -> None:
+        self._internal_response.internal_response.__exit__(*args)
 
 
 class AsyncHttpResponse(_HttpResponseBase):
@@ -470,3 +547,9 @@ class AsyncHttpResponse(_HttpResponseBase):
         :paramtype pipeline: azure.core.pipeline
         """
         return self._internal_response.stream_download(pipeline=pipeline)
+
+    async def close(self) -> None:
+        await self._internal_response.internal_response.close()
+
+    async def __aexit__(self, *args) -> None:
+        await self._internal_response.internal_response.__aexit__(*args)

@@ -28,6 +28,7 @@ __all__ = [
     "HttpRequest",
     "HttpResponse",
 ]
+from abc import abstractmethod
 import sys
 import six
 import os
@@ -57,6 +58,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport._base import (
         _HttpResponseBase as _PipelineTransportHttpResponseBase
     )
+    from azure.core._pipeline_client import PipelineClient as _PipelineClient
 
 class HttpVerbs(str, Enum):
     GET = "GET"
@@ -152,6 +154,33 @@ def _set_body(content, data, files, json_body, internal_request):
 
 
 ################################## CLASSES ######################################
+class _StreamContextManager(object):
+    def __init__(self, client, request, **kwargs):
+        # type: (_PipelineClient, HttpRequest, Any) -> None
+        self.client = client
+        self.request = request
+        self.kwargs = kwargs
+
+    def __enter__(self):
+        # type: (...) -> HttpResponse
+        """Actually make the call only when we enter. For sync stream_response calls"""
+        pipeline_transport_response = self.client._pipeline.run(
+            self.request._internal_request,
+            stream=True,
+            **self.kwargs
+        ).http_response
+        self.response = HttpResponse(
+            request=self.request,
+            _internal_response=pipeline_transport_response
+        )
+        return self.response
+
+    def __exit__(self, *args):
+        """Close our stream connection. For sync calls"""
+        self.response.__exit__(*args)
+
+    def close(self):
+        self.response.close()
 
 class HttpRequest(object):
     """Represents an HTTP request.
@@ -423,3 +452,9 @@ class HttpResponse(_HttpResponseBase):
         :rtype: iterator[bytes]
         """
         return self._internal_response.stream_download(pipeline=pipeline)
+
+    def close(self):
+        self._internal_response.internal_response.close()
+
+    def __exit__(self, *args):
+        self._internal_response.internal_response.__exit__(*args)
