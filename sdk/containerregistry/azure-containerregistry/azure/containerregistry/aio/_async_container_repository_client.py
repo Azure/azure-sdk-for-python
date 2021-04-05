@@ -13,6 +13,7 @@ from ._async_base_client import ContainerRegistryBaseClient
 from .._helpers import _is_tag
 from .._models import (
     ContentPermissions,
+    DeletedRepositoryResult,
     RegistryArtifactProperties,
     RepositoryProperties,
     TagProperties,
@@ -47,14 +48,17 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         return tag_props.digest
 
     @distributed_trace_async
-    async def delete(self, **kwargs: Dict[str, Any]) -> None:
+    async def delete(self, **kwargs: Dict[str, Any]) -> DeletedRepositoryResult:
         """Delete a repository
 
-        :returns: None
+        :returns: Object containing information about the deleted repository
+        :rtype: :class:`~azure.containerregistry.DeletedRepositoryResult`
+        :rtype: :class:~azure.containerregistry.DeletedRepositoryResult
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        await self._client.container_registry.delete_repository(self.repository, **kwargs)
-
+        return DeletedRepositoryResult._from_generated(  # pylint: disable=protected-access
+            await self._client.container_registry.delete_repository(self.repository, **kwargs)
+        )
     @distributed_trace_async
     async def delete_registry_artifact(self, digest: str, **kwargs) -> None:
         """Delete a registry artifact
@@ -129,6 +133,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :type page_size: int
         :keyword orderby: Order by query parameter
         :type orderby: :class:~azure.containerregistry.RegistryArtifactOrderBy
+        :keyword results_per_page: Numer of repositories to return in a single page
+        :type results_per_page: int
         :returns: ~azure.core.paging.AsyncItemPaged[RegistryArtifactProperties]
         :raises: None
         """
@@ -153,7 +159,10 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :param last: Query parameter for the last item in the previous call. Ensuing
             call will return values after last lexically
         :type last: str
-        :param order_by: Query paramter for ordering by time ascending or descending
+        :keyword orderby: Order by query parameter
+        :type orderby: :class:~azure.containerregistry.RegistryArtifactOrderBy
+        :keyword results_per_page: Numer of repositories to return in a single page
+        :type results_per_page: int
         :returns: ~azure.core.paging.AsyncItemPaged[TagProperties]
         :raises: None
         """

@@ -9,7 +9,12 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._base_client import ContainerRegistryBaseClient
 from ._helpers import _is_tag
-from ._models import RepositoryProperties, TagProperties, RegistryArtifactProperties
+from ._models import (
+    RepositoryProperties,
+    TagProperties,
+    RegistryArtifactProperties,
+    DeletedRepositoryResult
+)
 
 if TYPE_CHECKING:
     from typing import Any, Dict
@@ -48,10 +53,13 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         # type: (...) -> None
         """Delete a repository
 
-        :returns: None
-        :raises: :class:~azure.core.exceptions.ResourceNotFoundError
+        :returns: Object containing information about the deleted repository
+        :rtype: :class:`~azure.containerregistry.DeletedRepositoryResult`
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
-        self._client.container_registry.delete_repository(self.repository, **kwargs)
+        return DeletedRepositoryResult._from_generated(  # pylint: disable=protected-access
+            self._client.container_registry.delete_repository(self.repository, **kwargs)
+        )
 
     @distributed_trace
     def delete_registry_artifact(self, digest, **kwargs):
@@ -134,6 +142,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :type page_size: int
         :keyword orderby: Order by query parameter
         :type orderby: :class:~azure.containerregistry.RegistryArtifactOrderBy
+        :keyword results_per_page: Numer of repositories to return in a single page
+        :type last: int
         :returns: ~azure.core.paging.ItemPaged[RegistryArtifactProperties]
         :raises: None
         """
@@ -160,6 +170,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             call will return values after last lexically
         :type last: str
         :param order_by: Query paramter for ordering by time ascending or descending
+        :keyword results_per_page: Numer of repositories to return in a single page
+        :type last: int
         :returns: ~azure.core.paging.ItemPaged[TagProperties]
         :raises: None
         """

@@ -23,10 +23,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         # type: (str, TokenCredential, Dict[str, Any]) -> None
         """Create a ContainerRegistryClient from an ACR endpoint and a credential
 
-        :param endpoint: An ACR endpoint
-        :type endpoint: str
-        :param credential: The credential with which to authenticate
-        :type credential: TokenCredential
+        :param str endpoint: An ACR endpoint
+        :param TokenCredential credential: The credential with which to authenticate
         :returns: None
         :raises: None
         """
@@ -41,10 +39,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         # type: (str, Dict[str, Any]) -> DeletedRepositoryResult
         """Delete a repository
 
-        :param repository: The repository to delete
-        :type repository: str
-        :returns: None
-        :raises: :class:~azure.core.exceptions.ResourceNotFoundError
+        :param str repository: The repository to delete
+        :returns: Object containing information about the deleted repository
+        :rtype: :class:`~azure.containerregistry.DeletedRepositoryResult`
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         return DeletedRepositoryResult._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.delete_repository(repository, **kwargs)
@@ -59,8 +57,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :type max: int
         :keyword last: Query parameter for the last item in previous query
         :type last: str
+        :keyword results_per_page: Numer of repositories to return in a single page
+        :type last: int
         :returns: ~azure.core.paging.ItemPaged[str]
-        :raises: None
+        :raises: ResourceNotFoundError
         """
         return self._client.container_registry.get_repositories(
             last=kwargs.pop("last", None), n=kwargs.pop("max", None), **kwargs
@@ -71,9 +71,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         # type: (str, Dict[str, Any]) -> ContainerRepositoryClient
         """Get a repository client
 
-        :param repository: The repository to create a client for
-        :type repository: str
-        :returns: :class:~azure.containerregistry.ContainerRepositoryClient
+        :param str repository: The repository to create a client for
+        :returns: :class:`~azure.containerregistry.ContainerRepositoryClient`
         :raises: None
         """
         _pipeline = Pipeline(

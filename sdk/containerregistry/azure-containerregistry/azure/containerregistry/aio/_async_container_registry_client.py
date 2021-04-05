@@ -41,7 +41,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :param repository: The repository to delete
         :type repository: str
-        :returns: None
+        :returns: Object containing information about the deleted repository
+        :rtype: :class:`~azure.containerregistry.DeletedRepositoryResult`
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
         result = await self._client.container_registry.delete_repository(repository, **kwargs)
@@ -49,6 +50,17 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace
     def list_repositories(self, **kwargs) -> AsyncItemPaged[str]:
+        """List all repositories
+
+        :keyword max: Maximum number of repositories to return
+        :type max: int
+        :keyword last: Query parameter for the last item in previous query
+        :type last: str
+        :keyword results_per_page: Numer of repositories to return in a single page
+        :type results_per_page: int
+        :returns: ~azure.core.paging.AsyncItemPaged[str]
+        :raises: ResourceNotFoundError
+        """
 
         return self._client.container_registry.get_repositories(
             last=kwargs.pop("last", None), n=kwargs.pop("page_size", None), **kwargs
