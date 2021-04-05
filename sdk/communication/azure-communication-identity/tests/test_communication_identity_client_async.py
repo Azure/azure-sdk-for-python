@@ -44,7 +44,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
         async with identity_client:
             user = await identity_client.create_user()
 
-        assert user.identifier is not None
+        assert user.properties.get('id') is not None
 
     @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
     @CommunicationServicePreparer()
@@ -53,7 +53,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
         async with identity_client:
             user = await identity_client.create_user()
 
-        assert user.identifier is not None
+        assert user.properties.get('id') is not None
 
     @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
     @CommunicationServicePreparer()
@@ -62,7 +62,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
         async with identity_client:
             user, token_response = await identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
 
-        assert user.identifier is not None
+        assert user.properties.get('id') is not None
         assert token_response.token is not None
 
     @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
@@ -79,7 +79,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
             user = await identity_client.create_user()
             token_response = await identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
 
-        assert user.identifier is not None
+        assert user.properties.get('id') is not None
         assert token_response.token is not None
 
     @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
@@ -90,7 +90,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
             user = await identity_client.create_user()
             token_response = await identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
 
-        assert user.identifier is not None
+        assert user.properties.get('id') is not None
         assert token_response.token is not None
 
     @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
@@ -108,7 +108,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
             token_response = await identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
             await identity_client.revoke_tokens(user)
 
-        assert user.identifier is not None
+        assert user.properties.get('id') is not None
         assert token_response.token is not None
 
     @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
@@ -120,7 +120,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
             token_response = await identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
             await identity_client.revoke_tokens(user)
 
-        assert user.identifier is not None
+        assert user.properties.get('id') is not None
         assert token_response.token is not None
 
     @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
@@ -137,7 +137,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
             user = await identity_client.create_user()
             await identity_client.delete_user(user)
 
-        assert user.identifier is not None
+        assert user.properties.get('id') is not None
 
     @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
     @CommunicationServicePreparer()
@@ -147,4 +147,4 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
             user = await identity_client.create_user()
             await identity_client.delete_user(user)
 
-        assert user.identifier is not None
+        assert user.properties.get('id') is not None
