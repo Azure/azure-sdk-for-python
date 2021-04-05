@@ -18,7 +18,7 @@ from azure.core import CaseInsensitiveEnumMeta
 class CommunicationIdentifierKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Communication Identifier Kind."""
 
-    UNKOWN = "unknown"
+    UNKNOWN = "unknown"
     COMMUNICATION_USER = "communication_user"
     PHONE_NUMBER = "phone_number"
     MICROSOFT_TEAMS_USER = "microsoft_teams_user"
@@ -109,7 +109,7 @@ class UnknownIdentifier(object):
     :ivar Mapping properties: The properties of the identifier.
     :param str identifier: The ID of the identifier.
     """
-    kind = CommunicationIdentifierKind.UNKOWN
+    kind = CommunicationIdentifierKind.UNKNOWN
 
     def __init__(self, identifier):
         # type: (str) -> None

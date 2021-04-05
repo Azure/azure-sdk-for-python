@@ -29,7 +29,7 @@ def serialize_identifier(identifier):
     try:
         request_model = {'raw_id': identifier.raw_id}
 
-        if identifier.kind and identifier.kind != CommunicationIdentifierKind.UNKOWN:
+        if identifier.kind and identifier.kind != CommunicationIdentifierKind.UNKNOWN:
             request_model[identifier.kind] = dict(identifier.properties)
         return request_model
     except AttributeError:
