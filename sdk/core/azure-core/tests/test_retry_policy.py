@@ -8,6 +8,7 @@ try:
 except ImportError:
     from cStringIO import StringIO as BytesIO
 import pytest
+from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import AzureError, ServiceResponseError, ServiceResponseTimeoutError
 from azure.core.pipeline.policies import (
     RetryPolicy,
@@ -22,6 +23,12 @@ from azure.core.pipeline.transport import (
 import tempfile
 import os
 import time
+
+try:
+    from unittest.mock import Mock
+except ImportError:
+    from mock import Mock
+
 
 def test_retry_code_class_variables():
     retry_policy = RetryPolicy()
@@ -209,30 +216,42 @@ def test_retry_seekable_file():
         pipeline.run(http_request)
     os.unlink(f.name)
 
+
 def test_retry_timeout():
-    class MockTransport(HttpTransport):
-        def __init__(self):
-            self.count = 0
+    timeout = 1
 
-        def __exit__(self, exc_type, exc_val, exc_tb):
-            pass
-        def close(self):
-            pass
-        def open(self):
-            pass
+    def send(request, **kwargs):
+        assert kwargs["connection_timeout"] <= timeout, "policy should set connection_timeout not to exceed timeout"
+        raise ServiceResponseError("oops")
 
-        def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
-            self.count += 1
-            if self.count > 2:
-                assert self.count <= 2
-            time.sleep(0.5)
-            raise ServiceResponseError('timeout')
+    transport = Mock(
+        spec=HttpTransport,
+        send=Mock(wraps=send),
+        connection_config=ConnectionConfiguration(connection_timeout=timeout * 2),
+        sleep=time.sleep,
+    )
+    pipeline = Pipeline(transport, [RetryPolicy(timeout=timeout)])
 
-    http_request = HttpRequest('GET', 'http://127.0.0.1/')
-    headers = {'Content-Type': "multipart/form-data"}
-    http_request.headers = headers
-    http_retry = RetryPolicy(retry_total=10, timeout=1)
-    pipeline = Pipeline(MockTransport(), [http_retry])
     with pytest.raises(ServiceResponseTimeoutError):
-        pipeline.run(http_request)
+        response = pipeline.run(HttpRequest("GET", "http://127.0.0.1/"))
 
+
+def test_timeout_defaults():
+    """When "timeout" is not set, the policy should not override the transport's timeout configuration"""
+
+    def send(request, **kwargs):
+        for arg in ("connection_timeout", "read_timeout"):
+            assert arg not in kwargs, "policy should defer to transport configuration when not given a timeout"
+        response = HttpResponse(request, None)
+        response.status_code = 200
+        return response
+
+    transport = Mock(
+        spec_set=HttpTransport,
+        send=Mock(wraps=send),
+        sleep=Mock(side_effect=Exception("policy should not sleep: its first send succeeded")),
+    )
+    pipeline = Pipeline(transport, [RetryPolicy()])
+
+    pipeline.run(HttpRequest("GET", "http://127.0.0.1/"))
+    assert transport.send.call_count == 1, "policy should not retry: its first send succeeded"

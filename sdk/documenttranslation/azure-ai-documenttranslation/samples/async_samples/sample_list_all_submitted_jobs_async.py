@@ -4,30 +4,43 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import os
+"""
+FILE: list_all_submitted_jobs_async.py
+
+DESCRIPTION:
+    This sample demonstrates how to list all the submitted translation jobs for the resource and
+    wait until done on any jobs that are still running.
+
+    To set up your containers for translation and generate SAS tokens to your containers (or files)
+    with the appropriate permissions, see the README.
+
+USAGE:
+    python list_all_submitted_jobs_async.py
+
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_DOCUMENT_TRANSLATION_ENDPOINT - the endpoint to your Document Translation resource.
+    2) AZURE_DOCUMENT_TRANSLATION_KEY - your Document Translation API key.
+"""
+
 import asyncio
 
-class ListAllSubmittedJobsSampleAsync(object):
 
-    def list_all_submitted_jobs(self):
-        # import libraries
-        from azure.core.credentials import AzureKeyCredential
-        from azure.ai.documenttranslation.aio import DocumentTranslationClient
+async def sample_list_all_submitted_jobs_async():
+    import os
+    # [START list_all_jobs_async]
+    from azure.core.credentials import AzureKeyCredential
+    from azure.ai.documenttranslation.aio import DocumentTranslationClient
 
-        # get service secrets
-        endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
-        key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
+    endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
+    key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
 
-        # create translation client
-        client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
+    client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
+    async with client:
+        translation_jobs = client.list_submitted_jobs()  # type: AsyncItemPaged[JobStatusResult]
 
-        # list submitted jobs
-        jobs = client.list_submitted_jobs() # type: AsyncItemPaged[JobStatusResult]
-
-        async for job in jobs:
-            # wait for job to finish
-            if job.status in ["NotStarted", "Running"]:
-                job = client.wait_until_done(job.id)
+        async for job in translation_jobs:
+            if job.status == "Running":
+                job = await client.wait_until_done(job.id)
 
             print("Job ID: {}".format(job.id))
             print("Job status: {}".format(job.status))
@@ -36,18 +49,15 @@ class ListAllSubmittedJobsSampleAsync(object):
             print("Total number of translations on documents: {}".format(job.documents_total_count))
             print("Total number of characters charged: {}".format(job.total_characters_charged))
 
-            print("Of total documents...")
+            print("\nOf total documents...")
             print("{} failed".format(job.documents_failed_count))
             print("{} succeeded".format(job.documents_succeeded_count))
-            print("{} in progress".format(job.documents_in_progress_count))
-            print("{} not yet started".format(job.documents_not_yet_started_count))
-            print("{} cancelled".format(job.documents_cancelled_count))
+            print("{} cancelled\n".format(job.documents_cancelled_count))
+    # [END list_all_jobs_async]
 
 
 async def main():
-    sample = ListAllSubmittedJobsSampleAsync()
-    await sample.list_all_submitted_jobs()
-
+    await sample_list_all_submitted_jobs_async()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

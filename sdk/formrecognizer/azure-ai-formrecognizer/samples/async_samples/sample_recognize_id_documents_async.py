@@ -68,14 +68,13 @@ class RecognizeIdDocumentsSampleAsync(object):
                     print("Date of Expiration: {} has confidence: {}".format(doe.value, doe.confidence))
                 sex = id_document.fields.get("Sex")
                 if sex:
-                    print("Sex: {} has confidence: {}".format(sex.value_data.text, sex.confidence))
+                    print("Sex: {} has confidence: {}".format(sex.value, sex.confidence))
                 address = id_document.fields.get("Address")
                 if address:
                     print("Address: {} has confidence: {}".format(address.value, address.confidence))
-                # FIXME: uncomment this
-                # country = id_document.fields.get("Country")
-                # if country:
-                #     print("Country: {} has confidence: {}".format(country.value, country.confidence))
+                country = id_document.fields.get("Country")
+                if country:
+                    print("Country: {} has confidence: {}".format(country.value, country.confidence))
                 region = id_document.fields.get("Region")
                 if region:
                     print("Region: {} has confidence: {}".format(region.value, region.confidence))

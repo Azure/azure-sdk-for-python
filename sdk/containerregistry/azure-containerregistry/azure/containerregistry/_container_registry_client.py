@@ -4,9 +4,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import TYPE_CHECKING
-from azure.core.paging import ItemPaged
 
-from ._base_client import ContainerRegistryBaseClient
+from azure.core.paging import ItemPaged
+from azure.core.pipeline import Pipeline
+from azure.core.tracing.decorator import distributed_trace
+
+from ._base_client import ContainerRegistryBaseClient, TransportWrapper
 from ._container_repository_client import ContainerRepositoryClient
 from ._models import DeletedRepositoryResult
 
@@ -27,12 +30,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: None
         """
-        if not endpoint.startswith("https://"):
+        if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
         self._credential = credential
         super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, **kwargs)
 
+    @distributed_trace
     def delete_repository(self, repository, **kwargs):
         # type: (str, Dict[str, Any]) -> DeletedRepositoryResult
         """Delete a repository
@@ -42,10 +46,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        # NOTE: DELETE `/acr/v1/{name}`
-        deleted_repository = self._client.container_registry.delete_repository(repository, **kwargs)
-        return DeletedRepositoryResult._from_generated(deleted_repository)  # pylint: disable=protected-access
+        return DeletedRepositoryResult._from_generated(  # pylint: disable=protected-access
+            self._client.container_registry.delete_repository(repository, **kwargs)
+        )
 
+    @distributed_trace
     def list_repositories(self, **kwargs):
         # type: (Dict[str, Any]) -> ItemPaged[str]
         """List all repositories
@@ -61,6 +66,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             last=kwargs.pop("last", None), n=kwargs.pop("max", None), **kwargs
         )
 
+    @distributed_trace
     def get_repository_client(self, repository, **kwargs):
         # type: (str, Dict[str, Any]) -> ContainerRepositoryClient
         """Get a repository client
@@ -68,5 +74,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param repository: The repository to create a client for
         :type repository: str
         :returns: :class:~azure.containerregistry.ContainerRepositoryClient
+        :raises: None
         """
-        return ContainerRepositoryClient(self._endpoint, repository, credential=self._credential, **kwargs)
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._client._client._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._client._client._pipeline._impl_policies,  # pylint: disable=protected-access
+        )
+        return ContainerRepositoryClient(
+            self._endpoint, repository, credential=self._credential, pipeline=_pipeline, **kwargs
+        )

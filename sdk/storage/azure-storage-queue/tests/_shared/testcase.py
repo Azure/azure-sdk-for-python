@@ -142,7 +142,7 @@ class StorageTestCase(AzureMgmtTestCase):
         self.replay_processors.append(XMSRequestIDBody())
 
     def connection_string(self, account, key):
-        return "DefaultEndpointsProtocol=https;AccountName=" + account.name + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"
+        return "DefaultEndpointsProtocol=https;AcCounTName=" + account.name + ";AccOuntKey=" + str(key) + ";EndpoIntSuffix=core.windows.net"
 
     def account_url(self, storage_account, storage_type):
         """Return an url of storage account.

@@ -9,7 +9,7 @@ from ._client import DocumentTranslationClient
 from ._generated.models import (
     StorageInputType,
 )
-from ._api_version import DocumentTranslationVersion
+from ._api_version import DocumentTranslationApiVersion
 from ._models import (
     TranslationTarget,
     JobStatusResult,
@@ -25,7 +25,7 @@ __VERSION__ = VERSION
 
 __all__ = [
     "DocumentTranslationClient",
-    "DocumentTranslationVersion",
+    "DocumentTranslationApiVersion",
     "DocumentTranslationInput",
     "TranslationGlossary",
     "StorageInputType",

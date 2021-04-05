@@ -28,20 +28,32 @@ COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
 
 
 class DocumentTranslationClient(object):
-    """DocumentTranslationClient
-
-    """
 
     def __init__(
             self, endpoint: str, credential: "AzureKeyCredential", **kwargs: Any
     ) -> None:
-        """
+        """DocumentTranslationClient is your interface to the Document Translation service.
+        Use the client to translate whole documents while preserving source document
+        structure and text formatting.
 
-        :param str endpoint:
-        :param credential:
-        :type credential: AzureKeyCredential
-        :keyword str api_version:
-        :rtype: None
+        :param str endpoint: Supported Document Translation endpoint (protocol and hostname, for example:
+            https://<resource-name>.cognitiveservices.azure.com/).
+        :param credential: Credential needed for the client to connect to Azure.
+            Currently only API key authentication is supported.
+        :type credential: :class:`~azure.core.credentials.AzureKeyCredential`
+        :keyword api_version:
+            The API version of the service to use for requests. It defaults to the latest service version.
+            Setting to an older version may result in reduced feature compatibility.
+        :paramtype api_version: str or ~azure.ai.documenttranslation.DocumentTranslationApiVersion
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+                :start-after: [START create_dt_client_with_key_async]
+                :end-before: [END create_dt_client_with_key_async]
+                :language: python
+                :dedent: 4
+                :caption: Creating the DocumentTranslationClient with an endpoint and API key.
         """
         self._endpoint = endpoint
         self._credential = credential
@@ -75,12 +87,28 @@ class DocumentTranslationClient(object):
     @distributed_trace_async
     async def create_translation_job(self, inputs, **kwargs):
         # type: (List[DocumentTranslationInput], **Any) -> JobStatusResult
-        """
+        """Create a document translation job which translates the document(s) in your source container
+        to your TranslationTarget(s) in the given language.
 
-        :param inputs:
+        For supported languages and document formats, see the service documentation:
+        https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
+
+        :param inputs: A list of translation inputs. Each individual input has a single
+            source URL to documents and can contain multiple TranslationTargets (one for each language)
+            for the destination to write translated documents.
         :type inputs: List[~azure.ai.documenttranslation.DocumentTranslationInput]
-        :return: JobStatusResult
-        :rtype: JobStatusResult
+        :return: A JobStatusResult with information on the status of the translation job.
+        :rtype: ~azure.ai.documenttranslation.JobStatusResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_check_document_statuses_async.py
+                :start-after: [START create_translation_job_async]
+                :end-before: [END create_translation_job_async]
+                :language: python
+                :dedent: 4
+                :caption: Create a translation job.
         """
 
         # submit translation job
@@ -106,11 +134,15 @@ class DocumentTranslationClient(object):
     @distributed_trace_async
     async def get_job_status(self, job_id, **kwargs):
         # type: (str, **Any) -> JobStatusResult
-        """
+        """Gets the status of a translation job.
 
-        :param job_id: guid id for job
-        :type job_id: str
+        The status includes the overall job status, as well as a summary of
+        the documents that are being translated as part of that translation job.
+
+        :param str job_id: The translation job ID.
+        :return: A JobStatusResult with information on the status of the translation job.
         :rtype: ~azure.ai.documenttranslation.JobStatusResult
+        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
 
         job_status = await self._client.document_translation.get_operation_status(job_id, **kwargs)
@@ -120,11 +152,16 @@ class DocumentTranslationClient(object):
     @distributed_trace_async
     async def cancel_job(self, job_id, **kwargs):
         # type: (str, **Any) -> None
-        """
+        """Cancel a currently processing or queued job.
 
-        :param job_id: guid id for job
-        :type job_id: str
+        A job will not be cancelled if it is already completed, failed, or cancelling.
+        All documents that have completed translation will not be cancelled and will be charged.
+        If possible, all pending documents will be cancelled.
+
+        :param str job_id: The translation job ID.
+        :return: None
         :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
 
         await self._client.document_translation.cancel_operation(job_id, **kwargs)
@@ -132,12 +169,25 @@ class DocumentTranslationClient(object):
     @distributed_trace_async
     async def wait_until_done(self, job_id, **kwargs):
         # type: (str, **Any) -> JobStatusResult
-        """
+        """Wait until the translation job is done.
 
-        :param job_id: guid id for job
-        :type job_id: str
-        :return: JobStatusResult
-        :rtype: JobStatusResult
+        A job is considered "done" when it reaches a terminal state like
+        Succeeded, Failed, Cancelled.
+
+        :param str job_id: The translation job ID.
+        :return: A JobStatusResult with information on the status of the translation job.
+        :rtype: ~azure.ai.documenttranslation.JobStatusResult
+        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
+            Will raise if validation fails on the input. E.g. insufficient permissions on the blob containers.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_create_translation_job_async.py
+                :start-after: [START wait_until_done_async]
+                :end-before: [END wait_until_done_async]
+                :language: python
+                :dedent: 4
+                :caption: Create a translation job and wait until it is done.
         """
         pipeline_response = await self._client.document_translation.get_operation_status(
             job_id,
@@ -153,7 +203,7 @@ class DocumentTranslationClient(object):
             initial_response=pipeline_response,
             deserialization_callback=callback,
             polling_method=AsyncLROBasePolling(
-                timeout=30,
+                timeout=self._client._config.polling_interval,  # pylint: disable=protected-access
                 lro_algorithms=[TranslationPolling()],
                 **kwargs
             ),
@@ -163,14 +213,21 @@ class DocumentTranslationClient(object):
     @distributed_trace
     def list_submitted_jobs(self, **kwargs):
         # type: (**Any) -> AsyncItemPaged[JobStatusResult]
-        """
+        """List all the submitted translation jobs under the Document Translation resource.
 
-        :keyword int results_per_page:
-        :keyword int skip:
-        :rtype: ~azure.core.polling.AsyncItemPaged[JobStatusResult]
+        :return: ~azure.core.paging.AsyncItemPaged[:class:`~azure.ai.documenttranslation.JobStatusResult`]
+        :rtype: ~azure.core.paging.AsyncItemPaged
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_list_all_submitted_jobs_async.py
+                :start-after: [START list_all_jobs_async]
+                :end-before: [END list_all_jobs_async]
+                :language: python
+                :dedent: 4
+                :caption: List all submitted jobs under the resource.
         """
-        skip = kwargs.pop('skip', None)
-        results_per_page = kwargs.pop('results_per_page', None)
 
         def _convert_from_generated_model(generated_model):
             # pylint: disable=protected-access
@@ -182,8 +239,6 @@ class DocumentTranslationClient(object):
         )
 
         return self._client.document_translation.get_operations(
-            top=results_per_page,
-            skip=skip,
             cls=model_conversion_function,
             **kwargs
         )
@@ -191,16 +246,22 @@ class DocumentTranslationClient(object):
     @distributed_trace
     def list_all_document_statuses(self, job_id, **kwargs):
         # type: (str, **Any) -> AsyncItemPaged[DocumentStatusResult]
-        """
+        """List all the document statuses under a translation job.
 
-        :param job_id: guid id for job
-        :type job_id: str
-        :keyword int results_per_page:
-        :keyword int skip:
-        :rtype: ~azure.core.paging.AsyncItemPaged[DocumentStatusResult]
+        :param str job_id: The translation job ID.
+        :return: ~azure.core.paging.AsyncItemPaged[:class:`~azure.ai.documenttranslation.DocumentStatusResult`]
+        :rtype: ~azure.core.paging.AsyncItemPaged
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_create_translation_job_async.py
+                :start-after: [START list_all_document_statuses_async]
+                :end-before: [END list_all_document_statuses_async]
+                :language: python
+                :dedent: 8
+                :caption: List all the document statuses under the translation job.
         """
-        skip = kwargs.pop('skip', None)
-        results_per_page = kwargs.pop('results_per_page', None)
 
         def _convert_from_generated_model(generated_model):
             # pylint: disable=protected-access
@@ -213,23 +274,20 @@ class DocumentTranslationClient(object):
 
         return self._client.document_translation.get_operation_documents_status(
             id=job_id,
-            top=results_per_page,
-            skip=skip,
             cls=model_conversion_function,
             **kwargs
         )
 
-
     @distributed_trace_async
     async def get_document_status(self, job_id, document_id, **kwargs):
         # type: (str, str, **Any) -> DocumentStatusResult
-        """
+        """Get the status of an individual document within a translation job.
 
-        :param job_id: guid id for job
-        :type job_id: str
-        :param document_id: guid id for document
-        :type document_id: str
+        :param str job_id: The translation job ID.
+        :param str document_id: The ID for the document.
+        :return: A DocumentStatusResult with information on the status of the document.
         :rtype: ~azure.ai.documenttranslation.DocumentStatusResult
+        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
         document_status = await self._client.document_translation.get_document_status(job_id, document_id, **kwargs)
         # pylint: disable=protected-access
@@ -239,9 +297,11 @@ class DocumentTranslationClient(object):
     @distributed_trace_async
     async def get_glossary_formats(self, **kwargs):
         # type: (**Any) -> List[FileFormat]
-        """
+        """Get the list of the glossary formats supported by the Document Translation service.
 
-        :rtype: list[FileFormat]
+        :return: A list of supported glossary formats.
+        :rtype: List[FileFormat]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         glossary_formats = await self._client.document_translation.get_glossary_formats(**kwargs)
         # pylint: disable=protected-access
@@ -250,9 +310,11 @@ class DocumentTranslationClient(object):
     @distributed_trace_async
     async def get_document_formats(self, **kwargs):
         # type: (**Any) -> List[FileFormat]
-        """
+        """Get the list of the document formats supported by the Document Translation service.
 
-        :rtype: list[FileFormat]
+        :return: A list of supported document formats for translation.
+        :rtype: List[FileFormat]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         document_formats = await self._client.document_translation.get_document_formats(**kwargs)
         # pylint: disable=protected-access

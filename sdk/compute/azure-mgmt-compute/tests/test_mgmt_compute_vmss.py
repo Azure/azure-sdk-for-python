@@ -832,7 +832,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             result = self.mgmt_client.virtual_machine_scale_sets.begin_redeploy(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
             result = result.result()
         except HttpResponseError as e:
-            if not str(e).startswith("(VMRedeploymentTimedOut)"):
+            if not str(e).startswith("(VMRedeployment)"):
                 raise e
 
         # Deallocate virtual machine scale set (TODO: need swagger file)

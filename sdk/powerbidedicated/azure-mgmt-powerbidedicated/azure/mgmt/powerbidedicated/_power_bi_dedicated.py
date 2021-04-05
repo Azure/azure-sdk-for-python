@@ -20,6 +20,7 @@ if TYPE_CHECKING:
 from ._configuration import PowerBIDedicatedConfiguration
 from .operations import CapacitiesOperations
 from .operations import Operations
+from .operations import AutoScaleVCoresOperations
 from . import models
 
 
@@ -30,6 +31,8 @@ class PowerBIDedicated(object):
     :vartype capacities: azure.mgmt.powerbidedicated.operations.CapacitiesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.powerbidedicated.operations.Operations
+    :ivar auto_scale_vcores: AutoScaleVCoresOperations operations
+    :vartype auto_scale_vcores: azure.mgmt.powerbidedicated.operations.AutoScaleVCoresOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: A unique identifier for a Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
@@ -59,6 +62,8 @@ class PowerBIDedicated(object):
         self.capacities = CapacitiesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.auto_scale_vcores = AutoScaleVCoresOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def close(self):
