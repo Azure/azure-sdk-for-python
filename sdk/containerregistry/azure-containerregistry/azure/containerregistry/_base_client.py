@@ -25,12 +25,10 @@ class ContainerRegistryApiVersion(str, Enum):
 class ContainerRegistryBaseClient(object):
     """Base class for ContainerRegistryClient and ContainerRepositoryClient
 
-    :param endpoint: Azure Container Registry endpoint
-    :type endpoint: str
+    :param str endpoint: Azure Container Registry endpoint
     :param credential: AAD Token for authenticating requests with Azure
     :type credential: :class:`azure.identity.DefaultTokenCredential`
     """
-
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, TokenCredential, Dict[str, Any]) -> None
         auth_policy = ContainerRegistryChallengePolicy(credential, endpoint)
