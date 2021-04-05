@@ -5,6 +5,8 @@
 from enum import Enum
 from typing import TYPE_CHECKING
 
+from azure.core.pipeline.transport import AsyncHttpTransport
+
 from ._async_authentication_policy import ContainerRegistryChallengePolicy
 from .._generated.aio import ContainerRegistry
 from .._user_agent import USER_AGENT

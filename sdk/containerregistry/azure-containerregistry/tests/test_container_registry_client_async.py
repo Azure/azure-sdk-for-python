@@ -3,12 +3,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import functools
-import os
 import pytest
 import six
 
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureTestCase
 
 from azure.containerregistry import (
     DeletedRepositoryResult,
@@ -18,16 +16,10 @@ from azure.containerregistry.aio import ContainerRegistryClient, ContainerReposi
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline.transport import AioHttpTransport
-from azure.identity.aio import DefaultAzureCredential
 
 from asynctestcase import AsyncContainerRegistryTestClass
-
-
-acr_preparer = functools.partial(
-    PowerShellPreparer,
-    "containerregistry",
-    containerregistry_baseurl="fake_url.azurecr.io",
-)
+from constants import TO_BE_DELETED
+from preparer import acr_preparer
 
 
 class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
@@ -35,6 +27,8 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     @acr_preparer()
     async def test_list_repositories(self, containerregistry_baseurl):
         client = self.create_registry_client(containerregistry_baseurl)
+
+        repositories = client.list_repositories()
 
         count = 0
         prev = None
@@ -46,16 +40,20 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
 
         assert count > 0
 
-    @pytest.mark.skip("Don't want to delete for now")
     @acr_preparer()
-    def test_delete_repository(self, containerregistry_baseurl):
+    async def test_delete_repository(self, containerregistry_baseurl, containerregistry_resource_group):
+        repository = self.get_resource_name("repo")
+        self._import_tag_to_be_deleted(
+            containerregistry_baseurl, resource_group=containerregistry_resource_group, repository=repository
+        )
         client = self.create_registry_client(containerregistry_baseurl)
 
-        deleted_result = client.delete_repository("debian")
+        await client.delete_repository(repository)
+        self.sleep(5)
 
-        assert isinstance(deleted_result, DeletedRepositoryResult)
-        assert len(deleted_result.deleted_registry_artifact_digests) == 1
-        assert len(deleted_result.deleted_tags) == 1
+        async for repo in client.list_repositories():
+            if repo == repository:
+                raise ValueError("Repository not deleted")
 
     @acr_preparer()
     async def test_delete_repository_does_not_exist(self, containerregistry_baseurl):
@@ -72,8 +70,9 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
             async for r in client.list_repositories():
                 pass
             assert transport.session is not None
-
-            async with client.get_repository_client("hello-world") as repo_client:
+            
+            repo_client = client.get_repository_client("hello-world")
+            async with repo_client:
                 assert transport.session is not None
 
             async for r in client.list_repositories():

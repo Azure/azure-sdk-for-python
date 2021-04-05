@@ -29,10 +29,9 @@ class ContainerRegistryBaseClient(object):
     :type endpoint: str
     :param credential: AAD Token for authenticating requests with Azure
     :type credential: :class:`azure.identity.DefaultTokenCredential`
-
     """
 
-    def __init__(self, endpoint, credential, **kwargs):  # pylint:disable=client-method-missing-type-annotations
+    def __init__(self, endpoint, credential, **kwargs):
         # type: (str, TokenCredential, Dict[str, Any]) -> None
         auth_policy = ContainerRegistryChallengePolicy(credential, endpoint)
         self._client = ContainerRegistry(
@@ -82,4 +81,3 @@ class TransportWrapper(HttpTransport):
 
     def __exit__(self, *args):  # pylint: disable=arguments-differ
         pass
-

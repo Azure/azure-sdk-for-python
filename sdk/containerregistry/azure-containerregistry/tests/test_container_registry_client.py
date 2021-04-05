@@ -3,12 +3,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import functools
-import os
 import pytest
 import six
 
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureTestCase
 
 from azure.containerregistry import (
     ContainerRegistryClient,
@@ -17,16 +15,10 @@ from azure.containerregistry import (
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline.transport import RequestsTransport
-from azure.identity import DefaultAzureCredential
 
 from testcase import ContainerRegistryTestClass
-
-
-acr_preparer = functools.partial(
-    PowerShellPreparer,
-    "containerregistry",
-    containerregistry_baseurl="fake_url.azurecr.io",
-)
+from constants import TO_BE_DELETED
+from preparer import acr_preparer
 
 
 class TestContainerRegistryClient(ContainerRegistryTestClass):
@@ -48,16 +40,20 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
         assert count > 0
 
-    @pytest.mark.skip("Don't want to delete for now")
     @acr_preparer()
-    def test_delete_repository(self, containerregistry_baseurl):
+    def test_delete_repository(self, containerregistry_baseurl, containerregistry_resource_group):
+        repository = self.get_resource_name("repo")
+        self._import_tag_to_be_deleted(
+            containerregistry_baseurl, resource_group=containerregistry_resource_group, repository=repository
+        )
         client = self.create_registry_client(containerregistry_baseurl)
 
-        deleted_result = client.delete_repository("debian")
+        client.delete_repository(repository)
+        self.sleep(5)
 
-        assert isinstance(deleted_result, DeletedRepositoryResult)
-        assert len(deleted_result.deleted_registry_artifact_digests) == 1
-        assert len(deleted_result.deleted_tags) == 1
+        for repo in client.list_repositories():
+            if repo == repository:
+                raise ValueError("Repository not deleted")
 
     @acr_preparer()
     def test_delete_repository_does_not_exist(self, containerregistry_baseurl):

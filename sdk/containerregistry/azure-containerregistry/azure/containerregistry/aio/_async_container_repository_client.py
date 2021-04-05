@@ -3,9 +3,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Any
 
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._async_base_client import ContainerRegistryBaseClient
 from .._helpers import _is_tag
@@ -44,8 +46,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         tag_props = await self.get_tag_properties(tag)
         return tag_props.digest
 
-    async def delete(self, **kwargs) -> None:
-        # type: (...) -> None
+    @distributed_trace_async
+    async def delete(self, **kwargs: Dict[str, Any]) -> None:
         """Delete a repository
 
         :returns: None
@@ -53,7 +55,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """
         await self._client.container_registry.delete_repository(self.repository, **kwargs)
 
-    def delete_registry_artifact(self, digest: str, **kwargs) -> None:
+    @distributed_trace_async
+    async def delete_registry_artifact(self, digest: str, **kwargs) -> None:
         """Delete a registry artifact
 
         :param digest: The digest of the artifact to be deleted
@@ -61,18 +64,20 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        raise NotImplementedError("Has not been implemented")
+        await self._client.container_registry_repository.delete_manifest(self.repository, digest, **kwargs)
 
-    def delete_tag(self, tag: str, **kwargs) -> None:
-        """Delete a tag
+    @distributed_trace_async
+    async def delete_tag(self, tag: str, **kwargs) -> None:
+        """Delete a tag from a repository
 
         :param tag: The digest of the artifact to be deleted
         :type tag: str
         :returns: None
         :raises: :class:~azure.core.exceptions.ResourceNotFoundError
         """
-        raise NotImplementedError("Has not been implemented")
+        await self._client.container_registry_repository.delete_tag(self.repository, tag, **kwargs)
 
+    @distributed_trace_async
     async def get_properties(self, **kwargs) -> RepositoryProperties:
         """Get the properties of a repository
 
@@ -83,6 +88,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             await self._client.container_registry_repository.get_properties(self.repository, **kwargs)
         )
 
+    @distributed_trace_async
     async def get_registry_artifact_properties(self, tag_or_digest: str, **kwargs) -> RegistryArtifactProperties:
         """Get the properties of a registry artifact
 
@@ -100,6 +106,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             )
         )
 
+    @distributed_trace_async
     async def get_tag_properties(self, tag: str, **kwargs) -> TagProperties:
         """Get the properties for a tag
 
@@ -112,7 +119,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             await self._client.container_registry_repository.get_tag_properties(self.repository, tag, **kwargs)
         )
 
-    async def list_registry_artifacts(self, **kwargs) -> AsyncItemPaged[RegistryArtifactProperties]:
+    @distributed_trace
+    def list_registry_artifacts(self, **kwargs) -> AsyncItemPaged[RegistryArtifactProperties]:
         """List the artifacts for a repository
 
         :keyword last: Query parameter for the last item in the previous query
@@ -127,7 +135,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         last = kwargs.pop("last", None)
         n = kwargs.pop("page_size", None)
         orderby = kwargs.pop("order_by", None)
-        return await self._client.container_registry_repository.get_manifests(
+        return self._client.container_registry_repository.get_manifests(
             self.repository,
             last=last,
             n=n,
@@ -138,7 +146,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             **kwargs
         )
 
-    async def list_tags(self, **kwargs) -> AsyncItemPaged[TagProperties]:
+    @distributed_trace
+    def list_tags(self, **kwargs) -> AsyncItemPaged[TagProperties]:
         """List the tags for a repository
 
         :param last: Query parameter for the last item in the previous call. Ensuing
@@ -148,7 +157,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: ~azure.core.paging.AsyncItemPaged[TagProperties]
         :raises: None
         """
-        return await self._client.container_registry_repository.get_tags(
+        return self._client.container_registry_repository.get_tags(
             self.repository,
             last=kwargs.pop("last", None),
             n=kwargs.pop("top", None),
@@ -158,6 +167,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             **kwargs
         )
 
+    @distributed_trace_async
     async def set_manifest_properties(self, digest: str, permissions: ContentPermissions, **kwargs) -> None:
         """Set the properties for a manifest
 
@@ -173,7 +183,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             self.repository, digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
         )
 
-    async def set_tag_properties(self, tag_or_digest: str, permissions: ContentPermissions, **kwargs) -> None:
+    @distributed_trace_async
+    async def set_tag_properties(self, tag: str, permissions: ContentPermissions, **kwargs) -> None:
         """Set the properties for a tag
 
         :param tag: Tag to set properties for
@@ -183,12 +194,6 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: None
         """
-        if _is_tag(tag_or_digest):
-            tag_or_digest = self._get_digest_from_tag(tag_or_digest)
-
-        await self._client.container_registry_repository.update_manifest_attributes(
-            self.repository,
-            tag_or_digest,
-            value=permissions._to_generated(),  # pylint: disable=protected-access
-            **kwargs
+        await self._client.container_registry_repository.update_tag_attributes(
+            self.repository, tag, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
         )
