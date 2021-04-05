@@ -11,11 +11,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
+    uri: https://fake_url.azurecr.io/acr/v1/repoeb7113db/_tags/to_be_deleted
   response:
     body:
       string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"hello-world","Action":"metadata_read"}]}]}
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"repoeb7113db","Action":"metadata_read"}]}]}
 
         '
     headers:
@@ -27,11 +27,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '214'
+      - '215'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:49:02 GMT
+      - Mon, 05 Apr 2021 12:20:45 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:49:04 GMT
+      - Mon, 05 Apr 2021 12:20:47 GMT
       server:
       - openresty
       strict-transport-security:
@@ -79,12 +79,12 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.283333'
+      - '333.25'
     status:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Ahello-world%3Ametadata_read&refresh_token=REDACTED
+    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Arepoeb7113db%3Ametadata_read&refresh_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -93,7 +93,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1079'
+      - '1080'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -109,7 +109,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:49:04 GMT
+      - Mon, 05 Apr 2021 12:20:47 GMT
       server:
       - openresty
       strict-transport-security:
@@ -117,7 +117,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333'
+      - '333.233333'
     status:
       code: 200
       message: OK
@@ -133,10 +133,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
+    uri: https://fake_url.azurecr.io/acr/v1/repoeb7113db/_tags/to_be_deleted
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","tag":{"name":"to_be_deleted","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-04-02T17:44:56.5327351Z","lastUpdateTime":"2021-04-02T17:44:56.5327351Z","signed":false,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}}
+      string: '{"registry":"fake_url.azurecr.io","imageName":"repoeb7113db","tag":{"name":"to_be_deleted","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-04-05T12:20:35.6831394Z","lastUpdateTime":"2021-04-05T12:20:35.6831394Z","signed":false,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}}
 
         '
     headers:
@@ -148,11 +148,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '387'
+      - '388'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:49:04 GMT
+      - Mon, 05 Apr 2021 12:20:47 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -179,11 +179,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
+    uri: https://fake_url.azurecr.io/acr/v1/repoeb7113db/_tags/to_be_deleted
   response:
     body:
       string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"hello-world","Action":"delete"}]}]}
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"repoeb7113db","Action":"delete"}]}]}
 
         '
     headers:
@@ -195,11 +195,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '207'
+      - '208'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:49:04 GMT
+      - Mon, 05 Apr 2021 12:20:47 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -239,7 +239,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:49:05 GMT
+      - Mon, 05 Apr 2021 12:20:48 GMT
       server:
       - openresty
       strict-transport-security:
@@ -247,12 +247,12 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.983333'
+      - '333.216667'
     status:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Ahello-world%3Adelete&refresh_token=REDACTED
+    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Arepoeb7113db%3Adelete&refresh_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -261,7 +261,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1072'
+      - '1073'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -277,7 +277,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:49:05 GMT
+      - Mon, 05 Apr 2021 12:20:48 GMT
       server:
       - openresty
       strict-transport-security:
@@ -285,7 +285,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.966667'
+      - '333.2'
     status:
       code: 200
       message: OK
@@ -303,7 +303,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
+    uri: https://fake_url.azurecr.io/acr/v1/repoeb7113db/_tags/to_be_deleted
   response:
     body:
       string: ''
@@ -318,7 +318,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 02 Apr 2021 17:49:05 GMT
+      - Mon, 05 Apr 2021 12:20:48 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -347,11 +347,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
+    uri: https://fake_url.azurecr.io/acr/v1/repoeb7113db/_tags/to_be_deleted
   response:
     body:
       string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"hello-world","Action":"metadata_read"}]}]}
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"repoeb7113db","Action":"metadata_read"}]}]}
 
         '
     headers:
@@ -363,11 +363,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '214'
+      - '215'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:49:15 GMT
+      - Mon, 05 Apr 2021 12:20:53 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -407,7 +407,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:49:16 GMT
+      - Mon, 05 Apr 2021 12:20:54 GMT
       server:
       - openresty
       strict-transport-security:
@@ -415,12 +415,12 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.25'
+      - '333.183333'
     status:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Ahello-world%3Ametadata_read&refresh_token=REDACTED
+    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Arepoeb7113db%3Ametadata_read&refresh_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -429,7 +429,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1079'
+      - '1080'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -445,7 +445,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:49:16 GMT
+      - Mon, 05 Apr 2021 12:20:54 GMT
       server:
       - openresty
       strict-transport-security:
@@ -453,7 +453,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.233333'
+      - '333.166667'
     status:
       code: 200
       message: OK
@@ -469,7 +469,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
+    uri: https://fake_url.azurecr.io/acr/v1/repoeb7113db/_tags/to_be_deleted
   response:
     body:
       string: '{"errors":[{"code":"TAG_UNKNOWN","message":"the specified tag does
@@ -489,7 +489,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:49:16 GMT
+      - Mon, 05 Apr 2021 12:20:54 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

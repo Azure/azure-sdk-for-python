@@ -6,9 +6,10 @@
 from typing import TYPE_CHECKING
 
 from azure.core.paging import ItemPaged
+from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 
-from ._base_client import ContainerRegistryBaseClient
+from ._base_client import ContainerRegistryBaseClient, TransportWrapper
 from ._container_repository_client import ContainerRepositoryClient
 from ._models import DeletedRepositoryResult
 
@@ -75,4 +76,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: :class:~azure.containerregistry.ContainerRepositoryClient
         :raises: None
         """
-        return ContainerRepositoryClient(self._endpoint, repository, credential=self._credential, **kwargs)
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._client._client._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._client._client._pipeline._impl_policies,  # pylint: disable=protected-access
+        )
+        return ContainerRepositoryClient(
+            self._endpoint, repository, credential=self._credential, pipeline=_pipeline, **kwargs
+        )

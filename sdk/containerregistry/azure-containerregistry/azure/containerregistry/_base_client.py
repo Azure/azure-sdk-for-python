@@ -3,9 +3,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from enum import Enum
 from typing import TYPE_CHECKING
 
-from enum import Enum
+from azure.core.pipeline.transport import HttpTransport
 
 from ._authentication_policy import ContainerRegistryChallengePolicy
 from ._generated import ContainerRegistry
@@ -55,3 +56,28 @@ class ContainerRegistryBaseClient(object):
         Calling this method is unnecessary when using the client as a context manager.
         """
         self._client.close()
+
+
+class TransportWrapper(HttpTransport):
+    """Wrapper class that ensures that an inner client created
+    by a `get_client` method does not close the outer transport for the parent
+    when used in a context manager.
+    """
+
+    def __init__(self, transport):
+        self._transport = transport
+
+    def send(self, request, **kwargs):
+        return self._transport.send(request, **kwargs)
+
+    def open(self):
+        pass
+
+    def close(self):
+        pass
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, *args):  # pylint: disable=arguments-differ
+        pass
