@@ -26,7 +26,8 @@ class ContainerRegistryBaseClient(object):
     """Base class for ContainerRegistryClient and ContainerRepositoryClient
 
     :param str endpoint: Azure Container Registry endpoint
-    :param :class:`azure.identity.DefaultTokenCredential` credential: AAD Token for authenticating requests with Azure
+    :param credential: AAD Token for authenticating requests with Azure
+    :vartype credential: :class:`azure.identity.DefaultTokenCredential`
     """
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, TokenCredential, Dict[str, Any]) -> None

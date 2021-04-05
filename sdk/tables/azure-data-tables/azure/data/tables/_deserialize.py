@@ -12,11 +12,10 @@ import datetime
 from azure.core.exceptions import ResourceExistsError
 
 from ._entity import EntityProperty, EdmType, TableEntity
-from ._common_conversion import _decode_base64_to_bytes
+from ._common_conversion import _decode_base64_to_bytes, TZ_UTC
 from ._error import TableErrorCode
 
 if TYPE_CHECKING:
-    from datetime import datetime
     from azure.core.exceptions import AzureError
 
 
@@ -38,6 +37,16 @@ if TYPE_CHECKING:
         Type,
         Tuple,
     )
+
+
+class TablesEntityDatetime(datetime.datetime):
+
+    @property
+    def tables_service_value(self):
+        try:
+            return self._service_value
+        except AttributeError:
+            return ""
 
 
 def url_quote(url):
@@ -80,32 +89,19 @@ def _from_entity_int64(value):
     return EntityProperty(int(value), EdmType.INT64)
 
 
-zero = datetime.timedelta(0)  # same as 00:00
-
-
-class Timezone(datetime.tzinfo):
-    def utcoffset(self, dt):
-        return zero
-
-    def dst(self, dt):
-        return zero
-
-    def tzname(self, dt):
-        return
-
-
 def _from_entity_datetime(value):
     # Cosmos returns this with a decimal point that throws an error on deserialization
-    value = clean_up_dotnet_timestamps(value)
-
+    cleaned_value = clean_up_dotnet_timestamps(value)
     try:
-        return datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(
-            tzinfo=Timezone()
+        dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(
+            tzinfo=TZ_UTC
         )
     except ValueError:
-        return datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(
-            tzinfo=Timezone()
+        dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%SZ").replace(
+            tzinfo=TZ_UTC
         )
+    dt_obj._service_value = value  # pylint:disable=protected-access
+    return dt_obj
 
 
 def clean_up_dotnet_timestamps(value):
@@ -205,7 +201,7 @@ def _convert_to_entity(entry_element):
     for name, value in properties.items():
         mtype = edmtypes.get(name)
 
-        # Add type for Int32
+        # Add type for Int32/64
         if isinstance(value, int) and mtype is None:
             mtype = EdmType.INT32
 

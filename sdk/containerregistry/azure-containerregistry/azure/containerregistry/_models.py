@@ -153,18 +153,18 @@ class RepositoryProperties(object):
         )
 
 
-class RegistryArtifactOrderBy(int, Enum):
+class RegistryArtifactOrderBy(str, Enum):
     """Enum for ordering registry artifacts"""
 
-    LAST_UPDATE_TIME_DESCENDING = 0
-    LAST_UPDATE_TIME_ASCENDING = 1
+    LAST_UPDATE_TIME_DESCENDING = "timedesc"
+    LAST_UPDATE_TIME_ASCENDING = "timeasc"
 
 
-class TagOrderBy(int, Enum):
+class TagOrderBy(str, Enum):
     """Enum for ordering tags"""
 
-    LAST_UPDATE_TIME_DESCENDING = 0
-    LAST_UPDATE_TIME_ASCENDING = 1
+    LAST_UPDATE_TIME_DESCENDING = "timedesc"
+    LAST_UPDATE_TIME_ASCENDING = "timeasc"
 
 
 class TagProperties(object):

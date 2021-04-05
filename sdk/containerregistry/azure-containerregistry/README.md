@@ -100,7 +100,7 @@ additional questions or comments.
 <!-- LINKS -->
 [source]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/containerregistry/azure-containerregistry
 [package]: https://pypi.org/azure-containerregistry
-<!-- [docs]: https://docs.microsoft.com/en-us/python/api/overview/azure/container-registry?view=azure-python-preview -->
+<!-- [docs]: https://docs.microsoft.com/python/api/overview/azure/container-registry?view=azure-python-preview -->
 [rest_docs]: https://docs.microsoft.com/rest/api/containerregistry/
 [product_docs]:  https://docs.microsoft.com/azure/container-registry
 [pip_link]: https://pypi.org

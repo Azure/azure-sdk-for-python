@@ -137,10 +137,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :keyword last: Query parameter for the last item in the previous call. Ensuing
             call will return values after last lexically
         :type last: str
-        :keyword order_by: Query paramter for ordering by time ascending or descending
+        :keyword order_by: Query parameter for ordering by time ascending or descending
         :type order_by: :class:`~azure.containerregistry.RegistryArtifactOrderBy`
-        :keyword page_size: Number of items per page
-        :type page_size: int
         :keyword results_per_page: Numer of repositories to return in a single page
         :type results_per_page: int
         :return: ItemPaged[:class:`RegistryArtifactProperties`]
@@ -166,7 +164,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         # type: (...) -> ItemPaged[TagProperties]
         """List the tags for a repository
 
-        :param last: Query parameter for the last item in the previous call. Ensuing
+        :keyword last: Query parameter for the last item in the previous call. Ensuing
             call will return values after last lexically
         :type last: str
         :param order_by: Query paramter for ordering by time ascending or descending

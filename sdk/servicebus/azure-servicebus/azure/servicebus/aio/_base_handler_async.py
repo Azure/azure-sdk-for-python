@@ -32,7 +32,7 @@ from ..exceptions import (
 )
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -86,7 +86,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self,
         fully_qualified_namespace: str,
         entity_name: str,
-        credential: "TokenCredential",
+        credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
         # If the user provided http:// or sb://, let's be polite and strip that.
