@@ -12,13 +12,11 @@ Example to show sending message(s) to and receiving messages from a Service Bus 
 # pylint: disable=C0111
 
 import os
-import logging
-logging.basicConfig(level=logging.INFO)
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
-CONNECTION_STR = 'Endpoint=sb://t1sbtest.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=FD6GZZ18MrSo+GQI+LW8rPnFYSKvyLaCIebv1MQBl+Y='#os.environ['SERVICE_BUS_CONNECTION_STR']
-SESSION_QUEUE_NAME = 'testsqueue'#os.environ["SERVICE_BUS_SESSION_QUEUE_NAME"]
-SESSION_ID = 'testsessionid' #os.environ['SERVICE_BUS_SESSION_ID']
+CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
+SESSION_QUEUE_NAME = os.environ["SERVICE_BUS_SESSION_QUEUE_NAME"]
+SESSION_ID = os.environ['SERVICE_BUS_SESSION_ID']
 
 
 def send_single_message(sender):
@@ -47,8 +45,8 @@ def receive_batch_message(receiver):
     session = receiver.session
     session.set_state("START")
     print("Session state:", session.get_state())
-    #received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
-    for msg in receiver:
+    received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
+    for msg in received_msgs:
         print(str(msg))
         receiver.complete_message(msg)
         session.renew_lock()
@@ -67,7 +65,7 @@ if __name__ == '__main__':
 
         print("Send message is done.")
 
-        receiver = servicebus_client.get_queue_receiver(queue_name=SESSION_QUEUE_NAME, session_id=SESSION_ID, max_wait_time=10)
+        receiver = servicebus_client.get_queue_receiver(queue_name=SESSION_QUEUE_NAME, session_id=SESSION_ID)
         with receiver:
             receive_batch_message(receiver)
 
