@@ -44,8 +44,28 @@ class CreateClients(object):
         client = ContainerRepositoryClient(self.account_url, "my_repository", DefaultAzureCredential())
         # [END create_repository_client]
 
+    def basic_sample(self):
+
+        from azure.containerregistry import ContainerRegistryClient
+        from azure.identity import DefaultAzureCredential
+
+        # Instantiate the client
+        client = ContainerRegistryClient(self.account_url, DefaultAzureCredential())
+        with client:
+            # Iterate through all the repositories
+            for repository_name in client.list_repositories():
+                if repository_name == "hello-world":
+                    # Create a repository client from the registry client
+                    repository_client = client.get_repository_client(repository_name)
+
+                    with repository_client:
+                        # Show all tags
+                        for tag in repository_client.list_tags():
+                            print(tag.digest)
+
 
 if __name__ == '__main__':
     sample = CreateClients()
     sample.create_registry_client()
     sample.create_repository_client()
+    sample.basic_sample()
