@@ -35,7 +35,7 @@ from ._connection_manager_async import get_connection_manager
 from ._error_async import _handle_exception
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     try:
         from typing_extensions import Protocol
     except ImportError:
@@ -107,7 +107,7 @@ class ClientBaseAsync(ClientBase):
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        credential: Union["TokenCredential", AzureSasCredential],
+        credential: Union["AsyncTokenCredential", AzureSasCredential],
         **kwargs: Any
     ) -> None:
         self._loop = kwargs.pop("loop", None)
