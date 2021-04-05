@@ -84,13 +84,12 @@ class StorageRetryTest(AzureTestCase, AsyncTableTestCase):
     async def test_retry_on_server_error_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key, default_table=False)
         try:
-            # Force the create call to 'timeout' with a 408
             callback = ResponseCallback(status=201, new_status=500).override_status
 
             new_table_name = self.get_resource_name('uttable')
-            # The initial create will return 201, but we overwrite it and retry.
-            # The retry will then get a 409 and return false.
-            with self.assertRaises(ResourceExistsError):
+            # The initial create will return 201, but we overwrite it with 500 and retry.
+            # The retry will then get a 409 conflict.
+            with pytest.raises(ResourceExistsError):
                 await self.ts.create_table(new_table_name, raw_response_hook=callback)
         finally:
             await self.ts.delete_table(new_table_name)
@@ -106,9 +105,9 @@ class StorageRetryTest(AzureTestCase, AsyncTableTestCase):
         callback = ResponseCallback(status=201, new_status=408).override_status
 
         try:
-            # The initial create will return 201, but we overwrite it and retry.
-            # The retry will then get a 409 and return false.
-            with self.assertRaises(ResourceExistsError):
+            # The initial create will return 201, but we overwrite it with 408 and retry.
+            # The retry will then get a 409 conflict.
+            with pytest.raises(ResourceExistsError):
                 await self.ts.create_table(new_table_name, raw_response_hook=callback)
         finally:
             await self.ts.delete_table(new_table_name)
@@ -127,9 +126,9 @@ class StorageRetryTest(AzureTestCase, AsyncTableTestCase):
             self.assertIsNotNone(kwargs.get('response'))
             self.assertEqual(kwargs['response'].status_code, 408)
         try:
-            # The initial create will return 201, but we overwrite it and retry.
-            # The retry will then get a 408 and return false.
-            with self.assertRaises(ResourceExistsError):
+            # The initial create will return 201, but we overwrite it with 408 and retry.
+            # The retry will then get a 409 conflict.
+            with pytest.raises(ResourceExistsError):
                 await self.ts.create_table(new_table_name, raw_response_hook=callback, retry_hook=assert_exception_is_present_on_retry_context)
         finally:
             await self.ts.delete_table(new_table_name)
@@ -149,13 +148,13 @@ class StorageRetryTest(AzureTestCase, AsyncTableTestCase):
     
         new_table_name = self.get_resource_name('uttable')
         try:
-            with self.assertRaises(AzureError) as error:
+            with pytest.raises(AzureError) as error:
                 await self.ts.create_table(new_table_name)
-            # Assert
+
             # 3 retries + 1 original == 4
             assert retry_transport.count == 4
             # This call should succeed on the server side, but fail on the client side due to socket timeout
-            self.assertTrue('Timeout on reading' in str(error.exception), 'Expected socket timeout but got different exception.')
+            self.assertTrue('Timeout on reading' in str(error.value), 'Expected socket timeout but got different exception.')
 
         finally:
             # TODO: Why can I not just reset the connection timeout???
@@ -168,7 +167,7 @@ class StorageRetryTest(AzureTestCase, AsyncTableTestCase):
     # Waiting on fix to client pipeline
     # @TablesPreparer()
     # async def test_no_retry_async(self, tables_storage_account_name, tables_primary_storage_account_key):
-    #     self._set_up(tables_storage_account_name, tables_primary_storage_account_key, retry_total=0, default_table=False)
+    #     await self._set_up(tables_storage_account_name, tables_primary_storage_account_key, retry_total=0, default_table=False)
 
     #     new_table_name = self.get_resource_name('uttable')
 
@@ -176,13 +175,13 @@ class StorageRetryTest(AzureTestCase, AsyncTableTestCase):
     #     callback = ResponseCallback(status=201, new_status=408).override_status
 
     #     try:
-    #         with self.assertRaises(HttpResponseError) as error:
-    #             self.ts.create_table(new_table_name, raw_response_hook=callback)
-    #         self.assertEqual(error.exception.response.status_code, 408)
-    #         self.assertEqual(error.exception.reason, 'Created')
+    #         with with pytest.raises(HttpResponseError) as error:
+    #             await self.ts.create_table(new_table_name, raw_response_hook=callback)
+    #         self.assertEqual(error.value.response.status_code, 408)
+    #         self.assertEqual(error.value.reason, 'Created')
 
     #     finally:
-    #         self.ts.delete_table(new_table_name)
-    #         self._tear_down()
+    #         await self.ts.delete_table(new_table_name)
+    #         await self._tear_down()
 # ------------------------------------------------------------------------------
 

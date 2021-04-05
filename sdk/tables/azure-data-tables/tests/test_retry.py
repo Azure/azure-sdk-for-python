@@ -86,13 +86,12 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
     def test_retry_on_server_error(self, tables_storage_account_name, tables_primary_storage_account_key):
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key, default_table=False)
         try:
-            # Force the create call to 'timeout' with a 408
             callback = ResponseCallback(status=201, new_status=500).override_status
 
             new_table_name = self.get_resource_name('uttable')
-            # The initial create will return 201, but we overwrite it and retry.
-            # The retry will then get a 409 and return false.
-            with self.assertRaises(ResourceExistsError):
+            # The initial create will return 201, but we overwrite it with 500 and retry.
+            # The retry will then get a 409 conflict.
+            with pytest.raises(ResourceExistsError):
                 self.ts.create_table(new_table_name, raw_response_hook=callback)
         finally:
             self.ts.delete_table(new_table_name)
@@ -108,9 +107,9 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
         callback = ResponseCallback(status=201, new_status=408).override_status
 
         try:
-            # The initial create will return 201, but we overwrite it and retry.
-            # The retry will then get a 409 and return false.
-            with self.assertRaises(ResourceExistsError):
+            # The initial create will return 201, but we overwrite it with 408 and retry.
+            # The retry will then get a 409 conflict.
+            with pytest.raises(ResourceExistsError):
                 self.ts.create_table(new_table_name, raw_response_hook=callback)
         finally:
             self.ts.delete_table(new_table_name)
@@ -129,9 +128,9 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
             self.assertIsNotNone(kwargs.get('response'))
             self.assertEqual(kwargs['response'].status_code, 408)
         try:
-            # The initial create will return 201, but we overwrite it and retry.
-            # The retry will then get a 408 and return false.
-            with self.assertRaises(ResourceExistsError):
+            # The initial create will return 201, but we overwrite it with 408 and retry.
+            # The retry will then get a 409 conflict.
+            with pytest.raises(ResourceExistsError):
                 self.ts.create_table(new_table_name, raw_response_hook=callback, retry_hook=assert_exception_is_present_on_retry_context)
         finally:
             self.ts.delete_table(new_table_name)
@@ -151,13 +150,13 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
     
         new_table_name = self.get_resource_name('uttable')
         try:
-            with self.assertRaises(AzureError) as error:
+            with pytest.raises(AzureError) as error:
                 self.ts.create_table(new_table_name)
-            # Assert
+
             # 3 retries + 1 original == 4
             assert retry_transport.count == 4
             # This call should succeed on the server side, but fail on the client side due to socket timeout
-            self.assertTrue('read timeout' in str(error.exception), 'Expected socket timeout but got different exception.')
+            self.assertTrue('read timeout' in str(error.value), 'Expected socket timeout but got different exception.')
 
         finally:
             # we must make the timeout normal again to let the delete operation succeed
@@ -176,10 +175,10 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
     #     callback = ResponseCallback(status=201, new_status=408).override_status
 
     #     try:
-    #         with self.assertRaises(HttpResponseError) as error:
+    #         with pytest.raises(HttpResponseError) as error:
     #             self.ts.create_table(new_table_name, raw_response_hook=callback)
-    #         self.assertEqual(error.exception.response.status_code, 408)
-    #         self.assertEqual(error.exception.reason, 'Created')
+    #         self.assertEqual(error.value.response.status_code, 408)
+    #         self.assertEqual(error.value.reason, 'Created')
 
     #     finally:
     #         self.ts.delete_table(new_table_name)
