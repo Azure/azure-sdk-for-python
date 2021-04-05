@@ -11,66 +11,47 @@ parameters:
 - name: InjectedPackages
   type: string
   default: ''
-- name: BuildDocs
-  type: boolean
-  default: true
 - name: EmulatorStartParameters
   type: string
   default: ''
-- name: TargetDocRepoOwner
-  type: string
-  default: MicrosoftDocs
-- name: TargetDocRepoName
-  type: string
-  default: azure-docs-sdk-python
-  
+
 stages:
-  - stage: Build
+  - template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      # Skip emulator tests in the CI run
+      TestMarkArgument: not cosmosEmulator
+      InjectedPackages: ${{parameters.InjectedPackages}}
+      Artifacts: ${{parameters.Artifacts}}
+
+  - stage: Test_Emulator
+    dependsOn: []
     jobs:
-      - template: ../jobs/archetype-sdk-client.yml
-        parameters:
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          # Skip emulator tests in the CI run
-          TestMarkArgument: not cosmosEmulator
-          BuildDocs: ${{parameters.BuildDocs}}
-          InjectedPackages: ${{parameters.InjectedPackages}}
-      - job: Emulator
-        strategy:
-          matrix:
-            Windows_Python35:
-              OSVmImage: 'windows-2019'
-              PythonVersion: '3.5'
-            Windows_Python27:
-              OSVmImage: 'windows-2019'
-              PythonVersion: '2.7'
-        pool:
-          vmImage: $(OSVmImage)
+    - job: Emulator
+      strategy:
+        matrix:
+          Windows_Python35:
+            OSVmImage: 'windows-2019'
+            PythonVersion: '3.5'
+          Windows_Python27:
+            OSVmImage: 'windows-2019'
+            PythonVersion: '2.7'
+      pool:
+        vmImage: $(OSVmImage)
 
-        steps:
-          - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
-            parameters:
-              EmulatorMsiUrl: ${{ parameters.EmulatorMsiUrl }}
-              StartParameters: ${{ parameters.EmulatorStartParameters }}
+      steps:
+        - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
+          parameters:
+            EmulatorMsiUrl: ${{ parameters.EmulatorMsiUrl }}
+            StartParameters: ${{ parameters.EmulatorStartParameters }}
 
-          - template: ../steps/build-test.yml
-            parameters:
-              TestMarkArgument: not globaldb
-              EnvVars:
-                ACCOUNT_HOST: https://localhost:8081/
-              ServiceDirectory: ${{ parameters.ServiceDirectory }}
-              PythonVersion: $(PythonVersion)
-              OSVmImage: $(OSVmImage)
-              ToxTestEnv: 'whl,sdist'
-              BuildDocs: ${{parameters.BuildDocs}}
-              InjectedPackages: ${{parameters.InjectedPackages}}
-
-  # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
-  - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
-    - template: archetype-python-release.yml
-      parameters:
-        DependsOn: Build
-        ServiceDirectory: ${{parameters.ServiceDirectory}}
-        Artifacts: ${{parameters.Artifacts}}
-        ArtifactName: packages
-        TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
-        TargetDocRepoName: ${{parameters.TargetDocRepoName}}
+        - template: /eng/pipelines/templates/steps/build-test.yml
+          parameters:
+            TestMarkArgument: not globaldb
+            EnvVars:
+              ACCOUNT_HOST: https://localhost:8081/
+            ServiceDirectory: ${{ parameters.ServiceDirectory }}
+            PythonVersion: $(PythonVersion)
+            OSVmImage: $(OSVmImage)
+            ToxTestEnv: 'whl,sdist'
+            InjectedPackages: ${{parameters.InjectedPackages}}

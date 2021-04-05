@@ -29,10 +29,11 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: servicebus
+    MatrixFilters:
+      - PythonVersion=^(?!pypy3).*
     Artifacts:
     - name: azure-mgmt-servicebus
       safeName: azuremgmtservicebus
     - name: azure-servicebus
       safeName: azureservicebus
-    SkipPythonVersion: 'pypy3'
 
