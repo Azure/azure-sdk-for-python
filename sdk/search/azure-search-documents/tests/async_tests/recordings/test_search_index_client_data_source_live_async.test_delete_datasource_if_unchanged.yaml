@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"name": "sample-datasource", "type": "azureblob", "credentials": {"connectionString":
-      "connection_string"},
+      "DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net"},
       "container": {"name": "searchcontainer"}}'
     headers:
       Accept:
@@ -11,25 +11,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://search950921e4.search.windows.net/datasources?api-version=2020-06-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search950921e4.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D84B9BCA3CCF43\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
+      string: '{"@odata.context":"https://search950921e4.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D8EFCCB97DCB0B\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
     headers:
       cache-control: no-cache
       content-length: '391'
       content-type: application/json; odata.metadata=minimal
-      date: Fri, 28 Aug 2020 21:46:15 GMT
-      elapsed-time: '39'
-      etag: W/"0x8D84B9BCA3CCF43"
+      date: Thu, 25 Mar 2021 20:29:43 GMT
+      elapsed-time: '69'
+      etag: W/"0x8D8EFCCB97DCB0B"
       expires: '-1'
       location: https://search950921e4.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: e5bcd4ac-e977-11ea-aa0c-5cf37071153c
+      request-id: d5568060-8da8-11eb-b3bb-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
@@ -37,7 +37,7 @@ interactions:
     url: https://search950921e4.search.windows.net/datasources?api-version=2020-06-30-Preview
 - request:
     body: '{"name": "sample-datasource", "description": "updated", "type": "azureblob",
-      "credentials": {"connectionString": "connection_string"},
+      "credentials": {"connectionString": "DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net"},
       "container": {"name": "searchcontainer"}}'
     headers:
       Accept:
@@ -49,25 +49,25 @@ interactions:
       Prefer:
       - return=representation
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: PUT
     uri: https://search950921e4.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search950921e4.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D84B9BCA914055\"","name":"sample-datasource","description":"updated","type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
+      string: '{"@odata.context":"https://search950921e4.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D8EFCCB98D97C5\"","name":"sample-datasource","description":"updated","type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
-      content-length: '375'
+      content-length: '376'
       content-type: application/json; odata.metadata=minimal
-      date: Fri, 28 Aug 2020 21:46:16 GMT
-      elapsed-time: '45'
-      etag: W/"0x8D84B9BCA914055"
+      date: Thu, 25 Mar 2021 20:29:43 GMT
+      elapsed-time: '39'
+      etag: W/"0x8D8EFCCB98D97C5"
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: e649a707-e977-11ea-b894-5cf37071153c
+      request-id: d57b09ec-8da8-11eb-808e-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
@@ -80,9 +80,9 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       If-Match:
-      - '"0x8D84B9BCA3CCF43"'
+      - '"0x8D8EFCCB97DCB0B"'
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://search950921e4.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30-Preview
   response:
@@ -95,13 +95,13 @@ interactions:
       content-language: en
       content-length: '160'
       content-type: application/json; odata.metadata=minimal
-      date: Fri, 28 Aug 2020 21:46:16 GMT
-      elapsed-time: '4'
+      date: Thu, 25 Mar 2021 20:29:43 GMT
+      elapsed-time: '6'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: e69ddcf7-e977-11ea-822a-5cf37071153c
+      request-id: d586f0fb-8da8-11eb-88fa-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 412

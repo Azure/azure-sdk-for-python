@@ -118,7 +118,7 @@ class ClientBaseAsync(ClientBase):
         super(ClientBaseAsync, self).__init__(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
-            credential=credential,
+            credential=self._credential,
             **kwargs
         )
         self._conn_manager_async = get_connection_manager(loop=self._loop, **kwargs)

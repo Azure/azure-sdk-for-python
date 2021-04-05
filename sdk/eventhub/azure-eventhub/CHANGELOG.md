@@ -11,7 +11,14 @@ This version follows from version 5.3.1, rather than 5.4.0b1 so that the preview
   - WARNING: Implementing a custom checkpointstore that does not support taking `**kwargs` in the methods listed previously will result in the following pylint error: `W0221: Parameters differ from overridden ________ method (arguments-differ)`.
 - Updated `update_checkpoint` on sync and async `PartitionContext` to support taking `**kwargs`.
 
+**Bug Fixes**
+
+* Updated uAMQP dependency to 1.3.0.
+  - Fixed bug that sending message of large size triggering segmentation fault when the underlying socket connection is lost (#13739, #14543).
+  - Fixed bug in link flow control where link credit and delivery count should be calculated based on per message instead of per transfer frame (#16934).
+
 **Notes**
+
 - Updated azure-core dependency to 1.13.0.
 
 ## 5.4.0b1 (2021-03-09)
