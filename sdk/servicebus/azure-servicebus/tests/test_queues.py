@@ -25,7 +25,9 @@ from azure.servicebus import (
     ServiceBusMessageBatch,
     ServiceBusReceivedMessage,
     ServiceBusReceiveMode,
-    ServiceBusSubQueue
+    ServiceBusSubQueue,
+    AMQPAnnotatedMessage,
+    AMQPMessageBodyType
 )
 from azure.servicebus._common.constants import (
     _X_OPT_LOCK_TOKEN,
@@ -2375,3 +2377,101 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         sender.schedule_messages(message_dict, scheduled_enqueue_time)
                     with pytest.raises(TypeError):
                         sender.schedule_messages(list_message_dicts, scheduled_enqueue_time)
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    def test_queue_send_amqp_annotated_message(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+
+        with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            sequence_body = [b'message', 123.456, True]
+            footer = {'footer_key': 'footer_value'}
+            prop = {"subject": "sequence"}
+            seq_app_prop = {"body_type": "sequence"}
+
+            sequence_message = AMQPAnnotatedMessage(
+                sequence_body=sequence_body,
+                footer=footer,
+                properties=prop,
+                application_properties=seq_app_prop
+            )
+
+            value_body = {b"key": [-123, b'data', False]}
+            header = {"priority": 10}
+            anno = {"ann_key": "ann_value"}
+            value_app_prop = {"body_type": "value"}
+
+            value_message = AMQPAnnotatedMessage(
+                value_body=value_body,
+                header=header,
+                annotations=anno,
+                application_properties=value_app_prop
+            )
+
+            data_body = [b'aa', b'bb', b'cc']
+            data_app_prop = {"body_type": "data"}
+            del_anno = {"delann_key": "delann_value"}
+            data_message = AMQPAnnotatedMessage(
+                data_body=data_body,
+                delivery_annotations=del_anno,
+                application_properties=data_app_prop
+            )
+
+            with pytest.raises(ValueError):
+                AMQPAnnotatedMessage(data_body=data_body, value_body=value_body)
+            with pytest.raises(ValueError):
+                AMQPAnnotatedMessage()
+
+            content = "normalmessage"
+            dict_message = {"body": content}
+            sb_message = ServiceBusMessage(body=content)
+
+            recv_data_msg = recv_sequence_msg = recv_value_msg = normal_msg = 0
+            with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10) as receiver:
+                with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                    batch = sender.create_message_batch()
+                    batch.add_message(data_message)
+                    batch.add_message(value_message)
+                    batch.add_message(sequence_message)
+                    batch.add_message(dict_message)
+                    batch.add_message(sb_message)
+
+                    sender.send_messages(batch)
+                    sender.send_messages([data_message, value_message, sequence_message, dict_message, sb_message])
+                    sender.send_messages(data_message)
+                    sender.send_messages(value_message)
+                    sender.send_messages(sequence_message)
+
+                    for message in receiver:
+                        if message.body_type == AMQPMessageBodyType.DATA:
+                            if message.message.application_properties and message.message.application_properties.get(b'body_type') == b'data':
+                                body = [data for data in message.body]
+                                assert data_body == body
+                                assert message.message.delivery_annotations[b'delann_key'] == b'delann_value'
+                                assert message.message.application_properties[b'body_type'] == b'data'
+                                recv_data_msg += 1
+                            else:
+                                assert str(message) == content
+                                normal_msg += 1
+                        elif message.body_type == AMQPMessageBodyType.SEQUENCE:
+                            body = [sequence for sequence in message.body]
+                            assert [sequence_body] == body
+                            assert message.message.properties.subject == b'sequence'
+                            assert message.message.footer[b'footer_key'] == b'footer_value'
+                            assert message.message.application_properties[b'body_type'] == b'sequence'
+                            recv_sequence_msg += 1
+                        elif message.body_type == AMQPMessageBodyType.VALUE:
+                            assert message.body == value_body
+                            assert message.message.header.priority == 10
+                            assert message.message.annotations[b'ann_key'] == b'ann_value'
+                            assert message.message.application_properties[b'body_type'] == b'value'
+                            recv_value_msg += 1
+                        receiver.complete_message(message)
+
+                    assert recv_sequence_msg == 3
+                    assert recv_data_msg == 3
+                    assert recv_value_msg == 3
+                    assert normal_msg == 4

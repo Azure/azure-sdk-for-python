@@ -34,6 +34,8 @@ from .constants import (
     ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME,
     ANNOTATION_SYMBOL_KEY_MAP,
     MESSAGE_PROPERTY_MAX_LENGTH,
+    AMQPMessageBodyType,
+    AMQP_MESSAGE_BODY_TYPE_MAP,
 )
 
 from ..exceptions import MessageSizeExceededError
@@ -42,7 +44,7 @@ from .utils import (
     utc_now,
     transform_messages_to_sendable_if_needed,
     trace_message,
-    create_messages_from_dicts_if_needed
+    create_messages_from_dicts_if_needed,
 )
 
 if TYPE_CHECKING:
@@ -122,7 +124,7 @@ class ServiceBusMessage(
 
         # If message is the full message, raw_amqp_message is the "public facing interface" for what we expose.
         self.raw_amqp_message = AMQPAnnotatedMessage(
-            self.message
+            message=self.message
         )  # type: AMQPAnnotatedMessage
 
     def __str__(self):
@@ -315,12 +317,30 @@ class ServiceBusMessage(
 
     @property
     def body(self):
-        # type: () -> Optional[Union[bytes, Iterable[bytes]]]
-        """The body of the Message.
+        # type: () -> Any
+        """The body of the Message. The format may vary depending
+        on the body type:
+        For ~azure.servicebus.AMQPMessageBodyType.DATA, the body could be bytes or Iterable[bytes]
+        For ~azure.servicebus.AMQPMessageBodyType.SEQUENCE, the body could be List or Iterable[List]
+        For ~azure.servicebus.AMQPMessageBodyType.VALUE, the body could be any type.
 
-        :rtype: bytes or Iterable[bytes]
+        :rtype: Any
         """
         return self.message.get_data()
+
+    @property
+    def body_type(self):
+        # type: () -> Optional[AMQPMessageBodyType]
+        """The body type of the underlying AMQP message.
+
+        rtype: Optional[~azure.servicebus.AMQPMessageBodyType]
+        """
+        try:
+            return AMQP_MESSAGE_BODY_TYPE_MAP.get(
+                self.message._body.type  # pylint: disable=protected-access
+            )
+        except AttributeError:
+            return None
 
     @property
     def content_type(self):
@@ -559,7 +579,7 @@ class ServiceBusMessageBatch(object):
         return self._size
 
     def add_message(self, message):
-        # type: (Union[ServiceBusMessage, Mapping[str, Any]]) -> None
+        # type: (Union[ServiceBusMessage, AMQPAnnotatedMessage, Mapping[str, Any]]) -> None
         """Try to add a single Message to the batch.
 
         The total size of an added message is the sum of its body, properties, etc.
@@ -567,7 +587,7 @@ class ServiceBusMessageBatch(object):
         be raised.
 
         :param message: The Message to be added to the batch.
-        :type message: ~azure.servicebus.ServiceBusMessage
+        :type message: Union[~azure.servicebus.ServiceBusMessage, ~azure.servicebus.AMQPAnnotatedMessage]
         :rtype: None
         :raises: :class: ~azure.servicebus.exceptions.MessageSizeExceededError, when exceeding the size limit.
         """
@@ -575,7 +595,7 @@ class ServiceBusMessageBatch(object):
         return self._add(message)
 
     def _add(self, add_message, parent_span=None):
-        # type: (Union[ServiceBusMessage, Mapping[str, Any]], AbstractSpan) -> None
+        # type: (Union[ServiceBusMessage, Mapping[str, Any], AMQPAnnotatedMessage], AbstractSpan) -> None
         """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
         message = create_messages_from_dicts_if_needed(add_message, ServiceBusMessage)
         message = transform_messages_to_sendable_if_needed(message)
@@ -583,7 +603,9 @@ class ServiceBusMessageBatch(object):
         trace_message(
             message, parent_span
         )  # parent_span is e.g. if built as part of a send operation.
-        message_size = message.message.get_message_encoded_size()
+        message_size = (
+            message.message.get_message_encoded_size()
+        )
 
         # For a ServiceBusMessageBatch, if the encoded_message_size of event_data is < 256, then the overhead cost to
         # encode that message into the ServiceBusMessageBatch would be 5 bytes, if >= 256, it would be 8 bytes.
@@ -860,12 +882,148 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
 
 class AMQPAnnotatedMessage(object):
     """
-    The internal AMQP message that this ServiceBusMessage represents.  Is read-only.
+    The AMQP Annotated Message for advanced sending and receiving scenarios which allows you to
+    access to low-level AMQP message sections.
+    Please refer to the AMQP spec:
+    http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#section-message-format
+    for more information on the message format.
+
+    :keyword data_body: The body consists of one or more data sections and each section contains opaque binary data.
+    :paramtype data_body: Union[str, bytes, List[Union[str, bytes]]]
+    :keyword sequence_body: The body consists of one or more sequence sections and
+     each section contains an arbitrary number of structured data elements.
+    :paramtype sequence_body: List[Any]
+    :keyword value_body: The body consists of one amqp-value section and the section contains a single AMQP value.
+    :paramtype value_body: Any
+    :keyword header: The amqp message header. This must be a dictionary with the following
+     keys:
+
+        - `delivery_count` (int)
+        - `time_to_live` (int)
+        - `durable` (bool)
+        - `first_acquirer` (bool)
+        - `priority` (int)
+
+    :paramtype header: dict
+    :keyword footer: The amqp message footer.
+    :paramtype footer: dict
+    :keyword properties: Properties to add to the amqp message. This must be a dictionary with the following
+     keys:
+
+        - message_id (str or bytes),
+        - user_id (str or bytes),
+        - to (Any),
+        - subject (str or bytes),
+        - reply_to (Any),
+        - correlation_id (str or bytes),
+        - content_type (str or bytes),
+        - content_encoding (str or bytes),
+        - creation_time (int),
+        - absolute_expiry_time (int),
+        - group_id (str or bytes),
+        - group_sequence (int),
+        - reply_to_group_id (str or bytes)
+
+    :paramtype properties: dict
+    :keyword application_properties: Service specific application properties.
+    :paramtype application_properties: dict
+    :keyword annotations: Service specific message annotations.
+    :paramtype annotations: dict
+    :keyword delivery_annotations: Service specific delivery annotations.
+    :paramtype delivery_annotations: dict
     """
 
-    def __init__(self, message):
-        # type: (uamqp.Message) -> None
-        self._message = message
+    def __init__(self, **kwargs):
+        # type: (Any) -> None
+        self._message = kwargs.pop("message", None)
+
+        if self._message:
+            # internal usage only for service bus received message
+            return
+
+        self._data_body = kwargs.pop("data_body", None)
+        self._sequence_body = kwargs.pop("sequence_body", None)
+        self._value_body = kwargs.pop("value_body", None)
+
+        validation = [
+            body
+            for body in (self._value_body, self._data_body, self._sequence_body)
+            if body is not None
+        ]
+        if len(validation) != 1:
+            raise ValueError(
+                "There should be one and only one of either data_body, sequence_body "
+                "or value_body being set as the body of the AMQPAnnotatedMessage."
+            )
+
+        header = kwargs.get("header")
+        footer = kwargs.get("footer")
+        properties = kwargs.get("properties")
+        application_properties = kwargs.get("application_properties")
+        annotations = kwargs.get("annotations")
+        delivery_annotations = kwargs.get("delivery_annotations")
+
+        body_type = (
+            uamqp.MessageBodyType.Data
+            if self._data_body
+            else (
+                uamqp.MessageBodyType.Sequence
+                if self._sequence_body
+                else uamqp.MessageBodyType.Value
+            )
+        )
+        body = self._data_body or self._sequence_body or self._value_body
+
+        message_header = None
+        message_properties = None
+        if header:
+            message_header = uamqp.message.MessageHeader()
+            message_header.delivery_count = header.get("delivery_count", 0)
+            message_header.time_to_live = header.get("time_to_live")
+            message_header.first_acquirer = header.get("first_acquirer")
+            message_header.durable = header.get("durable")
+            message_header.priority = header.get("priority")
+
+        if properties:
+            message_properties = uamqp.message.MessageProperties(**properties)
+
+        self._message = uamqp.message.Message(
+            body=body,
+            body_type=body_type,
+            header=message_header,
+            footer=footer,
+            properties=message_properties,
+            application_properties=application_properties,
+            annotations=annotations,
+            delivery_annotations=delivery_annotations,
+        )
+
+    def _to_service_bus_message(self):
+        return ServiceBusMessage(body=None, message=self._message)
+
+    @property
+    def body(self):
+        # type: () -> Any
+        """The body of the Message. The format may vary depending
+        on the body type:
+        For ~azure.servicebus.AMQPMessageBodyType.DATA, the body could be bytes or Iterable[bytes]
+        For ~azure.servicebus.AMQPMessageBodyType.SEQUENCE, the body could be List or Iterable[List]
+        For ~azure.servicebus.AMQPMessageBodyType.VALUE, the body could be any type.
+
+        :rtype: Any
+        """
+        return self._message.get_data()
+
+    @property
+    def body_type(self):
+        # type: () -> Optional[AMQPMessageBodyType]
+        """The body type of the underlying AMQP message.
+
+        rtype: Optional[~azure.servicebus.AMQPMessageBodyType]
+        """
+        return AMQP_MESSAGE_BODY_TYPE_MAP.get(
+            self._message._body.type  # pylint: disable=protected-access
+        )
 
     @property
     def properties(self):
@@ -884,6 +1042,11 @@ class AMQPAnnotatedMessage(object):
             correlation_id=self._message.properties.correlation_id,
             content_type=self._message.properties.content_type,
             content_encoding=self._message.properties.content_encoding,
+            absolute_expiry_time=self._message.properties.absolute_expiry_time,
+            creation_time=self._message.properties.creation_time,
+            group_id=self._message.properties.group_id,
+            group_sequence=self._message.properties.group_sequence,
+            reply_to_group_id=self._message.properties.reply_to_group_id,
         )
 
     # NOTE: These are disabled pending arch. design and cross-sdk consensus on

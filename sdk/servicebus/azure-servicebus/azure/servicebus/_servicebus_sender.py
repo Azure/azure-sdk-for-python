@@ -13,7 +13,11 @@ from uamqp.authentication.common import AMQPAuth
 
 from ._base_handler import BaseHandler
 from ._common import mgmt_handlers
-from ._common.message import ServiceBusMessage, ServiceBusMessageBatch
+from ._common.message import (
+    ServiceBusMessage,
+    ServiceBusMessageBatch,
+    AMQPAnnotatedMessage,
+)
 from .exceptions import (
     OperationTimeoutError,
     _ServiceBusErrorPolicy,
@@ -44,12 +48,15 @@ if TYPE_CHECKING:
     MessageTypes = Union[
         Mapping[str, Any],
         ServiceBusMessage,
-        List[Union[Mapping[str, Any], ServiceBusMessage]]
+        AMQPAnnotatedMessage,
+        List[Union[Mapping[str, Any], ServiceBusMessage, AMQPAnnotatedMessage]],
     ]
     MessageObjTypes = Union[
         ServiceBusMessage,
+        AMQPAnnotatedMessage,
         ServiceBusMessageBatch,
-        List[ServiceBusMessage]]
+        List[Union[ServiceBusMessage, AMQPAnnotatedMessage]],
+    ]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -262,7 +269,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         Returns a list of the sequence numbers of the enqueued messages.
 
         :param messages: The message or list of messages to schedule.
-        :type messages: Union[~azure.servicebus.ServiceBusMessage, List[~azure.servicebus.ServiceBusMessage]]
+        :type messages: Union[~azure.servicebus.ServiceBusMessage, ~azure.servicebus.AMQPAnnotatedMessage,
+         List[Union[~azure.servicebus.ServiceBusMessage, ~azure.servicebus.AMQPAnnotatedMessage]]]
         :param schedule_time_utc: The utc date and time to enqueue the messages.
         :type schedule_time_utc: ~datetime.datetime
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
@@ -354,8 +362,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         `ValueError` if they cannot fit in a single batch.
 
         :param message: The ServiceBus message to be sent.
-        :type message: Union[~azure.servicebus.ServiceBusMessage,~azure.servicebus.ServiceBusMessageBatch,
-         list[~azure.servicebus.ServiceBusMessage]]
+        :type message: Union[~azure.servicebus.ServiceBusMessage, ~azure.servicebus.ServiceBusMessageBatch,
+         ~azure.servicebus.AMQPAnnotatedMessage, List[Union[~azure.servicebus.ServiceBusMessage,
+         ~azure.servicebus.AMQPAnnotatedMessage]]]
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
          The value must be greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: None
@@ -386,7 +395,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             if isinstance(message, ServiceBusMessageBatch):
                 obj_message = message  # type: MessageObjTypes
             else:
-                obj_message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
+                obj_message = create_messages_from_dicts_if_needed(  # type: ignore
+                    message, ServiceBusMessage
+                )
                 # Ensure message is sendable (not a ReceivedMessage), and if needed (a list) is batched. Adds tracing.
                 obj_message = transform_messages_to_sendable_if_needed(obj_message)
                 try:
@@ -397,7 +408,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                     trace_message(cast(ServiceBusMessage, obj_message), send_span)
 
             if (
-                isinstance(obj_message, ServiceBusMessageBatch) and len(obj_message) == 0
+                isinstance(obj_message, ServiceBusMessageBatch)
+                and len(obj_message) == 0
             ):  # pylint: disable=len-as-condition
                 return  # Short circuit noop if an empty list or batch is provided.
 
