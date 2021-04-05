@@ -32,7 +32,7 @@ class CreateClients(object):
         # Instantiate the ContainerRegistryClient
         # [START create_registry_client]
         from azure.containerregistry.aio import ContainerRegistryClient
-        from azure.identity import DefaultAzureCredential
+        from azure.identity.aio import DefaultAzureCredential
         client = ContainerRegistryClient(self.account_url, DefaultAzureCredential())
         # [END create_registry_client]
 
