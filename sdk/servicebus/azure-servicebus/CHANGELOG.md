@@ -1,8 +1,13 @@
 # Release History
 
-## 7.1.2 (Unreleased)
+## 7.2.0 (Unreleased)
 
 
+## 7.2.0b1 (2021-04-07)
+
+**New Features**
+
+* Added support for using `~azure.core.credentials.AzureSasCredential` as credential for authenticating the clients.
 
 ## 7.1.1 (2021-04-07)
 
@@ -17,7 +22,7 @@ This version and all future versions will require Python 2.7 or Python 3.6+, Pyt
 * Updated uAMQP dependency to 1.3.0.
   - Fixed bug that sending message of large size triggering segmentation fault when the underlying socket connection is lost (#13739, #14543).
   - Fixed bug in link flow control where link credit and delivery count should be calculated based on per message instead of per transfer frame (#16934).
-
+ 
 ## 7.1.0 (2021-03-09)
 
 This version will be the last version to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
