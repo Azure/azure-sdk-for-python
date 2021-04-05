@@ -131,7 +131,7 @@ class ServiceBusMessage(
     def __repr__(self):
         # type: () -> str
         rec_repr = "body={}".format(
-            self.message._body # pylint: disable=protected-access
+            self.body
         )
         return "ServiceBusMessage({})".format(rec_repr)[:1024]
 
