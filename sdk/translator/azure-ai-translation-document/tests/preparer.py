@@ -23,9 +23,9 @@ DocumentTranslationPreparer = functools.partial(
 )
 
 
-class DocumentTranslatorClientPreparer(AzureMgmtPreparer):
+class DocumentTranslationClientPreparer(AzureMgmtPreparer):
     def __init__(self, client_cls, client_kwargs={}, **kwargs):
-        super(DocumentTranslatorClientPreparer, self).__init__(
+        super(DocumentTranslationClientPreparer, self).__init__(
             name_prefix='',
             random_name_length=42
         )

@@ -34,7 +34,7 @@ async def sample_translation_async():
     import os
     # [START wait_until_done_async]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.translation.document.aio import DocumentTranslatorClient
+    from azure.ai.translation.document.aio import DocumentTranslationClient
     from azure.ai.translation.document import (
         DocumentTranslationInput,
         TranslationTarget

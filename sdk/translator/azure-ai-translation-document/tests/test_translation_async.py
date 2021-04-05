@@ -9,18 +9,18 @@ import pytest
 from testcase import Document
 from asynctestcase import AsyncDocumentTranslationTest
 from preparer import DocumentTranslationPreparer, \
-    DocumentTranslatorClientPreparer as _DocumentTranslatorClientPreparer
+    DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
 from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import ContainerClient
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
-from azure.ai.translation.document.aio import DocumentTranslatorClient
-DocumentTranslatorClientPreparer = functools.partial(_DocumentTranslatorClientPreparer, DocumentTranslatorClient)
+from azure.ai.translation.document.aio import DocumentTranslationClient
+DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
 
 class TestTranslation(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
-    @DocumentTranslatorClientPreparer()
+    @DocumentTranslationClientPreparer()
     async def test_single_source_single_target(self, client):
         # prepare containers and test data
         blob_data = b'This is some text'
@@ -44,7 +44,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
         await self._submit_and_validate_translation_job_async(client, translation_inputs, 1)
 
     @DocumentTranslationPreparer()
-    @DocumentTranslatorClientPreparer()
+    @DocumentTranslationClientPreparer()
     async def test_single_source_two_targets(self, client):
         # prepare containers and test data
         blob_data = b'This is some text'
@@ -73,7 +73,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
         await self._submit_and_validate_translation_job_async(client, translation_inputs, 2)
 
     @DocumentTranslationPreparer()
-    @DocumentTranslatorClientPreparer()
+    @DocumentTranslationClientPreparer()
     async def test_multiple_sources_single_target(self, client):
         # prepare containers and test data
         blob_data = b'This is some text'
@@ -108,7 +108,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
         await self._submit_and_validate_translation_job_async(client, translation_inputs, 2)
 
     @DocumentTranslationPreparer()
-    @DocumentTranslatorClientPreparer()
+    @DocumentTranslationClientPreparer()
     async def test_single_source_single_target_with_prefix(self, client):
         # prepare containers and test data
         blob_data = b'This is some text'
@@ -134,7 +134,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
         await self._submit_and_validate_translation_job_async(client, translation_inputs, 1)
 
     @DocumentTranslationPreparer()
-    @DocumentTranslatorClientPreparer()
+    @DocumentTranslationClientPreparer()
     async def test_single_source_single_target_with_suffix(self, client):
         # prepare containers and test data
         blob_data = b'This is some text'

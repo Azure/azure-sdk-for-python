@@ -6,17 +6,17 @@
 
 import functools
 from testcase import DocumentTranslationTest
-from preparer import DocumentTranslationPreparer, DocumentTranslatorClientPreparer as _DocumentTranslatorClientPreparer
-from azure.ai.translation.document import DocumentTranslatorClient
+from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
+from azure.ai.translation.document import DocumentTranslationClient
 import pytest
-DocumentTranslatorClientPreparer = functools.partial(_DocumentTranslatorClientPreparer, DocumentTranslatorClient)
+DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
 TOTAL_DOC_COUNT_IN_JOB = 1
 
 class TestSubmittedJobs(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
-    @DocumentTranslatorClientPreparer()
+    @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs(self, client):
         # create some jobs
         job_ids = self._create_and_submit_sample_translation_jobs(client, 3)
@@ -35,7 +35,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
 
     @pytest.mark.skip("top not exposed yet")
     @DocumentTranslationPreparer()
-    @DocumentTranslatorClientPreparer()
+    @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_with_pagination(self, client):
         # prepare data
         result_per_page = 2
@@ -60,7 +60,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
 
     @pytest.mark.skip("skip not exposed yet")
     @DocumentTranslationPreparer()
-    @DocumentTranslatorClientPreparer()
+    @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_with_skip(self, client):
         # prepare data
         jobs_count = 6

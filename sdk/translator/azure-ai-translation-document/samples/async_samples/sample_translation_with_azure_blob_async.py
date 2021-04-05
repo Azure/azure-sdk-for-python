@@ -38,7 +38,7 @@ import datetime
 import asyncio
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceExistsError
-from azure.ai.translation.document.aio import DocumentTranslatorClient
+from azure.ai.translation.document.aio import DocumentTranslationClient
 from azure.ai.translation.document import (
     DocumentTranslationInput,
     TranslationTarget
@@ -61,7 +61,7 @@ class SampleTranslationWithAzureBlobAsync(object):
 
     async def sample_translation_with_azure_blob(self):
 
-        translation_client = DocumentTranslatorClient(
+        translation_client = DocumentTranslationClient(
             self.endpoint, AzureKeyCredential(self.key)
         )
 

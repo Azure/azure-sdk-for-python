@@ -27,12 +27,12 @@ from .._polling import TranslationPolling
 COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
 
 
-class DocumentTranslatorClient(object):
+class DocumentTranslationClient(object):
 
     def __init__(
             self, endpoint: str, credential: "AzureKeyCredential", **kwargs: Any
     ) -> None:
-        """DocumentTranslatorClient is your interface to the Document Translation service.
+        """DocumentTranslationClient is your interface to the Document Translation service.
         Use the client to translate whole documents while preserving source document
         structure and text formatting.
 
@@ -53,7 +53,7 @@ class DocumentTranslatorClient(object):
                 :end-before: [END create_dt_client_with_key_async]
                 :language: python
                 :dedent: 4
-                :caption: Creating the DocumentTranslatorClient with an endpoint and API key.
+                :caption: Creating the DocumentTranslationClient with an endpoint and API key.
         """
         self._endpoint = endpoint
         self._credential = credential
@@ -73,7 +73,7 @@ class DocumentTranslatorClient(object):
             **kwargs
         )
 
-    async def __aenter__(self) -> "DocumentTranslatorClient":
+    async def __aenter__(self) -> "DocumentTranslationClient":
         await self._client.__aenter__()
         return self
 
@@ -81,7 +81,7 @@ class DocumentTranslatorClient(object):
         await self._client.__aexit__(*args)
 
     async def close(self) -> None:
-        """Close the :class:`~azure.ai.translation.document.aio.DocumentTranslatorClient` session."""
+        """Close the :class:`~azure.ai.translation.document.aio.DocumentTranslationClient` session."""
         await self._client.__aexit__()
 
     @distributed_trace_async

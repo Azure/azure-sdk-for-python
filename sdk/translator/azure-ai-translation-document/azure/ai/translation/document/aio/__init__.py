@@ -4,8 +4,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from ._client_async import DocumentTranslatorClient
+from ._client_async import DocumentTranslationClient
 
 __all__ = [
-    "DocumentTranslatorClient"
+    "DocumentTranslationClient"
 ]
