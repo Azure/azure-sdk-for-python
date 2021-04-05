@@ -194,6 +194,20 @@ def trace_link_message(events, parent_span=None):
     except Exception as exp:  # pylint:disable=broad-except
         _LOGGER.warning("trace_link_message had an exception %r", exp)
 
+def get_event_links(events):
+    trace_events = events if isinstance(events, Iterable) else (events,)  # pylint:disable=isinstance-second-argument-not-valid-type
+    links = []
+    try:
+        for event in trace_events:  # type: ignore
+            if event.properties:
+                traceparent = event.properties.get(b"Diagnostic-Id", "").decode("ascii")
+                if traceparent:
+                    links.append(Link({'traceparent': traceparent},
+                        attributes={"enqueuedTime": event.message.annotations.get(PROP_TIMESTAMP)}
+                        ))
+    except AttributeError:
+        pass
+    return links
 
 def event_position_selector(value, inclusive=False):
     # type: (Union[int, str, datetime.datetime], bool) -> bytes
