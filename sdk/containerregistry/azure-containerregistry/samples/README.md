@@ -19,7 +19,7 @@ The async versions of the samples require Python 3.6 or later.
 |[sample_create_client.py][create_client] and [sample_create_client_async.py][create_client_async]|Instantiate a client|Authorizing a `ContainerRegistryClient` object and `ContainerRepositoryClient` object|
 
 ### Prerequisites
-* Python 2.7, or 3.5 or later is required to use this package.
+* Python 2.7, or 3.6 or later is required to use this package.
 * You need an [Azure subscription][azure_sub] and a [Container Registry account][container_registry_docs] to use this package.
 
 ## Setup
