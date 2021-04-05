@@ -6,27 +6,38 @@
 
 from enum import Enum
 from typing import TYPE_CHECKING
+from ._generated.models import ContentProperties
 
 if TYPE_CHECKING:
-    from ._generated.models import ManifestChangeableAttributes, ManifestAttributesBase
+    from ._generated.models import ManifestAttributesBase
     from ._generated.models import RepositoryProperties as GeneratedRepositoryProperties
+    from ._generated.models import TagProperties as GeneratedTagProperties
 
 
 class ContentPermissions(object):
     def __init__(self, **kwargs):
-        self.delete_enabled = kwargs.get("delete_enabled")
-        self.list_enabled = kwargs.get("list_enabled")
-        self.read_enabled = kwargs.get("read_enabled")
-        self.write_enabled = kwargs.get("write_enabled")
+        self.can_delete = kwargs.get("can_delete")
+        self.can_list = kwargs.get("can_list")
+        self.can_read = kwargs.get("can_read")
+        self.can_write = kwargs.get("can_write")
 
     @classmethod
     def _from_generated(cls, generated):
-        # type: (ManifestChangeableAttributes) -> ContentPermissions
+        # type: (ContentProperties) -> ContentPermissions
         return cls(
-            delete_enabled=generated.delete_enabled,
-            list_enabled=generated.list_enabled,
-            read_enabled=generated.read_enabled,
-            write_enabled=generated.write_enabled,
+            can_delete=generated.can_delete,
+            can_list=generated.can_list,
+            can_read=generated.can_read,
+            can_write=generated.can_write,
+        )
+
+    def _to_generated(self):
+        # type: () -> ContentProperties
+        return ContentProperties(
+            can_delete=self.can_delete,
+            can_list=self.can_list,
+            can_read=self.can_read,
+            can_write=self.can_write,
         )
 
 
@@ -49,10 +60,13 @@ class RegistryArtifactProperties(object):
         self.created_on = kwargs.get("created_on", None)
         self.digest = kwargs.get("digest", None)
         self.last_updated_on = kwargs.get("last_updated_on", None)
-        self.manifest_properties = kwargs.get("manifest_properties", None)
         self.operating_system = kwargs.get("operating_system", None)
+        self.references = kwargs.get("references", None)
         self.size = kwargs.get("size", None)
         self.tags = kwargs.get("tags", None)
+        self.content_permissions = kwargs.get("content_permissions", None)
+        if self.content_permissions:
+            self.content_permissions = ContentPermissions._from_generated(self.content_permissions)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -62,10 +76,10 @@ class RegistryArtifactProperties(object):
             created_on=generated.created_on,
             digest=generated.digest,
             last_updated_on=generated.last_updated_on,
-            manifest_properties=generated.manifest_properties,
             operating_system=generated.operating_system,
             size=generated.size,
             tags=generated.tags,
+            content_permissions=generated.writeable_properties,
         )
 
 
@@ -93,11 +107,10 @@ class RepositoryProperties(object):
     def __init__(self, **kwargs):
         self.created_on = kwargs.get("created_on", None)
         self.last_updated_on = kwargs.get("last_updated_on", None)
-        self.modifiable_properties = kwargs.get("modifiable_properties", None)
         self.name = kwargs.get("name", None)
         self.registry = kwargs.get("registry", None)
-        self.tag_count = kwargs.get("tag_count", None)
         self.manifest_count = kwargs.get("manifest_count", None)
+        self.tag_count = kwargs.get("tag_count", None)
         self.content_permissions = kwargs.get("content_permissions", None)
         if self.content_permissions:
             self.content_permissions = ContentPermissions._from_generated(self.content_permissions)
@@ -109,23 +122,23 @@ class RepositoryProperties(object):
             created_on=generated.created_on,
             last_updated_on=generated.last_updated_on,
             name=generated.name,
-            # registry=generated.registry,
             manifest_count=generated.registry_artifact_count,
             tag_count=generated.tag_count,
             content_permissions=generated.writeable_properties,
+            registry=generated.additional_properties.get("registry", None),
         )
 
 
-class RegistryArtifactOrderBy(int, Enum):
+class RegistryArtifactOrderBy(str, Enum):
 
-    LAST_UPDATE_TIME_DESCENDING = 0
-    LAST_UPDATE_TIME_ASCENDING = 1
+    LAST_UPDATE_TIME_DESCENDING = "timedesc"
+    LAST_UPDATE_TIME_ASCENDING = "timeasc"
 
 
-class TagOrderBy(int, Enum):
+class TagOrderBy(str, Enum):
 
-    LAST_UPDATE_TIME_DESCENDING = 0
-    LAST_UPDATE_TIME_ASCENDING = 1
+    LAST_UPDATE_TIME_DESCENDING = "timedesc"
+    LAST_UPDATE_TIME_ASCENDING = "timeasc"
 
 
 class TagProperties(object):
@@ -151,21 +164,18 @@ class TagProperties(object):
         self.created_on = kwargs.get("created_on", None)
         self.digest = kwargs.get("digest", None)
         self.last_updated_on = kwargs.get("last_updated_on", None)
-        self.content_permissions = kwargs.get("content_permissions", None)
+        self.content_permissions = kwargs.get("writeable_properties", None)
         if self.content_permissions:
             self.content_permissions = ContentPermissions._from_generated(self.content_permissions)
         self.name = kwargs.get("name", None)
-        self.signed = kwargs.get("signed", None)
-        self.quarantine_state = kwargs.get("quarantine_state", None)
 
     @classmethod
     def _from_generated(cls, generated):
+        # type: (GeneratedTagProperties) -> TagProperties
         return cls(
             created_on=generated.created_on,
             digest=generated.digest,
             last_updated_on=generated.last_updated_on,
-            content_permissions=generated.modifiable_properties,
             name=generated.name,
-            signed=generated.additional_properties.get("signed", None),
-            quarantine_state=generated.additional_properties.get("quarantine_state", None),
+            writeable_properties=generated.writeable_properties,
         )

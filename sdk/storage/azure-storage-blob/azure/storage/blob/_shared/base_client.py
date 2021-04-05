@@ -425,6 +425,9 @@ def create_configuration(**kwargs):
     # Page blob uploads
     config.max_page_size = kwargs.get("max_page_size", 4 * 1024 * 1024)
 
+    # Datalake file uploads
+    config.min_large_chunk_upload_threshold = kwargs.get("min_large_chunk_upload_threshold", 100 * 1024 * 1024 + 1)
+
     # Blob downloads
     config.max_single_get_size = kwargs.get("max_single_get_size", 32 * 1024 * 1024)
     config.max_chunk_get_size = kwargs.get("max_chunk_get_size", 4 * 1024 * 1024)

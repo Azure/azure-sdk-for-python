@@ -26,6 +26,12 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class AccessLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    NONE = "None"
+    READ = "Read"
+    WRITE = "Write"
+
 class AvailabilitySetSkuTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the sku of an Availability Set. Use 'Aligned' for virtual machines with managed disks
     and 'Classic' for virtual machines with unmanaged disks. Default value is 'Classic'.
@@ -75,6 +81,18 @@ class DiffDiskPlacement(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CACHE_DISK = "CacheDisk"
     RESOURCE_DISK = "ResourceDisk"
 
+class DiskCreateOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """This enumerates the possible sources of a disk's creation.
+    """
+
+    EMPTY = "Empty"  #: Create an empty data disk of a size given by diskSizeGB.
+    ATTACH = "Attach"  #: Disk will be attached to a VM.
+    FROM_IMAGE = "FromImage"  #: Create a new disk from a platform image specified by the given imageReference or galleryImageReference.
+    IMPORT_ENUM = "Import"  #: Create a disk by importing from a blob specified by a sourceUri in a storage account specified by storageAccountId.
+    COPY = "Copy"  #: Create a new disk or snapshot by copying from a disk or snapshot specified by the given sourceResourceId.
+    RESTORE = "Restore"  #: Create a new disk by copying from a backup recovery point.
+    UPLOAD = "Upload"  #: Create a new disk by obtaining a write token and using it to directly upload the contents of the disk.
+
 class DiskCreateOptionTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies how the virtual machine should be created.:code:`<br>`:code:`<br>` Possible values
     are::code:`<br>`:code:`<br>` **Attach** \u2013 This value is used when you are using a
@@ -102,6 +120,59 @@ class DiskDetachOptionTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
 
     FORCE_DETACH = "ForceDetach"
 
+class DiskEncryptionSetIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of Managed Identity used by the DiskEncryptionSet. Only SystemAssigned is supported
+    for new creations. Disk Encryption Sets can be updated with Identity type None during migration
+    of subscription to a new Azure Active Directory tenant; it will cause the encrypted resources
+    to lose access to the keys.
+    """
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    NONE = "None"
+
+class DiskEncryptionSetType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of key used to encrypt the data of the disk.
+    """
+
+    ENCRYPTION_AT_REST_WITH_CUSTOMER_KEY = "EncryptionAtRestWithCustomerKey"  #: Resource using diskEncryptionSet would be encrypted at rest with Customer managed key that can be changed and revoked by a customer.
+    ENCRYPTION_AT_REST_WITH_PLATFORM_AND_CUSTOMER_KEYS = "EncryptionAtRestWithPlatformAndCustomerKeys"  #: Resource using diskEncryptionSet would be encrypted at rest with two layers of encryption. One of the keys is Customer managed and the other key is Platform managed.
+
+class DiskSecurityTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies the SecurityType of the VM. Applicable for OS disks only.
+    """
+
+    TRUSTED_LAUNCH = "TrustedLaunch"  #: Trusted Launch provides security features such as secure boot and virtual Trusted Platform Module (vTPM).
+
+class DiskState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """This enumerates the possible state of the disk.
+    """
+
+    UNATTACHED = "Unattached"  #: The disk is not being used and can be attached to a VM.
+    ATTACHED = "Attached"  #: The disk is currently mounted to a running VM.
+    RESERVED = "Reserved"  #: The disk is mounted to a stopped-deallocated VM.
+    ACTIVE_SAS = "ActiveSAS"  #: The disk currently has an Active SAS Uri associated with it.
+    READY_TO_UPLOAD = "ReadyToUpload"  #: A disk is ready to be created by upload by requesting a write token.
+    ACTIVE_UPLOAD = "ActiveUpload"  #: A disk is created for upload and a write token has been issued for uploading to it.
+
+class DiskStorageAccountTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The sku name.
+    """
+
+    STANDARD_LRS = "Standard_LRS"  #: Standard HDD locally redundant storage. Best for backup, non-critical, and infrequent access.
+    PREMIUM_LRS = "Premium_LRS"  #: Premium SSD locally redundant storage. Best for production and performance sensitive workloads.
+    STANDARD_SSD_LRS = "StandardSSD_LRS"  #: Standard SSD locally redundant storage. Best for web servers, lightly used enterprise applications and dev/test.
+    ULTRA_SSD_LRS = "UltraSSD_LRS"  #: Ultra SSD locally redundant storage. Best for IO-intensive workloads such as SAP HANA, top tier databases (for example, SQL, Oracle), and other transaction-heavy workloads.
+    PREMIUM_ZRS = "Premium_ZRS"  #: Premium SSD zone redundant storage. Best for the production workloads that need storage resiliency against zone failures.
+    STANDARD_SSD_ZRS = "StandardSSD_ZRS"  #: Standard SSD zone redundant storage. Best for web servers, lightly used enterprise applications and dev/test that need storage resiliency against zone failures.
+
+class EncryptionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of key used to encrypt the data of the disk.
+    """
+
+    ENCRYPTION_AT_REST_WITH_PLATFORM_KEY = "EncryptionAtRestWithPlatformKey"  #: Disk is encrypted at rest with Platform managed key. It is the default encryption type. This is not a valid encryption type for disk encryption sets.
+    ENCRYPTION_AT_REST_WITH_CUSTOMER_KEY = "EncryptionAtRestWithCustomerKey"  #: Disk is encrypted at rest with Customer managed key that can be changed and revoked by a customer.
+    ENCRYPTION_AT_REST_WITH_PLATFORM_AND_CUSTOMER_KEYS = "EncryptionAtRestWithPlatformAndCustomerKeys"  #: Disk is encrypted at rest with 2 layers of encryption. One of the keys is Customer managed and the other key is Platform managed.
+
 class ExecutionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Script execution status.
     """
@@ -119,6 +190,13 @@ class ExtendedLocationTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     """
 
     EDGE_ZONE = "EdgeZone"
+
+class HyperVGeneration(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The hypervisor generation of the Virtual Machine. Applicable to OS disks only.
+    """
+
+    V1 = "V1"
+    V2 = "V2"
 
 class HyperVGenerationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the HyperVGeneration Type associated with a resource
@@ -172,6 +250,14 @@ class MaintenanceOperationResultCodeTypes(with_metaclass(_CaseInsensitiveEnumMet
     MAINTENANCE_ABORTED = "MaintenanceAborted"
     MAINTENANCE_COMPLETED = "MaintenanceCompleted"
 
+class NetworkAccessPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Policy for accessing the disk via network.
+    """
+
+    ALLOW_ALL = "AllowAll"  #: The disk can be exported or uploaded to from any network.
+    ALLOW_PRIVATE = "AllowPrivate"  #: The disk can be exported or uploaded to using a DiskAccess resource's private endpoints.
+    DENY_ALL = "DenyAll"  #: The disk cannot be exported.
+
 class OperatingSystemStateTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The OS State.
     """
@@ -180,7 +266,7 @@ class OperatingSystemStateTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     SPECIALIZED = "Specialized"  #: Specialized image. Contains already provisioned OS Disk.
 
 class OperatingSystemTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The operating system of the osDiskImage.
+    """The Operating System type.
     """
 
     WINDOWS = "Windows"
@@ -245,6 +331,23 @@ class PatchOperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "Succeeded"
     COMPLETED_WITH_WARNINGS = "CompletedWithWarnings"
 
+class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The current provisioning state.
+    """
+
+    SUCCEEDED = "Succeeded"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    FAILED = "Failed"
+
+class PrivateEndpointServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The private endpoint connection status.
+    """
+
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    REJECTED = "Rejected"
+
 class ProtocolTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the protocol of WinRM listener. :code:`<br>`:code:`<br>` Possible values are:
     :code:`<br>`\ **http** :code:`<br>`:code:`<br>` **https**
@@ -297,6 +400,14 @@ class SettingNames(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     AUTO_LOGON = "AutoLogon"
     FIRST_LOGON_COMMANDS = "FirstLogonCommands"
 
+class SnapshotStorageAccountTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The sku name.
+    """
+
+    STANDARD_LRS = "Standard_LRS"  #: Standard HDD locally redundant storage.
+    PREMIUM_LRS = "Premium_LRS"  #: Premium SSD locally redundant storage.
+    STANDARD_ZRS = "Standard_ZRS"  #: Standard zone redundant storage.
+
 class StatusLevelTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The level code.
     """
@@ -309,16 +420,20 @@ class StorageAccountTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the storage account type for the managed disk. Managed OS disk storage account type
     can only be set when you create the scale set. NOTE: UltraSSD_LRS can only be used with data
     disks. It cannot be used with OS Disk. Standard_LRS uses Standard HDD. StandardSSD_LRS uses
-    Standard SSD. Premium_LRS uses Premium SSD. UltraSSD_LRS uses Ultra disk. For more information
-    regarding disks supported for Windows Virtual Machines, refer to https://docs.microsoft.com/en-
-    us/azure/virtual-machines/windows/disks-types and, for Linux Virtual Machines, refer to
-    https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disks-types
+    Standard SSD. Premium_LRS uses Premium SSD. UltraSSD_LRS uses Ultra disk. Premium_ZRS uses
+    Premium SSD zone redundant storage. StandardSSD_ZRS uses Standard SSD zone redundant storage.
+    For more information regarding disks supported for Windows Virtual Machines, refer to
+    https://docs.microsoft.com/en-us/azure/virtual-machines/windows/disks-types and, for Linux
+    Virtual Machines, refer to https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disks-
+    types
     """
 
     STANDARD_LRS = "Standard_LRS"
     PREMIUM_LRS = "Premium_LRS"
     STANDARD_SSD_LRS = "StandardSSD_LRS"
     ULTRA_SSD_LRS = "UltraSSD_LRS"
+    PREMIUM_ZRS = "Premium_ZRS"
+    STANDARD_SSD_ZRS = "StandardSSD_ZRS"
 
 class UpgradeMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br />`:code:`<br

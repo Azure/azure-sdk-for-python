@@ -15,7 +15,7 @@ from ._eventprocessor.common import LoadBalancingStrategy
 
 if TYPE_CHECKING:
     import datetime
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials import TokenCredential, AzureSasCredential
     from typing import (  # pylint: disable=ungrouped-imports
         Any,
         Union,
@@ -54,10 +54,11 @@ class EventHubConsumerClient(ClientBase):
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
     :param str eventhub_name: The path of the specific Event Hub to connect the client to.
     :param str consumer_group: Receive events from the event hub for this consumer group.
-    :param ~azure.core.credentials.TokenCredential credential: The credential object used for authentication which
+    :param credential: The credential object used for authentication which
      implements a particular interface for getting tokens. It accepts
      :class:`EventHubSharedKeyCredential<azure.eventhub.EventHubSharedKeyCredential>`, or credential objects generated
      by the azure-identity library and objects that implement the `get_token(self, *scopes)` method.
+    :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureSasCredential
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
      The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
@@ -128,7 +129,7 @@ class EventHubConsumerClient(ClientBase):
         fully_qualified_namespace,  # type: str
         eventhub_name,  # type: str
         consumer_group,  # type: str
-        credential,  # type: TokenCredential
+        credential,  # type: Union[AzureSasCredential, TokenCredential]
         **kwargs  # type: Any
     ):
         # type: (...) -> None

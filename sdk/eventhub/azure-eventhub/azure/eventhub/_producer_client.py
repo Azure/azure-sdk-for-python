@@ -16,7 +16,7 @@ from ._constants import ALL_PARTITIONS
 from ._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials import TokenCredential, AzureSasCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -28,10 +28,11 @@ class EventHubProducerClient(ClientBase):
     :param str fully_qualified_namespace: The fully qualified host name for the Event Hubs namespace.
      This is likely to be similar to <yournamespace>.servicebus.windows.net
     :param str eventhub_name: The path of the specific Event Hub to connect the client to.
-    :param ~azure.core.credentials.TokenCredential credential: The credential object used for authentication which
+    :param credential: The credential object used for authentication which
      implements a particular interface for getting tokens. It accepts
      :class:`EventHubSharedKeyCredential<azure.eventhub.EventHubSharedKeyCredential>`, or credential objects generated
      by the azure-identity library and objects that implement the `get_token(self, *scopes)` method.
+    :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureSasCredential
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
      The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
@@ -73,7 +74,7 @@ class EventHubProducerClient(ClientBase):
         self,
         fully_qualified_namespace,  # type: str
         eventhub_name,  # type: str
-        credential,  # type: TokenCredential
+        credential,  # type: Union[AzureSasCredential, TokenCredential]
         **kwargs  # type: Any
     ):
         # type:(...) -> None

@@ -71,10 +71,11 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
             parameters = {"location": self.location}
             expiry = datetime.datetime.utcnow() + self.delete_after_tag_timedelta
             parameters["tags"] = {"DeleteAfter": expiry.replace(microsecond=0).isoformat()}
-            parameters["tags"]["BuildId"] = os.environ.get("BUILD_BUILDID", None)
-            parameters["tags"]["BuildJob"] = os.environ.get("AGENT_JOBNAME", None)
-            parameters["tags"]["BuildNumber"] = os.environ.get("BUILD_BUILDNUMBER", None)
-            parameters["tags"]["BuildReason"] = os.environ.get("BUILD_REASON", None)
+
+            parameters["tags"]["BuildId"] = os.environ.get("BUILD_BUILDID", "local")
+            parameters["tags"]["BuildJob"] = os.environ.get("AGENT_JOBNAME", "local")
+            parameters["tags"]["BuildNumber"] = os.environ.get("BUILD_BUILDNUMBER", "local")
+            parameters["tags"]["BuildReason"] = os.environ.get("BUILD_REASON", "local")
             try:
                 logging.info(
                     "Attempting to create a Resource Group with name {} and parameters {}".format(name, parameters)

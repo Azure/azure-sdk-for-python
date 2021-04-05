@@ -10,7 +10,12 @@ from ._generated.models import (
     CommunicationTokenScope
 )
 
-from ._shared.models import CommunicationUserIdentifier
+from ._shared.models import (
+    CommunicationIdentifier,
+    CommunicationIdentifierKind,
+    CommunicationUserIdentifier,
+    CommunicationUserProperties
+)
 
 __all__ = [
     'CommunicationIdentityClient',
@@ -19,5 +24,8 @@ __all__ = [
     'CommunicationTokenScope',
 
     # from _shared
-    'CommunicationUserIdentifier'
+    'CommunicationIdentifier',
+    'CommunicationIdentifierKind',
+    'CommunicationUserIdentifier',
+    'CommunicationUserProperties'
 ]

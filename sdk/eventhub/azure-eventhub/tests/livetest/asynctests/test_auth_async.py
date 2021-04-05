@@ -9,6 +9,7 @@ import asyncio
 import datetime
 import time
 
+from azure.core.credentials import AzureSasCredential
 from azure.identity.aio import EnvironmentCredential
 from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient, EventHubSharedKeyCredential
@@ -99,3 +100,36 @@ class AsyncEventHubAuthTests(AzureMgmtTestCase):
             batch = await conn_str_producer_client.create_batch(partition_id='0')
             batch.add(EventData(body='A single message'))
             await conn_str_producer_client.send_batch(batch)
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='eventhubtest')
+    @CachedEventHubNamespacePreparer(name_prefix='eventhubtest')
+    @CachedEventHubPreparer(name_prefix='eventhubtest')
+    async def test_client_azure_sas_credential_async(self,
+                                   eventhub,
+                                   eventhub_namespace,
+                                   eventhub_namespace_key_name,
+                                   eventhub_namespace_primary_key,
+                                   eventhub_namespace_connection_string,
+                                   **kwargs):
+        # This should "just work" to validate known-good.
+        hostname = "{}.servicebus.windows.net".format(eventhub_namespace.name)
+        producer_client = EventHubProducerClient.from_connection_string(eventhub_namespace_connection_string, eventhub_name = eventhub.name)
+
+        async with producer_client:
+            batch = await producer_client.create_batch(partition_id='0')
+            batch.add(EventData(body='A single message'))
+            await producer_client.send_batch(batch)
+
+        hostname = "{}.servicebus.windows.net".format(eventhub_namespace.name)
+        auth_uri = "sb://{}/{}".format(hostname, eventhub.name)
+        token = (await credential.get_token(auth_uri)).token
+        producer_client = EventHubProducerClient(fully_qualified_namespace=hostname,
+                                                 eventhub_name=eventhub.name,
+                                                 credential=AzureSasCredential(token))
+
+        async with producer_client:
+            batch = await producer_client.create_batch(partition_id='0')
+            batch.add(EventData(body='A single message'))
+            await producer_client.send_batch(batch)

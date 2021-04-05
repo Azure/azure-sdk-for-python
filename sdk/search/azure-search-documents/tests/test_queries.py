@@ -129,6 +129,10 @@ class TestSearchQuery(object):
         query.select("f3", "f4")
         assert query.request.select == "f3,f4"
 
+        str = ["f1", "f2"]
+        query.select(str)
+        assert query.request.select == "f1,f2"
+
         with pytest.raises(ValueError) as e:
             query.select()
             assert str(e) == "At least one field must be provided"
