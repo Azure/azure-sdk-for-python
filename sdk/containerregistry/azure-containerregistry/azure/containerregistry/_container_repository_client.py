@@ -137,7 +137,6 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: ~azure.core.paging.ItemPaged[RegistryArtifactProperties]
         :raises: None
         """
-        # GET /acr/v1/{name}/_manifests
         last = kwargs.pop("last", None)
         n = kwargs.pop("page_size", None)
         orderby = kwargs.pop("order_by", None)
@@ -149,6 +148,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             cls=lambda objs: [
                 RegistryArtifactProperties._from_generated(x) for x in objs  # pylint: disable=protected-access
             ],
+            **kwargs
         )
 
     @distributed_trace
