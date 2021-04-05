@@ -56,6 +56,14 @@ extends:
     - name: azure-mgmt-storageimportexport
       safeName: azuremgmtstorageimportexport
     CondaArtifacts:
+    - name: azure-core
+      meta_source: ../core/meta.yml
+      dependency: true
+      common_root: azure
+      checkout:
+        - package: azure-core
+          checkout_path: sdk/core
+          version: 1.13.0
     - name: azure-storage
       meta_source: meta.yml
       common_root: azure/storage
