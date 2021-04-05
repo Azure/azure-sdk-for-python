@@ -1283,7 +1283,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @TablesPreparer()
-    async def test_query_injection(self, tables_storage_account_name, tables_primary_storage_account_key):
+    async def test_query_injection_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1315,8 +1315,8 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                 entities.append(e)
             assert len(entities) ==  0
         finally:
-            self.ts.delete_table(table_name)
-            self._tear_down()
+            await self.ts.delete_table(table_name)
+            await self._tear_down()
 
     @TablesPreparer()
     async def test_query_special_chars(self, tables_storage_account_name, tables_primary_storage_account_key):
