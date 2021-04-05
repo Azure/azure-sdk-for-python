@@ -1,7 +1,7 @@
 # Release History
 
 ## 12.0.0b6 (Unreleased)
-
+* Updated deserialization of datetime fields in entities to support preservation of the service format with additional decimal place.
 
 ## 12.0.0b5 (2021-03-09)
 * This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported.
@@ -26,6 +26,3 @@
 
 ## 12.0.0b1 (2020-09-08)
 This is the first beta of the `azure-data-tables` client library. The Azure Tables client library can seamlessly target either Azure Table storage or Azure Cosmos DB table service endpoints with no code changes.
-
-
-

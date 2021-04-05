@@ -10,14 +10,12 @@ from datetime import datetime
 from math import isnan
 from enum import Enum
 import sys
-import uuid
 
 from azure.core import MatchConditions
 from azure.core.exceptions import raise_with_traceback
 
 from ._entity import EdmType, EntityProperty
-from ._models import TablePayloadFormat
-from ._common_conversion import _to_str, _encode_base64, _to_utc_datetime
+from ._common_conversion import _encode_base64, _to_utc_datetime
 from ._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED
 
 

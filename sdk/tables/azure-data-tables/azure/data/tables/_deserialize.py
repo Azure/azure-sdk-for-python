@@ -40,11 +40,13 @@ if TYPE_CHECKING:
 
 
 class TablesEntityDatetime(datetime.datetime):
-    _service_value = ""
 
     @property
     def tables_service_value(self):
-        return self._service_value
+        try:
+            return self._service_value
+        except AttributeError:
+            return ""
 
 
 def url_quote(url):
@@ -94,12 +96,12 @@ def _from_entity_datetime(value):
         dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(
             tzinfo=TZ_UTC
         )
-        dt_obj._service_value = value  # pylint:disable=protected-access
-        return dt_obj
     except ValueError:
-        return TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%SZ").replace(
+        dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%SZ").replace(
             tzinfo=TZ_UTC
         )
+    dt_obj._service_value = value  # pylint:disable=protected-access
+    return dt_obj
 
 
 def clean_up_dotnet_timestamps(value):
