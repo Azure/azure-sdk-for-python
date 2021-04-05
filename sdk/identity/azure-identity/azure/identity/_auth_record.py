@@ -5,8 +5,17 @@
 import json
 
 
+SUPPORTED_VERSIONS = {"1.0"}
+
+
 class AuthenticationRecord(object):
-    """A record which can initialize :class:`DeviceCodeCredential` or :class:`InteractiveBrowserCredential`"""
+    """Non-secret account information for an authenticated user
+
+    This class enables :class:`DeviceCodeCredential` and :class:`InteractiveBrowserCredential` to access
+    previously cached authentication data. Applications shouldn't construct instances of this class. They should
+    instead acquire one from a credential's **authenticate** method, such as
+    :func:`InteractiveBrowserCredential.authenticate`. See the user_authentication sample for more details.
+    """
 
     def __init__(self, tenant_id, client_id, authority, home_account_id, username):
         # type: (str, str, str, str, str) -> None
@@ -52,11 +61,17 @@ class AuthenticationRecord(object):
 
         deserialized = json.loads(data)
 
+        version = deserialized.get("version")
+        if version not in SUPPORTED_VERSIONS:
+            raise ValueError(
+                'Unexpected version "{}". This package supports these versions: {}'.format(version, SUPPORTED_VERSIONS)
+            )
+
         return cls(
             authority=deserialized["authority"],
-            client_id=deserialized["client_id"],
-            home_account_id=deserialized["home_account_id"],
-            tenant_id=deserialized["tenant_id"],
+            client_id=deserialized["clientId"],
+            home_account_id=deserialized["homeAccountId"],
+            tenant_id=deserialized["tenantId"],
             username=deserialized["username"],
         )
 
@@ -69,10 +84,11 @@ class AuthenticationRecord(object):
 
         record = {
             "authority": self._authority,
-            "client_id": self._client_id,
-            "home_account_id": self._home_account_id,
-            "tenant_id": self._tenant_id,
+            "clientId": self._client_id,
+            "homeAccountId": self._home_account_id,
+            "tenantId": self._tenant_id,
             "username": self._username,
+            "version": "1.0",
         }
 
         return json.dumps(record)
