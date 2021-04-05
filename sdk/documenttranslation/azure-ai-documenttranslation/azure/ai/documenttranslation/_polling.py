@@ -12,6 +12,8 @@ from azure.core.polling.base_polling import (
     OperationFailed
 )
 
+from azure.core.exceptions import HttpResponseError, ODataV4Format
+
 
 class TranslationPolling(LongRunningOperation):
     """Implements a Location polling.
@@ -63,7 +65,7 @@ class TranslationPolling(LongRunningOperation):
             body = _as_json(response)
             status = body.get("status")
             if status:
-                return self._map_nonstandard_statuses(status)
+                return self._map_nonstandard_statuses(status, body)
             raise BadResponse("No status found in body")
         raise BadResponse("The response from long running operation does not contain a body.")
 
@@ -76,14 +78,28 @@ class TranslationPolling(LongRunningOperation):
         return None
 
     # pylint: disable=R0201
-    def _map_nonstandard_statuses(self, status):
-        # type: (str) -> str
+    def _map_nonstandard_statuses(self, status, body):
+        # type: (str, dict) -> str
         """Map non-standard statuses.
 
         :param str status: lro process status.
+        :param str body: pipeline response body.
         """
-        if status in ["ValidationFailed"]:
-            return "Failed"
+        if status == "ValidationFailed":
+            self.raise_error(body)
+        if status == "Failed":
+            # We don't throw in a "Failed" case so this just indicates job completed
+            return "Succeeded"
         if status in ["Cancelled", "Cancelling"]:
             return "Canceled"
         return status
+
+    def raise_error(self, body):
+        error = body["error"]
+        if body["error"].get("innerError", None):
+            error = body["error"]["innerError"]
+        http_response_error = HttpResponseError(
+            message="({}): {}".format(error["code"], error["message"])
+        )
+        http_response_error.error = ODataV4Format(error)  # set error.code
+        raise http_response_error
