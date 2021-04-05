@@ -128,6 +128,13 @@ class ServiceBusMessage(
     def __str__(self):
         return str(self.message)
 
+    def __repr__(self):
+        # type: () -> str
+        rec_repr = "received_timestamp_utc={}, settled={}, body={}".format(
+            self._received_timestamp_utc, self._settled, self.message._body # pylint: disable=protected-access
+        )
+        return "ServiceBuMessage({})".format(rec_repr)[:1024]
+
     def _build_message(self, body):
         if not (
             isinstance(body, (six.string_types, six.binary_type)) or (body is None)
@@ -690,6 +697,13 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             time_to_live=self.time_to_live,
             to=self.to,
         )
+
+    def __repr__(self):
+        # type: () -> str
+        rec_repr = "received_timestamp_utc={}, settled={}, body={}".format(
+            self._received_timestamp_utc, self._settled, self.message._body # pylint: disable=protected-access
+        )
+        return "ServiceBusReceivedMessage({})".format(rec_repr)[:1024]
 
     @property
     def dead_letter_error_description(self):
