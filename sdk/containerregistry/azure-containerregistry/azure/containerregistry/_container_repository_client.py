@@ -150,7 +150,10 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         n = kwargs.pop("results_per_page", None)
         orderby = kwargs.pop("order_by", None)
         cls = kwargs.pop(
-            "cls", lambda objs: [RegistryArtifactProperties._from_generated(x) for x in objs]  # pylint: disable=protected-access
+            "cls",
+            lambda objs: [
+                RegistryArtifactProperties._from_generated(x) for x in objs  # pylint: disable=protected-access
+            ],
         )
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}

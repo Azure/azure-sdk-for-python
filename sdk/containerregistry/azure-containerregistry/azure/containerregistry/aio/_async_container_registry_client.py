@@ -165,7 +165,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: :class:~azure.containerregistry.aio.ContainerRepositoryClient
         """
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._client._client._pipeline._transport),  # pylint: disable=protected-access
+            transport=AsyncTransportWrapper(
+                self._client._client._pipeline._transport # pylint: disable=protected-access
+            ),
             policies=self._client._client._pipeline._impl_policies,  # pylint: disable=protected-access
         )
         return ContainerRepositoryClient(
