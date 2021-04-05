@@ -130,10 +130,10 @@ class ServiceBusMessage(
 
     def __repr__(self):
         # type: () -> str
-        rec_repr = "received_timestamp_utc={}, settled={}, body={}".format(
-            self._received_timestamp_utc, self._settled, self.message._body # pylint: disable=protected-access
+        rec_repr = "body={}".format(
+            self.message._body # pylint: disable=protected-access
         )
-        return "ServiceBuMessage({})".format(rec_repr)[:1024]
+        return "ServiceBusMessage({})".format(rec_repr)[:1024]
 
     def _build_message(self, body):
         if not (

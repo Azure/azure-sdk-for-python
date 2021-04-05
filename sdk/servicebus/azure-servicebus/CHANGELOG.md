@@ -2,7 +2,9 @@
 
 ## 7.1.2 (Unreleased)
 
+**Bug Fixes**
 
+* Improved the `repr` on `ServiceBusMessage` and `ServiceBusReceivedMessage` to show more meaningful text.
 
 ## 7.1.1 (2021-04-07)
 
