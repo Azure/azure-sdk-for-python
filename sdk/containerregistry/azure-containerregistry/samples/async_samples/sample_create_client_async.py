@@ -40,7 +40,7 @@ class CreateClients(object):
         # Instantiate the ContainerRegistryClient
         # [START create_repository_client]
         from azure.containerregistry.aio import ContainerRepositoryClient
-        from azure.identity import DefaultAzureCredential
+        from azure.identity.aio import DefaultAzureCredential
         client = ContainerRepositoryClient(self.account_url, "my_repository", DefaultAzureCredential())
         # [END create_repository_client]
 
