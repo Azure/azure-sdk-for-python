@@ -77,10 +77,9 @@ class RegistryArtifactProperties(object):
             digest=generated.digest,
             last_updated_on=generated.last_updated_on,
             operating_system=generated.operating_system,
-            registry_artifacts=generated.registry_artifacts,
             size=generated.size,
             tags=generated.tags,
-            content_permissions=generated.manifest_properties,
+            content_permissions=generated.writeable_properties,
         )
 
 
