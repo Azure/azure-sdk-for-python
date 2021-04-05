@@ -65,6 +65,7 @@ class AsyncTransportWrapper(AsyncHttpTransport):
     by a `get_client` method does not close the outer transport for the parent
     when used in a context manager.
     """
+
     def __init__(self, async_transport):
         self._transport = async_transport
 
