@@ -69,19 +69,6 @@ class AadClientBase(ABC):
         """Assumes all cached refresh tokens belong to the same user"""
         return self._cache.find(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes))
 
-    def should_refresh(self, token):
-        # type: (AccessToken) -> bool
-        """ check if the token needs refresh or not
-        """
-        expires_on = int(token.expires_on)
-        now = int(time.time())
-        if expires_on - now > self._token_refresh_offset:
-            return False
-        if now - self._last_refresh_time < self._token_refresh_retry_delay:
-            return False
-        return True
-
-
     @abc.abstractmethod
     def obtain_token_by_authorization_code(self, scopes, code, redirect_uri, client_secret=None, **kwargs):
         pass

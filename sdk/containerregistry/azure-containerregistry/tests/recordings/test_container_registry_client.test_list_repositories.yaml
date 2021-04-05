@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 21:19:36 GMT
+      - Mon, 05 Apr 2021 14:38:23 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 21:19:38 GMT
+      - Mon, 05 Apr 2021 14:38:24 GMT
       server:
       - openresty
       strict-transport-security:
@@ -79,7 +79,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.316667'
+      - '333.25'
     status:
       code: 200
       message: OK
@@ -109,7 +109,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 21:19:38 GMT
+      - Mon, 05 Apr 2021 14:38:24 GMT
       server:
       - openresty
       strict-transport-security:
@@ -117,7 +117,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.3'
+      - '332.7'
     status:
       code: 200
       message: OK
@@ -136,7 +136,7 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
-      string: '{"repositories":["alpine/git","debian","hello-world","library/hello-world","repo160e197b","repo2e8319c5","repo308e19dd","repo6ce51658","repo9b321760","repob7cc1bf8","repod2be1c42","repoeb7113db","ubuntu"]}
+      string: '{"repositories":["alpine/git","debian","hello-world","library/hello-world","repo160e197b","repo2e8319c5","repo308e19dd","repo6ce51658","repo9b321760","repo_set160e197b","repob7cc1bf8","repod2be1c42","repoeb7113db","ubuntu"]}
 
         '
     headers:
@@ -148,11 +148,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '206'
+      - '225'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 21:19:38 GMT
+      - Mon, 05 Apr 2021 14:38:24 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

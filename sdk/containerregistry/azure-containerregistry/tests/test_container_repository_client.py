@@ -43,7 +43,6 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
         client.delete_tag(tag)
         self.sleep(10)
-
         with pytest.raises(ResourceNotFoundError):
             client.get_tag_properties(tag)
 
@@ -209,7 +208,7 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
     @pytest.mark.live_test_only  # Recordings error, recieves more than 100 headers, not that many present
     @acr_preparer()
     def test_set_manifest_properties(self, containerregistry_baseurl, containerregistry_resource_group):
-        repository = self.get_resource_name("repo")
+        repository = self.get_resource_name("repo_set")
         tag_identifier = self.get_resource_name("tag")
         self.import_repo_to_be_deleted(
             containerregistry_baseurl,
