@@ -40,6 +40,33 @@ def test_rsa_encrypt_decrypt(key, algorithm):
     assert decrypt_result.plaintext == plaintext
 
 
+@pytest.mark.parametrize(
+    "algorithm,key_size",
+    (
+        (EncryptionAlgorithm.a256_cbcpad, 32),
+        (EncryptionAlgorithm.a192_cbcpad, 24),
+        (EncryptionAlgorithm.a128_cbcpad, 16),
+    )
+)
+def test_symmetric_encrypt_decrypt(algorithm, key_size):
+    jwk = {
+        "k": os.urandom(key_size),
+        "kid":"http://localhost/keys/key/version",
+        "kty": "oct-HSM",
+        "key_ops": ("encrypt", "decrypt")
+    }
+    key = KeyVaultKey(key_id="http://localhost/keys/key/version", jwk=jwk)
+    provider = get_local_cryptography_provider(key.key)
+    plaintext = b"plaintext"
+    iv = os.urandom(16)
+
+    encrypt_result = provider.encrypt(algorithm, plaintext, iv=iv)
+    assert encrypt_result.key_id == key.id
+
+    decrypt_result = provider.decrypt(encrypt_result.algorithm, encrypt_result.ciphertext, iv=encrypt_result.iv)
+    assert decrypt_result.plaintext == plaintext
+
+
 @pytest.mark.parametrize("key", RSA_KEYS.values())
 @pytest.mark.parametrize(
     "algorithm,hash_function",
@@ -77,9 +104,14 @@ def test_rsa_wrap_unwrap(key, algorithm):
     assert unwrap_result.key == plaintext
 
 
-@pytest.mark.parametrize("algorithm", (a for a in KeyWrapAlgorithm if a.startswith("AES")))
+@pytest.mark.parametrize("algorithm", (a for a in KeyWrapAlgorithm if a.startswith("A")))
 def test_symmetric_wrap_unwrap(algorithm):
-    jwk = {"k": os.urandom(32), "kty": "oct", "key_ops": ("unwrapKey", "wrapKey")}
+    jwk = {
+        "k": os.urandom(32),
+        "kid":"http://localhost/keys/key/version",
+        "kty": "oct",
+        "key_ops": ("unwrapKey", "wrapKey")
+    }
     key = KeyVaultKey(key_id="http://localhost/keys/key/version", jwk=jwk)
     provider = get_local_cryptography_provider(key.key)
     key_bytes = os.urandom(32)
@@ -149,7 +181,7 @@ def test_unsupported_ec_operations(key, algorithm):
     "algorithm",
     [a for a in KeyWrapAlgorithm if a.startswith("RSA")]
     + list(SignatureAlgorithm)
-    + list(EncryptionAlgorithm),
+    + [a for a in EncryptionAlgorithm if not a.endswith("PAD")],
 )
 def test_unsupported_symmetric_operations(algorithm):
     """The crypto provider should raise NotImplementedError when a key doesn't support an operation or algorithm"""

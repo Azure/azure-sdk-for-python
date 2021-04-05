@@ -24,7 +24,8 @@ class SymmetricCryptographyProvider(LocalCryptographyProvider):
 
     def supports(self, operation, algorithm):
         # type: (KeyOperation, Algorithm) -> bool
-        return (
-            operation in (KeyOperation.unwrap_key, KeyOperation.wrap_key)
-            and algorithm in self._internal_key.supported_key_wrap_algorithms
-        )
+        if operation in (KeyOperation.decrypt, KeyOperation.encrypt):
+            return algorithm in self._internal_key.supported_encryption_algorithms
+        if operation in (KeyOperation.unwrap_key, KeyOperation.wrap_key):
+            return algorithm in self._internal_key.supported_key_wrap_algorithms
+        return False

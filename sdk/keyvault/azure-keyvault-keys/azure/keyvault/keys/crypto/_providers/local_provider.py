@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 
 class LocalCryptographyProvider(ABC):
     def __init__(self, key):
-        # type: (JsonWebKey, **Any) -> None
+        # type: (JsonWebKey) -> None
         self._allowed_ops = frozenset(key.key_ops or [])
         self._internal_key = self._get_internal_key(key)
         self._key = key
@@ -60,16 +60,16 @@ class LocalCryptographyProvider(ABC):
         if operation not in self._allowed_ops:
             raise AzureError('This key does not allow the "{}" operation'.format(operation))
 
-    def encrypt(self, algorithm, plaintext):
-        # type: (EncryptionAlgorithm, bytes) -> EncryptResult
+    def encrypt(self, algorithm, plaintext, iv=None):
+        # type: (EncryptionAlgorithm, bytes, Optional[bytes]) -> EncryptResult
         self._raise_if_unsupported(KeyOperation.encrypt, algorithm)
-        ciphertext = self._internal_key.encrypt(plaintext, algorithm=algorithm.value)
-        return EncryptResult(key_id=self._key.kid, algorithm=algorithm, ciphertext=ciphertext)
+        ciphertext = self._internal_key.encrypt(plaintext, algorithm=algorithm.value, iv=iv)
+        return EncryptResult(key_id=self._key.kid, algorithm=algorithm, ciphertext=ciphertext, iv=iv)
 
-    def decrypt(self, algorithm, ciphertext):
-        # type: (EncryptionAlgorithm, bytes) -> DecryptResult
+    def decrypt(self, algorithm, ciphertext, iv=None):
+        # type: (EncryptionAlgorithm, bytes, Optional[bytes]) -> DecryptResult
         self._raise_if_unsupported(KeyOperation.decrypt, algorithm)
-        plaintext = self._internal_key.decrypt(ciphertext, iv=None, algorithm=algorithm.value)
+        plaintext = self._internal_key.decrypt(ciphertext, iv=iv, algorithm=algorithm.value)
         return DecryptResult(key_id=self._key.kid, algorithm=algorithm, plaintext=plaintext)
 
     def wrap_key(self, algorithm, key):
