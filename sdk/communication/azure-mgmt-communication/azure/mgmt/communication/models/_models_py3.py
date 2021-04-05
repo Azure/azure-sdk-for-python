@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import datetime
 from typing import Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
@@ -96,15 +97,17 @@ class LocationResource(msrest.serialization.Model):
 
 
 class Resource(msrest.serialization.Model):
-    """The core properties of ARM resources.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the service - e.g. "Microsoft.Communication/CommunicationServices".
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     """
 
@@ -140,12 +143,16 @@ class CommunicationServiceResource(Resource, LocationResource, TaggedResource):
     :type tags: dict[str, str]
     :param location: The Azure location where the CommunicationService is running.
     :type location: str
-    :ivar id: Fully qualified resource ID for the resource.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the service - e.g. "Microsoft.Communication/CommunicationServices".
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~communication_service_management_client.models.SystemData
     :ivar provisioning_state: Provisioning state of the resource. Possible values include:
      "Unknown", "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting",
      "Moving".
@@ -168,6 +175,7 @@ class CommunicationServiceResource(Resource, LocationResource, TaggedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'host_name': {'readonly': True},
         'notification_hub_id': {'readonly': True},
@@ -181,6 +189,7 @@ class CommunicationServiceResource(Resource, LocationResource, TaggedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'data_location': {'key': 'properties.dataLocation', 'type': 'str'},
@@ -200,6 +209,7 @@ class CommunicationServiceResource(Resource, LocationResource, TaggedResource):
         super(CommunicationServiceResource, self).__init__(location=location, tags=tags, **kwargs)
         self.tags = tags
         self.location = location
+        self.system_data = None
         self.provisioning_state = None
         self.host_name = None
         self.data_location = data_location
@@ -210,6 +220,7 @@ class CommunicationServiceResource(Resource, LocationResource, TaggedResource):
         self.id = None
         self.name = None
         self.type = None
+        self.system_data = None
         self.provisioning_state = None
         self.host_name = None
         self.data_location = data_location
@@ -220,6 +231,7 @@ class CommunicationServiceResource(Resource, LocationResource, TaggedResource):
         self.id = None
         self.name = None
         self.type = None
+        self.system_data = None
         self.provisioning_state = None
         self.host_name = None
         self.data_location = data_location
@@ -256,88 +268,101 @@ class CommunicationServiceResourceList(msrest.serialization.Model):
         self.next_link = next_link
 
 
-class Dimension(msrest.serialization.Model):
-    """Specifications of the Dimension of metrics.
+class ErrorAdditionalInfo(msrest.serialization.Model):
+    """The resource management error additional info.
 
-    :param name: The public facing name of the dimension.
-    :type name: str
-    :param display_name: Localized friendly display name of the dimension.
-    :type display_name: str
-    :param internal_name: Name of the dimension as it appears in MDM.
-    :type internal_name: str
-    :param to_be_exported_for_shoebox: A Boolean flag indicating whether this dimension should be
-     included for the shoebox export scenario.
-    :type to_be_exported_for_shoebox: bool
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: object
     """
 
+    _validation = {
+        'type': {'readonly': True},
+        'info': {'readonly': True},
+    }
+
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'internal_name': {'key': 'internalName', 'type': 'str'},
-        'to_be_exported_for_shoebox': {'key': 'toBeExportedForShoebox', 'type': 'bool'},
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
     }
 
     def __init__(
         self,
-        *,
-        name: Optional[str] = None,
-        display_name: Optional[str] = None,
-        internal_name: Optional[str] = None,
-        to_be_exported_for_shoebox: Optional[bool] = None,
         **kwargs
     ):
-        super(Dimension, self).__init__(**kwargs)
-        self.name = name
-        self.display_name = display_name
-        self.internal_name = internal_name
-        self.to_be_exported_for_shoebox = to_be_exported_for_shoebox
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
-    """Error response indicating why the requested operation could not be performed.
+class ErrorDetail(msrest.serialization.Model):
+    """The error detail.
 
-    :param error: The error.
-    :type error: ~communication_service_management_client.models.ErrorResponseError
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~communication_service_management_client.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info:
+     list[~communication_service_management_client.models.ErrorAdditionalInfo]
     """
 
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponseError'},
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
     }
-
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorResponseError"] = None,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
-        self.error = error
-
-
-class ErrorResponseError(msrest.serialization.Model):
-    """The error.
-
-    :param code: Error code.
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
-    """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorDetail]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorDetail, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponse(msrest.serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+
+    :param error: The error object.
+    :type error: ~communication_service_management_client.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorDetail'},
     }
 
     def __init__(
         self,
         *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
+        error: Optional["ErrorDetail"] = None,
         **kwargs
     ):
-        super(ErrorResponseError, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = error
 
 
 class LinkedNotificationHub(msrest.serialization.Model):
@@ -394,118 +419,148 @@ class LinkNotificationHubParameters(msrest.serialization.Model):
         self.connection_string = connection_string
 
 
-class MetricSpecification(msrest.serialization.Model):
-    """Specifications of the Metrics for Azure Monitoring.
+class NameAvailability(msrest.serialization.Model):
+    """Result of the request to check name availability. It contains a flag and possible reason of failure.
 
-    :param name: Name of the metric.
-    :type name: str
-    :param display_name: Localized friendly display name of the metric.
-    :type display_name: str
-    :param display_description: Localized friendly description of the metric.
-    :type display_description: str
-    :param unit: The unit that makes sense for the metric.
-    :type unit: str
-    :param aggregation_type: The method for aggregating the metric. Possible values include:
-     "Average", "Minimum", "Maximum", "Total", "Count".
-    :type aggregation_type: str or ~communication_service_management_client.models.AggregationType
-    :param fill_gap_with_zero: Optional. If set to true, then zero will be returned for time
-     duration where no metric is emitted/published.
-     Ex. a metric that returns the number of times a particular error code was emitted. The error
-     code may not appear
-     often, instead of the RP publishing 0, Shoebox can auto fill in 0s for time periods where
-     nothing was emitted.
-    :type fill_gap_with_zero: str
-    :param category: The name of the metric category that the metric belongs to. A metric can only
-     belong to a single category.
-    :type category: str
-    :param dimensions: The dimensions of the metrics.
-    :type dimensions: list[~communication_service_management_client.models.Dimension]
+    :param name_available: Indicates whether the name is available or not.
+    :type name_available: bool
+    :param reason: The reason of the availability. Required if name is not available.
+    :type reason: str
+    :param message: The message of the operation.
+    :type message: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'display_description': {'key': 'displayDescription', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
-        'fill_gap_with_zero': {'key': 'fillGapWithZero', 'type': 'str'},
-        'category': {'key': 'category', 'type': 'str'},
-        'dimensions': {'key': 'dimensions', 'type': '[Dimension]'},
+        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
+        'reason': {'key': 'reason', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        name: Optional[str] = None,
-        display_name: Optional[str] = None,
-        display_description: Optional[str] = None,
-        unit: Optional[str] = None,
-        aggregation_type: Optional[Union[str, "AggregationType"]] = None,
-        fill_gap_with_zero: Optional[str] = None,
-        category: Optional[str] = None,
-        dimensions: Optional[List["Dimension"]] = None,
+        name_available: Optional[bool] = None,
+        reason: Optional[str] = None,
+        message: Optional[str] = None,
         **kwargs
     ):
-        super(MetricSpecification, self).__init__(**kwargs)
+        super(NameAvailability, self).__init__(**kwargs)
+        self.name_available = name_available
+        self.reason = reason
+        self.message = message
+
+
+class NameAvailabilityParameters(msrest.serialization.Model):
+    """Data POST-ed to the nameAvailability action.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. The resource type. Should be always
+     "Microsoft.Communication/CommunicationServices".
+    :type type: str
+    :param name: Required. The CommunicationService name to validate. e.g."my-CommunicationService-
+     name-here".
+    :type name: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: str,
+        name: str,
+        **kwargs
+    ):
+        super(NameAvailabilityParameters, self).__init__(**kwargs)
+        self.type = type
         self.name = name
-        self.display_name = display_name
-        self.display_description = display_description
-        self.unit = unit
-        self.aggregation_type = aggregation_type
-        self.fill_gap_with_zero = fill_gap_with_zero
-        self.category = category
-        self.dimensions = dimensions
 
 
 class Operation(msrest.serialization.Model):
-    """REST API operation supported by CommunicationService resource provider.
+    """Details of a REST API operation, returned from the Resource Provider Operations API.
 
-    :param name: Name of the operation with format: {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: The object that describes the operation.
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
+     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
+    :vartype name: str
+    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for data-
+     plane operations and "false" for ARM/control-plane operations.
+    :vartype is_data_action: bool
+    :param display: Localized display information for this particular operation.
     :type display: ~communication_service_management_client.models.OperationDisplay
-    :param origin: Optional. The intended executor of the operation; governs the display of the
-     operation in the RBAC UX and the audit logs UX.
-    :type origin: str
-    :param properties: Extra properties for the operation.
-    :type properties: ~communication_service_management_client.models.OperationProperties
+    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
+     (RBAC) and audit logs UX. Default value is "user,system". Possible values include: "user",
+     "system", "user,system".
+    :vartype origin: str or ~communication_service_management_client.models.Origin
+    :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
+     internal only APIs. Possible values include: "Internal".
+    :vartype action_type: str or ~communication_service_management_client.models.ActionType
     """
+
+    _validation = {
+        'name': {'readonly': True},
+        'is_data_action': {'readonly': True},
+        'origin': {'readonly': True},
+        'action_type': {'readonly': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
         'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'OperationProperties'},
+        'action_type': {'key': 'actionType', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        name: Optional[str] = None,
         display: Optional["OperationDisplay"] = None,
-        origin: Optional[str] = None,
-        properties: Optional["OperationProperties"] = None,
         **kwargs
     ):
         super(Operation, self).__init__(**kwargs)
-        self.name = name
+        self.name = None
+        self.is_data_action = None
         self.display = display
-        self.origin = origin
-        self.properties = properties
+        self.origin = None
+        self.action_type = None
 
 
 class OperationDisplay(msrest.serialization.Model):
-    """The object that describes a operation.
+    """Localized display information for this particular operation.
 
-    :param provider: Friendly name of the resource provider.
-    :type provider: str
-    :param resource: Resource type on which the operation is performed.
-    :type resource: str
-    :param operation: The localized friendly name for the operation.
-    :type operation: str
-    :param description: The localized friendly description for the operation.
-    :type description: str
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
+     Monitoring Insights" or "Microsoft Compute".
+    :vartype provider: str
+    :ivar resource: The localized friendly name of the resource type related to this operation.
+     E.g. "Virtual Machines" or "Job Schedule Collections".
+    :vartype resource: str
+    :ivar operation: The concise, localized friendly name for the operation; suitable for
+     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
+    :vartype operation: str
+    :ivar description: The short, localized friendly description of the operation; suitable for
+     tool tips and detailed views.
+    :vartype description: str
     """
+
+    _validation = {
+        'provider': {'readonly': True},
+        'resource': {'readonly': True},
+        'operation': {'readonly': True},
+        'description': {'readonly': True},
+    }
 
     _attribute_map = {
         'provider': {'key': 'provider', 'type': 'str'},
@@ -516,30 +571,30 @@ class OperationDisplay(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        provider: Optional[str] = None,
-        resource: Optional[str] = None,
-        operation: Optional[str] = None,
-        description: Optional[str] = None,
         **kwargs
     ):
         super(OperationDisplay, self).__init__(**kwargs)
-        self.provider = provider
-        self.resource = resource
-        self.operation = operation
-        self.description = description
+        self.provider = None
+        self.resource = None
+        self.operation = None
+        self.description = None
 
 
-class OperationList(msrest.serialization.Model):
-    """Result of the request to list REST API operations. It contains a list of operations.
+class OperationListResult(msrest.serialization.Model):
+    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
 
-    :param value: List of operations supported by the resource provider.
-    :type value: list[~communication_service_management_client.models.Operation]
-    :param next_link: The URL the client should use to fetch the next page (per server side
-     paging).
-     It's null for now, added for future use.
-    :type next_link: str
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of operations supported by the resource provider.
+    :vartype value: list[~communication_service_management_client.models.Operation]
+    :ivar next_link: URL to get the next set of operation list results (if there are any).
+    :vartype next_link: str
     """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[Operation]'},
@@ -548,36 +603,11 @@ class OperationList(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: Optional[List["Operation"]] = None,
-        next_link: Optional[str] = None,
         **kwargs
     ):
-        super(OperationList, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class OperationProperties(msrest.serialization.Model):
-    """Extra Operation properties.
-
-    :param service_specification: The service specifications.
-    :type service_specification:
-     ~communication_service_management_client.models.ServiceSpecification
-    """
-
-    _attribute_map = {
-        'service_specification': {'key': 'serviceSpecification', 'type': 'ServiceSpecification'},
-    }
-
-    def __init__(
-        self,
-        *,
-        service_specification: Optional["ServiceSpecification"] = None,
-        **kwargs
-    ):
-        super(OperationProperties, self).__init__(**kwargs)
-        self.service_specification = service_specification
+        super(OperationListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class OperationStatus(msrest.serialization.Model):
@@ -585,7 +615,7 @@ class OperationStatus(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: The operation Id.
+    :ivar id: Fully qualified ID for the operation status.
     :vartype id: str
     :ivar status: Provisioning state of the resource. Possible values include: "Succeeded",
      "Failed", "Canceled", "Creating", "Deleting", "Moving".
@@ -596,8 +626,8 @@ class OperationStatus(msrest.serialization.Model):
     :vartype end_time: ~datetime.datetime
     :ivar percent_complete: Percent of the operation that is complete.
     :vartype percent_complete: float
-    :param error: The error.
-    :type error: ~communication_service_management_client.models.ErrorResponseError
+    :param error: The error object.
+    :type error: ~communication_service_management_client.models.ErrorDetail
     """
 
     _validation = {
@@ -614,13 +644,13 @@ class OperationStatus(msrest.serialization.Model):
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'percent_complete': {'key': 'percentComplete', 'type': 'float'},
-        'error': {'key': 'error.error', 'type': 'ErrorResponseError'},
+        'error': {'key': 'error.error', 'type': 'ErrorDetail'},
     }
 
     def __init__(
         self,
         *,
-        error: Optional["ErrorResponseError"] = None,
+        error: Optional["ErrorDetail"] = None,
         **kwargs
     ):
         super(OperationStatus, self).__init__(**kwargs)
@@ -654,23 +684,50 @@ class RegenerateKeyParameters(msrest.serialization.Model):
         self.key_type = key_type
 
 
-class ServiceSpecification(msrest.serialization.Model):
-    """An object that describes a specification.
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
 
-    :param metric_specifications: Specifications of the Metrics for Azure Monitoring.
-    :type metric_specifications:
-     list[~communication_service_management_client.models.MetricSpecification]
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource. Possible values
+     include: "User", "Application", "ManagedIdentity", "Key".
+    :type created_by_type: str or ~communication_service_management_client.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :type last_modified_by_type: str or
+     ~communication_service_management_client.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
     }
 
     def __init__(
         self,
         *,
-        metric_specifications: Optional[List["MetricSpecification"]] = None,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(ServiceSpecification, self).__init__(**kwargs)
-        self.metric_specifications = metric_specifications
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at

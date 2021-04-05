@@ -26,6 +26,7 @@ from consts import (
     KEY_UUID,
 )
 import pytest
+import copy
 import datetime
 import os
 import logging
@@ -445,3 +446,48 @@ class AppConfigurationClientTest(AzureTestCase):
                 and to_set_kv.tags == set_kv.tags
                 and to_set_kv.etag != set_kv.etag
         )
+
+    def _order_dict(self, d):
+        from collections import OrderedDict
+        new = OrderedDict()
+        for k, v in d.items():
+            new[k] = str(v)
+        return new
+
+
+    @app_config_decorator
+    def test_sync_tokens(self, client):
+
+        sync_tokens = copy.deepcopy(client._sync_token_policy._sync_tokens)
+        sync_token_header = self._order_dict(sync_tokens)
+        sync_token_header = ",".join(str(x) for x in sync_token_header.values())
+
+        new = ConfigurationSetting(
+                key="KEY1",
+                label=None,
+                value="TEST_VALUE1",
+                content_type=TEST_CONTENT_TYPE,
+                tags={"tag1": "tag1", "tag2": "tag2"},
+        )
+
+        sent = client.set_configuration_setting(new)
+        sync_tokens2 = copy.deepcopy(client._sync_token_policy._sync_tokens)
+        sync_token_header2 = self._order_dict(sync_tokens2)
+        sync_token_header2 = ",".join(str(x) for x in sync_token_header2.values())
+        assert sync_token_header != sync_token_header2
+
+        new = ConfigurationSetting(
+                key="KEY2",
+                label=None,
+                value="TEST_VALUE2",
+                content_type=TEST_CONTENT_TYPE,
+                tags={"tag1": "tag1", "tag2": "tag2"},
+        )
+
+        sent = client.set_configuration_setting(new)
+        sync_tokens3 = copy.deepcopy(client._sync_token_policy._sync_tokens)
+        sync_token_header3 = self._order_dict(sync_tokens3)
+        sync_token_header3 = ",".join(str(x) for x in sync_token_header3.values())
+        assert sync_token_header2 != sync_token_header3
+
+        client.close()

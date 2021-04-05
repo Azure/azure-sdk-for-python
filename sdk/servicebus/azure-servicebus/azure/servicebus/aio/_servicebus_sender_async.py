@@ -26,7 +26,6 @@ from .._common.utils import (
     create_messages_from_dicts_if_needed,
     send_trace_context_manager,
     trace_message,
-    add_link_to_send,
 )
 from ._async_utils import create_authentication
 
@@ -329,24 +328,16 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         with send_trace_context_manager() as send_span:
             if isinstance(message, ServiceBusMessageBatch):
-                for (
-                    batch_message
-                ) in message.message._body_gen:  # pylint: disable=protected-access
-                    add_link_to_send(batch_message, send_span)
                 obj_message = message  # type: MessageObjTypes
             else:
                 obj_message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
                 obj_message = transform_messages_to_sendable_if_needed(obj_message)
                 try:
-                    # Ignore type (and below) as it will except if wrong.
-                    for each_message in iter(obj_message):  # type: ignore
-                        add_link_to_send(each_message, send_span)
                     batch = await self.create_message_batch()
                     batch._from_list(obj_message, send_span)  # type: ignore # pylint: disable=protected-access
                     obj_message = batch
                 except TypeError:  # Message was not a list or generator.
                     trace_message(cast(ServiceBusMessage, obj_message), send_span)
-                    add_link_to_send(obj_message, send_span)
             if (
                 isinstance(obj_message, ServiceBusMessageBatch) and len(obj_message) == 0
             ):  # pylint: disable=len-as-condition
