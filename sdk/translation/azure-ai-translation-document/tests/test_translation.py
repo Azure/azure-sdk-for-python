@@ -69,7 +69,7 @@ class TestTranslation(DocumentTranslationTest):
         ]
 
         # submit job and test
-        self._submit_and_validate_translation_job(client, translation_inputs, 2)
+        self._submit_and_validate_translation_job(client, translation_inputs)
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
