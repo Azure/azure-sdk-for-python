@@ -131,10 +131,8 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
             await client.set_tag_properties("does_not_exist", ContentPermissions(can_delete=False))
 
     @acr_preparer()
-    async def test_set_manifest_properties(
-        self, containerregistry_baseurl, containerregistry_resource_group
-    ):
-        repository = self.get_resource_name("repo")
+    async def test_set_manifest_properties(self, containerregistry_baseurl, containerregistry_resource_group):
+        repository = self.get_resource_name("repo_set_mani")
         tag_identifier = self.get_resource_name("tag")
         self.import_repo_to_be_deleted(
             containerregistry_baseurl,
@@ -148,12 +146,12 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         async for artifact in client.list_registry_artifacts():
             permissions = artifact.content_permissions
 
-            await client.set_manifest_properties(artifact.digest, ContentPermissions(
+            received_permissions = await client.set_manifest_properties(artifact.digest, ContentPermissions(
                 can_delete=False, can_list=False, can_read=False, can_write=False,
             ))
-            self.sleep(10)
+            # self.sleep(10)
 
-            received_permissions = await client.get_registry_artifact_properties(artifact.digest)
+            # received_permissions = await client.get_registry_artifact_properties(artifact.digest)
 
             assert not received_permissions.content_permissions.can_delete
             assert not received_permissions.content_permissions.can_read
@@ -167,4 +165,4 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         client = self.create_repository_client(containerregistry_baseurl, self.get_resource_name("repo"))
 
         with pytest.raises(ResourceNotFoundError):
-            await client.set_manifest_properties("sha256:abcdef", ContentPermissions(can_delete=False))
+            received_permissions = await client.set_manifest_properties("sha256:abcdef", ContentPermissions(can_delete=False))

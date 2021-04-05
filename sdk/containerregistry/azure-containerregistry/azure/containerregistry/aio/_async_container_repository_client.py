@@ -178,9 +178,10 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: None
         """
-
-        await self._client.container_registry_repository.update_manifest_attributes(
-            self.repository, digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
+        return RegistryArtifactProperties._from_generated(  # pylint: disable=protected-access
+            await self._client.container_registry_repository.update_manifest_attributes(
+                self.repository, digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
+            )
         )
 
     @distributed_trace_async

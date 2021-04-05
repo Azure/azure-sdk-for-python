@@ -188,12 +188,12 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
         for artifact in client.list_registry_artifacts():
             permissions = artifact.content_permissions
 
-            client.set_manifest_properties(artifact.digest, ContentPermissions(
+            received_permissions = client.set_manifest_properties(artifact.digest, ContentPermissions(
                 can_delete=False, can_list=False, can_read=False, can_write=False,
             ))
-            self.sleep(10)
+            # self.sleep(10)
 
-            received_permissions = client.get_registry_artifact_properties(artifact.digest)
+            # received_permissions = client.get_registry_artifact_properties(artifact.digest)
 
             assert not received_permissions.content_permissions.can_delete
             assert not received_permissions.content_permissions.can_read
@@ -208,7 +208,7 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
         client = self.create_repository_client(containerregistry_baseurl, self.get_resource_name("repo"))
 
         with pytest.raises(ResourceNotFoundError):
-            client.set_manifest_properties("sha256:abcdef", ContentPermissions(can_delete=False))
+            received_permissions = client.set_manifest_properties("sha256:abcdef", ContentPermissions(can_delete=False))
 
     @acr_preparer()
     def test_delete_repository(self, containerregistry_baseurl, containerregistry_resource_group):

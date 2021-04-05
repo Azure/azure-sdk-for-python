@@ -175,19 +175,20 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
     @distributed_trace
     def set_manifest_properties(self, digest, permissions, **kwargs):
-        # type: (str, ContentPermissions) -> None
+        # type: (str, ContentPermissions) -> RegistryArtifactProperties
         """Set the properties for a manifest
 
         :param digest: Digest of a manifest
         :type digest: str
         :param permissions: The property's values to be set
         :type permissions: ContentPermissions
-        :returns: None
+        :returns: :class:~azure.containerregistry.RegistryArtifactProperties
         :raises: None
         """
-
-        self._client.container_registry_repository.update_manifest_attributes(
-            self.repository, digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
+        return RegistryArtifactProperties._from_generated(  # pylint: disable=protected-access
+            self._client.container_registry_repository.update_manifest_attributes(
+                self.repository, digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
+            )
         )
 
     @distributed_trace
