@@ -17,7 +17,6 @@ from .._version import SDK_MONIKER
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from .._generated.models import CommunicationTokenScope
-    from .._shared.models import CommunicationIdentifier
 
 
 class CommunicationIdentityClient:
@@ -80,11 +79,11 @@ class CommunicationIdentityClient:
         return cls(endpoint, access_key, **kwargs)
 
     @distributed_trace_async
-    async def create_user(self, **kwargs) -> 'CommunicationIdentifier':
+    async def create_user(self, **kwargs) -> 'CommunicationUserIdentifier':
         """create a single Communication user
 
-        :return: CommunicationIdentifier
-        :rtype: ~azure.communication.identity.CommunicationIdentifier
+        :return: CommunicationUserIdentifier
+        :rtype: ~azure.communication.identity.CommunicationUserIdentifier
         """
         return await self._identity_service_client.communication_identity.create(
             cls=lambda pr, u, e: CommunicationUserIdentifier(u.identity.id, raw_id=u.identity.id),
@@ -95,14 +94,14 @@ class CommunicationIdentityClient:
             self,
             scopes: List[Union[str, 'CommunicationTokenScope']],
             **kwargs
-        ) -> Tuple['CommunicationIdentifier', AccessToken]:
+        ) -> Tuple['CommunicationUserIdentifier', AccessToken]:
         """create a single Communication user with an identity token.
         :param scopes:
             List of scopes to be added to the token.
         :type scopes: list[str or ~azure.communication.identity.CommunicationTokenScope]
-        :return: A tuple of a CommunicationIdentifier and a AccessToken.
+        :return: A tuple of a CommunicationUserIdentifier and a AccessToken.
         :rtype:
-            tuple of (~azure.communication.identity.CommunicationIdentifier, ~azure.core.credentials.AccessToken)
+            tuple of (~azure.communication.identity.CommunicationUserIdentifier, ~azure.core.credentials.AccessToken)
         """
         return await self._identity_service_client.communication_identity.create(
             create_token_with_scopes=scopes,

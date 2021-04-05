@@ -17,7 +17,6 @@ from ._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from ._shared.models import CommunicationIdentifier
     from ._generated.models import CommunicationTokenScope
 
 
@@ -85,11 +84,11 @@ class CommunicationIdentityClient(object):
 
     @distributed_trace
     def create_user(self, **kwargs):
-        # type: (Any) -> CommunicationIdentifier
+        # type: (Any) -> CommunicationUserIdentifier
         """create a single Communication user
 
-        :return: CommunicationIdentifier
-        :rtype: ~azure.communication.identity.CommunicationIdentifier
+        :return: CommunicationUserIdentifier
+        :rtype: ~azure.communication.identity.CommunicationUserIdentifier
         """
         return self._identity_service_client.communication_identity.create(
             cls=lambda pr, u, e: CommunicationUserIdentifier(u.identity.id, raw_id=u.identity.id),
@@ -101,14 +100,14 @@ class CommunicationIdentityClient(object):
             scopes, # type: List[Union[str, CommunicationTokenScope]]
             **kwargs # type: Any
         ):
-        # type: (...) -> Tuple[CommunicationIdentifier, AccessToken]
+        # type: (...) -> Tuple[CommunicationUserIdentifier, AccessToken]
         """Create a single Communication user with an identity token.
 
         :param scopes: List of scopes to be added to the token.
         :type scopes: list[str or ~azure.communication.identity.CommunicationTokenScope]
-        :return: A tuple of a CommunicationIdentifier and a AccessToken.
+        :return: A tuple of a CommunicationUserIdentifier and a AccessToken.
         :rtype:
-            tuple of (~azure.communication.identity.CommunicationIdentifier, ~azure.core.credentials.AccessToken)
+            tuple of (~azure.communication.identity.CommunicationUserIdentifier, ~azure.core.credentials.AccessToken)
         """
         return self._identity_service_client.communication_identity.create(
             cls=lambda pr, u, e: (CommunicationUserIdentifier(u.identity.id, raw_id=u.identity.id),
