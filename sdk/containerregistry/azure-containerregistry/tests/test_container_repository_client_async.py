@@ -111,12 +111,9 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         tag_props = await client.get_tag_properties(tag_identifier)
         permissions = tag_props.content_permissions
 
-        await client.set_tag_properties(tag_identifier, ContentPermissions(
+        received = await client.set_tag_properties(tag_identifier, ContentPermissions(
             can_delete=False, can_list=False, can_read=False, can_write=False,
         ))
-        self.sleep(10)
-
-        received = await client.get_tag_properties(tag_identifier)
 
         assert not received.content_permissions.can_write
         assert not received.content_permissions.can_read
@@ -149,10 +146,6 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
             received_permissions = await client.set_manifest_properties(artifact.digest, ContentPermissions(
                 can_delete=False, can_list=False, can_read=False, can_write=False,
             ))
-            # self.sleep(10)
-
-            # received_permissions = await client.get_registry_artifact_properties(artifact.digest)
-
             assert not received_permissions.content_permissions.can_delete
             assert not received_permissions.content_permissions.can_read
             assert not received_permissions.content_permissions.can_list
@@ -165,4 +158,4 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         client = self.create_repository_client(containerregistry_baseurl, self.get_resource_name("repo"))
 
         with pytest.raises(ResourceNotFoundError):
-            received_permissions = await client.set_manifest_properties("sha256:abcdef", ContentPermissions(can_delete=False))
+            await client.set_manifest_properties("sha256:abcdef", ContentPermissions(can_delete=False))
