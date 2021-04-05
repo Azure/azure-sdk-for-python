@@ -337,8 +337,8 @@ class ServiceBusMessage(
         """
         try:
             return AMQP_MESSAGE_BODY_TYPE_MAP.get(
-                self.message._body.type
-            )  # pylint: disable=protected-access
+                self.message._body.type  # pylint: disable=protected-access
+            )
         except AttributeError:
             return None
 
@@ -1022,8 +1022,8 @@ class AMQPAnnotatedMessage(object):
         rtype: Optional[~azure.servicebus.AMQPMessageBodyType]
         """
         return AMQP_MESSAGE_BODY_TYPE_MAP.get(
-            self._message._body.type
-        )  # pylint: disable=protected-access
+            self._message._body.type  # pylint: disable=protected-access
+        )
 
     @property
     def properties(self):

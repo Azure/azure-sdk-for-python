@@ -400,7 +400,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                     add_link_to_send(batch_message, send_span)
                 obj_message = message  # type: MessageObjTypes
             else:
-                obj_message = create_messages_from_dicts_if_needed(
+                obj_message = create_messages_from_dicts_if_needed(  # type: ignore
                     message, ServiceBusMessage
                 )
                 # Ensure message is sendable (not a ReceivedMessage), and if needed (a list) is batched. Adds tracing.

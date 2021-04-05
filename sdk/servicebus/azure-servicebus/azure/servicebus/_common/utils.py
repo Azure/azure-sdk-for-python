@@ -228,7 +228,7 @@ def _convert_to_single_service_bus_message(message, message_type):
     # type: (SingleMessageType, Type[ServiceBusMessage]) -> ServiceBusMessage
     try:
         # Handle AMQPAnnotatedMessage
-        message = message._to_service_bus_message()  # pylint: disable=protected-access
+        message = message._to_service_bus_message()  # type: ignore  # pylint: disable=protected-access
     except AttributeError:
         pass
 
