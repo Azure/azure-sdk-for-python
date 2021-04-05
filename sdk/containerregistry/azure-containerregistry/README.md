@@ -50,10 +50,6 @@ A **registry** stores Docker images and [OCI Artifacts](https://opencontainers.o
 
 For more information please see [Container Registry Concepts](https://docs.microsoft.com/azure/container-registry/container-registry-concepts).
 
-### Thread safety
-
-We guarantee that all client instance methods are thread-safe and independent of each other ([guideline](https://azure.github.io/azure-sdk/dotnet_introduction.html#dotnet-service-methods-thread-safety)). This ensures that the recommendation of reusing client instances is always safe, even across threads.
-
 
 ## Examples
 
@@ -61,8 +57,25 @@ We guarantee that all client instance methods are thread-safe and independent of
 
 ## Troubleshooting
 
-All container registry service operations will throw a
-[RequestFailedException][RequestFailedException] on failure.
+### General
+Form Recognizer client library will raise exceptions defined in [Azure Core][azure_core_exceptions].
+
+### Logging
+This library uses the standard
+[logging][python_logging] library for logging.
+
+Basic information about HTTP sessions (URLs, headers, etc.) is logged at `INFO` level.
+
+Detailed `DEBUG` level logging, including request/response bodies and **unredacted**
+headers, can be enabled on the client or per-operation with the `logging_enable` keyword argument.
+
+See full SDK logging documentation with examples [here][sdk_logging_docs].
+
+### Optional Configuration
+
+Optional keyword arguments can be passed in at the client and per-operation level.
+The azure-core [reference documentation][azure_core_ref_docs]
+describes available configurations for retries, logging, transport protocols, and more.
 
 ## Next steps
 
@@ -97,9 +110,14 @@ additional questions or comments.
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_sub]: https://azure.microsoft.com/free/
 [identity]: https://github.com/Azure/azure-sdk-for-net/tree/master/sdk/identity/Azure.Identity/README.md
-[RequestFailedException]: https://github.com/Azure/azure-sdk-for-net/tree/master/sdk/core/Azure.Core/src/RequestFailedException.cs
+
 [samples]: https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/containerregistry/Azure.Containers.ContainerRegistry/samples/
 [cla]: https://cla.microsoft.com
 [coc]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
+
+[azure_core_ref_docs]: https://aka.ms/azsdk/python/core/docs
+[azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
+[python_logging]: https://docs.python.org/3/library/logging.html
+[sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
