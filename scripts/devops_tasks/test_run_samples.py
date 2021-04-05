@@ -99,7 +99,9 @@ IGNORED_SAMPLES = {
         "mgmt_subscription_async.py",
         "mgmt_topic_async.py",
         "proxy_async.py",
-        "receive_deferred_message_queue_async.py"
+        "receive_deferred_message_queue_async.py",
+        "authenticate_using_azure_sas_credential_async.py",
+        "authenticate_using_azure_sas_credential.py"
     ]
 }
 

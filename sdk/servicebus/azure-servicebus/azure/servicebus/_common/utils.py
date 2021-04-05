@@ -20,7 +20,8 @@ from typing import (
     Type,
     TYPE_CHECKING,
     Union,
-    cast,
+    Tuple,
+    cast
 )
 from contextlib import contextmanager
 from msrest.serialization import UTC
@@ -61,6 +62,7 @@ if TYPE_CHECKING:
         AMQPAnnotatedMessage,
     )
     from azure.core.tracing import AbstractSpan
+    from azure.core.credentials import AzureSasCredential
     from .receiver_mixins import ReceiverMixin
     from .._servicebus_session import BaseSession
 
@@ -322,6 +324,7 @@ def trace_message(message, parent_span=None):
     except Exception as exp:  # pylint:disable=broad-except
         _log.warning("trace_message had an exception %r", exp)
 
+
 def get_receive_links(messages):
     trace_messages = (
         messages if isinstance(messages, Iterable)  # pylint:disable=isinstance-second-argument-not-valid-type
@@ -345,3 +348,14 @@ def get_receive_links(messages):
     except AttributeError:
         pass
     return links
+
+
+def parse_sas_credential(credential):
+    # type: (AzureSasCredential) -> Tuple
+    sas = credential.signature
+    parsed_sas = sas.split('&')
+    expiry = None
+    for item in parsed_sas:
+        if item.startswith('se='):
+            expiry = int(item[3:])
+    return (sas, expiry)
