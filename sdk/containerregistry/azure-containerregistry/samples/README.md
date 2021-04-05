@@ -11,7 +11,7 @@ urlFragment: containerregistry-samples
 ---
 
 These code samples show common scenario operations with the Azure Container Registry client library.
-The async versions of the samples require Python 3.5 or later.
+The async versions of the samples require Python 3.6 or later.
 
 
 |**File Name**|**Description**|
