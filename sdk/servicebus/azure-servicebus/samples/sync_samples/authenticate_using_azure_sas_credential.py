@@ -31,13 +31,11 @@ def generate_sas_token(uri, sas_name, sas_value, token_ttl):
     return 'SharedAccessSignature sr={}&sig={}&se={}&skn={}'.format(uri, signature, expiry, sas_name)
 
 FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE']
-# SESSION_QUEUE_NAME = os.environ["SERVICE_BUS_SESSION_QUEUE_NAME"]
-# SAS_POLICY = os.environ['SERVICE_BUS_SAS_POLICY']
-SESSION_QUEUE_NAME = "sbsessionqueue"
-SAS_POLICY = "test"
+QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
+SAS_POLICY = os.environ['SERVICE_BUS_SAS_POLICY']
 SERVICEBUS_SAS_KEY = os.environ['SERVICEBUS_SAS_KEY']
 
-auth_uri = "sb://{}/{}".format(FULLY_QUALIFIED_NAMESPACE, SESSION_QUEUE_NAME)
+auth_uri = "sb://{}/{}".format(FULLY_QUALIFIED_NAMESPACE, QUEUE_NAME)
 token_ttl = 3000  # seconds
 
 sas_token = generate_sas_token(auth_uri, SAS_POLICY, SERVICEBUS_SAS_KEY, token_ttl)
@@ -45,5 +43,5 @@ sas_token = generate_sas_token(auth_uri, SAS_POLICY, SERVICEBUS_SAS_KEY, token_t
 credential=AzureSasCredential(sas_token)
 
 with ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential) as client:
-    with client.get_queue_sender(SESSION_QUEUE_NAME) as sender:
+    with client.get_queue_sender(QUEUE_NAME) as sender:
         sender.send_messages([ServiceBusMessage("hello")])
