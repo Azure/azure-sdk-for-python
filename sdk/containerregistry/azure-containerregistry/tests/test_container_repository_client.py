@@ -30,17 +30,16 @@ from preparer import acr_preparer
 class TestContainerRepositoryClient(ContainerRegistryTestClass):
     @acr_preparer()
     def test_delete_tag(self, containerregistry_baseurl, containerregistry_resource_group):
-        self._import_tag_to_be_deleted(
-            containerregistry_baseurl, resource_group=containerregistry_resource_group
-        )
+        repo = self.get_resource_name("repo")
+        self._import_tag_to_be_deleted(containerregistry_baseurl, resource_group=containerregistry_resource_group, repository=repo, tag=TO_BE_DELETED)
 
-        client = self.create_repository_client(containerregistry_baseurl, "hello-world")
+        client = self.create_repository_client(containerregistry_baseurl, repo)
 
         tag = client.get_tag_properties(TO_BE_DELETED)
         assert tag is not None
 
         client.delete_tag(TO_BE_DELETED)
-        self.sleep(10)
+        self.sleep(5)
 
         with pytest.raises(ResourceNotFoundError):
             client.get_tag_properties(TO_BE_DELETED)
@@ -174,10 +173,8 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
     @pytest.mark.live_test_only  # Recordings error, recieves more than 100 headers, not that many present
     @acr_preparer()
-    def test_set_manifest_properties(
-        self, containerregistry_baseurl, containerregistry_resource_group
-    ):
-        repository = self.get_resource_name("repo")
+    def test_set_manifest_properties(self, containerregistry_baseurl, containerregistry_resource_group):
+        repository = self.get_resource_name("repo_set")
         tag_identifier = self.get_resource_name("tag")
         self.import_repo_to_be_deleted(
             containerregistry_baseurl,
