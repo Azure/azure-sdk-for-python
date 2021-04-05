@@ -8,7 +8,7 @@ import os
 from azure.core.exceptions import AzureError
 from .key import Key
 from .algorithms.aes_cbc import Aes256CbcPad, Aes192CbcPad, Aes128CbcPad
-from .algorithms.aes_cbc_hmac import Aes256CbcHmacSha512, Aes192CbcHmacSha384, Aes128CbcHmacSha256
+from .algorithms.aes_cbc_hmac import Aes256CbcHmacSha512, Aes192CbcHmacSha384
 from .algorithms.aes_kw import AesKw256, AesKw192, AesKw128
 
 key_size_128 = 128 >> 3
@@ -73,12 +73,7 @@ class SymmetricKey(Key):
             supported_key_wrap_algorithms.append(AesKw192.name())
         if key_size >= key_size_256:
             supported_encryption_algorithms.append(Aes256CbcPad.name())
-            supported_encryption_algorithms.append(Aes128CbcHmacSha256.name())
             supported_key_wrap_algorithms.append(AesKw256.name())
-        if key_size >= key_size_384:
-            supported_encryption_algorithms.append(Aes192CbcHmacSha384.name())
-        if key_size >= key_size_512:
-            supported_encryption_algorithms.append(Aes256CbcHmacSha512.name())
         self._supported_encryption_algorithms = frozenset(supported_encryption_algorithms)
         self._supported_key_wrap_algorithms = frozenset(supported_key_wrap_algorithms)
 
