@@ -75,18 +75,6 @@ class AuthnClientBase(ABC):
     def auth_url(self):
         return self._auth_url
 
-    def should_refresh(self, token):
-        # type: (AccessToken) -> bool
-        """ check if the token needs refresh or not
-        """
-        expires_on = int(token.expires_on)
-        now = int(time.time())
-        if expires_on - now > self._token_refresh_offset:
-            return False
-        if now - self._last_refresh_time < self._token_refresh_retry_delay:
-            return False
-        return True
-
     def get_cached_token(self, scopes):
         # type: (Iterable[str]) -> Optional[AccessToken]
         tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=list(scopes))

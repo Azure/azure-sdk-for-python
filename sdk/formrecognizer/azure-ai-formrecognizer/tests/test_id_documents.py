@@ -24,7 +24,7 @@ class TestIdDocument(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     def test_id_document_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
-        with open(self.id_document_jpg, "rb") as fd:
+        with open(self.id_document_license_jpg, "rb") as fd:
             myfile = fd.read()
         with self.assertRaises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
@@ -39,7 +39,7 @@ class TestIdDocument(FormRecognizerTest):
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_passing_enum_content_type(self, client):
-        with open(self.id_document_jpg, "rb") as fd:
+        with open(self.id_document_license_jpg, "rb") as fd:
             myfile = fd.read()
         poller = client.begin_recognize_id_documents(
             myfile,
@@ -98,7 +98,7 @@ class TestIdDocument(FormRecognizerTest):
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_passing_bad_content_type_param_passed(self, client):
-        with open(self.id_document_jpg, "rb") as fd:
+        with open(self.id_document_license_jpg, "rb") as fd:
             myfile = fd.read()
         with self.assertRaises(ValueError):
             poller = client.begin_recognize_id_documents(
@@ -134,7 +134,7 @@ class TestIdDocument(FormRecognizerTest):
             responses.append(analyze_result)
             responses.append(extracted_id_document)
 
-        with open(self.id_document_jpg, "rb") as fd:
+        with open(self.id_document_license_jpg, "rb") as fd:
             myfile = fd.read()
 
         poller = client.begin_recognize_id_documents(
@@ -163,8 +163,31 @@ class TestIdDocument(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
+    def test_id_document_jpg_passport(self, client):
+        with open(self.id_document_passport_jpg, "rb") as fd:
+            id_document = fd.read()
+
+        poller = client.begin_recognize_id_documents(id_document)
+
+        result = poller.result()
+        self.assertEqual(len(result), 1)
+    
+        id_document = result[0]
+        # check dict values
+
+        passport = id_document.fields.get("MachineReadableZone").value
+        self.assertEqual(passport["LastName"].value, "MARTIN")
+        self.assertEqual(passport["FirstName"].value, "SARAH")
+        self.assertEqual(passport["DocumentNumber"].value, "ZE000509")
+        self.assertEqual(passport["DateOfBirth"].value, date(1985,1,1))
+        self.assertEqual(passport["DateOfExpiration"].value, date(2023,1,14))
+        self.assertEqual(passport["Sex"].value, "F")
+        self.assertEqual(passport["Country"].value, "CAN")
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
     def test_id_document_jpg(self, client):
-        with open(self.id_document_jpg, "rb") as fd:
+        with open(self.id_document_license_jpg, "rb") as fd:
             id_document = fd.read()
 
         poller = client.begin_recognize_id_documents(id_document)
@@ -187,7 +210,7 @@ class TestIdDocument(FormRecognizerTest):
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_id_document_jpg_include_field_elements(self, client):
-        with open(self.id_document_jpg, "rb") as fd:
+        with open(self.id_document_license_jpg, "rb") as fd:
             id_document = fd.read()
         poller = client.begin_recognize_id_documents(id_document, include_field_elements=True)
 
@@ -210,7 +233,7 @@ class TestIdDocument(FormRecognizerTest):
     @GlobalClientPreparer()
     @pytest.mark.live_test_only
     def test_id_document_continuation_token(self, client):
-        with open(self.id_document_jpg, "rb") as fd:
+        with open(self.id_document_license_jpg, "rb") as fd:
             id_document = fd.read()
 
         initial_poller = client.begin_recognize_id_documents(id_document)
@@ -223,7 +246,7 @@ class TestIdDocument(FormRecognizerTest):
     @FormRecognizerPreparer()
     @GlobalClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     def test_id_document_v2(self, client):
-        with open(self.id_document_jpg, "rb") as fd:
+        with open(self.id_document_license_jpg, "rb") as fd:
             id_document = fd.read()
         with pytest.raises(ValueError) as e:
             client.begin_recognize_id_documents(id_document)
@@ -232,7 +255,7 @@ class TestIdDocument(FormRecognizerTest):
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_pages_kwarg_specified(self, client):
-        with open(self.id_document_jpg, "rb") as fd:
+        with open(self.id_document_license_jpg, "rb") as fd:
             id_document = fd.read()
         poller = client.begin_recognize_id_documents(id_document, pages=["1"])
         assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']

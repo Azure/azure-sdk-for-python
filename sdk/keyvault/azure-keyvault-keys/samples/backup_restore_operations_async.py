@@ -26,7 +26,9 @@ from azure.core.exceptions import HttpResponseError
 #
 # 3. Delete a key (delete_key)
 #
-# 4. Restore a key (restore_key_backup)
+# 4. Purge a key (purge_deleted_key)
+#
+# 5. Restore a key (restore_key_backup)
 # ----------------------------------------------------------------------------------------------------------
 async def run_sample():
     # Instantiate a key client that will be used to call the service.
@@ -51,12 +53,19 @@ async def run_sample():
 
         # The rsa key is no longer in use, so you delete it.
         deleted_key = await client.delete_key(key.name)
-        print("Deleted Key with name '{0}'".format(deleted_key.name))
+        print("Deleted key with name '{0}'".format(deleted_key.name))
 
-        # In future, if the key is required again, we can use the backup value to restore it in the Key Vault.
+        # Purge the deleted key.
+        # The purge will take some time, so wait before restoring the backup to avoid a conflict.
+        print("\n.. Purge the key")
+        await client.purge_deleted_key(key.name)
+        await asyncio.sleep(60)
+        print("Purged key with name '{0}'".format(deleted_key.name))
+
+        # In the future, if the key is required again, we can use the backup value to restore it in the Key Vault.
         print("\n.. Restore the key using the backed up key bytes")
         key = await client.restore_key_backup(key_backup)
-        print("Restored Key with name '{0}'".format(key.name))
+        print("Restored key with name '{0}'".format(key.name))
 
     except HttpResponseError as e:
         print("\nrun_sample has caught an error. {0}".format(e.message))

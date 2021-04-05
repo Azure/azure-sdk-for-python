@@ -29,6 +29,7 @@ USAGE:
 
 def sample_translation():
     import os
+    # [START wait_until_done]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation import (
         DocumentTranslationClient,
@@ -66,17 +67,20 @@ def sample_translation():
     print("\nOf total documents...")
     print("{} failed".format(job_result.documents_failed_count))
     print("{} succeeded".format(job_result.documents_succeeded_count))
+    # [END wait_until_done]
 
+    # [START list_all_document_statuses]
     doc_results = client.list_all_document_statuses(job_result.id)  # type: ItemPaged[DocumentStatusResult]
     for document in doc_results:
         print("Document ID: {}".format(document.id))
         print("Document status: {}".format(document.status))
         if document.status == "Succeeded":
-            print("Document location: {}".format(document.translated_document_url))
+            print("Source document location: {}".format(document.source_document_url))
+            print("Translated document location: {}".format(document.translated_document_url))
             print("Translated to language: {}\n".format(document.translate_to))
         else:
             print("Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
-
+    # [END list_all_document_statuses]
 
 if __name__ == '__main__':
     sample_translation()

@@ -25,6 +25,7 @@ USAGE:
 
 def sample_list_all_submitted_jobs():
     import os
+    # [START list_all_jobs]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation import (
         DocumentTranslationClient,
@@ -51,6 +52,8 @@ def sample_list_all_submitted_jobs():
         print("{} failed".format(job.documents_failed_count))
         print("{} succeeded".format(job.documents_succeeded_count))
         print("{} cancelled\n".format(job.documents_cancelled_count))
+
+    # [END list_all_jobs]
 
 
 if __name__ == '__main__':
