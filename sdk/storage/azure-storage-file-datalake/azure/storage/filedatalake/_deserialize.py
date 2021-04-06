@@ -59,7 +59,7 @@ def get_deleted_path_properties_from_generated_code(generated):
 
 
 def is_file_path(_, __, headers):
-    if headers['x-ms-client-request-id'] == "file":
+    if headers['x-ms-resource-type'] == "file":
         return True
     return False
 

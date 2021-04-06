@@ -577,7 +577,7 @@ class FileSystemTest(StorageTestCase):
     def test_undelete_dir_with_version_id(self):
         if not self.is_playback():
             return
-        file_system_client = self.dsc.get_file_system_client('testrestore')
+        file_system_client = self._create_file_system("fs")
         dir_path = 'dir10'
         dir_client = file_system_client.create_directory(dir_path)
         resp = dir_client.delete_directory()
@@ -591,7 +591,7 @@ class FileSystemTest(StorageTestCase):
     def test_undelete_file_with_version_id(self):
         if not self.is_playback():
             return
-        file_system_client = self.dsc.get_file_system_client('testrestore')
+        file_system_client = self._create_file_system("fs1")
         file_path = 'dir10/fileŇ'
         dir_client = file_system_client.create_file(file_path)
         resp = dir_client.delete_file()
