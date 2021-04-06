@@ -483,4 +483,4 @@ with ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR) as client:
 
 ## Additional samples
 
-More examples can be found at [Samples for azure-servicebus](https://github.com/Azure/azure-sdk-for-python/tree/tree/feature/servicebus/7.2.0b1/sdk/servicebus/azure-servicebus/samples)
+More examples can be found at [Samples for azure-servicebus](https://github.com/Azure/azure-sdk-for-python/tree/feature/servicebus/7.2.0b1/sdk/servicebus/azure-servicebus/samples)
