@@ -96,13 +96,14 @@ class ModelsRepositoryClient(object):
         # NOTE: depending on how this class develops over time, may need to adjust relationship
         # between some of these objects
         self.fetcher = _create_fetcher(
-            location=repository_location, api_version=api_version, **kwargs
+            location=repository_location, **kwargs
         )
         self.resolver = _resolver.DtmiResolver(self.fetcher)
         self._psuedo_parser = _pseudo_parser.PseudoParser(self.resolver)
 
         # Store api version here (for now). Currently doesn't do anything
         self._api_version = kwargs.get("api_version", _constants.DEFAULT_API_VERSION)
+
 
     @distributed_trace
     def get_models(self, dtmis, dependency_resolution=None):

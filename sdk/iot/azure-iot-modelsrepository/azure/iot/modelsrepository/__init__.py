@@ -5,10 +5,10 @@
 # --------------------------------------------------------------------------
 
 # Main Client
-from .client import ModelsRepositoryClient
+from ._client import ModelsRepositoryClient
 
 # Constants
-from .client import (
+from ._client import (
     DEPENDENCY_MODE_DISABLED,
     DEPENDENCY_MODE_ENABLED,
     DEPENDENCY_MODE_TRY_FROM_EXPANDED,
