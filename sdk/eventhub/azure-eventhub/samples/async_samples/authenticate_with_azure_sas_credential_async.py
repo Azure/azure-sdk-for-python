@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Example to demonstrate utilizing azure.core.credentials.AzureSasCredential to authenticate with EventHub
+Example to demonstrate utilizing azure.core.credentials.AzureSasCredential to authenticate with Event Hubs.
 """
 
 # pylint: disable=C0111
@@ -22,7 +22,7 @@ try:
 except ImportError:
     from urllib import pathname2url as url_parse_quote
 
-from azure.core.credentials import AccessToken, AzureSasCredential
+from azure.core.credentials import AzureSasCredential
 from azure.eventhub.aio import EventHubProducerClient
 from azure.eventhub import EventData
 
@@ -39,11 +39,11 @@ def generate_sas_token(uri, sas_name, sas_value, token_ttl):
 # Target namespace and hub must also be specified.  Consumer group is set to default unless required otherwise.
 FULLY_QUALIFIED_NAMESPACE = os.environ['EVENT_HUB_HOSTNAME']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
-CONSUMER_GROUP = "$Default"
 
 # The following part creates a SAS token. A SAS token is typically given to you after being created.
 SAS_POLICY = os.environ['EVENT_HUB_SAS_POLICY']
 SAS_KEY = os.environ['EVENT_HUB_SAS_KEY']
+
 
 async def create_with_sas_token():
     uri = "sb://{}/{}".format(FULLY_QUALIFIED_NAMESPACE, EVENTHUB_NAME)
