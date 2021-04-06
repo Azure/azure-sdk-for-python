@@ -64,7 +64,7 @@ class ChatClientSamples(object):
 
         from azure.communication.chat import(
             ChatClient,
-            ChatThreadParticipant,
+            ChatParticipant,
             CommunicationTokenCredential
         )
 
@@ -72,7 +72,7 @@ class ChatClientSamples(object):
         chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
 
         topic = "test topic"
-        participants = [ChatThreadParticipant(
+        participants = [ChatParticipant(
             user=user,
             display_name='name',
             share_history_time=datetime.utcnow()

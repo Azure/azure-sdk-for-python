@@ -26,7 +26,7 @@ from ._generated.models import (
     SendChatMessageResult
 )
 from ._models import (
-    ChatThreadParticipant,
+    ChatParticipant,
     ChatMessage,
     ChatMessageReadReceipt,
     ChatThreadProperties
@@ -464,13 +464,13 @@ class ChatThreadClient(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> ItemPaged[ChatThreadParticipant]
+        # type: (...) -> ItemPaged[ChatParticipant]
         """Gets the participants of a thread.
 
         :keyword int results_per_page: The maximum number of participants to be returned per page.
         :keyword int skip: Skips participants up to a specified position in response.
-        :return: An iterator like instance of ChatThreadParticipant
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.chat.ChatThreadParticipant]
+        :return: An iterator like instance of ChatParticipant
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.chat.ChatParticipant]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -490,17 +490,17 @@ class ChatThreadClient(object):
             self._thread_id,
             max_page_size=results_per_page,
             skip=skip,
-            cls=lambda objs: [ChatThreadParticipant._from_generated(x) for x in objs],  # pylint:disable=protected-access
+            cls=lambda objs: [ChatParticipant._from_generated(x) for x in objs],  # pylint:disable=protected-access
             **kwargs)
 
 
     @distributed_trace
     def add_participants(
         self,
-        thread_participants,  # type: List[ChatThreadParticipant]
+        thread_participants,  # type: List[ChatParticipant]
         **kwargs  # type: Any
     ):
-        # type: (...) -> List[Tuple[ChatThreadParticipant, ChatError]]
+        # type: (...) -> List[Tuple[ChatParticipant, ChatError]]
         """Adds thread participants to a thread. If participants already exist, no change occurs.
 
         If all participants are added successfully, then an empty list is returned;
@@ -508,9 +508,9 @@ class ChatThreadClient(object):
         of failed participants and its respective error
 
         :param thread_participants: Thread participants to be added to the thread.
-        :type thread_participants: List[~azure.communication.chat.ChatThreadParticipant]
-        :return: List[Tuple[ChatThreadParticipant, ChatError]]
-        :rtype: List[Tuple[~azure.communication.chat.ChatThreadParticipant, ~azure.communication.chat.ChatError]]
+        :type thread_participants: List[~azure.communication.chat.ChatParticipant]
+        :return: List[Tuple[ChatParticipant, ChatError]]
+        :rtype: List[Tuple[~azure.communication.chat.ChatParticipant, ~azure.communication.chat.ChatError]]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:

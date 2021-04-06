@@ -11,6 +11,7 @@
 - Changed return type of `send_message` to `SendChatMessageResult`.
 - Replaced `CommunicationError` with `ChatError`.
 - Refactored `CommunicationTokenCredential` constructor to accept `token` instead of `CommunicationTokenRefreshOptions`.
+- Renamed `ChatThreadParticipant` to `ChatParticipant`.
 
 ## 1.0.0b5 (2021-03-09)
 ### Breaking Changes

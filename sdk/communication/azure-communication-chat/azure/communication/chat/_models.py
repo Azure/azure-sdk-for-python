@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
 
 
-class ChatThreadParticipant(object):
+class ChatParticipant(object):
     """A participant of the chat thread.
 
     All required parameters must be populated in order to send to Azure.
@@ -144,7 +144,7 @@ class ChatMessageContent(object):
     :type topic: str
     :ivar participants: Chat message content for messages of types participantAdded or
      participantRemoved.
-    :type participants: List[~azure.communication.chat.models.ChatThreadParticipant]
+    :type participants: List[~azure.communication.chat.models.ChatParticipant]
     :ivar initiator: Chat message content for messages of types participantAdded or
      participantRemoved.
     :type initiator: CommunicationIdentifier
@@ -166,7 +166,7 @@ class ChatMessageContent(object):
         participants_list = chat_message_content.participants
         if participants_list is not None and len(participants_list) > 0:
             participants = [
-                ChatThreadParticipant._from_generated(participant) for participant in  # pylint:disable=protected-access
+                ChatParticipant._from_generated(participant) for participant in  # pylint:disable=protected-access
                 participants_list
             ]
         else:
@@ -270,7 +270,7 @@ class CreateChatThreadResult(object):
     :ivar chat_thread: Chat thread.
     :type chat_thread: ~azure.communication.chat.ChatThreadProperties
     :ivar errors: Errors encountered during the creation of the chat thread.
-    :type errors: List[Tuple[~azure.communication.chat.ChatThreadParticipant, ~azure.communication.chat.ChatError]]
+    :type errors: List[Tuple[~azure.communication.chat.ChatParticipant, ~azure.communication.chat.ChatError]]
     """
 
     def __init__(

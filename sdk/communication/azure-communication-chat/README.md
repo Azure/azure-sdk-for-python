@@ -171,7 +171,7 @@ The following sections provide several code snippets covering some of the most c
 Use the `create_chat_thread` method to create a chat thread.
 
 - Use `topic`, required, to give a thread topic;
-- Use `thread_participants`, optional, to provide a list the `ChatThreadParticipant` to be added to the thread;
+- Use `thread_participants`, optional, to provide a list the `ChatParticipant` to be added to the thread;
     - `user`, required, it is the `CommunicationUserIdentifier` you created by CommunicationIdentityClient.create_user()
       from User Access Tokens
     <!-- [User Access Tokens](#user-access-tokens) -->
@@ -194,7 +194,7 @@ chat_thread_client = chat_client.get_chat_thread_client(create_chat_thread_resul
 ```Python
 # With idempotency_token and thread_participants
 from azure.communication.identity import CommunicationIdentityClient
-from azure.communication.chat import ChatThreadParticipant, ChatClient, CommunicationTokenCredential
+from azure.communication.chat import ChatParticipant, ChatClient, CommunicationTokenCredential
 import uuid
 from datetime import datetime
 
@@ -221,7 +221,7 @@ def get_unique_identifier_for_request(**kwargs):
     return res
 
 topic = "test topic"
-thread_participants = [ChatThreadParticipant(
+thread_participants = [ChatParticipant(
     user=user,
     display_name='name',
     share_history_time=datetime.utcnow()
@@ -408,32 +408,32 @@ Use `list_participants` to retrieve the participants of the thread.
 - Use `results_per_page`, optional, The maximum number of participants to be returned per page.
 - Use `skip`, optional, to skips participants up to a specified position in response.
 
-An iterator of `[ChatThreadParticipant]` is the response returned from listing participants
+An iterator of `[ChatParticipant]` is the response returned from listing participants
 
 ```python
-chat_thread_participants = chat_thread_client.list_participants(results_per_page=5, skip=5)
-for chat_thread_participant_page in chat_thread_participants.by_page():
-    for chat_thread_participant in chat_thread_participant_page:
-        print("ChatThreadParticipant: ", chat_thread_participant)
+chat_participants = chat_thread_client.list_participants(results_per_page=5, skip=5)
+for chat_participant_page in chat_participants.by_page():
+    for chat_participant in chat_participant_page:
+        print("ChatParticipant: ", chat_participant)
 ```
 
 ### Add thread participants
 
 Use `add_participants` method to add thread participants to the thread.
 
-- Use `thread_participants`, required, to list the `ChatThreadParticipant` to be added to the thread;
+- Use `thread_participants`, required, to list the `ChatParticipant` to be added to the thread;
   - `user`, required, it is the `CommunicationUserIdentifier` you created by CommunicationIdentityClient.create_user() from User Access Tokens
   <!-- [User Access Tokens](#user-access-tokens) -->
   - `display_name`, optional, is the display name for the thread participant.
   - `share_history_time`, optional, time from which the chat history is shared with the participant.
 
-A `list(tuple(ChatThreadParticipant, ChatError))` is returned. When participant is successfully added,
+A `list(tuple(ChatParticipant, ChatError))` is returned. When participant is successfully added,
 an empty list is expected. In case of an error encountered while adding participant, the list is populated
 with the failed participants along with the error that was encountered.
 
 ```Python
 from azure.communication.identity import CommunicationIdentityClient
-from azure.communication.chat import ChatThreadParticipant
+from azure.communication.chat import ChatParticipant
 from datetime import datetime
 
 # create 2 users
@@ -446,19 +446,19 @@ new_users = [identity_client.create_user() for i in range(2)]
 # user_id = 'some user id'
 # user_display_name = "Wilma Flinstone"
 # new_user = CommunicationUserIdentifier(user_id)
-# participant = ChatThreadParticipant(
+# participant = ChatParticipant(
 #     user=new_user,
 #     display_name=user_display_name,
 #     share_history_time=datetime.utcnow())
 
 participants = []
 for _user in new_users:
-  chat_thread_participant = ChatThreadParticipant(
+  chat_participant = ChatParticipant(
     user=_user,
     display_name='Fred Flinstone',
     share_history_time=datetime.utcnow()
   ) 
-  participants.append(chat_thread_participant) 
+  participants.append(chat_participant) 
 
 response = chat_thread_client.add_participants(thread_participants=participants)
 

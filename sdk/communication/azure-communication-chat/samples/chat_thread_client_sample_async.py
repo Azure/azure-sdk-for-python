@@ -57,14 +57,14 @@ class ChatThreadClientSamplesAsync(object):
         # [START create_chat_thread_client]
         from datetime import datetime
         from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential
-        from azure.communication.chat import ChatThreadParticipant
+        from azure.communication.chat import ChatParticipant
         from azure.communication.identity import CommunicationUserIdentifier
         # set `endpoint` to an existing ACS endpoint
         chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
 
         async with chat_client:
             topic = "test topic"
-            participants = [ChatThreadParticipant(
+            participants = [ChatParticipant(
                 user=user,
                 display_name='name',
                 share_history_time=datetime.utcnow()
@@ -268,7 +268,7 @@ class ChatThreadClientSamplesAsync(object):
                 print("list_participants succeeded, participants:")
                 async for chat_thread_participant_page in chat_thread_participants.by_page():
                     async for chat_thread_participant in chat_thread_participant_page:
-                        print("ChatThreadParticipant: ", chat_thread_participant)
+                        print("ChatParticipant: ", chat_thread_participant)
         # [END list_participants]
         print("list_participants_async succeeded")
 
@@ -289,9 +289,9 @@ class ChatThreadClientSamplesAsync(object):
             # set `thread_id` to an existing thread id
             chat_thread_client = chat_client.get_chat_thread_client(thread_id=thread_id)
             async with chat_thread_client:
-                from azure.communication.chat import ChatThreadParticipant
+                from azure.communication.chat import ChatParticipant
                 from datetime import datetime
-                new_participant = ChatThreadParticipant(
+                new_participant = ChatParticipant(
                         user=self.new_user,
                         display_name='name',
                         share_history_time=datetime.utcnow())
@@ -311,7 +311,7 @@ class ChatThreadClientSamplesAsync(object):
         chat_client = self._chat_client
         identity_client = self.identity_client
 
-        from azure.communication.chat import ChatThreadParticipant, CommunicationUserIdentifier
+        from azure.communication.chat import ChatParticipant, CommunicationUserIdentifier
 
         from datetime import datetime
 
@@ -325,12 +325,12 @@ class ChatThreadClientSamplesAsync(object):
 
             async with chat_thread_client:
                 # add user1 and user2 to chat thread
-                participant1 = ChatThreadParticipant(
+                participant1 = ChatParticipant(
                     user=user1,
                     display_name='Fred Flinstone',
                     share_history_time=datetime.utcnow())
 
-                participant2 = ChatThreadParticipant(
+                participant2 = ChatParticipant(
                     user=user2,
                     display_name='Wilma Flinstone',
                     share_history_time=datetime.utcnow())
@@ -343,7 +343,7 @@ class ChatThreadClientSamplesAsync(object):
 
                 async for chat_thread_participant_page in chat_thread_participants.by_page():
                     async for chat_thread_participant in chat_thread_participant_page:
-                        print("ChatThreadParticipant: ", chat_thread_participant)
+                        print("ChatParticipant: ", chat_thread_participant)
                         if chat_thread_participant.user.properties['id'] == user1.properties['id']:
                             print("Found Fred!")
                             await chat_thread_client.remove_participant(chat_thread_participant.user)
