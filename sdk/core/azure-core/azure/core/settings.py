@@ -33,6 +33,7 @@ import os
 import sys
 import six
 from azure.core.tracing import AbstractSpan
+import azure.core.clouds
 
 try:
     from typing import Type, Optional, Dict, Callable, cast, TYPE_CHECKING
@@ -429,6 +430,14 @@ class Settings(object):
         "tracing_implementation", env_var="AZURE_SDK_TRACING_IMPLEMENTATION", convert=convert_tracing_impl, default=None
     )
 
+    cloud_configuration = PrioritizedSetting(
+        "cloud_configuration", 
+        env_var='AZURE_CLOUD', 
+        convert=(lambda name_or_definition: azure.core.clouds.well_known[name_or_definition] 
+            if isinstance(name_or_definition, str)
+            else azure.core.clouds.CloudConfig(name_or_definition)),
+        default='AzureCloud'
+    )
 
 settings = Settings()
 """The settings unique instance.
