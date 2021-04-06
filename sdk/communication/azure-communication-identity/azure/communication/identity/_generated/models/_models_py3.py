@@ -28,8 +28,8 @@ class CommunicationError(msrest.serialization.Model):
     :vartype target: str
     :ivar details: Further details about specific errors that led to this error.
     :vartype details: list[~azure.communication.identity.models.CommunicationError]
-    :param inner_error: The Communication Services error.
-    :type inner_error: ~azure.communication.identity.models.CommunicationError
+    :ivar inner_error: The inner error if any.
+    :vartype inner_error: ~azure.communication.identity.models.CommunicationError
     """
 
     _validation = {
@@ -37,6 +37,7 @@ class CommunicationError(msrest.serialization.Model):
         'message': {'required': True},
         'target': {'readonly': True},
         'details': {'readonly': True},
+        'inner_error': {'readonly': True},
     }
 
     _attribute_map = {
@@ -44,7 +45,7 @@ class CommunicationError(msrest.serialization.Model):
         'message': {'key': 'message', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
         'details': {'key': 'details', 'type': '[CommunicationError]'},
-        'inner_error': {'key': 'innerError', 'type': 'CommunicationError'},
+        'inner_error': {'key': 'innererror', 'type': 'CommunicationError'},
     }
 
     def __init__(
@@ -52,7 +53,6 @@ class CommunicationError(msrest.serialization.Model):
         *,
         code: str,
         message: str,
-        inner_error: Optional["CommunicationError"] = None,
         **kwargs
     ):
         super(CommunicationError, self).__init__(**kwargs)
@@ -60,7 +60,7 @@ class CommunicationError(msrest.serialization.Model):
         self.message = message
         self.target = None
         self.details = None
-        self.inner_error = inner_error
+        self.inner_error = None
 
 
 class CommunicationErrorResponse(msrest.serialization.Model):

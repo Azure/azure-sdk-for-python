@@ -98,7 +98,7 @@ class ChatOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         if repeatability_request_id is not None:
-            header_parameters['repeatability-Request-Id'] = self._serialize.header("repeatability_request_id", repeatability_request_id, 'str')
+            header_parameters['repeatability-request-id'] = self._serialize.header("repeatability_request_id", repeatability_request_id, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 

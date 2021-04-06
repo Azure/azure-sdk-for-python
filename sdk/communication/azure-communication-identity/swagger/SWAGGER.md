@@ -15,7 +15,8 @@ autorest ./SWAGGER.md
 
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/5b19c6e69cd2bb9dbe4e5c1237b2c5a175d90ca5/specification/communication/data-plane/Microsoft.CommunicationServicesIdentity/stable/2021-03-07/CommunicationIdentity.json
+tag: package-2021-03-07
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/bf081421869ccd31d9fd87084b07a1e246aee310/specification/communication/data-plane/Microsoft.CommunicationServicesIdentity/readme.md
 output-folder: ../azure/communication/identity/_generated/
 namespace: azure.communication.identity
 license-header: MICROSOFT_MIT_NO_VERSION
@@ -24,6 +25,7 @@ no-namespace-folders: true
 clear-output-folder: true
 v3: true
 python: true
+title: Communication Identity Client
 ```
 
 ### Rename CommunicationIdentityTokenScope to CommunicationTokenScope

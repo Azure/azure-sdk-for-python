@@ -14,8 +14,10 @@ autorest SWAGGER.md
 ```
 
 ### Settings
-``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/specification/communication/data-plane/Microsoft.CommunicationServicesChat/stable/2021-03-07/communicationserviceschat.json
+
+```yaml
+tag: package-chat-2021-03-07
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/bf081421869ccd31d9fd87084b07a1e246aee310/specification/communication/data-plane/Microsoft.CommunicationServicesChat/readme.md
 output-folder: ../azure/communication/chat/_generated
 namespace: azure.communication.chat
 no-namespace-folders: true
@@ -26,13 +28,15 @@ python: true
 v3: true
 no-async: false
 add-credential: false
+title: Azure Communication Chat Service
+disable-async-iterators: true
 ```
 
 ### Rename CommunicationError to ChatError
 ```yaml
 directive:
-    from: swagger-document
-    where: '$.definitions.CommunicationError'
-    transform: >
-        $["x-ms-client-name"] = "ChatError";
+  from: swagger-document
+  where: '$.definitions.CommunicationError'
+  transform: >
+    $["x-ms-client-name"] = "ChatError";
 ```
