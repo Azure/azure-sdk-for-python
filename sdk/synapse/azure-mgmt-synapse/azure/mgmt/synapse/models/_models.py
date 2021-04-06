@@ -645,7 +645,41 @@ class DataLakeStorageAccountDetails(msrest.serialization.Model):
         self.filesystem = kwargs.get('filesystem', None)
 
 
-class DataMaskingPolicy(Resource):
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class DataMaskingPolicy(ProxyResource):
     """DataMaskingPolicy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -716,7 +750,7 @@ class DataMaskingPolicy(Resource):
         self.masking_level = None
 
 
-class DataMaskingRule(Resource):
+class DataMaskingRule(ProxyResource):
     """Represents a Sql pool data masking rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -838,7 +872,7 @@ class DataMaskingRuleListResult(msrest.serialization.Model):
         self.value = kwargs.get('value', None)
 
 
-class DataWarehouseUserActivities(Resource):
+class DataWarehouseUserActivities(ProxyResource):
     """User activities of a data warehouse.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -925,7 +959,7 @@ class EncryptionDetails(msrest.serialization.Model):
         self.cmk = kwargs.get('cmk', None)
 
 
-class EncryptionProtector(Resource):
+class EncryptionProtector(ProxyResource):
     """The server encryption protector.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1177,7 +1211,7 @@ class ErrorResponse(msrest.serialization.Model):
         self.error = kwargs.get('error', None)
 
 
-class ExtendedServerBlobAuditingPolicy(Resource):
+class ExtendedServerBlobAuditingPolicy(ProxyResource):
     """An extended server blob auditing policy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1385,7 +1419,7 @@ class ExtendedServerBlobAuditingPolicyListResult(msrest.serialization.Model):
         self.next_link = None
 
 
-class ExtendedSqlPoolBlobAuditingPolicy(Resource):
+class ExtendedSqlPoolBlobAuditingPolicy(ProxyResource):
     """An extended Sql pool blob auditing policy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1593,7 +1627,7 @@ class ExtendedSqlPoolBlobAuditingPolicyListResult(msrest.serialization.Model):
         self.next_link = None
 
 
-class GeoBackupPolicy(Resource):
+class GeoBackupPolicy(ProxyResource):
     """A database geo backup policy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2116,7 +2150,45 @@ class IntegrationRuntimeRegenerateKeyParameters(msrest.serialization.Model):
         self.key_name = kwargs.get('key_name', None)
 
 
-class IntegrationRuntimeResource(AzureEntityResource):
+class SubResource(AzureEntityResource):
+    """Azure Synapse nested resource, which belongs to a workspace.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SubResource, self).__init__(**kwargs)
+
+
+class IntegrationRuntimeResource(SubResource):
     """Integration runtime resource type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2372,7 +2444,7 @@ class IntegrationRuntimeVNetProperties(msrest.serialization.Model):
         self.public_i_ps = kwargs.get('public_i_ps', None)
 
 
-class IpFirewallRuleInfo(Resource):
+class IpFirewallRuleInfo(ProxyResource):
     """IP firewall rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2479,7 +2551,7 @@ class IpFirewallRuleProperties(msrest.serialization.Model):
         self.start_ip_address = kwargs.get('start_ip_address', None)
 
 
-class Key(Resource):
+class Key(ProxyResource):
     """A workspace key.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2657,7 +2729,7 @@ class LibraryRequirements(msrest.serialization.Model):
         self.filename = kwargs.get('filename', None)
 
 
-class LibraryResource(AzureEntityResource):
+class LibraryResource(SubResource):
     """Library response details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2898,7 +2970,7 @@ class ListSqlPoolSecurityAlertPolicies(msrest.serialization.Model):
         self.next_link = None
 
 
-class MaintenanceWindowOptions(Resource):
+class MaintenanceWindowOptions(ProxyResource):
     """Maintenance window options.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2962,7 +3034,7 @@ class MaintenanceWindowOptions(Resource):
         self.allow_multiple_maintenance_windows_per_cycle = kwargs.get('allow_multiple_maintenance_windows_per_cycle', None)
 
 
-class MaintenanceWindows(Resource):
+class MaintenanceWindows(ProxyResource):
     """Maintenance windows.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3063,7 +3135,7 @@ class ManagedIdentity(msrest.serialization.Model):
         self.type = kwargs.get('type', None)
 
 
-class ManagedIdentitySqlControlSettingsModel(Resource):
+class ManagedIdentitySqlControlSettingsModel(ProxyResource):
     """Sql Control Settings for workspace managed identity.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3413,7 +3485,7 @@ class ManagedVirtualNetworkSettings(msrest.serialization.Model):
         self.allowed_aad_tenant_ids_for_linking = kwargs.get('allowed_aad_tenant_ids_for_linking', None)
 
 
-class MetadataSyncConfig(Resource):
+class MetadataSyncConfig(ProxyResource):
     """Configuration for metadata sync.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3453,26 +3525,6 @@ class MetadataSyncConfig(Resource):
         super(MetadataSyncConfig, self).__init__(**kwargs)
         self.enabled = kwargs.get('enabled', None)
         self.sync_interval_in_minutes = kwargs.get('sync_interval_in_minutes', None)
-
-
-class NetworkSettings(msrest.serialization.Model):
-    """Network Settings.
-
-    :param public_network_access: Enable or Disable pubic network access to workspace. Possible
-     values include: "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.synapse.models.WorkspacePublicNetworkAccess
-    """
-
-    _attribute_map = {
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(NetworkSettings, self).__init__(**kwargs)
-        self.public_network_access = kwargs.get('public_network_access', None)
 
 
 class OperationMetaLogSpecification(msrest.serialization.Model):
@@ -3685,7 +3737,7 @@ class PrivateEndpoint(msrest.serialization.Model):
         self.id = None
 
 
-class PrivateEndpointConnection(Resource):
+class PrivateEndpointConnection(ProxyResource):
     """A private endpoint connection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4009,7 +4061,7 @@ class PrivateLinkHubPatchInfo(msrest.serialization.Model):
         self.tags = kwargs.get('tags', None)
 
 
-class PrivateLinkResource(Resource):
+class PrivateLinkResource(ProxyResource):
     """A private link resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4146,40 +4198,6 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
         self.actions_required = None
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
-
-
 class PurviewConfiguration(msrest.serialization.Model):
     """Purview Configuration.
 
@@ -4305,7 +4323,7 @@ class QueryStatistic(msrest.serialization.Model):
         self.intervals = None
 
 
-class RecommendedSensitivityLabelUpdate(Resource):
+class RecommendedSensitivityLabelUpdate(ProxyResource):
     """A recommended sensitivity label update operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4374,7 +4392,7 @@ class RecommendedSensitivityLabelUpdateList(msrest.serialization.Model):
         self.operations = kwargs.get('operations', None)
 
 
-class RecoverableSqlPool(Resource):
+class RecoverableSqlPool(ProxyResource):
     """A recoverable sql pool.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4497,7 +4515,7 @@ class ReplaceAllIpFirewallRulesRequest(msrest.serialization.Model):
         self.ip_firewall_rules = kwargs.get('ip_firewall_rules', None)
 
 
-class ReplicationLink(Resource):
+class ReplicationLink(ProxyResource):
     """Represents a Sql pool replication link.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4644,7 +4662,7 @@ class ResourceMoveDefinition(msrest.serialization.Model):
         self.id = kwargs['id']
 
 
-class RestorableDroppedSqlPool(Resource):
+class RestorableDroppedSqlPool(ProxyResource):
     """A restorable dropped Sql pool.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4748,7 +4766,7 @@ class RestorableDroppedSqlPoolListResult(msrest.serialization.Model):
         self.value = kwargs['value']
 
 
-class RestorePoint(Resource):
+class RestorePoint(ProxyResource):
     """Database restore points.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5192,7 +5210,7 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         self.auto_update_eta = None
 
 
-class SensitivityLabel(Resource):
+class SensitivityLabel(ProxyResource):
     """A sensitivity label.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5303,7 +5321,7 @@ class SensitivityLabelListResult(msrest.serialization.Model):
         self.next_link = None
 
 
-class SensitivityLabelUpdate(Resource):
+class SensitivityLabelUpdate(ProxyResource):
     """A sensitivity label update operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5376,7 +5394,7 @@ class SensitivityLabelUpdateList(msrest.serialization.Model):
         self.operations = kwargs.get('operations', None)
 
 
-class ServerBlobAuditingPolicy(Resource):
+class ServerBlobAuditingPolicy(ProxyResource):
     """A server blob auditing policy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5580,7 +5598,7 @@ class ServerBlobAuditingPolicyListResult(msrest.serialization.Model):
         self.next_link = None
 
 
-class ServerSecurityAlertPolicy(Resource):
+class ServerSecurityAlertPolicy(ProxyResource):
     """Workspace managed Sql server security alert policy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5770,7 +5788,7 @@ class ServerUsageListResult(msrest.serialization.Model):
         self.next_link = None
 
 
-class ServerVulnerabilityAssessment(Resource):
+class ServerVulnerabilityAssessment(ProxyResource):
     """A server vulnerability assessment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5972,7 +5990,7 @@ class SqlPool(TrackedResource):
         self.storage_account_type = kwargs.get('storage_account_type', None)
 
 
-class SqlPoolBlobAuditingPolicy(Resource):
+class SqlPoolBlobAuditingPolicy(ProxyResource):
     """A Sql pool blob auditing policy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6194,7 +6212,7 @@ class SqlPoolBlobAuditingPolicySqlPoolOperationListResult(msrest.serialization.M
         self.next_link = None
 
 
-class SqlPoolColumn(Resource):
+class SqlPoolColumn(ProxyResource):
     """A Sql pool column resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6271,7 +6289,7 @@ class SqlPoolColumnListResult(msrest.serialization.Model):
         self.next_link = None
 
 
-class SqlPoolConnectionPolicy(Resource):
+class SqlPoolConnectionPolicy(ProxyResource):
     """A Sql pool connection policy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6366,7 +6384,7 @@ class SqlPoolInfoListResult(msrest.serialization.Model):
         self.value = kwargs.get('value', None)
 
 
-class SqlPoolOperation(Resource):
+class SqlPoolOperation(ProxyResource):
     """A Sql pool operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6539,7 +6557,7 @@ class SqlPoolPatchInfo(msrest.serialization.Model):
         self.storage_account_type = kwargs.get('storage_account_type', None)
 
 
-class SqlPoolSchema(Resource):
+class SqlPoolSchema(ProxyResource):
     """A Sql pool schema resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6579,7 +6597,7 @@ class SqlPoolSchemaListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Array of results.
-    :vartype value: list[~azure.mgmt.synapse.models.Resource]
+    :vartype value: list[~azure.mgmt.synapse.models.SqlPoolSchema]
     :ivar next_link: Link to retrieve next page of results.
     :vartype next_link: str
     """
@@ -6590,7 +6608,7 @@ class SqlPoolSchemaListResult(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Resource]'},
+        'value': {'key': 'value', 'type': '[SqlPoolSchema]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -6603,7 +6621,7 @@ class SqlPoolSchemaListResult(msrest.serialization.Model):
         self.next_link = None
 
 
-class SqlPoolSecurityAlertPolicy(Resource):
+class SqlPoolSecurityAlertPolicy(ProxyResource):
     """A Sql pool security alert policy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6676,7 +6694,7 @@ class SqlPoolSecurityAlertPolicy(Resource):
         self.creation_time = None
 
 
-class SqlPoolTable(Resource):
+class SqlPoolTable(ProxyResource):
     """A Sql pool table resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6716,7 +6734,7 @@ class SqlPoolTableListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Array of results.
-    :vartype value: list[~azure.mgmt.synapse.models.Resource]
+    :vartype value: list[~azure.mgmt.synapse.models.SqlPoolTable]
     :ivar next_link: Link to retrieve next page of results.
     :vartype next_link: str
     """
@@ -6727,7 +6745,7 @@ class SqlPoolTableListResult(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Resource]'},
+        'value': {'key': 'value', 'type': '[SqlPoolTable]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -6827,7 +6845,7 @@ class SqlPoolUsageListResult(msrest.serialization.Model):
         self.next_link = None
 
 
-class SqlPoolVulnerabilityAssessment(Resource):
+class SqlPoolVulnerabilityAssessment(ProxyResource):
     """A Sql pool vulnerability assessment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6914,7 +6932,7 @@ class SqlPoolVulnerabilityAssessmentListResult(msrest.serialization.Model):
         self.next_link = None
 
 
-class SqlPoolVulnerabilityAssessmentRuleBaseline(Resource):
+class SqlPoolVulnerabilityAssessmentRuleBaseline(ProxyResource):
     """A Sql pool vulnerability assessment rule baseline.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6978,7 +6996,7 @@ class SqlPoolVulnerabilityAssessmentRuleBaselineItem(msrest.serialization.Model)
         self.result = kwargs['result']
 
 
-class SqlPoolVulnerabilityAssessmentScansExport(Resource):
+class SqlPoolVulnerabilityAssessmentScansExport(ProxyResource):
     """A Sql pool Vulnerability Assessment scan export resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7434,44 +7452,6 @@ class SsisVariable(msrest.serialization.Model):
         self.sensitive_value = kwargs.get('sensitive_value', None)
 
 
-class SubResource(AzureEntityResource):
-    """Azure Synapse nested resource, which belongs to a workspace.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar etag: Resource Etag.
-    :vartype etag: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SubResource, self).__init__(**kwargs)
-
-
 class TopQueries(msrest.serialization.Model):
     """A database query.
 
@@ -7560,7 +7540,7 @@ class TopQueriesListResult(msrest.serialization.Model):
         self.value = kwargs['value']
 
 
-class TransparentDataEncryption(Resource):
+class TransparentDataEncryption(ProxyResource):
     """Represents a Sql pool transparent data encryption configuration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7761,7 +7741,7 @@ class VulnerabilityAssessmentScanError(msrest.serialization.Model):
         self.message = None
 
 
-class VulnerabilityAssessmentScanRecord(Resource):
+class VulnerabilityAssessmentScanRecord(ProxyResource):
     """A vulnerability assessment scan record.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7866,7 +7846,7 @@ class VulnerabilityAssessmentScanRecordListResult(msrest.serialization.Model):
         self.next_link = None
 
 
-class WorkloadClassifier(Resource):
+class WorkloadClassifier(ProxyResource):
     """Workload classifier operations for a data warehouse.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7954,7 +7934,7 @@ class WorkloadClassifierListResult(msrest.serialization.Model):
         self.next_link = None
 
 
-class WorkloadGroup(Resource):
+class WorkloadGroup(ProxyResource):
     """Workload group operations for a sql pool.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8101,8 +8081,9 @@ class Workspace(TrackedResource):
     :type purview_configuration: ~azure.mgmt.synapse.models.PurviewConfiguration
     :ivar adla_resource_id: The ADLA resource ID.
     :vartype adla_resource_id: str
-    :param network_settings: Network Settings.
-    :type network_settings: ~azure.mgmt.synapse.models.NetworkSettings
+    :param public_network_access: Enable or Disable pubic network access to workspace. Possible
+     values include: "Enabled", "Disabled".
+    :type public_network_access: str or ~azure.mgmt.synapse.models.WorkspacePublicNetworkAccess
     """
 
     _validation = {
@@ -8139,7 +8120,7 @@ class Workspace(TrackedResource):
         'workspace_repository_configuration': {'key': 'properties.workspaceRepositoryConfiguration', 'type': 'WorkspaceRepositoryConfiguration'},
         'purview_configuration': {'key': 'properties.purviewConfiguration', 'type': 'PurviewConfiguration'},
         'adla_resource_id': {'key': 'properties.adlaResourceId', 'type': 'str'},
-        'network_settings': {'key': 'properties.networkSettings', 'type': 'NetworkSettings'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
     }
 
     def __init__(
@@ -8164,10 +8145,10 @@ class Workspace(TrackedResource):
         self.workspace_repository_configuration = kwargs.get('workspace_repository_configuration', None)
         self.purview_configuration = kwargs.get('purview_configuration', None)
         self.adla_resource_id = None
-        self.network_settings = kwargs.get('network_settings', None)
+        self.public_network_access = kwargs.get('public_network_access', None)
 
 
-class WorkspaceAadAdminInfo(Resource):
+class WorkspaceAadAdminInfo(ProxyResource):
     """Workspace active directory administrator.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8286,8 +8267,9 @@ class WorkspacePatchInfo(msrest.serialization.Model):
     :vartype provisioning_state: str
     :param encryption: The encryption details of the workspace.
     :type encryption: ~azure.mgmt.synapse.models.EncryptionDetails
-    :param network_settings: Network Settings.
-    :type network_settings: ~azure.mgmt.synapse.models.NetworkSettings
+    :param public_network_access: Enable or Disable pubic network access to workspace. Possible
+     values include: "Enabled", "Disabled".
+    :type public_network_access: str or ~azure.mgmt.synapse.models.WorkspacePublicNetworkAccess
     """
 
     _validation = {
@@ -8303,7 +8285,7 @@ class WorkspacePatchInfo(msrest.serialization.Model):
         'purview_configuration': {'key': 'properties.purviewConfiguration', 'type': 'PurviewConfiguration'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionDetails'},
-        'network_settings': {'key': 'properties.networkSettings', 'type': 'NetworkSettings'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
     }
 
     def __init__(
@@ -8319,7 +8301,7 @@ class WorkspacePatchInfo(msrest.serialization.Model):
         self.purview_configuration = kwargs.get('purview_configuration', None)
         self.provisioning_state = None
         self.encryption = kwargs.get('encryption', None)
-        self.network_settings = kwargs.get('network_settings', None)
+        self.public_network_access = kwargs.get('public_network_access', None)
 
 
 class WorkspaceRepositoryConfiguration(msrest.serialization.Model):
