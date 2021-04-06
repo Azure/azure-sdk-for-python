@@ -4,7 +4,7 @@
 
 **New Features**
 
-* Added support for using `~azure.core.credentials.AzureSasCredential` as credential for authenticating the clients.
+* Added support for using `azure.core.credentials.AzureSasCredential` as credential for authenticating the clients.
 * Added support for sending AMQP annotated message which allows full access to the AMQP message fields.
   -`azure.servicebus.AMQPAnnotatedMessage` is now made public and could be instantiated for sending.
 * Added new enum class `azure.servicebus.AMQPMessageBodyType` to represent the body type of the message message which includes:
