@@ -5,9 +5,11 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-# Used to
-#
+# Used to generate conda artifacts
 
+# TODO: parse ci.yml to get dependent artifact information
+# TODO: parse version out of meta.yaaml
+# TODO: do not generate a combined package if the target is a single package
 
 import argparse
 import sys
@@ -19,6 +21,7 @@ from common_tasks import process_glob_string, run_check_call, str_to_bool, parse
 from subprocess import check_call
 from distutils.dir_util import copy_tree
 
+VERSION_REGEX = re.compile(r"\{\%\s*set\s*version\s*=\s*\"(.*)\"\s*\%\}")
 
 NAMESPACE_EXTENSION_TEMPLATE = """__path__ = __import__('pkgutil').extend_path(__path__, __name__)  # type: str
 """
@@ -73,6 +76,14 @@ def create_namespace_extension(target_directory):
         f.write(NAMESPACE_EXTENSION_TEMPLATE)
 
 
+def get_pkgs_from_build_directory(build_directory, artifact_name):
+    return [
+        os.path.join(build_directory, p)
+        for p in os.listdir(build_directory)
+        if p != artifact_name
+    ]
+
+
 def create_sdist_skeleton(build_directory, artifact_name, common_root):
     sdist_directory = os.path.join(build_directory, artifact_name)
 
@@ -90,13 +101,9 @@ def create_sdist_skeleton(build_directory, artifact_name, common_root):
         create_namespace_extension(ns_dir)
 
     # get all the directories in the build folder, we will pull in all of them
-    pkgs_for_consumption = [
-        os.path.join(build_directory, p)
-        for p in os.listdir(build_directory)
-        if p != artifact_name
-    ]
+    pkgs_for_consumption = get_pkgs_from_build_directory(build_directory)
 
-    print('I see the following packages in the build directory')
+    print("I see the following packages in the build directory")
     print(pkgs_for_consumption)
 
     for pkg in pkgs_for_consumption:
@@ -115,13 +122,23 @@ def create_sdist_skeleton(build_directory, artifact_name, common_root):
                 shutil.copytree(src, dest)
 
 
-def create_sdist_setup(build_directory, artifact_name, service):
+def get_version_from_meta(meta_yaml_location):
+    with open(os.path.abspath((meta_yaml_location)), "r") as f:
+        lines = f.readlines()
+    for line in lines:
+        result = VERSION_REGEX.match(line)
+        if result:
+            return result.group(1)
+    return "0.0.0"
+
+
+def create_sdist_setup(build_directory, artifact_name, service, meta_yaml):
     sdist_directory = os.path.join(build_directory, artifact_name)
     setup_location = os.path.join(sdist_directory, "setup.py")
 
     template = CONDA_PKG_SETUP_TEMPLATE.format(
         conda_package_name=artifact_name,
-        version="0.0.0",
+        version=get_version_from_meta(meta_yaml),
         service=service,
         package_excludes="'azure', 'tests'",
     )
@@ -131,12 +148,18 @@ def create_sdist_setup(build_directory, artifact_name, service):
 
 
 def create_combined_sdist(
-    output_directory, build_directory, artifact_name, common_root, service
+    output_directory, build_directory, artifact_name, common_root, service, meta_yaml
 ):
-    create_sdist_skeleton(build_directory, artifact_name, common_root)
-    create_sdist_setup(build_directory, artifact_name, service)
+    singular_dependency = (
+        len(get_pkgs_from_build_directory(build_directory, artifact_name)) == 1
+    )
+
+    if not singular_dependency:
+        create_sdist_skeleton(build_directory, artifact_name, common_root)
+        create_sdist_setup(build_directory, artifact_name, service, meta_yaml)
 
     sdist_location = os.path.join(build_directory, artifact_name)
+
     output_sdist_location = os.path.join(output_directory, "sdist", artifact_name)
 
     create_package(sdist_location, output_sdist_location)
@@ -220,6 +243,7 @@ if __name__ == "__main__":
         args.artifact_name,
         args.common_root,
         args.service,
+        args.meta_yml,
     )
 
     if args.output_var:
