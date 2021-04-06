@@ -49,6 +49,24 @@ def _parse_challenge(header):
     return ret
 
 
+def _parse_next_link(link_string):
+    # type: (str) -> str
+    """Parses the next link in the list operations response URL
+
+    Per the Docker v2 HTTP API spec, the Link header is an RFC5988
+    compliant rel='next' with URL to next result set, if available.
+    See: https://docs.docker.com/registry/spec/api/
+
+    The URI reference can be obtained from link-value as follows:
+    Link       = "Link" ":" #link-value
+    link-value = "<" URI-Reference ">" * (";" link-param )
+    See: https://tools.ietf.org/html/rfc5988#section-5
+    """
+    if not link_string:
+        return None
+    return link_string[1 : link_string.find(">")]
+
+
 def _enforce_https(request):
     # type: (PipelineRequest) -> None
     """Raise ServiceRequestError if the request URL is non-HTTPS and the sender did not specify enforce_https=False"""
