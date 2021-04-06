@@ -3,6 +3,7 @@
 ## 12.0.0b6 (2021-04-06)
 * Updated deserialization of datetime fields in entities to support preservation of the service format with additional decimal place.
 * Passing a string parameter into a query filter will now be escaped to protect against injection.
+* Fixed bug in incrementing retries in async retry policy
 
 ## 12.0.0b5 (2021-03-09)
 * This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported.
