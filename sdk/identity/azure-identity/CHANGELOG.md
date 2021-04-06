@@ -1,10 +1,10 @@
 # Release History
 
-## 1.6.0b3 (Unreleased)
+## 1.6.0b3 (2021-04-06)
 ### Breaking Changes
 > These changes do not impact the API of stable versions such as 1.5.0.
 > Only code written against a beta version such as 1.6.0b1 may be affected.
-- Removed property `AuthenticationRequiredError.error_details` 
+- Removed property `AuthenticationRequiredError.error_details`
 
 ### Fixed
 - Credentials consistently retry token requests after connection failures, or
@@ -28,14 +28,14 @@
   ```
   # before (e.g. in 1.6.0b1):
   DeviceCodeCredential(enable_persistent_cache=True, allow_unencrypted_cache=True)
-  
+
   # after:
   cache_options = TokenCachePersistenceOptions(allow_unencrypted_storage=True)
   DeviceCodeCredential(cache_persistence_options=cache_options)
   ```
-  
+
   See the documentation and samples for more details.
-  
+
 ### Added
 - New class `TokenCachePersistenceOptions` configures persistent caching
 - The `AuthenticationRequiredError.claims` property provides any additional
