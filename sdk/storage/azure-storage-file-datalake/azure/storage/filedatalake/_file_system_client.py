@@ -28,7 +28,7 @@ from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._generated import AzureDataLakeStorageRESTAPI
 from ._generated.models import ListBlobsIncludeItem
-from ._deserialize import deserialize_path_properties, deserialize_metadata, process_storage_error
+from ._deserialize import deserialize_path_properties, process_storage_error, is_file_path
 
 
 class FileSystemClient(StorageAccountHostsMixin):
@@ -789,13 +789,13 @@ class FileSystemClient(StorageAccountHostsMixin):
         path_client = AzureDataLakeStorageRESTAPI(
             url, filesystem=self.file_system_name, path=deleted_path_name, pipeline=pipeline)
         try:
-            path_client.path.undelete(undelete_source=undelete_source, **kwargs)
+            is_file = path_client.path.undelete(undelete_source=undelete_source, cls=is_file_path, **kwargs)
+            if is_file:
+                return self.get_file_client(deleted_path_name)
+            else:
+                return self.get_directory_client(deleted_path_name)
         except HttpResponseError as error:
             process_storage_error(error)
-        resp = path_client.path.get_properties(cls=deserialize_metadata)
-        if resp.get('hdi_isfolder'):
-            return self.get_directory_client(deleted_path_name)
-        return self.get_file_client(deleted_path_name)
 
     def _get_root_directory_client(self):
         # type: () -> DataLakeDirectoryClient

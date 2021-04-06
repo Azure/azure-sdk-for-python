@@ -9,6 +9,7 @@
 import datetime
 from typing import List, Optional
 
+from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 

@@ -58,6 +58,12 @@ def get_deleted_path_properties_from_generated_code(generated):
     return deleted_path
 
 
+def is_file_path(_, __, headers):
+    if headers['x-ms-client-request-id'] == "file":
+        return True
+    return False
+
+
 def get_datalake_service_properties(datalake_properties):
     datalake_properties["analytics_logging"] = AnalyticsLogging._from_generated(    # pylint: disable=protected-access
         datalake_properties["analytics_logging"])

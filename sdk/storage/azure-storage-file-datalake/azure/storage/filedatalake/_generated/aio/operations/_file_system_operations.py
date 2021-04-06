@@ -443,8 +443,10 @@ class FileSystemOperations:
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
             if request_id_parameter is not None:
-                header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-            header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+                header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter",
+                                                                                     request_id_parameter, 'str')
+            header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version,
+                                                                       'str')
             header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
@@ -456,7 +458,8 @@ class FileSystemOperations:
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['resource'] = self._serialize.query("self._config.resource", self._config.resource, 'str')
+                query_parameters['resource'] = self._serialize.query("self._config.resource", self._config.resource,
+                                                                     'str')
                 if timeout is not None:
                     query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
                 # TODO: change this once continuation/next_link autorest PR is merged
