@@ -7,22 +7,22 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AssociatedWorkspace
     from ._models_py3 import AvailableServiceTier
     from ._models_py3 import AzureEntityResource
+    from ._models_py3 import CapacityReservationProperties
     from ._models_py3 import Cluster
-    from ._models_py3 import ClusterErrorResponse
     from ._models_py3 import ClusterListResult
     from ._models_py3 import ClusterPatch
     from ._models_py3 import ClusterSku
     from ._models_py3 import CoreSummary
     from ._models_py3 import DataExport
-    from ._models_py3 import DataExportErrorResponse
     from ._models_py3 import DataExportListResult
     from ._models_py3 import DataSource
     from ._models_py3 import DataSourceFilter
     from ._models_py3 import DataSourceListResult
     from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorContract
+    from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse
     from ._models_py3 import Identity
     from ._models_py3 import IntelligencePack
@@ -57,6 +57,7 @@ try:
     from ._models_py3 import Tag
     from ._models_py3 import TrackedResource
     from ._models_py3 import UsageMetric
+    from ._models_py3 import UserIdentityProperties
     from ._models_py3 import Workspace
     from ._models_py3 import WorkspaceCapping
     from ._models_py3 import WorkspaceListManagementGroupsResult
@@ -69,22 +70,22 @@ try:
     from ._models_py3 import WorkspacePurgeStatusResponse
     from ._models_py3 import WorkspaceSku
 except (SyntaxError, ImportError):
+    from ._models import AssociatedWorkspace  # type: ignore
     from ._models import AvailableServiceTier  # type: ignore
     from ._models import AzureEntityResource  # type: ignore
+    from ._models import CapacityReservationProperties  # type: ignore
     from ._models import Cluster  # type: ignore
-    from ._models import ClusterErrorResponse  # type: ignore
     from ._models import ClusterListResult  # type: ignore
     from ._models import ClusterPatch  # type: ignore
     from ._models import ClusterSku  # type: ignore
     from ._models import CoreSummary  # type: ignore
     from ._models import DataExport  # type: ignore
-    from ._models import DataExportErrorResponse  # type: ignore
     from ._models import DataExportListResult  # type: ignore
     from ._models import DataSource  # type: ignore
     from ._models import DataSourceFilter  # type: ignore
     from ._models import DataSourceListResult  # type: ignore
     from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorContract  # type: ignore
+    from ._models import ErrorDetail  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import Identity  # type: ignore
     from ._models import IntelligencePack  # type: ignore
@@ -119,6 +120,7 @@ except (SyntaxError, ImportError):
     from ._models import Tag  # type: ignore
     from ._models import TrackedResource  # type: ignore
     from ._models import UsageMetric  # type: ignore
+    from ._models import UserIdentityProperties  # type: ignore
     from ._models import Workspace  # type: ignore
     from ._models import WorkspaceCapping  # type: ignore
     from ._models import WorkspaceListManagementGroupsResult  # type: ignore
@@ -132,6 +134,7 @@ except (SyntaxError, ImportError):
     from ._models import WorkspaceSku  # type: ignore
 
 from ._log_analytics_management_client_enums import (
+    BillingType,
     ClusterEntityStatus,
     ClusterSkuNameEnum,
     DataIngestionStatus,
@@ -150,22 +153,22 @@ from ._log_analytics_management_client_enums import (
 )
 
 __all__ = [
+    'AssociatedWorkspace',
     'AvailableServiceTier',
     'AzureEntityResource',
+    'CapacityReservationProperties',
     'Cluster',
-    'ClusterErrorResponse',
     'ClusterListResult',
     'ClusterPatch',
     'ClusterSku',
     'CoreSummary',
     'DataExport',
-    'DataExportErrorResponse',
     'DataExportListResult',
     'DataSource',
     'DataSourceFilter',
     'DataSourceListResult',
     'ErrorAdditionalInfo',
-    'ErrorContract',
+    'ErrorDetail',
     'ErrorResponse',
     'Identity',
     'IntelligencePack',
@@ -200,6 +203,7 @@ __all__ = [
     'Tag',
     'TrackedResource',
     'UsageMetric',
+    'UserIdentityProperties',
     'Workspace',
     'WorkspaceCapping',
     'WorkspaceListManagementGroupsResult',
@@ -211,6 +215,7 @@ __all__ = [
     'WorkspacePurgeResponse',
     'WorkspacePurgeStatusResponse',
     'WorkspaceSku',
+    'BillingType',
     'ClusterEntityStatus',
     'ClusterSkuNameEnum',
     'DataIngestionStatus',

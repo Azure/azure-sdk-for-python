@@ -24,20 +24,20 @@ from .operations import IntelligencePacksOperations
 from .operations import LinkedServicesOperations
 from .operations import LinkedStorageAccountsOperations
 from .operations import ManagementGroupsOperations
-from .operations import Operations
 from .operations import OperationStatusesOperations
 from .operations import SharedKeysOperations
 from .operations import UsagesOperations
-from .operations import WorkspacesOperations
-from .operations import DeletedWorkspacesOperations
-from .operations import ClustersOperations
 from .operations import StorageInsightConfigsOperations
 from .operations import SavedSearchesOperations
 from .operations import AvailableServiceTiersOperations
 from .operations import GatewaysOperations
 from .operations import SchemaOperations
 from .operations import WorkspacePurgeOperations
+from .operations import ClustersOperations
+from .operations import Operations
 from .operations import TablesOperations
+from .operations import WorkspacesOperations
+from .operations import DeletedWorkspacesOperations
 from . import models
 
 
@@ -56,20 +56,12 @@ class LogAnalyticsManagementClient(object):
     :vartype linked_storage_accounts: azure.mgmt.loganalytics.operations.LinkedStorageAccountsOperations
     :ivar management_groups: ManagementGroupsOperations operations
     :vartype management_groups: azure.mgmt.loganalytics.operations.ManagementGroupsOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.loganalytics.operations.Operations
     :ivar operation_statuses: OperationStatusesOperations operations
     :vartype operation_statuses: azure.mgmt.loganalytics.operations.OperationStatusesOperations
     :ivar shared_keys: SharedKeysOperations operations
     :vartype shared_keys: azure.mgmt.loganalytics.operations.SharedKeysOperations
     :ivar usages: UsagesOperations operations
     :vartype usages: azure.mgmt.loganalytics.operations.UsagesOperations
-    :ivar workspaces: WorkspacesOperations operations
-    :vartype workspaces: azure.mgmt.loganalytics.operations.WorkspacesOperations
-    :ivar deleted_workspaces: DeletedWorkspacesOperations operations
-    :vartype deleted_workspaces: azure.mgmt.loganalytics.operations.DeletedWorkspacesOperations
-    :ivar clusters: ClustersOperations operations
-    :vartype clusters: azure.mgmt.loganalytics.operations.ClustersOperations
     :ivar storage_insight_configs: StorageInsightConfigsOperations operations
     :vartype storage_insight_configs: azure.mgmt.loganalytics.operations.StorageInsightConfigsOperations
     :ivar saved_searches: SavedSearchesOperations operations
@@ -82,8 +74,16 @@ class LogAnalyticsManagementClient(object):
     :vartype schema: azure.mgmt.loganalytics.operations.SchemaOperations
     :ivar workspace_purge: WorkspacePurgeOperations operations
     :vartype workspace_purge: azure.mgmt.loganalytics.operations.WorkspacePurgeOperations
+    :ivar clusters: ClustersOperations operations
+    :vartype clusters: azure.mgmt.loganalytics.operations.ClustersOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.loganalytics.operations.Operations
     :ivar tables: TablesOperations operations
     :vartype tables: azure.mgmt.loganalytics.operations.TablesOperations
+    :ivar workspaces: WorkspacesOperations operations
+    :vartype workspaces: azure.mgmt.loganalytics.operations.WorkspacesOperations
+    :ivar deleted_workspaces: DeletedWorkspacesOperations operations
+    :vartype deleted_workspaces: azure.mgmt.loganalytics.operations.DeletedWorkspacesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
@@ -122,19 +122,11 @@ class LogAnalyticsManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.management_groups = ManagementGroupsOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.operation_statuses = OperationStatusesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.shared_keys = SharedKeysOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.usages = UsagesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.workspaces = WorkspacesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.deleted_workspaces = DeletedWorkspacesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.clusters = ClustersOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.storage_insight_configs = StorageInsightConfigsOperations(
             self._client, self._config, self._serialize, self._deserialize)
@@ -148,7 +140,15 @@ class LogAnalyticsManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.workspace_purge = WorkspacePurgeOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.clusters = ClustersOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.tables = TablesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.workspaces = WorkspacesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.deleted_workspaces = DeletedWorkspacesOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def close(self):

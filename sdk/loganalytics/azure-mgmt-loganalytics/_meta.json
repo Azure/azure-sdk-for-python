@@ -1,0 +1,8 @@
+{
+  "autorest": "3.0.6369",
+  "use": "@autorest/python@5.6.2",
+  "commit": "f5dce125fdad97160346fe3ac32d7d0a49bb11e4",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "autorest_command": "autorest specification/operationalinsights/resource-manager/readme.md --multiapi --python --python-mode=update --python-sdks-folder=/home/vsts/work/1/s/azure-sdk-for-python/sdk --track2 --use=@autorest/python@5.6.2 --version=3.0.6369",
+  "readme": "specification/operationalinsights/resource-manager/readme.md"
+}
