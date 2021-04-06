@@ -26,7 +26,7 @@ import os
 class CreateClients(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.account_url = os.environ["AZURE_CONTAINERREGISTRY_URL"]
+        self.account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
     def create_registry_client(self):
         # Instantiate the ContainerRegistryClient
