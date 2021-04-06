@@ -38,7 +38,7 @@ class AzureBlobStorageConfiguration(Configuration):
         super(AzureBlobStorageConfiguration, self).__init__(**kwargs)
 
         self.url = url
-        self.version = "2020-06-12"
+        self.version = "2020-08-04"
         kwargs.setdefault('sdk_moniker', 'azureblobstorage/{}'.format(VERSION))
         self._configure(**kwargs)
 
