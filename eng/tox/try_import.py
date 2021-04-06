@@ -5,8 +5,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-# This script is used to verify that packages are not importable. This is especially useful when 
-# running checks without the presence of "optional" packages like aiohttp. 
+# This script is used to verify that packages are not importable. This is especially useful when
+# running checks without the presence of "optional" packages like aiohttp.
 
 
 import argparse
@@ -33,7 +33,6 @@ if __name__ == "__main__":
         nargs="+",
         help="The set of packages that we shouldn't be able to import.",
     )
-
 
     parser.add_argument(
         "-p",
