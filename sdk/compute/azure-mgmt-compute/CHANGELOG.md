@@ -1,39 +1,35 @@
 # Release History
 
-## 20.0.0 (2021-03-26)
+## 20.0.0 (2021-04-06)
 
 **Features**
 
-  - Model DiskRestorePoint has a new parameter supports_hibernation
-  - Model LoadBalancerConfiguration has a new parameter id
-  - Model Disk has a new parameter supports_hibernation
-  - Model Disk has a new parameter security_profile
-  - Model Disk has a new parameter property_updates_in_progress
-  - Model CloudServiceInstanceView has a new parameter private_ids
-  - Model DiskEncryptionSetUpdate has a new parameter identity
-  - Model DiskEncryptionSetUpdate has a new parameter rotation_to_latest_key_version_enabled
+  - Model PurchasePlan has a new parameter promotion_code
   - Model DiskUpdate has a new parameter supports_hibernation
   - Model DiskUpdate has a new parameter property_updates_in_progress
+  - Model SnapshotUpdate has a new parameter supports_hibernation
+  - Model DiskRestorePoint has a new parameter supports_hibernation
+  - Model DiskEncryptionSetUpdate has a new parameter identity
+  - Model DiskEncryptionSetUpdate has a new parameter rotation_to_latest_key_version_enabled
+  - Model CloudServiceProperties has a new parameter allow_model_override
+  - Model LoadBalancerConfiguration has a new parameter id
+  - Model CloudServiceInstanceView has a new parameter private_ids
+  - Model Snapshot has a new parameter supports_hibernation
   - Model DiskEncryptionSet has a new parameter last_key_rotation_timestamp
   - Model DiskEncryptionSet has a new parameter rotation_to_latest_key_version_enabled
-  - Model Snapshot has a new parameter supports_hibernation
-  - Model CloudServiceProperties has a new parameter allow_model_override
-  - Model SnapshotUpdate has a new parameter supports_hibernation
+  - Model Disk has a new parameter security_profile
+  - Model Disk has a new parameter supports_hibernation
+  - Model Disk has a new parameter property_updates_in_progress
   - Added operation group CloudServiceOperatingSystemsOperations
 
 **Breaking changes**
 
   - Parameter name of model LoadBalancerConfiguration is now required
   - Parameter properties of model LoadBalancerConfiguration is now required
+  - Parameter frontend_ip_configurations of model LoadBalancerConfigurationProperties is now required
   - Parameter name of model LoadBalancerFrontendIPConfiguration is now required
   - Parameter properties of model LoadBalancerFrontendIPConfiguration is now required
-  - Parameter frontend_ip_configurations of model LoadBalancerConfigurationProperties is now required
-  - Operation GalleriesOperations.get has a new signature
-  - Model Gallery no longer has parameter sharing_profile
-  - Model GalleryImageUpdate no longer has parameter features
-  - Model GalleryUpdate no longer has parameter sharing_profile
-  - Model GalleryImage no longer has parameter features
-  - Model GalleryArtifactVersionSource no longer has parameter uri
+
 
 ## 19.0.0 (2021-02-20)
 
