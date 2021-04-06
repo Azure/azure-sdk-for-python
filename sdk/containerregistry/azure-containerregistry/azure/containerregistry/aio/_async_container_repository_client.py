@@ -32,7 +32,9 @@ if TYPE_CHECKING:
 
 
 class ContainerRepositoryClient(ContainerRegistryBaseClient):
-    def __init__(self, endpoint: str, repository: str, credential: "AsyncTokenCredential", **kwargs: Dict[str, Any]) -> None:
+    def __init__(
+        self, endpoint: str, repository: str, credential: "AsyncTokenCredential", **kwargs: Dict[str, Any]
+    ) -> None:
         """Create a ContainerRepositoryClient from an endpoint, repository name, and credential
 
         :param endpoint: An ACR endpoint
@@ -66,6 +68,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         return DeletedRepositoryResult._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry.delete_repository(self.repository, **kwargs)
         )
+
     @distributed_trace_async
     async def delete_registry_artifact(self, digest: str, **kwargs: Dict[str, Any]) -> None:
         """Delete a registry artifact
@@ -99,7 +102,9 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace_async
-    async def get_registry_artifact_properties(self, tag_or_digest: str, **kwargs: Dict[str, Any]) -> RegistryArtifactProperties:
+    async def get_registry_artifact_properties(
+        self, tag_or_digest: str, **kwargs: Dict[str, Any]
+    ) -> RegistryArtifactProperties:
         """Get the properties of a registry artifact
 
         :param tag_or_digest: The tag/digest of a registry artifact
@@ -364,7 +369,9 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def set_manifest_properties(self, digest: str, permissions: ContentPermissions, **kwargs: Dict[str, Any]) -> None:
+    async def set_manifest_properties(
+        self, digest: str, permissions: ContentPermissions, **kwargs: Dict[str, Any]
+    ) -> None:
         """Set the properties for a manifest
 
         :param digest: Digest of a manifest
@@ -381,7 +388,9 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace_async
-    async def set_tag_properties(self, tag: str, permissions: ContentPermissions, **kwargs: Dict[str, Any]) -> TagProperties:
+    async def set_tag_properties(
+        self, tag: str, permissions: ContentPermissions, **kwargs: Dict[str, Any]
+    ) -> TagProperties:
         """Set the properties for a tag
 
         :param tag: Tag to set properties for

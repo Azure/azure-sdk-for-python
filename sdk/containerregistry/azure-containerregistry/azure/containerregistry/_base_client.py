@@ -29,6 +29,7 @@ class ContainerRegistryBaseClient(object):
     :param credential: AAD Token for authenticating requests with Azure
     :type credential: :class:`azure.identity.DefaultTokenCredential`
     """
+
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, TokenCredential, Dict[str, Any]) -> None
         auth_policy = ContainerRegistryChallengePolicy(credential, endpoint)
