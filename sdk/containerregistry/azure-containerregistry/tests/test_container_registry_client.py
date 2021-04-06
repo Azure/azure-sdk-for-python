@@ -23,8 +23,8 @@ from preparer import acr_preparer
 
 class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
-    def test_list_repositories(self, containerregistry_baseurl):
-        client = self.create_registry_client(containerregistry_baseurl)
+    def test_list_repositories(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint)
 
         repositories = client.list_repositories()
         assert isinstance(repositories, ItemPaged)
@@ -40,8 +40,8 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         assert count > 0
 
     @acr_preparer()
-    def test_list_repositories_by_page(self, containerregistry_baseurl):
-        client = self.create_registry_client(containerregistry_baseurl)
+    def test_list_repositories_by_page(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint)
         results_per_page = 2
         total_pages = 0
 
@@ -61,12 +61,12 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         assert total_pages > 1
 
     @acr_preparer()
-    def test_delete_repository(self, containerregistry_baseurl, containerregistry_resource_group):
+    def test_delete_repository(self, containerregistry_endpoint, containerregistry_resource_group):
         repository = self.get_resource_name("repo")
         self._import_tag_to_be_deleted(
-            containerregistry_baseurl, resource_group=containerregistry_resource_group, repository=repository
+            containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=repository
         )
-        client = self.create_registry_client(containerregistry_baseurl)
+        client = self.create_registry_client(containerregistry_endpoint)
 
         result = client.delete_repository(repository)
         assert isinstance(result, DeletedRepositoryResult)
@@ -80,16 +80,16 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
                 raise ValueError("Repository not deleted")
 
     @acr_preparer()
-    def test_delete_repository_does_not_exist(self, containerregistry_baseurl):
-        client = self.create_registry_client(containerregistry_baseurl)
+    def test_delete_repository_does_not_exist(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint)
 
         with pytest.raises(ResourceNotFoundError):
             deleted_result = client.delete_repository("not_real_repo")
 
     @acr_preparer()
-    def test_transport_closed_only_once(self, containerregistry_baseurl):
+    def test_transport_closed_only_once(self, containerregistry_endpoint):
         transport = RequestsTransport()
-        client = self.create_registry_client(containerregistry_baseurl, transport=transport)
+        client = self.create_registry_client(containerregistry_endpoint, transport=transport)
         with client:
             for r in client.list_repositories():
                 pass
