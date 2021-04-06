@@ -1,18 +1,11 @@
 {
   "matrix": {
-    "$IMPORT": "eng/pipelines/templates/stages/platform-matrix.json"
+    "$IMPORT": "eng/pipelines/templates/stages/platform-matrix-cryptography-dependency.json"
   },
   "exclude": [
-    { "OSVmImage": "macOS-10.15" }
+    { "PythonVersion": "3.7" }
   ],
   "include": [
-    {
-      "Agent": {
-        "macOS-10.15": { "OSVmImage": "macOS-10.15", "Pool": "Azure Pipelines" }
-      },
-      "PythonVersion": "3.6",
-      "CoverageArg": "--disablecov"
-    },
     {
       "Config": {
         "ubuntu_18.04_3.7_msal": {
