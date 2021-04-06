@@ -1,5 +1,9 @@
 # Release History
 
+## 1.0.0-beta.4 (2021-04-07)
+### Breaking Changes
+- This package has been deprecated. Please use [azure-communication-identity](https://pypi.org/project/azure-communication-identity/) and [azure-communication-phonenumbers](https://pypi.org/project/azure-communication-phonenumbers/) instead.
+
 ## 1.0.0b3 (2020-11-16)
 
 **Breaking Changes**

@@ -2,7 +2,9 @@
 
 # Azure Communication Administration Package client library for Python
 
-Azure Communication Administration client package is intended to be used to setup the basics for opening a way to use Azure Communication Service offerings. This package helps to create identities user tokens to be used by other client packages such as chat, calling, sms. 
+This package has been deprecated. Please use [azure-communication-identity](https://pypi.org/project/azure-communication-identity/) and [azure-communication-phonenumbers](https://pypi.org/project/azure-communication-phonenumbers/) instead.
+
+The requested features were implemented in the new libraries. See change log for more details.
 
 # Getting started
 ### Prerequisites
