@@ -519,7 +519,7 @@ class TestChatThreadClient(unittest.TestCase):
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
         try:
-            chat_thread_client.remove_participant(user=CommunicationUserIdentifier(participant_id))
+            chat_thread_client.remove_participant(identifier=CommunicationUserIdentifier(participant_id))
         except:
             raised = True
 

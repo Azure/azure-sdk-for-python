@@ -538,7 +538,7 @@ async def test_remove_participant():
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
     try:
-        await chat_thread_client.remove_participant(user=CommunicationUserIdentifier(participant_id))
+        await chat_thread_client.remove_participant(identifier=CommunicationUserIdentifier(participant_id))
     except:
         raised = True
 
