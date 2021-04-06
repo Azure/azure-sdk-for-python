@@ -44,7 +44,7 @@ class ModelsRepositoryClient(object):
     """Client providing APIs for Models Repository operations"""
 
     def __init__(
-        self, repository_location=None, dependency_resolution=None, api_version=None, **kwargs
+        self, repository_location=None, dependency_resolution=None, **kwargs
     ):
         """
         :param str repository_location: Location of the Models Repository you wish to access.
@@ -62,6 +62,9 @@ class ModelsRepositoryClient(object):
             If using the default repository location, the default dependency resolution mode will
             be "tryFromExpanded". If using a custom repository location, the default dependency
             resolution mode will be "enabled".
+
+        There are additional keyword arguments you can provide, which are documented here:
+        https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#configurations
 
         :raises: ValueError if repository_location is invalid
         :raises: ValueError if dependency_resolution is invalid
@@ -90,9 +93,6 @@ class ModelsRepositoryClient(object):
             self.resolution_mode = dependency_resolution
         _LOGGER.debug("Client configured for dependency mode %s", self.resolution_mode)
 
-        # TODO: Should api_version be a kwarg in the API surface?
-        kwargs.setdefault("api_verison", api_version)
-
         # NOTE: depending on how this class develops over time, may need to adjust relationship
         # between some of these objects
         self.fetcher = _create_fetcher(
@@ -101,11 +101,15 @@ class ModelsRepositoryClient(object):
         self.resolver = _resolver.DtmiResolver(self.fetcher)
         self._psuedo_parser = _pseudo_parser.PseudoParser(self.resolver)
 
+        # Store api version here (for now). Currently doesn't do anything
+        self._api_version = kwargs.get("api_version", _constants.DEFAULT_API_VERSION)
+
     @distributed_trace
     def get_models(self, dtmis, dependency_resolution=None):
         """Retrieve a model from the Models Repository.
 
-        :param list[str] dtmis: The DTMIs for the models you wish to retrieve
+        :param dtmis: The DTMI(s) for the model(s) you wish to retrieve
+        :type dtmis: str or list[str]
         :param str dependency_resolution: Dependency resolution mode override. This value takes
             precedence over the value set on the client.
             Possible values:
@@ -121,6 +125,9 @@ class ModelsRepositoryClient(object):
         :returns: Dictionary mapping DTMIs to models
         :rtype: dict
         """
+        if type(dtmis) is str:
+            dtmis = [dtmis]
+
         # TODO: Use better error surface than the custom ResolverError
         if dependency_resolution is None:
             dependency_resolution = self.resolution_mode
