@@ -8,7 +8,7 @@ from datetime import datetime
 from msrest.serialization import TZ_UTC
 from azure.communication.chat.aio import ChatThreadClient
 from azure.communication.chat import (
-    ChatThreadParticipant,
+    ChatParticipant,
     ChatMessageType
 )
 from azure.communication.chat._shared.models import(
@@ -472,7 +472,7 @@ async def test_add_participants():
         return mock_response(status_code=201)
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
-    new_participant = ChatThreadParticipant(
+    new_participant = ChatParticipant(
             user=CommunicationUserIdentifier(new_participant_id),
             display_name='name',
             share_history_time=datetime.utcnow())
@@ -505,7 +505,7 @@ async def test_add_participants_w_failed_participants_returns_nonempty_list():
         })
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
-    new_participant = ChatThreadParticipant(
+    new_participant = ChatParticipant(
             user=CommunicationUserIdentifier(new_participant_id),
             display_name='name',
             share_history_time=datetime.utcnow())

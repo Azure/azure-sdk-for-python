@@ -15,7 +15,7 @@ from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.chat import (
     ChatClient,
     CommunicationTokenCredential,
-    ChatThreadParticipant
+    ChatParticipant
 )
 from azure.communication.chat._shared.utils import parse_connection_str
 
@@ -64,7 +64,7 @@ class ChatClientTest(CommunicationTestCase):
         topic = "test topic"
         share_history_time = datetime.utcnow()
         share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
-        participants = [ChatThreadParticipant(
+        participants = [ChatParticipant(
             user=self.user,
             display_name='name',
             share_history_time=share_history_time

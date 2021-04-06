@@ -15,7 +15,7 @@ from azure.communication.chat.aio import (
     CommunicationTokenCredential
 )
 from azure.communication.chat import (
-    ChatThreadParticipant,
+    ChatParticipant,
     ChatMessageType
 )
 from azure.communication.identity._shared.utils import parse_connection_str
@@ -72,7 +72,7 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
         topic = "test topic"
         share_history_time = datetime.utcnow()
         share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
-        participants = [ChatThreadParticipant(
+        participants = [ChatParticipant(
             user=self.user,
             display_name='name',
             share_history_time=share_history_time
@@ -87,12 +87,12 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
         share_history_time = datetime.utcnow()
         share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
         participants = [
-            ChatThreadParticipant(
+            ChatParticipant(
                 user=self.user,
                 display_name='name',
                 share_history_time=share_history_time
             ),
-            ChatThreadParticipant(
+            ChatParticipant(
                 user=self.new_user,
                 display_name='name',
                 share_history_time=share_history_time
@@ -227,7 +227,7 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
                 # add another participant
                 share_history_time = datetime.utcnow()
                 share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
-                new_participant = ChatThreadParticipant(
+                new_participant = ChatParticipant(
                     user=self.new_user,
                     display_name='name',
                     share_history_time=share_history_time)
@@ -255,7 +255,7 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
             async with self.chat_thread_client:
                 share_history_time = datetime.utcnow()
                 share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
-                new_participant = ChatThreadParticipant(
+                new_participant = ChatParticipant(
                         user=self.new_user,
                         display_name='name',
                         share_history_time=share_history_time)
@@ -279,7 +279,7 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
                 # add participant first
                 share_history_time = datetime.utcnow()
                 share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
-                new_participant = ChatThreadParticipant(
+                new_participant = ChatParticipant(
                         user=self.new_user,
                         display_name='name',
                         share_history_time=share_history_time)

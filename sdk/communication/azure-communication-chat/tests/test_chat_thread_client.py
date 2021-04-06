@@ -12,7 +12,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
 from azure.communication.chat import (
     ChatThreadClient,
-    ChatThreadParticipant,
+    ChatParticipant,
     ChatMessageType
 )
 from azure.communication.chat._shared.models import(
@@ -453,7 +453,7 @@ class TestChatThreadClient(unittest.TestCase):
             return mock_response(status_code=201)
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
-        new_participant = ChatThreadParticipant(
+        new_participant = ChatParticipant(
                 user=CommunicationUserIdentifier(new_participant_id),
                 display_name='name',
                 share_history_time=datetime.utcnow())
@@ -486,7 +486,7 @@ class TestChatThreadClient(unittest.TestCase):
             })
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
-        new_participant = ChatThreadParticipant(
+        new_participant = ChatParticipant(
                 user=CommunicationUserIdentifier(new_participant_id),
                 display_name='name',
                 share_history_time=datetime.utcnow())
