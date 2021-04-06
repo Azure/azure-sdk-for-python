@@ -9,7 +9,7 @@ Use the client library for Azure Container Registry to:
 - Set read/write/delete properties on registry items
 - Delete images and artifacts, repositories and tags
 
-[Source code][source] | [Package (Pypi)]<!--[package]--> | [API reference documentation]<!--[docs]--> | [REST API documentation][rest_docs] | [Product documentation][product_docs]
+[Source code][source] | [Package (Pypi)][package] | [API reference documentation]<!--[docs]--> | [REST API documentation][rest_docs] | [Product documentation][product_docs]
 
 ## Getting started
 
@@ -99,7 +99,7 @@ additional questions or comments.
 
 <!-- LINKS -->
 [source]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/containerregistry/azure-containerregistry
-[package]: https://pypi.org/azure-containerregistry
+[package]: https://pypi.org/project/azure-containerregistry/
 <!-- [docs]: https://docs.microsoft.com/python/api/overview/azure/container-registry?view=azure-python-preview -->
 [rest_docs]: https://docs.microsoft.com/rest/api/containerregistry/
 [product_docs]:  https://docs.microsoft.com/azure/container-registry
