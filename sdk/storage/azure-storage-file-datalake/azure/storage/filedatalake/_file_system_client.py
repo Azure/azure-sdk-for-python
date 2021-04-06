@@ -792,8 +792,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             is_file = path_client.path.undelete(undelete_source=undelete_source, cls=is_file_path, **kwargs)
             if is_file:
                 return self.get_file_client(deleted_path_name)
-            else:
-                return self.get_directory_client(deleted_path_name)
+            return self.get_directory_client(deleted_path_name)
         except HttpResponseError as error:
             process_storage_error(error)
 
