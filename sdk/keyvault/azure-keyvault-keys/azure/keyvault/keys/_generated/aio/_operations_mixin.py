@@ -92,6 +92,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_1.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'backup_key'".format(api_version))
         mixin_instance = OperationClass()
@@ -242,6 +244,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_1.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'create_key'".format(api_version))
         mixin_instance = OperationClass()
@@ -291,6 +295,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_1.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'decrypt'".format(api_version))
         mixin_instance = OperationClass()
@@ -471,6 +477,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_1.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'delete_key'".format(api_version))
         mixin_instance = OperationClass()
@@ -625,6 +633,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_1.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'encrypt'".format(api_version))
         mixin_instance = OperationClass()
@@ -634,6 +644,45 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.encrypt(vault_base_url, key_name, key_version, parameters, **kwargs)
+
+    async def export(
+        self,
+        vault_base_url: str,
+        key_name: str,
+        key_version: str,
+        parameters: "_models.KeyExportParameters",
+        **kwargs
+    ) -> "_models.KeyBundle":
+        """Exports a key.
+
+        The export key operation is applicable to all key types. The target key must be marked
+        exportable. This operation requires the keys/export permission.
+
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param key_name: The name of the key to get.
+        :type key_name: str
+        :param key_version: Adding the version parameter retrieves a specific version of a key.
+        :type key_version: str
+        :param parameters: The parameters for the key export operation.
+        :type parameters: ~azure.keyvault.v7_3.models.KeyExportParameters
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: KeyBundle, or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_3.models.KeyBundle
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('export')
+        if api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'export'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return await mixin_instance.export(vault_base_url, key_name, key_version, parameters, **kwargs)
 
     async def get_certificate(
         self,
@@ -1027,6 +1076,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_1.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_deleted_key'".format(api_version))
         mixin_instance = OperationClass()
@@ -1070,6 +1121,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_1.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_deleted_keys'".format(api_version))
         mixin_instance = OperationClass()
@@ -1324,6 +1377,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_1.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_key'".format(api_version))
         mixin_instance = OperationClass()
@@ -1367,6 +1422,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_1.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_key_versions'".format(api_version))
         mixin_instance = OperationClass()
@@ -1409,6 +1466,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_1.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_keys'".format(api_version))
         mixin_instance = OperationClass()
@@ -1746,6 +1805,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_1.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'import_key'".format(api_version))
         mixin_instance = OperationClass()
@@ -1861,6 +1922,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_1.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'purge_deleted_key'".format(api_version))
         mixin_instance = OperationClass()
@@ -2009,6 +2072,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_1.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'recover_deleted_key'".format(api_version))
         mixin_instance = OperationClass()
@@ -2161,6 +2226,45 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.regenerate_storage_account_key(vault_base_url, storage_account_name, parameters, **kwargs)
 
+    async def release(
+        self,
+        vault_base_url: str,
+        key_name: str,
+        key_version: str,
+        parameters: "_models.KeyReleaseParameters",
+        **kwargs
+    ) -> "_models.KeyReleaseResult":
+        """Releases a key.
+
+        The release key operation is applicable to all key types. The target key must be marked
+        exportable. This operation requires the keys/release permission.
+
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param key_name: The name of the key to get.
+        :type key_name: str
+        :param key_version: Adding the version parameter retrieves a specific version of a key.
+        :type key_version: str
+        :param parameters: The parameters for the key release operation.
+        :type parameters: ~azure.keyvault.v7_3.models.KeyReleaseParameters
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: KeyReleaseResult, or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_3.models.KeyReleaseResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('release')
+        if api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'release'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return await mixin_instance.release(vault_base_url, key_name, key_version, parameters, **kwargs)
+
     async def restore_certificate(
         self,
         vault_base_url: str,
@@ -2231,6 +2335,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_1.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'restore_key'".format(api_version))
         mixin_instance = OperationClass()
@@ -2531,6 +2637,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_1.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'sign'".format(api_version))
         mixin_instance = OperationClass()
@@ -2578,6 +2686,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_1.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'unwrap_key'".format(api_version))
         mixin_instance = OperationClass()
@@ -2780,6 +2890,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_1.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'update_key'".format(api_version))
         mixin_instance = OperationClass()
@@ -2945,6 +3057,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_1.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'verify'".format(api_version))
         mixin_instance = OperationClass()
@@ -2994,6 +3108,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_1.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from ..v7_3_preview.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'wrap_key'".format(api_version))
         mixin_instance = OperationClass()
