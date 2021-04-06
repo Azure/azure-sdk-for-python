@@ -551,7 +551,7 @@ class ChatThreadClient(object):
         # type: (...) -> None
         """Remove a participant from a thread.
 
-        :param identifier: Required. User identity of the thread participant to remove from the thread.
+        :param identifier: Required. Identifier of the thread participant to remove from the thread.
         :type identifier: ~azure.communication.chat.CommunicationIdentifier
         :return: None
         :rtype: None

@@ -478,10 +478,10 @@ if retry:
 ### Remove thread participant
 
 Use `remove_participant` method to remove thread participant from the thread identified by threadId.
-`user` is the `CommunicationUserIdentifier` you created by CommunicationIdentityClient.create_user() from User Access Tokens
+`identifier` is the `CommunicationUserIdentifier` you created by CommunicationIdentityClient.create_user() from User Access Tokens
 <!-- [User Access Tokens](#user-access-tokens)  -->
 and was added into this chat thread.
-- Use `user` to specify the `CommunicationUserIdentifier` you created
+- Use `identifier` to specify the `CommunicationUserIdentifier` you created
 ```python
 chat_thread_client.remove_participant(identifier=new_user)
 
