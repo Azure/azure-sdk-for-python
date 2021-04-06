@@ -214,7 +214,7 @@ jobs:
 
       - template: /eng/common/TestResources/deploy-test-resources.yml
         parameters:
-          ServiceDirectory: '$(Build.SourcesDirectory)/common/smoketest/'
+          ServiceDirectory: 'smoke-test'
           SubscriptionConfiguration: $(SubscriptionConfiguration)
           Location: $(Location)
           ArmTemplateParameters: $(ArmTemplateParameters)
@@ -224,6 +224,6 @@ jobs:
 
       - template: /eng/common/TestResources/remove-test-resources.yml
         parameters:
-          ServiceDirectory: '$(Build.SourcesDirectory)/common/smoketest/'
+          ServiceDirectory: 'smoke-test'
           SubscriptionConfiguration: $(SubscriptionConfiguration)
 
