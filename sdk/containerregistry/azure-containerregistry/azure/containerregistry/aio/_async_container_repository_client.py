@@ -140,11 +140,11 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
         :keyword last: Query parameter for the last item in the previous call. Ensuing
             call will return values after last lexically
-        :type last: str
+        :paramtype last: str
         :keyword order_by: Query parameter for ordering by time ascending or descending
-        :type order_by: :class:`~azure.containerregistry.RegistryArtifactOrderBy`
-        :keyword results_per_page: Numer of repositories to return per page
-        :type results_per_page: int
+        :paramtype order_by: :class:`~azure.containerregistry.RegistryArtifactOrderBy`
+        :keyword results_per_page: Number of repositories to return per page
+        :paramtype results_per_page: int
         :return: ItemPaged[:class:`~azure.containerregistry.RegistryArtifactProperties`]
         :rtype: :class:`~azure.core.async_paging.AsyncItemPaged`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
@@ -257,11 +257,11 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
         :keyword last: Query parameter for the last item in the previous call. Ensuing
             call will return values after last lexically
-        :type last: str
-        :keyword order_by: Query paramter for ordering by time ascending or descending
-        :type order_by: :class:`~azure.containerregistry.TagOrderBy`
-        :keyword results_per_page: Numer of repositories to return per page
-        :type results_per_page: int
+        :paramtype last: str
+        :keyword order_by: Query parameter for ordering by time ascending or descending
+        :paramtype order_by: :class:`~azure.containerregistry.TagOrderBy`
+        :keyword results_per_page: Number of repositories to return per page
+        :paramtype results_per_page: int
         :return: ItemPaged[:class:`~azure.containerregistry.TagProperties`]
         :rtype: :class:`~azure.core.async_paging.AsyncItemPaged`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`

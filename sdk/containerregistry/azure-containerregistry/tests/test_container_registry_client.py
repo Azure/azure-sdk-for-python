@@ -22,7 +22,6 @@ from preparer import acr_preparer
 
 
 class TestContainerRegistryClient(ContainerRegistryTestClass):
-
     @acr_preparer()
     def test_list_repositories(self, containerregistry_baseurl):
         client = self.create_registry_client(containerregistry_baseurl)

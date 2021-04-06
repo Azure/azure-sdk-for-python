@@ -63,11 +63,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :keyword last: Query parameter for the last item in the previous call. Ensuing
             call will return values after last lexicallyy
-        :type last: str
+        :paramtype last: str
         :keyword max: Maximum number of repositories to return
-        :type max: int
-        :keyword results_per_page: Numer of repositories to return per page
-        :type results_per_page: int
+        :paramtype max: int
+        :keyword results_per_page: Number of repositories to return per page
+        :paramtype results_per_page: int
         :return: ItemPaged[str]
         :rtype: :class:`~azure.core.async_paging.AsyncItemPaged`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`

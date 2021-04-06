@@ -26,7 +26,6 @@ from constants import TO_BE_DELETED
 
 
 class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
-
     @acr_preparer()
     async def test_list_registry_artifacts(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
@@ -105,7 +104,12 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
     @acr_preparer()
     async def test_delete_tag(self, containerregistry_baseurl, containerregistry_resource_group):
         repo = self.get_resource_name("repo")
-        self._import_tag_to_be_deleted(containerregistry_baseurl, resource_group=containerregistry_resource_group, repository=repo, tag=TO_BE_DELETED)
+        self._import_tag_to_be_deleted(
+            containerregistry_baseurl,
+            resource_group=containerregistry_resource_group,
+            repository=repo,
+            tag=TO_BE_DELETED,
+        )
 
         client = self.create_repository_client(containerregistry_baseurl, repo)
 
@@ -127,7 +131,9 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     async def test_delete_repository(self, containerregistry_baseurl, containerregistry_resource_group):
-        self.import_repo_to_be_deleted(containerregistry_baseurl, resource_group=containerregistry_resource_group, repository=TO_BE_DELETED)
+        self.import_repo_to_be_deleted(
+            containerregistry_baseurl, resource_group=containerregistry_resource_group, repository=TO_BE_DELETED
+        )
 
         reg_client = self.create_registry_client(containerregistry_baseurl)
         existing_repos = []
@@ -158,7 +164,9 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
     @acr_preparer()
     async def test_delete_registry_artifact(self, containerregistry_baseurl, containerregistry_resource_group):
         repository = self.get_resource_name("repo")
-        self.import_repo_to_be_deleted(containerregistry_baseurl, resource_group=containerregistry_resource_group, repository=repository)
+        self.import_repo_to_be_deleted(
+            containerregistry_baseurl, resource_group=containerregistry_resource_group, repository=repository
+        )
 
         repo_client = self.create_repository_client(containerregistry_baseurl, repository)
 
@@ -177,9 +185,7 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
         assert len(artifacts) == count - 1
 
     @acr_preparer()
-    async def test_set_tag_properties(
-        self, containerregistry_baseurl, containerregistry_resource_group
-    ):
+    async def test_set_tag_properties(self, containerregistry_baseurl, containerregistry_resource_group):
         repository = self.get_resource_name("repo")
         tag_identifier = self.get_resource_name("tag")
         self.import_repo_to_be_deleted(
@@ -194,9 +200,15 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
         tag_props = await client.get_tag_properties(tag_identifier)
         permissions = tag_props.content_permissions
 
-        received = await client.set_tag_properties(tag_identifier, ContentPermissions(
-            can_delete=False, can_list=False, can_read=False, can_write=False,
-        ))
+        received = await client.set_tag_properties(
+            tag_identifier,
+            ContentPermissions(
+                can_delete=False,
+                can_list=False,
+                can_read=False,
+                can_write=False,
+            ),
+        )
 
         assert not received.content_permissions.can_write
         assert not received.content_permissions.can_read
@@ -226,9 +238,15 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
         async for artifact in client.list_registry_artifacts():
             permissions = artifact.content_permissions
 
-            received_permissions = await client.set_manifest_properties(artifact.digest, ContentPermissions(
-                can_delete=False, can_list=False, can_read=False, can_write=False,
-            ))
+            received_permissions = await client.set_manifest_properties(
+                artifact.digest,
+                ContentPermissions(
+                    can_delete=False,
+                    can_list=False,
+                    can_read=False,
+                    can_write=False,
+                ),
+            )
             assert not received_permissions.content_permissions.can_delete
             assert not received_permissions.content_permissions.can_read
             assert not received_permissions.content_permissions.can_list
@@ -271,7 +289,6 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
 
         assert count > 0
 
-
     @acr_preparer()
     async def test_list_registry_artifacts(self, containerregistry_baseurl):
         client = self.create_repository_client(containerregistry_baseurl, self.repository)
@@ -294,7 +311,9 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        async for artifact in client.list_registry_artifacts(order_by=RegistryArtifactOrderBy.LAST_UPDATE_TIME_DESCENDING):
+        async for artifact in client.list_registry_artifacts(
+            order_by=RegistryArtifactOrderBy.LAST_UPDATE_TIME_DESCENDING
+        ):
             if prev_last_updated_on:
                 assert artifact.last_updated_on < prev_last_updated_on
             prev_last_updated_on = artifact.last_updated_on
@@ -308,7 +327,9 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        async for artifact in client.list_registry_artifacts(order_by=RegistryArtifactOrderBy.LAST_UPDATE_TIME_ASCENDING):
+        async for artifact in client.list_registry_artifacts(
+            order_by=RegistryArtifactOrderBy.LAST_UPDATE_TIME_ASCENDING
+        ):
             if prev_last_updated_on:
                 assert artifact.last_updated_on > prev_last_updated_on
             prev_last_updated_on = artifact.last_updated_on
