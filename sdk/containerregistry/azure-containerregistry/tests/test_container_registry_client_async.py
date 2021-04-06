@@ -23,7 +23,6 @@ from preparer import acr_preparer
 
 
 class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
-
     @acr_preparer()
     async def test_list_repositories(self, containerregistry_baseurl):
         client = self.create_registry_client(containerregistry_baseurl)
@@ -39,6 +38,27 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
             prev = repo
 
         assert count > 0
+
+    @acr_preparer()
+    async def test_list_repositories_by_page(self, containerregistry_baseurl):
+        client = self.create_registry_client(containerregistry_baseurl)
+        results_per_page = 2
+        total_pages = 0
+
+        repository_pages = client.list_repositories(results_per_page=results_per_page)
+
+        prev = None
+        async for page in repository_pages.by_page():
+            page_count = 0
+            async for repo in page:
+                assert isinstance(repo, six.string_types)
+                assert prev != repo
+                prev = repo
+                page_count += 1
+            assert page_count <= results_per_page
+            total_pages += 1
+
+        assert total_pages >= 1
 
     @acr_preparer()
     async def test_delete_repository(self, containerregistry_baseurl, containerregistry_resource_group):

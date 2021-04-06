@@ -7,19 +7,19 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog
+    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags
   response:
     body:
       string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"registry","Name":"catalog","Action":"*"}]}]}
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"hello-world","Action":"metadata_read"}]}]}
 
         '
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '196'
+      content-length: '214'
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 14:39:05 GMT
+      date: Mon, 05 Apr 2021 21:51:04 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -28,7 +28,7 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankane.azurecr.io/acr/v1/_catalog
+    url: https://seankane.azurecr.io/acr/v1/hello-world/_tags
 - request:
     body:
       access_token: REDACTED
@@ -47,11 +47,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 14:39:06 GMT
+      date: Mon, 05 Apr 2021 21:51:05 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.883333'
+      x-ms-ratelimit-remaining-calls-per-second: '333.15'
     status:
       code: 200
       message: OK
@@ -60,7 +60,7 @@ interactions:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
-      scope: registry:catalog:*
+      scope: repository:hello-world:metadata_read
       service: seankane.azurecr.io
     headers:
       Accept:
@@ -75,11 +75,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 14:39:06 GMT
+      date: Mon, 05 Apr 2021 21:51:05 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.866667'
+      x-ms-ratelimit-remaining-calls-per-second: '333.133333'
     status:
       code: 200
       message: OK
@@ -92,18 +92,18 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog
+    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags
   response:
     body:
-      string: '{"repositories":["alpine/git","debian","hello-world","library/hello-world","repo160e197b","repo2e8319c5","repo308e19dd","repo6ce51658","repo9b321760","repo_set160e197b","repob7cc1bf8","repod2be1c42","repoeb7113db","ubuntu"]}
+      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","tags":[{"name":"latest","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-03-30T12:18:52.8272444Z","lastUpdateTime":"2021-03-30T12:18:52.8272444Z","signed":false,"quarantineState":"Passed","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}]}
 
         '
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '225'
+      content-length: '410'
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 14:39:06 GMT
+      date: Mon, 05 Apr 2021 21:51:05 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -111,5 +111,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/acr/v1/_catalog
+    url: https://seankane.azurecr.io/acr/v1/hello-world/_tags
 version: 1

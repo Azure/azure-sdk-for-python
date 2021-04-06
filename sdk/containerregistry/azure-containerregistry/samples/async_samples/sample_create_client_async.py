@@ -22,8 +22,8 @@ USAGE:
 from dotenv import find_dotenv, load_dotenv
 import os
 
-class CreateClients(object):
 
+class CreateClients(object):
     def __init__(self):
         load_dotenv(find_dotenv())
         self.account_url = os.environ["AZURE_CONTAINERREGISTRY_URL"]
@@ -33,6 +33,7 @@ class CreateClients(object):
         # [START create_registry_client]
         from azure.containerregistry.aio import ContainerRegistryClient
         from azure.identity.aio import DefaultAzureCredential
+
         client = ContainerRegistryClient(self.account_url, DefaultAzureCredential())
         # [END create_registry_client]
 
@@ -41,6 +42,7 @@ class CreateClients(object):
         # [START create_repository_client]
         from azure.containerregistry.aio import ContainerRepositoryClient
         from azure.identity.aio import DefaultAzureCredential
+
         client = ContainerRepositoryClient(self.account_url, "my_repository", DefaultAzureCredential())
         # [END create_repository_client]
 
@@ -64,7 +66,7 @@ class CreateClients(object):
                             print(tag.digest)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = CreateClients()
     sample.create_registry_client()
     sample.create_repository_client()
