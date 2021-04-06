@@ -6,7 +6,7 @@
 import six.moves.urllib as urllib
 import re
 import logging
-from azure.core import PipelineClient
+from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.configuration import Configuration
@@ -157,27 +157,14 @@ class ModelsRepositoryClient(object):
         return model_map
 
 
-class ModelsRepositoryClientConfiguration(Configuration):
-    """ModelsRepositoryClient-specific variant of the Azure Core Configuration for Pipelines"""
-
-    def __init__(self, **kwargs):
-        super(ModelsRepositoryClientConfiguration, self).__init__(**kwargs)
-        # NOTE: There might be some further organization to do here as it's kind of weird that
-        # the generic config (which could be used for any remote repository) always will have
-        # the default repository's api version stored. Keep this in mind when expanding the
-        # scope of the client in the future - perhaps there may need to eventually be unique
-        # configs for default repository vs. custom repository endpoints
-        self._api_version = kwargs.get("api_version", _constants.DEFAULT_API_VERSION)
-
-
 def _create_fetcher(location, **kwargs):
     """Return a Fetcher based upon the type of location"""
     scheme = urllib.parse.urlparse(location).scheme
     if scheme in _REMOTE_PROTOCOLS:
         # HTTP/HTTPS URL
         _LOGGER.debug("Repository Location identified as HTTP/HTTPS endpoint - using HttpFetcher")
-        client = _create_pipeline_client(base_url=location, **kwargs)
-        fetcher = _resolver.HttpFetcher(client)
+        pipeline = _create_pipeline(**kwargs)
+        fetcher = _resolver.HttpFetcher(location, pipeline)
     elif scheme == "file":
         # Filesystem URI
         _LOGGER.debug("Repository Location identified as filesystem URI - using FilesystemFetcher")
@@ -191,8 +178,8 @@ def _create_fetcher(location, **kwargs):
         # Web URL with protocol unspecified - default to HTTPS
         _LOGGER.debug("Repository Location identified as remote endpoint without protocol specified - using HttpFetcher")
         location = "https://" + location
-        client = _create_pipeline_client(base_url=location, **kwargs)
-        fetcher = _resolver.HttpFetcher(client)
+        pipeline = _create_pipeline(**kwargs)
+        fetcher = _resolver.HttpFetcher(location, pipeline)
     elif scheme != "" and len(scheme) == 1 and scheme.isalpha():
         # Filesystem path using drive letters (e.g. "C:", "D:", etc.)
         _LOGGER.debug("Repository Location identified as drive letter fileystem path - using FilesystemFetcher")
@@ -202,33 +189,24 @@ def _create_fetcher(location, **kwargs):
     return fetcher
 
 
-def _create_pipeline_client(base_url, **kwargs):
+def _create_pipeline(**kwargs):
     """Creates and returns a PipelineClient configured for the provided base_url and kwargs"""
     transport = kwargs.get("transport", RequestsTransport(**kwargs))
-    config = _create_config(**kwargs)
+    policies = _create_policies_list(**kwargs)
+    return Pipeline(policies=policies, transport=transport)
+
+
+def _create_policies_list(**kwargs):
+    """Creates and returns a list of policies based on provided kwargs (or default policies)"""
     policies = [
-        config.user_agent_policy,
-        config.headers_policy,
-        config.authentication_policy,
-        ContentDecodePolicy(),
-        config.proxy_policy,
-        config.redirect_policy,
-        config.retry_policy,
-        config.logging_policy,
+        kwargs.get("user_agent_policy", UserAgentPolicy(_constants.USER_AGENT, **kwargs)),
+        kwargs.get("headers_policy", HeadersPolicy(**kwargs)),
+        kwargs.get("retry_policy", RetryPolicy(**kwargs)),
+        kwargs.get("redirect_policy", RedirectPolicy(**kwargs)),
+        kwargs.get("logging_policy", NetworkTraceLoggingPolicy(**kwargs)),
+        kwargs.get("proxy_policy", ProxyPolicy(**kwargs)),
     ]
-    return PipelineClient(base_url=base_url, config=config, policies=policies, transport=transport)
-
-
-def _create_config(**kwargs):
-    """Creates and returns a ModelsRepositoryConfiguration object"""
-    config = ModelsRepositoryClientConfiguration(**kwargs)
-    config.headers_policy = kwargs.get("headers_policy", HeadersPolicy(**kwargs))
-    config.user_agent_policy = kwargs.get(
-        "user_agent_policy", UserAgentPolicy(_constants.USER_AGENT, **kwargs)
-    )
-    config.authentication_policy = kwargs.get("authentication_policy")
-    config.retry_policy = kwargs.get("retry_policy", RetryPolicy(**kwargs))
-    config.redirect_policy = kwargs.get("redirect_policy", RedirectPolicy(**kwargs))
-    config.logging_policy = kwargs.get("logging_policy", NetworkTraceLoggingPolicy(**kwargs))
-    config.proxy_policy = kwargs.get("proxy_policy", ProxyPolicy(**kwargs))
-    return config
+    auth_policy = kwargs.get("authentication_policy")
+    if auth_policy:
+        policies.append(auth_policy)
+    return policies

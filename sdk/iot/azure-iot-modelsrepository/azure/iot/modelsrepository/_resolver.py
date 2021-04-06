@@ -8,6 +8,7 @@ import json
 import abc
 import os
 import six
+from azure.core.pipeline.transport import HttpRequest
 from . import dtmi_conventions
 from ._chainable_exception import ChainableException
 
@@ -86,12 +87,15 @@ class Fetcher(object):
 class HttpFetcher(Fetcher):
     """Fetches JSON data from a web endpoint"""
 
-    def __init__(self, http_client):
+    def __init__(self, base_url, pipeline):
         """
-        :param http_client: PipelineClient that has been configured for an endpoint
-        :type http_client: :class:`azure.core.PipelineClient`
+        :param pipeline: Pipeline (pre-configured)
+        :type pipeline: :class:`azure.core.pipeline.Pipeline`
         """
-        self.client = http_client
+        self.pipeline = pipeline
+        self.base_url = base_url
+        if not self.base_url.endswith("/"):
+            self.base_url += "/"
 
     def fetch(self, path):
         """Fetch and return the contents of a JSON file at a given web path.
@@ -104,8 +108,9 @@ class HttpFetcher(Fetcher):
         :rtype: JSON object
         """
         _LOGGER.debug("Fetching %s from remote endpoint", path)
-        request = self.client.get(url=path)
-        response = self.client._pipeline.run(request).http_response
+        url = self.base_url + path
+        request = HttpRequest("GET", url)
+        response = self.pipeline.run(request).http_response
         if response.status_code != 200:
             raise FetcherError("Failed to fetch from remote endpoint")
         json_response = json.loads(response.text())
