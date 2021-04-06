@@ -14,7 +14,7 @@ from opentelemetry import trace
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 import flask
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
@@ -29,7 +29,7 @@ exporter = AzureMonitorTraceExporter.from_connection_string(
 )
 
 # SpanExporter receives the spans and send them to the target location.
-span_processor = BatchExportSpanProcessor(exporter)
+span_processor = BatchSpanProcessor(exporter)
 trace.get_tracer_provider().add_span_processor(span_processor)
 
 # Integrations are the glue that binds the OpenTelemetry API and the
