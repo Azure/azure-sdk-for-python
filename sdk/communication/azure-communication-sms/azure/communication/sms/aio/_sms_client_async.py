@@ -143,6 +143,6 @@ class SmsClient(object):
 
     async def close(self) -> None:
         """Close the :class:
-        `~azure.communication.administration.aio.SMSClient` session.
+        `~azure.communication.sms.aio.SmsClient` session.
         """
         await self._sms_service_client.__aexit__()

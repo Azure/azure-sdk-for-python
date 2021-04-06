@@ -87,8 +87,13 @@ class SearchQuery(_QueryBase):
         """
         if not fields:
             raise ValueError("At least one field must be provided")
-
-        self._request.select = ",".join(fields)
+        selects = []
+        for field in fields:
+            if isinstance(field, list):
+                selects.append(",".join(field))
+            else:
+                selects.append(field)
+        self._request.select = ",".join(selects)
 
 
 class SuggestQuery(_QueryBase):
@@ -111,4 +116,10 @@ class SuggestQuery(_QueryBase):
         if not fields:
             raise ValueError("At least one field must be provided")
 
-        self._request.select = ",".join(fields)
+        selects = []
+        for field in fields:
+            if isinstance(field, list):
+                selects.append(",".join(field))
+            else:
+                selects.append(field)
+        self._request.select = ",".join(selects)

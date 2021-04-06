@@ -10,7 +10,12 @@
 # --------------------------------------------------------------------------
 
 from ._azure_appconfiguration_client import AzureAppConfigurationClient
-from ._models import ConfigurationSetting
+from ._constants import PERCENTAGE, TARGETING, TIME_WINDOW
+from ._models import (
+    ConfigurationSetting,
+    FeatureFlagConfigurationSetting,
+    SecretReferenceConfigurationSetting,
+)
 from ._version import VERSION
 from ._azure_appconfiguration_error import ResourceReadOnlyError
 
@@ -19,4 +24,9 @@ __all__ = [
     "AzureAppConfigurationClient",
     "ConfigurationSetting",
     "ResourceReadOnlyError",
+    "FeatureFlagConfigurationSetting",
+    "SecretReferenceConfigurationSetting",
+    "PERCENTAGE",
+    "TARGETING",
+    "TIME_WINDOW",
 ]

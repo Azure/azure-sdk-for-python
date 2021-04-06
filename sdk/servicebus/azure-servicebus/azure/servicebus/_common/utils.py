@@ -33,7 +33,7 @@ except ImportError:
 from uamqp import authentication, types
 
 from azure.core.settings import settings
-from azure.core.tracing import SpanKind
+from azure.core.tracing import SpanKind, Link
 
 from .._version import VERSION
 from .constants import (
@@ -260,45 +260,25 @@ def send_trace_context_manager(span_name=SPAN_NAME_SEND):
     span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
 
     if span_impl_type is not None:
-        with span_impl_type(name=span_name) as child:
-            child.kind = SpanKind.CLIENT
+        with span_impl_type(name=span_name, kind=SpanKind.CLIENT) as child:
             yield child
     else:
         yield None
 
 
 @contextmanager
-def receive_trace_context_manager(receiver, message=None, span_name=SPAN_NAME_RECEIVE):
-    # type: (ReceiverMixin, Optional[Union[ServiceBusMessage, Iterable[ServiceBusMessage]]], str) -> Iterator[None]
+def receive_trace_context_manager(receiver, span_name=SPAN_NAME_RECEIVE, links=None):
+    # type: (ReceiverMixin, str, List[Link]) -> Iterator[None]
     """Tracing"""
     span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
     if span_impl_type is None:
         yield
     else:
-        receive_span = span_impl_type(name=span_name)
+        receive_span = span_impl_type(name=span_name, kind=SpanKind.CONSUMER, links=links)
         receiver._add_span_request_attributes(receive_span)  # type: ignore  # pylint: disable=protected-access
-        receive_span.kind = SpanKind.CONSUMER
-
-        # If it is desired to create link before span open
-        if message:
-            trace_link_message(message, receive_span)
 
         with receive_span:
             yield
-
-
-def add_link_to_send(message, send_span):
-    """Add Diagnostic-Id from message to span as link."""
-    try:
-        if send_span and message.message.application_properties:
-            traceparent = message.message.application_properties.get(
-                TRACE_PARENT_PROPERTY, ""
-            ).decode(TRACE_PROPERTY_ENCODING)
-            if traceparent:
-                send_span.link(traceparent)
-    except Exception as exp:  # pylint:disable=broad-except
-        _log.warning("add_link_to_send had an exception %r", exp)
-
 
 def trace_message(message, parent_span=None):
     # type: (ServiceBusMessage, Optional[AbstractSpan]) -> None
@@ -312,8 +292,10 @@ def trace_message(message, parent_span=None):
             current_span = parent_span or span_impl_type(
                 span_impl_type.get_current_span()
             )
-            with current_span.span(name=SPAN_NAME_MESSAGE) as message_span:
-                message_span.kind = SpanKind.PRODUCER
+            link = Link({
+                'traceparent': current_span.get_trace_parent()
+            })
+            with current_span.span(name=SPAN_NAME_MESSAGE, kind=SpanKind.PRODUCER, links=[link]) as message_span:
                 message_span.add_attribute(TRACE_NAMESPACE_PROPERTY, TRACE_NAMESPACE)
                 # TODO: Remove intermediary message; this is standin while this var is being renamed in a concurrent PR
                 if not message.message.application_properties:
@@ -325,36 +307,26 @@ def trace_message(message, parent_span=None):
     except Exception as exp:  # pylint:disable=broad-except
         _log.warning("trace_message had an exception %r", exp)
 
-
-def trace_link_message(messages, parent_span=None):
-    # type: (Union[ServiceBusMessage, Iterable[ServiceBusMessage]], Optional[AbstractSpan]) -> None
-    """Link the current message(s) to current span or provided parent span.
-    Will extract DiagnosticId if available.
-    """
+def get_receive_links(messages):
     trace_messages = (
         messages if isinstance(messages, Iterable)  # pylint:disable=isinstance-second-argument-not-valid-type
         else (messages,)
     )
-    try:  # pylint:disable=too-many-nested-blocks
-        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
-        if span_impl_type is not None:
-            current_span = parent_span or span_impl_type(
-                span_impl_type.get_current_span()
-            )
-            if current_span:
-                for message in trace_messages:  # type: ignore
-                    if message.message.application_properties:
-                        traceparent = message.message.application_properties.get(
-                            TRACE_PARENT_PROPERTY, ""
-                        ).decode(TRACE_PROPERTY_ENCODING)
-                        if traceparent:
-                            current_span.link(
-                                traceparent,
-                                attributes={
-                                    SPAN_ENQUEUED_TIME_PROPERTY: message.message.annotations.get(
-                                        TRACE_ENQUEUED_TIME_PROPERTY
-                                    )
-                                },
+
+    links = []
+    try:
+        for message in trace_messages:  # type: ignore
+            if message.message.application_properties:
+                traceparent = message.message.application_properties.get(
+                    TRACE_PARENT_PROPERTY, ""
+                ).decode(TRACE_PROPERTY_ENCODING)
+                if traceparent:
+                    links.append(Link({'traceparent': traceparent},
+                        {
+                            SPAN_ENQUEUED_TIME_PROPERTY: message.message.annotations.get(
+                                TRACE_ENQUEUED_TIME_PROPERTY
                             )
-    except Exception as exp:  # pylint:disable=broad-except
-        _log.warning("trace_link_message had an exception %r", exp)
+                        }))
+    except AttributeError:
+        pass
+    return links

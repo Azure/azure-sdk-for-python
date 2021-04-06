@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import sys
+import time
 
 from azure.core.credentials import AccessToken
 from azure.identity import CredentialUnavailableError, VisualStudioCodeCredential
@@ -142,16 +143,23 @@ def test_cache_refresh_token():
 
 
 def test_no_obtain_token_if_cached():
-    expected_token = AccessToken("token", 42)
+    expected_token = AccessToken("token", time.time() + 3600)
 
-    mock_client = mock.Mock(should_refresh=lambda _: False)
-    mock_client.obtain_token_by_refresh_token = mock.Mock(return_value=expected_token)
-    mock_client.get_cached_access_token = mock.Mock(return_value="VALUE")
+    mock_client = mock.Mock(
+        obtain_token_by_refresh_token=mock.Mock(return_value=expected_token),
+        get_cached_access_token=mock.Mock(return_value=expected_token)
+    )
 
-    with mock.patch(VisualStudioCodeCredential.__module__ + ".get_credentials", return_value="VALUE"):
-        credential = VisualStudioCodeCredential(_client=mock_client)
+    credential = VisualStudioCodeCredential(_client=mock_client)
+    with mock.patch(
+        VisualStudioCodeCredential.__module__ + ".get_credentials",
+        mock.Mock(side_effect=Exception("credential should not acquire a new token")),
+    ):
         token = credential.get_token("scope")
-        assert mock_client.obtain_token_by_refresh_token.call_count == 0
+
+    assert mock_client.obtain_token_by_refresh_token.call_count == 0
+    assert token.token == expected_token.token
+    assert token.expires_on == expected_token.expires_on
 
 
 @pytest.mark.skipif(not sys.platform.startswith("linux"), reason="This test only runs on Linux")

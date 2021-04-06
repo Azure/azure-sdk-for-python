@@ -27,7 +27,7 @@ endpoint = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
 
 # To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have your
 # AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
-phone_number_administration_client = PhoneNumbersAdministrationClient(endpoint, DefaultAzureCredential())
+phone_numbers_client = PhoneNumbersClient(endpoint, DefaultAzureCredential())
 
 ```
 ### Initializing the Client Using Your Connection String
@@ -39,7 +39,7 @@ import os
 from azure.communication.phonenumbers import PhoneNumbersClient
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
-phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
+phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 ```
 
 ### Phone Number Types overview

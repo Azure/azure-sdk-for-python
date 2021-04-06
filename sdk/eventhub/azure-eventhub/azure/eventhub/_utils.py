@@ -10,7 +10,7 @@ import platform
 import datetime
 import calendar
 import logging
-from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any, Iterable
+from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any, Iterable, Tuple
 
 import six
 
@@ -18,7 +18,7 @@ from uamqp import types
 from uamqp.message import MessageHeader
 
 from azure.core.settings import settings
-from azure.core.tracing import SpanKind
+from azure.core.tracing import SpanKind, Link
 
 from ._version import VERSION
 from ._constants import (
@@ -35,6 +35,7 @@ if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
     from uamqp import Message
     from azure.core.tracing import AbstractSpan
+    from azure.core.credentials import AzureSasCredential
     from ._common import EventData
 
 _LOGGER = logging.getLogger(__name__)
@@ -131,23 +132,10 @@ def send_context_manager():
     )  # type: Type[AbstractSpan]
 
     if span_impl_type is not None:
-        with span_impl_type(name="Azure.EventHubs.send") as child:
-            child.kind = SpanKind.CLIENT
+        with span_impl_type(name="Azure.EventHubs.send", kind=SpanKind.CLIENT) as child:
             yield child
     else:
         yield None
-
-
-def add_link_to_send(event, send_span):
-    """Add Diagnostic-Id from event to span as link.
-    """
-    try:
-        if send_span and event.properties:
-            traceparent = event.properties.get(b"Diagnostic-Id", "").decode("ascii")
-            if traceparent:
-                send_span.link(traceparent)
-    except Exception as exp:  # pylint:disable=broad-except
-        _LOGGER.warning("add_link_to_send had an exception %r", exp)
 
 
 def trace_message(event, parent_span=None):
@@ -163,8 +151,14 @@ def trace_message(event, parent_span=None):
             current_span = parent_span or span_impl_type(
                 span_impl_type.get_current_span()
             )
-            with current_span.span(name="Azure.EventHubs.message") as message_span:
-                message_span.kind = SpanKind.PRODUCER
+            link = Link({
+                'traceparent': current_span.get_trace_parent()
+            })
+            with current_span.span(
+                name="Azure.EventHubs.message",
+                kind=SpanKind.PRODUCER,
+                links=[link]
+                ) as message_span:
                 message_span.add_attribute("az.namespace", "Microsoft.EventHub")
                 if not event.properties:
                     event.properties = dict()
@@ -174,32 +168,20 @@ def trace_message(event, parent_span=None):
     except Exception as exp:  # pylint:disable=broad-except
         _LOGGER.warning("trace_message had an exception %r", exp)
 
-
-def trace_link_message(events, parent_span=None):
-    # type: (Union[EventData, Iterable[EventData]], Optional[AbstractSpan]) -> None
-    """Link the current event(s) to current span or provided parent span.
-
-    Will extract DiagnosticId if available.
-    """
+def get_event_links(events):
     trace_events = events if isinstance(events, Iterable) else (events,)  # pylint:disable=isinstance-second-argument-not-valid-type
-    try:  # pylint:disable=too-many-nested-blocks
-        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
-        if span_impl_type is not None:
-            current_span = parent_span or span_impl_type(
-                span_impl_type.get_current_span()
-            )
-            if current_span:
-                for event in trace_events:  # type: ignore
-                    if event.properties:
-                        traceparent = event.properties.get(b"Diagnostic-Id", "").decode("ascii")
-                        if traceparent:
-                            current_span.link(
-                                traceparent,
-                                attributes={"enqueuedTime": event.message.annotations.get(PROP_TIMESTAMP)}
-                            )
-    except Exception as exp:  # pylint:disable=broad-except
-        _LOGGER.warning("trace_link_message had an exception %r", exp)
-
+    links = []
+    try:
+        for event in trace_events:  # type: ignore
+            if event.properties:
+                traceparent = event.properties.get(b"Diagnostic-Id", "").decode("ascii")
+                if traceparent:
+                    links.append(Link({'traceparent': traceparent},
+                        attributes={"enqueuedTime": event.message.annotations.get(PROP_TIMESTAMP)}
+                        ))
+    except AttributeError:
+        pass
+    return links
 
 def event_position_selector(value, inclusive=False):
     # type: (Union[int, str, datetime.datetime], bool) -> bytes
@@ -262,3 +244,13 @@ def get_last_enqueued_event_properties(event_data):
         }
         return event_data._last_enqueued_event_properties
     return None
+
+def parse_sas_credential(credential):
+    # type: (AzureSasCredential) -> Tuple
+    sas = credential.signature
+    parsed_sas = sas.split('&')
+    expiry = None
+    for item in parsed_sas:
+        if item.startswith('se='):
+            expiry = int(item[3:])
+    return (sas, expiry)

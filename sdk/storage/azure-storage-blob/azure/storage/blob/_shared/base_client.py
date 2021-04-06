@@ -56,10 +56,10 @@ from .response_handlers import process_storage_error, PartialBatchErrorException
 
 _LOGGER = logging.getLogger(__name__)
 _SERVICE_PARAMS = {
-    "blob": {"primary": "BlobEndpoint", "secondary": "BlobSecondaryEndpoint"},
-    "queue": {"primary": "QueueEndpoint", "secondary": "QueueSecondaryEndpoint"},
-    "file": {"primary": "FileEndpoint", "secondary": "FileSecondaryEndpoint"},
-    "dfs": {"primary": "BlobEndpoint", "secondary": "BlobEndpoint"},
+    "blob": {"primary": "BLOBENDPOINT", "secondary": "BLOBSECONDARYENDPOINT"},
+    "queue": {"primary": "QUEUEENDPOINT", "secondary": "QUEUESECONDARYENDPOINT"},
+    "file": {"primary": "FILEENDPOINT", "secondary": "FILESECONDARYENDPOINT"},
+    "dfs": {"primary": "BLOBENDPOINT", "secondary": "BLOBENDPOINT"},
 }
 
 
@@ -364,15 +364,15 @@ def parse_connection_str(conn_str, credential, service):
     conn_settings = [s.split("=", 1) for s in conn_str.split(";")]
     if any(len(tup) != 2 for tup in conn_settings):
         raise ValueError("Connection string is either blank or malformed.")
-    conn_settings = dict(conn_settings)
+    conn_settings = dict((key.upper(), val) for key, val in conn_settings)
     endpoints = _SERVICE_PARAMS[service]
     primary = None
     secondary = None
     if not credential:
         try:
-            credential = {"account_name": conn_settings["AccountName"], "account_key": conn_settings["AccountKey"]}
+            credential = {"account_name": conn_settings["ACCOUNTNAME"], "account_key": conn_settings["ACCOUNTKEY"]}
         except KeyError:
-            credential = conn_settings.get("SharedAccessSignature")
+            credential = conn_settings.get("SHAREDACCESSSIGNATURE")
     if endpoints["primary"] in conn_settings:
         primary = conn_settings[endpoints["primary"]]
         if endpoints["secondary"] in conn_settings:
@@ -382,13 +382,13 @@ def parse_connection_str(conn_str, credential, service):
             raise ValueError("Connection string specifies only secondary endpoint.")
         try:
             primary = "{}://{}.{}.{}".format(
-                conn_settings["DefaultEndpointsProtocol"],
-                conn_settings["AccountName"],
+                conn_settings["DEFAULTENDPOINTSPROTOCOL"],
+                conn_settings["ACCOUNTNAME"],
                 service,
-                conn_settings["EndpointSuffix"],
+                conn_settings["ENDPOINTSUFFIX"],
             )
             secondary = "{}-secondary.{}.{}".format(
-                conn_settings["AccountName"], service, conn_settings["EndpointSuffix"]
+                conn_settings["ACCOUNTNAME"], service, conn_settings["ENDPOINTSUFFIX"]
             )
         except KeyError:
             pass
@@ -396,7 +396,7 @@ def parse_connection_str(conn_str, credential, service):
     if not primary:
         try:
             primary = "https://{}.{}.{}".format(
-                conn_settings["AccountName"], service, conn_settings.get("EndpointSuffix", SERVICE_HOST_BASE)
+                conn_settings["ACCOUNTNAME"], service, conn_settings.get("ENDPOINTSUFFIX", SERVICE_HOST_BASE)
             )
         except KeyError:
             raise ValueError("Connection string missing required connection details.")
@@ -424,6 +424,9 @@ def create_configuration(**kwargs):
 
     # Page blob uploads
     config.max_page_size = kwargs.get("max_page_size", 4 * 1024 * 1024)
+
+    # Datalake file uploads
+    config.min_large_chunk_upload_threshold = kwargs.get("min_large_chunk_upload_threshold", 100 * 1024 * 1024 + 1)
 
     # Blob downloads
     config.max_single_get_size = kwargs.get("max_single_get_size", 32 * 1024 * 1024)

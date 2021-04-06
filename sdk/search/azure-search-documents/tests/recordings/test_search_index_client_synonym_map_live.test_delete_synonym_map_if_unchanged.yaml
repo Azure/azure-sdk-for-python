@@ -14,12 +14,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://searchfabb2026.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://searchfabb2026.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D84B8A22BED907\"","name":"test-syn-map","format":"solr","synonyms":"USA,
+      string: '{"@odata.context":"https://searchfabb2026.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D8EFCADE723BA5\"","name":"test-syn-map","format":"solr","synonyms":"USA,
         United States, United States of America\nWashington, Wash. => WA","encryptionKey":null}'
     headers:
       cache-control:
@@ -29,11 +29,11 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Fri, 28 Aug 2020 19:39:53 GMT
+      - Thu, 25 Mar 2021 20:16:26 GMT
       elapsed-time:
-      - '38'
+      - '70'
       etag:
-      - W/"0x8D84B8A22BED907"
+      - W/"0x8D8EFCADE723BA5"
       expires:
       - '-1'
       location:
@@ -45,7 +45,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 3e4b8219-e966-11ea-8c23-5cf37071153c
+      - fa291dc2-8da6-11eb-99e0-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -68,12 +68,12 @@ interactions:
       Prefer:
       - return=representation
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: PUT
     uri: https://searchfabb2026.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://searchfabb2026.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D84B8A22DC034D\"","name":"test-syn-map","format":"solr","synonyms":"W\na\ns\nh\ni\nn\ng\nt\no\nn\n,\n
+      string: '{"@odata.context":"https://searchfabb2026.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D8EFCADE8B4CCF\"","name":"test-syn-map","format":"solr","synonyms":"W\na\ns\nh\ni\nn\ng\nt\no\nn\n,\n
         \nW\na\ns\nh\n.\n \n=\n>\n \nW\nA","encryptionKey":null}'
     headers:
       cache-control:
@@ -83,11 +83,11 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Fri, 28 Aug 2020 19:39:53 GMT
+      - Thu, 25 Mar 2021 20:16:26 GMT
       elapsed-time:
-      - '23'
+      - '26'
       etag:
-      - W/"0x8D84B8A22DC034D"
+      - W/"0x8D8EFCADE8B4CCF"
       expires:
       - '-1'
       odata-version:
@@ -97,7 +97,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 3ec8cd68-e966-11ea-bc7e-5cf37071153c
+      - fa6e90b2-8da6-11eb-9a57-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -117,9 +117,9 @@ interactions:
       Content-Length:
       - '0'
       If-Match:
-      - '"0x8D84B8A22BED907"'
+      - '"0x8D8EFCADE723BA5"'
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://searchfabb2026.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30-Preview
   response:
@@ -137,7 +137,7 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Fri, 28 Aug 2020 19:39:53 GMT
+      - Thu, 25 Mar 2021 20:16:26 GMT
       elapsed-time:
       - '5'
       expires:
@@ -149,7 +149,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 3ee62b8a-e966-11ea-a027-5cf37071153c
+      - fa837a93-8da6-11eb-ba4b-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
