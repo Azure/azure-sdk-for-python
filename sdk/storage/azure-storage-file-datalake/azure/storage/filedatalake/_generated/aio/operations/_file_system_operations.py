@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVar
+from typing import Any, AsyncIterable, Callable, Dict, Generic, List, Optional, TypeVar, Union
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -108,7 +108,7 @@ class FileSystemOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -206,7 +206,7 @@ class FileSystemOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -276,7 +276,7 @@ class FileSystemOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -370,7 +370,7 @@ class FileSystemOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -443,8 +443,10 @@ class FileSystemOperations:
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
             if request_id_parameter is not None:
-                header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-            header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+                header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter",
+                                                                                     request_id_parameter, 'str')
+            header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version,
+                                                                       'str')
             header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
@@ -456,7 +458,8 @@ class FileSystemOperations:
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['resource'] = self._serialize.query("self._config.resource", self._config.resource, 'str')
+                query_parameters['resource'] = self._serialize.query("self._config.resource", self._config.resource,
+                                                                     'str')
                 if timeout is not None:
                     query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
                 # TODO: change this once continuation/next_link autorest PR is merged
@@ -502,7 +505,7 @@ class FileSystemOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.StorageError, response)
+                error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -512,3 +515,117 @@ class FileSystemOperations:
             get_next, extract_data
         )
     list_paths.metadata = {'url': '/{filesystem}'}  # type: ignore
+
+    async def list_blob_hierarchy_segment(
+        self,
+        prefix: Optional[str] = None,
+        delimiter: Optional[str] = None,
+        marker: Optional[str] = None,
+        max_results: Optional[int] = None,
+        include: Optional[List[Union[str, "_models.ListBlobsIncludeItem"]]] = None,
+        showonly: Optional[str] = "deleted",
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        **kwargs
+    ) -> "_models.ListBlobsHierarchySegmentResponse":
+        """The List Blobs operation returns a list of the blobs under the specified container.
+
+        :param prefix: Filters results to filesystems within the specified prefix.
+        :type prefix: str
+        :param delimiter: When the request includes this parameter, the operation returns a BlobPrefix
+         element in the response body that acts as a placeholder for all blobs whose names begin with
+         the same substring up to the appearance of the delimiter character. The delimiter may be a
+         single character or a string.
+        :type delimiter: str
+        :param marker: A string value that identifies the portion of the list of containers to be
+         returned with the next listing operation. The operation returns the NextMarker value within the
+         response body if the listing operation did not return all containers remaining to be listed
+         with the current page. The NextMarker value can be used as the value for the marker parameter
+         in a subsequent call to request the next page of list items. The marker value is opaque to the
+         client.
+        :type marker: str
+        :param max_results: An optional value that specifies the maximum number of items to return. If
+         omitted or greater than 5,000, the response will include up to 5,000 items.
+        :type max_results: int
+        :param include: Include this parameter to specify one or more datasets to include in the
+         response.
+        :type include: list[str or ~azure.storage.filedatalake.models.ListBlobsIncludeItem]
+        :param showonly: Include this parameter to specify one or more datasets to include in the
+         response.
+        :type showonly: str
+        :param timeout: The timeout parameter is expressed in seconds. For more information, see
+         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
+         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+        :type timeout: int
+        :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
+         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+        :type request_id_parameter: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ListBlobsHierarchySegmentResponse, or the result of cls(response)
+        :rtype: ~azure.storage.filedatalake.models.ListBlobsHierarchySegmentResponse
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListBlobsHierarchySegmentResponse"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        restype = "container"
+        comp = "list"
+        accept = "application/xml"
+
+        # Construct URL
+        url = self.list_blob_hierarchy_segment.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['restype'] = self._serialize.query("restype", restype, 'str')
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+        if prefix is not None:
+            query_parameters['prefix'] = self._serialize.query("prefix", prefix, 'str')
+        if delimiter is not None:
+            query_parameters['delimiter'] = self._serialize.query("delimiter", delimiter, 'str')
+        if marker is not None:
+            query_parameters['marker'] = self._serialize.query("marker", marker, 'str')
+        if max_results is not None:
+            query_parameters['maxResults'] = self._serialize.query("max_results", max_results, 'int', minimum=1)
+        if include is not None:
+            query_parameters['include'] = self._serialize.query("include", include, '[str]', div=',')
+        if showonly is not None:
+            query_parameters['showonly'] = self._serialize.query("showonly", showonly, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if request_id_parameter is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        deserialized = self._deserialize('ListBlobsHierarchySegmentResponse', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
+    list_blob_hierarchy_segment.metadata = {'url': '/{filesystem}'}  # type: ignore

@@ -12,7 +12,8 @@ from typing import (  # pylint: disable=unused-import
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.exceptions import HttpResponseError, DecodeError, ResourceModifiedError, ClientAuthenticationError, \
     ResourceNotFoundError, ResourceExistsError
-from ._models import FileProperties, DirectoryProperties, LeaseProperties, PathProperties
+from ._models import FileProperties, DirectoryProperties, LeaseProperties, DeletedPathProperties, StaticWebsite, \
+    RetentionPolicy, Metrics, AnalyticsLogging, PathProperties  # pylint: disable=protected-access
 from ._shared.models import StorageErrorCode
 
 if TYPE_CHECKING:
@@ -48,6 +49,34 @@ def deserialize_path_properties(path_list):
     return [PathProperties._from_generated(path) for path in path_list] # pylint: disable=protected-access
 
 
+def get_deleted_path_properties_from_generated_code(generated):
+    deleted_path = DeletedPathProperties()
+    deleted_path.name = generated.name
+    deleted_path.deleted_time = generated.properties.deleted_time
+    deleted_path.remaining_retention_days = generated.properties.remaining_retention_days
+    deleted_path.deletion_id = generated.deletion_id
+    return deleted_path
+
+
+def is_file_path(_, __, headers):
+    if headers['x-ms-resource-type'] == "file":
+        return True
+    return False
+
+
+def get_datalake_service_properties(datalake_properties):
+    datalake_properties["analytics_logging"] = AnalyticsLogging._from_generated(    # pylint: disable=protected-access
+        datalake_properties["analytics_logging"])
+    datalake_properties["hour_metrics"] = Metrics._from_generated(datalake_properties["hour_metrics"])  # pylint: disable=protected-access
+    datalake_properties["minute_metrics"] = Metrics._from_generated(    # pylint: disable=protected-access
+        datalake_properties["minute_metrics"])
+    datalake_properties["delete_retention_policy"] = RetentionPolicy._from_generated(   # pylint: disable=protected-access
+        datalake_properties["delete_retention_policy"])
+    datalake_properties["static_website"] = StaticWebsite._from_generated(  # pylint: disable=protected-access
+        datalake_properties["static_website"])
+    return datalake_properties
+
+
 def from_blob_properties(blob_properties):
     file_props = FileProperties()
     file_props.name = blob_properties.name
@@ -63,6 +92,7 @@ def from_blob_properties(blob_properties):
     file_props.remaining_retention_days = blob_properties.remaining_retention_days
     file_props.content_settings = blob_properties.content_settings
     return file_props
+
 
 def normalize_headers(headers):
     normalized = {}

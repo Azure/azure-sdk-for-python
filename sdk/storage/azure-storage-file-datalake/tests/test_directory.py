@@ -182,9 +182,7 @@ class DirectoryTest(StorageTestCase):
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         directory_client.create_directory(metadata=metadata)
 
-        response = directory_client.delete_directory()
-        # Assert
-        self.assertIsNone(response)
+        directory_client.delete_directory()
 
     @record
     def test_delete_directory_with_if_modified_since(self):

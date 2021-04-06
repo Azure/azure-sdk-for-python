@@ -17,8 +17,8 @@ from azure.core import MatchConditions
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
-from azure.storage.filedatalake import AccessPolicy, generate_directory_sas, DirectorySasPermissions, \
-    generate_file_system_sas, generate_account_sas, ResourceTypes, AccountSasPermissions
+from azure.storage.filedatalake import generate_account_sas, ResourceTypes, AccountSasPermissions
+from azure.storage.filedatalake import AccessPolicy, DirectorySasPermissions, generate_file_system_sas
 from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirectoryClient, FileSystemClient
 from azure.storage.filedatalake import PublicAccess
 from testcase import (
@@ -635,6 +635,59 @@ class FileSystemTest(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_paths_pages_correctly())
 
+    async def _test_get_deleted_paths(self):
+        # Arrange
+        file_system = await self._create_file_system()
+        file0 = await file_system.create_file("file0")
+        file1 = await file_system.create_file("file1")
+
+        dir1 = await file_system.create_directory("dir1")
+        dir2 = await file_system.create_directory("dir2")
+        dir3 = await file_system.create_directory("dir3")
+        file_in_dir3 = await dir3.create_file("file_in_dir3")
+        file_in_subdir = await dir3.create_file("subdir/file_in_subdir")
+
+        await file0.delete_file()
+        await file1.delete_file()
+        await dir1.delete_directory()
+        await dir2.delete_directory()
+        await file_in_dir3.delete_file()
+        await file_in_subdir.delete_file()
+        deleted_paths = []
+        async for path in file_system.get_deleted_paths():
+            deleted_paths.append(path)
+        dir3_paths = []
+        async for path in file_system.get_deleted_paths(name_starts_with="dir3/"):
+            dir3_paths.append(path)
+
+        # Assert
+        self.assertEqual(len(deleted_paths), 6)
+        self.assertEqual(len(dir3_paths), 2)
+        self.assertIsNotNone(dir3_paths[0].deletion_id)
+        self.assertIsNotNone(dir3_paths[1].deletion_id)
+        self.assertEqual(dir3_paths[0].name, 'dir3/file_in_dir3')
+        self.assertEqual(dir3_paths[1].name, 'dir3/subdir/file_in_subdir')
+
+        paths_generator1 = file_system.get_deleted_paths(max_results=2).by_page()
+        paths1 = []
+        async for path in await paths_generator1.__anext__():
+            paths1.append(path)
+
+        paths_generator2 = file_system.get_deleted_paths(max_results=4) \
+            .by_page(continuation_token=paths_generator1.continuation_token)
+        paths2 = []
+        async for path in await paths_generator2.__anext__():
+            paths2.append(path)
+
+        # Assert
+        self.assertEqual(len(paths1), 2)
+        self.assertEqual(len(paths2), 4)
+
+    @record
+    def test_get_deleted_paths(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_get_deleted_paths())
+
     async def _test_create_directory_from_file_system_client_async(self):
         # Arrange
         file_system = await self._create_file_system()
@@ -776,6 +829,41 @@ class FileSystemTest(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_file_system_sessions_closes_properly_async())
 
+    async def _test_undelete_dir_with_version_id(self):
+        if not self.is_playback():
+            return
+        file_system_client = await self._create_file_system("fs")
+        dir_path = 'dir10'
+        dir_client = await file_system_client.create_directory(dir_path)
+        resp = await dir_client.delete_directory()
+        with self.assertRaises(HttpResponseError):
+            await file_system_client.get_file_client(dir_path).get_file_properties()
+        restored_dir_client = await file_system_client.undelete_path(dir_path, resp['deletion_id'])
+        resp = await restored_dir_client.get_directory_properties()
+        self.assertIsNotNone(resp)
+
+    @record
+    def test_undelete_dir_with_version_id(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_undelete_dir_with_version_id())
+
+    async def _test_undelete_file_with_version_id(self):
+        if not self.is_playback():
+            return
+        file_system_client = await self._create_file_system("fs")
+        file_path = 'dir10/fileŇ'
+        dir_client = await file_system_client.create_file(file_path)
+        resp = await dir_client.delete_file()
+        with self.assertRaises(HttpResponseError):
+            await file_system_client.get_file_client(file_path).get_file_properties()
+        restored_file_client = await file_system_client.undelete_path(file_path, resp['deletion_id'])
+        resp = await restored_file_client.get_file_properties()
+        self.assertIsNotNone(resp)
+
+    @record
+    def test_undelete_file_with_version_id(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_undelete_file_with_version_id())
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

@@ -213,6 +213,7 @@ class PathClient(StorageAccountHostsMixin):
             'recursive': True,
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
+            'cls': return_response_headers,
             'timeout': kwargs.pop('timeout', None)}
         options.update(kwargs)
         return options
