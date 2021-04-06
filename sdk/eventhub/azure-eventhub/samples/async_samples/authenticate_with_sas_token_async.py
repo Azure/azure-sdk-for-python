@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Example to demonstrate utilizing SAS (Shared Access Signature) tokens to authenticate with ServiceBus
+Example to demonstrate utilizing SAS (Shared Access Signature) tokens to authenticate with Event Hubs
 """
 
 # pylint: disable=C0111
@@ -58,11 +58,11 @@ class CustomizedSASCredential(object):
 # Target namespace and hub must also be specified.  Consumer group is set to default unless required otherwise.
 FULLY_QUALIFIED_NAMESPACE = os.environ['EVENT_HUB_HOSTNAME']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
-CONSUMER_GROUP = "$Default"
 
 # The following part creates a SAS token. Users can use any way to create a SAS token.
 SAS_POLICY = os.environ['EVENT_HUB_SAS_POLICY']
 SAS_KEY = os.environ['EVENT_HUB_SAS_KEY']
+
 
 async def create_with_sas_token():
     uri = "sb://{}/{}".format(FULLY_QUALIFIED_NAMESPACE, EVENTHUB_NAME)
