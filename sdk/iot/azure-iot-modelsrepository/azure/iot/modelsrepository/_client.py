@@ -199,22 +199,13 @@ def _create_fetcher(location, **kwargs):
 
 def _create_pipeline(**kwargs):
     """Creates and returns a PipelineClient configured for the provided base_url and kwargs"""
-    transport = kwargs.get("transport", RequestsTransport(**kwargs))
-    policies = _create_policies_list(**kwargs)
-    return Pipeline(policies=policies, transport=transport)
-
-
-def _create_policies_list(**kwargs):
-    """Creates and returns a list of policies based on provided kwargs (or default policies)"""
+    transport = RequestsTransport(**kwargs)
     policies = [
-        kwargs.get("user_agent_policy", UserAgentPolicy(_constants.USER_AGENT, **kwargs)),
-        kwargs.get("headers_policy", HeadersPolicy(**kwargs)),
-        kwargs.get("retry_policy", RetryPolicy(**kwargs)),
-        kwargs.get("redirect_policy", RedirectPolicy(**kwargs)),
-        kwargs.get("logging_policy", NetworkTraceLoggingPolicy(**kwargs)),
-        kwargs.get("proxy_policy", ProxyPolicy(**kwargs)),
+        UserAgentPolicy(_constants.USER_AGENT, **kwargs),
+        HeadersPolicy(**kwargs),
+        RetryPolicy(**kwargs),
+        RedirectPolicy(**kwargs),
+        NetworkTraceLoggingPolicy(**kwargs),
+        ProxyPolicy(**kwargs),
     ]
-    auth_policy = kwargs.get("authentication_policy")
-    if auth_policy:
-        policies.append(auth_policy)
-    return policies
+    return Pipeline(policies=policies, transport=transport)
