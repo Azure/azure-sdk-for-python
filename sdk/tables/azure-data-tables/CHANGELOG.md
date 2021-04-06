@@ -1,5 +1,8 @@
 # Release History
 
+## 12.0.0b7 (Unreleased)
+
+
 ## 12.0.0b6 (2021-04-06)
 * Updated deserialization of datetime fields in entities to support preservation of the service format with additional decimal place.
 * Passing a string parameter into a query filter will now be escaped to protect against injection.
