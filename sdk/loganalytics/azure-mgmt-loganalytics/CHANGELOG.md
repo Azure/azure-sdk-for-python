@@ -1,5 +1,36 @@
 # Release History
 
+## 9.0.0 (2021-04-06)
+
+**Features**
+
+  - Model WorkspacePatch has a new parameter created_date
+  - Model WorkspacePatch has a new parameter features
+  - Model WorkspacePatch has a new parameter modified_date
+  - Model WorkspacePatch has a new parameter force_cmk_for_query
+  - Model Cluster has a new parameter last_modified_date
+  - Model Cluster has a new parameter billing_type
+  - Model Cluster has a new parameter is_double_encryption_enabled
+  - Model Cluster has a new parameter is_availability_zones_enabled
+  - Model Cluster has a new parameter created_date
+  - Model Cluster has a new parameter capacity_reservation_properties
+  - Model Cluster has a new parameter associated_workspaces
+  - Model Table has a new parameter is_troubleshooting_allowed
+  - Model Table has a new parameter last_troubleshoot_date
+  - Model Table has a new parameter is_troubleshoot_enabled
+  - Model Identity has a new parameter user_assigned_identities
+  - Model ClusterPatch has a new parameter identity
+  - Model KeyVaultProperties has a new parameter key_rsa_size
+  - Model Workspace has a new parameter created_date
+  - Model Workspace has a new parameter features
+  - Model Workspace has a new parameter modified_date
+  - Model Workspace has a new parameter force_cmk_for_query
+
+**Breaking changes**
+
+  - Model Cluster no longer has parameter next_link
+  - Model ErrorResponse has a new signature
+
 ## 8.0.0 (2020-12-25)
 
 **Breaking changes**
