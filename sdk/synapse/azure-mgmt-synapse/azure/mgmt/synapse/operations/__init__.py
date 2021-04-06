@@ -12,6 +12,23 @@
 from ._big_data_pools_operations import BigDataPoolsOperations
 from ._operations import Operations
 from ._ip_firewall_rules_operations import IpFirewallRulesOperations
+from ._integration_runtimes_operations import IntegrationRuntimesOperations
+from ._integration_runtime_node_ip_address_operations import IntegrationRuntimeNodeIpAddressOperations
+from ._integration_runtime_object_metadata_operations import IntegrationRuntimeObjectMetadataOperations
+from ._integration_runtime_nodes_operations import IntegrationRuntimeNodesOperations
+from ._integration_runtime_credentials_operations import IntegrationRuntimeCredentialsOperations
+from ._integration_runtime_connection_infos_operations import IntegrationRuntimeConnectionInfosOperations
+from ._integration_runtime_auth_keys_operations import IntegrationRuntimeAuthKeysOperations
+from ._integration_runtime_monitoring_data_operations import IntegrationRuntimeMonitoringDataOperations
+from ._integration_runtime_status_operations import IntegrationRuntimeStatusOperations
+from ._keys_operations import KeysOperations
+from ._library_operations import LibraryOperations
+from ._libraries_operations import LibrariesOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._private_link_hub_private_link_resources_operations import PrivateLinkHubPrivateLinkResourcesOperations
+from ._private_link_hubs_operations import PrivateLinkHubsOperations
+from ._private_endpoint_connections_private_link_hub_operations import PrivateEndpointConnectionsPrivateLinkHubOperations
 from ._sql_pools_operations import SqlPoolsOperations
 from ._sql_pool_metadata_sync_configs_operations import SqlPoolMetadataSyncConfigsOperations
 from ._sql_pool_operation_results_operations import SqlPoolOperationResultsOperations
@@ -41,25 +58,6 @@ from ._data_masking_rules_operations import DataMaskingRulesOperations
 from ._sql_pool_columns_operations import SqlPoolColumnsOperations
 from ._sql_pool_workload_group_operations import SqlPoolWorkloadGroupOperations
 from ._sql_pool_workload_classifier_operations import SqlPoolWorkloadClassifierOperations
-from ._workspaces_operations import WorkspacesOperations
-from ._workspace_aad_admins_operations import WorkspaceAadAdminsOperations
-from ._workspace_sql_aad_admins_operations import WorkspaceSqlAadAdminsOperations
-from ._workspace_managed_identity_sql_control_settings_operations import WorkspaceManagedIdentitySqlControlSettingsOperations
-from ._restorable_dropped_sql_pools_operations import RestorableDroppedSqlPoolsOperations
-from ._integration_runtimes_operations import IntegrationRuntimesOperations
-from ._integration_runtime_node_ip_address_operations import IntegrationRuntimeNodeIpAddressOperations
-from ._integration_runtime_object_metadata_operations import IntegrationRuntimeObjectMetadataOperations
-from ._integration_runtime_nodes_operations import IntegrationRuntimeNodesOperations
-from ._integration_runtime_credentials_operations import IntegrationRuntimeCredentialsOperations
-from ._integration_runtime_connection_infos_operations import IntegrationRuntimeConnectionInfosOperations
-from ._integration_runtime_auth_keys_operations import IntegrationRuntimeAuthKeysOperations
-from ._integration_runtime_monitoring_data_operations import IntegrationRuntimeMonitoringDataOperations
-from ._integration_runtime_status_operations import IntegrationRuntimeStatusOperations
-from ._private_link_resources_operations import PrivateLinkResourcesOperations
-from ._private_link_hub_private_link_resources_operations import PrivateLinkHubPrivateLinkResourcesOperations
-from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
-from ._private_link_hubs_operations import PrivateLinkHubsOperations
-from ._private_endpoint_connections_private_link_hub_operations import PrivateEndpointConnectionsPrivateLinkHubOperations
 from ._workspace_managed_sql_server_blob_auditing_policies_operations import WorkspaceManagedSqlServerBlobAuditingPoliciesOperations
 from ._workspace_managed_sql_server_extended_blob_auditing_policies_operations import WorkspaceManagedSqlServerExtendedBlobAuditingPoliciesOperations
 from ._workspace_managed_sql_server_security_alert_policy_operations import WorkspaceManagedSqlServerSecurityAlertPolicyOperations
@@ -67,12 +65,33 @@ from ._workspace_managed_sql_server_vulnerability_assessments_operations import 
 from ._workspace_managed_sql_server_encryption_protector_operations import WorkspaceManagedSqlServerEncryptionProtectorOperations
 from ._workspace_managed_sql_server_usages_operations import WorkspaceManagedSqlServerUsagesOperations
 from ._workspace_managed_sql_server_recoverable_sql_pools_operations import WorkspaceManagedSqlServerRecoverableSqlPoolsOperations
-from ._keys_operations import KeysOperations
+from ._workspaces_operations import WorkspacesOperations
+from ._workspace_aad_admins_operations import WorkspaceAadAdminsOperations
+from ._workspace_sql_aad_admins_operations import WorkspaceSqlAadAdminsOperations
+from ._workspace_managed_identity_sql_control_settings_operations import WorkspaceManagedIdentitySqlControlSettingsOperations
+from ._restorable_dropped_sql_pools_operations import RestorableDroppedSqlPoolsOperations
 
 __all__ = [
     'BigDataPoolsOperations',
     'Operations',
     'IpFirewallRulesOperations',
+    'IntegrationRuntimesOperations',
+    'IntegrationRuntimeNodeIpAddressOperations',
+    'IntegrationRuntimeObjectMetadataOperations',
+    'IntegrationRuntimeNodesOperations',
+    'IntegrationRuntimeCredentialsOperations',
+    'IntegrationRuntimeConnectionInfosOperations',
+    'IntegrationRuntimeAuthKeysOperations',
+    'IntegrationRuntimeMonitoringDataOperations',
+    'IntegrationRuntimeStatusOperations',
+    'KeysOperations',
+    'LibraryOperations',
+    'LibrariesOperations',
+    'PrivateEndpointConnectionsOperations',
+    'PrivateLinkResourcesOperations',
+    'PrivateLinkHubPrivateLinkResourcesOperations',
+    'PrivateLinkHubsOperations',
+    'PrivateEndpointConnectionsPrivateLinkHubOperations',
     'SqlPoolsOperations',
     'SqlPoolMetadataSyncConfigsOperations',
     'SqlPoolOperationResultsOperations',
@@ -102,25 +121,6 @@ __all__ = [
     'SqlPoolColumnsOperations',
     'SqlPoolWorkloadGroupOperations',
     'SqlPoolWorkloadClassifierOperations',
-    'WorkspacesOperations',
-    'WorkspaceAadAdminsOperations',
-    'WorkspaceSqlAadAdminsOperations',
-    'WorkspaceManagedIdentitySqlControlSettingsOperations',
-    'RestorableDroppedSqlPoolsOperations',
-    'IntegrationRuntimesOperations',
-    'IntegrationRuntimeNodeIpAddressOperations',
-    'IntegrationRuntimeObjectMetadataOperations',
-    'IntegrationRuntimeNodesOperations',
-    'IntegrationRuntimeCredentialsOperations',
-    'IntegrationRuntimeConnectionInfosOperations',
-    'IntegrationRuntimeAuthKeysOperations',
-    'IntegrationRuntimeMonitoringDataOperations',
-    'IntegrationRuntimeStatusOperations',
-    'PrivateLinkResourcesOperations',
-    'PrivateLinkHubPrivateLinkResourcesOperations',
-    'PrivateEndpointConnectionsOperations',
-    'PrivateLinkHubsOperations',
-    'PrivateEndpointConnectionsPrivateLinkHubOperations',
     'WorkspaceManagedSqlServerBlobAuditingPoliciesOperations',
     'WorkspaceManagedSqlServerExtendedBlobAuditingPoliciesOperations',
     'WorkspaceManagedSqlServerSecurityAlertPolicyOperations',
@@ -128,5 +128,9 @@ __all__ = [
     'WorkspaceManagedSqlServerEncryptionProtectorOperations',
     'WorkspaceManagedSqlServerUsagesOperations',
     'WorkspaceManagedSqlServerRecoverableSqlPoolsOperations',
-    'KeysOperations',
+    'WorkspacesOperations',
+    'WorkspaceAadAdminsOperations',
+    'WorkspaceSqlAadAdminsOperations',
+    'WorkspaceManagedIdentitySqlControlSettingsOperations',
+    'RestorableDroppedSqlPoolsOperations',
 ]

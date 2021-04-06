@@ -2454,6 +2454,73 @@ class LibraryRequirements(Model):
         self.filename = kwargs.get('filename', None)
 
 
+class LibraryResource(SubResource):
+    """Library response details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    :vartype type: str
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    :param library_resource_name: Name of the library.
+    :type library_resource_name: str
+    :param path: Storage blob path of library.
+    :type path: str
+    :param container_name: Storage blob container name.
+    :type container_name: str
+    :ivar uploaded_timestamp: The last update time of the library.
+    :vartype uploaded_timestamp: datetime
+    :param library_resource_type: Type of the library.
+    :type library_resource_type: str
+    :ivar provisioning_status: Provisioning status of the library/package.
+    :vartype provisioning_status: str
+    :ivar creator_id: Creator Id of the library/package.
+    :vartype creator_id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'uploaded_timestamp': {'readonly': True},
+        'provisioning_status': {'readonly': True},
+        'creator_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'library_resource_name': {'key': 'properties.name', 'type': 'str'},
+        'path': {'key': 'properties.path', 'type': 'str'},
+        'container_name': {'key': 'properties.containerName', 'type': 'str'},
+        'uploaded_timestamp': {'key': 'properties.uploadedTimestamp', 'type': 'iso-8601'},
+        'library_resource_type': {'key': 'properties.type', 'type': 'str'},
+        'provisioning_status': {'key': 'properties.provisioningStatus', 'type': 'str'},
+        'creator_id': {'key': 'properties.creatorId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LibraryResource, self).__init__(**kwargs)
+        self.library_resource_name = kwargs.get('library_resource_name', None)
+        self.path = kwargs.get('path', None)
+        self.container_name = kwargs.get('container_name', None)
+        self.uploaded_timestamp = None
+        self.library_resource_type = kwargs.get('library_resource_type', None)
+        self.provisioning_status = None
+        self.creator_id = None
+
+
 class LinkedIntegrationRuntime(Model):
     """The linked integration runtime information.
 
@@ -5111,7 +5178,7 @@ class SqlPool(TrackedResource):
     :param status: Resource status
     :type status: str
     :param restore_point_in_time: Snapshot time to restore
-    :type restore_point_in_time: str
+    :type restore_point_in_time: datetime
     :param create_mode: What is this?
     :type create_mode: str
     :param creation_date: Date the SQL pool was created
@@ -5142,7 +5209,7 @@ class SqlPool(TrackedResource):
         'recoverable_database_id': {'key': 'properties.recoverableDatabaseId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
-        'restore_point_in_time': {'key': 'properties.restorePointInTime', 'type': 'str'},
+        'restore_point_in_time': {'key': 'properties.restorePointInTime', 'type': 'iso-8601'},
         'create_mode': {'key': 'properties.createMode', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
@@ -5565,7 +5632,7 @@ class SqlPoolPatchInfo(Model):
     :param status: Resource status
     :type status: str
     :param restore_point_in_time: Snapshot time to restore
-    :type restore_point_in_time: str
+    :type restore_point_in_time: datetime
     :param create_mode: What is this?
     :type create_mode: str
     :param creation_date: Date the SQL pool was created
@@ -5586,7 +5653,7 @@ class SqlPoolPatchInfo(Model):
         'recoverable_database_id': {'key': 'properties.recoverableDatabaseId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
-        'restore_point_in_time': {'key': 'properties.restorePointInTime', 'type': 'str'},
+        'restore_point_in_time': {'key': 'properties.restorePointInTime', 'type': 'iso-8601'},
         'create_mode': {'key': 'properties.createMode', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
@@ -6869,6 +6936,10 @@ class Workspace(TrackedResource):
      ~azure.mgmt.synapse.models.PurviewConfiguration
     :ivar adla_resource_id: The ADLA resource ID.
     :vartype adla_resource_id: str
+    :param public_network_access: Enable or Disable pubic network access to
+     workspace. Possible values include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.synapse.models.WorkspacePublicNetworkAccess
     :param identity: Identity of the workspace
     :type identity: ~azure.mgmt.synapse.models.ManagedIdentity
     """
@@ -6906,6 +6977,7 @@ class Workspace(TrackedResource):
         'workspace_repository_configuration': {'key': 'properties.workspaceRepositoryConfiguration', 'type': 'WorkspaceRepositoryConfiguration'},
         'purview_configuration': {'key': 'properties.purviewConfiguration', 'type': 'PurviewConfiguration'},
         'adla_resource_id': {'key': 'properties.adlaResourceId', 'type': 'str'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
     }
 
@@ -6927,6 +6999,7 @@ class Workspace(TrackedResource):
         self.workspace_repository_configuration = kwargs.get('workspace_repository_configuration', None)
         self.purview_configuration = kwargs.get('purview_configuration', None)
         self.adla_resource_id = None
+        self.public_network_access = kwargs.get('public_network_access', None)
         self.identity = kwargs.get('identity', None)
 
 
@@ -7024,6 +7097,10 @@ class WorkspacePatchInfo(Model):
     :vartype provisioning_state: str
     :param encryption: The encryption details of the workspace
     :type encryption: ~azure.mgmt.synapse.models.EncryptionDetails
+    :param public_network_access: Enable or Disable pubic network access to
+     workspace. Possible values include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.synapse.models.WorkspacePublicNetworkAccess
     """
 
     _validation = {
@@ -7039,6 +7116,7 @@ class WorkspacePatchInfo(Model):
         'purview_configuration': {'key': 'properties.purviewConfiguration', 'type': 'PurviewConfiguration'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionDetails'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -7051,6 +7129,7 @@ class WorkspacePatchInfo(Model):
         self.purview_configuration = kwargs.get('purview_configuration', None)
         self.provisioning_state = None
         self.encryption = kwargs.get('encryption', None)
+        self.public_network_access = kwargs.get('public_network_access', None)
 
 
 class WorkspaceRepositoryConfiguration(Model):

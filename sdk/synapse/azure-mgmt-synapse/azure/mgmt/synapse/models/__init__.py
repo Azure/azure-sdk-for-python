@@ -62,6 +62,7 @@ try:
     from ._models_py3 import Key
     from ._models_py3 import LibraryInfo
     from ._models_py3 import LibraryRequirements
+    from ._models_py3 import LibraryResource
     from ._models_py3 import LinkedIntegrationRuntime
     from ._models_py3 import LinkedIntegrationRuntimeKeyAuthorization
     from ._models_py3 import LinkedIntegrationRuntimeRbacAuthorization
@@ -216,6 +217,7 @@ except (SyntaxError, ImportError):
     from ._models import Key
     from ._models import LibraryInfo
     from ._models import LibraryRequirements
+    from ._models import LibraryResource
     from ._models import LinkedIntegrationRuntime
     from ._models import LinkedIntegrationRuntimeKeyAuthorization
     from ._models import LinkedIntegrationRuntimeRbacAuthorization
@@ -326,6 +328,7 @@ from ._paged_models import GeoBackupPolicyPaged
 from ._paged_models import IntegrationRuntimeResourcePaged
 from ._paged_models import IpFirewallRuleInfoPaged
 from ._paged_models import KeyPaged
+from ._paged_models import LibraryResourcePaged
 from ._paged_models import PrivateEndpointConnectionForPrivateLinkHubPaged
 from ._paged_models import PrivateEndpointConnectionPaged
 from ._paged_models import PrivateLinkHubPaged
@@ -357,6 +360,20 @@ from ._synapse_management_client_enums import (
     NodeSize,
     NodeSizeFamily,
     ProvisioningState,
+    IntegrationRuntimeType,
+    IntegrationRuntimeState,
+    DataFlowComputeType,
+    IntegrationRuntimeSsisCatalogPricingTier,
+    IntegrationRuntimeLicenseType,
+    IntegrationRuntimeEntityReferenceType,
+    IntegrationRuntimeEdition,
+    ManagedIntegrationRuntimeNodeStatus,
+    IntegrationRuntimeInternalChannelEncryptionMode,
+    SelfHostedIntegrationRuntimeNodeStatus,
+    IntegrationRuntimeUpdateResult,
+    IntegrationRuntimeAutoUpdate,
+    IntegrationRuntimeAuthKeyName,
+    SsisObjectMetadataType,
     OperationStatus,
     StorageAccountType,
     GeoBackupPolicyState,
@@ -381,22 +398,9 @@ from ._synapse_management_client_enums import (
     DataMaskingFunction,
     SensitivityLabelUpdateKind,
     RecommendedSensitivityLabelUpdateKind,
-    ResourceIdentityType,
-    IntegrationRuntimeType,
-    IntegrationRuntimeState,
-    DataFlowComputeType,
-    IntegrationRuntimeSsisCatalogPricingTier,
-    IntegrationRuntimeLicenseType,
-    IntegrationRuntimeEntityReferenceType,
-    IntegrationRuntimeEdition,
-    ManagedIntegrationRuntimeNodeStatus,
-    IntegrationRuntimeInternalChannelEncryptionMode,
-    SelfHostedIntegrationRuntimeNodeStatus,
-    IntegrationRuntimeUpdateResult,
-    IntegrationRuntimeAutoUpdate,
-    IntegrationRuntimeAuthKeyName,
-    SsisObjectMetadataType,
     ServerKeyType,
+    WorkspacePublicNetworkAccess,
+    ResourceIdentityType,
     SensitivityLabelSource,
     VulnerabilityAssessmentPolicyBaselineName,
 )
@@ -454,6 +458,7 @@ __all__ = [
     'Key',
     'LibraryInfo',
     'LibraryRequirements',
+    'LibraryResource',
     'LinkedIntegrationRuntime',
     'LinkedIntegrationRuntimeKeyAuthorization',
     'LinkedIntegrationRuntimeRbacAuthorization',
@@ -557,6 +562,13 @@ __all__ = [
     'WorkspaceRepositoryConfiguration',
     'BigDataPoolResourceInfoPaged',
     'IpFirewallRuleInfoPaged',
+    'IntegrationRuntimeResourcePaged',
+    'KeyPaged',
+    'LibraryResourcePaged',
+    'PrivateEndpointConnectionPaged',
+    'PrivateLinkResourcePaged',
+    'PrivateLinkHubPaged',
+    'PrivateEndpointConnectionForPrivateLinkHubPaged',
     'SqlPoolPaged',
     'GeoBackupPolicyPaged',
     'RestorePointPaged',
@@ -576,13 +588,6 @@ __all__ = [
     'DataMaskingRulePaged',
     'WorkloadGroupPaged',
     'WorkloadClassifierPaged',
-    'WorkspacePaged',
-    'RestorableDroppedSqlPoolPaged',
-    'IntegrationRuntimeResourcePaged',
-    'PrivateLinkResourcePaged',
-    'PrivateEndpointConnectionPaged',
-    'PrivateLinkHubPaged',
-    'PrivateEndpointConnectionForPrivateLinkHubPaged',
     'ServerBlobAuditingPolicyPaged',
     'ExtendedServerBlobAuditingPolicyPaged',
     'ServerSecurityAlertPolicyPaged',
@@ -590,10 +595,25 @@ __all__ = [
     'EncryptionProtectorPaged',
     'ServerUsagePaged',
     'RecoverableSqlPoolPaged',
-    'KeyPaged',
+    'WorkspacePaged',
+    'RestorableDroppedSqlPoolPaged',
     'NodeSize',
     'NodeSizeFamily',
     'ProvisioningState',
+    'IntegrationRuntimeType',
+    'IntegrationRuntimeState',
+    'DataFlowComputeType',
+    'IntegrationRuntimeSsisCatalogPricingTier',
+    'IntegrationRuntimeLicenseType',
+    'IntegrationRuntimeEntityReferenceType',
+    'IntegrationRuntimeEdition',
+    'ManagedIntegrationRuntimeNodeStatus',
+    'IntegrationRuntimeInternalChannelEncryptionMode',
+    'SelfHostedIntegrationRuntimeNodeStatus',
+    'IntegrationRuntimeUpdateResult',
+    'IntegrationRuntimeAutoUpdate',
+    'IntegrationRuntimeAuthKeyName',
+    'SsisObjectMetadataType',
     'OperationStatus',
     'StorageAccountType',
     'GeoBackupPolicyState',
@@ -618,22 +638,9 @@ __all__ = [
     'DataMaskingFunction',
     'SensitivityLabelUpdateKind',
     'RecommendedSensitivityLabelUpdateKind',
-    'ResourceIdentityType',
-    'IntegrationRuntimeType',
-    'IntegrationRuntimeState',
-    'DataFlowComputeType',
-    'IntegrationRuntimeSsisCatalogPricingTier',
-    'IntegrationRuntimeLicenseType',
-    'IntegrationRuntimeEntityReferenceType',
-    'IntegrationRuntimeEdition',
-    'ManagedIntegrationRuntimeNodeStatus',
-    'IntegrationRuntimeInternalChannelEncryptionMode',
-    'SelfHostedIntegrationRuntimeNodeStatus',
-    'IntegrationRuntimeUpdateResult',
-    'IntegrationRuntimeAutoUpdate',
-    'IntegrationRuntimeAuthKeyName',
-    'SsisObjectMetadataType',
     'ServerKeyType',
+    'WorkspacePublicNetworkAccess',
+    'ResourceIdentityType',
     'SensitivityLabelSource',
     'VulnerabilityAssessmentPolicyBaselineName',
 ]
