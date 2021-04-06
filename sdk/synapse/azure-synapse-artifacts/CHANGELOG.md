@@ -1,5 +1,8 @@
 # Release History
 
+## 0.6.1 (Unreleased)
+
+
 ## 0.6.0 (2021-04-06)
 
 ### New Features
