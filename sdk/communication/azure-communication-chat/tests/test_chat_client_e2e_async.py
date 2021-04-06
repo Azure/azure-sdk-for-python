@@ -62,7 +62,7 @@ class ChatClientTestAsync(AsyncCommunicationTestCase):
         share_history_time = datetime.utcnow()
         share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
         participants = [ChatParticipant(
-            user=self.user,
+            identifier=self.user,
             display_name='name',
             share_history_time=share_history_time
         )]

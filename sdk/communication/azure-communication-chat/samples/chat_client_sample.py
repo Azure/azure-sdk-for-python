@@ -73,7 +73,7 @@ class ChatClientSamples(object):
 
         topic = "test topic"
         participants = [ChatParticipant(
-            user=user,
+            identifier=user,
             display_name='name',
             share_history_time=datetime.utcnow()
         )]

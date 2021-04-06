@@ -70,7 +70,7 @@ class ChatThreadClientSamples(object):
         chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
         topic = "test topic"
         participants = [ChatParticipant(
-            user=user,
+            identifier=user,
             display_name='name',
             share_history_time=datetime.utcnow()
         )]
@@ -289,7 +289,7 @@ class ChatThreadClientSamples(object):
         # create `user` using CommunicationIdentityClient.create_user method for new users;
         # else for existing users set `user` = CommunicationUserIdentifier(some_user_id)
         new_participant = ChatParticipant(
-            user=user,
+            identifier=user,
             display_name='name',
             share_history_time=datetime.utcnow())
 
@@ -324,12 +324,12 @@ class ChatThreadClientSamples(object):
 
         # add user1 and user2 to chat thread
         participant1 = ChatParticipant(
-                user=user1,
+                identifier=user1,
                 display_name='Fred Flinstone',
                 share_history_time=datetime.utcnow())
 
         participant2 = ChatParticipant(
-            user=user2,
+            identifier=user2,
             display_name='Wilma Flinstone',
             share_history_time=datetime.utcnow())
 
@@ -343,9 +343,9 @@ class ChatThreadClientSamples(object):
         for chat_thread_participant_page in chat_thread_participants.by_page():
             for chat_thread_participant in chat_thread_participant_page:
                 print("ChatParticipant: ", chat_thread_participant)
-                if chat_thread_participant.user.properties['id'] == user1.properties['id']:
+                if chat_thread_participant.identifier.properties['id'] == user1.properties['id']:
                     print("Found Fred!")
-                    chat_thread_client.remove_participant(chat_thread_participant.user)
+                    chat_thread_client.remove_participant(chat_thread_participant.identifier)
                     print("Fred has been removed from the thread...")
                     break
 

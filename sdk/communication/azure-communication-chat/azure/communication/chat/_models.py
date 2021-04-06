@@ -22,8 +22,8 @@ class ChatParticipant(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar user: Required. The communication identifier.
-    :type user: CommunicationIdentifier
+    :ivar identifier: Required. The communication identifier.
+    :type identifier: CommunicationIdentifier
     :ivar display_name: Display name for the chat thread participant.
     :type display_name: str
     :ivar share_history_time: Time from which the chat history is shared with the participant. The
@@ -37,21 +37,21 @@ class ChatParticipant(object):
     ):
         # type: (...) -> None
 
-        self.user = kwargs['user']
+        self.identifier = kwargs['identifier']
         self.display_name = kwargs.get('display_name', None)
         self.share_history_time = kwargs.get('share_history_time', None)
 
     @classmethod
     def _from_generated(cls, chat_thread_participant):
         return cls(
-            user=deserialize_identifier(chat_thread_participant.communication_identifier),
+            identifier=deserialize_identifier(chat_thread_participant.communication_identifier),
             display_name=chat_thread_participant.display_name,
             share_history_time=chat_thread_participant.share_history_time
         )
 
     def _to_generated(self):
         return ChatParticipantAutorest(
-            communication_identifier=serialize_identifier(self.user),
+            communication_identifier=serialize_identifier(self.identifier),
             display_name=self.display_name,
             share_history_time=self.share_history_time
         )

@@ -65,7 +65,7 @@ class ChatThreadClientSamplesAsync(object):
         async with chat_client:
             topic = "test topic"
             participants = [ChatParticipant(
-                user=user,
+                identifier=user,
                 display_name='name',
                 share_history_time=datetime.utcnow()
             )]
@@ -292,7 +292,7 @@ class ChatThreadClientSamplesAsync(object):
                 from azure.communication.chat import ChatParticipant
                 from datetime import datetime
                 new_participant = ChatParticipant(
-                        user=self.new_user,
+                        identifier=self.new_user,
                         display_name='name',
                         share_history_time=datetime.utcnow())
                 thread_participants = [new_participant]
@@ -326,12 +326,12 @@ class ChatThreadClientSamplesAsync(object):
             async with chat_thread_client:
                 # add user1 and user2 to chat thread
                 participant1 = ChatParticipant(
-                    user=user1,
+                    identifier=user1,
                     display_name='Fred Flinstone',
                     share_history_time=datetime.utcnow())
 
                 participant2 = ChatParticipant(
-                    user=user2,
+                    identifier=user2,
                     display_name='Wilma Flinstone',
                     share_history_time=datetime.utcnow())
 
@@ -344,9 +344,9 @@ class ChatThreadClientSamplesAsync(object):
                 async for chat_thread_participant_page in chat_thread_participants.by_page():
                     async for chat_thread_participant in chat_thread_participant_page:
                         print("ChatParticipant: ", chat_thread_participant)
-                        if chat_thread_participant.user.properties['id'] == user1.properties['id']:
+                        if chat_thread_participant.identifier.properties['id'] == user1.properties['id']:
                             print("Found Fred!")
-                            await chat_thread_client.remove_participant(chat_thread_participant.user)
+                            await chat_thread_client.remove_participant(chat_thread_participant.identifier)
                             print("Fred has been removed from the thread...")
                             break
 

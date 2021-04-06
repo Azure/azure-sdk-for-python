@@ -60,7 +60,7 @@ class TestChatClient(unittest.TestCase):
         topic="test topic"
         user = CommunicationUserIdentifier("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
         participants=[ChatParticipant(
-            user=user,
+            identifier=user,
             display_name='name',
             share_history_time=datetime.utcnow()
         )]
@@ -94,7 +94,7 @@ class TestChatClient(unittest.TestCase):
         topic = "test topic"
         user = CommunicationUserIdentifier("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
         participants = [ChatParticipant(
-            user=user,
+            identifier=user,
             display_name='name',
             share_history_time=datetime.utcnow()
         )]
@@ -117,7 +117,7 @@ class TestChatClient(unittest.TestCase):
         topic="test topic",
         user = CommunicationUserIdentifier("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
         thread_participants=[ChatParticipant(
-            user=user,
+            identifier=user,
             display_name='name',
             share_history_time=datetime.utcnow()
         )]
