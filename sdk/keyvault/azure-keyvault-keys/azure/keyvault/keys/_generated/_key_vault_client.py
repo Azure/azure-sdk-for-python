@@ -23,6 +23,8 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Optional
 
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
         """This is a fake class to support current implemetation of MultiApiClientMixin."
@@ -120,7 +122,7 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
         profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):
-        if api_version == '2016-10-01' or api_version == '7.0' or api_version == '7.1' or api_version == '7.2-preview':
+        if api_version == '2016-10-01' or api_version == '7.0' or api_version == '7.1' or api_version == '7.2-preview' or api_version == '7.3-preview':
             base_url = '{vaultBaseUrl}'
         else:
             raise ValueError("API version {} is not available".format(api_version))
@@ -143,6 +145,7 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
            * 7.0: :mod:`v7_0.models<azure.keyvault.v7_0.models>`
            * 7.1: :mod:`v7_1.models<azure.keyvault.v7_1.models>`
            * 7.2-preview: :mod:`v7_2_preview.models<azure.keyvault.v7_2_preview.models>`
+           * 7.3-preview: :mod:`v7_3_preview.models<azure.keyvault.v7_3_preview.models>`
         """
         if api_version == '2016-10-01':
             from .v2016_10_01 import models
@@ -155,6 +158,9 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
             return models
         elif api_version == '7.2-preview':
             from .v7_2_preview import models
+            return models
+        elif api_version == '7.3-preview':
+            from .v7_3_preview import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
