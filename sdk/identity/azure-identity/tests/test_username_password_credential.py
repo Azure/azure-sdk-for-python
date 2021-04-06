@@ -163,7 +163,7 @@ def test_client_capabilities():
 
 
 def test_claims_challenge():
-    """get_token should pass any claims challenge to MSAL token acquisition APIs"""
+    """get_token should and authenticate pass any claims challenge to MSAL token acquisition APIs"""
 
     msal_acquire_token_result = dict(
         build_aad_response(access_token="**", id_token=build_id_token()),
@@ -176,9 +176,15 @@ def test_claims_challenge():
     with patch.object(UsernamePasswordCredential, "_get_app") as get_mock_app:
         msal_app = get_mock_app()
         msal_app.acquire_token_by_username_password.return_value = msal_acquire_token_result
+
+        credential.authenticate(scopes=["scope"], claims=expected_claims)
+        assert msal_app.acquire_token_by_username_password.call_count == 1
+        args, kwargs = msal_app.acquire_token_by_username_password.call_args
+        assert kwargs["claims_challenge"] == expected_claims
+
         credential.get_token("scope", claims=expected_claims)
 
-        assert msal_app.acquire_token_by_username_password.call_count == 1
+        assert msal_app.acquire_token_by_username_password.call_count == 2
         args, kwargs = msal_app.acquire_token_by_username_password.call_args
         assert kwargs["claims_challenge"] == expected_claims
 

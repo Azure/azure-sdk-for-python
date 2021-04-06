@@ -6,7 +6,7 @@
 # pylint:disable=specify-parameter-names-in-call
 # pylint:disable=too-many-lines
 import functools
-from typing import TYPE_CHECKING, Any, Union, cast
+from typing import TYPE_CHECKING, Any, Union, cast, Mapping
 from xml.etree.ElementTree import ElementTree
 
 from azure.core.async_paging import AsyncItemPaged
@@ -78,6 +78,7 @@ from ...management._utils import (
     deserialize_rule_key_values,
     serialize_rule_key_values,
     create_properties_from_dict_if_needed,
+    _normalize_entity_path_to_full_path_if_needed,
     _validate_entity_name_type,
     _validate_topic_and_subscription_types,
     _validate_topic_subscription_and_rule_types,
@@ -343,6 +344,15 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         :rtype: ~azure.servicebus.management.QueueProperties
         """
+        forward_to = _normalize_entity_path_to_full_path_if_needed(
+            kwargs.pop("forward_to", None), self.fully_qualified_namespace
+        )
+        forward_dead_lettered_messages_to = (
+            _normalize_entity_path_to_full_path_if_needed(
+                kwargs.pop("forward_dead_lettered_messages_to", None),
+                self.fully_qualified_namespace,
+            )
+        )
         queue = QueueProperties(
             queue_name,
             authorization_rules=kwargs.pop("authorization_rules", None),
@@ -368,10 +378,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             ),
             requires_session=kwargs.pop("requires_session", None),
             status=kwargs.pop("status", None),
-            forward_to=kwargs.pop("forward_to", None),
-            forward_dead_lettered_messages_to=kwargs.pop(
-                "forward_dead_lettered_messages_to", None
-            ),
+            forward_to=forward_to,
+            forward_dead_lettered_messages_to=forward_dead_lettered_messages_to,
             user_metadata=kwargs.pop("user_metadata", None),
         )
         to_create = queue._to_internal_entity()
@@ -399,7 +407,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return result
 
-    async def update_queue(self, queue: QueueProperties, **kwargs) -> None:
+    async def update_queue(
+        self, queue: Union[QueueProperties, Mapping[str, Any]], **kwargs
+    ) -> None:
         """Update a queue.
 
         Before calling this method, you should use `get_queue`, `create_queue` or `list_queues` to get a
@@ -412,7 +422,16 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
 
-        queue = create_properties_from_dict_if_needed(queue, QueueProperties)   # type: ignore
+        queue = create_properties_from_dict_if_needed(queue, QueueProperties)
+        queue.forward_to = _normalize_entity_path_to_full_path_if_needed(
+            queue.forward_to, self.fully_qualified_namespace
+        )
+        queue.forward_dead_lettered_messages_to = (
+            _normalize_entity_path_to_full_path_if_needed(
+                queue.forward_dead_lettered_messages_to,
+                self.fully_qualified_namespace,
+            )
+        )
         to_update = queue._to_internal_entity()
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(
@@ -626,7 +645,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return result
 
-    async def update_topic(self, topic: TopicProperties, **kwargs) -> None:
+    async def update_topic(
+        self, topic: Union[TopicProperties, Mapping[str, Any]], **kwargs
+    ) -> None:
         """Update a topic.
 
         Before calling this method, you should use `get_topic`, `create_topic` or `list_topics` to get a
@@ -639,7 +660,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
 
-        topic = create_properties_from_dict_if_needed(topic, TopicProperties)   # type: ignore
+        topic = create_properties_from_dict_if_needed(topic, TopicProperties)
         to_update = topic._to_internal_entity()
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(
@@ -819,6 +840,15 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype:  ~azure.servicebus.management.SubscriptionProperties
         """
         _validate_entity_name_type(topic_name, display_name="topic_name")
+        forward_to = _normalize_entity_path_to_full_path_if_needed(
+            kwargs.pop("forward_to", None), self.fully_qualified_namespace
+        )
+        forward_dead_lettered_messages_to = (
+            _normalize_entity_path_to_full_path_if_needed(
+                kwargs.pop("forward_dead_lettered_messages_to", None),
+                self.fully_qualified_namespace,
+            )
+        )
 
         subscription = SubscriptionProperties(
             subscription_name,
@@ -836,11 +866,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             max_delivery_count=kwargs.pop("max_delivery_count", None),
             enable_batched_operations=kwargs.pop("enable_batched_operations", None),
             status=kwargs.pop("status", None),
-            forward_to=kwargs.pop("forward_to", None),
+            forward_to=forward_to,
             user_metadata=kwargs.pop("user_metadata", None),
-            forward_dead_lettered_messages_to=kwargs.pop(
-                "forward_dead_lettered_messages_to", None
-            ),
+            forward_dead_lettered_messages_to=forward_dead_lettered_messages_to,
             auto_delete_on_idle=kwargs.pop("auto_delete_on_idle", None),
             availability_status=None,
         )
@@ -872,7 +900,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return result
 
     async def update_subscription(
-        self, topic_name: str, subscription: SubscriptionProperties, **kwargs
+        self,
+        topic_name: str,
+        subscription: Union[SubscriptionProperties, Mapping[str, Any]],
+        **kwargs
     ) -> None:
         """Update a subscription.
 
@@ -887,7 +918,18 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         _validate_entity_name_type(topic_name, display_name="topic_name")
 
-        subscription = create_properties_from_dict_if_needed(subscription, SubscriptionProperties)  # type: ignore
+        subscription = create_properties_from_dict_if_needed(
+            subscription, SubscriptionProperties
+        )
+        subscription.forward_to = _normalize_entity_path_to_full_path_if_needed(
+            subscription.forward_to, self.fully_qualified_namespace
+        )
+        subscription.forward_dead_lettered_messages_to = (
+            _normalize_entity_path_to_full_path_if_needed(
+                subscription.forward_dead_lettered_messages_to,
+                self.fully_qualified_namespace,
+            )
+        )
         to_update = subscription._to_internal_entity()
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(
@@ -1068,7 +1110,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return result
 
     async def update_rule(
-        self, topic_name: str, subscription_name: str, rule: RuleProperties, **kwargs
+        self,
+        topic_name: str,
+        subscription_name: str,
+        rule: Union[RuleProperties, Mapping[str, Any]],
+        **kwargs
     ) -> None:
         """Update a rule.
 
@@ -1085,7 +1131,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)
 
-        rule = create_properties_from_dict_if_needed(rule, RuleProperties)  # type: ignore
+        rule = create_properties_from_dict_if_needed(rule, RuleProperties)
         to_update = rule._to_internal_entity()
 
         create_entity_body = CreateRuleBody(

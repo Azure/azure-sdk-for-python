@@ -5,9 +5,9 @@ interactions:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('1')?api-version=2020-06-30
+    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('1')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"1","hotelName":"Fancy Stay","description":"Best hotel in
@@ -23,28 +23,28 @@ interactions:
       content-encoding: gzip
       content-length: '748'
       content-type: application/json; odata.metadata=none
-      date: Fri, 28 Aug 2020 20:50:21 GMT
-      elapsed-time: '54'
+      date: Thu, 25 Mar 2021 20:21:24 GMT
+      elapsed-time: '113'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 16f90283-e970-11ea-aa15-5cf37071153c
+      request-id: ac01cc3b-8da7-11eb-9da5-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('1')?api-version=2020-06-30
+    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('1')?api-version=2020-06-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('2')?api-version=2020-06-30
+    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('2')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"2","hotelName":"Roach Motel","description":"Cheapest hotel
@@ -55,28 +55,28 @@ interactions:
       content-encoding: gzip
       content-length: '449'
       content-type: application/json; odata.metadata=none
-      date: Fri, 28 Aug 2020 20:50:21 GMT
-      elapsed-time: '4'
+      date: Thu, 25 Mar 2021 20:21:24 GMT
+      elapsed-time: '7'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 17282947-e970-11ea-97bb-5cf37071153c
+      request-id: ac3063a0-8da7-11eb-a63e-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('2')?api-version=2020-06-30
+    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('2')?api-version=2020-06-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2020-06-30
+    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"3","hotelName":"EconoStay","description":"Very popular
@@ -86,28 +86,28 @@ interactions:
       content-encoding: gzip
       content-length: '438'
       content-type: application/json; odata.metadata=none
-      date: Fri, 28 Aug 2020 20:50:21 GMT
-      elapsed-time: '4'
+      date: Thu, 25 Mar 2021 20:21:24 GMT
+      elapsed-time: '5'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 17358eab-e970-11ea-8b59-5cf37071153c
+      request-id: ac3d75ef-8da7-11eb-834c-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2020-06-30
+    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2020-06-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30
+    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"4","hotelName":"Express Rooms","description":"Pretty good
@@ -117,28 +117,28 @@ interactions:
       content-encoding: gzip
       content-length: '422'
       content-type: application/json; odata.metadata=none
-      date: Fri, 28 Aug 2020 20:50:21 GMT
-      elapsed-time: '5'
+      date: Thu, 25 Mar 2021 20:21:24 GMT
+      elapsed-time: '6'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 174245af-e970-11ea-81bb-5cf37071153c
+      request-id: ac452893-8da7-11eb-bad7-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30
+    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('5')?api-version=2020-06-30
+    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('5')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"5","hotelName":"Comfy Place","description":"Another good
@@ -148,28 +148,28 @@ interactions:
       content-encoding: gzip
       content-length: '424'
       content-type: application/json; odata.metadata=none
-      date: Fri, 28 Aug 2020 20:50:21 GMT
+      date: Thu, 25 Mar 2021 20:21:24 GMT
       elapsed-time: '6'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 1751f445-e970-11ea-aed7-5cf37071153c
+      request-id: ac4d2784-8da7-11eb-a44a-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('5')?api-version=2020-06-30
+    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('5')?api-version=2020-06-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('6')?api-version=2020-06-30
+    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('6')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"6","hotelName":null,"description":"Surprisingly expensive.
@@ -179,28 +179,28 @@ interactions:
       content-encoding: gzip
       content-length: '301'
       content-type: application/json; odata.metadata=none
-      date: Fri, 28 Aug 2020 20:50:22 GMT
-      elapsed-time: '4'
+      date: Thu, 25 Mar 2021 20:21:24 GMT
+      elapsed-time: '6'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 175d43ce-e970-11ea-b122-5cf37071153c
+      request-id: ac556eb5-8da7-11eb-ac96-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('6')?api-version=2020-06-30
+    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('6')?api-version=2020-06-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('7')?api-version=2020-06-30
+    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('7')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"7","hotelName":"Modern Stay","description":"Modern architecture,
@@ -211,28 +211,28 @@ interactions:
       content-encoding: gzip
       content-length: '357'
       content-type: application/json; odata.metadata=none
-      date: Fri, 28 Aug 2020 20:50:22 GMT
-      elapsed-time: '4'
+      date: Thu, 25 Mar 2021 20:21:24 GMT
+      elapsed-time: '6'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 176a1840-e970-11ea-8c98-5cf37071153c
+      request-id: ac61ea25-8da7-11eb-949a-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('7')?api-version=2020-06-30
+    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('7')?api-version=2020-06-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('8')?api-version=2020-06-30
+    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('8')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"8","hotelName":null,"description":"Has some road noise
@@ -244,28 +244,28 @@ interactions:
       content-encoding: gzip
       content-length: '411'
       content-type: application/json; odata.metadata=none
-      date: Fri, 28 Aug 2020 20:50:22 GMT
-      elapsed-time: '3'
+      date: Thu, 25 Mar 2021 20:21:24 GMT
+      elapsed-time: '6'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 177b20f8-e970-11ea-bee8-5cf37071153c
+      request-id: ac6e1e0e-8da7-11eb-ba32-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('8')?api-version=2020-06-30
+    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('8')?api-version=2020-06-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('9')?api-version=2020-06-30
+    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('9')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"9","hotelName":"Secret Point Motel","description":"The
@@ -291,28 +291,28 @@ interactions:
       content-encoding: gzip
       content-length: '1061'
       content-type: application/json; odata.metadata=none
-      date: Fri, 28 Aug 2020 20:50:22 GMT
-      elapsed-time: '8'
+      date: Thu, 25 Mar 2021 20:21:24 GMT
+      elapsed-time: '12'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 1787ce63-e970-11ea-87e0-5cf37071153c
+      request-id: ac76656f-8da7-11eb-a87c-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('9')?api-version=2020-06-30
+    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('9')?api-version=2020-06-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('10')?api-version=2020-06-30
+    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('10')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"10","hotelName":"Countryside Hotel","description":"Save
@@ -334,17 +334,17 @@ interactions:
       content-encoding: gzip
       content-length: '938'
       content-type: application/json; odata.metadata=none
-      date: Fri, 28 Aug 2020 20:50:22 GMT
-      elapsed-time: '5'
+      date: Thu, 25 Mar 2021 20:21:24 GMT
+      elapsed-time: '7'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 1799fef0-e970-11ea-b087-5cf37071153c
+      request-id: ac7fcbd0-8da7-11eb-8021-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('10')?api-version=2020-06-30
+    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('10')?api-version=2020-06-30-Preview
 version: 1

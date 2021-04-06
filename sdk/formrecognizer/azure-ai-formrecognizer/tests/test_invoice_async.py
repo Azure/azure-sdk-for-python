@@ -306,7 +306,7 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
         self.assertEqual(invoice.fields.get("CustomerName").value, "Microsoft")
         self.assertEqual(invoice.fields.get("InvoiceId").value, '34278587')
         self.assertEqual(invoice.fields.get("InvoiceDate").value, date(2017, 6, 18))
-        self.assertEqual(invoice.fields.get("InvoiceTotal").value, 56651.49)
+        self.assertEqual(invoice.fields.get("Items").value[0].value["Amount"].value, 56651.49)
         self.assertEqual(invoice.fields.get("DueDate").value, date(2017, 6, 24))
 
     @FormRecognizerPreparer()
@@ -354,7 +354,10 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
         self.assertFormPagesHasValues(invoice.pages)
 
         for field in invoice.fields.values():
+            if field.name == "Items":
+                continue
             self.assertFieldElementsHasValues(field.value_data.field_elements, invoice.page_range.first_page_number)
+        self.assertInvoiceItemsHasValues(invoice.fields["Items"].value, invoice.page_range.first_page_number, True)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -389,7 +392,8 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
         async with client:
             poller = await client.begin_recognize_invoices(invoice, locale="en-US")
             assert 'en-US' == poller._polling_method._initial_response.http_response.request.query['locale']
-            await poller.wait()
+            result = await poller.result()
+            assert result
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -400,3 +404,14 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
             async with client:
                 await client.begin_recognize_invoices(invoice, locale="not a locale")
         assert "locale" in e.value.error.message
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    async def test_pages_kwarg_specified(self, client):
+        with open(self.invoice_pdf, "rb") as fd:
+            invoice = fd.read()
+        async with client:
+            poller = await client.begin_recognize_invoices(invoice, pages=["1"])
+            assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+            result = await poller.result()
+            assert result

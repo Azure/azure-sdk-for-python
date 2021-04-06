@@ -1,7 +1,45 @@
 # Release History
 
-## 1.6.0b2 (Unreleased)
+## 1.6.0b3 (2021-04-06)
+### Breaking Changes
+> These changes do not impact the API of stable versions such as 1.5.0.
+> Only code written against a beta version such as 1.6.0b1 may be affected.
+- Removed property `AuthenticationRequiredError.error_details`
 
+### Fixed
+- Credentials consistently retry token requests after connection failures, or
+  when instructed to by a Retry-After header
+- ManagedIdentityCredential caches tokens correctly
+
+### Added
+- `InteractiveBrowserCredential` functions in more WSL environments
+  ([#17615](https://github.com/Azure/azure-sdk-for-python/issues/17615))
+
+## 1.6.0b2 (2021-03-09)
+### Breaking Changes
+> These changes do not impact the API of stable versions such as 1.5.0.
+> Only code written against a beta version such as 1.6.0b1 may be affected.
+- Renamed `CertificateCredential` keyword argument `certificate_bytes` to
+  `certificate_data`
+- Credentials accepting keyword arguments `allow_unencrypted_cache` and
+  `enable_persistent_cache` to configure persistent caching accept a
+  `cache_persistence_options` argument instead whose value should be an
+  instance of `TokenCachePersistenceOptions`. For example:
+  ```
+  # before (e.g. in 1.6.0b1):
+  DeviceCodeCredential(enable_persistent_cache=True, allow_unencrypted_cache=True)
+
+  # after:
+  cache_options = TokenCachePersistenceOptions(allow_unencrypted_storage=True)
+  DeviceCodeCredential(cache_persistence_options=cache_options)
+  ```
+
+  See the documentation and samples for more details.
+
+### Added
+- New class `TokenCachePersistenceOptions` configures persistent caching
+- The `AuthenticationRequiredError.claims` property provides any additional
+  claims required by a user credential's `authenticate()` method
 
 ## 1.6.0b1 (2021-02-09)
 ### Changed

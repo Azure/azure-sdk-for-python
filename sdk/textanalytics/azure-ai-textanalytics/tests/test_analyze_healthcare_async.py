@@ -22,7 +22,7 @@ from azure.ai.textanalytics import (
     TextDocumentInput,
     VERSION,
     TextAnalyticsApiVersion,
-    HealthcareEntityRelationType
+    HealthcareEntityRelationType,
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -162,7 +162,7 @@ class TestHealth(AsyncTextAnalyticsTest):
             )).result()
 
         self.assertIsNotNone(response)
-        self.assertEqual("2021-01-11", response.model_version)
+        assert response.model_version    # commenting out bc of service error, always uses latest https://github.com/Azure/azure-sdk-for-python/issues/17160
         self.assertEqual(response.statistics.documents_count, 5)
         self.assertEqual(response.statistics.transactions_count, 4)
         self.assertEqual(response.statistics.valid_documents_count, 4)
@@ -373,7 +373,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     async def test_default_string_index_type_is_UnicodeCodePoint(self, client):
-        poller = await client.begin_analyze_healthcare_entities(documents=["Hello world"])
+        poller = await client.begin_analyze_healthcare_entities(documents=["Hello world"], polling_interval=self._interval())
         actual_string_index_type = poller._polling_method._initial_response.http_request.query["stringIndexType"]
         self.assertEqual(actual_string_index_type, "UnicodeCodePoint")
         await poller.result()
@@ -383,7 +383,8 @@ class TestHealth(AsyncTextAnalyticsTest):
     async def test_explicit_set_string_index_type(self, client):
         poller = await client.begin_analyze_healthcare_entities(
             documents=["Hello world"],
-            string_index_type="TextElements_v8"
+            string_index_type="TextElements_v8",
+            polling_interval=self._interval(),
         )
         actual_string_index_type = poller._polling_method._initial_response.http_request.query["stringIndexType"]
         self.assertEqual(actual_string_index_type, "TextElements_v8")
@@ -393,7 +394,8 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_relations(self, client):
         response = await (await client.begin_analyze_healthcare_entities(
-            documents=["The patient was diagnosed with Parkinsons Disease (PD)"]
+            documents=["The patient was diagnosed with Parkinsons Disease (PD)"],
+            polling_interval=self._interval(),
         )).result()
 
         result = []
@@ -424,18 +426,34 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_normalized_text(self, client):
         response = await (await client.begin_analyze_healthcare_entities(
-            documents=["patients must have histologically confirmed NHL"]
+            documents=["patients must have histologically confirmed NHL"],
+            polling_interval=self._interval(),
         )).result()
 
         result = []
         async for r in response:
             result.append(r)
 
-        # currently just testing it has that attribute.
-        # have an issue to update https://github.com/Azure/azure-sdk-for-python/issues/17072
-
         assert all([
             e for e in result[0].entities if hasattr(e, "normalized_text")
         ])
 
+        histologically_entity = list(filter(lambda x: x.text == "histologically", result[0].entities))[0]
+        assert histologically_entity.normalized_text == "Histology Procedure"
 
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_healthcare_assertion(self, client):
+        response = await (await client.begin_analyze_healthcare_entities(
+            documents=["Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."],
+            polling_interval=self._interval(),
+        )).result()
+
+        result = []
+        async for r in response:
+            result.append(r)
+
+        # currently can only test certainty
+        # have an issue to update https://github.com/Azure/azure-sdk-for-python/issues/17088
+        meningitis_entity = next(e for e in result[0].entities if e.text == "Meningitis")
+        assert meningitis_entity.assertion.certainty == "negativePossible"

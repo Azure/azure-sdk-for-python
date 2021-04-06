@@ -12,7 +12,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) CUSTOM_SCHEMA_ACCESS_KEY - The access key of your eventgrid account.
     2) CUSTOM_SCHEMA_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
-    "<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net".
+    "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
 """
 import os
 import asyncio
@@ -30,7 +30,7 @@ endpoint = os.environ["CUSTOM_SCHEMA_TOPIC_HOSTNAME"]
 
 async def publish_event():
     # authenticate client
-    # [START publish_custon_schema_async]
+    # [START publish_custom_schema_async]
     credential = AzureKeyCredential(key)
     client = EventGridPublisherClient(endpoint, credential)
 
@@ -46,7 +46,7 @@ async def publish_event():
         # publish list of events
         await client.send(custom_schema_event)
     
-    # [END publish_custon_schema_async]
+    # [END publish_custom_schema_async]
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

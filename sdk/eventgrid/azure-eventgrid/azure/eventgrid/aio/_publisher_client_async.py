@@ -26,11 +26,11 @@ from azure.core.pipeline.policies import (
 from .._policies import CloudEventDistributedTracingPolicy
 from .._models import EventGridEvent
 from .._helpers import (
-    _get_endpoint_only_fqdn,
     _get_authentication_policy,
     _is_cloud_event,
     _is_eventgrid_event,
     _eventgrid_data_typecheck,
+    _build_request,
     _cloud_event_to_generated,
 )
 from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
@@ -79,7 +79,6 @@ class EventGridPublisherClient:
         self._client = EventGridPublisherClientAsync(
             policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs
         )
-        endpoint = _get_endpoint_only_fqdn(endpoint)
         self._endpoint = endpoint
 
     @staticmethod
@@ -137,7 +136,7 @@ class EventGridPublisherClient:
                 :end-before: [END publish_eg_event_dict_async]
                 :language: python
                 :dedent: 4
-                :caption: Publishing an EventGridEvent using a dict-like representation.
+                :caption: Publishing a list of EventGridEvents using a dict-like representation.
 
             .. literalinclude:: ../samples/async_samples/sample_publish_cloud_event_using_dict_async.py
                 :start-after: [START publish_cloud_event_dict_async]
@@ -158,11 +157,13 @@ class EventGridPublisherClient:
                 :dedent: 4
                 :caption: Publishing a Custom Schema event.
 
-        **WARNING**: To gain the best performance when sending multiple events at one time,
-        it is highly recommended to send a list of events instead of iterating over and sending each event in a loop.
+        **WARNING**: When sending a list of multiple events at one time, iterating over and sending each event
+        will not result in optimal performance. For best performance, it is highly recommended to send
+        a list of events.
 
         :param events: A single instance or a list of dictionaries/CloudEvent/EventGridEvent to be sent.
-        :type events: SendType
+        :type events: ~azure.core.messaging.CloudEvent or ~azure.eventgrid.EventGridEvent or dict or
+         List[~azure.core.messaging.CloudEvent] or List[~azure.eventgrid.EventGridEvent] or List[dict]
         :keyword str content_type: The type of content to be used to send the events.
          Has default value "application/json; charset=utf-8" for EventGridEvents,
          with "cloudevents-batch+json" for CloudEvents
@@ -170,6 +171,7 @@ class EventGridPublisherClient:
         """
         if not isinstance(events, list):
             events = cast(ListEventType, [events])
+        content_type = kwargs.pop("content_type", "application/json; charset=utf-8")
 
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
@@ -178,15 +180,13 @@ class EventGridPublisherClient:
                 ]
             except AttributeError:
                 pass  # means it's a dictionary
-            kwargs.setdefault(
-                "content_type", "application/cloudevents-batch+json; charset=utf-8"
-            )
+            content_type = "application/cloudevents-batch+json; charset=utf-8"
         elif isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
-            kwargs.setdefault("content_type", "application/json; charset=utf-8")
             for event in events:
                 _eventgrid_data_typecheck(event)
-        return await self._client.publish_custom_event_events(
-            self._endpoint, cast(List, events), **kwargs
+        await self._client._send_request( # pylint: disable=protected-access
+            _build_request(self._endpoint, content_type, events),
+            **kwargs
         )
 
     async def __aenter__(self) -> "EventGridPublisherClient":

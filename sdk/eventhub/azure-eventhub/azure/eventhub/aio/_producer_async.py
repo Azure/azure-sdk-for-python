@@ -21,7 +21,6 @@ from .._utils import (
     set_message_partition_key,
     trace_message,
     send_context_manager,
-    add_link_to_send,
 )
 from .._constants import TIMEOUT_SYMBOL
 from ._client_base_async import ConsumerProducerMixin
@@ -182,7 +181,6 @@ class EventHubProducer(
                 set_message_partition_key(event_data.message, partition_key)
             wrapper_event_data = event_data
             trace_message(wrapper_event_data, span)
-            add_link_to_send(wrapper_event_data, span)
         else:
             if isinstance(
                 event_data, EventDataBatch
@@ -193,8 +191,8 @@ class EventHubProducer(
                     raise ValueError(
                         "The partition_key does not match the one of the EventDataBatch"
                     )
-                for message in event_data.message._body_gen:  # pylint: disable=protected-access
-                    add_link_to_send(message, span)
+                for event in event_data.message._body_gen: # pylint: disable=protected-access
+                    trace_message(event, span)
                 wrapper_event_data = event_data  # type:ignore
             else:
                 if partition_key:

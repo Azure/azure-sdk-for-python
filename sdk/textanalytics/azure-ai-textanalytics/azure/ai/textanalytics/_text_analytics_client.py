@@ -18,7 +18,11 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._base_client import TextAnalyticsClientBase
-from ._request_handlers import _validate_input, _determine_action_type, _check_string_index_type_arg
+from ._request_handlers import (
+    _validate_input,
+    _determine_action_type,
+    _check_string_index_type_arg
+)
 from ._response_handlers import (
     process_http_response_error,
     entities_result,
@@ -54,6 +58,7 @@ if TYPE_CHECKING:
         RecognizePiiEntitiesResult,
         RecognizeEntitiesAction,
         RecognizePiiEntitiesAction,
+        RecognizeLinkedEntitiesAction,
         ExtractKeyPhrasesAction,
         AnalyzeHealthcareEntitiesResultItem,
         AnalyzeBatchActionsResult,
@@ -301,6 +306,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             I.e., if set to 'phi', will only return entities in the Protected Healthcare Information domain.
             See https://aka.ms/tanerpii for more information.
         :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomainType
+        :keyword categories_filter: Instead of filtering over all PII entity categories, you can pass in a list of
+            the specific PII entity categories you want to filter out. For example, if you only want to filter out
+            U.S. social security numbers in a document, you can pass in
+            `[PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
+        :paramtype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategoryType]
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
             you can also pass in `Utf16CodePoint` or `TextElements_v8`. For additional information
@@ -327,6 +337,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         domain_filter = kwargs.pop("domain_filter", None)
+        categories_filter = kwargs.pop("categories_filter", None)
 
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
@@ -342,6 +353,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 model_version=model_version,
                 show_stats=show_stats,
                 domain=domain_filter,
+                pii_categories=categories_filter,
                 cls=kwargs.pop("cls", pii_entities_result),
                 **kwargs
             )
@@ -478,6 +490,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            Currently not working on the service side at time of release, as service will
+            only use the latest model. Service is aware, and once it's been fixed on the service
+            side, the SDK should work automatically.
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
@@ -732,7 +747,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def begin_analyze_batch_actions(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        actions,  # type: List[Union[RecognizeEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction]]
+        actions,  # type: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction]] # pylint: disable=line-too-long
         **kwargs  # type: Any
     ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeBatchActionsResult]]
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
@@ -750,7 +765,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             The outputted action results will be in the same order you inputted your actions.
             Duplicate actions in list not supported.
         :type actions:
-            list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction]
+            list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
+            RecognizeLinkedEntitiesAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -805,6 +821,13 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 key_phrase_extraction_tasks=[
                     t.to_generated() for t in
                     [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES]
+                ],
+                entity_linking_tasks=[
+                    t.to_generated() for t in
+                    [
+                        a for a in actions
+                        if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES
+                    ]
                 ]
             )
             analyze_body = self._client.models(api_version='v3.1-preview.4').AnalyzeBatchInput(

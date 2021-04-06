@@ -25,11 +25,11 @@ from azure.core.messaging import CloudEvent
 
 from ._models import EventGridEvent
 from ._helpers import (
-    _get_endpoint_only_fqdn,
     _get_authentication_policy,
     _is_cloud_event,
     _is_eventgrid_event,
     _eventgrid_data_typecheck,
+    _build_request,
     _cloud_event_to_generated,
 )
 from ._generated._event_grid_publisher_client import (
@@ -62,6 +62,7 @@ class EventGridPublisherClient(object):
     :param credential: The credential object used for authentication which
      implements SAS key authentication or SAS token authentication.
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential
+    :rtype: None
 
     .. admonition:: Example:
 
@@ -82,8 +83,6 @@ class EventGridPublisherClient(object):
 
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, AzureSasCredential], Any) -> None
-        endpoint = _get_endpoint_only_fqdn(endpoint)
-
         self._endpoint = endpoint
         self._client = EventGridPublisherClientImpl(
             policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs
@@ -143,8 +142,8 @@ class EventGridPublisherClient(object):
                 :start-after: [START publish_eg_event_dict]
                 :end-before: [END publish_eg_event_dict]
                 :language: python
-                :dedent: 0
-                :caption: Publishing an EventGridEvent using a dict-like representation.
+                :dedent: 4
+                :caption: Publishing a list of EventGridEvents using a dict-like representation.
 
             .. literalinclude:: ../samples/sync_samples/sample_publish_cloud_event_using_dict.py
                 :start-after: [START publish_cloud_event_dict]
@@ -162,14 +161,16 @@ class EventGridPublisherClient(object):
                 :start-after: [START publish_custom_schema]
                 :end-before: [END publish_custom_schema]
                 :language: python
-                :dedent: 0
+                :dedent: 4
                 :caption: Publishing a Custom Schema event.
 
-        **WARNING**: To gain the best performance when sending multiple events at one time,
-        it is highly recommended to send a list of events instead of iterating over and sending each event in a loop.
+        **WARNING**: When sending a list of multiple events at one time, iterating over and sending each event
+        will not result in optimal performance. For best performance, it is highly recommended to send
+        a list of events.
 
         :param events: A single instance or a list of dictionaries/CloudEvent/EventGridEvent to be sent.
-        :type events: SendType
+        :type events: ~azure.core.messaging.CloudEvent or ~azure.eventgrid.EventGridEvent or dict or
+         List[~azure.core.messaging.CloudEvent] or List[~azure.eventgrid.EventGridEvent] or List[dict]
         :keyword str content_type: The type of content to be used to send the events.
          Has default value "application/json; charset=utf-8" for EventGridEvents,
          with "cloudevents-batch+json" for CloudEvents
@@ -177,6 +178,7 @@ class EventGridPublisherClient(object):
         """
         if not isinstance(events, list):
             events = cast(ListEventType, [events])
+        content_type = kwargs.pop("content_type", "application/json; charset=utf-8")
 
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
@@ -185,15 +187,13 @@ class EventGridPublisherClient(object):
                 ]
             except AttributeError:
                 pass  # means it's a dictionary
-            kwargs.setdefault(
-                "content_type", "application/cloudevents-batch+json; charset=utf-8"
-            )
+            content_type = "application/cloudevents-batch+json; charset=utf-8"
         elif isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
-            kwargs.setdefault("content_type", "application/json; charset=utf-8")
             for event in events:
                 _eventgrid_data_typecheck(event)
-        return self._client.publish_custom_event_events(
-            self._endpoint, cast(List, events), **kwargs
+        self._client._send_request( # pylint: disable=protected-access
+            _build_request(self._endpoint, content_type, events),
+            **kwargs
         )
 
     def close(self):

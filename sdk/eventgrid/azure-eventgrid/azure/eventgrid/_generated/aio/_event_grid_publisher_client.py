@@ -26,7 +26,7 @@ class EventGridPublisherClient(EventGridPublisherClientOperationsMixin):
         self,
         **kwargs: Any
     ) -> None:
-        base_url = 'https://{topicHostname}'
+        base_url = '{topicHostname}'
         self._config = EventGridPublisherClientConfiguration(**kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 

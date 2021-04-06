@@ -10,17 +10,15 @@ class PhoneNumberUriReplacer(RecordingProcessor):
 
     def process_request(self, request):
         import re
-        request.uri = re.sub('/identities/([^/?]+)', '/identities/sanitized', request.uri)
+        request.uri = re.sub('phoneNumbers/[%2B\d]+', 'phoneNumbers/sanitized', request.uri)
         return request
 
     def process_response(self, response):
         import re
         if 'url' in response:
-            response['url'] = re.sub('/identities/([^/?]+)', '/identities/sanitized', response['url'])
-            response['url'] = re.sub('phonePlanId=([^/?&]+)', 'phonePlanId=sanitized', response['url'])
             response['url'] = re.sub('capabilities/([^/?&]+)', 'capabilities/sanitized', response['url'])
-            response['url'] = re.sub('phoneplangroups/([^/?&]+)', 'phoneplangroups/sanitized', response['url'])
-            response['url'] = re.sub('phoneplans/([^/?&]+)', 'phoneplans/sanitized', response['url'])
             response['url'] = re.sub('releases/([^/?&]+)', 'releases/sanitized', response['url'])
             response['url'] = re.sub('searches/([^/?&]+)', 'searches/sanitized', response['url'])
-        return response
+            response['url'] = re.sub('phoneNumbers/[%2B\d]+', 'phoneNumbers/sanitized', response['url'])
+            response['url'] = re.sub('^(.*?)\.communication.azure.com', 'https://sanitized.communication.azure.com', response['url'])
+        return response 

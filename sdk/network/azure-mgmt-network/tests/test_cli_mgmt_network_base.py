@@ -525,7 +525,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
 
         # Stop packet capture on virtual network gateway[post]
         # BODY = {
-        #   "sas_url": "https://teststorage.blob.core.windows.net/?sv=2018-03-28&ss=bfqt&srt=sco&sp=rwdlacup&se=2019-09-13T07:44:05Z&st=2019-09-06T23:44:05Z&spr=https&sig=V1h9D1riltvZMI69d6ihENnFo%2FrCvTqGgjO2lf%2FVBhE%3D"
+        #   "sas_url": "fakeuri"
         # }
         # result = self.mgmt_client.virtual_network_gateways.begin_stop_packet_capture(resource_group.name, VIRTUAL_NETWORK_GATEWAY_NAME)
         # result = result.result()
@@ -591,7 +591,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
 
         # Stop packet capture on virtual network gateway connection[post]
         # BODY = {
-        #   "sas_url": "https://teststorage.blob.core.windows.net/?sv=2018-03-28&ss=bfqt&srt=sco&sp=rwdlacup&se=2019-09-13T07:44:05Z&st=2019-09-06T23:44:05Z&spr=https&sig=V1h9D1riltvZMI69d6ihENnFo%2FrCvTqGgjO2lf%2FVBhE%3D"
+        #   "sas_url": "fakeuri"
         # }
         # result = self.mgmt_client.virtual_network_gateway_connections.begin_stop_packet_capture(resource_group.name, CONNECTION_NAME)
         # result = result.result()

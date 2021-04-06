@@ -27,7 +27,7 @@ pr:
     - sdk/core/
 
 extends:
-  template: ../../eng/pipelines/templates/stages/cosmos-sdk-client.yml
+  template: /eng/pipelines/templates/stages/cosmos-sdk-client.yml
   parameters:
     ServiceDirectory: cosmos
     Artifacts:

@@ -445,7 +445,7 @@ and [language and regional support][language_and_regional_support].
 
 ### Healthcare Entities Analysis
 
-The example below extracts entities recognized within the healthcare domain, and identifies relationships between entities within the input document and links to known sources of information in various well known databases, such as UMLS, CHV, MSH, etc.  This sample demonstrates the usage for [long-running operations](#long-running-operations).
+[Long-running operation](#long-running-operations) [`begin_analyze_healthcare_entities`][analyze_healthcare_entities] extracts entities recognized within the healthcare domain, and identifies relationships between entities within the input document and links to known sources of information in various well known databases, such as UMLS, CHV, MSH, etc.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -477,6 +477,11 @@ for idx, doc in enumerate(docs):
             for data_source in entity.data_sources:
                 print("......Entity ID: {}".format(data_source.entity_id))
                 print("......Name: {}".format(data_source.name))
+        if entity.assertion is not None:
+            print("...Assertion:")
+            print("......Conditionality: {}".format(entity.assertion.conditionality))
+            print("......Certainty: {}".format(entity.assertion.certainty))
+            print("......Association: {}".format(entity.assertion.association))
     for relation in doc.entity_relations:
         print("Relation of type: {} has the following roles".format(relation.relation_type))
         for role in relation.roles:
@@ -488,18 +493,21 @@ Note: The Healthcare Entities Analysis service is currently available only in th
 
 ### Batch Analysis
 
-The example below demonstrates how to perform multiple analyses over one set of documents in a single request. Currently batching is supported using any combination of the following Text Analytics APIs in a single request:
+[Long-running operation](#long-running-operations) [`begin_analyze_batch_actions`][analyze_batch_actions] performs multiple analyses over one set of documents in a single request. Currently batching is supported using any combination of the following Text Analytics APIs in a single request:
 
 - Entities Recognition
 - PII Entities Recognition
+- Linked Entity Recognition
 - Key Phrase Extraction
-
-This sample demonstrates the usage for [long-running operations](#long-running-operations)
 
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import (
-    TextAnalyticsClient, RecognizeEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction
+    TextAnalyticsClient,
+    RecognizeEntitiesAction,
+    RecognizePiiEntitiesAction,
+    ExtractKeyPhrasesAction,
+    RecognizeLinkedEntitiesAction
 )
 
 credential = AzureKeyCredential("<api_key>")
@@ -516,6 +524,7 @@ poller = text_analytics_client.begin_analyze_batch_actions(
         RecognizeEntitiesAction(),
         RecognizePiiEntitiesAction(),
         ExtractKeyPhrasesAction(),
+        RecognizeLinkedEntitiesAction()
     ]
 )
 
@@ -555,6 +564,26 @@ for idx, doc in enumerate(docs):
     print("Document text: {}\n".format(documents[idx]))
     print("Key Phrases: {}\n".format(doc.key_phrases))
     print("------------------------------------------")
+
+fourth_action_result = next(result)
+print("Results of Linked Entities Recognition action:")
+docs = [doc for doc in fourth_action_result.document_results if not doc.is_error]
+
+for idx, doc in enumerate(docs):
+    print("Document text: {}\n".format(documents[idx]))
+    for linked_entity in doc.entities:
+        print("Entity name: {}".format(linked_entity.name))
+        print("...Data source: {}".format(linked_entity.data_source))
+        print("...Data source language: {}".format(linked_entity.language))
+        print("...Data source entity ID: {}".format(linked_entity.data_source_entity_id))
+        print("...Data source URL: {}".format(linked_entity.url))
+        print("...Document matches:")
+        for match in linked_entity.matches:
+            print("......Match text: {}".format(match.text))
+            print(".........Confidence Score: {}".format(match.confidence_score))
+            print(".........Offset: {}".format(match.offset))
+            print(".........Length: {}".format(match.length))
+    print("------------------------------------------")
 ```
 
 The returned response is an object encapsulating multiple iterables, each representing results of individual analyses.
@@ -566,6 +595,11 @@ Note: Batch analysis is currently available only in the v3.1-preview API version
 Optional keyword arguments can be passed in at the client and per-operation level.
 The azure-core [reference documentation][azure_core_ref_docs]
 describes available configurations for retries, logging, transport protocols, and more.
+
+## Known Issues
+
+- `begin_analyze_healthcare_entities` is currently in gated preview and can not be used with AAD credentials. For more information, see [the Text Analytics for Health documentation](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview).
+- At time of this SDK release, the service is not respecting the value passed through `model_version` to `begin_analyze_healthcare_entities`, it only uses the latest model.
 
 ## Troubleshooting
 
@@ -689,6 +723,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [detect_language_input]: https://aka.ms/azsdk-python-textanalytics-detectlanguageinput
 [text_analytics_client]: https://aka.ms/azsdk-python-textanalytics-textanalyticsclient
 [analyze_sentiment]: https://aka.ms/azsdk-python-textanalytics-analyzesentiment
+[analyze_batch_actions]: https://aka.ms/azsdk/python/docs/ref/textanalytics#azure.ai.textanalytics.TextAnalyticsClient.begin_analyze_batch_actions
+[analyze_healthcare_entities]: https://aka.ms/azsdk/python/docs/ref/textanalytics#azure.ai.textanalytics.TextAnalyticsClient.begin_analyze_healthcare_entities
 [recognize_entities]: https://aka.ms/azsdk-python-textanalytics-recognizeentities
 [recognize_pii_entities]: https://aka.ms/azsdk-python-textanalytics-recognizepiientities
 [recognize_linked_entities]: https://aka.ms/azsdk-python-textanalytics-recognizelinkedentities

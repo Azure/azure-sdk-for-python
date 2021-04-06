@@ -4,11 +4,10 @@
 # ------------------------------------
 
 from azure.search.documents.indexes.models import SearchIndex, RegexFlags, PatternAnalyzer, PatternTokenizer
-from azure.search.documents.indexes._internal._generated.models import (
+from azure.search.documents.indexes._generated.models import (
     PatternAnalyzer as _PatternAnalyzer,
     PatternTokenizer as _PatternTokenizer,
 )
-from azure.search.documents.indexes._internal._utils import unpack_search_index, pack_search_index
 
 def test_unpack_search_index():
     pattern_analyzer = _PatternAnalyzer(
@@ -29,7 +28,7 @@ def test_unpack_search_index():
         analyzers=analyzers,
         tokenizers=tokenizers
     )
-    result = unpack_search_index(index)
+    result = SearchIndex._from_generated(index)
     assert isinstance(result.analyzers[0], PatternAnalyzer)
     assert isinstance(result.analyzers[0].flags, list)
     assert result.analyzers[0].flags[0] == "CANON_EQ"
@@ -56,7 +55,7 @@ def test_multi_unpack_search_index():
         analyzers=analyzers,
         tokenizers=tokenizers
     )
-    result = unpack_search_index(index)
+    result = SearchIndex._from_generated(index)
     assert isinstance(result.analyzers[0], PatternAnalyzer)
     assert isinstance(result.analyzers[0].flags, list)
     assert result.analyzers[0].flags[0] == "CANON_EQ"
@@ -85,7 +84,7 @@ def test_unpack_search_index_enum():
         analyzers=analyzers,
         tokenizers=tokenizers
     )
-    result = unpack_search_index(index)
+    result = SearchIndex._from_generated(index)
     assert isinstance(result.analyzers[0], PatternAnalyzer)
     assert isinstance(result.analyzers[0].flags, list)
     assert result.analyzers[0].flags[0] == "CANON_EQ"
@@ -112,7 +111,7 @@ def test_pack_search_index():
         analyzers=analyzers,
         tokenizers=tokenizers
     )
-    result = pack_search_index(index)
+    result = index._to_generated()
     assert isinstance(result.analyzers[0], _PatternAnalyzer)
     assert isinstance(result.analyzers[0].flags, str)
     assert result.analyzers[0].flags == "CANON_EQ"
@@ -139,7 +138,7 @@ def test_multi_pack_search_index():
         analyzers=analyzers,
         tokenizers=tokenizers
     )
-    result = pack_search_index(index)
+    result = index._to_generated()
     assert isinstance(result.analyzers[0], _PatternAnalyzer)
     assert isinstance(result.analyzers[0].flags, str)
     assert result.analyzers[0].flags == "CANON_EQ|MULTILINE"

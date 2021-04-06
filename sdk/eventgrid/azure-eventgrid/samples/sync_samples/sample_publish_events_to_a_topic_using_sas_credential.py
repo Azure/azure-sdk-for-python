@@ -10,9 +10,10 @@ DESCRIPTION:
 USAGE:
     python sample_publish_events_to_a_topic_using_sas_credential.py
     Set the environment variables with your own values before running the sample:
-    1) EVENTGRID_SAS - The access key of your eventgrid account.
+    1) EVENTGRID_SAS - The shared access signature to use Event Grid. This is typically given to you
+    after creating it using the `generate_sas` method.
     2) EG_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
-    "<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net".
+    "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
 """
 import os
 from azure.eventgrid import EventGridPublisherClient, EventGridEvent, generate_sas

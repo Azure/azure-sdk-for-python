@@ -8,18 +8,18 @@ $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=con
 function Get-AllPackageInfoFromRepo ($serviceDirectory)
 {
   $allPackageProps = @()
-  $searchPath = "sdk/*/*/setup.py"
+  $searchPath = "sdk"
   if ($serviceDirectory)
   {
-    $searchPath = "sdk/${serviceDirectory}/*/setup.py"
+    $searchPath = Join-Path sdk ${serviceDirectory}
   }
 
   $allPkgPropLines = $null
   try
   {
     Push-Location $RepoRoot
-    pip install packaging==20.4 -q -I
-    $allPkgPropLines = python "eng\scripts\get_package_properties.py" -s $searchPath
+    pip install packaging==20.4 setuptools==44.1.1 -q -I
+    $allPkgPropLines = python (Join-path eng scripts get_package_properties.py) -s $searchPath
   }
   catch
   {
@@ -33,7 +33,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
 
   foreach ($line in $allPkgPropLines)
   {
-    $pkgInfo = ($line -Split ",").Trim("()' ")
+    $pkgInfo = ($line -Split " ")
     $packageName = $pkgInfo[0]
     $packageVersion = $pkgInfo[1]
     $isNewSdk = ($pkgInfo[2] -eq "True")
@@ -55,50 +55,6 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
     $allPackageProps += $pkgProp
   }
   return $allPackageProps
-}
-
-function Get-python-PackageInfoFromRepo  ($pkgPath, $serviceDirectory, $pkgName)
-{  
-  $packageName = $pkgName.Replace('_', '-')
-  $pkgDirName = Split-Path $pkgPath -Leaf
-  if ($pkgDirName -ne $packageName)
-  {
-    # Common code triggers this function against each directory but we can skip if it doesn't match package name
-    return $null
-  }
-
-  if (Test-Path (Join-Path $pkgPath "setup.py"))
-  {
-    $setupLocation = $pkgPath.Replace('\','/')
-    pushd $RepoRoot
-    $setupProps = $null
-    try{
-      pip install packaging==20.4 -q -I
-      $setupProps = (python -c "import sys; import os; sys.path.append(os.path.join('scripts', 'devops_tasks')); from common_tasks import get_package_properties; obj=get_package_properties('$setupLocation'); print('{0},{1},{2},{3}'.format(obj[0], obj[1], obj[2], obj[3]));") -split ","
-    }
-    catch
-    {
-      # This is soft error and failure is expected for python metapackages
-      Write-Host "Failed to parse package properties for " $packageName
-    }
-    popd
-    if (($setupProps -ne $null) -and ($setupProps[0] -eq $packageName))
-    {
-      $pkgProp = [PackageProps]::new($setupProps[0], $setupProps[1], $pkgPath, $serviceDirectory)
-      if ($packageName -match "mgmt")
-      {
-        $pkgProp.SdkType = "mgmt"
-      }
-      else
-      {
-        $pkgProp.SdkType = "client"
-      }
-      $pkgProp.IsNewSdk = ($setupProps[2] -eq "True")
-      $pkgProp.ArtifactName = $pkgName
-      return $pkgProp
-    }
-  }
-  return $null
 }
 
 # Returns the pypi publish status of a package id and version.
@@ -242,20 +198,25 @@ function Update-python-CIConfig($pkgs, $ciRepo, $locationInDocRepo, $monikerId=$
         $existingPackageDef.package_info.version = ">=$($releasingPkg.PackageVersion)"
       }
       else {
-        if ($def.version) {
-          $def.PSObject.Properties.Remove('version')  
+        if ($existingPackageDef.package_info.version) {
+          $existingPackageDef.package_info.PSObject.Properties.Remove('version')
         }
       }
     }
     else {
       $newItem = New-Object PSObject -Property @{ 
-          package_info = New-Object PSObject -Property @{ 
-            prefer_source_distribution = "true"
-            install_type = "pypi"
-            name=$releasingPkg.PackageId
-          }
-          exclude_path = @("test*","example*","sample*","doc*")
+        package_info = New-Object PSObject -Property @{
+          prefer_source_distribution = "true"
+          install_type = "pypi"
+          name=$releasingPkg.PackageId
         }
+        exclude_path = @("test*","example*","sample*","doc*")
+      }
+
+      if ($releasingPkg.IsPrerelease) {
+        $newItem.package_info | Add-Member -NotePropertyName version -NotePropertyValue ">=$($releasingPkg.PackageVersion)"
+      }
+
       $allJson.packages += $newItem
     }
   }
@@ -299,7 +260,7 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
   return $packages
 }
 
-function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseDate, $BuildType=$null, $GroupId=$null)
+function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseDate)
 {
   if($null -eq $ReleaseDate)
   {

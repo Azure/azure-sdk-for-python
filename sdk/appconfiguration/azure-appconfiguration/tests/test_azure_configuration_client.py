@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.core import MatchConditions
+from azure.core.exceptions import HttpResponseError
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 from azure.core.exceptions import (
     ResourceModifiedError,
@@ -15,7 +16,13 @@ from azure.appconfiguration import (
     ResourceReadOnlyError,
     AzureAppConfigurationClient,
     ConfigurationSetting,
+    FeatureFlagConfigurationSetting,
+    SecretReferenceConfigurationSetting,
+    PERCENTAGE,
+    TARGETING,
+    TIME_WINDOW,
 )
+from azure.identity import DefaultAzureCredential
 
 from consts import (
     KEY,
@@ -29,11 +36,19 @@ from consts import (
 from wrapper import app_config_decorator
 
 import pytest
+import copy
 import datetime
 import os
 import logging
 import re
 import functools
+from uuid import uuid4
+
+try:
+    from unittest import mock
+except ImportError:
+    import mock
+
 
 class AppConfigurationClientTest(AzureTestCase):
     def __init__(self, method_name):
@@ -45,6 +60,43 @@ class AppConfigurationClientTest(AzureTestCase):
 
     def tearDown(self):
         super(AppConfigurationClientTest, self).tearDown()
+
+    @app_config_decorator
+    def test_mock_policies(self, client, appconfiguration_connection_string):
+        from azure.core.pipeline.transport import HttpRequest, HttpResponse, HttpTransport
+        from azure.core.pipeline.policies import RetryPolicy
+        from azure.core.pipeline import Pipeline, PipelineResponse
+
+        class MockTransport(HttpTransport):
+            def __init__(self):
+                self._count = 0
+                self.auth_headers = None
+            def __exit__(self, exc_type, exc_val, exc_tb):
+                pass
+            def close(self):
+                pass
+            def open(self):
+                pass
+
+            def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+                assert request.headers['Authorization'] != self.auth_headers
+                self.auth_headers = request.headers['Authorization']
+                response = HttpResponse(request, None)
+                response.status_code = 429
+                return response
+
+        def new_method(self, request):
+            request.http_request.headers["Authorization"] = uuid4()
+
+        from azure.appconfiguration._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
+        temp = AppConfigRequestsCredentialsPolicy._signed_request
+        AppConfigRequestsCredentialsPolicy._signed_request = new_method
+
+        client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string, transport=MockTransport())
+
+        client.list_configuration_settings()
+
+        AppConfigRequestsCredentialsPolicy._signed_request = temp
 
     # method: add_configuration_setting
     @app_config_decorator
@@ -68,6 +120,8 @@ class AppConfigurationClientTest(AzureTestCase):
             and created_kv.last_modified is not None
             and created_kv.read_only is False
         )
+        created_kv.value = None
+        created_kv.value = ""
         client.delete_configuration_setting(
             created_kv.key, created_kv.label
         )
@@ -417,3 +471,408 @@ class AppConfigurationClientTest(AzureTestCase):
         set_kv.etag = "bad"
         with pytest.raises(ResourceModifiedError):
             client.set_read_only(set_kv, True, match_condition=MatchConditions.IfNotModified)
+
+    def _order_dict(self, d):
+        from collections import OrderedDict
+        new = OrderedDict()
+        for k, v in d.items():
+            new[k] = str(v)
+        return new
+
+    def _assert_same_keys(self, key1, key2):
+        assert type(key1) == type(key2)
+        assert key1.key == key2.key
+        assert key1.label == key2.label
+        assert key1.content_type == key2.content_type
+        assert key1.tags == key2.tags
+        assert key1.etag != key2.etag
+        if isinstance(key1, FeatureFlagConfigurationSetting):
+            assert key1.enabled == key2.enabled
+            assert len(key1.filters) == len(key2.filters)
+        elif isinstance(key1, SecretReferenceConfigurationSetting):
+            assert key1.secret_uri == key2.secret_uri
+        else:
+            assert key1.value == key2.value
+
+    @app_config_decorator
+    def test_sync_tokens(self, client):
+
+        sync_tokens = copy.deepcopy(client._sync_token_policy._sync_tokens)
+        sync_token_header = self._order_dict(sync_tokens)
+        sync_token_header = ",".join(str(x) for x in sync_token_header.values())
+
+        new = ConfigurationSetting(
+                key="KEY1",
+                label=None,
+                value="TEST_VALUE1",
+                content_type=TEST_CONTENT_TYPE,
+                tags={"tag1": "tag1", "tag2": "tag2"},
+        )
+
+        sent = client.set_configuration_setting(new)
+        sync_tokens2 = copy.deepcopy(client._sync_token_policy._sync_tokens)
+        sync_token_header2 = self._order_dict(sync_tokens2)
+        sync_token_header2 = ",".join(str(x) for x in sync_token_header2.values())
+        assert sync_token_header != sync_token_header2
+
+        new = ConfigurationSetting(
+                key="KEY2",
+                label=None,
+                value="TEST_VALUE2",
+                content_type=TEST_CONTENT_TYPE,
+                tags={"tag1": "tag1", "tag2": "tag2"},
+        )
+
+        sent = client.set_configuration_setting(new)
+        sync_tokens3 = copy.deepcopy(client._sync_token_policy._sync_tokens)
+        sync_token_header3 = self._order_dict(sync_tokens3)
+        sync_token_header3 = ",".join(str(x) for x in sync_token_header3.values())
+        assert sync_token_header2 != sync_token_header3
+        client.close()
+
+    @app_config_decorator
+    def test_config_setting_feature_flag(self, client):
+        feature_flag = FeatureFlagConfigurationSetting("test_feature", True)
+        set_flag = client.set_configuration_setting(feature_flag)
+
+        self._assert_same_keys(feature_flag, set_flag)
+
+        set_flag.enabled = not set_flag.enabled
+        changed_flag = client.set_configuration_setting(set_flag)
+
+        changed_flag.enabled = False
+        assert changed_flag.value['enabled'] == False
+
+        c = copy.deepcopy(changed_flag.value)
+        c['enabled'] = True
+        changed_flag.value = c
+        assert changed_flag.enabled == True
+
+        changed_flag.value = {}
+        assert changed_flag.enabled == None
+        assert changed_flag.value == {}
+
+        with pytest.raises(ValueError):
+            set_flag.value = "bad_value"
+            _ = set_flag.enabled
+
+        client.delete_configuration_setting(changed_flag.key)
+
+    @app_config_decorator
+    def test_config_setting_secret_reference(self, client):
+        secret_reference = SecretReferenceConfigurationSetting(
+            "ConnectionString", "https://test-test.vault.azure.net/secrets/connectionString")
+        set_flag = client.set_configuration_setting(secret_reference)
+        self._assert_same_keys(secret_reference, set_flag)
+
+        updated_flag = client.set_configuration_setting(set_flag)
+        self._assert_same_keys(set_flag, updated_flag)
+
+        assert isinstance(updated_flag, SecretReferenceConfigurationSetting)
+        new_uri = "https://aka.ms/azsdk"
+        new_uri2 = "https://aka.ms/azsdk/python"
+        updated_flag.secret_uri = new_uri
+        assert updated_flag.value['secret_uri'] == new_uri
+
+        updated_flag.value = {'secret_uri': new_uri2}
+        assert updated_flag.secret_uri == new_uri2
+
+        with pytest.raises(ValueError):
+            set_flag.value = "bad_value"
+            _ = set_flag.secret_uri
+
+        client.delete_configuration_setting(secret_reference.key)
+
+    @app_config_decorator
+    def test_feature_filter_targeting(self, client):
+        new = FeatureFlagConfigurationSetting(
+            "newflag",
+            True,
+            filters=[
+                {
+                    "name": TARGETING,
+                    "parameters": {
+                        u"Audience": {
+                            u"Users": [u"abc", u"def"],
+                            u"Groups": [u"ghi", u"jkl"],
+                            u"DefaultRolloutPercentage": 75
+                        }
+                    }
+                }
+            ]
+        )
+
+        sent_config = client.set_configuration_setting(new)
+        self._assert_same_keys(sent_config, new)
+
+        assert isinstance(sent_config.filters[0], dict)
+        assert len(sent_config.filters) == 1
+
+        sent_config.filters[0]["parameters"]["Audience"]["DefaultRolloutPercentage"] = 80
+        updated_sent_config = client.set_configuration_setting(sent_config)
+        self._assert_same_keys(sent_config, updated_sent_config)
+
+        updated_sent_config.filters.append(
+            {
+                "name": TARGETING,
+                "parameters": {
+                    u"Audience": {
+                        u"Users": [u"abcd", u"defg"],
+                        u"Groups": [u"ghij", u"jklm"],
+                        u"DefaultRolloutPercentage": 50
+                    }
+                }
+            }
+        )
+        updated_sent_config.filters.append(
+            {
+                "name": TARGETING,
+                "parameters": {
+                    u"Audience": {
+                        u"Users": [u"abcde", u"defgh"],
+                        u"Groups": [u"ghijk", u"jklmn"],
+                        u"DefaultRolloutPercentage": 100
+                    }
+                }
+            }
+        )
+
+        sent_config = client.set_configuration_setting(updated_sent_config)
+        self._assert_same_keys(sent_config, updated_sent_config)
+        assert len(sent_config.filters) == 3
+
+        client.delete_configuration_setting(updated_sent_config.key)
+
+    @app_config_decorator
+    def test_feature_filter_time_window(self, client):
+        new = FeatureFlagConfigurationSetting(
+            'time_window',
+            True,
+            filters=[
+                {
+                    "name": TIME_WINDOW,
+                    "parameters": {
+                        "Start": "Wed, 10 Mar 2021 05:00:00 GMT",
+                        "End": "Fri, 02 Apr 2021 04:00:00 GMT"
+                    }
+                }
+            ]
+        )
+
+        sent = client.set_configuration_setting(new)
+        self._assert_same_keys(sent, new)
+
+        sent.filters[0]["parameters"]["Start"] = "Thurs, 11 Mar 2021 05:00:00 GMT"
+        new_sent = client.set_configuration_setting(sent)
+        self._assert_same_keys(sent, new_sent)
+
+        client.delete_configuration_setting(new_sent.key)
+
+    @app_config_decorator
+    def test_feature_filter_custom(self, client):
+        new = FeatureFlagConfigurationSetting(
+            'custom',
+            True,
+            filters=[
+                {
+                    "name": PERCENTAGE,
+                    "parameters": {
+                        "Value": 10,
+                        "User": "user1"
+                    }
+                }
+            ]
+        )
+
+        sent = client.set_configuration_setting(new)
+        self._assert_same_keys(sent, new)
+
+        sent.filters[0]["parameters"]["Value"] = 100
+        new_sent = client.set_configuration_setting(sent)
+        self._assert_same_keys(sent, new_sent)
+
+        client.delete_configuration_setting(new_sent.key)
+
+    @app_config_decorator
+    def test_feature_filter_multiple(self, client):
+        new = FeatureFlagConfigurationSetting(
+            'custom',
+            True,
+            filters=[
+                {
+                    "name": PERCENTAGE,
+                    "parameters": {
+                        "Value": 10
+                    }
+                },
+                {
+                    "name": TIME_WINDOW,
+                    "parameters": {
+                        "Start": "Wed, 10 Mar 2021 05:00:00 GMT",
+                        "End": "Fri, 02 Apr 2021 04:00:00 GMT"
+                    }
+                },
+                {
+                    "name": TARGETING,
+                    "parameters": {
+                        u"Audience": {
+                            u"Users": [u"abcde", u"defgh"],
+                            u"Groups": [u"ghijk", u"jklmn"],
+                            u"DefaultRolloutPercentage": 100
+                        }
+                    }
+                }
+            ]
+        )
+
+        sent = client.set_configuration_setting(new)
+        self._assert_same_keys(sent, new)
+
+        sent.filters[0]["parameters"]["Value"] = 100
+        sent.filters[1]["parameters"]["Start"] = "Wed, 10 Mar 2021 08:00:00 GMT"
+        sent.filters[2]["parameters"]["Audience"]["DefaultRolloutPercentage"] = 100
+
+        new_sent = client.set_configuration_setting(sent)
+        self._assert_same_keys(sent, new_sent)
+
+        assert new_sent.filters[0]["parameters"]["Value"] == 100
+        assert new_sent.filters[1]["parameters"]["Start"] == "Wed, 10 Mar 2021 08:00:00 GMT"
+        assert new_sent.filters[2]["parameters"]["Audience"]["DefaultRolloutPercentage"] == 100
+
+        client.delete_configuration_setting(new_sent.key)
+
+    @app_config_decorator
+    def test_breaking1(self, client):
+        new = FeatureFlagConfigurationSetting(
+            'breaking1',
+            True,
+            filters=[
+                {
+                    "name": TIME_WINDOW,
+                    "parameters": {
+                        "Start": "bababooey, 31 Mar 2021 25:00:00 GMT",
+                        "End": "Fri, 02 Apr 2021 04:00:00 GMT"
+                    }
+                },
+            ]
+        )
+        client.set_configuration_setting(new)
+        new1 = client.get_configuration_setting(new.key)
+
+        new = FeatureFlagConfigurationSetting(
+            'breaking2',
+            True,
+            filters=[
+                {
+                    "name": TIME_WINDOW,
+                    "parameters": {
+                        "Start": "bababooey, 31 Mar 2021 25:00:00 GMT",
+                        "End": "not even trying to be a date"
+                    }
+                },
+            ]
+        )
+        client.set_configuration_setting(new)
+        new1 = client.get_configuration_setting(new.key)
+
+        # This will show up as a Custom filter
+        new = FeatureFlagConfigurationSetting(
+            'breaking3',
+            True,
+            filters=[
+                {
+                    "name": TIME_WINDOW,
+                    "parameters": {
+                        "Start": "bababooey, 31 Mar 2021 25:00:00 GMT",
+                        "End": "not even trying to be a date"
+                    }
+                },
+            ]
+        )
+        client.set_configuration_setting(new)
+        new1 = client.get_configuration_setting(new.key)
+
+        new = FeatureFlagConfigurationSetting(
+            'breaking4',
+            True,
+            filters=[
+                {
+                    "name": TIME_WINDOW,
+                    "parameters": "stringystring"
+                },
+            ]
+        )
+        client.set_configuration_setting(new)
+        new1 = client.get_configuration_setting(new.key)
+
+        new = FeatureFlagConfigurationSetting(
+            'breaking5',
+            True,
+            filters=[
+                {
+                    "name": TARGETING,
+                    "parameters": {
+                        u"Audience": {
+                            u"Users": '123'
+                        }
+                    }
+                }
+            ]
+        )
+        client.set_configuration_setting(new)
+        new1 = client.get_configuration_setting(new.key)
+
+        new = FeatureFlagConfigurationSetting(
+            'breaking6',
+            True,
+            filters=[
+                {
+                    "name": TARGETING,
+                    "parameters": "invalidformat"
+                }
+            ]
+        )
+        client.set_configuration_setting(new)
+        new1 = client.get_configuration_setting(new.key)
+
+        new = FeatureFlagConfigurationSetting(
+            'breaking7',
+            True,
+            filters=[
+                {
+                    'abc': 'def'
+                }
+            ]
+        )
+        client.set_configuration_setting(new)
+        new1 = client.get_configuration_setting(new.key)
+
+        new = FeatureFlagConfigurationSetting(
+            'breaking8',
+            True,
+            filters=[
+                {
+                    'abc': 'def'
+                }
+            ]
+        )
+        new.feature_flag_content_type = "fakeyfakey"
+        client.set_configuration_setting(new)
+        new1 = client.get_configuration_setting(new.key)
+
+    @app_config_decorator
+    def test_breaking2(self, client):
+        new = SecretReferenceConfigurationSetting(
+            "aref",
+            "notaurl"
+        )
+        client.set_configuration_setting(new)
+        new1 = client.get_configuration_setting(new.key)
+
+        new = SecretReferenceConfigurationSetting(
+            "aref1",
+            "notaurl"
+        )
+        new.content_type = "fkaeyjfdkal;"
+        client.set_configuration_setting(new)
+        new1 = client.get_configuration_setting(new.key)

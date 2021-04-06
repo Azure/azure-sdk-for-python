@@ -20,10 +20,8 @@ from typing import (
     TYPE_CHECKING,
 )
 
-from azure.core.tracing import SpanKind
+from azure.core.tracing import SpanKind, Link
 from azure.core.settings import settings
-
-from .._utils import trace_link_message
 
 if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
@@ -98,17 +96,14 @@ class EventProcessorMixin(object):
         return consumer
 
     @contextmanager
-    def _context(self, event):
-        # type: (Union[EventData, Iterable[EventData]]) -> Iterator[None]
+    def _context(self, links=None):
+        # type: (List[Link]) -> Iterator[None]
         """Tracing"""
         span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
         if span_impl_type is None:
             yield
         else:
-            child = span_impl_type(name="Azure.EventHubs.process")
+            child = span_impl_type(name="Azure.EventHubs.process", kind=SpanKind.CONSUMER, links=links)
             self._eventhub_client._add_span_request_attributes(child)  # type: ignore  # pylint: disable=protected-access
-            child.kind = SpanKind.CONSUMER
-
-            trace_link_message(event, child)
             with child:
                 yield

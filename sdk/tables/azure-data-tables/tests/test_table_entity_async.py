@@ -16,6 +16,7 @@ import uuid
 from devtools_testutils import AzureTestCase
 
 from azure.core import MatchConditions
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -1282,6 +1283,101 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @TablesPreparer()
+    async def test_query_injection_async(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            table_name = self.get_resource_name('queryasynctable')
+            table = await self.ts.create_table_if_not_exists(table_name)
+            entity_a = {'PartitionKey': 'foo', 'RowKey': 'bar1', 'IsAdmin': 'admin'}
+            entity_b = {'PartitionKey': 'foo', 'RowKey': 'bar2', 'IsAdmin': ''}
+            await table.create_entity(entity_a)
+            await table.create_entity(entity_b)
+
+            is_user_admin = "PartitionKey eq @first and IsAdmin eq 'admin'"
+            entity_query = table.query_entities(is_user_admin, parameters={'first': 'foo'})
+            entities = []
+            async for e in entity_query:
+                entities.append(e)
+            assert len(entities) ==  1
+
+            injection = "foo' or RowKey eq 'bar2"
+            injected_query = "PartitionKey eq '{}' and IsAdmin eq 'admin'".format(injection)
+            entity_query = table.query_entities(injected_query)
+            entities = []
+            async for e in entity_query:
+                entities.append(e)
+            assert len(entities) ==  2
+
+            entity_query = table.query_entities(is_user_admin, parameters={'first': injection})           
+            entities = []
+            async for e in entity_query:
+                entities.append(e)
+            assert len(entities) ==  0
+        finally:
+            await self.ts.delete_table(table_name)
+            await self._tear_down()
+
+    @TablesPreparer()
+    async def test_query_special_chars(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            table_name = self.get_resource_name('querytable')
+            table = await self.ts.create_table_if_not_exists(table_name)
+            entity_a = {'PartitionKey': u':@', 'RowKey': u'+,$', 'Chars': u"?'/!_^#"}
+            entity_b = {'PartitionKey': u':@', 'RowKey': u'=& ', 'Chars': u'?"\\{}<>%'}
+            await table.create_entity(entity_a)
+            await table.create_entity(entity_b)
+
+            entities = []
+            all_entities = table.query_entities("PartitionKey eq ':@'")
+            async for e in all_entities:
+                entities.append(e)
+            assert len(entities) == 2
+        
+            entities = []
+            parameters = {'key': ':@'}
+            all_entities = table.query_entities("PartitionKey eq @key", parameters=parameters)
+            async for e in all_entities:
+                entities.append(e)
+            assert len(entities) == 2
+            
+            entities = []
+            query = "PartitionKey eq ':@' and RowKey eq '+,$' and Chars eq '?''/!_^#'"
+            query_entities = table.query_entities(query)
+            async for e in query_entities:
+                entities.append(e)
+            assert len(entities) == 1
+
+            entities = []
+            query = "PartitionKey eq @key and RowKey eq @row and Chars eq @quote"
+            parameters = {'key': ':@', 'row': '+,$', 'quote': "?'/!_^#"}
+            query_entities = table.query_entities(query, parameters=parameters)
+            async for e in query_entities:
+                entities.append(e)
+            assert len(entities) == 1
+
+            entities = []
+            query = "PartitionKey eq ':@' and RowKey eq '=& ' and Chars eq '?\"\\{}<>%'"
+            query_entities = table.query_entities(query)
+            async for e in query_entities:
+                entities.append(e)
+            assert len(entities) == 1
+
+            entities = []
+            query = "PartitionKey eq @key and RowKey eq @row and Chars eq @quote"
+            parameters = {'key': ':@', 'row': '=& ', 'quote': r'?"\{}<>%'}
+            query_entities = table.query_entities(query, parameters=parameters)
+            async for e in query_entities:
+                entities.append(e)
+            assert len(entities) == 1
+
+        finally:
+            await self.ts.delete_table(table_name)
+            await self._tear_down()
+
+    @TablesPreparer()
     async def test_query_user_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1591,7 +1687,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.live_test_only
     @TablesPreparer()
     async def test_sas_query(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1601,7 +1696,8 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         try:
             # Arrange
             entity, _ = await self._insert_random_entity()
-            token = generate_table_sas(
+            token = self.generate_sas(
+                generate_table_sas,
                 tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
@@ -1613,7 +1709,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
             entities = []
@@ -1627,7 +1723,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.live_test_only
     @TablesPreparer()
     async def test_sas_add(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1635,7 +1730,8 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
-            token = generate_table_sas(
+            token = self.generate_sas(
+                generate_table_sas,
                 tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
@@ -1647,7 +1743,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
 
@@ -1661,7 +1757,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.live_test_only
     @TablesPreparer()
     async def test_sas_add_inside_range(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1669,7 +1764,8 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
-            token = generate_table_sas(
+            token = self.generate_sas(
+                generate_table_sas,
                 tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
@@ -1682,7 +1778,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
             entity = self._create_random_entity_dict('test', 'test1')
@@ -1694,7 +1790,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.live_test_only
     @TablesPreparer()
     async def test_sas_add_outside_range(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1702,7 +1797,8 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
-            token = generate_table_sas(
+            token = self.generate_sas(
+                generate_table_sas,
                 tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
@@ -1715,7 +1811,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
             with pytest.raises(HttpResponseError):
@@ -1726,7 +1822,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.live_test_only
     @TablesPreparer()
     async def test_sas_update(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1735,7 +1830,8 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         try:
             # Arrange
             entity, _ = await self._insert_random_entity()
-            token = generate_table_sas(
+            token = self.generate_sas(
+                generate_table_sas,
                 tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
@@ -1746,7 +1842,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
             updated_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
@@ -1761,7 +1857,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.live_test_only
     @TablesPreparer()
     async def test_sas_delete(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1770,7 +1865,8 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         try:
             # Arrange
             entity, _ = await self._insert_random_entity()
-            token = generate_table_sas(
+            token = self.generate_sas(
+                generate_table_sas,
                 tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
@@ -1781,7 +1877,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
             await table.delete_entity(entity.PartitionKey, entity.RowKey)
@@ -1792,7 +1888,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.live_test_only
     @TablesPreparer()
     async def test_sas_upper_case_table_name(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1803,7 +1898,8 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity, _ = await self._insert_random_entity()
 
             # Table names are case insensitive, so simply upper case our existing table name to test
-            token = generate_table_sas(
+            token = self.generate_sas(
+                generate_table_sas,
                 tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name.upper(),
@@ -1815,7 +1911,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
             entities = []
@@ -1829,7 +1925,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.live_test_only
     @TablesPreparer()
     async def test_sas_signed_identifier(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1847,7 +1942,8 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             await self.table.set_table_access_policy(identifiers)
 
-            token = generate_table_sas(
+            token = self.generate_sas(
+                generate_table_sas,
                 tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
@@ -1857,7 +1953,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(table_name=self.table_name)
             entities = []
@@ -1873,8 +1969,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @TablesPreparer()
     async def test_datetime_milliseconds(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(tables_storage_account_name, "table")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict()
@@ -1890,5 +1984,33 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             assert entity['milliseconds'] == received_entity['milliseconds']
 
+        finally:
+            await self._tear_down()
+
+    @TablesPreparer()
+    async def test_datetime_str_passthrough(self, tables_storage_account_name, tables_primary_storage_account_key):
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        partition, row = self._create_pk_rk(None, None)
+
+        dotnet_timestamp = "2013-08-22T01:12:06.2608595Z"
+        entity = {
+            'PartitionKey': partition,
+            'RowKey': row,
+            'datetime1': EntityProperty(dotnet_timestamp, EdmType.DATETIME)
+        }
+        try:
+            await self.table.create_entity(entity)
+            received = await self.table.get_entity(partition, row)
+            assert isinstance(received['datetime1'], datetime)
+            assert received.datetime1.tables_service_value == dotnet_timestamp
+
+            received['datetime2'] = received.datetime1.replace(year=2020)
+            assert received['datetime2'].tables_service_value == ""
+
+            await self.table.update_entity(received)
+            updated = await self.table.get_entity(partition, row)
+            assert isinstance(updated['datetime1'], datetime)
+            assert isinstance(updated['datetime2'], datetime)
+            assert updated.datetime1.tables_service_value == dotnet_timestamp
         finally:
             await self._tear_down()

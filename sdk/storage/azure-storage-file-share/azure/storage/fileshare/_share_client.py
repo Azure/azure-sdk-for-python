@@ -48,6 +48,10 @@ class ShareClient(StorageAccountHostsMixin):
     For operations relating to a specific directory or file in this share, the clients for
     those entities can also be retrieved using the :func:`get_directory_client` and :func:`get_file_client` functions.
 
+    For more optional configuration, please click
+    `here <https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share
+    #optional-configuration>`_.
+
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the share,
         use the :func:`from_share_url` classmethod.
