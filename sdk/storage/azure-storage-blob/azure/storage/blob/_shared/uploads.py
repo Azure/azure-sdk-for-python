@@ -586,10 +586,11 @@ class IterStreamer(object):
                     chunk = chunk.encode(self.encoding)
                 data += chunk
                 count += len(chunk)
+        # This means count < size and what's leftover will be returned in this call.
         except StopIteration:
-            pass
+            self.leftover = b""
 
-        if count > size:
+        if count >= size:
             self.leftover = data[size:]
 
         return data[:size]
