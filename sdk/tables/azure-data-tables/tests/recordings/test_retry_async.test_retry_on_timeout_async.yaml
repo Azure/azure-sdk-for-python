@@ -1,0 +1,136 @@
+interactions:
+- request:
+    body: '{"TableName": "uttable9f4b1275"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Mon, 05 Apr 2021 21:53:16 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 05 Apr 2021 21:53:16 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_table_account.table.core.windows.net/Tables
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable9f4b1275"}'
+    headers:
+      cache-control: no-cache
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Mon, 05 Apr 2021 21:53:16 GMT
+      location: https://fake_table_account.table.core.windows.net/Tables('uttable9f4b1275')
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: https://seankaneprim.table.core.windows.net/Tables
+- request:
+    body: '{"TableName": "uttable9f4b1275"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Mon, 05 Apr 2021 21:53:16 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 05 Apr 2021 21:53:16 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_table_account.table.core.windows.net/Tables
+  response:
+    body:
+      string: '{"odata.error":{"code":"TableAlreadyExists","message":{"lang":"en-US","value":"The
+        table specified already exists.\nRequestId:27a14ef8-3002-0007-6766-2ab647000000\nTime:2021-04-05T21:53:37.7044890Z"}}}'
+    headers:
+      cache-control: no-cache
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Mon, 05 Apr 2021 21:53:37 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 409
+      message: Conflict
+    url: https://seankaneprim.table.core.windows.net/Tables
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Mon, 05 Apr 2021 21:53:37 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 05 Apr 2021 21:53:37 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_table_account.table.core.windows.net/Tables('uttable9f4b1275')
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      date: Mon, 05 Apr 2021 21:53:37 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 204
+      message: No Content
+    url: https://seankaneprim.table.core.windows.net/Tables('uttable9f4b1275')
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Mon, 05 Apr 2021 21:53:37 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 05 Apr 2021 21:53:37 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_table_account.table.core.windows.net/Tables('uttable9f4b1275')
+  response:
+    body:
+      string: '{"odata.error":{"code":"ResourceNotFound","message":{"lang":"en-US","value":"The
+        specified resource does not exist.\nRequestId:27a14f00-3002-0007-6d66-2ab647000000\nTime:2021-04-05T21:53:37.7625305Z"}}}'
+    headers:
+      cache-control: no-cache
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Mon, 05 Apr 2021 21:53:37 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 404
+      message: Not Found
+    url: https://seankaneprim.table.core.windows.net/Tables('uttable9f4b1275')
+version: 1
