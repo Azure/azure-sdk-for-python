@@ -202,3 +202,4 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mixedreality-authentication azure-core<2.0.0,>=1.4.0
 #override azure-iot-deviceupdate azure-core<2.0.0,>=1.6.0
 #override azure-mgmt-labservices msrest>=0.6.21
+#override azure-mgmt-compute msrest>=0.6.21
