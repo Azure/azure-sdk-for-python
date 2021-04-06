@@ -15,6 +15,21 @@ Example PR build:
  - `Analyze` tox envs run during the `Analyze job.
  - `Test <platform>_<pyversion>` runs PR/Nightly tox envs, depending on context.
 
+## Skipping a tox test environment at queue time
+
+All build definitions allow choice at queue time as to which `tox` environments actually run during the test phase.
+
+1. Find your target service `internal` build.
+2. Click `Run New`
+3. Before clicking `run` against `master` or your target commit, click `Variables` and add a variable. The value should be a comma separated list of tox environments that you want to run in the test phase.
+4. Once it's set, run the build!
+
+This is an example setting of that narrows the default set from `whl, sdist, depends, latestdependency, minimumdependency`.
+
+![res/queue_time_variable.png](res/queue_time_variable.png)
+
+Any combination of valid valid tox environments will work. Reference either this document or the file present at `eng/tox/tox.ini` to find what options are available.
+
 ## Analyze Checks
 Analyze job in both nightly CI and pull request validation pipeline runs a set of static analysis using external and internal tools. Following are the list of these static analysis.
 
