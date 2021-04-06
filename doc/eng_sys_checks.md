@@ -17,7 +17,7 @@ Example PR build:
 
 ## Skipping a tox test environment at queue time
 
-All build definitions allow choosing which actually run at queue time.
+All build definitions allow choice at queue time as to which `tox` environments actually run during the test phase.
 
 1. Find your target service `internal` build.
 2. Click `Run New`
