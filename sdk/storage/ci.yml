@@ -41,6 +41,7 @@ extends:
         Path: eng/pipelines/templates/stages/platform-matrix-cryptography-dependency.json
         Selection: sparse
         GenerateVMJobs: true
+    BuildDocs: false
     Artifacts:
     - name: azure-storage-blob
       safeName: azurestorageblob
@@ -59,7 +60,7 @@ extends:
     - name: azure-mgmt-storagesync
       safeName: azuremgmtstoragesync
     - name: azure-mgmt-storageimportexport
-      safeName: azuremgmtstorageimportexport
+      safeName: azuremgmtstorageimportexportP
     CondaArtifacts:
     - name: azure-storage
       meta_source: meta.yml

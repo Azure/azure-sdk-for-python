@@ -16,6 +16,7 @@ import sys
 import os
 import shutil
 import pdb
+import re
 
 from common_tasks import process_glob_string, run_check_call, str_to_bool, parse_setup
 from subprocess import check_call
