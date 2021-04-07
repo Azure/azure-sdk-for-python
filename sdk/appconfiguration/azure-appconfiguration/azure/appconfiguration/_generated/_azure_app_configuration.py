@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Optional
 
+    from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._configuration import AzureAppConfigurationConfiguration
@@ -25,6 +26,8 @@ from . import models
 class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):
     """AzureAppConfiguration.
 
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: The endpoint of the App Configuration instance to send requests to.
     :type endpoint: str
     :param sync_token: Used to guarantee real-time consistency between requests.
@@ -33,13 +36,14 @@ class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):
 
     def __init__(
         self,
+        credential,  # type: "TokenCredential"
         endpoint,  # type: str
         sync_token=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         base_url = '{endpoint}'
-        self._config = AzureAppConfigurationConfiguration(endpoint, sync_token, **kwargs)
+        self._config = AzureAppConfigurationConfiguration(credential, endpoint, sync_token, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
