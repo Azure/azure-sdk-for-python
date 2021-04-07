@@ -15,30 +15,31 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz?api-version=2021-03-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz","name":"myaccountxxyyzzz","location":"East
-        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"systemData":{"createdAt":"2021-04-07T03:52:15.0392752Z"},"properties":{"provisioningState":"Creating","publicNetworkAccess":"Enabled","enableAutomaticFailover":false,"enableMultipleWriteLocations":false,"enablePartitionKeyMonitor":false,"isVirtualNetworkFilterEnabled":false,"virtualNetworkRules":[],"EnabledApiTypes":"Sql","disableKeyBasedMetadataWriteAccess":false,"enableFreeTier":false,"enableAnalyticalStorage":false,"instanceId":"8b7ba8d2-7e35-476c-bf6d-366c3180f161","createMode":"Default","databaseAccountOfferType":"Standard","defaultIdentity":"","networkAclBypass":"None","consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"configurationOverrides":{},"writeLocations":[{"id":"myaccountxxyyzzz-eastus","locationName":"East
+        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"systemData":{"createdAt":"2021-04-07T08:50:02.0756205Z"},"properties":{"provisioningState":"Creating","publicNetworkAccess":"Enabled","enableAutomaticFailover":false,"enableMultipleWriteLocations":false,"enablePartitionKeyMonitor":false,"isVirtualNetworkFilterEnabled":false,"virtualNetworkRules":[],"EnabledApiTypes":"Sql","disableKeyBasedMetadataWriteAccess":false,"enableFreeTier":false,"enableAnalyticalStorage":false,"instanceId":"9ecdc7e4-143d-423c-8b39-642955c13b74","createMode":"Default","databaseAccountOfferType":"Standard","defaultIdentity":"","networkAclBypass":"None","consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"configurationOverrides":{},"writeLocations":[{"id":"myaccountxxyyzzz-eastus","locationName":"East
         US","provisioningState":"Creating","failoverPriority":0,"isZoneRedundant":false}],"readLocations":[{"id":"myaccountxxyyzzz-eastus","locationName":"East
         US","provisioningState":"Creating","failoverPriority":0,"isZoneRedundant":false}],"locations":[{"id":"myaccountxxyyzzz-eastus","locationName":"East
         US","provisioningState":"Creating","failoverPriority":0,"isZoneRedundant":false}],"failoverPolicies":[{"id":"myaccountxxyyzzz-eastus","locationName":"East
         US","failoverPriority":0}],"cors":[],"capabilities":[],"ipRules":[],"backupPolicy":{"type":"Periodic","periodicModeProperties":{"backupIntervalInMinutes":240,"backupRetentionIntervalInHours":8,"backupStorageRedundancy":"Geo"}},"networkAclBypassResourceIds":[]},"identity":{"type":"None"}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/c1cdca7b-2562-4e3c-b2ef-e32a9885f9e0?api-version=2021-03-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/679b5564-1136-48a9-a55a-b0928bd579b1?api-version=2021-03-15
       cache-control:
       - no-store, no-cache
       content-length:
-      - '1865'
+      - '1870'
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 03:52:17 GMT
+      - Wed, 07 Apr 2021 08:50:03 GMT
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/operationResults/c1cdca7b-2562-4e3c-b2ef-e32a9885f9e0?api-version=2021-03-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/operationResults/679b5564-1136-48a9-a55a-b0928bd579b1?api-version=2021-03-15
       pragma:
       - no-cache
       server:
@@ -54,7 +55,7 @@ interactions:
       x-ms-gatewayversion:
       - version=2.11.0
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1194'
     status:
       code: 200
       message: Ok
@@ -68,9 +69,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/c1cdca7b-2562-4e3c-b2ef-e32a9885f9e0?api-version=2021-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/679b5564-1136-48a9-a55a-b0928bd579b1?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -82,7 +84,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 03:52:47 GMT
+      - Wed, 07 Apr 2021 08:50:33 GMT
       pragma:
       - no-cache
       server:
@@ -110,9 +112,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/c1cdca7b-2562-4e3c-b2ef-e32a9885f9e0?api-version=2021-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/679b5564-1136-48a9-a55a-b0928bd579b1?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -124,7 +127,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 03:53:18 GMT
+      - Wed, 07 Apr 2021 08:51:04 GMT
       pragma:
       - no-cache
       server:
@@ -152,9 +155,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/c1cdca7b-2562-4e3c-b2ef-e32a9885f9e0?api-version=2021-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/679b5564-1136-48a9-a55a-b0928bd579b1?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -166,7 +170,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 03:53:48 GMT
+      - Wed, 07 Apr 2021 08:51:33 GMT
       pragma:
       - no-cache
       server:
@@ -194,13 +198,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz?api-version=2021-03-15
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz","name":"myaccountxxyyzzz","location":"East
-        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"systemData":{"createdAt":"2021-04-07T03:53:02.8777966Z"},"properties":{"provisioningState":"Succeeded","documentEndpoint":"https://myaccountxxyyzzz.documents.azure.com:443/","publicNetworkAccess":"Enabled","enableAutomaticFailover":false,"enableMultipleWriteLocations":false,"enablePartitionKeyMonitor":false,"isVirtualNetworkFilterEnabled":false,"virtualNetworkRules":[],"EnabledApiTypes":"Sql","disableKeyBasedMetadataWriteAccess":false,"enableFreeTier":false,"enableAnalyticalStorage":false,"instanceId":"8b7ba8d2-7e35-476c-bf6d-366c3180f161","createMode":"Default","databaseAccountOfferType":"Standard","defaultIdentity":"FirstPartyIdentity","networkAclBypass":"None","consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"configurationOverrides":{},"writeLocations":[{"id":"myaccountxxyyzzz-eastus","locationName":"East
+        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"systemData":{"createdAt":"2021-04-07T08:50:49.1469515Z"},"properties":{"provisioningState":"Succeeded","documentEndpoint":"https://myaccountxxyyzzz.documents.azure.com:443/","publicNetworkAccess":"Enabled","enableAutomaticFailover":false,"enableMultipleWriteLocations":false,"enablePartitionKeyMonitor":false,"isVirtualNetworkFilterEnabled":false,"virtualNetworkRules":[],"EnabledApiTypes":"Sql","disableKeyBasedMetadataWriteAccess":false,"enableFreeTier":false,"enableAnalyticalStorage":false,"instanceId":"9ecdc7e4-143d-423c-8b39-642955c13b74","createMode":"Default","databaseAccountOfferType":"Standard","defaultIdentity":"FirstPartyIdentity","networkAclBypass":"None","consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"configurationOverrides":{},"writeLocations":[{"id":"myaccountxxyyzzz-eastus","locationName":"East
         US","documentEndpoint":"https://myaccountxxyyzzz-eastus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0,"isZoneRedundant":false}],"readLocations":[{"id":"myaccountxxyyzzz-eastus","locationName":"East
         US","documentEndpoint":"https://myaccountxxyyzzz-eastus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0,"isZoneRedundant":false}],"locations":[{"id":"myaccountxxyyzzz-eastus","locationName":"East
         US","documentEndpoint":"https://myaccountxxyyzzz-eastus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0,"isZoneRedundant":false}],"failoverPolicies":[{"id":"myaccountxxyyzzz-eastus","locationName":"East
@@ -209,11 +214,11 @@ interactions:
       cache-control:
       - no-store, no-cache
       content-length:
-      - '2192'
+      - '2197'
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 03:53:49 GMT
+      - Wed, 07 Apr 2021 08:51:33 GMT
       pragma:
       - no-cache
       server:
@@ -246,32 +251,33 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/virtualNetworks/myNetwork?api-version=2020-11-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myNetwork\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/virtualNetworks/myNetwork\"\
-        ,\r\n  \"etag\": \"W/\\\"d0afaabf-6154-458e-baf0-a746a1ac4dca\\\"\",\r\n \
-        \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
-        ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
-        \   \"resourceGuid\": \"bcf6d430-d30b-46b9-904c-02bd65a91dd3\",\r\n    \"\
-        addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
-        \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
-        : [],\r\n    \"enableDdosProtection\": false\r\n  }\r\n}"
+      string: "{\r\n  \"name\": \"myNetwork\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/virtualNetworks/myNetwork\",\r\n
+        \ \"etag\": \"W/\\\"3288af13-c2ab-4a6e-905f-1bb9c7163e57\\\"\",\r\n  \"type\":
+        \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\",\r\n
+        \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"resourceGuid\":
+        \"bb8cc93d-5716-4ae1-bc16-f26992926ba2\",\r\n    \"addressSpace\": {\r\n      \"addressPrefixes\":
+        [\r\n        \"10.0.0.0/16\"\r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n
+        \   \"virtualNetworkPeerings\": [],\r\n    \"enableDdosProtection\": false\r\n
+        \ }\r\n}"
     headers:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/c9eedc8b-1714-4138-9e32-20b4e7062855?api-version=2020-11-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/99c24dfc-4c18-4389-a22d-f25278a5d676?api-version=2020-11-01
       cache-control:
       - no-cache
       content-length:
-      - '657'
+      - '662'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 03:53:59 GMT
+      - Wed, 07 Apr 2021 08:51:35 GMT
       expires:
       - '-1'
       pragma:
@@ -284,7 +290,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - c8c01d3c-a27f-49a8-a229-f6b4cf167a8d
+      - 3c93514c-b6ca-4d01-b729-a6b44ac2c592
       x-ms-ratelimit-remaining-subscription-writes:
       - '1199'
     status:
@@ -300,9 +306,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/c9eedc8b-1714-4138-9e32-20b4e7062855?api-version=2020-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/99c24dfc-4c18-4389-a22d-f25278a5d676?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -314,7 +321,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 03:54:02 GMT
+      - Wed, 07 Apr 2021 08:51:38 GMT
       expires:
       - '-1'
       pragma:
@@ -331,7 +338,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - a62d740f-75eb-42e4-8f05-da0dc106ba14
+      - c9a3eb70-1e32-442a-8c55-692b89733f35
     status:
       code: 200
       message: OK
@@ -345,30 +352,31 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/virtualNetworks/myNetwork?api-version=2020-11-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myNetwork\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/virtualNetworks/myNetwork\"\
-        ,\r\n  \"etag\": \"W/\\\"e0143714-dd77-4026-bf21-40ab99a76446\\\"\",\r\n \
-        \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
-        ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
-        \    \"resourceGuid\": \"bcf6d430-d30b-46b9-904c-02bd65a91dd3\",\r\n    \"\
-        addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
-        \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
-        : [],\r\n    \"enableDdosProtection\": false\r\n  }\r\n}"
+      string: "{\r\n  \"name\": \"myNetwork\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/virtualNetworks/myNetwork\",\r\n
+        \ \"etag\": \"W/\\\"091d3aef-52b3-4dd2-ac5f-6d44b8dd3830\\\"\",\r\n  \"type\":
+        \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\",\r\n
+        \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"resourceGuid\":
+        \"bb8cc93d-5716-4ae1-bc16-f26992926ba2\",\r\n    \"addressSpace\": {\r\n      \"addressPrefixes\":
+        [\r\n        \"10.0.0.0/16\"\r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n
+        \   \"virtualNetworkPeerings\": [],\r\n    \"enableDdosProtection\": false\r\n
+        \ }\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '658'
+      - '663'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 03:54:02 GMT
+      - Wed, 07 Apr 2021 08:51:38 GMT
       etag:
-      - W/"e0143714-dd77-4026-bf21-40ab99a76446"
+      - W/"091d3aef-52b3-4dd2-ac5f-6d44b8dd3830"
       expires:
       - '-1'
       pragma:
@@ -385,7 +393,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - d0fe9fe6-d5e2-4967-bb8b-12a08e79c28c
+      - c5cf71bc-1b01-45d3-826a-1ca7180c1ad1
     status:
       code: 200
       message: OK
@@ -404,28 +412,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/virtualNetworks/myNetwork/subnets/mysubnet?api-version=2020-11-01
   response:
     body:
-      string: "{\r\n  \"name\": \"mysubnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/virtualNetworks/myNetwork/subnets/mysubnet\"\
-        ,\r\n  \"etag\": \"W/\\\"ace868a6-6208-4353-b9c9-e7abac7c91f9\\\"\",\r\n \
-        \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
-        addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
-        : \"Disabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Disabled\"\
-        \r\n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n}"
+      string: "{\r\n  \"name\": \"mysubnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/virtualNetworks/myNetwork/subnets/mysubnet\",\r\n
+        \ \"etag\": \"W/\\\"0b448fd0-f43c-404d-993c-bba6d297c780\\\"\",\r\n  \"properties\":
+        {\r\n    \"provisioningState\": \"Updating\",\r\n    \"addressPrefix\": \"10.0.0.0/24\",\r\n
+        \   \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\": \"Disabled\",\r\n
+        \   \"privateLinkServiceNetworkPolicies\": \"Disabled\"\r\n  },\r\n  \"type\":
+        \"Microsoft.Network/virtualNetworks/subnets\"\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/04cb33b6-4139-40eb-83c4-0dda8388a239?api-version=2020-11-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/630cb39d-41d5-4f22-8c17-b94182f86d84?api-version=2020-11-01
       cache-control:
       - no-cache
       content-length:
-      - '579'
+      - '584'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 03:54:03 GMT
+      - Wed, 07 Apr 2021 08:51:38 GMT
       expires:
       - '-1'
       pragma:
@@ -438,7 +447,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - d5b1a389-2c34-4cf2-9ea5-ee2d64a74c2f
+      - b3e39984-68c5-41b7-80af-e482ca1395a2
       x-ms-ratelimit-remaining-subscription-writes:
       - '1198'
     status:
@@ -454,9 +463,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/04cb33b6-4139-40eb-83c4-0dda8388a239?api-version=2020-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/630cb39d-41d5-4f22-8c17-b94182f86d84?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -468,7 +478,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 03:54:06 GMT
+      - Wed, 07 Apr 2021 08:51:42 GMT
       expires:
       - '-1'
       pragma:
@@ -485,7 +495,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 50ebc3aa-8d2b-4343-8fbd-c934a24daf1e
+      - 91d82eee-6fda-4a5f-a4d0-9b21583a8f92
     status:
       code: 200
       message: OK
@@ -499,28 +509,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/virtualNetworks/myNetwork/subnets/mysubnet?api-version=2020-11-01
   response:
     body:
-      string: "{\r\n  \"name\": \"mysubnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/virtualNetworks/myNetwork/subnets/mysubnet\"\
-        ,\r\n  \"etag\": \"W/\\\"fa204975-5d90-451f-bf2c-cd2b91722dea\\\"\",\r\n \
-        \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
-        addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
-        : \"Disabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Disabled\"\
-        \r\n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n}"
+      string: "{\r\n  \"name\": \"mysubnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/virtualNetworks/myNetwork/subnets/mysubnet\",\r\n
+        \ \"etag\": \"W/\\\"087ed99e-31e7-46a4-be79-574ede1ff5c0\\\"\",\r\n  \"properties\":
+        {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"addressPrefix\": \"10.0.0.0/24\",\r\n
+        \   \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\": \"Disabled\",\r\n
+        \   \"privateLinkServiceNetworkPolicies\": \"Disabled\"\r\n  },\r\n  \"type\":
+        \"Microsoft.Network/virtualNetworks/subnets\"\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '580'
+      - '585'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 03:54:06 GMT
+      - Wed, 07 Apr 2021 08:51:42 GMT
       etag:
-      - W/"fa204975-5d90-451f-bf2c-cd2b91722dea"
+      - W/"087ed99e-31e7-46a4-be79-574ede1ff5c0"
       expires:
       - '-1'
       pragma:
@@ -537,7 +548,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 2a3bb439-8b53-4972-b418-58085566724c
+      - 1a302f81-0104-4c87-b662-57c9c6d2db80
     status:
       code: 200
       message: OK
@@ -554,47 +565,46 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '576'
+      - '586'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint?api-version=2020-11-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myPrivateEndpoint\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint\"\
-        ,\r\n  \"etag\": \"W/\\\"f138cf1c-573a-4900-b850-856f38d2869b\\\"\",\r\n \
-        \ \"type\": \"Microsoft.Network/privateEndpoints\",\r\n  \"location\": \"\
-        eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\"\
-        ,\r\n    \"resourceGuid\": \"cfd1f999-183f-48d5-acbf-560c5c8ca5b4\",\r\n \
-        \   \"privateLinkServiceConnections\": [\r\n      {\r\n        \"name\": \"\
-        myEndpoint\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint/privateLinkServiceConnections/myEndpoint\"\
-        ,\r\n        \"etag\": \"W/\\\"f138cf1c-573a-4900-b850-856f38d2869b\\\"\"\
-        ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
-        ,\r\n          \"privateLinkServiceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz\"\
-        ,\r\n          \"groupIds\": [\r\n            \"Sql\"\r\n          ],\r\n\
-        \          \"privateLinkServiceConnectionState\": {\r\n            \"status\"\
-        : \"Approved\",\r\n            \"description\": \"\",\r\n            \"actionsRequired\"\
-        : \"None\"\r\n          }\r\n        },\r\n        \"type\": \"Microsoft.Network/privateEndpoints/privateLinkServiceConnections\"\
-        \r\n      }\r\n    ],\r\n    \"manualPrivateLinkServiceConnections\": [],\r\
-        \n    \"subnet\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/virtualNetworks/myNetwork/subnets/mysubnet\"\
-        \r\n    },\r\n    \"networkInterfaces\": [\r\n      {\r\n        \"id\": \"\
-        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/networkInterfaces/myPrivateEndpoint.nic.42d94b3b-68cc-4c6a-92f1-e6f2e5927528\"\
-        \r\n      }\r\n    ],\r\n    \"customDnsConfigs\": []\r\n  }\r\n}"
+      string: "{\r\n  \"name\": \"myPrivateEndpoint\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint\",\r\n
+        \ \"etag\": \"W/\\\"f961b681-f97a-4354-bd4c-7e993f94fee4\\\"\",\r\n  \"type\":
+        \"Microsoft.Network/privateEndpoints\",\r\n  \"location\": \"eastus\",\r\n
+        \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"resourceGuid\":
+        \"b6f7ad9d-27ee-45b7-847e-48abbdd48f66\",\r\n    \"privateLinkServiceConnections\":
+        [\r\n      {\r\n        \"name\": \"myEndpoint\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint/privateLinkServiceConnections/myEndpoint\",\r\n
+        \       \"etag\": \"W/\\\"f961b681-f97a-4354-bd4c-7e993f94fee4\\\"\",\r\n
+        \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
+        \         \"privateLinkServiceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz\",\r\n
+        \         \"groupIds\": [\r\n            \"Sql\"\r\n          ],\r\n          \"privateLinkServiceConnectionState\":
+        {\r\n            \"status\": \"Approved\",\r\n            \"description\":
+        \"\",\r\n            \"actionsRequired\": \"None\"\r\n          }\r\n        },\r\n
+        \       \"type\": \"Microsoft.Network/privateEndpoints/privateLinkServiceConnections\"\r\n
+        \     }\r\n    ],\r\n    \"manualPrivateLinkServiceConnections\": [],\r\n
+        \   \"subnet\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/virtualNetworks/myNetwork/subnets/mysubnet\"\r\n
+        \   },\r\n    \"networkInterfaces\": [\r\n      {\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/networkInterfaces/myPrivateEndpoint.nic.be24671d-b0d0-45a7-b03b-68b6a373718e\"\r\n
+        \     }\r\n    ],\r\n    \"customDnsConfigs\": []\r\n  }\r\n}"
     headers:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/1dc7ba90-fbf9-409e-9b71-95089a8a451c?api-version=2020-11-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/ff91f1b9-20be-4145-a041-c4437860d92d?api-version=2020-11-01
       cache-control:
       - no-cache
       content-length:
-      - '2151'
+      - '2176'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 03:54:12 GMT
+      - Wed, 07 Apr 2021 08:51:43 GMT
       expires:
       - '-1'
       pragma:
@@ -607,7 +617,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - dd4f5637-50b1-4744-9325-364baa79572d
+      - e29c1f46-6ef0-428e-94cd-97c96b79c7e2
       x-ms-ratelimit-remaining-subscription-writes:
       - '1197'
     status:
@@ -623,9 +633,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/1dc7ba90-fbf9-409e-9b71-95089a8a451c?api-version=2020-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/ff91f1b9-20be-4145-a041-c4437860d92d?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -637,7 +648,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 03:54:22 GMT
+      - Wed, 07 Apr 2021 08:51:53 GMT
       expires:
       - '-1'
       pragma:
@@ -654,7 +665,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 8dca11f5-9aa6-4505-b209-5205a0340430
+      - 1963ca07-49e5-449a-a7ca-bbb484a6d2f8
     status:
       code: 200
       message: OK
@@ -668,9 +679,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/1dc7ba90-fbf9-409e-9b71-95089a8a451c?api-version=2020-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/ff91f1b9-20be-4145-a041-c4437860d92d?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -682,7 +694,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 03:54:43 GMT
+      - Wed, 07 Apr 2021 08:52:13 GMT
       expires:
       - '-1'
       pragma:
@@ -699,7 +711,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - be1d8007-4854-4349-a0d1-874e8dc5ea37
+      - 668fde68-cc4f-4f5d-8aae-18b25aa5a306
     status:
       code: 200
       message: OK
@@ -713,9 +725,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/1dc7ba90-fbf9-409e-9b71-95089a8a451c?api-version=2020-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/ff91f1b9-20be-4145-a041-c4437860d92d?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -727,7 +740,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 03:55:03 GMT
+      - Wed, 07 Apr 2021 08:52:34 GMT
       expires:
       - '-1'
       pragma:
@@ -744,7 +757,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 13c1d2a5-0f48-462e-bfb6-e28b9b8f0c2b
+      - d69cc97e-f760-4608-8fd7-d21ef108a29e
     status:
       code: 200
       message: OK
@@ -758,9 +771,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/1dc7ba90-fbf9-409e-9b71-95089a8a451c?api-version=2020-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/ff91f1b9-20be-4145-a041-c4437860d92d?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -772,7 +786,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 03:55:43 GMT
+      - Wed, 07 Apr 2021 08:53:13 GMT
       expires:
       - '-1'
       pragma:
@@ -789,7 +803,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - a2ccdb78-e24f-4b22-94ee-2686476a9703
+      - ced810e8-c281-47d8-a381-0d4096186959
     status:
       code: 200
       message: OK
@@ -803,9 +817,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/1dc7ba90-fbf9-409e-9b71-95089a8a451c?api-version=2020-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/ff91f1b9-20be-4145-a041-c4437860d92d?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -817,7 +832,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 03:56:24 GMT
+      - Wed, 07 Apr 2021 08:53:53 GMT
       expires:
       - '-1'
       pragma:
@@ -834,7 +849,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 80c8bad1-ef18-4f86-8e8a-6f1cce8381a4
+      - 9f292710-b1bd-45de-94eb-a4daa3056b5a
     status:
       code: 200
       message: OK
@@ -848,9 +863,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/1dc7ba90-fbf9-409e-9b71-95089a8a451c?api-version=2020-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/ff91f1b9-20be-4145-a041-c4437860d92d?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -862,7 +878,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 03:57:44 GMT
+      - Wed, 07 Apr 2021 08:55:13 GMT
       expires:
       - '-1'
       pragma:
@@ -879,7 +895,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 13d7a1b1-9d3c-4cfa-8694-3ca46444f1d6
+      - f2515f1e-30d8-42f9-b5b6-ad4640692d01
     status:
       code: 200
       message: OK
@@ -893,9 +909,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/1dc7ba90-fbf9-409e-9b71-95089a8a451c?api-version=2020-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/ff91f1b9-20be-4145-a041-c4437860d92d?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -907,7 +924,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 04:00:25 GMT
+      - Wed, 07 Apr 2021 08:57:53 GMT
       expires:
       - '-1'
       pragma:
@@ -924,7 +941,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - db9aa876-9117-4033-aaf3-81bd08761b06
+      - 6a2d4b81-1767-4abd-bf58-7bbb8a5a7bed
     status:
       code: 200
       message: OK
@@ -938,9 +955,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/1dc7ba90-fbf9-409e-9b71-95089a8a451c?api-version=2020-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/ff91f1b9-20be-4145-a041-c4437860d92d?api-version=2020-11-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -952,7 +970,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 04:02:05 GMT
+      - Wed, 07 Apr 2021 08:59:34 GMT
       expires:
       - '-1'
       pragma:
@@ -969,7 +987,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - f9372699-7cb5-49eb-9d9c-5e9161c11fd2
+      - 2f8ca663-c88a-4cee-b2d2-939fb2df056b
     status:
       code: 200
       message: OK
@@ -983,46 +1001,44 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/18.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint?api-version=2020-11-01
   response:
     body:
-      string: "{\r\n  \"name\": \"myPrivateEndpoint\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint\"\
-        ,\r\n  \"etag\": \"W/\\\"a0cb068d-0610-43f4-892e-5dbb1f9df3a8\\\"\",\r\n \
-        \ \"type\": \"Microsoft.Network/privateEndpoints\",\r\n  \"location\": \"\
-        eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
-        ,\r\n    \"resourceGuid\": \"cfd1f999-183f-48d5-acbf-560c5c8ca5b4\",\r\n \
-        \   \"privateLinkServiceConnections\": [\r\n      {\r\n        \"name\": \"\
-        myEndpoint\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint/privateLinkServiceConnections/myEndpoint\"\
-        ,\r\n        \"etag\": \"W/\\\"a0cb068d-0610-43f4-892e-5dbb1f9df3a8\\\"\"\
-        ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
-        ,\r\n          \"privateLinkServiceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz\"\
-        ,\r\n          \"groupIds\": [\r\n            \"Sql\"\r\n          ],\r\n\
-        \          \"privateLinkServiceConnectionState\": {\r\n            \"status\"\
-        : \"Approved\",\r\n            \"description\": \"\",\r\n            \"actionsRequired\"\
-        : \"None\"\r\n          }\r\n        },\r\n        \"type\": \"Microsoft.Network/privateEndpoints/privateLinkServiceConnections\"\
-        \r\n      }\r\n    ],\r\n    \"manualPrivateLinkServiceConnections\": [],\r\
-        \n    \"subnet\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/virtualNetworks/myNetwork/subnets/mysubnet\"\
-        \r\n    },\r\n    \"networkInterfaces\": [\r\n      {\r\n        \"id\": \"\
-        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/networkInterfaces/myPrivateEndpoint.nic.42d94b3b-68cc-4c6a-92f1-e6f2e5927528\"\
-        \r\n      }\r\n    ],\r\n    \"customDnsConfigs\": [\r\n      {\r\n      \
-        \  \"fqdn\": \"myaccountxxyyzzz.documents.azure.com\",\r\n        \"ipAddresses\"\
-        : [\r\n          \"10.0.0.4\"\r\n        ]\r\n      },\r\n      {\r\n    \
-        \    \"fqdn\": \"myaccountxxyyzzz-eastus.documents.azure.com\",\r\n      \
-        \  \"ipAddresses\": [\r\n          \"10.0.0.5\"\r\n        ]\r\n      }\r\n\
-        \    ]\r\n  }\r\n}"
+      string: "{\r\n  \"name\": \"myPrivateEndpoint\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint\",\r\n
+        \ \"etag\": \"W/\\\"c4a9d2db-bb1e-4822-99cb-1580605f451c\\\"\",\r\n  \"type\":
+        \"Microsoft.Network/privateEndpoints\",\r\n  \"location\": \"eastus\",\r\n
+        \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"resourceGuid\":
+        \"b6f7ad9d-27ee-45b7-847e-48abbdd48f66\",\r\n    \"privateLinkServiceConnections\":
+        [\r\n      {\r\n        \"name\": \"myEndpoint\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint/privateLinkServiceConnections/myEndpoint\",\r\n
+        \       \"etag\": \"W/\\\"c4a9d2db-bb1e-4822-99cb-1580605f451c\\\"\",\r\n
+        \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
+        \         \"privateLinkServiceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz\",\r\n
+        \         \"groupIds\": [\r\n            \"Sql\"\r\n          ],\r\n          \"privateLinkServiceConnectionState\":
+        {\r\n            \"status\": \"Approved\",\r\n            \"description\":
+        \"\",\r\n            \"actionsRequired\": \"None\"\r\n          }\r\n        },\r\n
+        \       \"type\": \"Microsoft.Network/privateEndpoints/privateLinkServiceConnections\"\r\n
+        \     }\r\n    ],\r\n    \"manualPrivateLinkServiceConnections\": [],\r\n
+        \   \"subnet\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/virtualNetworks/myNetwork/subnets/mysubnet\"\r\n
+        \   },\r\n    \"networkInterfaces\": [\r\n      {\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.Network/networkInterfaces/myPrivateEndpoint.nic.be24671d-b0d0-45a7-b03b-68b6a373718e\"\r\n
+        \     }\r\n    ],\r\n    \"customDnsConfigs\": [\r\n      {\r\n        \"fqdn\":
+        \"myaccountxxyyzzz.documents.azure.com\",\r\n        \"ipAddresses\": [\r\n
+        \         \"10.0.0.4\"\r\n        ]\r\n      },\r\n      {\r\n        \"fqdn\":
+        \"myaccountxxyyzzz-eastus.documents.azure.com\",\r\n        \"ipAddresses\":
+        [\r\n          \"10.0.0.5\"\r\n        ]\r\n      }\r\n    ]\r\n  }\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '2434'
+      - '2459'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 04:02:06 GMT
+      - Wed, 07 Apr 2021 08:59:34 GMT
       etag:
-      - W/"a0cb068d-0610-43f4-892e-5dbb1f9df3a8"
+      - W/"c4a9d2db-bb1e-4822-99cb-1580605f451c"
       expires:
       - '-1'
       pragma:
@@ -1039,7 +1055,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 787abf03-7258-4d18-885b-c573ca79803b
+      - 5a5f8b5d-8c2c-4c07-a11d-e38f2c4f420c
     status:
       code: 200
       message: OK
@@ -1055,11 +1071,12 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '387'
+      - '392'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/privateEndpointConnections/myPrivateEndpoint?api-version=2021-03-15
   response:
@@ -1067,7 +1084,7 @@ interactions:
       string: '{"status":"Enqueued"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/19433da0-5ddc-4e93-9744-b9cd457f4b21?api-version=2021-03-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/234d355f-d8d4-4171-8781-c5e684133ac3?api-version=2021-03-15
       cache-control:
       - no-store, no-cache
       content-length:
@@ -1075,9 +1092,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:02:07 GMT
+      - Wed, 07 Apr 2021 08:59:34 GMT
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/privateEndpointConnections/myPrivateEndpoint/operationResults/19433da0-5ddc-4e93-9744-b9cd457f4b21?api-version=2021-03-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/privateEndpointConnections/myPrivateEndpoint/operationResults/234d355f-d8d4-4171-8781-c5e684133ac3?api-version=2021-03-15
       pragma:
       - no-cache
       server:
@@ -1089,7 +1106,7 @@ interactions:
       x-ms-gatewayversion:
       - version=2.11.0
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1196'
     status:
       code: 202
       message: Accepted
@@ -1103,9 +1120,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/19433da0-5ddc-4e93-9744-b9cd457f4b21?api-version=2021-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/234d355f-d8d4-4171-8781-c5e684133ac3?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -1117,7 +1135,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:02:38 GMT
+      - Wed, 07 Apr 2021 09:00:04 GMT
       pragma:
       - no-cache
       server:
@@ -1145,7 +1163,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/privateEndpointConnections/myPrivateEndpoint?api-version=2021-03-15
   response:
@@ -1156,11 +1175,11 @@ interactions:
       cache-control:
       - no-store, no-cache
       content-length:
-      - '747'
+      - '757'
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:02:39 GMT
+      - Wed, 07 Apr 2021 09:00:05 GMT
       pragma:
       - no-cache
       server:
@@ -1188,7 +1207,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/privateEndpointConnections/myPrivateEndpoint?api-version=2021-03-15
   response:
@@ -1199,11 +1219,11 @@ interactions:
       cache-control:
       - no-store, no-cache
       content-length:
-      - '747'
+      - '757'
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:02:39 GMT
+      - Wed, 07 Apr 2021 09:00:05 GMT
       pragma:
       - no-cache
       server:
@@ -1231,7 +1251,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/privateLinkResources/Sql?api-version=2021-03-15
   response:
@@ -1241,11 +1262,11 @@ interactions:
       cache-control:
       - no-store, no-cache
       content-length:
-      - '460'
+      - '465'
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:02:39 GMT
+      - Wed, 07 Apr 2021 09:00:05 GMT
       pragma:
       - no-cache
       server:
@@ -1275,7 +1296,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/privateEndpointConnections/myPrivateEndpoint?api-version=2021-03-15
   response:
@@ -1283,7 +1305,7 @@ interactions:
       string: '{"status":"Enqueued"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/fbe9724b-4023-42bd-bd8b-0be91517876a?api-version=2021-03-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/244b00fe-6ab2-4e25-ad17-3d83e84de33c?api-version=2021-03-15
       cache-control:
       - no-store, no-cache
       content-length:
@@ -1291,9 +1313,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:02:40 GMT
+      - Wed, 07 Apr 2021 09:00:05 GMT
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/privateEndpointConnections/myPrivateEndpoint/operationResults/fbe9724b-4023-42bd-bd8b-0be91517876a?api-version=2021-03-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz/privateEndpointConnections/myPrivateEndpoint/operationResults/244b00fe-6ab2-4e25-ad17-3d83e84de33c?api-version=2021-03-15
       pragma:
       - no-cache
       server:
@@ -1319,9 +1341,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/fbe9724b-4023-42bd-bd8b-0be91517876a?api-version=2021-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/244b00fe-6ab2-4e25-ad17-3d83e84de33c?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -1333,7 +1356,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:03:11 GMT
+      - Wed, 07 Apr 2021 09:00:36 GMT
       pragma:
       - no-cache
       server:
@@ -1361,9 +1384,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/fbe9724b-4023-42bd-bd8b-0be91517876a?api-version=2021-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/244b00fe-6ab2-4e25-ad17-3d83e84de33c?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -1375,7 +1399,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:03:42 GMT
+      - Wed, 07 Apr 2021 09:01:05 GMT
       pragma:
       - no-cache
       server:
@@ -1405,7 +1429,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_cosmosdb_private_endpoint_test_endpoint50dc15ed/providers/Microsoft.DocumentDB/databaseAccounts/myaccountxxyyzzz?api-version=2021-03-15
   response:
@@ -1413,7 +1438,7 @@ interactions:
       string: '{"status":"Enqueued"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/96000e69-37d6-4033-b616-2a08a2fbbfb3?api-version=2021-03-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/5ac0e8a9-b234-4470-9a55-1e2484da1026?api-version=2021-03-15
       cache-control:
       - no-store, no-cache
       content-length:
@@ -1421,9 +1446,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:03:43 GMT
+      - Wed, 07 Apr 2021 09:01:06 GMT
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationResults/96000e69-37d6-4033-b616-2a08a2fbbfb3?api-version=2021-03-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationResults/5ac0e8a9-b234-4470-9a55-1e2484da1026?api-version=2021-03-15
       pragma:
       - no-cache
       server:
@@ -1449,9 +1474,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/96000e69-37d6-4033-b616-2a08a2fbbfb3?api-version=2021-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/5ac0e8a9-b234-4470-9a55-1e2484da1026?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -1463,7 +1489,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:04:14 GMT
+      - Wed, 07 Apr 2021 09:01:37 GMT
       pragma:
       - no-cache
       server:
@@ -1491,9 +1517,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/96000e69-37d6-4033-b616-2a08a2fbbfb3?api-version=2021-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/5ac0e8a9-b234-4470-9a55-1e2484da1026?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -1505,7 +1532,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:04:44 GMT
+      - Wed, 07 Apr 2021 09:02:06 GMT
       pragma:
       - no-cache
       server:
@@ -1533,9 +1560,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/96000e69-37d6-4033-b616-2a08a2fbbfb3?api-version=2021-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/5ac0e8a9-b234-4470-9a55-1e2484da1026?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -1547,7 +1575,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:05:15 GMT
+      - Wed, 07 Apr 2021 09:02:37 GMT
       pragma:
       - no-cache
       server:
@@ -1575,9 +1603,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/96000e69-37d6-4033-b616-2a08a2fbbfb3?api-version=2021-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/5ac0e8a9-b234-4470-9a55-1e2484da1026?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -1589,7 +1618,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:05:45 GMT
+      - Wed, 07 Apr 2021 09:03:07 GMT
       pragma:
       - no-cache
       server:
@@ -1617,9 +1646,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/96000e69-37d6-4033-b616-2a08a2fbbfb3?api-version=2021-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/5ac0e8a9-b234-4470-9a55-1e2484da1026?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -1631,7 +1661,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:06:15 GMT
+      - Wed, 07 Apr 2021 09:03:37 GMT
       pragma:
       - no-cache
       server:
@@ -1659,9 +1689,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/96000e69-37d6-4033-b616-2a08a2fbbfb3?api-version=2021-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/5ac0e8a9-b234-4470-9a55-1e2484da1026?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -1673,7 +1704,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:06:47 GMT
+      - Wed, 07 Apr 2021 09:04:07 GMT
       pragma:
       - no-cache
       server:
@@ -1701,9 +1732,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/96000e69-37d6-4033-b616-2a08a2fbbfb3?api-version=2021-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/5ac0e8a9-b234-4470-9a55-1e2484da1026?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -1715,7 +1747,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:07:17 GMT
+      - Wed, 07 Apr 2021 09:04:37 GMT
       pragma:
       - no-cache
       server:
@@ -1743,9 +1775,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/96000e69-37d6-4033-b616-2a08a2fbbfb3?api-version=2021-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/5ac0e8a9-b234-4470-9a55-1e2484da1026?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -1757,7 +1790,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:07:48 GMT
+      - Wed, 07 Apr 2021 09:05:07 GMT
       pragma:
       - no-cache
       server:
@@ -1785,9 +1818,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/96000e69-37d6-4033-b616-2a08a2fbbfb3?api-version=2021-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/5ac0e8a9-b234-4470-9a55-1e2484da1026?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -1799,7 +1833,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:08:19 GMT
+      - Wed, 07 Apr 2021 09:05:38 GMT
       pragma:
       - no-cache
       server:
@@ -1827,9 +1861,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/96000e69-37d6-4033-b616-2a08a2fbbfb3?api-version=2021-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/5ac0e8a9-b234-4470-9a55-1e2484da1026?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -1841,7 +1876,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:08:49 GMT
+      - Wed, 07 Apr 2021 09:06:07 GMT
       pragma:
       - no-cache
       server:
@@ -1869,9 +1904,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/96000e69-37d6-4033-b616-2a08a2fbbfb3?api-version=2021-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/5ac0e8a9-b234-4470-9a55-1e2484da1026?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -1883,7 +1919,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:09:19 GMT
+      - Wed, 07 Apr 2021 09:06:37 GMT
       pragma:
       - no-cache
       server:
@@ -1911,9 +1947,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/96000e69-37d6-4033-b616-2a08a2fbbfb3?api-version=2021-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/5ac0e8a9-b234-4470-9a55-1e2484da1026?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -1925,7 +1962,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:09:51 GMT
+      - Wed, 07 Apr 2021 09:07:08 GMT
       pragma:
       - no-cache
       server:
@@ -1953,9 +1990,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/96000e69-37d6-4033-b616-2a08a2fbbfb3?api-version=2021-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/5ac0e8a9-b234-4470-9a55-1e2484da1026?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -1967,7 +2005,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:10:21 GMT
+      - Wed, 07 Apr 2021 09:07:37 GMT
       pragma:
       - no-cache
       server:
@@ -1995,9 +2033,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/96000e69-37d6-4033-b616-2a08a2fbbfb3?api-version=2021-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/5ac0e8a9-b234-4470-9a55-1e2484da1026?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -2009,7 +2048,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:10:52 GMT
+      - Wed, 07 Apr 2021 09:08:08 GMT
       pragma:
       - no-cache
       server:
@@ -2037,9 +2076,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/96000e69-37d6-4033-b616-2a08a2fbbfb3?api-version=2021-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/5ac0e8a9-b234-4470-9a55-1e2484da1026?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -2051,7 +2091,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:11:23 GMT
+      - Wed, 07 Apr 2021 09:08:38 GMT
       pragma:
       - no-cache
       server:
@@ -2079,9 +2119,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/96000e69-37d6-4033-b616-2a08a2fbbfb3?api-version=2021-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/5ac0e8a9-b234-4470-9a55-1e2484da1026?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -2093,7 +2134,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:11:54 GMT
+      - Wed, 07 Apr 2021 09:09:08 GMT
       pragma:
       - no-cache
       server:
@@ -2121,9 +2162,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.6.9 (Linux-4.19.121-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-cosmosdb/6.2.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/96000e69-37d6-4033-b616-2a08a2fbbfb3?api-version=2021-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/eastus/operationsStatus/5ac0e8a9-b234-4470-9a55-1e2484da1026?api-version=2021-03-15
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -2135,7 +2177,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 07 Apr 2021 04:12:24 GMT
+      - Wed, 07 Apr 2021 09:09:38 GMT
       pragma:
       - no-cache
       server:
