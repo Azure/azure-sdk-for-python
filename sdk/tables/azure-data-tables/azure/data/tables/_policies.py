@@ -759,14 +759,4 @@ class CosmosPatchTransformPolicy(SansIOHTTPPolicy):
     def on_request(self, request):
         # type: (PipelineRequest) -> Union[None, Awaitable[None]]
         if request.http_request.method == "PATCH":
-            _transform_to_cosmos_post(request.http_request)
-
-    def on_response(self, request, response):
-        # type: (PipelineRequest, PipelineResponse) -> Union[None, Awaitable[None]]
-        pass
-
-    # def _transform_to_cosmos_post(self, request):
-    #     # type: (PipelineRequest) -> None
-    #     print("editing request")
-    #     request.http_request.method = "POST"
-    #     request.http_request.headers["X-HTTP-Method"] = "MERGE"
+            _transform_patch_to_cosmos_post(request.http_request)
