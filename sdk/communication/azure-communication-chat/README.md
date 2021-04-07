@@ -207,7 +207,7 @@ tokenresponse = identity_client.get_token(user, scopes=["chat"])
 token = tokenresponse.token
 
 ## OR pass existing user
-# from azure.communication.identity import CommunicationUserIdentifier
+# from azure.communication.chat import CommunicationUserIdentifier
 # user_id = 'some_user_id'
 # user = CommunicationUserIdentifier(user_id)
 
@@ -441,7 +441,7 @@ identity_client = CommunicationIdentityClient.from_connection_string('<connectio
 new_users = [identity_client.create_user() for i in range(2)]
 
 # # conversely, you can also add an existing user to a chat thread; provided the user_id is known
-# from azure.communication.identity import CommunicationUserIdentifier
+# from azure.communication.chat import CommunicationUserIdentifier
 #
 # user_id = 'some user id'
 # user_display_name = "Wilma Flinstone"
@@ -486,7 +486,7 @@ and was added into this chat thread.
 chat_thread_client.remove_participant(identifier=new_user)
 
 # # conversely you can also do the following; provided the user_id is known
-# from azure.communication.identity import CommunicationUserIdentifier
+# from azure.communication.chat import CommunicationUserIdentifier
 # 
 # user_id = 'some user id'
 # chat_thread_client.remove_participant(user=CommunicationUserIdentifier(new_user))

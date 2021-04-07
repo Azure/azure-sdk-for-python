@@ -60,11 +60,10 @@ class ChatClientSamples(object):
         # [START create_thread]
         from datetime import datetime
 
-        from azure.communication.identity import CommunicationUserIdentifier
-
         from azure.communication.chat import(
             ChatClient,
             ChatParticipant,
+            CommunicationUserIdentifier,
             CommunicationTokenCredential
         )
 

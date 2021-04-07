@@ -57,10 +57,10 @@ class ChatThreadClientSamples(object):
         user = self.user
         # [START create_chat_thread_client]
         from datetime import datetime
-        from azure.communication.identity import CommunicationUserIdentifier
         from azure.communication.chat import (
             ChatClient,
             ChatParticipant,
+            CommunicationUserIdentifier,
             CommunicationTokenCredential
         )
         # retrieve `token` using CommunicationIdentityClient.get_token method
@@ -311,8 +311,7 @@ class ChatThreadClientSamples(object):
         chat_client = self._chat_client
         identity_client = self.identity_client
 
-        from azure.communication.chat import ChatParticipant
-        from azure.communication.identity import CommunicationUserIdentifier
+        from azure.communication.chat import ChatParticipant, CommunicationUserIdentifier
         from datetime import datetime
 
         # create 2 new users using CommunicationIdentityClient.create_user method
