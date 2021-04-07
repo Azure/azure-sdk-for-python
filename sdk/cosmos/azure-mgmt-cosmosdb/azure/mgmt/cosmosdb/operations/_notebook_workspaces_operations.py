@@ -112,7 +112,7 @@ class NotebookWorkspacesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -176,7 +176,7 @@ class NotebookWorkspacesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('NotebookWorkspace', pipeline_response)
@@ -192,7 +192,7 @@ class NotebookWorkspacesOperations(object):
         resource_group_name,  # type: str
         account_name,  # type: str
         notebook_workspace_name,  # type: Union[str, "_models.NotebookWorkspaceName"]
-        notebook_create_update_parameters,  # type: "_models.ARMProxyResource"
+        notebook_create_update_parameters,  # type: "_models.NotebookWorkspaceCreateUpdateParameters"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.NotebookWorkspace"
@@ -225,7 +225,7 @@ class NotebookWorkspacesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(notebook_create_update_parameters, 'ARMProxyResource')
+        body_content = self._serialize.body(notebook_create_update_parameters, 'NotebookWorkspaceCreateUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -233,7 +233,7 @@ class NotebookWorkspacesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('NotebookWorkspace', pipeline_response)
@@ -249,7 +249,7 @@ class NotebookWorkspacesOperations(object):
         resource_group_name,  # type: str
         account_name,  # type: str
         notebook_workspace_name,  # type: Union[str, "_models.NotebookWorkspaceName"]
-        notebook_create_update_parameters,  # type: "_models.ARMProxyResource"
+        notebook_create_update_parameters,  # type: "_models.NotebookWorkspaceCreateUpdateParameters"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller["_models.NotebookWorkspace"]
@@ -263,11 +263,11 @@ class NotebookWorkspacesOperations(object):
         :type notebook_workspace_name: str or ~azure.mgmt.cosmosdb.models.NotebookWorkspaceName
         :param notebook_create_update_parameters: The notebook workspace to create for the current
          database account.
-        :type notebook_create_update_parameters: ~azure.mgmt.cosmosdb.models.ARMProxyResource
+        :type notebook_create_update_parameters: ~azure.mgmt.cosmosdb.models.NotebookWorkspaceCreateUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either NotebookWorkspace or the result of cls(response)
@@ -362,7 +362,7 @@ class NotebookWorkspacesOperations(object):
 
         if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -388,8 +388,8 @@ class NotebookWorkspacesOperations(object):
         :type notebook_workspace_name: str or ~azure.mgmt.cosmosdb.models.NotebookWorkspaceName
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -493,7 +493,7 @@ class NotebookWorkspacesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('NotebookWorkspaceConnectionInfoResult', pipeline_response)
@@ -544,7 +544,7 @@ class NotebookWorkspacesOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -570,8 +570,8 @@ class NotebookWorkspacesOperations(object):
         :type notebook_workspace_name: str or ~azure.mgmt.cosmosdb.models.NotebookWorkspaceName
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -662,7 +662,7 @@ class NotebookWorkspacesOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -688,8 +688,8 @@ class NotebookWorkspacesOperations(object):
         :type notebook_workspace_name: str or ~azure.mgmt.cosmosdb.models.NotebookWorkspaceName
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)

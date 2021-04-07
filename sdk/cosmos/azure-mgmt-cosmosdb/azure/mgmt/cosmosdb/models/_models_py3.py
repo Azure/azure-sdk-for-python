@@ -502,15 +502,14 @@ class CassandraKeyspaceGetResults(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource:
     :type resource: ~azure.mgmt.cosmosdb.models.CassandraKeyspaceGetPropertiesResource
-    :ivar options: Cosmos DB options resource object.
-    :vartype options: ~azure.mgmt.cosmosdb.models.OptionsResource
+    :param options:
+    :type options: ~azure.mgmt.cosmosdb.models.CassandraKeyspaceGetPropertiesOptions
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'options': {'readonly': True},
     }
 
     _attribute_map = {
@@ -520,7 +519,7 @@ class CassandraKeyspaceGetResults(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'CassandraKeyspaceGetPropertiesResource'},
-        'options': {'key': 'properties.options', 'type': 'OptionsResource'},
+        'options': {'key': 'properties.options', 'type': 'CassandraKeyspaceGetPropertiesOptions'},
     }
 
     def __init__(
@@ -529,11 +528,12 @@ class CassandraKeyspaceGetResults(ARMResourceProperties):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         resource: Optional["CassandraKeyspaceGetPropertiesResource"] = None,
+        options: Optional["CassandraKeyspaceGetPropertiesOptions"] = None,
         **kwargs
     ):
         super(CassandraKeyspaceGetResults, self).__init__(location=location, tags=tags, **kwargs)
         self.resource = resource
-        self.options = None
+        self.options = options
 
 
 class CassandraKeyspaceListResult(msrest.serialization.Model):
@@ -822,15 +822,14 @@ class CassandraTableGetResults(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource:
     :type resource: ~azure.mgmt.cosmosdb.models.CassandraTableGetPropertiesResource
-    :ivar options: Cosmos DB options resource object.
-    :vartype options: ~azure.mgmt.cosmosdb.models.OptionsResource
+    :param options:
+    :type options: ~azure.mgmt.cosmosdb.models.CassandraTableGetPropertiesOptions
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'options': {'readonly': True},
     }
 
     _attribute_map = {
@@ -840,7 +839,7 @@ class CassandraTableGetResults(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'CassandraTableGetPropertiesResource'},
-        'options': {'key': 'properties.options', 'type': 'OptionsResource'},
+        'options': {'key': 'properties.options', 'type': 'CassandraTableGetPropertiesOptions'},
     }
 
     def __init__(
@@ -849,11 +848,12 @@ class CassandraTableGetResults(ARMResourceProperties):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         resource: Optional["CassandraTableGetPropertiesResource"] = None,
+        options: Optional["CassandraTableGetPropertiesOptions"] = None,
         **kwargs
     ):
         super(CassandraTableGetResults, self).__init__(location=location, tags=tags, **kwargs)
         self.resource = resource
-        self.options = None
+        self.options = options
 
 
 class CassandraTableListResult(msrest.serialization.Model):
@@ -2346,15 +2346,14 @@ class GremlinDatabaseGetResults(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource:
     :type resource: ~azure.mgmt.cosmosdb.models.GremlinDatabaseGetPropertiesResource
-    :ivar options: Cosmos DB options resource object.
-    :vartype options: ~azure.mgmt.cosmosdb.models.OptionsResource
+    :param options:
+    :type options: ~azure.mgmt.cosmosdb.models.GremlinDatabaseGetPropertiesOptions
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'options': {'readonly': True},
     }
 
     _attribute_map = {
@@ -2364,7 +2363,7 @@ class GremlinDatabaseGetResults(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'GremlinDatabaseGetPropertiesResource'},
-        'options': {'key': 'properties.options', 'type': 'OptionsResource'},
+        'options': {'key': 'properties.options', 'type': 'GremlinDatabaseGetPropertiesOptions'},
     }
 
     def __init__(
@@ -2373,11 +2372,12 @@ class GremlinDatabaseGetResults(ARMResourceProperties):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         resource: Optional["GremlinDatabaseGetPropertiesResource"] = None,
+        options: Optional["GremlinDatabaseGetPropertiesOptions"] = None,
         **kwargs
     ):
         super(GremlinDatabaseGetResults, self).__init__(location=location, tags=tags, **kwargs)
         self.resource = resource
-        self.options = None
+        self.options = options
 
 
 class GremlinDatabaseListResult(msrest.serialization.Model):
@@ -2640,15 +2640,14 @@ class GremlinGraphGetResults(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource:
     :type resource: ~azure.mgmt.cosmosdb.models.GremlinGraphGetPropertiesResource
-    :ivar options: Cosmos DB options resource object.
-    :vartype options: ~azure.mgmt.cosmosdb.models.OptionsResource
+    :param options:
+    :type options: ~azure.mgmt.cosmosdb.models.GremlinGraphGetPropertiesOptions
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'options': {'readonly': True},
     }
 
     _attribute_map = {
@@ -2658,7 +2657,7 @@ class GremlinGraphGetResults(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'GremlinGraphGetPropertiesResource'},
-        'options': {'key': 'properties.options', 'type': 'OptionsResource'},
+        'options': {'key': 'properties.options', 'type': 'GremlinGraphGetPropertiesOptions'},
     }
 
     def __init__(
@@ -2667,11 +2666,12 @@ class GremlinGraphGetResults(ARMResourceProperties):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         resource: Optional["GremlinGraphGetPropertiesResource"] = None,
+        options: Optional["GremlinGraphGetPropertiesOptions"] = None,
         **kwargs
     ):
         super(GremlinGraphGetResults, self).__init__(location=location, tags=tags, **kwargs)
         self.resource = resource
-        self.options = None
+        self.options = options
 
 
 class GremlinGraphListResult(msrest.serialization.Model):
@@ -3412,15 +3412,14 @@ class MongoDBCollectionGetResults(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource:
     :type resource: ~azure.mgmt.cosmosdb.models.MongoDBCollectionGetPropertiesResource
-    :ivar options: Cosmos DB options resource object.
-    :vartype options: ~azure.mgmt.cosmosdb.models.OptionsResource
+    :param options:
+    :type options: ~azure.mgmt.cosmosdb.models.MongoDBCollectionGetPropertiesOptions
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'options': {'readonly': True},
     }
 
     _attribute_map = {
@@ -3430,7 +3429,7 @@ class MongoDBCollectionGetResults(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'MongoDBCollectionGetPropertiesResource'},
-        'options': {'key': 'properties.options', 'type': 'OptionsResource'},
+        'options': {'key': 'properties.options', 'type': 'MongoDBCollectionGetPropertiesOptions'},
     }
 
     def __init__(
@@ -3439,11 +3438,12 @@ class MongoDBCollectionGetResults(ARMResourceProperties):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         resource: Optional["MongoDBCollectionGetPropertiesResource"] = None,
+        options: Optional["MongoDBCollectionGetPropertiesOptions"] = None,
         **kwargs
     ):
         super(MongoDBCollectionGetResults, self).__init__(location=location, tags=tags, **kwargs)
         self.resource = resource
-        self.options = None
+        self.options = options
 
 
 class MongoDBCollectionListResult(msrest.serialization.Model):
@@ -3650,15 +3650,14 @@ class MongoDBDatabaseGetResults(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource:
     :type resource: ~azure.mgmt.cosmosdb.models.MongoDBDatabaseGetPropertiesResource
-    :ivar options: Cosmos DB options resource object.
-    :vartype options: ~azure.mgmt.cosmosdb.models.OptionsResource
+    :param options:
+    :type options: ~azure.mgmt.cosmosdb.models.MongoDBDatabaseGetPropertiesOptions
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'options': {'readonly': True},
     }
 
     _attribute_map = {
@@ -3668,7 +3667,7 @@ class MongoDBDatabaseGetResults(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'MongoDBDatabaseGetPropertiesResource'},
-        'options': {'key': 'properties.options', 'type': 'OptionsResource'},
+        'options': {'key': 'properties.options', 'type': 'MongoDBDatabaseGetPropertiesOptions'},
     }
 
     def __init__(
@@ -3677,11 +3676,12 @@ class MongoDBDatabaseGetResults(ARMResourceProperties):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         resource: Optional["MongoDBDatabaseGetPropertiesResource"] = None,
+        options: Optional["MongoDBDatabaseGetPropertiesOptions"] = None,
         **kwargs
     ):
         super(MongoDBDatabaseGetResults, self).__init__(location=location, tags=tags, **kwargs)
         self.resource = resource
-        self.options = None
+        self.options = options
 
 
 class MongoDBDatabaseListResult(msrest.serialization.Model):
@@ -4458,7 +4458,41 @@ class Resource(msrest.serialization.Model):
         self.type = None
 
 
-class PrivateEndpointConnection(Resource):
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class PrivateEndpointConnection(ProxyResource):
     """A private endpoint connection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4660,40 +4694,6 @@ class PrivateLinkServiceConnectionStateProperty(msrest.serialization.Model):
         self.status = status
         self.description = description
         self.actions_required = None
-
-
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
 
 
 class RegionForOnlineOffline(msrest.serialization.Model):
@@ -4995,15 +4995,14 @@ class SqlContainerGetResults(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource:
     :type resource: ~azure.mgmt.cosmosdb.models.SqlContainerGetPropertiesResource
-    :ivar options: Cosmos DB options resource object.
-    :vartype options: ~azure.mgmt.cosmosdb.models.OptionsResource
+    :param options:
+    :type options: ~azure.mgmt.cosmosdb.models.SqlContainerGetPropertiesOptions
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'options': {'readonly': True},
     }
 
     _attribute_map = {
@@ -5013,7 +5012,7 @@ class SqlContainerGetResults(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'SqlContainerGetPropertiesResource'},
-        'options': {'key': 'properties.options', 'type': 'OptionsResource'},
+        'options': {'key': 'properties.options', 'type': 'SqlContainerGetPropertiesOptions'},
     }
 
     def __init__(
@@ -5022,11 +5021,12 @@ class SqlContainerGetResults(ARMResourceProperties):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         resource: Optional["SqlContainerGetPropertiesResource"] = None,
+        options: Optional["SqlContainerGetPropertiesOptions"] = None,
         **kwargs
     ):
         super(SqlContainerGetResults, self).__init__(location=location, tags=tags, **kwargs)
         self.resource = resource
-        self.options = None
+        self.options = options
 
 
 class SqlContainerListResult(msrest.serialization.Model):
@@ -5247,15 +5247,14 @@ class SqlDatabaseGetResults(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource:
     :type resource: ~azure.mgmt.cosmosdb.models.SqlDatabaseGetPropertiesResource
-    :ivar options: Cosmos DB options resource object.
-    :vartype options: ~azure.mgmt.cosmosdb.models.OptionsResource
+    :param options:
+    :type options: ~azure.mgmt.cosmosdb.models.SqlDatabaseGetPropertiesOptions
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'options': {'readonly': True},
     }
 
     _attribute_map = {
@@ -5265,7 +5264,7 @@ class SqlDatabaseGetResults(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'SqlDatabaseGetPropertiesResource'},
-        'options': {'key': 'properties.options', 'type': 'OptionsResource'},
+        'options': {'key': 'properties.options', 'type': 'SqlDatabaseGetPropertiesOptions'},
     }
 
     def __init__(
@@ -5274,11 +5273,12 @@ class SqlDatabaseGetResults(ARMResourceProperties):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         resource: Optional["SqlDatabaseGetPropertiesResource"] = None,
+        options: Optional["SqlDatabaseGetPropertiesOptions"] = None,
         **kwargs
     ):
         super(SqlDatabaseGetResults, self).__init__(location=location, tags=tags, **kwargs)
         self.resource = resource
-        self.options = None
+        self.options = options
 
 
 class SqlDatabaseListResult(msrest.serialization.Model):
@@ -6161,15 +6161,14 @@ class TableGetResults(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource:
     :type resource: ~azure.mgmt.cosmosdb.models.TableGetPropertiesResource
-    :ivar options: Cosmos DB options resource object.
-    :vartype options: ~azure.mgmt.cosmosdb.models.OptionsResource
+    :param options:
+    :type options: ~azure.mgmt.cosmosdb.models.TableGetPropertiesOptions
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'options': {'readonly': True},
     }
 
     _attribute_map = {
@@ -6179,7 +6178,7 @@ class TableGetResults(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'TableGetPropertiesResource'},
-        'options': {'key': 'properties.options', 'type': 'OptionsResource'},
+        'options': {'key': 'properties.options', 'type': 'TableGetPropertiesOptions'},
     }
 
     def __init__(
@@ -6188,11 +6187,12 @@ class TableGetResults(ARMResourceProperties):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         resource: Optional["TableGetPropertiesResource"] = None,
+        options: Optional["TableGetPropertiesOptions"] = None,
         **kwargs
     ):
         super(TableGetResults, self).__init__(location=location, tags=tags, **kwargs)
         self.resource = resource
-        self.options = None
+        self.options = options
 
 
 class TableListResult(msrest.serialization.Model):
