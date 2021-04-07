@@ -489,7 +489,7 @@ chat_thread_client.remove_participant(identifier=new_user)
 # from azure.communication.chat import CommunicationUserIdentifier
 # 
 # user_id = 'some user id'
-# chat_thread_client.remove_participant(user=CommunicationUserIdentifier(new_user))
+# chat_thread_client.remove_participant(identifier=CommunicationUserIdentifier(new_user))
 
 ```
 
