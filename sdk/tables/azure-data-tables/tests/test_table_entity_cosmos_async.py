@@ -332,7 +332,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity = self._create_random_entity_dict()
 
             # Act
-            # resp = self.table.create_item(entity)
+            # resp = self.table.create_entity(entity)
             resp = await self.table.create_entity(entity=entity)
 
             # Assert  --- Does this mean insert returns nothing?
@@ -427,7 +427,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             # Act
             with pytest.raises(ResourceExistsError):
-                # self.table.create_item(entity)
+                # self.table.create_entity(entity)
                 await self.table.create_entity(entity=entity)
 
             # Assert
@@ -517,7 +517,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             # Act
             with pytest.raises(ValueError):
-                # resp = self.table.create_item(entity)
+                # resp = self.table.create_entity(entity)
                 resp = await self.table.create_entity(entity=entity)
             # Assert
         finally:
@@ -788,7 +788,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
 
-            # resp = self.table.update_item(sent_entity, response_hook=lambda e, h: h)
+            # resp = self.table.update_entitysent_entity, response_hook=lambda e, h: h)
             resp = await self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert

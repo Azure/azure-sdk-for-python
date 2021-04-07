@@ -88,11 +88,16 @@ def _sign_string(key, string_to_sign, key_is_base64=True):
     return encoded_digest
 
 
-def _is_cosmos_endpoint(parsed_url):
-    if ".table.cosmodb." in parsed_url.hostname:
+def _is_cosmos_endpoint(url):
+    if ".table.cosmodb." in url:
         return True
 
-    if ".table.cosmos." in parsed_url.hostname:
+    if ".table.cosmos." in url:
         return True
 
     return False
+
+
+def _transform_patch_to_cosmos_post(request):
+    request.method = "POST"
+    request.headers["X-HTTP-Method"] = "MERGE"

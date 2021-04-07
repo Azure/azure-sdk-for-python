@@ -93,7 +93,7 @@ class StorageAccountHostsMixin(object):
         self._location_mode = kwargs.get("_location_mode", LocationMode.PRIMARY)
         self._hosts = kwargs.get("_hosts")
         self.scheme = parsed_url.scheme
-        self._cosmos_endpoint = _is_cosmos_endpoint(parsed_url)
+        self._cosmos_endpoint = _is_cosmos_endpoint(parsed_url.hostname)
 
         if service not in ["blob", "queue", "file-share", "dfs", "table"]:
             raise ValueError("Invalid service: {}".format(service))

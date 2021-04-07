@@ -173,7 +173,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         assert length ==  len(transaction.requests)
 
     #--Test cases for batch ---------------------------------------------
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CosmosPreparer()
     async def test_batch_single_insert(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -213,7 +212,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CosmosPreparer()
     async def test_batch_single_update(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -250,7 +248,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CosmosPreparer()
     async def test_batch_update(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -286,7 +283,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CosmosPreparer()
     async def test_batch_merge(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -326,7 +322,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CosmosPreparer()
     async def test_batch_update_if_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -356,7 +351,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CosmosPreparer()
     async def test_batch_update_if_doesnt_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -386,7 +380,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CosmosPreparer()
     async def test_batch_insert_replace(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -418,7 +411,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CosmosPreparer()
     async def test_batch_insert_merge(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -448,7 +440,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CosmosPreparer()
     async def test_batch_delete(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -481,7 +472,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CosmosPreparer()
     async def test_batch_inserts(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -520,7 +510,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CosmosPreparer()
     async def test_batch_all_operations_together(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -593,7 +582,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CosmosPreparer()
     async def test_batch_all_operations_together_context_manager(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -642,7 +630,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CosmosPreparer()
     async def test_batch_same_row_operations_fail(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -667,7 +654,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CosmosPreparer()
     async def test_batch_different_partition_operations_fail(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -714,7 +700,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CosmosPreparer()
     async def test_new_non_existent_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -733,7 +718,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CosmosPreparer()
     async def test_new_delete_nonexistent_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
