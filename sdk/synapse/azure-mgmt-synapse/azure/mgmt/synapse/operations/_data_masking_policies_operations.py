@@ -24,7 +24,7 @@ class DataMaskingPoliciesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2020-12-01".
+    :ivar api_version: The API version to use for this operation. Constant value: "2021-03-01".
     :ivar data_masking_policy_name: The name of the data masking policy for which the masking rule applies. Constant value: "Default".
     """
 
@@ -35,7 +35,7 @@ class DataMaskingPoliciesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-12-01"
+        self.api_version = "2021-03-01"
         self.data_masking_policy_name = "Default"
 
         self.config = config

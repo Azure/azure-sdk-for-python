@@ -27,7 +27,7 @@ class SqlPoolRestorePointsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2020-12-01".
+    :ivar api_version: The API version to use for this operation. Constant value: "2021-03-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class SqlPoolRestorePointsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-12-01"
+        self.api_version = "2021-03-01"
 
         self.config = config
 
@@ -345,7 +345,7 @@ class SqlPoolRestorePointsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp

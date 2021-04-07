@@ -11,13 +11,12 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
 
-class SqlPoolColumnsOperations(object):
-    """SqlPoolColumnsOperations operations.
+class LibraryOperations(object):
+    """LibraryOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -40,42 +39,36 @@ class SqlPoolColumnsOperations(object):
         self.config = config
 
     def get(
-            self, resource_group_name, workspace_name, sql_pool_name, schema_name, table_name, column_name, custom_headers=None, raw=False, **operation_config):
-        """Get Sql pool column.
+            self, resource_group_name, library_name, workspace_name, custom_headers=None, raw=False, **operation_config):
+        """Get library by name.
+
+        Get library by name in a workspace.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
+        :param library_name: Library name
+        :type library_name: str
         :param workspace_name: The name of the workspace
         :type workspace_name: str
-        :param sql_pool_name: SQL pool name
-        :type sql_pool_name: str
-        :param schema_name: The name of the schema.
-        :type schema_name: str
-        :param table_name: The name of the table.
-        :type table_name: str
-        :param column_name: The name of the column.
-        :type column_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: SqlPoolColumn or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.synapse.models.SqlPoolColumn or
+        :return: LibraryResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.synapse.models.LibraryResource or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.synapse.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
-            'schemaName': self._serialize.url("schema_name", schema_name, 'str'),
-            'tableName': self._serialize.url("table_name", table_name, 'str'),
-            'columnName': self._serialize.url("column_name", column_name, 'str')
+            'libraryName': self._serialize.url("library_name", library_name, 'str'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -98,17 +91,15 @@ class SqlPoolColumnsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('SqlPoolColumn', response)
+            deserialized = self._deserialize('LibraryResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/schemas/{schemaName}/tables/{tableName}/columns/{columnName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/libraries/{libraryName}'}
