@@ -120,7 +120,7 @@ class ServiceTasksOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ApiError, response)
+                error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -136,8 +136,7 @@ class ServiceTasksOperations(object):
         group_name,  # type: str
         service_name,  # type: str
         task_name,  # type: str
-        etag=None,  # type: Optional[str]
-        properties=None,  # type: Optional["_models.ProjectTaskProperties"]
+        parameters,  # type: "_models.ProjectTask"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.ProjectTask"
@@ -154,10 +153,8 @@ class ServiceTasksOperations(object):
         :type service_name: str
         :param task_name: Name of the Task.
         :type task_name: str
-        :param etag: HTTP strong entity tag value. This is ignored if submitted.
-        :type etag: str
-        :param properties: Custom task properties.
-        :type properties: ~azure.mgmt.datamigration.models.ProjectTaskProperties
+        :param parameters: Information about the task.
+        :type parameters: ~azure.mgmt.datamigration.models.ProjectTask
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProjectTask, or the result of cls(response)
         :rtype: ~azure.mgmt.datamigration.models.ProjectTask
@@ -168,8 +165,6 @@ class ServiceTasksOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = _models.ProjectTask(etag=etag, properties=properties)
         api_version = "2018-07-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -194,7 +189,7 @@ class ServiceTasksOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'ProjectTask')
+        body_content = self._serialize.body(parameters, 'ProjectTask')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -202,7 +197,7 @@ class ServiceTasksOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -278,7 +273,7 @@ class ServiceTasksOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ProjectTask', pipeline_response)
@@ -350,7 +345,7 @@ class ServiceTasksOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -363,8 +358,7 @@ class ServiceTasksOperations(object):
         group_name,  # type: str
         service_name,  # type: str
         task_name,  # type: str
-        etag=None,  # type: Optional[str]
-        properties=None,  # type: Optional["_models.ProjectTaskProperties"]
+        parameters,  # type: "_models.ProjectTask"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.ProjectTask"
@@ -380,10 +374,8 @@ class ServiceTasksOperations(object):
         :type service_name: str
         :param task_name: Name of the Task.
         :type task_name: str
-        :param etag: HTTP strong entity tag value. This is ignored if submitted.
-        :type etag: str
-        :param properties: Custom task properties.
-        :type properties: ~azure.mgmt.datamigration.models.ProjectTaskProperties
+        :param parameters: Information about the task.
+        :type parameters: ~azure.mgmt.datamigration.models.ProjectTask
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProjectTask, or the result of cls(response)
         :rtype: ~azure.mgmt.datamigration.models.ProjectTask
@@ -394,8 +386,6 @@ class ServiceTasksOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = _models.ProjectTask(etag=etag, properties=properties)
         api_version = "2018-07-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -420,7 +410,7 @@ class ServiceTasksOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'ProjectTask')
+        body_content = self._serialize.body(parameters, 'ProjectTask')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -428,7 +418,7 @@ class ServiceTasksOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ProjectTask', pipeline_response)
@@ -495,7 +485,7 @@ class ServiceTasksOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ProjectTask', pipeline_response)
