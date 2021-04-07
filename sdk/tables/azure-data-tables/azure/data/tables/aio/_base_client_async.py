@@ -36,7 +36,6 @@ from azure.core.pipeline.transport import (
 )
 
 from .._authentication import SharedKeyCredentialPolicy
-from .._common_conversion import _is_cosmos_endpoint
 from .._constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT, READ_TIMEOUT
 from .._generated.aio._configuration import AzureTableConfiguration
 from .._models import BatchErrorException, BatchTransactionResult
