@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.keyvault.certificates import ApiVersion
 from azure.keyvault.certificates._shared import HttpChallengeCache
+from azure.keyvault.certificates._shared.client_base import DEFAULT_VERSION
 from devtools_testutils import AzureTestCase
 from parameterized import parameterized
 import pytest
@@ -30,6 +30,6 @@ class CertificatesTestCase(AzureTestCase):
             CertificateClient, credential=credential, vault_url=vault_uri, **kwargs
         )
 
-    def _skip_if_not_configured(self, api_version):
-        if self.is_live and api_version != ApiVersion.V7_1:
+    def _skip_if_not_configured(self, api_version, **kwargs):
+        if self.is_live and api_version != DEFAULT_VERSION:
             pytest.skip("This test only uses the default API version for live tests")
