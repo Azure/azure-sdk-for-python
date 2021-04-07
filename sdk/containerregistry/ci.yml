@@ -41,3 +41,4 @@ extends:
       safeName: azuremgmtcontainerregistry
     - name: azure-containerregistry
       safeName: azurecontainerregistry
+    VerifyAutorest: false
