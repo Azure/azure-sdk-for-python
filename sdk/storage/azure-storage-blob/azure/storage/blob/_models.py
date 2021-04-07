@@ -1037,6 +1037,11 @@ class DelimitedTextDialect(object):
         self.has_header = kwargs.pop('has_header', False)
 
 
+class ParquetDialect(object):
+    """Defines parquet input serialization for a blob query request."""
+    pass
+
+
 class ArrowDialect(ArrowField):
     """field of an arrow schema.
 
