@@ -478,18 +478,18 @@ if retry:
 ### Remove thread participant
 
 Use `remove_participant` method to remove thread participant from the thread identified by threadId.
-`identifier` is the `CommunicationUserIdentifier` you created by CommunicationIdentityClient.create_user() from User Access Tokens
+`identifier` is the `CommunicationUserIdentifier` you created by CommunicationIdentityClient.create_user() from `azure-communication-identity`
 <!-- [User Access Tokens](#user-access-tokens)  -->
 and was added into this chat thread.
 - Use `identifier` to specify the `CommunicationUserIdentifier` you created
 ```python
 chat_thread_client.remove_participant(identifier=new_user)
 
-# # converesely you can also do the following; provided the user_id is known
+# # conversely you can also do the following; provided the user_id is known
 # from azure.communication.identity import CommunicationUserIdentifier
 # 
 # user_id = 'some user id'
-# chat_thread_client.remove_participant(user=CommunincationUserIdentfier(new_user))
+# chat_thread_client.remove_participant(user=CommunicationUserIdentifier(new_user))
 
 ```
 
