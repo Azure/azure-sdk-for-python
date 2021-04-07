@@ -8,6 +8,7 @@ import json
 import abc
 import os
 import six
+import six.moves.urllib as urllib
 from azure.core.pipeline.transport import HttpRequest
 from . import dtmi_conventions
 from ._chainable_exception import ChainableException
@@ -94,8 +95,6 @@ class HttpFetcher(Fetcher):
         """
         self.pipeline = pipeline
         self.base_url = base_url
-        if not self.base_url.endswith("/"):
-            self.base_url += "/"
 
     def fetch(self, path):
         """Fetch and return the contents of a JSON file at a given web path.
@@ -108,11 +107,15 @@ class HttpFetcher(Fetcher):
         :rtype: JSON object
         """
         _LOGGER.debug("Fetching %s from remote endpoint", path)
-        url = self.base_url + path
+        url = urllib.parse.urljoin(self.base_url, path)
+
+        # Fetch
         request = HttpRequest("GET", url)
         response = self.pipeline.run(request).http_response
         if response.status_code != 200:
-            raise FetcherError("Failed to fetch from remote endpoint")
+            raise FetcherError("Failed to fetch from remote endpoint. Status code: {}".format(
+                response.status_code
+            ))
         json_response = json.loads(response.text())
         return json_response
 
@@ -136,18 +139,12 @@ class FilesystemFetcher(Fetcher):
         :rtype: JSON object
         """
         _LOGGER.debug("Fetching %s from local filesystem", path)
-        # Format path
-        path = os.path.join(self.base_path, path)
-        path = os.path.normcase(path)
-        path = os.path.normpath(path)
-
-        # TODO: Ensure support for relative and absolute paths
-        # TODO: Need robust suite of testing for different types of paths
+        abs_path = os.path.join(self.base_path, path)
 
         # Fetch
         try:
-            _LOGGER.debug("File open on %s", path)
-            with open(path) as f:
+            _LOGGER.debug("File open on %s", abs_path)
+            with open(abs_path) as f:
                 file_str = f.read()
         except Exception as e:
             raise FetcherError("Failed to fetch from Filesystem", e)

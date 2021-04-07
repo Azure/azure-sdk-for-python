@@ -6,6 +6,7 @@
 import six.moves.urllib as urllib
 import re
 import logging
+import os
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.transport import RequestsTransport
@@ -165,12 +166,14 @@ def _create_fetcher(location, **kwargs):
         # Filesystem URI
         _LOGGER.debug("Repository Location identified as filesystem URI - using FilesystemFetcher")
         location = location[len("file://") :]
+        location = _sanitize_filesystem_path(location)
         fetcher = _resolver.FilesystemFetcher(location)
     elif scheme == "" and location.startswith("/"):
         # POSIX filesystem path
         _LOGGER.debug(
             "Repository Location identified as POSIX fileystem path - using FilesystemFetcher"
         )
+        location = _sanitize_filesystem_path(location)
         fetcher = _resolver.FilesystemFetcher(location)
     elif scheme == "" and re.search(r"\.[a-zA-z]{2,63}$", location[: location.find("/")]):
         # Web URL with protocol unspecified - default to HTTPS
@@ -185,6 +188,7 @@ def _create_fetcher(location, **kwargs):
         _LOGGER.debug(
             "Repository Location identified as drive letter fileystem path - using FilesystemFetcher"
         )
+        location = _sanitize_filesystem_path(location)
         fetcher = _resolver.FilesystemFetcher(location)
     else:
         raise ValueError("Unable to identify location: {}".format(location))
@@ -203,3 +207,11 @@ def _create_pipeline(**kwargs):
         ProxyPolicy(**kwargs),
     ]
     return Pipeline(policies=policies, transport=transport)
+
+
+# TODO: Ensure support for relative and absolute paths
+# TODO: Need robust suite of testing for different types of paths
+def _sanitize_filesystem_path(path):
+    path = os.path.normcase(path)
+    path = os.path.normpath(path)
+    return path
