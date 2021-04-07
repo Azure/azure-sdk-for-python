@@ -41,15 +41,15 @@ class AvailableServiceSku(msrest.serialization.Model):
 
     :param resource_type: The resource type, including the provider namespace.
     :type resource_type: str
-    :param available_service_sku: SKU name, tier, etc.
-    :type available_service_sku: ~azure.mgmt.datamigration.models.AvailableServiceSkuSku
+    :param sku: SKU name, tier, etc.
+    :type sku: ~azure.mgmt.datamigration.models.AvailableServiceSkuSku
     :param capacity: A description of the scaling capacities of the SKU.
     :type capacity: ~azure.mgmt.datamigration.models.AvailableServiceSkuCapacity
     """
 
     _attribute_map = {
         'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'available_service_sku': {'key': 'sku', 'type': 'AvailableServiceSkuSku'},
+        'sku': {'key': 'sku', 'type': 'AvailableServiceSkuSku'},
         'capacity': {'key': 'capacity', 'type': 'AvailableServiceSkuCapacity'},
     }
 
@@ -57,50 +57,14 @@ class AvailableServiceSku(msrest.serialization.Model):
         self,
         *,
         resource_type: Optional[str] = None,
-        available_service_sku: Optional["AvailableServiceSkuSku"] = None,
+        sku: Optional["AvailableServiceSkuSku"] = None,
         capacity: Optional["AvailableServiceSkuCapacity"] = None,
         **kwargs
     ):
         super(AvailableServiceSku, self).__init__(**kwargs)
         self.resource_type = resource_type
-        self.available_service_sku = available_service_sku
+        self.sku = sku
         self.capacity = capacity
-
-
-class AvailableServiceSkuSku(msrest.serialization.Model):
-    """SKU name, tier, etc.
-
-    :param name: The name of the SKU.
-    :type name: str
-    :param family: SKU family.
-    :type family: str
-    :param size: SKU size.
-    :type size: str
-    :param tier: The tier of the SKU, such as "Basic", "General Purpose", or "Business Critical".
-    :type tier: str
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
-        'size': {'key': 'size', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        family: Optional[str] = None,
-        size: Optional[str] = None,
-        tier: Optional[str] = None,
-        **kwargs
-    ):
-        super(AvailableServiceSkuSku, self).__init__(**kwargs)
-        self.name = name
-        self.family = family
-        self.size = size
-        self.tier = tier
 
 
 class AvailableServiceSkuCapacity(msrest.serialization.Model):
@@ -138,6 +102,42 @@ class AvailableServiceSkuCapacity(msrest.serialization.Model):
         self.maximum = maximum
         self.default = default
         self.scale_type = scale_type
+
+
+class AvailableServiceSkuSku(msrest.serialization.Model):
+    """SKU name, tier, etc.
+
+    :param name: The name of the SKU.
+    :type name: str
+    :param family: SKU family.
+    :type family: str
+    :param size: SKU size.
+    :type size: str
+    :param tier: The tier of the SKU, such as "Basic", "General Purpose", or "Business Critical".
+    :type tier: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'family': {'key': 'family', 'type': 'str'},
+        'size': {'key': 'size', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        family: Optional[str] = None,
+        size: Optional[str] = None,
+        tier: Optional[str] = None,
+        **kwargs
+    ):
+        super(AvailableServiceSkuSku, self).__init__(**kwargs)
+        self.name = name
+        self.family = family
+        self.size = size
+        self.tier = tier
 
 
 class AzureActiveDirectoryApp(msrest.serialization.Model):
@@ -7881,7 +7881,7 @@ class MigrateSqlServerSqlMISyncTaskProperties(ProjectTaskProperties):
     :param client_data: Key value pairs of client data to attach meta data information to task.
     :type client_data: dict[str, str]
     :param input: Task input.
-    :type input: ~azure.mgmt.datamigration.models.SqlServerSqlMISyncTaskInput
+    :type input: ~azure.mgmt.datamigration.models.MigrateSqlServerSqlMISyncTaskInput
     :ivar output: Task output. This is ignored if submitted.
     :vartype output: list[~azure.mgmt.datamigration.models.MigrateSqlServerSqlMISyncTaskOutput]
     """
@@ -7900,7 +7900,7 @@ class MigrateSqlServerSqlMISyncTaskProperties(ProjectTaskProperties):
         'state': {'key': 'state', 'type': 'str'},
         'commands': {'key': 'commands', 'type': '[CommandProperties]'},
         'client_data': {'key': 'clientData', 'type': '{str}'},
-        'input': {'key': 'input', 'type': 'SqlServerSqlMISyncTaskInput'},
+        'input': {'key': 'input', 'type': 'MigrateSqlServerSqlMISyncTaskInput'},
         'output': {'key': 'output', 'type': '[MigrateSqlServerSqlMISyncTaskOutput]'},
     }
 
@@ -7908,7 +7908,7 @@ class MigrateSqlServerSqlMISyncTaskProperties(ProjectTaskProperties):
         self,
         *,
         client_data: Optional[Dict[str, str]] = None,
-        input: Optional["SqlServerSqlMISyncTaskInput"] = None,
+        input: Optional["MigrateSqlServerSqlMISyncTaskInput"] = None,
         **kwargs
     ):
         super(MigrateSqlServerSqlMISyncTaskProperties, self).__init__(client_data=client_data, **kwargs)
@@ -9844,7 +9844,7 @@ class MongoDbDatabaseProgress(MongoDbProgress):
     :type total_documents: long
     :param collections: The progress of the collections in the database. The keys are the
      unqualified names of the collections.
-    :type collections: dict[str, ~azure.mgmt.datamigration.models.MongoDbProgress]
+    :type collections: dict[str, ~azure.mgmt.datamigration.models.MongoDbCollectionProgress]
     """
 
     _validation = {
@@ -9875,7 +9875,7 @@ class MongoDbDatabaseProgress(MongoDbProgress):
         'state': {'key': 'state', 'type': 'str'},
         'total_bytes': {'key': 'totalBytes', 'type': 'long'},
         'total_documents': {'key': 'totalDocuments', 'type': 'long'},
-        'collections': {'key': 'collections', 'type': '{MongoDbProgress}'},
+        'collections': {'key': 'collections', 'type': '{MongoDbCollectionProgress}'},
     }
 
     def __init__(
@@ -9894,7 +9894,7 @@ class MongoDbDatabaseProgress(MongoDbProgress):
         last_replay_time: Optional[datetime.datetime] = None,
         name: Optional[str] = None,
         qualified_name: Optional[str] = None,
-        collections: Optional[Dict[str, "MongoDbProgress"]] = None,
+        collections: Optional[Dict[str, "MongoDbCollectionProgress"]] = None,
         **kwargs
     ):
         super(MongoDbDatabaseProgress, self).__init__(bytes_copied=bytes_copied, documents_copied=documents_copied, elapsed_time=elapsed_time, errors=errors, events_pending=events_pending, events_replayed=events_replayed, last_event_time=last_event_time, last_replay_time=last_replay_time, name=name, qualified_name=qualified_name, state=state, total_bytes=total_bytes, total_documents=total_documents, **kwargs)
@@ -12415,7 +12415,7 @@ class ValidateMigrationInputSqlServerSqlMISyncTaskProperties(ProjectTaskProperti
     :param client_data: Key value pairs of client data to attach meta data information to task.
     :type client_data: dict[str, str]
     :param input: Task input.
-    :type input: ~azure.mgmt.datamigration.models.SqlServerSqlMISyncTaskInput
+    :type input: ~azure.mgmt.datamigration.models.ValidateMigrationInputSqlServerSqlMISyncTaskInput
     :ivar output: Task output. This is ignored if submitted.
     :vartype output:
      list[~azure.mgmt.datamigration.models.ValidateMigrationInputSqlServerSqlMISyncTaskOutput]
@@ -12435,7 +12435,7 @@ class ValidateMigrationInputSqlServerSqlMISyncTaskProperties(ProjectTaskProperti
         'state': {'key': 'state', 'type': 'str'},
         'commands': {'key': 'commands', 'type': '[CommandProperties]'},
         'client_data': {'key': 'clientData', 'type': '{str}'},
-        'input': {'key': 'input', 'type': 'SqlServerSqlMISyncTaskInput'},
+        'input': {'key': 'input', 'type': 'ValidateMigrationInputSqlServerSqlMISyncTaskInput'},
         'output': {'key': 'output', 'type': '[ValidateMigrationInputSqlServerSqlMISyncTaskOutput]'},
     }
 
@@ -12443,7 +12443,7 @@ class ValidateMigrationInputSqlServerSqlMISyncTaskProperties(ProjectTaskProperti
         self,
         *,
         client_data: Optional[Dict[str, str]] = None,
-        input: Optional["SqlServerSqlMISyncTaskInput"] = None,
+        input: Optional["ValidateMigrationInputSqlServerSqlMISyncTaskInput"] = None,
         **kwargs
     ):
         super(ValidateMigrationInputSqlServerSqlMISyncTaskProperties, self).__init__(client_data=client_data, **kwargs)

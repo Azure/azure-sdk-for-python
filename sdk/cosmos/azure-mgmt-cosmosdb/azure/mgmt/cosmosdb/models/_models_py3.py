@@ -1312,6 +1312,10 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
     :type disable_key_based_metadata_write_access: bool
     :param key_vault_key_uri: The URI of the key vault.
     :type key_vault_key_uri: str
+    :param default_identity: The default identity for accessing key vault used in features like
+     customer managed keys. The default identity needs to be explicitly set by the users. It can be
+     "FirstPartyIdentity", "SystemAssignedIdentity" and more.
+    :type default_identity: str
     :param public_network_access: Whether requests from Public Network are allowed. Possible values
      include: "Enabled", "Disabled".
     :type public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
@@ -1362,6 +1366,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
         'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
         'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
+        'default_identity': {'key': 'properties.defaultIdentity', 'type': 'str'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
         'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
@@ -1393,6 +1398,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         connector_offer: Optional[Union[str, "ConnectorOffer"]] = None,
         disable_key_based_metadata_write_access: Optional[bool] = None,
         key_vault_key_uri: Optional[str] = None,
+        default_identity: Optional[str] = None,
         public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
         enable_free_tier: Optional[bool] = None,
         api_properties: Optional["ApiProperties"] = None,
@@ -1418,6 +1424,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         self.connector_offer = connector_offer
         self.disable_key_based_metadata_write_access = disable_key_based_metadata_write_access
         self.key_vault_key_uri = key_vault_key_uri
+        self.default_identity = default_identity
         self.public_network_access = public_network_access
         self.enable_free_tier = enable_free_tier
         self.api_properties = api_properties
@@ -1509,6 +1516,10 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :type disable_key_based_metadata_write_access: bool
     :param key_vault_key_uri: The URI of the key vault.
     :type key_vault_key_uri: str
+    :param default_identity: The default identity for accessing key vault used in features like
+     customer managed keys. The default identity needs to be explicitly set by the users. It can be
+     "FirstPartyIdentity", "SystemAssignedIdentity" and more.
+    :type default_identity: str
     :param public_network_access: Whether requests from Public Network are allowed. Possible values
      include: "Enabled", "Disabled".
     :type public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
@@ -1571,6 +1582,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
         'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
         'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
+        'default_identity': {'key': 'properties.defaultIdentity', 'type': 'str'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
         'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
@@ -1601,6 +1613,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         connector_offer: Optional[Union[str, "ConnectorOffer"]] = None,
         disable_key_based_metadata_write_access: Optional[bool] = None,
         key_vault_key_uri: Optional[str] = None,
+        default_identity: Optional[str] = None,
         public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
         enable_free_tier: Optional[bool] = None,
         api_properties: Optional["ApiProperties"] = None,
@@ -1633,6 +1646,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         self.connector_offer = connector_offer
         self.disable_key_based_metadata_write_access = disable_key_based_metadata_write_access
         self.key_vault_key_uri = key_vault_key_uri
+        self.default_identity = default_identity
         self.public_network_access = public_network_access
         self.enable_free_tier = enable_free_tier
         self.api_properties = api_properties
@@ -1832,6 +1846,10 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
     :type disable_key_based_metadata_write_access: bool
     :param key_vault_key_uri: The URI of the key vault.
     :type key_vault_key_uri: str
+    :param default_identity: The default identity for accessing key vault used in features like
+     customer managed keys. The default identity needs to be explicitly set by the users. It can be
+     "FirstPartyIdentity", "SystemAssignedIdentity" and more.
+    :type default_identity: str
     :param public_network_access: Whether requests from Public Network are allowed. Possible values
      include: "Enabled", "Disabled".
     :type public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
@@ -1869,6 +1887,7 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
         'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
         'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
         'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
+        'default_identity': {'key': 'properties.defaultIdentity', 'type': 'str'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
         'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
@@ -1897,6 +1916,7 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
         connector_offer: Optional[Union[str, "ConnectorOffer"]] = None,
         disable_key_based_metadata_write_access: Optional[bool] = None,
         key_vault_key_uri: Optional[str] = None,
+        default_identity: Optional[str] = None,
         public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
         enable_free_tier: Optional[bool] = None,
         api_properties: Optional["ApiProperties"] = None,
@@ -1923,6 +1943,7 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
         self.connector_offer = connector_offer
         self.disable_key_based_metadata_write_access = disable_key_based_metadata_write_access
         self.key_vault_key_uri = key_vault_key_uri
+        self.default_identity = default_identity
         self.public_network_access = public_network_access
         self.enable_free_tier = enable_free_tier
         self.api_properties = api_properties
