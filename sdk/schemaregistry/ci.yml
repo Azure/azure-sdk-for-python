@@ -29,7 +29,6 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: schemaregistry
-    VerifyAutorest: true
     Artifacts:
     - name: azure-schemaregistry
       safeName: azureschemaregistry
