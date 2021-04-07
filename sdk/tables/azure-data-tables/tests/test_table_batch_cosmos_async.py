@@ -715,6 +715,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
+    @pytest.mark.live_test_only
     @CosmosPreparer()
     async def test_new_invalid_key(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
