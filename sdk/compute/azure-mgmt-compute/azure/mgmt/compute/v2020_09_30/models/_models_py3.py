@@ -1131,21 +1131,21 @@ class Encryption(msrest.serialization.Model):
 class EncryptionImages(msrest.serialization.Model):
     """Optional. Allows users to provide customer managed keys for encrypting the OS and data disks in the gallery artifact.
 
-    :param os_disk_image: This is the disk image encryption base class.
-    :type os_disk_image: ~azure.mgmt.compute.v2020_09_30.models.DiskImageEncryption
+    :param os_disk_image: Contains encryption settings for an OS disk image.
+    :type os_disk_image: ~azure.mgmt.compute.v2020_09_30.models.OSDiskImageEncryption
     :param data_disk_images: A list of encryption specifications for data disk images.
     :type data_disk_images: list[~azure.mgmt.compute.v2020_09_30.models.DataDiskImageEncryption]
     """
 
     _attribute_map = {
-        'os_disk_image': {'key': 'osDiskImage', 'type': 'DiskImageEncryption'},
+        'os_disk_image': {'key': 'osDiskImage', 'type': 'OSDiskImageEncryption'},
         'data_disk_images': {'key': 'dataDiskImages', 'type': '[DataDiskImageEncryption]'},
     }
 
     def __init__(
         self,
         *,
-        os_disk_image: Optional["DiskImageEncryption"] = None,
+        os_disk_image: Optional["OSDiskImageEncryption"] = None,
         data_disk_images: Optional[List["DataDiskImageEncryption"]] = None,
         **kwargs
     ):
@@ -2385,9 +2385,9 @@ class GalleryImageVersion(Resource):
     :type location: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :param publishing_profile: Describes the basic gallery artifact publishing profile.
+    :param publishing_profile: The publishing profile of a gallery image Version.
     :type publishing_profile:
-     ~azure.mgmt.compute.v2020_09_30.models.GalleryArtifactPublishingProfileBase
+     ~azure.mgmt.compute.v2020_09_30.models.GalleryImageVersionPublishingProfile
     :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
      values include: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
     :vartype provisioning_state: str or
@@ -2413,7 +2413,7 @@ class GalleryImageVersion(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryArtifactPublishingProfileBase'},
+        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryImageVersionPublishingProfile'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'GalleryImageVersionStorageProfile'},
         'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
@@ -2424,7 +2424,7 @@ class GalleryImageVersion(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        publishing_profile: Optional["GalleryArtifactPublishingProfileBase"] = None,
+        publishing_profile: Optional["GalleryImageVersionPublishingProfile"] = None,
         storage_profile: Optional["GalleryImageVersionStorageProfile"] = None,
         **kwargs
     ):
@@ -2525,15 +2525,15 @@ class GalleryImageVersionStorageProfile(msrest.serialization.Model):
 
     :param source: The gallery artifact version source.
     :type source: ~azure.mgmt.compute.v2020_09_30.models.GalleryArtifactVersionSource
-    :param os_disk_image: This is the disk image base class.
-    :type os_disk_image: ~azure.mgmt.compute.v2020_09_30.models.GalleryDiskImage
+    :param os_disk_image: This is the OS disk image.
+    :type os_disk_image: ~azure.mgmt.compute.v2020_09_30.models.GalleryOSDiskImage
     :param data_disk_images: A list of data disk images.
     :type data_disk_images: list[~azure.mgmt.compute.v2020_09_30.models.GalleryDataDiskImage]
     """
 
     _attribute_map = {
         'source': {'key': 'source', 'type': 'GalleryArtifactVersionSource'},
-        'os_disk_image': {'key': 'osDiskImage', 'type': 'GalleryDiskImage'},
+        'os_disk_image': {'key': 'osDiskImage', 'type': 'GalleryOSDiskImage'},
         'data_disk_images': {'key': 'dataDiskImages', 'type': '[GalleryDataDiskImage]'},
     }
 
@@ -2541,7 +2541,7 @@ class GalleryImageVersionStorageProfile(msrest.serialization.Model):
         self,
         *,
         source: Optional["GalleryArtifactVersionSource"] = None,
-        os_disk_image: Optional["GalleryDiskImage"] = None,
+        os_disk_image: Optional["GalleryOSDiskImage"] = None,
         data_disk_images: Optional[List["GalleryDataDiskImage"]] = None,
         **kwargs
     ):
@@ -2564,9 +2564,9 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
     :vartype type: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :param publishing_profile: Describes the basic gallery artifact publishing profile.
+    :param publishing_profile: The publishing profile of a gallery image Version.
     :type publishing_profile:
-     ~azure.mgmt.compute.v2020_09_30.models.GalleryArtifactPublishingProfileBase
+     ~azure.mgmt.compute.v2020_09_30.models.GalleryImageVersionPublishingProfile
     :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
      values include: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
     :vartype provisioning_state: str or
@@ -2590,7 +2590,7 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryArtifactPublishingProfileBase'},
+        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryImageVersionPublishingProfile'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'GalleryImageVersionStorageProfile'},
         'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
@@ -2600,7 +2600,7 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        publishing_profile: Optional["GalleryArtifactPublishingProfileBase"] = None,
+        publishing_profile: Optional["GalleryImageVersionPublishingProfile"] = None,
         storage_profile: Optional["GalleryImageVersionStorageProfile"] = None,
         **kwargs
     ):
@@ -3729,7 +3729,7 @@ class SharedGalleryList(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. A list of shared galleries.
-    :type value: list[~azure.mgmt.compute.v2020_09_30.models.PirSharedGalleryResource]
+    :type value: list[~azure.mgmt.compute.v2020_09_30.models.SharedGallery]
     :param next_link: The uri to fetch the next page of shared galleries. Call ListNext() with this
      to fetch the next page of shared galleries.
     :type next_link: str
@@ -3740,14 +3740,14 @@ class SharedGalleryList(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PirSharedGalleryResource]'},
+        'value': {'key': 'value', 'type': '[SharedGallery]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        value: List["PirSharedGalleryResource"],
+        value: List["SharedGallery"],
         next_link: Optional[str] = None,
         **kwargs
     ):
