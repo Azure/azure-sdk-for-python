@@ -1,5 +1,14 @@
 # Release History
 
+## 0.8.0 (2021-04-07)
+
+**Features**
+
+  - Model Workspace has a new parameter public_network_access
+  - Model WorkspacePatchInfo has a new parameter public_network_access
+  - Added operation group LibraryOperations
+  - Added operation group LibrariesOperations
+
 ## 0.7.0 (2021-01-28)
 
 **Features**
