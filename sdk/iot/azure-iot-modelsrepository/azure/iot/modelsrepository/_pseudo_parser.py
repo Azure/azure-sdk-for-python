@@ -16,6 +16,7 @@ from ._chainable_exception import ChainableException
 
 _LOGGER = logging.getLogger(__name__)
 
+
 class PseudoParser(object):
     def __init__(self, resolver):
         """

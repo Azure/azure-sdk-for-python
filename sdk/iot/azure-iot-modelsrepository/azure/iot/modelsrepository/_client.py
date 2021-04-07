@@ -43,16 +43,12 @@ _TRACE_NAMESPACE = "modelsrepository"
 class ModelsRepositoryClient(object):
     """Client providing APIs for Models Repository operations"""
 
-    def __init__(
-        self, repository_location=None, dependency_resolution=None, **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
-        :param str repository_location: Location of the Models Repository you wish to access.
+        :keyword str repository_location: Location of the Models Repository you wish to access.
             This location can be a remote HTTP/HTTPS URL, or a local filesystem path.
             If omitted, will default to using "https://devicemodels.azure.com".
-        :param str api_version: The API version for the Models Repository Service you wish to
-            access.
-        :param str dependency_resolution: Dependency resolution mode.
+        :keyword str dependency_resolution: Dependency resolution mode.
             Possible values:
                 - "disabled": Do not resolve model dependencies
                 - "enabled": Resolve model dependencies from the repository
@@ -62,56 +58,47 @@ class ModelsRepositoryClient(object):
             If using the default repository location, the default dependency resolution mode will
             be "tryFromExpanded". If using a custom repository location, the default dependency
             resolution mode will be "enabled".
+        :keyword str api_version: The API version for the Models Repository Service you wish to
+            access.
 
-        There are additional keyword arguments you can provide, which are documented here:
-        https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#configurations
+        For additional request configuration options, please see [core options](https://aka.ms/azsdk/python/options).
 
         :raises: ValueError if repository_location is invalid
         :raises: ValueError if dependency_resolution is invalid
         """
-        repository_location = (
-            _DEFAULT_LOCATION if repository_location is None else repository_location
-        )
+        repository_location = kwargs.get("repository_location", _DEFAULT_LOCATION)
         _LOGGER.debug("Client configured for respository location %s", repository_location)
 
-        if dependency_resolution is None:
-            # If using the default repository location, the resolution mode should default to
-            # expanded mode because the defeault repo guarantees the existence of expanded DTDLs
-            if repository_location == _DEFAULT_LOCATION:
-                self.resolution_mode = DEPENDENCY_MODE_TRY_FROM_EXPANDED
-            else:
-                self.resolution_mode = DEPENDENCY_MODE_ENABLED
-        else:
-            if dependency_resolution not in [
-                DEPENDENCY_MODE_ENABLED,
-                DEPENDENCY_MODE_DISABLED,
-                DEPENDENCY_MODE_TRY_FROM_EXPANDED,
-            ]:
-                raise ValueError(
-                    "Invalid dependency resolution mode: {}".format(dependency_resolution)
-                )
-            self.resolution_mode = dependency_resolution
+        self.resolution_mode = kwargs.get(
+            "dependency_resolution",
+            DEPENDENCY_MODE_TRY_FROM_EXPANDED
+            if repository_location == _DEFAULT_LOCATION
+            else DEPENDENCY_MODE_ENABLED,
+        )
+        if self.resolution_mode not in [
+            DEPENDENCY_MODE_ENABLED,
+            DEPENDENCY_MODE_DISABLED,
+            DEPENDENCY_MODE_TRY_FROM_EXPANDED,
+        ]:
+            raise ValueError("Invalid dependency resolution mode: {}".format(self.resolution_mode))
         _LOGGER.debug("Client configured for dependency mode %s", self.resolution_mode)
 
         # NOTE: depending on how this class develops over time, may need to adjust relationship
         # between some of these objects
-        self.fetcher = _create_fetcher(
-            location=repository_location, **kwargs
-        )
+        self.fetcher = _create_fetcher(location=repository_location, **kwargs)
         self.resolver = _resolver.DtmiResolver(self.fetcher)
         self._psuedo_parser = _pseudo_parser.PseudoParser(self.resolver)
 
         # Store api version here (for now). Currently doesn't do anything
         self._api_version = kwargs.get("api_version", _constants.DEFAULT_API_VERSION)
 
-
     @distributed_trace
-    def get_models(self, dtmis, dependency_resolution=None):
+    def get_models(self, dtmis, **kwargs):
         """Retrieve a model from the Models Repository.
 
         :param dtmis: The DTMI(s) for the model(s) you wish to retrieve
         :type dtmis: str or list[str]
-        :param str dependency_resolution: Dependency resolution mode override. This value takes
+        :keyword str dependency_resolution: Dependency resolution mode override. This value takes
             precedence over the value set on the client.
             Possible values:
                 - "disabled": Do not resolve model dependencies
@@ -130,8 +117,7 @@ class ModelsRepositoryClient(object):
             dtmis = [dtmis]
 
         # TODO: Use better error surface than the custom ResolverError
-        if dependency_resolution is None:
-            dependency_resolution = self.resolution_mode
+        dependency_resolution = kwargs.get("dependency_resolution", self.resolution_mode)
 
         if dependency_resolution == DEPENDENCY_MODE_DISABLED:
             # Simply retrieve the model(s)
@@ -154,7 +140,9 @@ class ModelsRepositoryClient(object):
                 model_map = self.resolver.resolve(dtmis, expanded_model=True)
             except _resolver.ResolverError:
                 # Fallback to manual dependency resolution
-                _LOGGER.debug("Could not retreive model(s) from expanded DTDL - fallback to manual dependency resolution mode")
+                _LOGGER.debug(
+                    "Could not retreive model(s) from expanded DTDL - fallback to manual dependency resolution mode"
+                )
                 _LOGGER.debug("Retreiving model(s): %s...", dtmis)
                 base_model_map = self.resolver.resolve(dtmis)
                 base_model_list = list(base_model_map.items())
@@ -180,17 +168,23 @@ def _create_fetcher(location, **kwargs):
         fetcher = _resolver.FilesystemFetcher(location)
     elif scheme == "" and location.startswith("/"):
         # POSIX filesystem path
-        _LOGGER.debug("Repository Location identified as POSIX fileystem path - using FilesystemFetcher")
+        _LOGGER.debug(
+            "Repository Location identified as POSIX fileystem path - using FilesystemFetcher"
+        )
         fetcher = _resolver.FilesystemFetcher(location)
     elif scheme == "" and re.search(r"\.[a-zA-z]{2,63}$", location[: location.find("/")]):
         # Web URL with protocol unspecified - default to HTTPS
-        _LOGGER.debug("Repository Location identified as remote endpoint without protocol specified - using HttpFetcher")
+        _LOGGER.debug(
+            "Repository Location identified as remote endpoint without protocol specified - using HttpFetcher"
+        )
         location = "https://" + location
         pipeline = _create_pipeline(**kwargs)
         fetcher = _resolver.HttpFetcher(location, pipeline)
     elif scheme != "" and len(scheme) == 1 and scheme.isalpha():
         # Filesystem path using drive letters (e.g. "C:", "D:", etc.)
-        _LOGGER.debug("Repository Location identified as drive letter fileystem path - using FilesystemFetcher")
+        _LOGGER.debug(
+            "Repository Location identified as drive letter fileystem path - using FilesystemFetcher"
+        )
         fetcher = _resolver.FilesystemFetcher(location)
     else:
         raise ValueError("Unable to identify location: {}".format(location))
