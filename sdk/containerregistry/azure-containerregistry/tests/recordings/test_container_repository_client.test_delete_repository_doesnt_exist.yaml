@@ -16,10 +16,9 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/does_not_exist
   response:
     body:
-      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"does_not_exist","Action":"delete"}]}]}
-
-        '
+      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
+        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
+        "repository", "Name": "does_not_exist", "Action": "delete"}]}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -33,7 +32,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 14:40:09 GMT
+      - Wed, 07 Apr 2021 12:51:16 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -48,7 +47,7 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
-    body: grant_type=access_token&service=seankane.azurecr.io&access_token=REDACTED
+    body: grant_type=access_token&service=fake_url.azurecr.io&access_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -73,7 +72,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 14:40:10 GMT
+      - Wed, 07 Apr 2021 12:51:18 GMT
       server:
       - openresty
       strict-transport-security:
@@ -81,12 +80,12 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.766667'
+      - '332.7'
     status:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Adoes_not_exist%3Adelete&refresh_token=REDACTED
+    body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=repository%3Adoes_not_exist%3Adelete&refresh_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -111,7 +110,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 14:40:11 GMT
+      - Wed, 07 Apr 2021 12:51:18 GMT
       server:
       - openresty
       strict-transport-security:
@@ -119,7 +118,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.75'
+      - '332.65'
     status:
       code: 200
       message: OK
@@ -140,10 +139,8 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/does_not_exist
   response:
     body:
-      string: '{"errors":[{"code":"NAME_UNKNOWN","message":"repository name not known
-        to registry","detail":{"name":"does_not_exist"}}]}
-
-        '
+      string: '{"errors": [{"code": "NAME_UNKNOWN", "message": "repository name not
+        known to registry", "detail": {"name": "does_not_exist"}}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -157,7 +154,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 14:40:11 GMT
+      - Wed, 07 Apr 2021 12:51:18 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
