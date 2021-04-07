@@ -613,6 +613,10 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             Content supports auto language identification and multilanguage documents, so only
             provide a language code if you would like to force the documented to be processed as
             that specific language.
+        :keyword str reading_order: Reading order algorithm to sort the text lines returned. Supported
+            reading orders include: basic (default), natural. Set 'basic' to sort lines left to right and top
+            to bottom, although in some cases proximity is treated with higher priority. Set 'natural' to sort
+            lines by using positional information to keep nearby lines together.
         :keyword content_type: Content-type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -626,7 +630,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: v2.1-preview
-            The *pages* and *language* keyword arguments and support for image/bmp content
+            The *pages*, *language* and *reading_order* keyword arguments and support for image/bmp content
 
         .. admonition:: Example:
 
@@ -639,6 +643,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         """
         pages = kwargs.pop("pages", None)
         language = kwargs.pop("language", None)
+        reading_order = kwargs.pop("reading_order", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
             raise TypeError(
@@ -656,6 +661,14 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             else:
                 raise ValueError(
                     "'pages' is only available for API version V2_1_PREVIEW and up"
+                )
+
+        if reading_order:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+                kwargs.update({"reading_order": reading_order})
+            else:
+                raise ValueError(
+                    "'reading_order' is only available for API version V2_1_PREVIEW and up"
                 )
 
         if language:
@@ -692,6 +705,10 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             Content supports auto language identification and multilanguage documents, so only
             provide a language code if you would like to force the documented to be processed as
             that specific language.
+        :keyword str reading_order: Reading order algorithm to sort the text lines returned. Supported
+            reading orders include: basic (default), natural. Set 'basic' to sort lines left to right and top
+            to bottom, although in some cases proximity is treated with higher priority. Set 'natural' to sort
+            lines by using positional information to keep nearby lines together.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -701,10 +718,11 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: v2.1-preview
-            The *pages* and *language* keyword arguments and support for image/bmp content
+            The *pages*, *language* and *reading_order* keyword arguments and support for image/bmp content
         """
         pages = kwargs.pop("pages", None)
         language = kwargs.pop("language", None)
+        reading_order = kwargs.pop("reading_order", None)
 
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
@@ -714,6 +732,14 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             else:
                 raise ValueError(
                     "'pages' is only available for API version V2_1_PREVIEW and up"
+                )
+
+        if reading_order:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+                kwargs.update({"reading_order": reading_order})
+            else:
+                raise ValueError(
+                    "'reading_order' is only available for API version V2_1_PREVIEW and up"
                 )
 
         if language:

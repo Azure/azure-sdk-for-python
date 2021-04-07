@@ -4,61 +4,66 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from base64 import b64encode
-import re
 from typing import TYPE_CHECKING
 
-from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.pipeline.policies import HTTPPolicy
+
+from ._exchange_client import ACRExchangeClient
+from ._helpers import _enforce_https
 
 if TYPE_CHECKING:
-    from azure.core.pipeline import PipelineRequest
+    from azure.core.credentials import TokenCredential
+    from azure.core.pipeline import PipelineRequest, PipelineResponse
+    from typing import Optional
 
 
-class ContainerRegistryUserCredential(object):
-    """Credential used to authenticate with Container Registry service"""
+class ContainerRegistryChallengePolicy(HTTPPolicy):
+    """Authentication policy for ACR which accepts a challenge"""
 
-    def __init__(self, username, password):
-        self._user = username
-        self._password = password
-
-    def get_token(self):
-        token_str = "{}:{}".format(self._user, self._password)
-        token_bytes = token_str.encode("ascii")
-        b64_bytes = b64encode(token_bytes)
-        return b64_bytes.decode("ascii")
-
-
-class ContainerRegistryUserCredentialPolicy(SansIOHTTPPolicy):
-    """HTTP pipeline policy to authenticate using ContainerRegistryUserCredential"""
-
-    def __init__(self, credential):
+    def __init__(self, credential, endpoint):
+        # type: (TokenCredential, str) -> None
+        super(ContainerRegistryChallengePolicy, self).__init__()
         self._credential = credential
-
-    @staticmethod
-    def _update_headers(headers, token):
-        headers["Authorization"] = "Basic {}".format(token)
+        self._exchange_client = ACRExchangeClient(endpoint, self._credential)
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
-        self._update_headers(request.http_request.headers, self._credential.get_token())
+        """Called before the policy sends a request.
+        The base implementation authorizes the request with a bearer token.
+        :param ~azure.core.pipeline.PipelineRequest request: the request
+        """
+        # Future caching implementation will be included here
+        pass  # pylint: disable=unnecessary-pass
 
+    def send(self, request):
+        # type: (PipelineRequest) -> PipelineResponse
+        """Authorizes a request with a bearer token, possibly handling an authentication challenge
+        :param ~azure.core.pipeline.PipelineRequest request: the request
+        """
+        _enforce_https(request)
 
-class ContainerRegistryCredentialPolicy(SansIOHTTPPolicy):
-    """Challenge based authentication policy for ACR. This policy is used for getting
-    the AAD Token, refresh token, and access token before performing a call to service.
+        self.on_request(request)
 
-    :param credential: Azure Token Credential for authenticating with Azure
-    :type credential: TokenCredential
-    """
+        response = self.next.send(request)
 
-    BEARER = "Bearer"
-    AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
-    WWW_AUTHENTICATE = "WWW-Authenticate"
-    SCOPE_PARAMETER = "scope"
-    SERVICE_PARAMETER = "service"
-    AUTHORIZATION = "Authorization"
+        if response.http_response.status_code == 401:
+            challenge = response.http_response.headers.get("WWW-Authenticate")
+            if challenge and self.on_challenge(request, response, challenge):
+                response = self.next.send(request)
 
-    def __init__(self, credential, url, pipeline):
-        self._credential = credential
-        self.url = url
-        self.pipeline = pipeline
+        return response
+
+    def on_challenge(self, request, response, challenge):
+        # type: (PipelineRequest, PipelineResponse, str) -> bool
+        """Authorize request according to an authentication challenge
+        This method is called when the resource provider responds 401 with a WWW-Authenticate header.
+        :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
+        :param ~azure.core.pipeline.PipelineResponse response: the resource provider's response
+        :param str challenge: response's WWW-Authenticate header, unparsed. It may contain multiple challenges.
+        :returns: a bool indicating whether the policy should send the request
+        """
+        # pylint:disable=unused-argument,no-self-use
+
+        access_token = self._exchange_client.get_acr_access_token(challenge)
+        request.http_request.headers["Authorization"] = "Bearer " + access_token
+        return access_token is not None

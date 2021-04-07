@@ -14,6 +14,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 
 from ._shared.user_credential import CommunicationTokenCredential
+from ._shared.models import CommunicationIdentifier
 from ._generated import AzureCommunicationChatService
 from ._generated.models import (
     AddChatParticipantsRequest,
@@ -31,11 +32,8 @@ from ._models import (
     ChatThreadProperties
 )
 
-from ._utils import ( # pylint: disable=unused-import
-    _to_utc_datetime,
-    CommunicationUserIdentifierConverter,
-    CommunicationErrorResponseConverter
-)
+from ._communication_identifier_serializer import serialize_identifier
+from ._utils import CommunicationErrorResponseConverter
 from ._version import SDK_MONIKER
 
 if TYPE_CHECKING:
@@ -547,14 +545,14 @@ class ChatThreadClient(object):
     @distributed_trace
     def remove_participant(
         self,
-        user,  # type: CommunicationUserIdentifier
+        user,  # type: CommunicationIdentifier
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Remove a participant from a thread.
 
         :param user: Required. User identity of the thread participant to remove from the thread.
-        :type user: ~azure.communication.chat.CommunicationUserIdentifier
+        :type user: ~azure.communication.chat.CommunicationIdentifier
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -573,7 +571,7 @@ class ChatThreadClient(object):
 
         return self._client.chat_thread.remove_chat_participant(
             chat_thread_id=self._thread_id,
-            participant_communication_identifier=CommunicationUserIdentifierConverter.to_identifier_model(user),
+            participant_communication_identifier=serialize_identifier(user),
             **kwargs)
 
     def close(self):

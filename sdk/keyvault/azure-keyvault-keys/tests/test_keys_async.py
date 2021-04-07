@@ -13,6 +13,7 @@ from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.keys import JsonWebKey, KeyCurveName
 from azure.keyvault.keys.aio import KeyClient
+from devtools_testutils import PowerShellPreparer
 from parameterized import parameterized, param
 
 from _shared.test_case_async import KeyVaultTestCase
@@ -158,6 +159,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         return imported_key
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
     async def test_key_crud_operations(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(is_hsm)
@@ -227,6 +229,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         self.assertEqual(rsa_key.id, deleted_key.id)
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
     async def test_backup_restore(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(is_hsm)
@@ -256,6 +259,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         self._assert_key_attributes_equal(created_bundle.properties, restored_key.properties)
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
     async def test_key_list(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(is_hsm)
@@ -282,6 +286,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         self.assertEqual(len(expected), 0)
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
     async def test_list_versions(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(is_hsm)
@@ -311,6 +316,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         self.assertEqual(0, len(expected))
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
     async def test_list_deleted_keys(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(is_hsm)
@@ -345,6 +351,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         self.assertEqual(len(expected), 0)
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
     async def test_recover(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(is_hsm)
@@ -378,6 +385,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
     async def test_purge(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(is_hsm)
@@ -408,6 +416,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
             assert deleted_key.name not in key_names
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
     async def test_logging_enabled(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(is_hsm)
@@ -437,6 +446,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         assert False, "Expected request body wasn't logged"
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
     async def test_logging_disabled(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(is_hsm)

@@ -20,11 +20,11 @@ except ImportError:
 
 from uamqp import AMQPClient, Message, authentication, constants, errors, compat, utils
 import six
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AzureSasCredential
 
 from .exceptions import _handle_exception, ClientClosedError, ConnectError
 from ._configuration import Configuration
-from ._utils import utc_from_timestamp
+from ._utils import utc_from_timestamp, parse_sas_credential
 from ._connection_manager import get_connection_manager
 from ._constants import (
     CONTAINER_PREFIX,
@@ -164,17 +164,46 @@ class EventHubSASTokenCredential(object):
         """
         return AccessToken(self.token, self.expiry)
 
+class AzureSasTokenCredential(object):
+    """The shared access token credential used for authentication
+    when AzureSasCredential is provided.
+
+    :param azure_sas_credential: The credential to be used for authentication.
+    :type azure_sas_credential: ~azure.core.credentials.AzureSasCredential
+    """
+    def __init__(self, azure_sas_credential):
+        # type: (AzureSasCredential) -> None
+        """The shared access token credential used for authentication
+         when AzureSasCredential is provided.
+
+        :param azure_sas_credential: The credential to be used for authentication.
+        :type azure_sas_credential: ~azure.core.credentials.AzureSasCredential
+        """
+        self._credential = azure_sas_credential
+        self.token_type = b"servicebus.windows.net:sastoken"
+
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (str, Any) -> AccessToken
+        """
+        This method is automatically called when token is about to expire.
+        """
+        signature, expiry = parse_sas_credential(self._credential)
+        return AccessToken(signature, expiry)
+
 
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
-        # type: (str, str, TokenCredential, Any) -> None
+        # type: (str, str, Union[AzureSasCredential, TokenCredential], Any) -> None
         self.eventhub_name = eventhub_name
         if not eventhub_name:
             raise ValueError("The eventhub name can not be None or empty.")
         path = "/" + eventhub_name if eventhub_name else ""
         self._address = _Address(hostname=fully_qualified_namespace, path=path)
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
-        self._credential = credential
+        if isinstance(credential, AzureSasCredential):
+            self._credential = AzureSasTokenCredential(credential)
+        else:
+            self._credential = credential #type: ignore
         self._keep_alive = kwargs.get("keep_alive", 30)
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
         self._mgmt_target = "amqps://{}/{}".format(

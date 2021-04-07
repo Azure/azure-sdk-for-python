@@ -10,7 +10,7 @@ trigger:
     - restapi*
   paths:
     include:
-    - sdk/tables/
+    - sdk/containerregistry/
     - sdk/core/
     - tools/
     - eng/
@@ -26,7 +26,7 @@ pr:
     - restapi*
   paths:
     include:
-    - sdk/tables/
+    - sdk/containerregistry/
     - sdk/core/
     - tools/
     - eng/

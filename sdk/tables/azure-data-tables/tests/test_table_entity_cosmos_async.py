@@ -1625,6 +1625,101 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                 sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
+    async def test_query_injection_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+            table_name = self.get_resource_name('querytable')
+            table = await self.ts.create_table_if_not_exists(table_name)
+            entity_a = {'PartitionKey': 'foo', 'RowKey': 'bar1', 'IsAdmin': 'admin'}
+            entity_b = {'PartitionKey': 'foo', 'RowKey': 'bar2', 'IsAdmin': ''}
+            await table.create_entity(entity_a)
+            await table.create_entity(entity_b)
+
+            is_user_admin = "PartitionKey eq @first and IsAdmin eq 'admin'"
+            entity_query = table.query_entities(is_user_admin, parameters={'first': 'foo'})
+            entities = []
+            async for e in entity_query:
+                entities.append(e)
+            assert len(entities) ==  1
+
+            injection = "foo' or RowKey eq 'bar2"
+            injected_query = "PartitionKey eq '{}' and IsAdmin eq 'admin'".format(injection)
+            entity_query = table.query_entities(injected_query)
+            entities = []
+            async for e in entity_query:
+                entities.append(e)
+            assert len(entities) ==  2
+
+            entity_query = table.query_entities(is_user_admin, parameters={'first': injection})           
+            entities = []
+            async for e in entity_query:
+                entities.append(e)
+            assert len(entities) ==  0
+        finally:
+            await self.ts.delete_table(table_name)
+            await self._tear_down()
+
+    @CosmosPreparer()
+    async def test_query_special_chars(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+            table_name = self.get_resource_name('querytable')
+            table = await self.ts.create_table_if_not_exists(table_name)
+            entity_a = {'PartitionKey': u'foo', 'RowKey': u'bar1', 'Chars': u":@?'/!_^#+,$"}
+            entity_b = {'PartitionKey': u'foo', 'RowKey': u'bar2', 'Chars': u'=& ?"\\{}<>%'}
+            await table.create_entity(entity_a)
+            await table.create_entity(entity_b)
+
+            entities = []
+            all_entities = table.query_entities("PartitionKey eq 'foo'")
+            async for e in all_entities:
+                entities.append(e)
+            assert len(entities) == 2
+        
+            entities = []
+            parameters = {'key': 'foo'}
+            all_entities = table.query_entities("PartitionKey eq @key", parameters=parameters)
+            async for e in all_entities:
+                entities.append(e)
+            assert len(entities) == 2
+            
+            entities = []
+            query = "PartitionKey eq 'foo' and RowKey eq 'bar1' and Chars eq ':@?''/!_^#+,$'"
+            query_entities = table.query_entities(query)
+            async for e in query_entities:
+                entities.append(e)
+            assert len(entities) == 1
+
+            entities = []
+            query = "PartitionKey eq @key and RowKey eq @row and Chars eq @quote"
+            parameters = {'key': 'foo', 'row': 'bar1', 'quote': ":@?'/!_^#+,$"}
+            query_entities = table.query_entities(query, parameters=parameters)
+            async for e in query_entities:
+                entities.append(e)
+            assert len(entities) == 1
+
+            entities = []
+            query = "PartitionKey eq 'foo' and RowKey eq 'bar2' and Chars eq '=& ?\"\\{}<>%'"
+            query_entities = table.query_entities(query)
+            async for e in query_entities:
+                entities.append(e)
+            assert len(entities) == 1
+
+            entities = []
+            query = "PartitionKey eq @key and RowKey eq @row and Chars eq @quote"
+            parameters = {'key': 'foo', 'row': 'bar2', 'quote': r'=& ?"\{}<>%'}
+            query_entities = table.query_entities(query, parameters=parameters)
+            async for e in query_entities:
+                entities.append(e)
+            assert len(entities) == 1
+
+        finally:
+            await self.ts.delete_table(table_name)
+            await self._tear_down()
+
+    @CosmosPreparer()
     async def test_query_invalid_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1988,8 +2083,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     @CosmosPreparer()
     async def test_datetime_milliseconds(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(tables_cosmos_account_name, "table")
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             entity = self._create_random_entity_dict()
@@ -2008,3 +2101,31 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
             self.sleep(SLEEP_DELAY)
+
+    @CosmosPreparer()
+    async def test_datetime_str_passthrough(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        partition, row = self._create_pk_rk(None, None)
+
+        dotnet_timestamp = "2013-08-22T01:12:06.2608595Z"
+        entity = {
+            'PartitionKey': partition,
+            'RowKey': row,
+            'datetime1': EntityProperty(dotnet_timestamp, EdmType.DATETIME)
+        }
+        try:
+            await self.table.create_entity(entity)
+            received = await self.table.get_entity(partition, row)
+            assert isinstance(received['datetime1'], datetime)
+            assert received.datetime1.tables_service_value == dotnet_timestamp
+
+            received['datetime2'] = received.datetime1.replace(year=2020)
+            assert received['datetime2'].tables_service_value == ""
+
+            await self.table.update_entity(received, mode=UpdateMode.REPLACE)
+            updated = await self.table.get_entity(partition, row)
+            assert isinstance(updated['datetime1'], datetime)
+            assert isinstance(updated['datetime2'], datetime)
+            assert updated.datetime1.tables_service_value == dotnet_timestamp
+        finally:
+            await self._tear_down()

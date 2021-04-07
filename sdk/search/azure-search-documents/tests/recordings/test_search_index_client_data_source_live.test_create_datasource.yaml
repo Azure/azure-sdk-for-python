@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"name": "sample-datasource", "type": "azureblob", "credentials": {"connectionString":
-      "connection_string"},
+      "DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net"},
       "container": {"name": "searchcontainer"}}'
     headers:
       Accept:
@@ -15,12 +15,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://search54bc1a2e.search.windows.net/datasources?api-version=2020-06-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search54bc1a2e.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D84B8876DED987\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
+      string: '{"@odata.context":"https://search54bc1a2e.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D8EFC9B8C82845\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
     headers:
       cache-control:
       - no-cache
@@ -29,11 +29,11 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Fri, 28 Aug 2020 19:27:55 GMT
+      - Thu, 25 Mar 2021 20:08:14 GMT
       elapsed-time:
-      - '97'
+      - '66'
       etag:
-      - W/"0x8D84B8876DED987"
+      - W/"0x8D8EFC9B8C82845"
       expires:
       - '-1'
       location:
@@ -45,7 +45,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 92a2084f-e964-11ea-b328-5cf37071153c
+      - d47f511b-8da5-11eb-b51a-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:

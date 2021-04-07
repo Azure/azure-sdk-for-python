@@ -5,25 +5,57 @@
 import json
 
 from azure.identity import AuthenticationRecord
+from azure.identity._auth_record import SUPPORTED_VERSIONS
+import pytest
 
 
 def test_serialization():
-    """serialize should accept arbitrary additional key/value pairs, which deserialize should ignore"""
+    expected = {
+        "authority": "http://localhost",
+        "clientId": "client-id",
+        "homeAccountId": "object-id.tenant-id",
+        "tenantId": "tenant-id",
+        "username": "user",
+        "version": "1.0",
+    }
 
-    attrs = ("authority", "client_id","home_account_id", "tenant_id", "username")
-    nums = (n for n in range(len(attrs)))
-    record_values = {attr: next(nums) for attr in attrs}
-
-    record = AuthenticationRecord(**record_values)
+    record = AuthenticationRecord(
+        expected["tenantId"],
+        expected["clientId"],
+        expected["authority"],
+        expected["homeAccountId"],
+        expected["username"],
+    )
     serialized = record.serialize()
 
-    # AuthenticationRecord's fields should have been serialized
-    assert json.loads(serialized) == record_values
+    assert json.loads(serialized) == expected
 
     deserialized = AuthenticationRecord.deserialize(serialized)
 
-    # the deserialized record and the constructed record should have the same fields
     assert sorted(vars(deserialized)) == sorted(vars(record))
 
-    # the constructed and deserialized records should have the same values
-    assert all(getattr(deserialized, attr) == record_values[attr] for attr in attrs)
+    assert record.authority == deserialized.authority == expected["authority"]
+    assert record.client_id == deserialized.client_id == expected["clientId"]
+    assert record.home_account_id == deserialized.home_account_id == expected["homeAccountId"]
+    assert record.tenant_id == deserialized.tenant_id == expected["tenantId"]
+    assert record.username == deserialized.username == expected["username"]
+
+
+@pytest.mark.parametrize("version", ("42", None))
+def test_unknown_version(version):
+    """deserialize should raise ValueError when the data doesn't contain a known version"""
+
+    data = {
+        "authority": "http://localhost",
+        "clientId": "client-id",
+        "homeAccountId": "object-id.tenant-id",
+        "tenantId": "tenant-id",
+        "username": "user",
+    }
+
+    if version:
+        data["version"] = version
+
+    with pytest.raises(ValueError, match=".*{}.*".format(version)) as ex:
+        AuthenticationRecord.deserialize(json.dumps(data))
+    assert str(SUPPORTED_VERSIONS) in str(ex.value)

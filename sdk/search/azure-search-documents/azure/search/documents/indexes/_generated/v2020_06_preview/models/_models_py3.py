@@ -1263,6 +1263,7 @@ class CustomNormalizer(LexicalNormalizer):
         **kwargs
     ):
         super(CustomNormalizer, self).__init__(odata_type=odata_type, name=name, **kwargs)
+        self.odata_type = '#Microsoft.Azure.Search.CustomNormalizer'
         self.token_filters = token_filters
         self.char_filters = char_filters
 

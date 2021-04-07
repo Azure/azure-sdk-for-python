@@ -1,4 +1,4 @@
-# Azure Communication Phone Numbers Administration for Python
+# Azure Communication Phone Numbers for Python
 
 > see https://aka.ms/autorest
 

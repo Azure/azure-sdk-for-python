@@ -29,12 +29,35 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
 class AccessIdName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     ACCESS = "access"
+    GIT_ACCESS = "gitAccess"
 
 class AlwaysLog(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies for what type of messages sampling settings should not apply.
     """
 
     ALL_ERRORS = "allErrors"  #: Always log all erroneous request regardless of sampling settings.
+
+class ApiManagementSkuCapacityScaleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The scale type applicable to the sku.
+    """
+
+    AUTOMATIC = "Automatic"
+    MANUAL = "Manual"
+    NONE = "None"
+
+class ApiManagementSkuRestrictionsReasonCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The reason for restriction.
+    """
+
+    QUOTA_ID = "QuotaId"
+    NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
+
+class ApiManagementSkuRestrictionsType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of restrictions.
+    """
+
+    LOCATION = "Location"
+    ZONE = "Zone"
 
 class ApimIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity used for the resource. The type 'SystemAssigned, UserAssigned' includes
@@ -55,7 +78,7 @@ class ApiType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SOAP = "soap"
 
 class ApiVersionSetContractDetailsVersioningScheme(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """An value that determines where the API Version identifer will be located in a HTTP request.
+    """An value that determines where the API Version identifier will be located in a HTTP request.
     """
 
     SEGMENT = "Segment"
@@ -329,6 +352,10 @@ class SamplingType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     FIXED = "fixed"  #: Fixed-rate sampling.
 
+class SettingsTypeName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    PUBLIC = "public"
+
 class SkuType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Name of the Sku.
     """
@@ -413,7 +440,7 @@ class Verbosity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ERROR = "error"  #: Only traces with 'severity' set to 'error' will be sent to the logger attached to this diagnostic instance.
 
 class VersioningScheme(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """An value that determines where the API Version identifer will be located in a HTTP request.
+    """An value that determines where the API Version identifier will be located in a HTTP request.
     """
 
     SEGMENT = "Segment"  #: The API Version is passed in a path segment.
