@@ -123,9 +123,11 @@ class AgentPool(SubResource):
      will apply the default osDisk size according to the vmSize specified.
     :type os_disk_size_gb: int
     :param os_disk_type: OS disk type to be used for machines in a given agent
-     pool. Allowed values are 'Ephemeral' and 'Managed'. Defaults to 'Managed'.
-     May not be changed after creation. Possible values include: 'Managed',
-     'Ephemeral'
+     pool. Allowed values are 'Ephemeral' and 'Managed'. If unspecified,
+     defaults to 'Ephemeral' when the VM supports ephemeral OS and has a cache
+     disk larger than the requested OSDiskSizeGB. Otherwise, defaults to
+     'Managed'. May not be changed after creation. Possible values include:
+     'Managed', 'Ephemeral'
     :type os_disk_type: str or
      ~azure.mgmt.containerservice.v2021_02_01.models.OSDiskType
     :param kubelet_disk_type: KubeletDiskType determines the placement of
@@ -1514,9 +1516,11 @@ class ManagedClusterAgentPoolProfileProperties(Model):
      will apply the default osDisk size according to the vmSize specified.
     :type os_disk_size_gb: int
     :param os_disk_type: OS disk type to be used for machines in a given agent
-     pool. Allowed values are 'Ephemeral' and 'Managed'. Defaults to 'Managed'.
-     May not be changed after creation. Possible values include: 'Managed',
-     'Ephemeral'
+     pool. Allowed values are 'Ephemeral' and 'Managed'. If unspecified,
+     defaults to 'Ephemeral' when the VM supports ephemeral OS and has a cache
+     disk larger than the requested OSDiskSizeGB. Otherwise, defaults to
+     'Managed'. May not be changed after creation. Possible values include:
+     'Managed', 'Ephemeral'
     :type os_disk_type: str or
      ~azure.mgmt.containerservice.v2021_02_01.models.OSDiskType
     :param kubelet_disk_type: KubeletDiskType determines the placement of
@@ -1761,9 +1765,11 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      will apply the default osDisk size according to the vmSize specified.
     :type os_disk_size_gb: int
     :param os_disk_type: OS disk type to be used for machines in a given agent
-     pool. Allowed values are 'Ephemeral' and 'Managed'. Defaults to 'Managed'.
-     May not be changed after creation. Possible values include: 'Managed',
-     'Ephemeral'
+     pool. Allowed values are 'Ephemeral' and 'Managed'. If unspecified,
+     defaults to 'Ephemeral' when the VM supports ephemeral OS and has a cache
+     disk larger than the requested OSDiskSizeGB. Otherwise, defaults to
+     'Managed'. May not be changed after creation. Possible values include:
+     'Managed', 'Ephemeral'
     :type os_disk_type: str or
      ~azure.mgmt.containerservice.v2021_02_01.models.OSDiskType
     :param kubelet_disk_type: KubeletDiskType determines the placement of
