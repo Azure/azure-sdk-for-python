@@ -6,7 +6,6 @@
 import copy
 from datetime import datetime
 import json
-import os
 import re
 import six
 import subprocess
@@ -32,6 +31,7 @@ REDACTED = "REDACTED"
 
 class AcrBodyReplacer(RecordingProcessor):
     """Replace request body for oauth2 exchanges"""
+
     def __init__(self, replacement="redacted"):
         self._replacement = replacement
         self._401_replacement = 'Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"'
@@ -52,7 +52,7 @@ class AcrBodyReplacer(RecordingProcessor):
                 v = REDACTED
             s[idx] = "=".join([k, v])
         s = "&".join(s)
-        return bytes(s, "utf-8")
+        return s.encode("utf-8")
 
     def _scrub_body_dict(self, body):
         new_body = copy.deepcopy(body)
@@ -69,20 +69,20 @@ class AcrBodyReplacer(RecordingProcessor):
 
     def process_response(self, response):
         try:
-            headers = response['headers']
+            headers = response["headers"]
             auth_header = None
             if "www-authenticate" in headers:
-                response['headers']["www-authenticate"] = self._401_replacement
+                response["headers"]["www-authenticate"] = self._401_replacement
 
-            body = response['body']
+            body = response["body"]
             try:
-                refresh = json.loads(body['string'])
+                refresh = json.loads(body["string"])
                 if "refresh_token" in refresh.keys():
-                    refresh['refresh_token'] = REDACTED
-                    body['string'] = json.dumps(refresh)
+                    refresh["refresh_token"] = REDACTED
+                    body["string"] = json.dumps(refresh)
                 if "access_token" in refresh.keys():
                     refresh["access_token"] = REDACTED
-                    body['string'] = json.dumps(refresh)
+                    body["string"] = json.dumps(refresh)
 
             except json.decoder.JSONDecodeError:
                 pass
@@ -96,6 +96,7 @@ class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
     :param str scopes: Lets you specify the type of access needed.
     """
+
     def __init__(self):
         self.token = AccessToken("YOU SHALL NOT PASS", 0)
 
@@ -114,9 +115,7 @@ class ContainerRegistryTestClass(AzureTestCase):
         if self.is_live:
             time.sleep(t)
 
-    def _import_tag_to_be_deleted(
-        self, endpoint, repository="hello-world", resource_group="fake_rg", tag=None
-    ):
+    def _import_tag_to_be_deleted(self, endpoint, repository="hello-world", resource_group="fake_rg", tag=None):
         if not self.is_live:
             return
 
@@ -142,9 +141,7 @@ class ContainerRegistryTestClass(AzureTestCase):
         ]
         subprocess.check_call(command)
 
-    def import_repo_to_be_deleted(
-        self, endpoint, repository="hello-world", resource_group="fake_rg", tag=None
-    ):
+    def import_repo_to_be_deleted(self, endpoint, repository="hello-world", resource_group="fake_rg", tag=None):
         if not self.is_live:
             return
 
@@ -192,19 +189,10 @@ class ContainerRegistryTestClass(AzureTestCase):
         return FakeTokenCredential()
 
     def create_registry_client(self, endpoint, **kwargs):
-        return ContainerRegistryClient(
-            endpoint=endpoint,
-            credential=self.get_credential(),
-            **kwargs
-        )
+        return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(), **kwargs)
 
     def create_repository_client(self, endpoint, name, **kwargs):
-        return ContainerRepositoryClient(
-            endpoint=endpoint,
-            repository=name,
-            credential=self.get_credential(),
-            **kwargs
-        )
+        return ContainerRepositoryClient(endpoint=endpoint, repository=name, credential=self.get_credential(), **kwargs)
 
     def assert_content_permission(self, content_perm, content_perm2):
         assert isinstance(content_perm, ContentPermissions)

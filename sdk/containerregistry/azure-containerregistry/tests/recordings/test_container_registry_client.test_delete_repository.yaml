@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 12:06:43 GMT
+      - Mon, 05 Apr 2021 14:38:10 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -73,7 +73,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 12:06:45 GMT
+      - Mon, 05 Apr 2021 14:38:11 GMT
       server:
       - openresty
       strict-transport-security:
@@ -111,7 +111,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 12:06:45 GMT
+      - Mon, 05 Apr 2021 14:38:12 GMT
       server:
       - openresty
       strict-transport-security:
@@ -156,7 +156,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 12:06:47 GMT
+      - Mon, 05 Apr 2021 14:38:13 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -203,7 +203,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 12:06:52 GMT
+      - Mon, 05 Apr 2021 14:38:18 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -243,7 +243,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 12:06:52 GMT
+      - Mon, 05 Apr 2021 14:38:19 GMT
       server:
       - openresty
       strict-transport-security:
@@ -251,7 +251,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.183333'
+      - '333.15'
     status:
       code: 200
       message: OK
@@ -281,7 +281,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 12:06:52 GMT
+      - Mon, 05 Apr 2021 14:38:19 GMT
       server:
       - openresty
       strict-transport-security:
@@ -289,7 +289,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.166667'
+      - '332.933333'
     status:
       code: 200
       message: OK
@@ -308,7 +308,7 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
-      string: '{"repositories":["alpine/git","debian","hello-world","library/hello-world","repo160e197b","repo2e8319c5","repo308e19dd","repo6ce51658","repo9b321760","repob7cc1bf8","repod2be1c42","repoeb7113db","to_be_deleted","ubuntu"]}
+      string: '{"repositories":["alpine/git","debian","hello-world","library/hello-world","repo160e197b","repo2e8319c5","repo308e19dd","repo6ce51658","repo9b321760","repo_set160e197b","repob7cc1bf8","repod2be1c42","repoeb7113db","ubuntu"]}
 
         '
     headers:
@@ -320,11 +320,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '222'
+      - '225'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 12:06:53 GMT
+      - Mon, 05 Apr 2021 14:38:19 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

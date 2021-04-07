@@ -118,13 +118,13 @@ class ContainerRegistryOperations(object):
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+            header_parameters['Accept'] = self._client._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
                 url = self.get_repositories.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+                    'url': self._client._serialize.url("self._config.url", self._client._config.url, 'str', skip_quote=True),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters

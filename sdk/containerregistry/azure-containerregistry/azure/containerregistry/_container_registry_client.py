@@ -4,13 +4,21 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import TYPE_CHECKING
-
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    ResourceNotFoundError,
+    ResourceExistsError,
+    HttpResponseError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 
 from ._base_client import ContainerRegistryBaseClient, TransportWrapper
 from ._container_repository_client import ContainerRepositoryClient
+from ._generated.models import AcrErrors
+from ._helpers import _parse_next_link
 from ._models import DeletedRepositoryResult
 
 if TYPE_CHECKING:
@@ -24,7 +32,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """Create a ContainerRegistryClient from an ACR endpoint and a credential
 
         :param str endpoint: An ACR endpoint
-        :param TokenCredential credential: The credential with which to authenticate
+        :param credential: The credential with which to authenticate
+        :type credential: :class:`~azure.core.credentials.TokenCredential`
         :returns: None
         :raises: None
         """
@@ -54,19 +63,106 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """List all repositories
 
         :keyword max: Maximum number of repositories to return
-        :type max: int
+        :paramtype max: int
         :keyword last: Query parameter for the last item in the previous call. Ensuing
             call will return values after last lexically
-        :type last: str
-        :keyword results_per_page: Numer of repositories to return in a single page
-        :type results_per_page: int
+        :paramtype last: str
+        :keyword results_per_page: Number of repositories to return per page
+        :paramtype results_per_page: int
         :return: ItemPaged[str]
         :rtype: :class:`~azure.core.paging.ItemPaged`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
-        return self._client.container_registry.get_repositories(
-            last=kwargs.pop("last", None), n=kwargs.pop("max", None), **kwargs
-        )
+        n = kwargs.pop("results_per_page", None)
+        last = kwargs.pop("last", None)
+
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Repositories"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+        accept = "application/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters["Accept"] = self._client._serialize.header(  # pylint: disable=protected-access
+                "accept", accept, "str"
+            )
+
+            if not next_link:
+                # Construct URL
+                url = "/acr/v1/_catalog"
+                path_format_arguments = {
+                    "url": self._client._serialize.url(  # pylint: disable=protected-access
+                        "self._config.url",
+                        self._client._config.url,  # pylint: disable=protected-access
+                        "str",
+                        skip_quote=True,
+                    ),
+                }
+                url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                if last is not None:
+                    query_parameters["last"] = self._client._serialize.query(  # pylint: disable=protected-access
+                        "last", last, "str"
+                    )
+                if n is not None:
+                    query_parameters["n"] = self._client._serialize.query(  # pylint: disable=protected-access
+                        "n", n, "int"
+                    )
+
+                request = self._client._client.get(  # pylint: disable=protected-access
+                    url, query_parameters, header_parameters
+                )
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                path_format_arguments = {
+                    "url": self._client._serialize.url(  # pylint: disable=protected-access
+                        "self._config.url",
+                        self._client._config.url,  # pylint: disable=protected-access
+                        "str",
+                        skip_quote=True,
+                    ),
+                }
+                url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
+                request = self._client._client.get(  # pylint: disable=protected-access
+                    url, query_parameters, header_parameters
+                )
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._client._deserialize(  # pylint: disable=protected-access
+                "Repositories", pipeline_response
+            )
+            list_of_elem = deserialized.repositories
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            link = None
+            if "Link" in pipeline_response.http_response.headers.keys():
+                link = _parse_next_link(pipeline_response.http_response.headers["Link"])
+            elif "link" in pipeline_response.http_response.headers.keys():  # python 2.7 turns this into lowercase
+                link = _parse_next_link(pipeline_response.http_response.headers["link"])
+            return link, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                error = self._client._deserialize.failsafe_deserialize(  # pylint: disable=protected-access
+                    AcrErrors, response
+                )
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     def get_repository_client(self, repository, **kwargs):
