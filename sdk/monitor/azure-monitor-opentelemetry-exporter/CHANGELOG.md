@@ -1,10 +1,13 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.0.0b4 (2021-04-06)
 
   **Features**
   - Add `from_connection_string` method to instantiate exporters
       ([#16818](https://github.com/Azure/azure-sdk-for-python/pull/16818))
+
+  - Remove support for Python 3.5
+      ([#17747](https://github.com/Azure/azure-sdk-for-python/pull/17747))
 
 ## 1.0.0b3 (2021-02-11)
 

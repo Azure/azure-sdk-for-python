@@ -163,6 +163,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
           "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/loadBalancers/" + LOAD_BALANCER_NAME + "/backendAddressPools/" + BACKEND_ADDRESS_POOL_NAME
         )
 
+    @unittest.skip("skip temporary")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_vmss_rolling_upgrades(self, resource_group):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
@@ -654,6 +655,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.virtual_machine_scale_sets.begin_delete(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
         result = result.result() 
 
+    @unittest.skip("The (VMRedeployment) need artificially generated,skip for now")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute(self, resource_group):
 

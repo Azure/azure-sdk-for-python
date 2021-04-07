@@ -139,7 +139,7 @@ class SqlPoolSchemasOperations(object):
         schema_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.Resource"
+        # type: (...) -> "_models.SqlPoolSchema"
         """Get Sql Pool schema.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -151,11 +151,11 @@ class SqlPoolSchemasOperations(object):
         :param schema_name: The name of the schema.
         :type schema_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Resource, or the result of cls(response)
-        :rtype: ~azure.mgmt.synapse.models.Resource
+        :return: SqlPoolSchema, or the result of cls(response)
+        :rtype: ~azure.mgmt.synapse.models.SqlPoolSchema
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Resource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SqlPoolSchema"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -190,7 +190,7 @@ class SqlPoolSchemasOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Resource', pipeline_response)
+        deserialized = self._deserialize('SqlPoolSchema', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
