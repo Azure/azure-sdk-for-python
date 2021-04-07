@@ -8,12 +8,8 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
-      Date:
-      - Wed, 07 Apr 2021 18:26:53 GMT
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-return-client-request-id:
-      - 'true'
     method: GET
     uri: https://sanitized.communication.azure.com/phoneNumbers/sanitized?api-version=2021-03-07
   response:
@@ -28,15 +24,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 18:26:53 GMT
+      - Wed, 07 Apr 2021 18:26:55 GMT
       ms-cv:
-      - Fm7esbS6ykOT9mE5oXl6kg.0
+      - jD98+LYr7kiS4MN9Jd9l4g.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 1350ms
+      - 1208ms
     status:
       code: 200
       message: OK
