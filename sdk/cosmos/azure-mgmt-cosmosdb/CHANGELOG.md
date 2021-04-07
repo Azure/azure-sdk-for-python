@@ -58,6 +58,13 @@
 
   - Model DatabaseAccountCreateUpdateParameters has a new signature
 
+## 3.1.0 (2021-04-07)
+
+**Features**
+
+  - Model DatabaseAccountUpdateParameters has a new parameter default_identity
+  - Model DatabaseAccountGetResults has a new parameter default_identity
+
 ## 3.0.0 (2021-02-18)
 
 **Features**

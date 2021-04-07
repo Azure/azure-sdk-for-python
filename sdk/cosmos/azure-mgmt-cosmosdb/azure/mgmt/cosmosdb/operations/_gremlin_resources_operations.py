@@ -27,7 +27,7 @@ class GremlinResourcesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2021-03-01-preview".
+    :ivar api_version: The API version to use for this operation. Constant value: "2021-03-15".
     """
 
     models = models
@@ -37,7 +37,7 @@ class GremlinResourcesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2021-03-01-preview"
+        self.api_version = "2021-03-15"
 
         self.config = config
 
@@ -579,9 +579,7 @@ class GremlinResourcesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseUpdatedFormatException(self._deserialize, response)
 
         deserialized = None
 
@@ -618,7 +616,8 @@ class GremlinResourcesOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseUpdatedFormatException<azure.mgmt.cosmosdb.models.ErrorResponseUpdatedFormatException>`
         """
         raw_result = self._migrate_gremlin_database_to_autoscale_initial(
             resource_group_name=resource_group_name,
@@ -679,9 +678,7 @@ class GremlinResourcesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseUpdatedFormatException(self._deserialize, response)
 
         deserialized = None
 
@@ -718,7 +715,8 @@ class GremlinResourcesOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseUpdatedFormatException<azure.mgmt.cosmosdb.models.ErrorResponseUpdatedFormatException>`
         """
         raw_result = self._migrate_gremlin_database_to_manual_throughput_initial(
             resource_group_name=resource_group_name,
@@ -1306,9 +1304,7 @@ class GremlinResourcesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseUpdatedFormatException(self._deserialize, response)
 
         deserialized = None
 
@@ -1347,7 +1343,8 @@ class GremlinResourcesOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseUpdatedFormatException<azure.mgmt.cosmosdb.models.ErrorResponseUpdatedFormatException>`
         """
         raw_result = self._migrate_gremlin_graph_to_autoscale_initial(
             resource_group_name=resource_group_name,
@@ -1410,9 +1407,7 @@ class GremlinResourcesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseUpdatedFormatException(self._deserialize, response)
 
         deserialized = None
 
@@ -1451,7 +1446,8 @@ class GremlinResourcesOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseUpdatedFormatException<azure.mgmt.cosmosdb.models.ErrorResponseUpdatedFormatException>`
         """
         raw_result = self._migrate_gremlin_graph_to_manual_throughput_initial(
             resource_group_name=resource_group_name,
