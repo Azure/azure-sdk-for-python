@@ -654,6 +654,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.virtual_machine_scale_sets.begin_delete(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
         result = result.result() 
 
+    @unittest.skip("The (VMRedeployment) need artificially generated,skip for now")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute(self, resource_group):
 
