@@ -44,15 +44,15 @@ class AsyncARMChallengeAuthenticationPolicy(AsyncChallengeAuthenticationPolicy):
     """
 
     # pylint:disable=unused-argument
-    async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse", challenge: str) -> bool:
+    async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
         """Authorize request according to an ARM authentication challenge
 
         :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
         :param ~azure.core.pipeline.PipelineResponse response: the resource provider's response
-        :param str challenge: the response's WWW-Authenticate header, unparsed. It may contain multiple challenges.
         :returns: a bool indicating whether the policy should send the request
         """
 
+        challenge = response.http_response.headers.get("WWW-Authenticate")
         claims = _parse_claims_challenge(challenge)
         if claims:
             await self.authorize_request(request, *self._scopes, claims=claims)
