@@ -107,22 +107,20 @@ class AsyncChallengeAuthenticationPolicy(AsyncHTTPPolicy):
 
         if response.http_response.status_code == 401:
             self._token = None  # any cached token is invalid
-            challenge = response.http_response.headers.get("WWW-Authenticate")
-            if challenge:
-                request_authorized = await self.on_challenge(request, response, challenge)
+            if "WWW-Authenticate" in response.http_response.headers:
+                request_authorized = await self.on_challenge(request, response)
                 if request_authorized:
                     response = await self.next.send(request)
 
         return response
 
-    async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse", challenge: str) -> bool:
+    async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
         """Authorize request according to an authentication challenge
 
         This method is called when the resource provider responds 401 with a WWW-Authenticate header.
 
         :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
         :param ~azure.core.pipeline.PipelineResponse response: the resource provider's response
-        :param str challenge: response's WWW-Authenticate header, unparsed. It may contain multiple challenges.
         :returns: a bool indicating whether the policy should send the request
         """
         # pylint:disable=unused-argument,no-self-use
