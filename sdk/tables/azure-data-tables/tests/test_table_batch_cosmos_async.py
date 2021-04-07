@@ -52,7 +52,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
                 await self.ts.create_table(self.table_name)
             except ResourceExistsError:
                 pass
-        self.test_tables = []
+        self.test_tables = [self.table_name]
 
     async def _tear_down(self):
         if self.is_live:
@@ -66,8 +66,9 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
                     await self.ts.delete_table(table_name)
                 except:
                     pass
-            sleep(SLEEP_DELAY)
         await self.table.close()
+        self.test_tables = []
+        self.sleep(SLEEP_DELAY)
 
     #--Helpers-----------------------------------------------------------------
 
@@ -195,23 +196,21 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
             sent_entity = transaction_result.get_entity(entity.RowKey)
+
             assert sent_entity is not None
-
             e = await self.table.get_entity(row_key=entity.RowKey, partition_key=entity.PartitionKey)
-
             assert e.test ==  entity.test.value
             assert e.test2 ==  entity.test2
             assert e.test3 ==  entity.test3
             assert e.test4 ==  entity.test4.value
-
             assert sent_entity['test'] ==  entity.test.value
             assert sent_entity['test2'] ==  entity.test2
             assert sent_entity['test3'] ==  entity.test3
             assert sent_entity['test4'] ==  entity.test4.value
+
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
     @CosmosPreparer()
     async def test_batch_single_update(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -243,11 +242,10 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             result = await self.table.get_entity(row_key=entity.RowKey, partition_key=entity.PartitionKey)
             assert result.PartitionKey ==  u'001'
             assert result.RowKey ==  u'batch_insert'
-            assert result.test3.value ==  5
+            assert result.test3 ==  5
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
     @CosmosPreparer()
     async def test_batch_update(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -265,7 +263,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self.table.create_entity(entity)
 
             entity = await self.table.get_entity(u'001', u'batch_update')
-            assert 3 ==  entity.test3.value
+            assert 3 ==  entity.test3
             entity.test2 = u'value1'
 
             batch = self.table.create_batch()
@@ -276,13 +274,12 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             self._assert_valid_batch_transaction(transaction_result, 1)
             assert transaction_result.get_entity(entity.RowKey) is not None
             result = await self.table.get_entity('001', 'batch_update')
-            assert 'value1' ==  result.test2.value
+            assert 'value1' ==  result.test2
             assert entity.PartitionKey ==  u'001'
             assert entity.RowKey ==  u'batch_update'
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
     @CosmosPreparer()
     async def test_batch_merge(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -315,8 +312,8 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             assert transaction_result.get_entity(entity.RowKey) is not None
 
             resp_entity = await self.table.get_entity(partition_key=u'001', row_key=u'batch_merge')
-            assert entity.test2 ==  resp_entity.test2.value
-            assert 1234567890 ==  resp_entity.test4.value
+            assert entity.test2 ==  resp_entity.test2
+            assert 1234567890 ==  resp_entity.test4
             assert entity.PartitionKey ==  resp_entity.PartitionKey
             assert entity.RowKey ==  resp_entity.RowKey
         finally:
@@ -379,7 +376,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
     @CosmosPreparer()
     async def test_batch_insert_replace(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -405,12 +401,11 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
 
             entity = await self.table.get_entity('001', 'batch_insert_replace')
             assert entity is not None
-            assert 'value' ==  entity.test2.value
-            assert 1234567890 ==  entity.test4.value
+            assert 'value' ==  entity.test2
+            assert 1234567890 ==  entity.test4
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
     @CosmosPreparer()
     async def test_batch_insert_merge(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -435,8 +430,8 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             assert transaction_result.get_entity(entity.RowKey) is not None
             entity = await self.table.get_entity('001', 'batch_insert_merge')
             assert entity is not None
-            assert 'value' ==  entity.test2.value
-            assert 1234567890 ==  entity.test4.value
+            assert 'value' ==  entity.test2
+            assert 1234567890 ==  entity.test4
         finally:
             await self._tear_down()
 
@@ -487,7 +482,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             transaction_count = 0
 
             batch = self.table.create_batch()
-            for i in range(20):
+            for i in range(100):
                 entity.RowKey = str(i)
                 batch.create_entity(entity)
                 transaction_count += 1
@@ -505,11 +500,10 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
 
             # Assert
             assert entities is not None
-            assert transaction_count ==  length
+            assert 100 ==  length
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
     @CosmosPreparer()
     async def test_batch_all_operations_together(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -581,7 +575,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
     @CosmosPreparer()
     async def test_batch_all_operations_together_context_manager(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -630,6 +623,8 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
+    # The same row operations do not fail on Cosmos
+    @pytest.mark.xfail
     @CosmosPreparer()
     async def test_batch_same_row_operations_fail(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -644,6 +639,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             entity = self._create_updated_entity_dict(
                 '001', 'batch_negative_1')
             batch.update_entity(entity)
+
             entity = self._create_random_entity_dict(
                 '001', 'batch_negative_1')
             batch.update_entity(entity)
@@ -695,6 +691,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
                     entity.PartitionKey = 'large'
                     entity.RowKey = 'item{0}'.format(i)
                     batch.create_entity(entity)
+                await self.table.send_batch(batch)
 
             # Assert
         finally:
@@ -717,6 +714,27 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             # Assert
         finally:
             await self._tear_down()
+
+    @CosmosPreparer()
+    async def test_new_invalid_key(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        invalid_key = tables_primary_cosmos_account_key[0:-6] + "==" # cut off a bit from the end to invalidate
+        key_list = list(tables_primary_cosmos_account_key)
+
+        key_list[-6:] = list("0000==")
+        invalid_key = ''.join(key_list)
+
+        self.ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "table"), invalid_key)
+        self.table_name = self.get_resource_name('uttable')
+        self.table = self.ts.get_table_client(self.table_name)
+
+        entity = self._create_random_entity_dict('001', 'batch_negative_1')
+
+        batch = self.table.create_batch()
+        batch.create_entity(entity)
+
+        with pytest.raises(ClientAuthenticationError):
+            resp = await self.table.send_batch(batch)
 
     @CosmosPreparer()
     async def test_new_delete_nonexistent_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):

@@ -296,8 +296,8 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             batch = self.table.create_batch()
             batch.update_entity(
                 sent_entity,
-                etag=etag,
-                match_condition=MatchConditions.IfNotModified,
+                # etag=etag,
+                # match_condition=MatchConditions.IfNotModified,
                 mode=UpdateMode.REPLACE
             )
             transaction_result = self.table.send_batch(batch)
@@ -307,9 +307,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             assert transaction_result.get_entity(sent_entity['RowKey']) is not None
 
             entity = self.table.get_entity(partition_key=entity['PartitionKey'], row_key=entity['RowKey'])
-            with pytest.raises(AssertionError):
-                # The replace is not deleting properties
-                self._assert_updated_entity(entity)
+            self._assert_updated_entity(entity)
         finally:
             self._tear_down()
 

@@ -360,8 +360,6 @@ class TableBatchOperations(object):
         request = self._client._client.put(  # pylint: disable=protected-access
             url, query_parameters, header_parameters, **body_content_kwargs
         )
-        if _is_cosmos_endpoint(url):
-            _transform_patch_to_cosmos_post(request)
         self._requests.append(request)
 
     _batch_update_entity.metadata = {
