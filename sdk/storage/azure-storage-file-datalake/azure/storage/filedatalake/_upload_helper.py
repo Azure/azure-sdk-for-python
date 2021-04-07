@@ -68,7 +68,7 @@ def upload_datalake_file(  # pylint: disable=unused-argument
             modified_access_conditions.if_unmodified_since = None
 
         use_original_upload_path = file_settings.use_byte_buffer or \
-            validate_content or chunk_size < file_settings.min_large_block_upload_threshold or \
+            validate_content or chunk_size < file_settings.min_large_chunk_upload_threshold or \
             hasattr(stream, 'seekable') and not stream.seekable() or \
             not hasattr(stream, 'seek') or not hasattr(stream, 'tell')
 

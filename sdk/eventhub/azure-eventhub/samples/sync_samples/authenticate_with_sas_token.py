@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Example to demonstrate utilizing SAS (Shared Access Signature) tokens to authenticate with EventHub
+Example to demonstrate utilizing SAS (Shared Access Signature) tokens to authenticate with Event Hubs.
 """
 
 # pylint: disable=C0111
@@ -34,9 +34,6 @@ def generate_sas_token(uri, sas_name, sas_value, token_ttl):
     signature = url_parse_quote(base64.b64encode(signed_hmac_sha256.digest()))
     return 'SharedAccessSignature sr={}&sig={}&se={}&skn={}'.format(uri, signature, expiry, sas_name)
 
-def on_event(context, event):
-    print(context.partition_id, ":", event)
-
 
 class CustomizedSASCredential(object):
     def __init__(self, token, expiry):
@@ -59,7 +56,6 @@ class CustomizedSASCredential(object):
 # Target namespace and hub must also be specified.  Consumer group is set to default unless required otherwise.
 FULLY_QUALIFIED_NAMESPACE = os.environ['EVENT_HUB_HOSTNAME']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
-CONSUMER_GROUP = "$Default"
 
 # The following part creates a SAS token. Users can use any way to create a SAS token.
 SAS_POLICY = os.environ['EVENT_HUB_SAS_POLICY']

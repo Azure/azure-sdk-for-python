@@ -108,6 +108,78 @@ def is_retry(response, mode):
         return True
     return False
 
+def set_next_host_location(settings, request):
+    """
+    A function which sets the next host location on the request, if applicable.
+
+    :param ~azure.storage.models.RetryContext context:
+        The retry context containing the previous host location and the request
+        to evaluate and possibly modify.
+    """
+    if settings["hosts"] and all(settings["hosts"].values()):
+        url = urlparse(request.url)
+        # If there's more than one possible location, retry to the alternative
+        if settings["mode"] == LocationMode.PRIMARY:
+            settings["mode"] = LocationMode.SECONDARY
+        else:
+            settings["mode"] = LocationMode.PRIMARY
+        updated = url._replace(netloc=settings["hosts"].get(settings["mode"]))
+        request.url = updated.geturl()
+
+def increment(settings, request, response=None, error=None):
+    """Increment the retry counters.
+
+    :param Any request:
+    :param dict settings:
+    :param Any response: A pipeline response object.
+    :param Any error: An error encountered during the request, or
+        None if the response was received successfully.
+    :keyword callable cls: A custom type or function that will be passed the direct response
+    :return: Whether the retry attempts are exhausted.
+    :rtype: None
+    """
+    settings["total"] -= 1
+
+    if error and isinstance(error, ServiceRequestError):
+        # Errors when we're fairly sure that the server did not receive the
+        # request, so it should be safe to retry.
+        settings["connect"] -= 1
+        settings["history"].append(RequestHistory(request, error=error))
+
+    elif error and isinstance(error, ServiceResponseError):
+        # Errors that occur after the request has been started, so we should
+        # assume that the server began processing it.
+        settings["read"] -= 1
+        settings["history"].append(RequestHistory(request, error=error))
+
+    else:
+        # Incrementing because of a server error like a 500 in
+        # status_forcelist and a the given method is in the whitelist
+        if response:
+            settings["status"] -= 1
+            settings["history"].append(
+                RequestHistory(request, http_response=response)
+            )
+
+    if not is_exhausted(settings):
+        if request.method not in ["PUT"] and settings["retry_secondary"]:
+            set_next_host_location(settings, request)
+
+        # rewind the request body if it is a stream
+        if request.body and hasattr(request.body, "read"):
+            # no position was saved, then retry would not work
+            if settings["body_position"] is None:
+                return False
+            try:
+                # attempt to rewind the body to the initial position
+                request.body.seek(settings["body_position"], SEEK_SET)
+            except (UnsupportedOperation, ValueError):
+                # if body is not seekable, then retry would not work
+                return False
+        settings["count"] += 1
+        return True
+    return False
+
 
 def urljoin(base_url, stub_url):
     parsed = urlparse(base_url)
@@ -464,24 +536,6 @@ class TablesRetryPolicy(RetryPolicy):
         random_range_end = backoff + self.random_jitter_range
         return random_generator.uniform(random_range_start, random_range_end)
 
-    def _set_next_host_location(self, settings, request):  # pylint: disable=no-self-use
-        """
-        A function which sets the next host location on the request, if applicable.
-
-        :param ~azure.storage.models.RetryContext context:
-            The retry context containing the previous host location and the request
-            to evaluate and possibly modify.
-        """
-        if settings["hosts"] and all(settings["hosts"].values()):
-            url = urlparse(request.url)
-            # If there's more than one possible location, retry to the alternative
-            if settings["mode"] == LocationMode.PRIMARY:
-                settings["mode"] = LocationMode.SECONDARY
-            else:
-                settings["mode"] = LocationMode.PRIMARY
-            updated = url._replace(netloc=settings["hosts"].get(settings["mode"]))
-            request.url = updated.geturl()
-
     def configure_retries(
         self, request
     ):  # pylint: disable=no-self-use, arguments-differ
@@ -530,63 +584,6 @@ class TablesRetryPolicy(RetryPolicy):
             return
         transport.sleep(backoff)
 
-    def increment(
-        self, settings, request, response=None, error=None, **kwargs
-    ):  # pylint: disable=unused-argument, arguments-differ
-        # type: (...)->None
-        """Increment the retry counters.
-
-        :param Any request:
-        :param dict settings:
-        :param Any response: A pipeline response object.
-        :param Any error: An error encountered during the request, or
-            None if the response was received successfully.
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Whether the retry attempts are exhausted.
-        :rtype: None
-        """
-        settings["total"] -= 1
-
-        if error and isinstance(error, ServiceRequestError):
-            # Errors when we're fairly sure that the server did not receive the
-            # request, so it should be safe to retry.
-            settings["connect"] -= 1
-            settings["history"].append(RequestHistory(request, error=error))
-
-        elif error and isinstance(error, ServiceResponseError):
-            # Errors that occur after the request has been started, so we should
-            # assume that the server began processing it.
-            settings["read"] -= 1
-            settings["history"].append(RequestHistory(request, error=error))
-
-        else:
-            # Incrementing because of a server error like a 500 in
-            # status_forcelist and a the given method is in the whitelist
-            if response:
-                settings["status"] -= 1
-                settings["history"].append(
-                    RequestHistory(request, http_response=response)
-                )
-
-        if not is_exhausted(settings):
-            if request.method not in ["PUT"] and settings["retry_secondary"]:
-                self._set_next_host_location(settings, request)
-
-            # rewind the request body if it is a stream
-            if request.body and hasattr(request.body, "read"):
-                # no position was saved, then retry would not work
-                if settings["body_position"] is None:
-                    return False
-                try:
-                    # attempt to rewind the body to the initial position
-                    request.body.seek(settings["body_position"], SEEK_SET)
-                except (UnsupportedOperation, ValueError):
-                    # if body is not seekable, then retry would not work
-                    return False
-            settings["count"] += 1
-            return True
-        return False
-
     def send(self, request):
         """
         :param Any request:
@@ -599,7 +596,7 @@ class TablesRetryPolicy(RetryPolicy):
             try:
                 response = self.next.send(request)
                 if is_retry(response, retry_settings["mode"]):
-                    retries_remaining = self.increment(
+                    retries_remaining = increment(
                         retry_settings,
                         request=request.http_request,
                         response=response.http_response,
@@ -615,7 +612,7 @@ class TablesRetryPolicy(RetryPolicy):
                         continue
                 break
             except AzureError as err:
-                retries_remaining = self.increment(
+                retries_remaining = increment(
                     retry_settings, request=request.http_request, error=err
                 )
                 if retries_remaining:
