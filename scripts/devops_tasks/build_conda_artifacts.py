@@ -102,7 +102,7 @@ def create_sdist_skeleton(build_directory, artifact_name, common_root):
         create_namespace_extension(ns_dir)
 
     # get all the directories in the build folder, we will pull in all of them
-    pkgs_for_consumption = get_pkgs_from_build_directory(build_directory)
+    pkgs_for_consumption = get_pkgs_from_build_directory(build_directory, artifact_name)
 
     print("I see the following packages in the build directory")
     print(pkgs_for_consumption)
