@@ -152,6 +152,11 @@ class SearchField(msrest.serialization.Model):
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop",
      "whitespace".
     :type index_analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
+    :param normalizer: The name of the normalizer to use for the field. This option can be used
+     only with fields with filterable, sortable, or facetable enabled. Once the normalizer is
+     chosen, it cannot be changed for the field. Must be null for complex fields. Possible values
+     include: "asciifolding", "elision", "lowercase", "standard", "uppercase".
+    :type normalizer: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
     :param synonym_map_names: A list of the names of synonym maps to associate with this field. This
      option can be used only with searchable fields. Currently only one synonym map per field is
      supported. Assigning a synonym map to a field ensures that query terms targeting that field are
@@ -180,6 +185,7 @@ class SearchField(msrest.serialization.Model):
         'analyzer_name': {'key': 'analyzerName', 'type': 'str'},
         'search_analyzer_name': {'key': 'searchAnalyzerName', 'type': 'str'},
         'index_analyzer_name': {'key': 'indexAnalyzerName', 'type': 'str'},
+        'normalizer': {'key': 'normalizer', 'type': 'str'},
         'synonym_map_names': {'key': 'synonymMapNames', 'type': '[str]'},
         'fields': {'key': 'fields', 'type': '[SearchField]'},
     }
@@ -200,6 +206,7 @@ class SearchField(msrest.serialization.Model):
         self.analyzer_name = kwargs.get('analyzer_name', None)
         self.search_analyzer_name = kwargs.get('search_analyzer_name', None)
         self.index_analyzer_name = kwargs.get('index_analyzer_name', None)
+        self.normalizer = kwargs.get('normalizer', None)
         self.synonym_map_names = kwargs.get('synonym_map_names', None)
         self.fields = kwargs.get('fields', None)
 
@@ -219,6 +226,7 @@ class SearchField(msrest.serialization.Model):
             analyzer=self.analyzer_name,
             search_analyzer=self.search_analyzer_name,
             index_analyzer=self.index_analyzer_name,
+            normalizer=self.normalizer,
             synonym_maps=self.synonym_map_names,
             fields=fields
         )
@@ -231,6 +239,10 @@ class SearchField(msrest.serialization.Model):
         fields = [SearchField._from_generated(x) for x in search_field.fields] \
             if search_field.fields else None
         hidden = not search_field.retrievable if search_field.retrievable is not None else None
+        try:
+            normalizers = search_field.normalizers
+        except AttributeError:
+            normalizers = None
         return cls(
             name=search_field.name,
             type=search_field.type,
@@ -243,6 +255,7 @@ class SearchField(msrest.serialization.Model):
             analyzer_name=search_field.analyzer,
             search_analyzer_name=search_field.search_analyzer,
             index_analyzer_name=search_field.index_analyzer,
+            normalizers=normalizers,
             synonym_map_names=search_field.synonym_maps,
             fields=fields
         )
@@ -481,7 +494,7 @@ class SearchIndex(msrest.serialization.Model):
     :param cors_options: Options to control Cross-Origin Resource Sharing (CORS) for the index.
     :type cors_options: ~azure.search.documents.indexes.models.CorsOptions
     :param suggesters: The suggesters for the index.
-    :type suggesters: list[~azure.search.documents.indexes.models.Suggester]
+    :type suggesters: list[~azure.search.documents.indexes.models.SearchSuggester]
     :param analyzers: The analyzers for the index.
     :type analyzers: list[~azure.search.documents.indexes.models.LexicalAnalyzer]
     :param tokenizers: The tokenizers for the index.
@@ -490,6 +503,9 @@ class SearchIndex(msrest.serialization.Model):
     :type token_filters: list[~azure.search.documents.indexes.models.TokenFilter]
     :param char_filters: The character filters for the index.
     :type char_filters: list[~azure.search.documents.indexes.models.CharFilter]
+    :param normalizers: The normalizers for the index.
+    :type normalizers:
+     list[~azure.search.documents.indexes.models.LexicalNormalizer]
     :param encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your data when you
      want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive
@@ -503,7 +519,7 @@ class SearchIndex(msrest.serialization.Model):
      documents matching a search query. The similarity algorithm can only be defined at index
      creation time and cannot be modified on existing indexes. If null, the ClassicSimilarity
      algorithm is used.
-    :type similarity: ~azure.search.documents.indexes.models.Similarity
+    :type similarity: ~azure.search.documents.indexes.models.SimilarityAlgorithm
     :param e_tag: The ETag of the index.
     :type e_tag: str
     """
@@ -524,6 +540,7 @@ class SearchIndex(msrest.serialization.Model):
         'tokenizers': {'key': 'tokenizers', 'type': '[LexicalTokenizer]'},
         'token_filters': {'key': 'tokenFilters', 'type': '[TokenFilter]'},
         'char_filters': {'key': 'charFilters', 'type': '[CharFilter]'},
+        'normalizers': {'key': 'normalizers', 'type': '[LexicalNormalizer]'},
         'encryption_key': {'key': 'encryptionKey', 'type': 'SearchResourceEncryptionKey'},
         'similarity': {'key': 'similarity', 'type': 'SimilarityAlgorithm'},
         'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
@@ -544,6 +561,7 @@ class SearchIndex(msrest.serialization.Model):
         self.tokenizers = kwargs.get('tokenizers', None)
         self.token_filters = kwargs.get('token_filters', None)
         self.char_filters = kwargs.get('char_filters', None)
+        self.normalizers = kwargs.get('normalizers', None)
         self.encryption_key = kwargs.get('encryption_key', None)
         self.similarity = kwargs.get('similarity', None)
         self.e_tag = kwargs.get('e_tag', None)
@@ -580,6 +598,7 @@ class SearchIndex(msrest.serialization.Model):
             tokenizers=tokenizers,
             token_filters=self.token_filters,
             char_filters=self.char_filters,
+            normalizers=self.normalizers,
             # pylint:disable=protected-access
             encryption_key=self.encryption_key._to_generated() if self.encryption_key else None,
             similarity=self.similarity,
@@ -610,6 +629,10 @@ class SearchIndex(msrest.serialization.Model):
             fields = [SearchField._from_generated(x) for x in search_index.fields]  # pylint:disable=protected-access
         else:
             fields = None
+        try:
+            normalizers = search_index.normalizers
+        except AttributeError:
+            normalizers = None
         return cls(
             name=search_index.name,
             fields=fields,
@@ -621,6 +644,7 @@ class SearchIndex(msrest.serialization.Model):
             tokenizers=tokenizers,
             token_filters=search_index.token_filters,
             char_filters=search_index.char_filters,
+            normalizers=normalizers,
             # pylint:disable=protected-access
             encryption_key=SearchResourceEncryptionKey._from_generated(search_index.encryption_key),
             similarity=search_index.similarity,
@@ -644,6 +668,7 @@ def pack_search_field(search_field):
         analyzer_name = search_field.get("analyzer_name")
         search_analyzer_name = search_field.get("search_analyzer_name")
         index_analyzer_name = search_field.get("index_analyzer_name")
+        normalizer = search_field.get("normalizer")
         synonym_map_names = search_field.get("synonym_map_names")
         fields = search_field.get("fields")
         fields = [pack_search_field(x) for x in fields] if fields else None
@@ -659,6 +684,7 @@ def pack_search_field(search_field):
             analyzer=analyzer_name,
             search_analyzer=search_analyzer_name,
             index_analyzer=index_analyzer_name,
+            normalizer=normalizer,
             synonym_maps=synonym_map_names,
             fields=fields
         )

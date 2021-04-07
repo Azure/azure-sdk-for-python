@@ -23,6 +23,7 @@ from .. import CredentialUnavailableError
 from .._authn_client import AuthnClient
 from .._constants import Endpoints, EnvironmentVariables
 from .._internal.decorators import log_get_token
+from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.user_agent import USER_AGENT
 
 try:
@@ -156,7 +157,7 @@ class _ManagedIdentityBase(object):
     }
 
 
-class ImdsCredential(_ManagedIdentityBase):
+class ImdsCredential(_ManagedIdentityBase, GetTokenMixin):
     """Authenticates with a managed identity via the IMDS endpoint.
 
     :keyword str client_id: ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
@@ -167,16 +168,12 @@ class ImdsCredential(_ManagedIdentityBase):
         super(ImdsCredential, self).__init__(endpoint=Endpoints.IMDS, client_cls=AuthnClient, **kwargs)
         self._endpoint_available = None  # type: Optional[bool]
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+    def _acquire_token_silently(self, *scopes):
+        # type: (*str) -> Optional[AccessToken]
+        return self._client.get_cached_token(scopes)
+
+    def _request_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
-        """Request an access token for `scopes`.
-
-        This method is called automatically by Azure SDK clients.
-
-        :param str scopes: desired scope for the access token. This credential allows only one scope per request.
-        :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.identity.CredentialUnavailableError: the IMDS endpoint is unreachable
-        """
         if self._endpoint_available is None:
             # Lacking another way to determine whether the IMDS endpoint is listening,
             # we send a request it would immediately reject (missing a required header),
@@ -199,18 +196,6 @@ class ImdsCredential(_ManagedIdentityBase):
         if len(scopes) != 1:
             raise ValueError("This credential requires exactly one scope per token request.")
 
-        token = self._client.get_cached_token(scopes)
-        if not token:
-            token = self._refresh_token(*scopes)
-        elif self._client.should_refresh(token):
-            try:
-                token = self._refresh_token(*scopes)
-            except Exception:  # pylint: disable=broad-except
-                pass
-
-        return token
-
-    def _refresh_token(self, *scopes):
         resource = scopes[0]
         if resource.endswith("/.default"):
             resource = resource[: -len("/.default")]

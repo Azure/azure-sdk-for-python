@@ -181,7 +181,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         if self._local_provider.supports(KeyOperation.encrypt, algorithm):
             raise_if_time_invalid(self._not_before, self._expires_on)
             try:
-                return self._local_provider.encrypt(algorithm, plaintext)
+                return self._local_provider.encrypt(algorithm, plaintext, iv=iv)
             except Exception as ex:  # pylint:disable=broad-except
                 _LOGGER.warning("Local encrypt operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
                 if self._jwk:
@@ -240,7 +240,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
         if self._local_provider.supports(KeyOperation.decrypt, algorithm):
             try:
-                return self._local_provider.decrypt(algorithm, ciphertext)
+                return self._local_provider.decrypt(algorithm, ciphertext, iv=iv)
             except Exception as ex:  # pylint:disable=broad-except
                 _LOGGER.warning("Local decrypt operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
                 if self._jwk:

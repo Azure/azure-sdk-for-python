@@ -41,6 +41,14 @@ class ContentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Content Type 'image/tiff'.
     IMAGE_TIFF = "image/tiff"
 
+class FieldValueGender(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Gender value: M, F, or X.
+    """
+
+    M = "M"
+    F = "F"
+    X = "X"
+
 class FieldValueSelectionMark(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Selection mark value.
     """
@@ -61,6 +69,8 @@ class FieldValueType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ARRAY = "array"
     OBJECT = "object"
     SELECTION_MARK = "selectionMark"
+    GENDER = "gender"
+    COUNTRY = "country"
 
 class KeyValueType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Semantic data type of the key value element.

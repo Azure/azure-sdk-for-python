@@ -223,11 +223,12 @@ class TableClient(TableClientBase):
                 :dedent: 8
                 :caption: Creating a table from the TableClient object
         """
-        table_properties = TableProperties(table_name=self.table_name, **kwargs)
+        table_properties = TableProperties(table_name=self.table_name)
         try:
             metadata, _ = self._client.table.create(
                 table_properties,
                 cls=kwargs.pop("cls", _return_headers_and_deserialized),
+                **kwargs
             )
             return _trim_service_metadata(metadata)
         except HttpResponseError as error:

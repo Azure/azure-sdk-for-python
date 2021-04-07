@@ -7,6 +7,13 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AutoScaleVCore
+    from ._models_py3 import AutoScaleVCoreListResult
+    from ._models_py3 import AutoScaleVCoreMutableProperties
+    from ._models_py3 import AutoScaleVCoreProperties
+    from ._models_py3 import AutoScaleVCoreSku
+    from ._models_py3 import AutoScaleVCoreUpdateParameters
+    from ._models_py3 import CapacitySku
     from ._models_py3 import CheckCapacityNameAvailabilityParameters
     from ._models_py3 import CheckCapacityNameAvailabilityResult
     from ._models_py3 import DedicatedCapacities
@@ -16,15 +23,23 @@ try:
     from ._models_py3 import DedicatedCapacityProperties
     from ._models_py3 import DedicatedCapacityUpdateParameters
     from ._models_py3 import ErrorResponse
+    from ._models_py3 import ErrorResponseError
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
     from ._models_py3 import Resource
-    from ._models_py3 import ResourceSku
     from ._models_py3 import SkuDetailsForExistingResource
     from ._models_py3 import SkuEnumerationForExistingResourceResult
     from ._models_py3 import SkuEnumerationForNewResourceResult
+    from ._models_py3 import SystemData
 except (SyntaxError, ImportError):
+    from ._models import AutoScaleVCore  # type: ignore
+    from ._models import AutoScaleVCoreListResult  # type: ignore
+    from ._models import AutoScaleVCoreMutableProperties  # type: ignore
+    from ._models import AutoScaleVCoreProperties  # type: ignore
+    from ._models import AutoScaleVCoreSku  # type: ignore
+    from ._models import AutoScaleVCoreUpdateParameters  # type: ignore
+    from ._models import CapacitySku  # type: ignore
     from ._models import CheckCapacityNameAvailabilityParameters  # type: ignore
     from ._models import CheckCapacityNameAvailabilityResult  # type: ignore
     from ._models import DedicatedCapacities  # type: ignore
@@ -34,22 +49,34 @@ except (SyntaxError, ImportError):
     from ._models import DedicatedCapacityProperties  # type: ignore
     from ._models import DedicatedCapacityUpdateParameters  # type: ignore
     from ._models import ErrorResponse  # type: ignore
+    from ._models import ErrorResponseError  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
     from ._models import Resource  # type: ignore
-    from ._models import ResourceSku  # type: ignore
     from ._models import SkuDetailsForExistingResource  # type: ignore
     from ._models import SkuEnumerationForExistingResourceResult  # type: ignore
     from ._models import SkuEnumerationForNewResourceResult  # type: ignore
+    from ._models import SystemData  # type: ignore
 
 from ._power_bi_dedicated_enums import (
-    ProvisioningState,
-    SkuTier,
+    CapacityProvisioningState,
+    CapacitySkuTier,
+    IdentityType,
+    Mode,
     State,
+    VCoreProvisioningState,
+    VCoreSkuTier,
 )
 
 __all__ = [
+    'AutoScaleVCore',
+    'AutoScaleVCoreListResult',
+    'AutoScaleVCoreMutableProperties',
+    'AutoScaleVCoreProperties',
+    'AutoScaleVCoreSku',
+    'AutoScaleVCoreUpdateParameters',
+    'CapacitySku',
     'CheckCapacityNameAvailabilityParameters',
     'CheckCapacityNameAvailabilityResult',
     'DedicatedCapacities',
@@ -59,15 +86,20 @@ __all__ = [
     'DedicatedCapacityProperties',
     'DedicatedCapacityUpdateParameters',
     'ErrorResponse',
+    'ErrorResponseError',
     'Operation',
     'OperationDisplay',
     'OperationListResult',
     'Resource',
-    'ResourceSku',
     'SkuDetailsForExistingResource',
     'SkuEnumerationForExistingResourceResult',
     'SkuEnumerationForNewResourceResult',
-    'ProvisioningState',
-    'SkuTier',
+    'SystemData',
+    'CapacityProvisioningState',
+    'CapacitySkuTier',
+    'IdentityType',
+    'Mode',
     'State',
+    'VCoreProvisioningState',
+    'VCoreSkuTier',
 ]

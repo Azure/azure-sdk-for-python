@@ -103,8 +103,9 @@ stages:
       - stage: ${{ cloud.key }}_${{ parameters.JobName }}
         dependsOn: []
         jobs:
-        - template: /eng/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+        - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
           parameters:
+            JobTemplatePath: /eng/pipelines/templates/jobs/live.tests.yml
             AdditionalParameters:
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
               PreSteps:

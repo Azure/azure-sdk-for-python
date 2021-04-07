@@ -82,6 +82,7 @@ def generate(config_path, sdk_folder, project_pattern, readme, restapi_git_folde
                 local_conf,
                 autorest_bin
             )
+    return config
 
 
 def generate_main():

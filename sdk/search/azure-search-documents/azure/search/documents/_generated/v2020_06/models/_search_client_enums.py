@@ -27,6 +27,9 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
 
 
 class AutocompleteMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies the mode for Autocomplete. The default is 'oneTerm'. Use 'twoTerms' to get shingles
+    and 'oneTermWithContext' to use the current context in producing autocomplete terms.
+    """
 
     #: Only one term is suggested. If the query has two terms, only the last term is completed. For
     #: example, if the input is 'washington medic', the suggested terms could include 'medicaid',
@@ -60,6 +63,9 @@ class IndexActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DELETE = "delete"
 
 class QueryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies the syntax of the search query. The default is 'simple'. Use 'full' if your query
+    uses the Lucene query syntax.
+    """
 
     #: Uses the simple query syntax for searches. Search text is interpreted using a simple query
     #: language that allows for symbols such as +, * and "". Queries are evaluated across all
@@ -71,6 +77,11 @@ class QueryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FULL = "full"
 
 class ScoringStatistics(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """A value that specifies whether we want to calculate scoring statistics (such as document
+    frequency) globally for more consistent scoring, or locally, for lower latency. The default is
+    'local'. Use 'global' to aggregate scoring statistics globally before scoring. Using global
+    scoring statistics can increase latency of search queries.
+    """
 
     #: The scoring statistics will be calculated locally for lower latency.
     LOCAL = "local"
@@ -78,6 +89,9 @@ class ScoringStatistics(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     GLOBAL_ENUM = "global"
 
 class SearchMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies whether any or all of the search terms must be matched in order to count the document
+    as a match.
+    """
 
     #: Any of the search terms must be matched in order to count the document as a match.
     ANY = "any"

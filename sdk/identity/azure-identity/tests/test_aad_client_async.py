@@ -215,27 +215,6 @@ async def test_evicts_invalid_refresh_token():
     assert len(cache.find(TokenCache.CredentialType.REFRESH_TOKEN, query={"secret": invalid_token})) == 0
 
 
-async def test_should_refresh():
-    client = AadClient("test", "test")
-    now = int(time.time())
-
-    # do not need refresh
-    token = AccessToken("token", now + DEFAULT_REFRESH_OFFSET + 1)
-    should_refresh = client.should_refresh(token)
-    assert not should_refresh
-
-    # need refresh
-    token = AccessToken("token", now + DEFAULT_REFRESH_OFFSET - 1)
-    should_refresh = client.should_refresh(token)
-    assert should_refresh
-
-    # not exceed cool down time, do not refresh
-    token = AccessToken("token", now + DEFAULT_REFRESH_OFFSET - 1)
-    client._last_refresh_time = now - DEFAULT_TOKEN_REFRESH_RETRY_DELAY + 1
-    should_refresh = client.should_refresh(token)
-    assert not should_refresh
-
-
 async def test_retries_token_requests():
     """The client should retry token requests"""
 
