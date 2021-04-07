@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/repoeb7113db/_tags/to_be_deleted
+    uri: https://fake_url.azurecr.io/acr/v1/repoeb7113db/_tags/tageb7113db
   response:
     body:
       string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 12:20:45 GMT
+      - Mon, 05 Apr 2021 14:40:30 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 12:20:47 GMT
+      - Mon, 05 Apr 2021 14:40:31 GMT
       server:
       - openresty
       strict-transport-security:
@@ -79,7 +79,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.25'
+      - '332.916667'
     status:
       code: 200
       message: OK
@@ -109,7 +109,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 12:20:47 GMT
+      - Mon, 05 Apr 2021 14:40:31 GMT
       server:
       - openresty
       strict-transport-security:
@@ -117,7 +117,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.233333'
+      - '332.9'
     status:
       code: 200
       message: OK
@@ -133,10 +133,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/repoeb7113db/_tags/to_be_deleted
+    uri: https://fake_url.azurecr.io/acr/v1/repoeb7113db/_tags/tageb7113db
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"repoeb7113db","tag":{"name":"to_be_deleted","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-04-05T12:20:35.6831394Z","lastUpdateTime":"2021-04-05T12:20:35.6831394Z","signed":false,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}}
+      string: '{"registry":"fake_url.azurecr.io","imageName":"repoeb7113db","tag":{"name":"tageb7113db","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-04-05T14:40:20.7298748Z","lastUpdateTime":"2021-04-05T14:40:20.7298748Z","signed":false,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}}
 
         '
     headers:
@@ -148,11 +148,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '388'
+      - '386'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 12:20:47 GMT
+      - Mon, 05 Apr 2021 14:40:32 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -179,7 +179,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://fake_url.azurecr.io/acr/v1/repoeb7113db/_tags/to_be_deleted
+    uri: https://fake_url.azurecr.io/acr/v1/repoeb7113db/_tags/tageb7113db
   response:
     body:
       string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
@@ -199,7 +199,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 12:20:47 GMT
+      - Mon, 05 Apr 2021 14:40:32 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -239,7 +239,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 12:20:48 GMT
+      - Mon, 05 Apr 2021 14:40:32 GMT
       server:
       - openresty
       strict-transport-security:
@@ -247,7 +247,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.216667'
+      - '332.883333'
     status:
       code: 200
       message: OK
@@ -277,7 +277,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 12:20:48 GMT
+      - Mon, 05 Apr 2021 14:40:32 GMT
       server:
       - openresty
       strict-transport-security:
@@ -285,7 +285,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.2'
+      - '332.866667'
     status:
       code: 200
       message: OK
@@ -303,7 +303,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://fake_url.azurecr.io/acr/v1/repoeb7113db/_tags/to_be_deleted
+    uri: https://fake_url.azurecr.io/acr/v1/repoeb7113db/_tags/tageb7113db
   response:
     body:
       string: ''
@@ -318,7 +318,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 05 Apr 2021 12:20:48 GMT
+      - Mon, 05 Apr 2021 14:40:33 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -347,7 +347,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/repoeb7113db/_tags/to_be_deleted
+    uri: https://fake_url.azurecr.io/acr/v1/repoeb7113db/_tags/tageb7113db
   response:
     body:
       string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
@@ -367,7 +367,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 12:20:53 GMT
+      - Mon, 05 Apr 2021 14:40:43 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -407,7 +407,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 12:20:54 GMT
+      - Mon, 05 Apr 2021 14:40:43 GMT
       server:
       - openresty
       strict-transport-security:
@@ -415,7 +415,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.183333'
+      - '332.833333'
     status:
       code: 200
       message: OK
@@ -445,7 +445,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 12:20:54 GMT
+      - Mon, 05 Apr 2021 14:40:43 GMT
       server:
       - openresty
       strict-transport-security:
@@ -453,7 +453,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.166667'
+      - '332.816667'
     status:
       code: 200
       message: OK
@@ -469,7 +469,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/repoeb7113db/_tags/to_be_deleted
+    uri: https://fake_url.azurecr.io/acr/v1/repoeb7113db/_tags/tageb7113db
   response:
     body:
       string: '{"errors":[{"code":"TAG_UNKNOWN","message":"the specified tag does
@@ -489,7 +489,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 12:20:54 GMT
+      - Mon, 05 Apr 2021 14:40:43 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

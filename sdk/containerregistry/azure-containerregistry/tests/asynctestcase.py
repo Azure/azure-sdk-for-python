@@ -32,6 +32,7 @@ class AsyncFakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
     :param str scopes: Lets you specify the type of access needed.
     """
+
     def __init__(self):
         self.token = AccessToken("YOU SHALL NOT PASS", 0)
 
@@ -40,7 +41,6 @@ class AsyncFakeTokenCredential(object):
 
 
 class AsyncContainerRegistryTestClass(ContainerRegistryTestClass):
-
     def __init__(self, method_name):
         super(AsyncContainerRegistryTestClass, self).__init__(method_name)
 

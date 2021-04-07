@@ -16,23 +16,24 @@ USAGE:
     python sample_create_client.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_CONTAINERREGISTRY_URL - The URL of you Container Registry account
+    1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
 """
 
 from dotenv import find_dotenv, load_dotenv
 import os
 
-class CreateClients(object):
 
+class CreateClients(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.account_url = os.environ["AZURE_CONTAINERREGISTRY_URL"]
+        self.account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
     def create_registry_client(self):
         # Instantiate the ContainerRegistryClient
         # [START create_registry_client]
         from azure.containerregistry import ContainerRegistryClient
         from azure.identity import DefaultAzureCredential
+
         client = ContainerRegistryClient(self.account_url, DefaultAzureCredential())
         # [END create_registry_client]
 
@@ -41,6 +42,7 @@ class CreateClients(object):
         # [START create_repository_client]
         from azure.containerregistry import ContainerRepositoryClient
         from azure.identity import DefaultAzureCredential
+
         client = ContainerRepositoryClient(self.account_url, "my_repository", DefaultAzureCredential())
         # [END create_repository_client]
 
@@ -64,7 +66,7 @@ class CreateClients(object):
                             print(tag.digest)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = CreateClients()
     sample.create_registry_client()
     sample.create_repository_client()

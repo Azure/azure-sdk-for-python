@@ -10,7 +10,7 @@ products:
 urlFragment: containerregistry-samples
 ---
 
-These code samples show common scenario operations with the Azure Container Registry client library.
+These code samples show common scenario operations with the Azure Container Registry client library. The code samples assume an environment variable `CONTAINERREGISTRY_ENDPOINT` set including the name of the login server and the `https://` prefix. For more information on using AAD with Azure Container Registry, please see the service's [Authentication Overview](https://docs.microsoft.com/azure/container-registry/container-registry-authentication).
 The async versions of the samples require Python 3.6 or later.
 
 

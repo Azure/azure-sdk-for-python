@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+    # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 """
 An example to show an application instrumented with the Opentelemetry requests instrumentations.
@@ -10,14 +10,14 @@ import requests
 from opentelemetry import trace
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
 RequestsInstrumentor().instrument()
-span_processor = BatchExportSpanProcessor(
+span_processor = BatchSpanProcessor(
     AzureMonitorTraceExporter.from_connection_string(
         os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
     )
