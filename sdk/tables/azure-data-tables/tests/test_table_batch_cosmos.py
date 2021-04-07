@@ -172,32 +172,37 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
         assert length ==  len(transaction.results)
         assert length ==  len(transaction.requests)
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @CosmosPreparer()
     def test_batch_insert(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             # Act
-            entity = Entity()
+            entity = TableEntity()
             entity.PartitionKey = '001'
-            entity.RowKey = 'batch_insert'
-            entity.test = EntityProperty(True)
+            entity.RowKey = 'batch_insert_replace'
+            entity.test = True
             entity.test2 = 'value'
             entity.test3 = 3
             entity.test4 = EntityProperty(1234567890)
             entity.test5 = datetime.utcnow()
 
             batch = self.table.create_batch()
-            batch.create_entity(entity)
-            resp = self.table.commit_batch(batch)
+            batch.upsert_entity(entity)
+            transaction_result = self.table.send_batch(batch)
 
             # Assert
-            assert resp is not None
-            result, headers = self.table.get_entity('001', 'batch_insert')
-            assert list(resp)[0].headers['Etag'] ==  headers['etag']
+            self._assert_valid_batch_transaction(transaction_result, 1)
+            assert transaction_result.get_entity(entity.RowKey) is not None
+
+            entity = self.table.get_entity('001', 'batch_insert_replace')
+            assert entity is not None
+            assert 'value' ==  entity.test2
+            assert 1234567890 ==  entity.test4
         finally:
             self._tear_down()
+
 
     # @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
@@ -302,7 +307,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             assert transaction_result.get_entity(sent_entity['RowKey']) is not None
 
             entity = self.table.get_entity(partition_key=entity['PartitionKey'], row_key=entity['RowKey'])
-            with pytest.raises(AttributeError):
+            with pytest.raises(AssertionError):
                 # The replace is not deleting properties
                 self._assert_updated_entity(entity)
         finally:

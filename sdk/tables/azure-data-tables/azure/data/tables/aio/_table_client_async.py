@@ -22,6 +22,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._base_client import parse_connection_str
+from .._common_conversion import _is_cosmos_endpoint
 from .._constants import CONNECTION_TIMEOUT
 from .._entity import TableEntity
 from .._generated.aio import AzureTable
