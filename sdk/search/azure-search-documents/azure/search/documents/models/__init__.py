@@ -39,6 +39,7 @@ from .._search_client import odata
 
 __all__ = (
     "Answers",
+    "AutocompleteMode",
     "IndexAction",
     "IndexingResult",
     "odata",
