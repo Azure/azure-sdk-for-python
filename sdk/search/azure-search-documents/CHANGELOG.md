@@ -2,6 +2,9 @@
 
 ## 11.2.0b2 (Unreleased)
 
+### New features
+
+- Added support for semantic search    #17638
 
 ## 11.2.0b1 (2021-04-06)
 
@@ -9,7 +12,6 @@
 
 - Added new data source type ADLS gen2  #16852
 - Added normalizer support  #17579
-- Added support for semantic search    #17638
 
 ## 11.1.0 (2021-02-10)
 
