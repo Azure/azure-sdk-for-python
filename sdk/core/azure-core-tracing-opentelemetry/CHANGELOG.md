@@ -1,5 +1,8 @@
 # Release History
 
+## 1.0.0b10 (Unreleased)
+
+
 ## 1.0.0b9 (2021-04-06)
 
 - Updated opentelemetry-api to version 1.0.0
