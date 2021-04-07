@@ -331,7 +331,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
+    # @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CosmosPreparer()
     def test_insert_etag(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
 
@@ -946,7 +946,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
+    # @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CosmosPreparer()
     def test_update_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1030,7 +1030,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
+    # @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CosmosPreparer()
     def test_insert_or_merge_entity_with_existing_entity(self, tables_cosmos_account_name,
                                                          tables_primary_cosmos_account_key):
@@ -1051,7 +1051,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
+    # @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CosmosPreparer()
     def test_insert_or_merge_entity_with_non_existing_entity(self, tables_cosmos_account_name,
                                                              tables_primary_cosmos_account_key):
@@ -1073,7 +1073,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
+    # @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CosmosPreparer()
     def test_insert_or_replace_entity_with_existing_entity(self, tables_cosmos_account_name,
                                                            tables_primary_cosmos_account_key):
@@ -1094,7 +1094,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
+    # @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CosmosPreparer()
     def test_insert_or_replace_entity_with_non_existing_entity(self, tables_cosmos_account_name,
                                                                tables_primary_cosmos_account_key):
@@ -1116,7 +1116,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
+    # @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CosmosPreparer()
     def test_merge_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1136,7 +1136,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
+    # @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CosmosPreparer()
     def test_merge_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1154,7 +1154,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
+    # @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CosmosPreparer()
     def test_merge_entity_with_if_matches(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1178,7 +1178,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
+    # @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CosmosPreparer()
     def test_merge_entity_with_if_doesnt_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1616,7 +1616,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             entities = list(table.query_entities(injected_query))
             assert len(entities) ==  2
 
-            entities = list(table.query_entities(is_user_admin, parameters={'first': injection}))            
+            entities = list(table.query_entities(is_user_admin, parameters={'first': injection}))
             assert len(entities) ==  0
         finally:
             self.ts.delete_table(table_name)
@@ -1636,18 +1636,18 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             all_entities = list(table.query_entities("PartitionKey eq 'foo'"))
             assert len(all_entities) == 2
-        
+
             parameters = {'key': 'foo'}
             all_entities = list(table.query_entities("PartitionKey eq @key", parameters=parameters))
             assert len(all_entities) == 2
-            
+
             query = "PartitionKey eq 'foo' and RowKey eq 'bar1' and Chars eq ':@?''/!_^#+,$'"
             entities = list(table.query_entities(query))
             assert len(entities) == 1
 
             query = "PartitionKey eq @key and RowKey eq @row and Chars eq @quote"
             parameters = {'key': 'foo', 'row': 'bar1', 'quote': ":@?'/!_^#+,$"}
-            entities = list(table.query_entities(query, parameters=parameters))            
+            entities = list(table.query_entities(query, parameters=parameters))
             assert len(entities) ==  1
 
             query = "PartitionKey eq 'foo' and RowKey eq 'bar2' and Chars eq '=& ?\"\\{}<>%'"
@@ -1656,7 +1656,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             query = "PartitionKey eq @key and RowKey eq @row and Chars eq @quote"
             parameters = {'key': 'foo', 'row': 'bar2', 'quote': r'=& ?"\{}<>%'}
-            entities = list(table.query_entities(query, parameters=parameters))            
+            entities = list(table.query_entities(query, parameters=parameters))
             assert len(entities) ==  1
 
         finally:

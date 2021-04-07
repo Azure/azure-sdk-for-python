@@ -36,10 +36,12 @@ from azure.core.pipeline.transport import (
 )
 
 from .._authentication import SharedKeyCredentialPolicy
+from .._common_conversion import _is_cosmos_endpoint
 from .._constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT, READ_TIMEOUT
 from .._generated.aio._configuration import AzureTableConfiguration
 from .._models import BatchErrorException, BatchTransactionResult
 from .._policies import (
+    CosmosPatchTransformPolicy,
     StorageContentValidation,
     StorageRequestHook,
     StorageHosts,
@@ -106,7 +108,6 @@ class AsyncStorageAccountHostsMixin(object):
 
         kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
-
         self._policies = [
             StorageHeadersPolicy(**kwargs),
             ProxyPolicy(**kwargs),
@@ -123,6 +124,9 @@ class AsyncStorageAccountHostsMixin(object):
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
+
+        if self._cosmos_endpoint:
+            self._policies.insert(0, CosmosPatchTransformPolicy())
 
     async def _batch_send(
         self,

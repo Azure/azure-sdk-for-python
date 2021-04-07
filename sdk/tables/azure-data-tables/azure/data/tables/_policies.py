@@ -750,3 +750,22 @@ class LinearRetry(TablesRetryPolicy):
         )
         random_range_end = self.backoff + self.random_jitter_range
         return random_generator.uniform(random_range_start, random_range_end)
+
+
+class CosmosPatchTransformPolicy(SansIOHTTPPolicy):
+    """Policy to transform PATCH requests into POST requests with the "X-HTTP-Method":"MERGE" header set."""
+
+    def on_request(self, request):
+        # type: (PipelineRequest) -> Union[None, Awaitable[None]]
+        if request.http_request.method == "PATCH":
+            self._transform_to_cosmos_post(request)
+
+    def on_response(self, request, response):
+        # type: (PipelineRequest, PipelineResponse) -> Union[None, Awaitable[None]]
+        pass
+
+    def _transform_to_cosmos_post(self, request):
+        # type: (PipelineRequest) -> None
+        print("editing request")
+        request.http_request.method = "POST"
+        request.http_request.headers["X-HTTP-Method"] = "MERGE"

@@ -86,3 +86,13 @@ def _sign_string(key, string_to_sign, key_is_base64=True):
     digest = signed_hmac_sha256.digest()
     encoded_digest = _encode_base64(digest)
     return encoded_digest
+
+
+def _is_cosmos_endpoint(parsed_url):
+    if ".table.cosmodb." in parsed_url.hostname:
+        return True
+
+    if ".table.cosmos." in parsed_url.hostname:
+        return True
+
+    return False

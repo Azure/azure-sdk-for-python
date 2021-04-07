@@ -71,6 +71,9 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             **kwargs
         )
         loop = kwargs.pop("loop", None)
+
+        self._cosmos_endpoint = _is_cosmos_endpoint(urlparse(account_url.rstrip("/")))
+
         super(TableClient, self).__init__(
             account_url,
             table_name=table_name,
