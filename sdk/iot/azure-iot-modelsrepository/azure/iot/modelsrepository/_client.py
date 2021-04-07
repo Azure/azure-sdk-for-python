@@ -209,8 +209,6 @@ def _create_pipeline(**kwargs):
     return Pipeline(policies=policies, transport=transport)
 
 
-# TODO: Ensure support for relative and absolute paths
-# TODO: Need robust suite of testing for different types of paths
 def _sanitize_filesystem_path(path):
     path = os.path.normcase(path)
     path = os.path.normpath(path)

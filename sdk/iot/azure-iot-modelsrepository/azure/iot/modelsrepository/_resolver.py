@@ -98,8 +98,8 @@ class HttpFetcher(Fetcher):
 
     def fetch(self, path):
         """Fetch and return the contents of a JSON file at a given web path.
-        The path can be relative to the path configured in the Fetcher's HttpClient,
-        or it can be an absolute path.
+
+        :param str path: Path to JSON file (relative to the base_filepath of the Fetcher)
 
         :raises: FetcherError if data cannot be fetched
 
@@ -123,15 +123,16 @@ class HttpFetcher(Fetcher):
 class FilesystemFetcher(Fetcher):
     """Fetches JSON data from a local filesystem endpoint"""
 
-    def __init__(self, base_path):
+    def __init__(self, base_filepath):
         """
-        :param str base_path: The base filepath for fetching from
+        :param str base_filepath: The base filepath for fetching from
         """
-        self.base_path = base_path
+        self.base_filepath = base_filepath
 
     def fetch(self, path):
         """Fetch and return the contents of a JSON file at a given filesystem path.
-        The path can be relative to the Fetcher's base_path, or it can be an absolute path.
+
+        :param str path: Path to JSON file (relative to the base_filepath of the Fetcher)
 
         :raises: FetcherError if data cannot be fetched
 
@@ -139,7 +140,7 @@ class FilesystemFetcher(Fetcher):
         :rtype: JSON object
         """
         _LOGGER.debug("Fetching %s from local filesystem", path)
-        abs_path = os.path.join(self.base_path, path)
+        abs_path = os.path.join(self.base_filepath, path)
 
         # Fetch
         try:
