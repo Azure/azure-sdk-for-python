@@ -87,6 +87,7 @@ class ChatThreadClientSamples(object):
         # [START get_thread]
         from azure.communication.chat import ChatClient, CommunicationTokenCredential
 
+        # set `endpoint` to an existing ACS endpoint
         chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
         chat_thread_client = chat_client.get_chat_thread_client(thread_id)
         chat_thread_properties = chat_thread_client.get_properties()
@@ -298,7 +299,7 @@ class ChatThreadClientSamples(object):
 
         # list of participants which were unsuccessful to be added to chat thread
         retry = [p for p, e in result if decide_to_retry(e)]
-        if len(retry) > 0:
+        if retry:
             chat_thread_client.add_participants(retry)
         # [END add_participants]
         print("add_participants_w_check succeeded")
@@ -310,7 +311,6 @@ class ChatThreadClientSamples(object):
         chat_client = self._chat_client
         identity_client = self.identity_client
 
-        # [START remove_participant]
         from azure.communication.chat import ChatThreadParticipant
         from azure.communication.identity import CommunicationUserIdentifier
         from datetime import datetime
@@ -336,20 +336,21 @@ class ChatThreadClientSamples(object):
         thread_participants = [participant1, participant2]
         chat_thread_client.add_participants(thread_participants)
 
+        # [START remove_participant]
         # Option 1 : Iterate through all participants, find and delete Fred Flinstone
         chat_thread_participants = chat_thread_client.list_participants()
 
         for chat_thread_participant_page in chat_thread_participants.by_page():
             for chat_thread_participant in chat_thread_participant_page:
                 print("ChatThreadParticipant: ", chat_thread_participant)
-                if chat_thread_participant.user.identifier == user1.identifier:
+                if chat_thread_participant.user.properties['id'] == user1.properties['id']:
                     print("Found Fred!")
                     chat_thread_client.remove_participant(chat_thread_participant.user)
                     print("Fred has been removed from the thread...")
                     break
 
         # Option 2: Directly remove Wilma Flinstone
-        unique_identifier = user2.identifier # in real scenario the identifier would need to be retrieved from elsewhere
+        unique_identifier = user2.properties['id'] # in real scenario the identifier would need to be retrieved from elsewhere
         chat_thread_client.remove_participant(CommunicationUserIdentifier(unique_identifier))
         print("Wilma has been removed from the thread...")
         # [END remove_participant]
@@ -388,7 +389,6 @@ if __name__ == '__main__':
     sample.send_read_receipt()
     sample.list_read_receipts()
     sample.delete_message()
-    sample.add_participant_w_check()
     sample.add_participants_w_check()
     sample.list_participants()
     sample.remove_participant()

@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"name": "hotels", "fields": [{"name": "hotelId", "type": "Edm.String",
-      "key": true, "retrievable": true, "searchable": false}, {"name": "baseRate",
+      "key": true, "retrievable": true, "searchable": true}, {"name": "baseRate",
       "type": "Edm.Double", "retrievable": true}], "scoringProfiles": [{"name": "MyProfile"}],
       "corsOptions": {"allowedOrigins": ["*"], "maxAgeInSeconds": 60}}'
     headers:
@@ -12,29 +12,29 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '302'
+      - '301'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://search1f361943.search.windows.net/indexes?api-version=2020-06-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search1f361943.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D84B8927D51380\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[{"name":"MyProfile","functionAggregation":null,"text":null,"functions":[]}],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":{"@odata.type":"#Microsoft.Azure.Search.BM25Similarity","k1":null,"b":null}}'
+      string: '{"@odata.context":"https://search1f361943.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D8EFCA395E525C\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":true,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[{"name":"MyProfile","functionAggregation":null,"text":null,"functions":[]}],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":{"@odata.type":"#Microsoft.Azure.Search.BM25Similarity","k1":null,"b":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '961'
+      - '960'
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Fri, 28 Aug 2020 19:32:52 GMT
+      - Thu, 25 Mar 2021 20:11:49 GMT
       elapsed-time:
-      - '945'
+      - '1234'
       etag:
-      - W/"0x8D84B8927D51380"
+      - W/"0x8D8EFCA395E525C"
       expires:
       - '-1'
       location:
@@ -46,7 +46,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 42c76908-e965-11ea-8779-5cf37071153c
+      - 546084f3-8da6-11eb-a685-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -54,7 +54,7 @@ interactions:
       message: Created
 - request:
     body: '{"name": "hotels", "fields": [{"name": "hotelId", "type": "Edm.String",
-      "key": true, "retrievable": true, "searchable": false}, {"name": "baseRate",
+      "key": true, "retrievable": true, "searchable": true}, {"name": "baseRate",
       "type": "Edm.Double", "retrievable": true}], "scoringProfiles": [], "corsOptions":
       {"allowedOrigins": ["*"], "maxAgeInSeconds": 60}}'
     headers:
@@ -65,31 +65,31 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '281'
+      - '280'
       Content-Type:
       - application/json
       Prefer:
       - return=representation
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: PUT
     uri: https://search1f361943.search.windows.net/indexes('hotels')?api-version=2020-06-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search1f361943.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D84B892819F149\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":{"@odata.type":"#Microsoft.Azure.Search.BM25Similarity","k1":null,"b":null}}'
+      string: '{"@odata.context":"https://search1f361943.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D8EFCA398EC8D1\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":true,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":{"@odata.type":"#Microsoft.Azure.Search.BM25Similarity","k1":null,"b":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '887'
+      - '886'
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Fri, 28 Aug 2020 19:32:52 GMT
+      - Thu, 25 Mar 2021 20:11:49 GMT
       elapsed-time:
-      - '171'
+      - '137'
       etag:
-      - W/"0x8D84B892819F149"
+      - W/"0x8D8EFCA398EC8D1"
       expires:
       - '-1'
       odata-version:
@@ -99,7 +99,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 43e897d6-e965-11ea-8f03-5cf37071153c
+      - 556093b4-8da6-11eb-b030-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -119,9 +119,9 @@ interactions:
       Content-Length:
       - '0'
       If-Match:
-      - '"0x8D84B8927D51380"'
+      - '"0x8D8EFCA395E525C"'
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://search1f361943.search.windows.net/indexes('hotels')?api-version=2020-06-30-Preview
   response:
@@ -139,9 +139,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Fri, 28 Aug 2020 19:32:52 GMT
+      - Thu, 25 Mar 2021 20:11:49 GMT
       elapsed-time:
-      - '51'
+      - '17'
       expires:
       - '-1'
       odata-version:
@@ -151,7 +151,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 442b14d0-e965-11ea-807a-5cf37071153c
+      - 558707e5-8da6-11eb-8b4b-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:

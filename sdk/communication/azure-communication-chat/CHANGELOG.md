@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b6 (Unreleased)
+## 1.0.0 (2021-03-29)
 ### Breaking Changes
 - Renamed `ChatThread` to `ChatThreadProperties`.
 - Renamed `get_chat_thread` to `get_properties`.

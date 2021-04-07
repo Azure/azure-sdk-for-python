@@ -26,41 +26,6 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-
-
-class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
     :ivar system_data: Read only system data.
     :vartype system_data: ~azure.mgmt.cdn.models.SystemData
     """
@@ -83,11 +48,14 @@ class ProxyResource(Resource):
         self,
         **kwargs
     ):
-        super(ProxyResource, self).__init__(**kwargs)
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
         self.system_data = None
 
 
-class AFDDomain(ProxyResource):
+class AFDDomain(Resource):
     """Friendly domain name mapping to the endpoint hostname that the customer provides for branding purposes, e.g. www.contoso.com.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -406,29 +374,29 @@ class TrackedResource(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
     :param location: Required. Resource location.
     :type location: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :ivar system_data: Read only system data.
-    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'system_data': {'readonly': True},
+        'location': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
     def __init__(
@@ -441,7 +409,6 @@ class TrackedResource(Resource):
         super(TrackedResource, self).__init__(**kwargs)
         self.location = location
         self.tags = tags
-        self.system_data = None
 
 
 class AFDEndpoint(TrackedResource):
@@ -457,12 +424,12 @@ class AFDEndpoint(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
     :param location: Required. Resource location.
     :type location: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :ivar system_data: Read only system data.
-    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
     :param origin_response_timeout_seconds: Send and receive timeout on forwarding request to the
      origin. When timeout is reached, the request fails and returns.
     :type origin_response_timeout_seconds: int
@@ -484,8 +451,8 @@ class AFDEndpoint(TrackedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'system_data': {'readonly': True},
+        'location': {'required': True},
         'origin_response_timeout_seconds': {'minimum': 16},
         'provisioning_state': {'readonly': True},
         'deployment_status': {'readonly': True},
@@ -496,9 +463,9 @@ class AFDEndpoint(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'origin_response_timeout_seconds': {'key': 'properties.originResponseTimeoutSeconds', 'type': 'int'},
         'enabled_state': {'key': 'properties.enabledState', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -697,7 +664,7 @@ class AfdErrorResponse(msrest.serialization.Model):
         self.error = error
 
 
-class AFDOrigin(ProxyResource):
+class AFDOrigin(Resource):
     """CDN origin is the source of the content being delivered via CDN. When the edge nodes represented by an endpoint do not have the requested content cached, they attempt to fetch it from one or more of the configured origins.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -805,7 +772,7 @@ class AFDOrigin(ProxyResource):
         self.deployment_status = None
 
 
-class AFDOriginGroup(ProxyResource):
+class AFDOriginGroup(Resource):
     """AFDOrigin group comprising of origins is used for load balancing to origins when the content cannot be served from CDN.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1655,12 +1622,12 @@ class CdnWebApplicationFirewallPolicy(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
     :param location: Required. Resource location.
     :type location: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :ivar system_data: Read only system data.
-    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
     :param etag: Gets a unique read-only string that changes whenever the resource is updated.
     :type etag: str
     :param sku: Required. The pricing tier (defines a CDN provider, feature list and rate) of the
@@ -1689,8 +1656,8 @@ class CdnWebApplicationFirewallPolicy(TrackedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'system_data': {'readonly': True},
+        'location': {'required': True},
         'sku': {'required': True},
         'endpoint_links': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -1701,9 +1668,9 @@ class CdnWebApplicationFirewallPolicy(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'etag': {'key': 'etag', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'policy_settings': {'key': 'properties.policySettings', 'type': 'PolicySettings'},
@@ -2165,7 +2132,7 @@ class CookiesMatchConditionParameters(msrest.serialization.Model):
         self.transforms = transforms
 
 
-class CustomDomain(ProxyResource):
+class CustomDomain(Resource):
     """Friendly domain name mapping to the endpoint hostname that the customer provides for branding purposes, e.g. www.contoso.com.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2387,17 +2354,11 @@ class SecretParameters(msrest.serialization.Model):
         self.type = None  # type: Optional[str]
 
 
-class CustomerCertificateParameters(SecretParameters, Certificate):
+class CustomerCertificateParameters(SecretParameters):
     """Customer Certificate used for https.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param subject: Subject name in the certificate.
-    :type subject: str
-    :param expiration_date: Certificate expiration date.
-    :type expiration_date: str
-    :param thumbprint: Certificate thumbprint.
-    :type thumbprint: str
     :param type: Required. The type of the Secret to create.Constant filled by server.  Possible
      values include: "UrlSigningKey", "CustomerCertificate", "ManagedCertificate".
     :type type: str or ~azure.mgmt.cdn.models.SecretType
@@ -2419,9 +2380,6 @@ class CustomerCertificateParameters(SecretParameters, Certificate):
     }
 
     _attribute_map = {
-        'subject': {'key': 'subject', 'type': 'str'},
-        'expiration_date': {'key': 'expirationDate', 'type': 'str'},
-        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'secret_source': {'key': 'secretSource', 'type': 'ResourceReference'},
         'secret_version': {'key': 'secretVersion', 'type': 'str'},
@@ -2434,25 +2392,13 @@ class CustomerCertificateParameters(SecretParameters, Certificate):
         self,
         *,
         secret_source: "ResourceReference",
-        subject: Optional[str] = None,
-        expiration_date: Optional[str] = None,
-        thumbprint: Optional[str] = None,
         secret_version: Optional[str] = None,
         certificate_authority: Optional[str] = None,
         use_latest_version: Optional[bool] = None,
         subject_alternative_names: Optional[List[str]] = None,
         **kwargs
     ):
-        super(CustomerCertificateParameters, self).__init__(subject=subject, expiration_date=expiration_date, thumbprint=thumbprint, **kwargs)
-        self.subject = subject
-        self.expiration_date = expiration_date
-        self.thumbprint = thumbprint
-        self.type = 'CustomerCertificate'  # type: str
-        self.secret_source = secret_source
-        self.secret_version = secret_version
-        self.certificate_authority = certificate_authority
-        self.use_latest_version = use_latest_version
-        self.subject_alternative_names = subject_alternative_names
+        super(CustomerCertificateParameters, self).__init__(**kwargs)
         self.type = 'CustomerCertificate'  # type: str
         self.secret_source = secret_source
         self.secret_version = secret_version
@@ -3459,7 +3405,7 @@ class DomainValidationProperties(msrest.serialization.Model):
         self.expiration_date = None
 
 
-class EdgeNode(ProxyResource):
+class EdgeNode(Resource):
     """Edgenode is a global Point of Presence (POP) location used to deliver CDN content to end users.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3545,12 +3491,12 @@ class Endpoint(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
     :param location: Required. Resource location.
     :type location: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :ivar system_data: Read only system data.
-    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
     :param origin_path: A directory path on the origin that CDN can use to retrieve content from,
      e.g. contoso.cloudapp.net/originpath.
     :type origin_path: str
@@ -3621,8 +3567,8 @@ class Endpoint(TrackedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'system_data': {'readonly': True},
+        'location': {'required': True},
         'host_name': {'readonly': True},
         'resource_state': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -3632,9 +3578,9 @@ class Endpoint(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'origin_path': {'key': 'properties.originPath', 'type': 'str'},
         'content_types_to_compress': {'key': 'properties.contentTypesToCompress', 'type': '[str]'},
         'origin_host_header': {'key': 'properties.originHostHeader', 'type': 'str'},
@@ -4690,17 +4636,11 @@ class ManagedCertificate(Certificate):
         super(ManagedCertificate, self).__init__(subject=subject, expiration_date=expiration_date, thumbprint=thumbprint, **kwargs)
 
 
-class ManagedCertificateParameters(SecretParameters, Certificate):
+class ManagedCertificateParameters(SecretParameters):
     """Managed Certificate used for https.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param subject: Subject name in the certificate.
-    :type subject: str
-    :param expiration_date: Certificate expiration date.
-    :type expiration_date: str
-    :param thumbprint: Certificate thumbprint.
-    :type thumbprint: str
     :param type: Required. The type of the Secret to create.Constant filled by server.  Possible
      values include: "UrlSigningKey", "CustomerCertificate", "ManagedCertificate".
     :type type: str or ~azure.mgmt.cdn.models.SecretType
@@ -4711,25 +4651,14 @@ class ManagedCertificateParameters(SecretParameters, Certificate):
     }
 
     _attribute_map = {
-        'subject': {'key': 'subject', 'type': 'str'},
-        'expiration_date': {'key': 'expirationDate', 'type': 'str'},
-        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
     def __init__(
         self,
-        *,
-        subject: Optional[str] = None,
-        expiration_date: Optional[str] = None,
-        thumbprint: Optional[str] = None,
         **kwargs
     ):
-        super(ManagedCertificateParameters, self).__init__(subject=subject, expiration_date=expiration_date, thumbprint=thumbprint, **kwargs)
-        self.subject = subject
-        self.expiration_date = expiration_date
-        self.thumbprint = thumbprint
-        self.type = 'ManagedCertificate'  # type: str
+        super(ManagedCertificateParameters, self).__init__(**kwargs)
         self.type = 'ManagedCertificate'  # type: str
 
 
@@ -4927,6 +4856,8 @@ class ManagedRuleSetDefinition(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
     :param sku: The pricing tier (defines a CDN provider, feature list and rate) of the
      CdnWebApplicationFirewallPolicy.
     :type sku: ~azure.mgmt.cdn.models.Sku
@@ -4944,6 +4875,7 @@ class ManagedRuleSetDefinition(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'rule_set_type': {'readonly': True},
         'rule_set_version': {'readonly': True},
@@ -4954,6 +4886,7 @@ class ManagedRuleSetDefinition(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'rule_set_type': {'key': 'properties.ruleSetType', 'type': 'str'},
@@ -5283,7 +5216,7 @@ class OperationsListResult(msrest.serialization.Model):
         self.next_link = next_link
 
 
-class Origin(ProxyResource):
+class Origin(Resource):
     """CDN origin is the source of the content being delivered via CDN. When the edge nodes represented by an endpoint do not have the requested content cached, they attempt to fetch it from one or more of the configured origins.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5407,7 +5340,7 @@ class Origin(ProxyResource):
         self.private_endpoint_status = None
 
 
-class OriginGroup(ProxyResource):
+class OriginGroup(Resource):
     """Origin group comprising of origins is used for load balancing to origins when the content cannot be served from CDN.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6052,7 +5985,7 @@ class PolicySettings(msrest.serialization.Model):
     :param default_custom_block_response_status_code: If the action type is block, this field
      defines the default customer overridable http response status code. Possible values include:
      200, 403, 405, 406, 429.
-    :type default_custom_block_response_status_code: str or ~azure.mgmt.cdn.models.Enum47
+    :type default_custom_block_response_status_code: str or ~azure.mgmt.cdn.models.Enum46
     :param default_custom_block_response_body: If the action type is block, customer can override
      the response body. The body must be specified in base64 encoding.
     :type default_custom_block_response_body: str
@@ -6076,7 +6009,7 @@ class PolicySettings(msrest.serialization.Model):
         enabled_state: Optional[Union[str, "PolicyEnabledState"]] = None,
         mode: Optional[Union[str, "PolicyMode"]] = None,
         default_redirect_url: Optional[str] = None,
-        default_custom_block_response_status_code: Optional[Union[int, "Enum47"]] = None,
+        default_custom_block_response_status_code: Optional[Union[int, "Enum46"]] = None,
         default_custom_block_response_body: Optional[str] = None,
         **kwargs
     ):
@@ -6159,12 +6092,12 @@ class Profile(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
     :param location: Required. Resource location.
     :type location: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :ivar system_data: Read only system data.
-    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
     :param sku: Required. The pricing tier (defines a CDN provider, feature list and rate) of the
      CDN profile.
     :type sku: ~azure.mgmt.cdn.models.Sku
@@ -6181,8 +6114,8 @@ class Profile(TrackedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'system_data': {'readonly': True},
+        'location': {'required': True},
         'sku': {'required': True},
         'resource_state': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -6193,9 +6126,9 @@ class Profile(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -6267,6 +6200,42 @@ class ProfileUpdateParameters(msrest.serialization.Model):
     ):
         super(ProfileUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
 
 
 class PurgeParameters(msrest.serialization.Model):
@@ -7124,7 +7093,7 @@ class ResponseBasedOriginErrorDetectionParameters(msrest.serialization.Model):
         self.http_error_ranges = http_error_ranges
 
 
-class Route(ProxyResource):
+class Route(Resource):
     """Friendly Routes name mapping to the any Routes or secret related information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7152,17 +7121,12 @@ class Route(ProxyResource):
     :type patterns_to_match: list[str]
     :param compression_settings: compression settings.
     :type compression_settings: object
-    :param query_string_caching_behavior: Defines how AzureFrontDoor caches requests that include
-     query strings. You can ignore any query strings when caching, bypass caching to prevent
-     requests that contain query strings from being cached, or cache every request with a unique
-     URL. Possible values include: "IgnoreQueryString", "BypassCaching", "UseQueryString", "NotSet".
-    :type query_string_caching_behavior: str or ~azure.mgmt.cdn.models.QueryStringCachingBehavior
-    :param optimization_type: Specifies what scenario the customer wants this AzureFrontDoor
-     endpoint to optimize for, e.g. Download, Media services. With this information, AzureFrontDoor
-     can apply scenario driven optimization. Possible values include: "GeneralWebDelivery",
-     "GeneralMediaStreaming", "VideoOnDemandMediaStreaming", "LargeFileDownload",
-     "DynamicSiteAcceleration".
-    :type optimization_type: str or ~azure.mgmt.cdn.models.OptimizationType
+    :param query_string_caching_behavior: Defines how CDN caches requests that include query
+     strings. You can ignore any query strings when caching, bypass caching to prevent requests that
+     contain query strings from being cached, or cache every request with a unique URL. Possible
+     values include: "IgnoreQueryString", "UseQueryString", "NotSet".
+    :type query_string_caching_behavior: str or
+     ~azure.mgmt.cdn.models.AfdQueryStringCachingBehavior
     :param forwarding_protocol: Protocol this rule will use when forwarding traffic to backends.
      Possible values include: "HttpOnly", "HttpsOnly", "MatchRequest".
     :type forwarding_protocol: str or ~azure.mgmt.cdn.models.ForwardingProtocol
@@ -7206,7 +7170,6 @@ class Route(ProxyResource):
         'patterns_to_match': {'key': 'properties.patternsToMatch', 'type': '[str]'},
         'compression_settings': {'key': 'properties.compressionSettings', 'type': 'object'},
         'query_string_caching_behavior': {'key': 'properties.queryStringCachingBehavior', 'type': 'str'},
-        'optimization_type': {'key': 'properties.optimizationType', 'type': 'str'},
         'forwarding_protocol': {'key': 'properties.forwardingProtocol', 'type': 'str'},
         'link_to_default_domain': {'key': 'properties.linkToDefaultDomain', 'type': 'str'},
         'https_redirect': {'key': 'properties.httpsRedirect', 'type': 'str'},
@@ -7225,8 +7188,7 @@ class Route(ProxyResource):
         supported_protocols: Optional[List[Union[str, "AFDEndpointProtocols"]]] = None,
         patterns_to_match: Optional[List[str]] = None,
         compression_settings: Optional[object] = None,
-        query_string_caching_behavior: Optional[Union[str, "QueryStringCachingBehavior"]] = None,
-        optimization_type: Optional[Union[str, "OptimizationType"]] = None,
+        query_string_caching_behavior: Optional[Union[str, "AfdQueryStringCachingBehavior"]] = None,
         forwarding_protocol: Optional[Union[str, "ForwardingProtocol"]] = None,
         link_to_default_domain: Optional[Union[str, "LinkToDefaultDomain"]] = None,
         https_redirect: Optional[Union[str, "HttpsRedirect"]] = None,
@@ -7242,7 +7204,6 @@ class Route(ProxyResource):
         self.patterns_to_match = patterns_to_match
         self.compression_settings = compression_settings
         self.query_string_caching_behavior = query_string_caching_behavior
-        self.optimization_type = optimization_type
         self.forwarding_protocol = forwarding_protocol
         self.link_to_default_domain = link_to_default_domain
         self.https_redirect = https_redirect
@@ -7300,17 +7261,12 @@ class RouteUpdatePropertiesParameters(msrest.serialization.Model):
     :type patterns_to_match: list[str]
     :param compression_settings: compression settings.
     :type compression_settings: object
-    :param query_string_caching_behavior: Defines how AzureFrontDoor caches requests that include
-     query strings. You can ignore any query strings when caching, bypass caching to prevent
-     requests that contain query strings from being cached, or cache every request with a unique
-     URL. Possible values include: "IgnoreQueryString", "BypassCaching", "UseQueryString", "NotSet".
-    :type query_string_caching_behavior: str or ~azure.mgmt.cdn.models.QueryStringCachingBehavior
-    :param optimization_type: Specifies what scenario the customer wants this AzureFrontDoor
-     endpoint to optimize for, e.g. Download, Media services. With this information, AzureFrontDoor
-     can apply scenario driven optimization. Possible values include: "GeneralWebDelivery",
-     "GeneralMediaStreaming", "VideoOnDemandMediaStreaming", "LargeFileDownload",
-     "DynamicSiteAcceleration".
-    :type optimization_type: str or ~azure.mgmt.cdn.models.OptimizationType
+    :param query_string_caching_behavior: Defines how CDN caches requests that include query
+     strings. You can ignore any query strings when caching, bypass caching to prevent requests that
+     contain query strings from being cached, or cache every request with a unique URL. Possible
+     values include: "IgnoreQueryString", "UseQueryString", "NotSet".
+    :type query_string_caching_behavior: str or
+     ~azure.mgmt.cdn.models.AfdQueryStringCachingBehavior
     :param forwarding_protocol: Protocol this rule will use when forwarding traffic to backends.
      Possible values include: "HttpOnly", "HttpsOnly", "MatchRequest".
     :type forwarding_protocol: str or ~azure.mgmt.cdn.models.ForwardingProtocol
@@ -7335,7 +7291,6 @@ class RouteUpdatePropertiesParameters(msrest.serialization.Model):
         'patterns_to_match': {'key': 'patternsToMatch', 'type': '[str]'},
         'compression_settings': {'key': 'compressionSettings', 'type': 'object'},
         'query_string_caching_behavior': {'key': 'queryStringCachingBehavior', 'type': 'str'},
-        'optimization_type': {'key': 'optimizationType', 'type': 'str'},
         'forwarding_protocol': {'key': 'forwardingProtocol', 'type': 'str'},
         'link_to_default_domain': {'key': 'linkToDefaultDomain', 'type': 'str'},
         'https_redirect': {'key': 'httpsRedirect', 'type': 'str'},
@@ -7352,8 +7307,7 @@ class RouteUpdatePropertiesParameters(msrest.serialization.Model):
         supported_protocols: Optional[List[Union[str, "AFDEndpointProtocols"]]] = None,
         patterns_to_match: Optional[List[str]] = None,
         compression_settings: Optional[object] = None,
-        query_string_caching_behavior: Optional[Union[str, "QueryStringCachingBehavior"]] = None,
-        optimization_type: Optional[Union[str, "OptimizationType"]] = None,
+        query_string_caching_behavior: Optional[Union[str, "AfdQueryStringCachingBehavior"]] = None,
         forwarding_protocol: Optional[Union[str, "ForwardingProtocol"]] = None,
         link_to_default_domain: Optional[Union[str, "LinkToDefaultDomain"]] = None,
         https_redirect: Optional[Union[str, "HttpsRedirect"]] = None,
@@ -7369,7 +7323,6 @@ class RouteUpdatePropertiesParameters(msrest.serialization.Model):
         self.patterns_to_match = patterns_to_match
         self.compression_settings = compression_settings
         self.query_string_caching_behavior = query_string_caching_behavior
-        self.optimization_type = optimization_type
         self.forwarding_protocol = forwarding_protocol
         self.link_to_default_domain = link_to_default_domain
         self.https_redirect = https_redirect
@@ -7396,17 +7349,12 @@ class RouteProperties(AFDStateProperties, RouteUpdatePropertiesParameters):
     :type patterns_to_match: list[str]
     :param compression_settings: compression settings.
     :type compression_settings: object
-    :param query_string_caching_behavior: Defines how AzureFrontDoor caches requests that include
-     query strings. You can ignore any query strings when caching, bypass caching to prevent
-     requests that contain query strings from being cached, or cache every request with a unique
-     URL. Possible values include: "IgnoreQueryString", "BypassCaching", "UseQueryString", "NotSet".
-    :type query_string_caching_behavior: str or ~azure.mgmt.cdn.models.QueryStringCachingBehavior
-    :param optimization_type: Specifies what scenario the customer wants this AzureFrontDoor
-     endpoint to optimize for, e.g. Download, Media services. With this information, AzureFrontDoor
-     can apply scenario driven optimization. Possible values include: "GeneralWebDelivery",
-     "GeneralMediaStreaming", "VideoOnDemandMediaStreaming", "LargeFileDownload",
-     "DynamicSiteAcceleration".
-    :type optimization_type: str or ~azure.mgmt.cdn.models.OptimizationType
+    :param query_string_caching_behavior: Defines how CDN caches requests that include query
+     strings. You can ignore any query strings when caching, bypass caching to prevent requests that
+     contain query strings from being cached, or cache every request with a unique URL. Possible
+     values include: "IgnoreQueryString", "UseQueryString", "NotSet".
+    :type query_string_caching_behavior: str or
+     ~azure.mgmt.cdn.models.AfdQueryStringCachingBehavior
     :param forwarding_protocol: Protocol this rule will use when forwarding traffic to backends.
      Possible values include: "HttpOnly", "HttpsOnly", "MatchRequest".
     :type forwarding_protocol: str or ~azure.mgmt.cdn.models.ForwardingProtocol
@@ -7442,7 +7390,6 @@ class RouteProperties(AFDStateProperties, RouteUpdatePropertiesParameters):
         'patterns_to_match': {'key': 'patternsToMatch', 'type': '[str]'},
         'compression_settings': {'key': 'compressionSettings', 'type': 'object'},
         'query_string_caching_behavior': {'key': 'queryStringCachingBehavior', 'type': 'str'},
-        'optimization_type': {'key': 'optimizationType', 'type': 'str'},
         'forwarding_protocol': {'key': 'forwardingProtocol', 'type': 'str'},
         'link_to_default_domain': {'key': 'linkToDefaultDomain', 'type': 'str'},
         'https_redirect': {'key': 'httpsRedirect', 'type': 'str'},
@@ -7461,15 +7408,14 @@ class RouteProperties(AFDStateProperties, RouteUpdatePropertiesParameters):
         supported_protocols: Optional[List[Union[str, "AFDEndpointProtocols"]]] = None,
         patterns_to_match: Optional[List[str]] = None,
         compression_settings: Optional[object] = None,
-        query_string_caching_behavior: Optional[Union[str, "QueryStringCachingBehavior"]] = None,
-        optimization_type: Optional[Union[str, "OptimizationType"]] = None,
+        query_string_caching_behavior: Optional[Union[str, "AfdQueryStringCachingBehavior"]] = None,
         forwarding_protocol: Optional[Union[str, "ForwardingProtocol"]] = None,
         link_to_default_domain: Optional[Union[str, "LinkToDefaultDomain"]] = None,
         https_redirect: Optional[Union[str, "HttpsRedirect"]] = None,
         enabled_state: Optional[Union[str, "EnabledState"]] = None,
         **kwargs
     ):
-        super(RouteProperties, self).__init__(custom_domains=custom_domains, origin_group=origin_group, origin_path=origin_path, rule_sets=rule_sets, supported_protocols=supported_protocols, patterns_to_match=patterns_to_match, compression_settings=compression_settings, query_string_caching_behavior=query_string_caching_behavior, optimization_type=optimization_type, forwarding_protocol=forwarding_protocol, link_to_default_domain=link_to_default_domain, https_redirect=https_redirect, enabled_state=enabled_state, **kwargs)
+        super(RouteProperties, self).__init__(custom_domains=custom_domains, origin_group=origin_group, origin_path=origin_path, rule_sets=rule_sets, supported_protocols=supported_protocols, patterns_to_match=patterns_to_match, compression_settings=compression_settings, query_string_caching_behavior=query_string_caching_behavior, forwarding_protocol=forwarding_protocol, link_to_default_domain=link_to_default_domain, https_redirect=https_redirect, enabled_state=enabled_state, **kwargs)
         self.custom_domains = custom_domains
         self.origin_group = origin_group
         self.origin_path = origin_path
@@ -7478,7 +7424,6 @@ class RouteProperties(AFDStateProperties, RouteUpdatePropertiesParameters):
         self.patterns_to_match = patterns_to_match
         self.compression_settings = compression_settings
         self.query_string_caching_behavior = query_string_caching_behavior
-        self.optimization_type = optimization_type
         self.forwarding_protocol = forwarding_protocol
         self.link_to_default_domain = link_to_default_domain
         self.https_redirect = https_redirect
@@ -7505,17 +7450,12 @@ class RouteUpdateParameters(msrest.serialization.Model):
     :type patterns_to_match: list[str]
     :param compression_settings: compression settings.
     :type compression_settings: object
-    :param query_string_caching_behavior: Defines how AzureFrontDoor caches requests that include
-     query strings. You can ignore any query strings when caching, bypass caching to prevent
-     requests that contain query strings from being cached, or cache every request with a unique
-     URL. Possible values include: "IgnoreQueryString", "BypassCaching", "UseQueryString", "NotSet".
-    :type query_string_caching_behavior: str or ~azure.mgmt.cdn.models.QueryStringCachingBehavior
-    :param optimization_type: Specifies what scenario the customer wants this AzureFrontDoor
-     endpoint to optimize for, e.g. Download, Media services. With this information, AzureFrontDoor
-     can apply scenario driven optimization. Possible values include: "GeneralWebDelivery",
-     "GeneralMediaStreaming", "VideoOnDemandMediaStreaming", "LargeFileDownload",
-     "DynamicSiteAcceleration".
-    :type optimization_type: str or ~azure.mgmt.cdn.models.OptimizationType
+    :param query_string_caching_behavior: Defines how CDN caches requests that include query
+     strings. You can ignore any query strings when caching, bypass caching to prevent requests that
+     contain query strings from being cached, or cache every request with a unique URL. Possible
+     values include: "IgnoreQueryString", "UseQueryString", "NotSet".
+    :type query_string_caching_behavior: str or
+     ~azure.mgmt.cdn.models.AfdQueryStringCachingBehavior
     :param forwarding_protocol: Protocol this rule will use when forwarding traffic to backends.
      Possible values include: "HttpOnly", "HttpsOnly", "MatchRequest".
     :type forwarding_protocol: str or ~azure.mgmt.cdn.models.ForwardingProtocol
@@ -7540,7 +7480,6 @@ class RouteUpdateParameters(msrest.serialization.Model):
         'patterns_to_match': {'key': 'properties.patternsToMatch', 'type': '[str]'},
         'compression_settings': {'key': 'properties.compressionSettings', 'type': 'object'},
         'query_string_caching_behavior': {'key': 'properties.queryStringCachingBehavior', 'type': 'str'},
-        'optimization_type': {'key': 'properties.optimizationType', 'type': 'str'},
         'forwarding_protocol': {'key': 'properties.forwardingProtocol', 'type': 'str'},
         'link_to_default_domain': {'key': 'properties.linkToDefaultDomain', 'type': 'str'},
         'https_redirect': {'key': 'properties.httpsRedirect', 'type': 'str'},
@@ -7557,8 +7496,7 @@ class RouteUpdateParameters(msrest.serialization.Model):
         supported_protocols: Optional[List[Union[str, "AFDEndpointProtocols"]]] = None,
         patterns_to_match: Optional[List[str]] = None,
         compression_settings: Optional[object] = None,
-        query_string_caching_behavior: Optional[Union[str, "QueryStringCachingBehavior"]] = None,
-        optimization_type: Optional[Union[str, "OptimizationType"]] = None,
+        query_string_caching_behavior: Optional[Union[str, "AfdQueryStringCachingBehavior"]] = None,
         forwarding_protocol: Optional[Union[str, "ForwardingProtocol"]] = None,
         link_to_default_domain: Optional[Union[str, "LinkToDefaultDomain"]] = None,
         https_redirect: Optional[Union[str, "HttpsRedirect"]] = None,
@@ -7574,14 +7512,13 @@ class RouteUpdateParameters(msrest.serialization.Model):
         self.patterns_to_match = patterns_to_match
         self.compression_settings = compression_settings
         self.query_string_caching_behavior = query_string_caching_behavior
-        self.optimization_type = optimization_type
         self.forwarding_protocol = forwarding_protocol
         self.link_to_default_domain = link_to_default_domain
         self.https_redirect = https_redirect
         self.enabled_state = enabled_state
 
 
-class Rule(ProxyResource):
+class Rule(Resource):
     """Friendly Rules name mapping to the any Rules or secret related information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7788,7 +7725,7 @@ class RuleProperties(AFDStateProperties, RuleUpdatePropertiesParameters):
         self.deployment_status = None
 
 
-class RuleSet(ProxyResource):
+class RuleSet(Resource):
     """Friendly RuleSet name mapping to the any RuleSet or secret related information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7939,7 +7876,7 @@ class RuleUpdateParameters(msrest.serialization.Model):
         self.match_processing_behavior = match_processing_behavior
 
 
-class Secret(ProxyResource):
+class Secret(Resource):
     """Friendly Secret name mapping to the any Secret or secret related information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8060,7 +7997,7 @@ class SecretProperties(AFDStateProperties):
         self.parameters = parameters
 
 
-class SecurityPolicy(ProxyResource):
+class SecurityPolicy(Resource):
     """SecurityPolicy association for AzureFrontDoor profile.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8080,7 +8017,7 @@ class SecurityPolicy(ProxyResource):
      "Failed".
     :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
     :param parameters: object which contains security policy parameters.
-    :type parameters: ~azure.mgmt.cdn.models.SecurityPolicyWebApplicationFirewallParameters
+    :type parameters: ~azure.mgmt.cdn.models.SecurityPolicyParameters
     """
 
     _validation = {
@@ -8099,13 +8036,13 @@ class SecurityPolicy(ProxyResource):
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': 'SecurityPolicyWebApplicationFirewallParameters'},
+        'parameters': {'key': 'properties.parameters', 'type': 'SecurityPolicyParameters'},
     }
 
     def __init__(
         self,
         *,
-        parameters: Optional["SecurityPolicyWebApplicationFirewallParameters"] = None,
+        parameters: Optional["SecurityPolicyParameters"] = None,
         **kwargs
     ):
         super(SecurityPolicy, self).__init__(**kwargs)
@@ -8190,7 +8127,7 @@ class SecurityPolicyProperties(AFDStateProperties):
      "Failed".
     :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
     :param parameters: object which contains security policy parameters.
-    :type parameters: ~azure.mgmt.cdn.models.SecurityPolicyWebApplicationFirewallParameters
+    :type parameters: ~azure.mgmt.cdn.models.SecurityPolicyParameters
     """
 
     _validation = {
@@ -8201,13 +8138,13 @@ class SecurityPolicyProperties(AFDStateProperties):
     _attribute_map = {
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'SecurityPolicyWebApplicationFirewallParameters'},
+        'parameters': {'key': 'parameters', 'type': 'SecurityPolicyParameters'},
     }
 
     def __init__(
         self,
         *,
-        parameters: Optional["SecurityPolicyWebApplicationFirewallParameters"] = None,
+        parameters: Optional["SecurityPolicyParameters"] = None,
         **kwargs
     ):
         super(SecurityPolicyProperties, self).__init__(**kwargs)

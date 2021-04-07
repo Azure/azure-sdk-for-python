@@ -79,5 +79,5 @@ class _ReceiveTest(_EventHubTest):
     @staticmethod
     def add_arguments(parser):
         super(_ReceiveTest, _ReceiveTest).add_arguments(parser)
-        parser.add_argument('--max-wait-time', nargs='?', type=int, help='Max time to wait for events before closing. Defaults to 0.', default=60)
+        parser.add_argument('--max-wait-time', nargs='?', type=int, help='Max time to wait for events before closing. Defaults to 60.', default=60)
         parser.add_argument('--preload', nargs='?', type=int, help='Number of events to preload. Default is 10000.', default=10000)

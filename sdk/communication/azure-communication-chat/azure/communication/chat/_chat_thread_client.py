@@ -14,6 +14,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 
 from ._shared.user_credential import CommunicationTokenCredential
+from ._shared.models import CommunicationIdentifier
 from ._generated import AzureCommunicationChatService
 from ._generated.models import (
     AddChatParticipantsRequest,
@@ -31,11 +32,8 @@ from ._models import (
     ChatThreadProperties
 )
 
-from ._utils import ( # pylint: disable=unused-import
-    _to_utc_datetime,
-    CommunicationUserIdentifierConverter,
-    CommunicationErrorResponseConverter
-)
+from ._communication_identifier_serializer import serialize_identifier
+from ._utils import CommunicationErrorResponseConverter
 from ._version import SDK_MONIKER
 
 if TYPE_CHECKING:
@@ -47,9 +45,9 @@ if TYPE_CHECKING:
 
 class ChatThreadClient(object):
     """A client to interact with the AzureCommunicationService Chat gateway.
-    Instances of this class is normally created by ChatClient.create_chat_thread()
+    Instances of this class is normally retrieved by ChatClient.get_chat_thread_client()
 
-    This client provides operations to add participant to chat thread, remove participant from
+    This client provides operations to add participant(s) to chat thread, remove participant from
     chat thread, send message, delete message, update message, send typing notifications,
     send and list read receipt
 
@@ -138,7 +136,7 @@ class ChatThreadClient(object):
                 :end-before: [END get_thread]
                 :language: python
                 :dedent: 8
-                :caption: Getting a chat thread by thread id.
+                :caption: Retrieving chat thread properties by chat thread id.
         """
 
         chat_thread = self._client.chat_thread.get_chat_thread_properties(self._thread_id, **kwargs)
@@ -154,7 +152,7 @@ class ChatThreadClient(object):
         # type: (...) -> None
         """Updates a thread's properties.
 
-        :param topic: Thread topic. If topic is not specified, the update will succeeded but
+        :param topic: Thread topic. If topic is not specified, the update will succeed but
          chat thread properties will not be changed.
         :type topic: str
         :return: None
@@ -184,7 +182,7 @@ class ChatThreadClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Posts a read receipt event to a thread, on behalf of a user.
+        """Posts a read receipt event to a chat thread, on behalf of a user.
 
         :param message_id: Required. Id of the latest message read by current user.
         :type message_id: str
@@ -262,7 +260,7 @@ class ChatThreadClient(object):
                 :end-before: [END send_typing_notification]
                 :language: python
                 :dedent: 8
-                :caption: Sending typing notification.
+                :caption: Send typing notification.
         """
         return self._client.chat_thread.send_typing_notification(self._thread_id, **kwargs)
 
@@ -277,11 +275,11 @@ class ChatThreadClient(object):
 
         :param content: Required. Chat message content.
         :type content: str
-        :keyword chat_message_type: The chat message type. Possible values include: "text", "html".
-        Default: ChatMessageType.TEXT
+        :keyword chat_message_type:
+            The chat message type. Possible values include: "text", "html". Default: ChatMessageType.TEXT
         :paramtype chat_message_type: Union[str, ~azure.communication.chat.ChatMessageType]
         :keyword str sender_display_name: The display name of the message sender. This property is used to
-          populate sender name for push notifications.
+            populate sender name for push notifications.
         :return: SendChatMessageResult
         :rtype: ~azure.communication.chat.SendChatMessageResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -348,7 +346,7 @@ class ChatThreadClient(object):
                 :end-before: [END get_message]
                 :language: python
                 :dedent: 8
-                :caption: Getting a message by message id.
+                :caption: Retrieving a message by message id.
         """
         if not message_id:
             raise ValueError("message_id cannot be None.")
@@ -416,7 +414,7 @@ class ChatThreadClient(object):
                 :end-before: [END update_message]
                 :language: python
                 :dedent: 8
-                :caption: Updating a sent messages.
+                :caption: Updating an already sent message.
         """
         if not message_id:
             raise ValueError("message_id cannot be None.")
@@ -451,7 +449,7 @@ class ChatThreadClient(object):
                 :end-before: [END delete_message]
                 :language: python
                 :dedent: 8
-                :caption: Deleting a messages.
+                :caption: Deleting a message.
         """
         if not message_id:
             raise ValueError("message_id cannot be None.")
@@ -547,14 +545,14 @@ class ChatThreadClient(object):
     @distributed_trace
     def remove_participant(
         self,
-        user,  # type: CommunicationUserIdentifier
+        user,  # type: CommunicationIdentifier
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Remove a participant from a thread.
 
         :param user: Required. User identity of the thread participant to remove from the thread.
-        :type user: ~azure.communication.chat.CommunicationUserIdentifier
+        :type user: ~azure.communication.chat.CommunicationIdentifier
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -573,7 +571,7 @@ class ChatThreadClient(object):
 
         return self._client.chat_thread.remove_chat_participant(
             chat_thread_id=self._thread_id,
-            participant_communication_identifier=CommunicationUserIdentifierConverter.to_identifier_model(user),
+            participant_communication_identifier=serialize_identifier(user),
             **kwargs)
 
     def close(self):

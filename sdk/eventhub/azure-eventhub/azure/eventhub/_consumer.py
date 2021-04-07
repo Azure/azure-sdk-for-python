@@ -17,7 +17,7 @@ from uamqp import ReceiveClient, Source, Message
 from .exceptions import _error_handler
 from ._common import EventData
 from ._client_base import ConsumerProducerMixin
-from ._utils import create_properties, trace_link_message, event_position_selector
+from ._utils import create_properties, event_position_selector
 from ._constants import (
     EPOCH_SYMBOL,
     TIMEOUT_SYMBOL,
@@ -176,7 +176,6 @@ class EventHubConsumer(
         # pylint:disable=protected-access
         message = self._message_buffer.pop()
         event_data = EventData._from_message(message)
-        trace_link_message(event_data)
         self._last_received_event = event_data
         return event_data
 
