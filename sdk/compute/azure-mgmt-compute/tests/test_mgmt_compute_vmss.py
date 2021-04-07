@@ -163,6 +163,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
           "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/loadBalancers/" + LOAD_BALANCER_NAME + "/backendAddressPools/" + BACKEND_ADDRESS_POOL_NAME
         )
 
+    @unittest.skip("skip temporary")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_vmss_rolling_upgrades(self, resource_group):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
