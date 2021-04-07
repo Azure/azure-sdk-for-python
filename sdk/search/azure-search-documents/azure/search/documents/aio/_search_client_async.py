@@ -341,7 +341,7 @@ class SearchClient(HeadersMixin):
         :keyword mode: Specifies the mode for Autocomplete. The default is 'oneTerm'. Use
          'twoTerms' to get shingles and 'oneTermWithContext' to use the current context while producing
          auto-completed terms. Possible values include: 'oneTerm', 'twoTerms', 'oneTermWithContext'.
-        :paramtype mode: str or ~search_index_client.models.AutocompleteMode
+        :paramtype mode: str or ~azure.search.documents.models.AutocompleteMode
         :keyword str filter: An OData expression that filters the documents used to produce completed terms
          for the Autocomplete result.
         :keyword bool use_fuzzy_matching: A value indicating whether to use fuzzy matching for the

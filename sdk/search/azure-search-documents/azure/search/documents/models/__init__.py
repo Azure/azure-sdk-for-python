@@ -26,6 +26,7 @@
 
 from .._generated.models import (
     Answers,
+    AutocompleteMode,
     IndexAction,
     IndexingResult,
     QueryLanguage,
