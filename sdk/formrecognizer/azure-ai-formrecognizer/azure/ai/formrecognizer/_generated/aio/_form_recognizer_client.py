@@ -9,13 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.core import AsyncPipelineClient
-from msrest import Serializer, Deserializer
+from typing import Any, Optional, TYPE_CHECKING
 
+from azure.core import AsyncPipelineClient
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
+from msrest import Deserializer, Serializer
+
 from ._configuration import FormRecognizerClientConfiguration
 from ._operations_mixin import FormRecognizerClientOperationsMixin
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
+
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
         """This is a fake class to support current implemetation of MultiApiClientMixin."
@@ -38,14 +46,14 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :type endpoint: str
-    :param str api_version: API version to use if no profile is provided, or if
-     missing in profile.
+    :param api_version: API version to use if no profile is provided, or if missing in profile.
+    :type api_version: str
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2.1-preview.2'
+    DEFAULT_API_VERSION = '2.1-preview.3'
     _PROFILE_TAG = "azure.ai.formrecognizer.FormRecognizerClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -56,16 +64,16 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
 
     def __init__(
         self,
-        credential,  # type: "AsyncTokenCredential"
-        endpoint,  # type: str
-        api_version=None,
-        profile=KnownProfiles.default,
+        credential: "AsyncTokenCredential",
+        endpoint: str,
+        api_version: Optional[str] = None,
+        profile: KnownProfiles = KnownProfiles.default,
         **kwargs  # type: Any
     ) -> None:
         if api_version == '2.0':
             base_url = '{endpoint}/formrecognizer/v2.0'
-        elif api_version == '2.1-preview.2':
-            base_url = '{endpoint}/formrecognizer/v2.1-preview.2'
+        elif api_version == '2.1-preview.3':
+            base_url = '{endpoint}/formrecognizer/v2.1-preview.3'
         else:
             raise ValueError("API version {} is not available".format(api_version))
         self._config = FormRecognizerClientConfiguration(credential, endpoint, **kwargs)
@@ -84,13 +92,13 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
         """Module depends on the API version:
 
            * 2.0: :mod:`v2_0.models<azure.ai.formrecognizer.v2_0.models>`
-           * 2.1-preview.2: :mod:`v2_1_preview_2.models<azure.ai.formrecognizer.v2_1_preview_2.models>`
+           * 2.1-preview.3: :mod:`v2_1_preview_3.models<azure.ai.formrecognizer.v2_1_preview_3.models>`
         """
         if api_version == '2.0':
             from ..v2_0 import models
             return models
-        elif api_version == '2.1-preview.2':
-            from ..v2_1_preview_2 import models
+        elif api_version == '2.1-preview.3':
+            from ..v2_1_preview_3 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 

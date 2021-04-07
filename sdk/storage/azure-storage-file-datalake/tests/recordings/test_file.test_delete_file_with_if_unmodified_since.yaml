@@ -3,7 +3,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -11,15 +11,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - e17c0728-16b1-11ea-ac34-001a7dda7113
+      - 5f624194-919b-11eb-b8b4-001a7dda7113
       x-ms-date:
-      - Wed, 04 Dec 2019 16:19:43 GMT
+      - Tue, 30 Mar 2021 21:03:27 GMT
       x-ms-properties:
       - ''
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.dfs.core.windows.net/filesystem1a9514bc/file1a9514bc?resource=file
   response:
@@ -29,17 +29,17 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 04 Dec 2019 16:19:42 GMT
+      - Tue, 30 Mar 2021 21:03:27 GMT
       ETag:
-      - '"0x8D778D5C5E1D782"'
+      - '"0x8D8F3BF43CFDA79"'
       Last-Modified:
-      - Wed, 04 Dec 2019 16:19:43 GMT
+      - Tue, 30 Mar 2021 21:03:27 GMT
       Server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - da9cdde4-001f-001f-70be-aafe90000000
+      - fc780d80-801f-003e-2da8-25daeb000000
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     status:
       code: 201
       message: Created
@@ -47,19 +47,21 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - e1c13306-16b1-11ea-8f97-001a7dda7113
+      - 5fa38aa4-919b-11eb-accc-001a7dda7113
       x-ms-date:
-      - Wed, 04 Dec 2019 16:19:44 GMT
+      - Tue, 30 Mar 2021 21:03:27 GMT
+      x-ms-encryption-algorithm:
+      - AES256
       x-ms-version:
-      - '2019-02-02'
+      - '2020-06-12'
     method: HEAD
     uri: https://storagename.blob.core.windows.net/filesystem1a9514bc/file1a9514bc
   response:
@@ -73,13 +75,15 @@ interactions:
       Content-Type:
       - application/octet-stream
       Date:
-      - Wed, 04 Dec 2019 16:19:43 GMT
+      - Tue, 30 Mar 2021 21:03:27 GMT
       ETag:
-      - '"0x8D778D5C5E1D782"'
+      - '"0x8D8F3BF43CFDA79"'
       Last-Modified:
-      - Wed, 04 Dec 2019 16:19:43 GMT
+      - Tue, 30 Mar 2021 21:03:27 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
       x-ms-access-tier:
       - Hot
       x-ms-access-tier-inferred:
@@ -87,17 +91,23 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Wed, 04 Dec 2019 16:19:43 GMT
+      - Tue, 30 Mar 2021 21:03:27 GMT
+      x-ms-group:
+      - $superuser
       x-ms-lease-state:
       - available
       x-ms-lease-status:
       - unlocked
+      x-ms-owner:
+      - $superuser
+      x-ms-permissions:
+      - rw-r-----
       x-ms-request-id:
-      - 90f47a8a-401e-001e-1ebe-aaa14c000000
+      - 74514c16-701e-0015-46a8-255a27000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2019-02-02'
+      - '2020-06-12'
     status:
       code: 200
       message: OK
@@ -105,7 +115,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -113,17 +123,17 @@ interactions:
       Content-Length:
       - '0'
       If-Unmodified-Since:
-      - Wed, 04 Dec 2019 16:19:43 GMT
+      - Tue, 30 Mar 2021 21:03:27 GMT
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - e1f365cc-16b1-11ea-9fb1-001a7dda7113
+      - 5fe3ddee-919b-11eb-ac10-001a7dda7113
       x-ms-date:
-      - Wed, 04 Dec 2019 16:19:44 GMT
+      - Tue, 30 Mar 2021 21:03:27 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: DELETE
-    uri: https://storagename.dfs.core.windows.net/filesystem1a9514bc/file1a9514bc?recursive=true
+    uri: https://storagename.dfs.core.windows.net/filesystem1a9514bc/file1a9514bc
   response:
     body:
       string: ''
@@ -131,13 +141,13 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 04 Dec 2019 16:19:43 GMT
+      - Tue, 30 Mar 2021 21:03:27 GMT
       Server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - da9cdde5-001f-001f-71be-aafe90000000
+      - fc780d90-801f-003e-3ca8-25daeb000000
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     status:
       code: 200
       message: OK
@@ -145,19 +155,21 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - e201e1c6-16b1-11ea-bcaf-001a7dda7113
+      - 5ff6b90a-919b-11eb-a103-001a7dda7113
       x-ms-date:
-      - Wed, 04 Dec 2019 16:19:44 GMT
+      - Tue, 30 Mar 2021 21:03:28 GMT
+      x-ms-encryption-algorithm:
+      - AES256
       x-ms-version:
-      - '2019-02-02'
+      - '2020-06-12'
     method: HEAD
     uri: https://storagename.blob.core.windows.net/filesystem1a9514bc/file1a9514bc
   response:
@@ -165,17 +177,19 @@ interactions:
       string: ''
     headers:
       Date:
-      - Wed, 04 Dec 2019 16:19:43 GMT
+      - Tue, 30 Mar 2021 21:03:27 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
       - chunked
+      Vary:
+      - Origin
       x-ms-error-code:
       - BlobNotFound
       x-ms-request-id:
-      - 90f47b00-401e-001e-0bbe-aaa14c000000
+      - 74514d0a-701e-0015-28a8-255a27000000
       x-ms-version:
-      - '2019-02-02'
+      - '2020-06-12'
     status:
       code: 404
       message: The specified blob does not exist.

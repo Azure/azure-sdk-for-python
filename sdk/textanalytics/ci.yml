@@ -36,3 +36,4 @@ extends:
       safeName: azureaitextanalytics
     - name: azure-ai-nspkg
       safeName: azureainspkg
+    VerifyAutorest: true

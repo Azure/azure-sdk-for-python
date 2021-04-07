@@ -3,12 +3,22 @@ import pytest
 from azure.communication.phonenumbers import PhoneNumbersClient
 from _shared.testcase import CommunicationTestCase, ResponseReplacerProcessor, BodyReplacerProcessor
 from _shared.utils import create_token_credential
-from azure.communication.phonenumbers import PhoneNumberAssignmentType, PhoneNumberCapabilities, PhoneNumberCapabilityType, PhoneNumberType
+from azure.communication.phonenumbers import (
+    PhoneNumberAssignmentType, 
+    PhoneNumberCapabilities, 
+    PhoneNumberCapabilityType, 
+    PhoneNumberType,
+)
+from azure.communication.phonenumbers._generated.models import PhoneNumberOperationStatus
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
 from phone_number_helper import PhoneNumberUriReplacer
 
 SKIP_PURCHASE_PHONE_NUMBER_TESTS = True
 PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers shouldn't be purchased in live tests"
+
+SKIP_SEARCH_AVAILABLE_PHONE_NUMBER_TESTS = True
+SEARCH_AVAILABLE_PHONE_NUMBER_TEST_SKIP_REASON = "Temporarily skipping test"
+
 
 class PhoneNumbersClientTest(CommunicationTestCase):
     def setUp(self):
@@ -42,6 +52,7 @@ class PhoneNumbersClientTest(CommunicationTestCase):
         phone_number = self.phone_number_client.get_purchased_phone_number(self.phone_number)
         assert phone_number.phone_number == self.phone_number
 
+    @pytest.mark.skipif(SKIP_SEARCH_AVAILABLE_PHONE_NUMBER_TESTS, reason=SEARCH_AVAILABLE_PHONE_NUMBER_TEST_SKIP_REASON)
     def test_search_available_phone_numbers(self):
         capabilities = PhoneNumberCapabilities(
             calling = PhoneNumberCapabilityType.INBOUND,
@@ -63,7 +74,8 @@ class PhoneNumbersClientTest(CommunicationTestCase):
             PhoneNumberCapabilityType.INBOUND,
             polling = True
         )
-        assert poller.result()
+        poller.result()
+        assert poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
     @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
     def test_purchase_phone_numbers(self):
@@ -82,4 +94,4 @@ class PhoneNumbersClientTest(CommunicationTestCase):
         purchase_poller = self.phone_number_client.begin_purchase_phone_numbers(phone_number_to_buy.search_id, polling=True)
         purchase_poller.result()
         release_poller = self.phone_number_client.begin_release_phone_number(phone_number_to_buy.phone_numbers[0])
-        assert release_poller.status() == 'succeeded'
+        assert release_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value

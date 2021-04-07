@@ -1,5 +1,26 @@
 # Release History
 
+## 18.0.0 (2021-03-08)
+
+**Features**
+
+  - Model VpnConnection has a new parameter traffic_selector_policies
+  - Model VirtualNetworkGateway has a new parameter virtual_network_extended_location
+  - Model VirtualNetworkGateway has a new parameter v_net_extended_location_resource_id
+  - Model VpnClientConfiguration has a new parameter vpn_authentication_types
+  - Model LoadBalancerBackendAddress has a new parameter subnet
+  - Model ServiceEndpointPolicy has a new parameter kind
+  - Model FirewallPolicy has a new parameter snat
+  - Model FirewallPolicy has a new parameter insights
+  - Added operation VirtualNetworkGatewayConnectionsOperations.begin_reset_connection
+  - Added operation VpnLinkConnectionsOperations.begin_get_ike_sas
+  - Added operation VpnLinkConnectionsOperations.begin_reset_connection
+
+**Breaking changes**
+
+  - Model VirtualNetworkGateway no longer has parameter extended_location
+  - Model VirtualNetworkGateway no longer has parameter virtual_network_extended_location_resource_id
+
 ## 17.1.0 (2021-01-26)
 
 **Features**

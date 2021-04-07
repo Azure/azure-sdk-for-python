@@ -15,7 +15,7 @@ class CheckpointStore(ABC):
 
     @abstractmethod
     async def list_ownership(
-        self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str
+        self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str, **kwargs: Any
     ) -> Iterable[Dict[str, Any]]:
         """Retrieves a complete ownership list from the chosen storage service.
 
@@ -40,7 +40,7 @@ class CheckpointStore(ABC):
 
     @abstractmethod
     async def claim_ownership(
-        self, ownership_list: Iterable[Dict[str, Any]]
+        self, ownership_list: Iterable[Dict[str, Any]], **kwargs: Any
     ) -> Iterable[Dict[str, Any]]:
         """Tries to claim ownership for a list of specified partitions.
 
@@ -61,7 +61,7 @@ class CheckpointStore(ABC):
 
     @abstractmethod
     async def update_checkpoint(
-        self, checkpoint: Dict[str, Optional[Union[str, int]]]
+        self, checkpoint: Dict[str, Optional[Union[str, int]]], **kwargs: Any
     ) -> None:
         """Updates the checkpoint using the given information for the offset, associated partition and
         consumer group in the chosen storage service.
@@ -87,7 +87,7 @@ class CheckpointStore(ABC):
 
     @abstractmethod
     async def list_checkpoints(
-        self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str
+        self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str, **kwargs: Any
     ) -> Iterable[Dict[str, Any]]:
         """List the updated checkpoints from the chosen storage service.
 

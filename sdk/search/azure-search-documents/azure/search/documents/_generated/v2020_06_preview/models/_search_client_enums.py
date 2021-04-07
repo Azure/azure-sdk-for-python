@@ -26,7 +26,24 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class Answers(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """This parameter is only valid if the query type is 'semantic'. If set, the query returns answers
+    extracted from key passages in the highest ranked documents. The number of answers returned can
+    be configured by appending the pipe character '|' followed by the 'count-:code:`<number of
+    answers>`' option after the answers parameter value, such as 'extractive|count-3'. Default
+    count is 1.
+    """
+
+    #: Do not return answers for the query.
+    NONE = "none"
+    #: Extracts answer candidates from the contents of the documents returned in response to a query
+    #: expressed as a question in natural language.
+    EXTRACTIVE = "extractive"
+
 class AutocompleteMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies the mode for Autocomplete. The default is 'oneTerm'. Use 'twoTerms' to get shingles
+    and 'oneTermWithContext' to use the current context in producing autocomplete terms.
+    """
 
     #: Only one term is suggested. If the query has two terms, only the last term is completed. For
     #: example, if the input is 'washington medic', the suggested terms could include 'medicaid',
@@ -59,7 +76,19 @@ class IndexActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: document, use merge instead and set the field explicitly to null.
     DELETE = "delete"
 
+class QueryLanguage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The language of the query.
+    """
+
+    #: Query language not specified.
+    NONE = "none"
+    #: English.
+    EN_US = "en-us"
+
 class QueryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies the syntax of the search query. The default is 'simple'. Use 'full' if your query
+    uses the Lucene query syntax and 'semantic' if query syntax is not needed.
+    """
 
     #: Uses the simple query syntax for searches. Search text is interpreted using a simple query
     #: language that allows for symbols such as +, * and "". Queries are evaluated across all
@@ -69,8 +98,17 @@ class QueryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: query language which allows field-specific and weighted searches, as well as other advanced
     #: features.
     FULL = "full"
+    #: Best suited for queries expressed in natural language as opposed to keywords. Improves
+    #: precision of search results by re-ranking the top search results using a ranking model trained
+    #: on the Web corpus.
+    SEMANTIC = "semantic"
 
 class ScoringStatistics(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """A value that specifies whether we want to calculate scoring statistics (such as document
+    frequency) globally for more consistent scoring, or locally, for lower latency. The default is
+    'local'. Use 'global' to aggregate scoring statistics globally before scoring. Using global
+    scoring statistics can increase latency of search queries.
+    """
 
     #: The scoring statistics will be calculated locally for lower latency.
     LOCAL = "local"
@@ -78,8 +116,21 @@ class ScoringStatistics(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     GLOBAL_ENUM = "global"
 
 class SearchMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies whether any or all of the search terms must be matched in order to count the document
+    as a match.
+    """
 
     #: Any of the search terms must be matched in order to count the document as a match.
     ANY = "any"
     #: All of the search terms must be matched in order to count the document as a match.
     ALL = "all"
+
+class Speller(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Improve search recall by spell-correcting individual search query terms.
+    """
+
+    #: Speller not enabled.
+    NONE = "none"
+    #: Speller corrects individual query terms using a static lexicon for the language specified by
+    #: the queryLanguage parameter.
+    LEXICON = "lexicon"

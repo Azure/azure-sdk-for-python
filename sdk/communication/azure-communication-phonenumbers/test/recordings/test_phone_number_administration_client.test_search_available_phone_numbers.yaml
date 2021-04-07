@@ -14,9 +14,9 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 05 Mar 2021 22:20:06 GMT
+      - Tue, 16 Mar 2021 16:36:37 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -30,19 +30,19 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 05 Mar 2021 22:20:10 GMT
+      - Tue, 16 Mar 2021 16:36:40 GMT
       ms-cv:
-      - lzRA3VrAnEC+gMwWY5/d5w.0
+      - B5NTJ6zN4U+Mer53Yo4Iiw.0
       operation-id:
-      - search_c7deaed5-e41e-4fe5-91a6-a21e7210cbe4
+      - search_7ed48717-bb69-434d-bba2-e31ab2d6489f
       operation-location:
-      - /phoneNumbers/operations/search_c7deaed5-e41e-4fe5-91a6-a21e7210cbe4?api-version=2021-03-07
+      - /phoneNumbers/operations/search_7ed48717-bb69-434d-bba2-e31ab2d6489f?api-version=2021-03-07
       request-context:
       - appId=
       search-id:
-      - c7deaed5-e41e-4fe5-91a6-a21e7210cbe4
+      - 7ed48717-bb69-434d-bba2-e31ab2d6489f
       x-processing-time:
-      - 4133ms
+      - 3262ms
     status:
       code: 202
       message: Accepted
@@ -56,17 +56,17 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Fri, 05 Mar 2021 22:20:41 GMT
+      - Tue, 16 Mar 2021 16:37:11 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/phoneNumbers/operations/search_c7deaed5-e41e-4fe5-91a6-a21e7210cbe4?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/phoneNumbers/operations/search_7ed48717-bb69-434d-bba2-e31ab2d6489f?api-version=2021-03-07
   response:
     body:
-      string: '{"status": "Succeeded", "resourceLocation": "/availablePhoneNumbers/searchResults/c7deaed5-e41e-4fe5-91a6-a21e7210cbe4?api-version=2021-03-07",
-        "createdDateTime": "2021-03-05T22:20:11.001373+00:00", "id": "sanitized",
+      string: '{"status": "succeeded", "resourceLocation": "/availablePhoneNumbers/searchResults/7ed48717-bb69-434d-bba2-e31ab2d6489f?api-version=2021-03-07",
+        "createdDateTime": "2021-03-16T16:36:40.6037616+00:00", "id": "sanitized",
         "operationType": "Search", "lastActionDateTime": "0001-01-01T00:00:00+00:00"}'
     headers:
       access-control-expose-headers:
@@ -74,15 +74,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Mar 2021 22:20:41 GMT
+      - Tue, 16 Mar 2021 16:37:11 GMT
       ms-cv:
-      - AbkHLPOGRUirq1KzJ53Qlw.0
+      - VwymUOODMEG17oiEGW5A/g.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 670ms
+      - 560ms
     status:
       code: 200
       message: OK
@@ -97,33 +97,33 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Fri, 05 Mar 2021 22:20:41 GMT
+      - Tue, 16 Mar 2021 16:37:11 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/availablePhoneNumbers/searchResults/c7deaed5-e41e-4fe5-91a6-a21e7210cbe4?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/availablePhoneNumbers/searchResults/7ed48717-bb69-434d-bba2-e31ab2d6489f?api-version=2021-03-07
   response:
     body:
-      string: '{"searchId": "c7deaed5-e41e-4fe5-91a6-a21e7210cbe4", "phoneNumbers":
+      string: '{"searchId": "7ed48717-bb69-434d-bba2-e31ab2d6489f", "phoneNumbers":
         ["sanitized"], "phoneNumberType": "TollFree", "assignmentType": "Application",
         "capabilities": {"calling": "inbound", "sms": "inbound+outbound"}, "cost":
         {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "Monthly"}, "searchExpiresBy":
-        "2021-03-05T22:36:18.4979540+00:00"}'
+        "2021-03-16T16:52:45.9406658+00:00"}'
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Mar 2021 22:20:42 GMT
+      - Tue, 16 Mar 2021 16:37:12 GMT
       ms-cv:
-      - Rn4DVw7s5UOVfiCFfiXCOQ.0
+      - MAB8rWEV2kSuVCFN70pbZA.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 997ms
+      - 809ms
     status:
       code: 200
       message: OK

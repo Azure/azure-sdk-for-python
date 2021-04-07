@@ -1,5 +1,11 @@
 # Release History
 
+## 1.1.0b1 (2021-03-16)
+
+**Features**
+
+  - Model SoftwareUpdateConfigurationCollectionItem has a new parameter tasks
+
 ## 1.0.0 (2020-12-17)
 
 - GA release

@@ -41,25 +41,25 @@ class LargeFaceListOperations(object):
         name, an optional userData and recognitionModel.
         <br /> Large face list is a list of faces, up to 1,000,000 faces, and
         used by [Face - Find
-        Similar](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/findsimilar).
+        Similar](https://docs.microsoft.com/rest/api/faceapi/face/findsimilar).
         <br /> After creation, user should use [LargeFaceList Face -
-        Add](https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/addfacefromurl)
+        Add](https://docs.microsoft.com/rest/api/faceapi/largefacelist/addfacefromurl)
         to import the faces and [LargeFaceList -
-        Train](https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/train)
+        Train](https://docs.microsoft.com/rest/api/faceapi/largefacelist/train)
         to make it ready for [Face - Find
-        Similar](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/findsimilar).
+        Similar](https://docs.microsoft.com/rest/api/faceapi/face/findsimilar).
         No image will be stored. Only the extracted face features are stored on
         server until [LargeFaceList -
-        Delete](https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/delete)
+        Delete](https://docs.microsoft.com/rest/api/faceapi/largefacelist/delete)
         is called.
         <br /> Find Similar is used for scenario like finding celebrity-like
         faces, similar face filtering, or as a light way face identification.
         But if the actual use is to identify person, please use
-        [PersonGroup](https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroup)
+        [PersonGroup](https://docs.microsoft.com/rest/api/faceapi/persongroup)
         /
-        [LargePersonGroup](https://docs.microsoft.com/rest/api/cognitiveservices/face/largepersongroup)
+        [LargePersonGroup](https://docs.microsoft.com/rest/api/faceapi/largepersongroup)
         and [Face -
-        Identify](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/identify).
+        Identify](https://docs.microsoft.com/rest/api/faceapi/face/identify).
         <br/>'recognitionModel' should be specified to associate with this
         large face list. The default value for 'recognitionModel' is
         'recognition_01', if the latest model needed, please explicitly specify
@@ -67,15 +67,8 @@ class LargeFaceListOperations(object):
         existing large face list will use the recognition model that's already
         associated with the collection. Existing face features in a large face
         list can't be updated to features extracted by another version of
-        recognition model.
-        * 'recognition_01': The default recognition model for [LargeFaceList-
-        Create](https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/create).
-        All those large face lists created before 2019 March are bonded with
-        this recognition model.
-        * 'recognition_02': Recognition model released in 2019 March.
-        * 'recognition_03': Recognition model released in 2020 May.
-        'recognition_03' is recommended since its overall accuracy is improved
-        compared with 'recognition_01' and 'recognition_02'.
+        recognition model. Please refer to [Specify a recognition
+        model](https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-recognition-model).
         Large face list quota:
         * Free-tier subscription quota: 64 large face lists.
         * S0-tier subscription quota: 1,000,000 large face lists.
@@ -88,7 +81,7 @@ class LargeFaceListOperations(object):
         :param user_data: User specified data. Length should not exceed 16KB.
         :type user_data: str
         :param recognition_model: Possible values include: 'recognition_01',
-         'recognition_02', 'recognition_03'
+         'recognition_02', 'recognition_03', 'recognition_04'
         :type recognition_model: str or
          ~azure.cognitiveservices.vision.face.models.RecognitionModel
         :param dict custom_headers: headers that will be added to the request
@@ -353,7 +346,7 @@ class LargeFaceListOperations(object):
         """List large face lists’ information of largeFaceListId, name, userData
         and recognitionModel. <br />
         To get face information inside largeFaceList use [LargeFaceList Face -
-        Get](https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/getface)<br
+        Get](https://docs.microsoft.com/rest/api/faceapi/largefacelist/getface)<br
         />
         * Large face lists are stored in alphabetical order of largeFaceListId.
         * "start" parameter (string, optional) is a user-provided
@@ -645,13 +638,13 @@ class LargeFaceListOperations(object):
         persistedFaceId representing the added face. No image will be stored.
         Only the extracted face feature will be stored on server until
         [LargeFaceList Face -
-        Delete](https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/deleteface)
+        Delete](https://docs.microsoft.com/rest/api/faceapi/largefacelist/deleteface)
         or [LargeFaceList -
-        Delete](https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/delete)
+        Delete](https://docs.microsoft.com/rest/api/faceapi/largefacelist/delete)
         is called.
         <br /> Note persistedFaceId is different from faceId generated by [Face
         -
-        Detect](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl).
+        Detect](https://docs.microsoft.com/rest/api/faceapi/face/detectwithurl).
         * Higher face image quality means better recognition precision. Please
         consider high-quality faces: frontal, clear, and face size is 200x200
         pixels (100 pixels between eyes) or bigger.
@@ -660,7 +653,7 @@ class LargeFaceListOperations(object):
         * "targetFace" rectangle should contain one face. Zero or multiple
         faces will be regarded as an error. If the provided "targetFace"
         rectangle is not returned from [Face -
-        Detect](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl),
+        Detect](https://docs.microsoft.com/rest/api/faceapi/face/detectwithurl),
         there’s no guarantee to detect and add the face successfully.
         * Out of detectable face size (36x36 - 4096x4096 pixels), large
         head-pose, or large occlusions will cause failures.
@@ -672,16 +665,6 @@ class LargeFaceListOperations(object):
         * Different 'detectionModel' values can be provided. To use and compare
         different detection models, please refer to [How to specify a detection
         model](https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-detection-model)
-        | Model | Recommended use-case(s) |
-        | ---------- | -------- |
-        | 'detection_01': | The default detection model for [LargeFaceList -
-        Add
-        Face](https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/addfacefromurl).
-        Recommend for near frontal face detection. For scenarios with
-        exceptionally large angle (head-pose) faces, occluded faces or wrong
-        image orientation, the faces in such cases may not be detected. |
-        | 'detection_02': | Detection model released in 2019 May with improved
-        accuracy especially on small, side and blurry faces. |
         Quota:
         * Free-tier subscription quota: 1,000 faces per large face list.
         * S0-tier subscription quota: 1,000,000 faces per large face list.
@@ -705,7 +688,8 @@ class LargeFaceListOperations(object):
          can be provided when performing Face - Detect or (Large)FaceList - Add
          Face or (Large)PersonGroup - Add Face. The default value is
          'detection_01', if another model is needed, please explicitly specify
-         it. Possible values include: 'detection_01', 'detection_02'
+         it. Possible values include: 'detection_01', 'detection_02',
+         'detection_03'
         :type detection_model: str or
          ~azure.cognitiveservices.vision.face.models.DetectionModel
         :param dict custom_headers: headers that will be added to the request
@@ -840,13 +824,13 @@ class LargeFaceListOperations(object):
         persistedFaceId representing the added face. No image will be stored.
         Only the extracted face feature will be stored on server until
         [LargeFaceList Face -
-        Delete](https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/deleteface)
+        Delete](https://docs.microsoft.com/rest/api/faceapi/largefacelist/deleteface)
         or [LargeFaceList -
-        Delete](https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/delete)
+        Delete](https://docs.microsoft.com/rest/api/faceapi/largefacelist/delete)
         is called.
         <br /> Note persistedFaceId is different from faceId generated by [Face
         -
-        Detect](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl).
+        Detect](https://docs.microsoft.com/rest/api/faceapi/face/detectwithurl).
         * Higher face image quality means better recognition precision. Please
         consider high-quality faces: frontal, clear, and face size is 200x200
         pixels (100 pixels between eyes) or bigger.
@@ -855,7 +839,7 @@ class LargeFaceListOperations(object):
         * "targetFace" rectangle should contain one face. Zero or multiple
         faces will be regarded as an error. If the provided "targetFace"
         rectangle is not returned from [Face -
-        Detect](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl),
+        Detect](https://docs.microsoft.com/rest/api/faceapi/face/detectwithurl),
         there’s no guarantee to detect and add the face successfully.
         * Out of detectable face size (36x36 - 4096x4096 pixels), large
         head-pose, or large occlusions will cause failures.
@@ -866,17 +850,7 @@ class LargeFaceListOperations(object):
         1920x1080 pixels will need a proportionally larger minimum face size.
         * Different 'detectionModel' values can be provided. To use and compare
         different detection models, please refer to [How to specify a detection
-        model](https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-detection-model)
-        | Model | Recommended use-case(s) |
-        | ---------- | -------- |
-        | 'detection_01': | The default detection model for [LargeFaceList -
-        Add
-        Face](https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/addfacefromurl).
-        Recommend for near frontal face detection. For scenarios with
-        exceptionally large angle (head-pose) faces, occluded faces or wrong
-        image orientation, the faces in such cases may not be detected. |
-        | 'detection_02': | Detection model released in 2019 May with improved
-        accuracy especially on small, side and blurry faces. |
+        model](https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-detection-model).
         Quota:
         * Free-tier subscription quota: 1,000 faces per large face list.
         * S0-tier subscription quota: 1,000,000 faces per large face list.
@@ -900,7 +874,8 @@ class LargeFaceListOperations(object):
          can be provided when performing Face - Detect or (Large)FaceList - Add
          Face or (Large)PersonGroup - Add Face. The default value is
          'detection_01', if another model is needed, please explicitly specify
-         it. Possible values include: 'detection_01', 'detection_02'
+         it. Possible values include: 'detection_01', 'detection_02',
+         'detection_03'
         :type detection_model: str or
          ~azure.cognitiveservices.vision.face.models.DetectionModel
         :param dict custom_headers: headers that will be added to the request

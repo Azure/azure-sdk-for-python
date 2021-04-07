@@ -32,7 +32,7 @@ class BlockCryptoTransform(CryptoTransform):
         raise NotImplementedError()
 
     @abstractmethod
-    def finalize(self, data):
+    def finalize(self):
         raise NotImplementedError()
 
 

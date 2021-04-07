@@ -62,7 +62,7 @@
             "type": "object",
             "defaultValue": {
                 "canonicalizedResource": "[concat('/blob/', parameters('blobStorageAccount'), '/', parameters('trainingDataContainer'))]",
-                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT2H')]",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT3H')]",
                 "signedPermission": "rl",
                 "signedResource": "c"
             }
@@ -79,7 +79,7 @@
             "type": "object",
             "defaultValue": {
                 "canonicalizedResource": "[concat('/blob/', parameters('blobStorageAccount'), '/', parameters('testingDataContainer'))]",
-                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT2H')]",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT3H')]",
                 "signedPermission": "rl",
                 "signedResource": "c"
             }
@@ -92,7 +92,7 @@
             "type": "object",
             "defaultValue": {
                 "canonicalizedResource": "[concat('/blob/', parameters('blobStorageAccount'), '/', parameters('multiPageTestingDataContainer'))]",
-                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT2H')]",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT3H')]",
                 "signedPermission": "rl",
                 "signedResource": "c"
             }
@@ -105,7 +105,7 @@
             "type": "object",
             "defaultValue": {
                 "canonicalizedResource": "[concat('/blob/', parameters('blobStorageAccount'), '/', parameters('multiPageTestingDataContainer2'))]",
-                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT2H')]",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT3H')]",
                 "signedPermission": "rl",
                 "signedResource": "c"
             }
@@ -114,7 +114,7 @@
             "type": "object",
             "defaultValue": {
                 "canonicalizedResource": "[concat('/blob/', parameters('blobStorageAccount'), '/', parameters('selectionMarkTrainingDataContainer'))]",
-                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT2H')]",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT3H')]",
                 "signedPermission": "rl",
                 "signedResource": "c"
             }

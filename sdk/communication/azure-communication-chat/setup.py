@@ -44,8 +44,6 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
@@ -65,6 +63,7 @@ setup(
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-communication-nspkg'],
-        ":python_version<'3.5'": ["typing"]
+        ":python_version<'3.5'": ["typing"],
+        ":python_version<'3.8'": ["typing-extensions"]
     }
 )

@@ -11,10 +11,9 @@ from msrest.serialization import TZ_UTC
 from uuid import uuid4
 
 from azure.communication.identity import CommunicationIdentityClient
-from azure.communication.identity._shared.user_credential_async import CommunicationTokenCredential
-from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
 from azure.communication.chat.aio import (
-    ChatClient
+    ChatClient,
+    CommunicationTokenCredential
 )
 from azure.communication.chat import (
     ChatThreadParticipant
@@ -48,8 +47,7 @@ class ChatClientTestAsync(AsyncCommunicationTestCase):
         self.token = token_response.token
 
         # create ChatClient
-        refresh_options = CommunicationTokenRefreshOptions(self.token)
-        self.chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
+        self.chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(self.token))
 
     def tearDown(self):
         super(ChatClientTestAsync, self).tearDown()
@@ -58,7 +56,7 @@ class ChatClientTestAsync(AsyncCommunicationTestCase):
         if not self.is_playback():
             self.identity_client.delete_user(self.user)
 
-    async def _create_thread(self, repeatability_request_id=None):
+    async def _create_thread(self, idempotency_token=None):
         # create chat thread
         topic = "test topic"
         share_history_time = datetime.utcnow()
@@ -70,7 +68,7 @@ class ChatClientTestAsync(AsyncCommunicationTestCase):
         )]
         create_chat_thread_result = await self.chat_client.create_chat_thread(topic,
                                                                               thread_participants=participants,
-                                                                              repeatability_request_id=repeatability_request_id)
+                                                                              idempotency_token=idempotency_token)
         self.thread_id = create_chat_thread_result.chat_thread.id
 
     @pytest.mark.live_test_only
@@ -103,15 +101,15 @@ class ChatClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_chat_thread_w_repeatability_request_id_async(self):
         async with self.chat_client:
-            repeatability_request_id = str(uuid4())
+            idempotency_token = str(uuid4())
 
             # create thread
-            await self._create_thread(repeatability_request_id=repeatability_request_id)
+            await self._create_thread(idempotency_token=idempotency_token)
             assert self.thread_id is not None
             thread_id = self.thread_id
 
             # re-create thread
-            await self._create_thread(repeatability_request_id=repeatability_request_id)
+            await self._create_thread(idempotency_token=idempotency_token)
             assert thread_id == self.thread_id
 
 
@@ -122,28 +120,16 @@ class ChatClientTestAsync(AsyncCommunicationTestCase):
 
     @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
-    async def test_get_chat_thread(self):
-        async with self.chat_client:
-            await self._create_thread()
-            get_thread_result = await self.chat_client.get_chat_thread(self.thread_id)
-            assert get_thread_result.id == self.thread_id
-
-            # delete created users and chat threads
-            if not self.is_playback():
-                await self.chat_client.delete_chat_thread(self.thread_id)
-
-    @pytest.mark.live_test_only
-    @AsyncCommunicationTestCase.await_prepared_test
     async def test_list_chat_threads(self):
         async with self.chat_client:
             await self._create_thread()
             if self.is_live:
                 await asyncio.sleep(2)
 
-            chat_thread_infos = self.chat_client.list_chat_threads(results_per_page=1)
+            chat_threads = self.chat_client.list_chat_threads(results_per_page=1)
 
             items = []
-            async for item in chat_thread_infos:
+            async for item in chat_threads:
                 items.append(item)
             assert len(items) == 1
 

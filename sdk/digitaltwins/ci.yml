@@ -36,3 +36,4 @@ extends:
       safeName: azuredigitaltwinscore
     - name: azure-digitaltwins-nspkg
       safeName: azuredigitaltwinsnspkg
+    VerifyAutorest: true

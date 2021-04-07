@@ -1,0 +1,96 @@
+interactions:
+- request:
+    body: 'b''{"source": "blob_sas_url"}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '226'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyze?includeTextDetails=false&pages=1
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - 7f898b9e-afc6-43f4-8e23-ce2dab3665fc
+      content-length:
+      - '0'
+      date:
+      - Thu, 11 Mar 2021 18:02:47 GMT
+      operation-location:
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyzeResults/7f898b9e-afc6-43f4-8e23-ce2dab3665fc
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '96'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyzeResults/7f898b9e-afc6-43f4-8e23-ce2dab3665fc
+  response:
+    body:
+      string: '{"status": "succeeded", "createdDateTime": "2021-03-11T18:02:48Z",
+        "lastUpdatedDateTime": "2021-03-11T18:02:51Z", "analyzeResult": {"version":
+        "2.1.0", "readResults": [{"page": 1, "angle": -0.4021, "width": 506, "height":
+        319, "unit": "pixel"}], "documentResults": [{"docType": "prebuilt:idDocument:driverLicense",
+        "docTypeConfidence": 0.995, "pageRange": [1, 1], "fields": {"Address": {"type":
+        "string", "valueString": "123 MAIN STREET APT. 1 HARRISBURG, PA 17101-0000",
+        "text": "123 MAIN STREET APT. 1 HARRISBURG, PA 17101-0000", "boundingBox":
+        [178, 161, 357, 161, 357, 195, 178, 195], "page": 1, "confidence": 0.906},
+        "Country": {"type": "country", "valueCountry": "USA", "confidence": 0.99},
+        "DateOfBirth": {"type": "date", "valueDate": "1975-08-04", "text": "08/04/1975",
+        "boundingBox": [215, 93, 309, 92, 309, 109, 215, 108], "page": 1, "confidence":
+        0.995}, "DateOfExpiration": {"type": "date", "valueDate": "2023-08-05", "text":
+        "08/05/2023", "boundingBox": [215, 113, 307, 112, 307, 129, 215, 129], "page":
+        1, "confidence": 0.99}, "DocumentNumber": {"type": "string", "valueString":
+        "99 999 999", "text": "99 999 999", "boundingBox": [216, 74, 307, 74, 307,
+        91, 216, 91], "page": 1, "confidence": 0.991}, "FirstName": {"type": "string",
+        "valueString": "JANICE ANN", "text": "JANICE ANN", "boundingBox": [177, 147,
+        264, 147, 264, 161, 177, 161], "page": 1, "confidence": 0.987}, "LastName":
+        {"type": "string", "valueString": "SAMPLE", "text": "SAMPLE", "boundingBox":
+        [178, 135, 237, 134, 236, 147, 179, 147], "page": 1, "confidence": 0.986},
+        "Region": {"type": "string", "valueString": "Pennsylvania", "confidence":
+        0.99}, "Sex": {"type": "gender", "valueGender": "F", "text": "F", "boundingBox":
+        [210, 199, 216, 199, 217, 211, 210, 211], "page": 1, "confidence": 0.99}}}]}}'
+    headers:
+      apim-request-id:
+      - 126b4ea4-a5f6-4ffa-94ac-bf17b30faba0
+      content-length:
+      - '1602'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 11 Mar 2021 18:02:52 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '14'
+    status:
+      code: 200
+      message: OK
+version: 1

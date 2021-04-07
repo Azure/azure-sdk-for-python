@@ -98,6 +98,7 @@ known_content_issues:
   - ['sdk/textanalytics/azure-ai-textanalytics/samples/README.md', '#4554']
   - ['sdk/monitor/azure-monitor-opentelemetry-exporter/README.md', '#4554']
   - ['sdk/media/azure-media-nspkg/README.md', '#4554']
+  - ['sdk/containerregistry/azure-containerregistry/swagger/README.md', '#4554']
 
   # nspckg and common.
   - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'nspkg and common']
@@ -125,6 +126,7 @@ known_content_issues:
   - ['sdk/storage/azure-storage-file-share/samples/README.md', 'nspkg and common']
   - ['sdk/storage/azure-storage-queue/samples/README.md', 'nspkg and common']
   - ['sdk/textanalytics/azure-ai-nspkg/README.md', 'nspkg and common']
+  - ['sdk/translation/azure-ai-translation-nspkg/README.md', 'nspkg and common']
   - ['sdk/eventhub/azure-eventhub/samples/README.md', 'nspkg and common']
   - ['sdk/tables/azure-data-nspkg/README.md', 'nspkg and common']
   - ['sdk/cosmos/README.md', 'nspkg and common']

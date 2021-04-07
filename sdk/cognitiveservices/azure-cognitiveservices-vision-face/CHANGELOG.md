@@ -1,5 +1,16 @@
 # Release History
 
+## 0.5.0 (2020-03-12)
+
+**Features**
+
+  - Model FaceAttributes has a new parameter mask
+
+**Breaking changes**
+
+  - Operation FaceOperations.detect_with_stream has a new signature
+  - Operation FaceOperations.detect_with_url has a new signature
+
 ## 0.4.1 (2020-06-24)
 
 **Features**
