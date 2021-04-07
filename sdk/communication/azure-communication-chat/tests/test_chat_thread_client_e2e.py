@@ -61,9 +61,9 @@ class ChatThreadClientTest(CommunicationTestCase):
 
         # delete created users and chat threads
         if not self.is_playback():
+            self.chat_client.delete_chat_thread(self.thread_id)
             self.identity_client.delete_user(self.user)
             self.identity_client.delete_user(self.new_user)
-            self.chat_client.delete_chat_thread(self.thread_id)
 
     def _create_thread(
             self,
