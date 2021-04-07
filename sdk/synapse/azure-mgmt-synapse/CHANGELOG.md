@@ -1,5 +1,17 @@
 # Release History
 
+## 2.0.0 (2021-04-07)
+
+**Features**
+
+  - Model WorkspacePatchInfo has a new parameter public_network_access
+  - Model Workspace has a new parameter public_network_access
+
+**Breaking changes**
+
+  - Model WorkspacePatchInfo no longer has parameter network_settings
+  - Model Workspace no longer has parameter network_settings
+
 ## 1.0.0 (2021-03-10)
 
 **Features**
