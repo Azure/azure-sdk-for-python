@@ -1,5 +1,13 @@
 # Release History
 
+## 5.4.1 (Unreleased)
+
+
+## 0.2.0a1 (unreleased)
+
+- Swapped out Proton dependency for uAMQP.
+
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/eventhub/azure-eventhub/HISTORY.png)
 ## 5.4.0 (2021-04-07)
 
 This version follows from version 5.3.1, rather than 5.4.0b1 so that the preview idempotent producer feature is not included.
@@ -443,8 +451,3 @@ Version 5.0.0b1 is a preview of our efforts to create a client library that is u
 - Updated uAQMP dependency.
 
 
-## 0.2.0a1 (unreleased)
-
-- Swapped out Proton dependency for uAMQP.
-
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/eventhub/azure-eventhub/HISTORY.png)
