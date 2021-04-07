@@ -23,8 +23,6 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import base64
-import itertools
 import time
 
 from azure.core.credentials import AccessToken
@@ -42,16 +40,6 @@ except ImportError:
     from mock import Mock
 
 
-class MockPolicy(ChallengeAuthenticationPolicy):
-    def __init__(self, *args, **kwargs):
-        super(MockPolicy, self).__init__(*args, **kwargs)
-        self.on_challenge_called = False
-
-    def on_challenge(self, request, response, challenge):
-        self.on_challenge_called = True
-        return False
-
-
 def test_adds_header():
     """The policy should add a header containing a token from its credential"""
     # 2524608000 == 01/01/2050 @ 12:00am (UTC)
@@ -62,15 +50,15 @@ def test_adds_header():
         return Mock()
 
     fake_credential = Mock(get_token=Mock(return_value=expected_token))
-    policy = MockPolicy(fake_credential, "scope")
+    policy = ChallengeAuthenticationPolicy(fake_credential, "scope")
     policies = [policy, Mock(send=verify_authorization_header)]
 
     pipeline = Pipeline(transport=Mock(), policies=policies)
-    pipeline.run(HttpRequest("GET", "https://spam.eggs"))
+    pipeline.run(HttpRequest("GET", "https://localhost"))
 
     assert fake_credential.get_token.call_count == 1
 
-    pipeline.run(HttpRequest("GET", "https://spam.eggs"))
+    pipeline.run(HttpRequest("GET", "https://localhost"))
 
     # Didn't need a new token
     assert fake_credential.get_token.call_count == 1
@@ -81,7 +69,7 @@ def test_default_context():
     expected_scope = "scope"
     token = AccessToken("", 0)
     credential = Mock(get_token=Mock(return_value=token))
-    policy = MockPolicy(credential, expected_scope)
+    policy = ChallengeAuthenticationPolicy(credential, expected_scope)
     pipeline = Pipeline(transport=Mock(), policies=[policy])
 
     pipeline.run(HttpRequest("GET", "https://localhost"))
@@ -91,7 +79,7 @@ def test_default_context():
 
 def test_send():
     """The policy should invoke the next policy's send method and return the result"""
-    expected_request = HttpRequest("GET", "https://spam.eggs")
+    expected_request = HttpRequest("GET", "https://localhost")
     expected_response = Mock()
 
     def verify_request(request):
@@ -99,8 +87,8 @@ def test_send():
         return expected_response
 
     fake_credential = Mock(get_token=lambda _: AccessToken("", 0))
-    policy = MockPolicy(fake_credential, "scope")
-    policies = [MockPolicy(fake_credential, "scope"), Mock(send=verify_request)]
+    policy = ChallengeAuthenticationPolicy(fake_credential, "scope")
+    policies = [policy, Mock(send=verify_request)]
     response = Pipeline(transport=Mock(), policies=policies).run(expected_request)
 
     assert response is expected_response
@@ -109,24 +97,24 @@ def test_send():
 def test_token_caching():
     good_for_one_hour = AccessToken("token", time.time() + 3600)
     credential = Mock(get_token=Mock(return_value=good_for_one_hour))
-    policy = MockPolicy(credential, "scope")
+    policy = ChallengeAuthenticationPolicy(credential, "scope")
     pipeline = Pipeline(transport=Mock(), policies=[policy])
 
-    pipeline.run(HttpRequest("GET", "https://spam.eggs"))
+    pipeline.run(HttpRequest("GET", "https://localhost"))
     assert credential.get_token.call_count == 1  # policy has no token at first request -> it should call get_token
 
-    pipeline.run(HttpRequest("GET", "https://spam.eggs"))
+    pipeline.run(HttpRequest("GET", "https://localhost"))
     assert credential.get_token.call_count == 1  # token is good for an hour -> policy should return it from cache
 
     expired_token = AccessToken("token", time.time())
     credential.get_token.reset_mock()
     credential.get_token.return_value = expired_token
-    pipeline = Pipeline(transport=Mock(), policies=[MockPolicy(credential, "scope")])
+    pipeline = Pipeline(transport=Mock(), policies=[ChallengeAuthenticationPolicy(credential, "scope")])
 
-    pipeline.run(HttpRequest("GET", "https://spam.eggs"))
+    pipeline.run(HttpRequest("GET", "https://localhost"))
     assert credential.get_token.call_count == 1
 
-    pipeline.run(HttpRequest("GET", "https://spam.eggs"))
+    pipeline.run(HttpRequest("GET", "https://localhost"))
     assert credential.get_token.call_count == 2  # token expired -> policy should call get_token
 
 
@@ -138,22 +126,22 @@ def test_optionally_enforces_https():
         return Mock()
 
     credential = Mock(get_token=lambda *_, **__: AccessToken("***", 42))
-    policy = MockPolicy(credential, "scope")
+    policy = ChallengeAuthenticationPolicy(credential, "scope")
     pipeline = Pipeline(transport=Mock(send=assert_option_popped), policies=[policy])
 
     # by default and when enforce_https=True, the policy should raise when given an insecure request
     with pytest.raises(ServiceRequestError):
-        pipeline.run(HttpRequest("GET", "http://not.secure"))
+        pipeline.run(HttpRequest("GET", "http://localhost"))
     with pytest.raises(ServiceRequestError):
-        pipeline.run(HttpRequest("GET", "http://not.secure"), enforce_https=True)
+        pipeline.run(HttpRequest("GET", "http://localhost"), enforce_https=True)
 
     # when enforce_https=False, an insecure request should pass
-    pipeline.run(HttpRequest("GET", "http://not.secure"), enforce_https=False)
+    pipeline.run(HttpRequest("GET", "http://localhost"), enforce_https=False)
 
     # https requests should always pass
-    pipeline.run(HttpRequest("GET", "https://secure"), enforce_https=False)
-    pipeline.run(HttpRequest("GET", "https://secure"), enforce_https=True)
-    pipeline.run(HttpRequest("GET", "https://secure"))
+    pipeline.run(HttpRequest("GET", "https://localhost"), enforce_https=False)
+    pipeline.run(HttpRequest("GET", "https://localhost"), enforce_https=True)
+    pipeline.run(HttpRequest("GET", "https://localhost"))
 
 
 def test_preserves_enforce_https_opt_out():
@@ -165,10 +153,10 @@ def test_preserves_enforce_https_opt_out():
             return Mock()
 
     credential = Mock(get_token=Mock(return_value=AccessToken("***", 42)))
-    policy = MockPolicy(credential, "scope")
+    policy = ChallengeAuthenticationPolicy(credential, "scope")
     pipeline = Pipeline(transport=Mock(), policies=[policy])
 
-    pipeline.run(HttpRequest("GET", "http://not.secure"), enforce_https=False)
+    pipeline.run(HttpRequest("GET", "http://localhost"), enforce_https=False)
 
 
 def test_context_unmodified_by_default():
@@ -179,11 +167,11 @@ def test_context_unmodified_by_default():
             assert not any(request.context), "the policy shouldn't add to the request's context"
 
     credential = Mock(get_token=Mock(return_value=AccessToken("***", 42)))
-    policy = MockPolicy(credential, "scope")
+    policy = ChallengeAuthenticationPolicy(credential, "scope")
     policies = [policy, ContextValidator()]
     pipeline = Pipeline(transport=Mock(), policies=policies)
 
-    pipeline.run(HttpRequest("GET", "https://secure"))
+    pipeline.run(HttpRequest("GET", "https://localhost"))
 
 
 def test_cannot_complete_challenge():
@@ -194,12 +182,13 @@ def test_cannot_complete_challenge():
     credential = Mock(get_token=Mock(return_value=expected_token))
     expected_response = Mock(status_code=401, headers={"WWW-Authenticate": 'Basic realm="localhost"'})
     transport = Mock(send=Mock(return_value=expected_response))
-    policy = MockPolicy(credential, expected_scope)
+    policy = ChallengeAuthenticationPolicy(credential, expected_scope)
+    policy.on_challenge = Mock(wraps=policy.on_challenge)
 
     pipeline = Pipeline(transport=transport, policies=[policy])
     response = pipeline.run(HttpRequest("GET", "https://localhost"))
 
-    assert policy.on_challenge_called
+    assert policy.on_challenge.called
     assert response.http_response is expected_response
     assert transport.send.call_count == 1
     credential.get_token.assert_called_once_with(expected_scope)

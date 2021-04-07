@@ -24,8 +24,6 @@
 #
 # --------------------------------------------------------------------------
 import asyncio
-import base64
-import itertools
 import time
 from unittest.mock import Mock
 
@@ -38,16 +36,6 @@ from azure.core.pipeline.transport import HttpRequest
 import pytest
 
 pytestmark = pytest.mark.asyncio
-
-
-class MockPolicy(AsyncChallengeAuthenticationPolicy):
-    def __init__(self, *args, **kwargs):
-        super(MockPolicy, self).__init__(*args, **kwargs)
-        self.on_challenge_called = False
-
-    async def on_challenge(self, request, response, challenge):
-        self.on_challenge_called = True
-        return False
 
 
 async def test_adds_header():
@@ -67,7 +55,7 @@ async def test_adds_header():
         return expected_token
 
     fake_credential = Mock(get_token=get_token)
-    policies = [MockPolicy(fake_credential, "scope"), Mock(send=verify_authorization_header)]
+    policies = [AsyncChallengeAuthenticationPolicy(fake_credential, "scope"), Mock(send=verify_authorization_header)]
     pipeline = AsyncPipeline(transport=Mock(), policies=policies)
 
     await pipeline.run(HttpRequest("GET", "https://localhost"), context=None)
@@ -89,7 +77,7 @@ async def test_default_context():
 
     expected_scope = "scope"
     credential = Mock(get_token=Mock(wraps=get_token))
-    policy = MockPolicy(credential, expected_scope)
+    policy = AsyncChallengeAuthenticationPolicy(credential, expected_scope)
     pipeline = AsyncPipeline(transport=Mock(send=send), policies=[policy])
 
     await pipeline.run(HttpRequest("GET", "https://localhost"))
@@ -107,7 +95,7 @@ async def test_send():
         return expected_response
 
     fake_credential = Mock(get_token=lambda *_, **__: get_completed_future(AccessToken("", 0)))
-    policies = [MockPolicy(fake_credential, "scope"), Mock(send=verify_request)]
+    policies = [AsyncChallengeAuthenticationPolicy(fake_credential, "scope"), Mock(send=verify_request)]
     response = await AsyncPipeline(transport=Mock(), policies=policies).run(expected_request)
 
     assert response is expected_response
@@ -130,7 +118,7 @@ async def test_token_caching():
 
     transport = Mock(send=send)
 
-    pipeline = AsyncPipeline(transport=transport, policies=[MockPolicy(credential, "scope")])
+    pipeline = AsyncPipeline(transport=transport, policies=[AsyncChallengeAuthenticationPolicy(credential, "scope")])
     await pipeline.run(HttpRequest("GET", "https://localhost"))
     assert get_token_calls == 1  # policy has no token at first request -> it should call get_token
     await pipeline.run(HttpRequest("GET", "https://localhost"))
@@ -139,7 +127,7 @@ async def test_token_caching():
     expired_token = AccessToken("token", time.time())
     get_token_calls = 0
     expected_token = expired_token
-    pipeline = AsyncPipeline(transport=transport, policies=[MockPolicy(credential, "scope")])
+    pipeline = AsyncPipeline(transport=transport, policies=[AsyncChallengeAuthenticationPolicy(credential, "scope")])
 
     await pipeline.run(HttpRequest("GET", "https://localhost"))
     assert get_token_calls == 1
@@ -151,25 +139,25 @@ async def test_optionally_enforces_https():
     """HTTPS enforcement should be controlled by a keyword argument, and enabled by default"""
 
     async def assert_option_popped(request, **kwargs):
-        assert "enforce_https" not in kwargs, "MockPolicy didn't pop the 'enforce_https' option"
+        assert "enforce_https" not in kwargs, "AsyncChallengeAuthenticationPolicy didn't pop the 'enforce_https' option"
         return Mock()
 
     credential = Mock(get_token=lambda *_, **__: get_completed_future(AccessToken("***", 42)))
-    pipeline = AsyncPipeline(transport=Mock(send=assert_option_popped), policies=[MockPolicy(credential, "scope")])
+    pipeline = AsyncPipeline(transport=Mock(send=assert_option_popped), policies=[AsyncChallengeAuthenticationPolicy(credential, "scope")])
 
     # by default and when enforce_https=True, the policy should raise when given an insecure request
     with pytest.raises(ServiceRequestError):
-        await pipeline.run(HttpRequest("GET", "http://not.secure"))
+        await pipeline.run(HttpRequest("GET", "http://localhost"))
     with pytest.raises(ServiceRequestError):
-        await pipeline.run(HttpRequest("GET", "http://not.secure"), enforce_https=True)
+        await pipeline.run(HttpRequest("GET", "http://localhost"), enforce_https=True)
 
     # when enforce_https=False, an insecure request should pass
-    await pipeline.run(HttpRequest("GET", "http://not.secure"), enforce_https=False)
+    await pipeline.run(HttpRequest("GET", "http://localhost"), enforce_https=False)
 
     # https requests should always pass
-    await pipeline.run(HttpRequest("GET", "https://secure"), enforce_https=False)
-    await pipeline.run(HttpRequest("GET", "https://secure"), enforce_https=True)
-    await pipeline.run(HttpRequest("GET", "https://secure"))
+    await pipeline.run(HttpRequest("GET", "https://localhost"), enforce_https=False)
+    await pipeline.run(HttpRequest("GET", "https://localhost"), enforce_https=True)
+    await pipeline.run(HttpRequest("GET", "https://localhost"))
 
 
 async def test_preserves_enforce_https_opt_out():
@@ -186,10 +174,10 @@ async def test_preserves_enforce_https_opt_out():
 
     get_token = get_completed_future(AccessToken("***", 42))
     credential = Mock(get_token=lambda *_, **__: get_token)
-    policies = [MockPolicy(credential, "scope"), ContextValidator()]
+    policies = [AsyncChallengeAuthenticationPolicy(credential, "scope"), ContextValidator()]
     pipeline = AsyncPipeline(transport=transport, policies=policies)
 
-    await pipeline.run(HttpRequest("GET", "http://not.secure"), enforce_https=False)
+    await pipeline.run(HttpRequest("GET", "http://localhost"), enforce_https=False)
 
 
 async def test_context_unmodified_by_default():
@@ -206,10 +194,10 @@ async def test_context_unmodified_by_default():
 
     get_token = get_completed_future(AccessToken("***", 42))
     credential = Mock(get_token=lambda *_, **__: get_token)
-    policies = [MockPolicy(credential, "scope"), ContextValidator()]
+    policies = [AsyncChallengeAuthenticationPolicy(credential, "scope"), ContextValidator()]
     pipeline = AsyncPipeline(transport=transport, policies=policies)
 
-    await pipeline.run(HttpRequest("GET", "https://secure"))
+    await pipeline.run(HttpRequest("GET", "https://localhost"))
 
 
 async def test_cannot_complete_challenge():
@@ -225,12 +213,13 @@ async def test_cannot_complete_challenge():
     expected_scope = "scope"
     get_token = Mock(return_value=get_completed_future(AccessToken("***", 42)))
     credential = Mock(get_token=get_token)
-    policy = MockPolicy(credential, expected_scope)
+    policy = AsyncChallengeAuthenticationPolicy(credential, expected_scope)
+    policy.on_challenge = Mock(wraps=policy.on_challenge)
 
     pipeline = AsyncPipeline(transport=transport, policies=[policy])
     response = await pipeline.run(HttpRequest("GET", "https://localhost"))
 
-    assert policy.on_challenge_called
+    assert policy.on_challenge.called
     assert response.http_response is expected_response
     assert transport.send.call_count == 1
     credential.get_token.assert_called_once_with(expected_scope)
