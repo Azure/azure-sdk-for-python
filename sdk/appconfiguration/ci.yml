@@ -40,4 +40,4 @@ extends:
       safeName: azureappconfiguration
     - name: azure-mgmt-appconfiguration
       safeName: azuremgmtappconfiguration
-    VerifyAutorest: true
+    VerifyAutorest: false
