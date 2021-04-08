@@ -12,6 +12,7 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     BearerTokenCredentialPolicy,
+    ContentDecodePolicy,
 )
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.transport import RequestsTransport
@@ -153,6 +154,7 @@ class AzureAppConfigurationClient:
                 self._config.logging_policy,  # HTTP request/response log
                 DistributedTracingPolicy(**kwargs),
                 HttpLoggingPolicy(**kwargs),
+                ContentDecodePolicy(**kwargs),
             ]
 
         if not transport:
@@ -215,8 +217,9 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
                 **kwargs
             )
-        except Error as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError as error:
+            e = error_map[error.status_code]
+            raise e(message=error.message, response=error.response)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
@@ -276,8 +279,9 @@ class AzureAppConfigurationClient:
             return ConfigurationSetting._from_generated(key_value)
         except ResourceNotModifiedError:
             return None
-        except Error as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError as error:
+            e = error_map[error.status_code]
+            raise e(message=error.message, response=error.response)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
@@ -324,8 +328,9 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
             )
             return ConfigurationSetting._from_generated(key_value_added)
-        except Error as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError as error:
+            e = error_map[error.status_code]
+            raise e(message=error.message, response=error.response)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
@@ -390,8 +395,9 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
             )
             return ConfigurationSetting._from_generated(key_value_set)
-        except Error as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError as error:
+            e = error_map[error.status_code]
+            raise e(message=error.message, response=error.response)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
@@ -445,8 +451,9 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
             )
             return ConfigurationSetting._from_generated(key_value_deleted)
-        except Error as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError as error:
+            e = error_map[error.status_code]
+            raise e(message=error.message, response=error.response)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
@@ -505,8 +512,9 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
                 **kwargs
             )
-        except Error as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError as error:
+            e = error_map[error.status_code]
+            raise e(message=error.message, response=error.response)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
@@ -574,8 +582,9 @@ class AzureAppConfigurationClient:
                     **kwargs
                 )
             return ConfigurationSetting._from_generated(key_value)
-        except Error as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError as error:
+            e = error_map[error.status_code]
+            raise e(message=error.message, response=error.response)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 

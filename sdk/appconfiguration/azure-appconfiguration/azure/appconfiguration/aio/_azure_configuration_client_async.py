@@ -12,6 +12,7 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     AsyncBearerTokenCredentialPolicy,
+    ContentDecodePolicy,
 )
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -161,6 +162,7 @@ class AzureAppConfigurationClient:
                 self._config.logging_policy,  # HTTP request/response log
                 DistributedTracingPolicy(**kwargs),
                 HttpLoggingPolicy(**kwargs),
+                ContentDecodePolicy(**kwargs),
             ]
 
         if not transport:
