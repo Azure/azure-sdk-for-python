@@ -10,6 +10,7 @@ class URIIdentityReplacer(RecordingProcessor):
     def process_request(self, request):
         import re
         request.uri = re.sub('/identities/([^/?]+)', '/identities/sanitized', request.uri)
+        request.uri = re.sub('^(.*?)\\.communication.azure.com', 'https://sanitized.communication.azure.com', request.uri)
         return request
     
     def process_response(self, response):
