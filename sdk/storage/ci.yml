@@ -63,7 +63,7 @@ extends:
       safeName: azuremgmtstorageimportexportP
     CondaArtifacts:
     - name: azure-storage
-      meta_source: meta.yml
+      meta_source: meta.yaml
       common_root: azure/storage
       checkout:
         - package: azure-storage-blob
