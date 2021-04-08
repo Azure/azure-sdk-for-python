@@ -128,9 +128,9 @@ class SearchClient(HeadersMixin):
         :keyword list[str] highlight_fields: The list of field names to use for hit highlights. Only searchable
          fields can be used for hit highlighting.
         :keyword str highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
-         highlightPreTag. Default is &lt;/em&gt;.
+         highlightPreTag. Default is </em>.
         :keyword str highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
-         highlightPostTag. Default is &lt;em&gt;.
+         highlightPostTag. Default is <em>.
         :keyword float minimum_coverage: A number between 0 and 100 indicating the percentage of the index that
          must be covered by a search query in order for the query to be reported as a success. This
          parameter can be useful for ensuring search availability even for services with only one
@@ -143,8 +143,8 @@ class SearchClient(HeadersMixin):
          document match score. There can be at most 32 $orderby clauses.
         :keyword query_type: A value that specifies the syntax of the search query. The default is
          'simple'. Use 'full' if your query uses the Lucene query syntax. Possible values include:
-         'simple', 'full'.
-        :paramtype query_type: str or ~search_index_client.models.QueryType
+         'simple', 'full', "semantic".
+        :paramtype query_type: str or ~azure.search.documents.models.QueryType
         :keyword list[str] scoring_parameters: The list of parameter values to be used in scoring functions (for
          example, referencePointParameter) using the format name-values. For example, if the scoring
          profile defines a function with a parameter called 'mylocation' the parameter string would be
@@ -156,7 +156,16 @@ class SearchClient(HeadersMixin):
          each fielded search expression take precedence over any field names listed in this parameter.
         :keyword search_mode: A value that specifies whether any or all of the search terms must be
          matched in order to count the document as a match. Possible values include: 'any', 'all'.
-        :paramtype search_mode: str or ~search_index_client.models.SearchMode
+        :paramtype search_mode: str or ~azure.search.documents.models.SearchMode
+        :keyword query_language: A value that specifies the language of the search query. Possible values
+         include: "none", "en-us".
+        :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
+        :keyword speller: A value that specified the type of the speller to use to spell-correct
+         individual search query terms. Possible values include: "none", "lexicon".
+        :paramtype speller: str or ~azure.search.documents.models.Speller
+        :keyword answers: A value that specifies whether answers should be returned as part of the search
+         response. Possible values include: "none", "extractive".
+        :paramtype answers: str or ~azure.search.documents.models.Answers
         :keyword list[str] select: The list of fields to retrieve. If unspecified, all fields marked as retrievable
          in the schema are included.
         :keyword int skip: The number of search results to skip. This value cannot be greater than 100,000.
@@ -208,6 +217,9 @@ class SearchClient(HeadersMixin):
         scoring_profile = kwargs.pop("scoring_profile", None)
         search_fields = kwargs.pop("search_fields", None)
         search_mode = kwargs.pop("search_mode", None)
+        query_language = kwargs.pop("query_language", None)
+        speller = kwargs.pop("speller", None)
+        answers = kwargs.pop("answers", None)
         select = kwargs.pop("select", None)
         skip = kwargs.pop("skip", None)
         top = kwargs.pop("top", None)
@@ -226,6 +238,9 @@ class SearchClient(HeadersMixin):
             scoring_profile=scoring_profile,
             search_fields=search_fields,
             search_mode=search_mode,
+            query_language=query_language,
+            speller=speller,
+            answers=answers,
             select=select if isinstance(select, six.string_types) else None,
             skip=skip,
             top=top
@@ -326,7 +341,7 @@ class SearchClient(HeadersMixin):
         :keyword mode: Specifies the mode for Autocomplete. The default is 'oneTerm'. Use
          'twoTerms' to get shingles and 'oneTermWithContext' to use the current context while producing
          auto-completed terms. Possible values include: 'oneTerm', 'twoTerms', 'oneTermWithContext'.
-        :paramtype mode: str or ~search_index_client.models.AutocompleteMode
+        :paramtype mode: str or ~azure.search.documents.models.AutocompleteMode
         :keyword str filter: An OData expression that filters the documents used to produce completed terms
          for the Autocomplete result.
         :keyword bool use_fuzzy_matching: A value indicating whether to use fuzzy matching for the

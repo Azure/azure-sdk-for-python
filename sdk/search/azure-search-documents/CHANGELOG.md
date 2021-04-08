@@ -2,6 +2,9 @@
 
 ## 11.2.0b2 (Unreleased)
 
+### New features
+
+- Added support for semantic search    #17638
 
 ## 11.2.0b1 (2021-04-06)
 
