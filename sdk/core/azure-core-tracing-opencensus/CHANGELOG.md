@@ -13,14 +13,14 @@
 
 ## 1.0.0b5 (2020-01-14)
 
-### Features
-
-- Implement new "change_context" API
-
 ### Bugfix
 
 - Fix context passing for multi-threading
 - Don't fail on unknown span type, but maps to PRODUCER or UNSPECIFIED
+
+### Features
+
+- Implement new "change_context" API
 
 ## 1.0.0b4 (2019-10-07)
 
