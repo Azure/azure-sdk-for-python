@@ -189,7 +189,7 @@ def create_combined_sdist(
     output_directory, build_directory, artifact_name, common_root, service, meta_yaml
 ):
     singular_dependency = (
-        len(get_pkgs_from_build_directory(build_directory, artifact_name)) == 1
+        len(get_pkgs_from_build_directory(build_directory, artifact_name)) == 0
     )
 
     if not singular_dependency:
