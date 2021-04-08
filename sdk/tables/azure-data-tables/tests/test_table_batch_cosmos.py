@@ -293,8 +293,8 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             batch = self.table.create_batch()
             batch.update_entity(
                 sent_entity,
-                # etag=etag,
-                # match_condition=MatchConditions.IfNotModified,
+                etag=etag,
+                match_condition=MatchConditions.IfNotModified,
                 mode=UpdateMode.REPLACE
             )
             transaction_result = self.table.send_batch(batch)
@@ -314,34 +314,25 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
-            # Act
-            entity = TableEntity()
-            entity.PartitionKey = u'001'
-            entity.RowKey = u'batch_update'
-            entity.test = EntityProperty(True)
-            entity.test2 = u'value'
-            entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
-            entity.test5 = datetime.utcnow()
+            entity = self._create_random_entity_dict()
             self.table.create_entity(entity)
 
-            entity = self.table.get_entity(u'001', u'batch_update')
-            assert 3 ==  entity.test3
-            entity.test2 = u'value1'
+            # Act
+            sent_entity1 = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
 
             batch = self.table.create_batch()
-            batch.update_entity(entity)
-            transaction_result = self.table.send_batch(batch)
+            batch.update_entity(
+                sent_entity1,
+                etag=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
+                match_condition=MatchConditions.IfNotModified
+            )
+
+            with pytest.raises(BatchErrorException):
+                self.table.send_batch(batch)
 
             # Assert
-            self._assert_valid_batch_transaction(transaction_result, 1)
-            assert transaction_result.get_entity(entity.RowKey) is not None
-
-            result = self.table.get_entity('001', 'batch_update')
-
-            assert 'value1' ==  result.test2
-            assert entity.PartitionKey ==  u'001'
-            assert entity.RowKey ==  u'batch_update'
+            received_entity = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
+            self._assert_default_entity(received_entity)
         finally:
             self._tear_down()
 

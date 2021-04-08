@@ -947,8 +947,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
 
-            # resp = self.table.update_entitysent_entity, response_hook=lambda e, h: h)
-            resp = self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
+            self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
             #  assert resp
