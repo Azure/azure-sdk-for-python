@@ -15,6 +15,8 @@ if ($version -lt $minimumVersion) {
     Update-Module Az -RequiredVersion "5.7.0" -Force
 }
 
+Import-Module Az -Force
+
 Import-AzContainerRegistryImage `
     -ResourceGroupName $DeploymentOutputs['CONTAINERREGISTRY_RESOURCE_GROUP'] `
     -RegistryName $DeploymentOutputs['CONTAINERREGISTRY_USERNAME'] `
