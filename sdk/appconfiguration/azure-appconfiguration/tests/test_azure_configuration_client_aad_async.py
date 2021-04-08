@@ -294,6 +294,7 @@ class AppConfigurationClientTest(AzureTestCase):
         )
         assert len(items) == 1
         assert all(x.label == LABEL_RESERVED_CHARS for x in items)
+        client.delete_configuration_setting(resered_char_kv.key)
 
     # NOTE: Label filter does not support wildcard at beginning on filters. https://docs.microsoft.com/en-us/azure/azure-app-configuration/rest-api-key-value#supported-filters
     @app_config_decorator
