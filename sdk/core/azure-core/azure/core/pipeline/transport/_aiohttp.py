@@ -200,11 +200,12 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
     :param block_size: block size of data sent over connection.
     :type block_size: int
     """
-    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse) -> None:
+    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, **kwargs: Any) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = response.block_size
+        chunk_size = kwargs.pop("chunk_size", None)
+        self.block_size = chunk_size if chunk_size is not None else response.block_size
         self.content_length = int(response.internal_response.headers.get('Content-Length', 0))
         self.downloaded = 0
 
@@ -269,13 +270,13 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         """Load in memory the body, so it could be accessible from sync methods."""
         self._body = await self.internal_response.read()
 
-    def stream_download(self, pipeline) -> AsyncIteratorType[bytes]:
+    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
 
         :param pipeline: The pipeline object
         :type pipeline: azure.core.pipeline
         """
-        return AioHttpStreamDownloadGenerator(pipeline, self)
+        return AioHttpStreamDownloadGenerator(pipeline, self, **kwargs)
 
     def __getstate__(self):
         # Be sure body is loaded in memory, otherwise not pickable and let it throw

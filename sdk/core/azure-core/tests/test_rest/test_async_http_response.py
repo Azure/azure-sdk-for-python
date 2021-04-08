@@ -48,7 +48,7 @@ async def test_rest_response():
 
     assert response.status_code == 200
     assert response.reason == "OK"
-    await response.load_body()
+    await response.read()
     assert response.text == "Hello, world!"
     assert response.request.method == "GET"
     assert response.request.url == "https://example.org"
@@ -61,7 +61,7 @@ async def test_rest_response_content():
 
     assert response.status_code == 200
     assert response.reason == "OK"
-    await response.load_body()
+    await response.read()
     assert response.text == "Hello, world!"
     response.raise_for_status()
 
@@ -75,7 +75,7 @@ async def test_rest_response_text():
 
     assert response.status_code == 200
     assert response.reason == "OK"
-    await response.load_body()
+    await response.read()
     assert response.text == "Hello, world!"
     assert response.headers == {
         "Content-Length": "13",
@@ -90,7 +90,7 @@ async def test_rest_response_html():
 
     assert response.status_code == 200
     assert response.reason == "OK"
-    await response.load_body()
+    await response.read()
     assert response.text == "<html><body>Hello, world!</html></body>"
     response.raise_for_status()
 
@@ -131,7 +131,7 @@ async def test_rest_response_content_type_encoding():
         content=content,
         headers=headers,
     )
-    await response.load_body()
+    await response.read()
     assert response.text == "Latin 1: ÿ"
     assert response.encoding == "latin-1"
 
@@ -146,7 +146,7 @@ async def test_rest_response_autodetect_encoding():
         200,
         content=content,
     )
-    await response.load_body()
+    await response.read()
     assert response.text == "おはようございます。"
     assert response.encoding is None
 
@@ -163,7 +163,7 @@ async def test_rest_response_fallback_to_autodetect():
         content=content,
         headers=headers,
     )
-    await response.load_body()
+    await response.read()
     assert response.text == "おはようございます。"
     assert response.encoding is None
 
@@ -183,7 +183,7 @@ async def test_rest_response_no_charset_with_ascii_content():
     )
     assert response.status_code == 200
     assert response.encoding is None
-    await response.load_body()
+    await response.read()
     assert response.text == "Hello, world!"
 
 
@@ -200,7 +200,7 @@ async def test_rest_response_no_charset_with_iso_8859_1_content():
         content=content,
         headers=headers,
     )
-    await response.load_body()
+    await response.read()
     assert response.text == "Accented: Österreich"
     assert response.encoding is None
 
@@ -215,7 +215,7 @@ async def test_rest_response_set_explicit_encoding():
         headers=headers,
     )
     response.encoding = "latin-1"
-    await response.load_body()
+    await response.read()
     assert response.text == "Latin 1: ÿ"
     assert response.encoding == "latin-1"
 
@@ -229,7 +229,7 @@ async def test_rest_json():
         content=content,
         headers=headers,
     )
-    await response.load_body()
+    await response.read()
     assert response.json() == data
 
 @pytest.mark.asyncio
@@ -242,7 +242,7 @@ async def test_rest_json_with_specified_encoding():
         content=content,
         headers=headers,
     )
-    await response.load_body()
+    await response.read()
     assert response.json() == data
 
 @pytest.mark.asyncio
@@ -251,7 +251,7 @@ async def test_rest_response_with_unset_request():
 
     assert response.status_code == 200
     assert response.reason == "OK"
-    await response.load_body()
+    await response.read()
     assert response.text == "Hello, world!"
     response.raise_for_status()
 
@@ -276,7 +276,7 @@ async def test_rest_cannot_access_unset_request():
 @pytest.mark.asyncio
 async def test_rest_emoji():
     response = _create_http_response(200, content="👩".encode("utf-8"))
-    await response.load_body()
+    await response.read()
     assert response.text == "👩"
 
 @pytest.mark.asyncio
@@ -285,11 +285,11 @@ async def test_rest_emoji_family_with_skin_tone_modifier():
         "Content-Type": "text-plain; charset=utf-16"
     }
     response = _create_http_response(200, headers=headers, content="👩🏻‍👩🏽‍👧🏾‍👦🏿 SSN: 859-98-0987".encode("utf-16"))
-    await response.load_body()
+    await response.read()
     assert response.text == "👩🏻‍👩🏽‍👧🏾‍👦🏿 SSN: 859-98-0987"
 
 @pytest.mark.asyncio
 async def test_rest_korean_nfc():
     response = _create_http_response(200, content="아가".encode("utf-8"))
-    await response.load_body()
+    await response.read()
     assert response.text == "아가"
