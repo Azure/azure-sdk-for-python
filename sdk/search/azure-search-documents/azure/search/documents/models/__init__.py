@@ -26,6 +26,7 @@
 
 from .._generated.models import (
     Answers,
+    AnswerResult,
     AutocompleteMode,
     IndexAction,
     IndexingResult,
@@ -39,6 +40,7 @@ from .._search_client import odata
 
 __all__ = (
     "Answers",
+    "AnswerResult",
     "AutocompleteMode",
     "IndexAction",
     "IndexingResult",
