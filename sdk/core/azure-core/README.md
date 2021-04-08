@@ -1,8 +1,8 @@
 
 # Azure Core shared client library for Python
 
-Azure core provides shared exceptions and modules for Python SDK client libraries. 
-These libraries follow the [Azure SDK Design Guidelines for Python](https://azure.github.io/azure-sdk/python_introduction.html) .
+Azure core provides shared exceptions and modules for Python SDK client libraries.
+These libraries follow the [Azure SDK Design Guidelines for Python](https://azure.github.io/azure-sdk/python/guidelines/index.html) .
 
 If you are a client library developer, please reference [client library developer reference](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md) for more information.
 
@@ -10,9 +10,9 @@ If you are a client library developer, please reference [client library develope
 
 ## Getting started
 
-Typically, you will not need to install azure core; 
-it will be installed when you install one of the client libraries using it. 
-In case you want to install it explicitly (to implement your own client library, for example), 
+Typically, you will not need to install azure core;
+it will be installed when you install one of the client libraries using it.
+In case you want to install it explicitly (to implement your own client library, for example),
 you can find it [here](https://pypi.org/project/azure-core/).
 
 ## Key concepts
@@ -32,7 +32,7 @@ class AzureError(Exception):
         super(AzureError, self).__init__(self.message, *args)
 ```
 
-*message* is any message (str) to be associated with the exception. 
+*message* is any message (str) to be associated with the exception.
 
 *args* are any additional args to be included with exception.
 

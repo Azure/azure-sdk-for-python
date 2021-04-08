@@ -22,6 +22,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._base_client import parse_connection_str
+from .._common_conversion import _is_cosmos_endpoint
 from .._constants import CONNECTION_TIMEOUT
 from .._entity import TableEntity
 from .._generated.aio import AzureTable
@@ -71,6 +72,9 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             **kwargs
         )
         loop = kwargs.pop("loop", None)
+
+        self._cosmos_endpoint = _is_cosmos_endpoint(account_url)
+
         super(TableClient, self).__init__(
             account_url,
             table_name=table_name,
@@ -241,11 +245,12 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :dedent: 8
                 :caption: Creating a table from the TableClient object.
         """
-        table_properties = TableProperties(table_name=self.table_name, **kwargs)
+        table_properties = TableProperties(table_name=self.table_name)
         try:
             metadata, _ = await self._client.table.create(
                 table_properties,
                 cls=kwargs.pop("cls", _return_headers_and_deserialized),
+                **kwargs
             )
             return _trim_service_metadata(metadata)
         except HttpResponseError as error:

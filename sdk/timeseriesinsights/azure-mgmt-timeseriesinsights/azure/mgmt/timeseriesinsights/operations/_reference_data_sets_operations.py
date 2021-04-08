@@ -190,7 +190,7 @@ class ReferenceDataSetsOperations(object):
         resource_group_name,  # type: str
         environment_name,  # type: str
         reference_data_set_name,  # type: str
-        tags=None,  # type: Optional[Dict[str, str]]
+        reference_data_set_update_parameters,  # type: "_models.ReferenceDataSetUpdateParameters"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.ReferenceDataSetResource"
@@ -205,8 +205,9 @@ class ReferenceDataSetsOperations(object):
         :param reference_data_set_name: The name of the Time Series Insights reference data set
          associated with the specified environment.
         :type reference_data_set_name: str
-        :param tags: Key-value pairs of additional properties for the reference data set.
-        :type tags: dict[str, str]
+        :param reference_data_set_update_parameters: Request object that contains the updated
+         information for the reference data set.
+        :type reference_data_set_update_parameters: ~azure.mgmt.timeseriesinsights.models.ReferenceDataSetUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ReferenceDataSetResource, or the result of cls(response)
         :rtype: ~azure.mgmt.timeseriesinsights.models.ReferenceDataSetResource
@@ -217,8 +218,6 @@ class ReferenceDataSetsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _reference_data_set_update_parameters = _models.ReferenceDataSetUpdateParameters(tags=tags)
         api_version = "2020-05-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -243,7 +242,7 @@ class ReferenceDataSetsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_reference_data_set_update_parameters, 'ReferenceDataSetUpdateParameters')
+        body_content = self._serialize.body(reference_data_set_update_parameters, 'ReferenceDataSetUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)

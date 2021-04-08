@@ -29,7 +29,8 @@ phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
 def get_purchased_phone_number_information():
     purchased_phone_number_information = phone_numbers_client.get_purchased_phone_number(phone_number)
-    print('Phone number information: ' + purchased_phone_number_information)
+    print('Phone number: ' + purchased_phone_number_information.phone_number)
+    print('Country code: ' + purchased_phone_number_information.country_code)
 
 if __name__ == '__main__':
     get_purchased_phone_number_information()

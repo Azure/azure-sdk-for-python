@@ -25,7 +25,7 @@ To try and improve the development experience across Azure services, a set of un
 
 ### Cross Service SDK improvements
 
-The modern Event Grid client library also provides the ability to share in some of the cross-service improvements made to the Azure development experience, such as 
+The modern Event Grid client library also provides the ability to share in some of the cross-service improvements made to the Azure development experience, such as
 - a unified logging and diagnostics pipeline offering a common view of the activities across each of the client libraries
 - using the new [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) library to share a single authentication approach between clients
 

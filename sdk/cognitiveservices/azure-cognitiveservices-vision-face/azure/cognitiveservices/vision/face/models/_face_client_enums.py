@@ -17,6 +17,7 @@ class RecognitionModel(str, Enum):
     recognition_01 = "recognition_01"
     recognition_02 = "recognition_02"
     recognition_03 = "recognition_03"
+    recognition_04 = "recognition_04"
 
 
 class Gender(str, Enum):
@@ -73,6 +74,14 @@ class NoiseLevel(str, Enum):
     high = "High"
 
 
+class MaskType(str, Enum):
+
+    no_mask = "noMask"
+    face_mask = "faceMask"
+    other_mask_or_occlusion = "otherMaskOrOcclusion"
+    uncertain = "uncertain"
+
+
 class FindSimilarMatchMode(str, Enum):
 
     match_person = "matchPerson"
@@ -124,9 +133,11 @@ class FaceAttributeType(str, Enum):
     blur = "blur"
     exposure = "exposure"
     noise = "noise"
+    mask = "mask"
 
 
 class DetectionModel(str, Enum):
 
     detection_01 = "detection_01"
     detection_02 = "detection_02"
+    detection_03 = "detection_03"

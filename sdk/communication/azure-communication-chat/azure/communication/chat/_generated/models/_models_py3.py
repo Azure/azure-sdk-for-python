@@ -15,34 +15,6 @@ import msrest.serialization
 from ._azure_communication_chat_service_enums import *
 
 
-class AddChatParticipantsErrors(msrest.serialization.Model):
-    """Errors encountered during the addition of the chat participant to the chat thread.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param invalid_participants: Required. The participants that failed to be added to the chat
-     thread.
-    :type invalid_participants: list[~azure.communication.chat.models.CommunicationError]
-    """
-
-    _validation = {
-        'invalid_participants': {'required': True},
-    }
-
-    _attribute_map = {
-        'invalid_participants': {'key': 'invalidParticipants', 'type': '[CommunicationError]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        invalid_participants: List["CommunicationError"],
-        **kwargs
-    ):
-        super(AddChatParticipantsErrors, self).__init__(**kwargs)
-        self.invalid_participants = invalid_participants
-
-
 class AddChatParticipantsRequest(msrest.serialization.Model):
     """Participants to be added to the thread.
 
@@ -73,23 +45,76 @@ class AddChatParticipantsRequest(msrest.serialization.Model):
 class AddChatParticipantsResult(msrest.serialization.Model):
     """Result of the add chat participants operation.
 
-    :param errors: Errors encountered during the addition of the chat participant to the chat
-     thread.
-    :type errors: ~azure.communication.chat.models.AddChatParticipantsErrors
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar invalid_participants: The participants that failed to be added to the chat thread.
+    :vartype invalid_participants: list[~azure.communication.chat.models.ChatError]
     """
 
+    _validation = {
+        'invalid_participants': {'readonly': True},
+    }
+
     _attribute_map = {
-        'errors': {'key': 'errors', 'type': 'AddChatParticipantsErrors'},
+        'invalid_participants': {'key': 'invalidParticipants', 'type': '[ChatError]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AddChatParticipantsResult, self).__init__(**kwargs)
+        self.invalid_participants = None
+
+
+class ChatError(msrest.serialization.Model):
+    """The Communication Services error.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. The error code.
+    :type code: str
+    :param message: Required. The error message.
+    :type message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: Further details about specific errors that led to this error.
+    :vartype details: list[~azure.communication.chat.models.ChatError]
+    :ivar inner_error: The inner error if any.
+    :vartype inner_error: ~azure.communication.chat.models.ChatError
+    """
+
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'inner_error': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ChatError]'},
+        'inner_error': {'key': 'innererror', 'type': 'ChatError'},
     }
 
     def __init__(
         self,
         *,
-        errors: Optional["AddChatParticipantsErrors"] = None,
+        code: str,
+        message: str,
         **kwargs
     ):
-        super(AddChatParticipantsResult, self).__init__(**kwargs)
-        self.errors = errors
+        super(ChatError, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.target = None
+        self.details = None
+        self.inner_error = None
 
 
 class ChatMessage(msrest.serialization.Model):
@@ -409,7 +434,54 @@ class ChatParticipantsCollection(msrest.serialization.Model):
         self.next_link = None
 
 
-class ChatThread(msrest.serialization.Model):
+class ChatThreadItem(msrest.serialization.Model):
+    """Summary information of a chat thread.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Chat thread id.
+    :type id: str
+    :param topic: Required. Chat thread topic.
+    :type topic: str
+    :param deleted_on: The timestamp when the chat thread was deleted. The timestamp is in RFC3339
+     format: ``yyyy-MM-ddTHH:mm:ssZ``.
+    :type deleted_on: ~datetime.datetime
+    :ivar last_message_received_on: The timestamp when the last message arrived at the server. The
+     timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
+    :vartype last_message_received_on: ~datetime.datetime
+    """
+
+    _validation = {
+        'id': {'required': True},
+        'topic': {'required': True},
+        'last_message_received_on': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'topic': {'key': 'topic', 'type': 'str'},
+        'deleted_on': {'key': 'deletedOn', 'type': 'iso-8601'},
+        'last_message_received_on': {'key': 'lastMessageReceivedOn', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: str,
+        topic: str,
+        deleted_on: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        super(ChatThreadItem, self).__init__(**kwargs)
+        self.id = id
+        self.topic = topic
+        self.deleted_on = deleted_on
+        self.last_message_received_on = None
+
+
+class ChatThreadProperties(msrest.serialization.Model):
     """Chat thread.
 
     All required parameters must be populated in order to send to Azure.
@@ -457,7 +529,7 @@ class ChatThread(msrest.serialization.Model):
         deleted_on: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(ChatThread, self).__init__(**kwargs)
+        super(ChatThreadProperties, self).__init__(**kwargs)
         self.id = id
         self.topic = topic
         self.created_on = created_on
@@ -465,54 +537,7 @@ class ChatThread(msrest.serialization.Model):
         self.deleted_on = deleted_on
 
 
-class ChatThreadInfo(msrest.serialization.Model):
-    """Summary information of a chat thread.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. Chat thread id.
-    :type id: str
-    :param topic: Required. Chat thread topic.
-    :type topic: str
-    :param deleted_on: The timestamp when the chat thread was deleted. The timestamp is in RFC3339
-     format: ``yyyy-MM-ddTHH:mm:ssZ``.
-    :type deleted_on: ~datetime.datetime
-    :ivar last_message_received_on: The timestamp when the last message arrived at the server. The
-     timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-    :vartype last_message_received_on: ~datetime.datetime
-    """
-
-    _validation = {
-        'id': {'required': True},
-        'topic': {'required': True},
-        'last_message_received_on': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'topic': {'key': 'topic', 'type': 'str'},
-        'deleted_on': {'key': 'deletedOn', 'type': 'iso-8601'},
-        'last_message_received_on': {'key': 'lastMessageReceivedOn', 'type': 'iso-8601'},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: str,
-        topic: str,
-        deleted_on: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
-        super(ChatThreadInfo, self).__init__(**kwargs)
-        self.id = id
-        self.topic = topic
-        self.deleted_on = deleted_on
-        self.last_message_received_on = None
-
-
-class ChatThreadsInfoCollection(msrest.serialization.Model):
+class ChatThreadsItemCollection(msrest.serialization.Model):
     """Collection of chat threads.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -520,7 +545,7 @@ class ChatThreadsInfoCollection(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. Collection of chat threads.
-    :type value: list[~azure.communication.chat.models.ChatThreadInfo]
+    :type value: list[~azure.communication.chat.models.ChatThreadItem]
     :ivar next_link: If there are more chat threads that can be retrieved, the next link will be
      populated.
     :vartype next_link: str
@@ -532,69 +557,19 @@ class ChatThreadsInfoCollection(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ChatThreadInfo]'},
+        'value': {'key': 'value', 'type': '[ChatThreadItem]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        value: List["ChatThreadInfo"],
+        value: List["ChatThreadItem"],
         **kwargs
     ):
-        super(ChatThreadsInfoCollection, self).__init__(**kwargs)
+        super(ChatThreadsItemCollection, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
-
-
-class CommunicationError(msrest.serialization.Model):
-    """The Communication Services error.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param code: Required. The error code.
-    :type code: str
-    :param message: Required. The error message.
-    :type message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: Further details about specific errors that led to this error.
-    :vartype details: list[~azure.communication.chat.models.CommunicationError]
-    :ivar inner_error: The inner error if any.
-    :vartype inner_error: ~azure.communication.chat.models.CommunicationError
-    """
-
-    _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'inner_error': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[CommunicationError]'},
-        'inner_error': {'key': 'innererror', 'type': 'CommunicationError'},
-    }
-
-    def __init__(
-        self,
-        *,
-        code: str,
-        message: str,
-        **kwargs
-    ):
-        super(CommunicationError, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
-        self.target = None
-        self.details = None
-        self.inner_error = None
 
 
 class CommunicationErrorResponse(msrest.serialization.Model):
@@ -603,7 +578,7 @@ class CommunicationErrorResponse(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param error: Required. The Communication Services error.
-    :type error: ~azure.communication.chat.models.CommunicationError
+    :type error: ~azure.communication.chat.models.ChatError
     """
 
     _validation = {
@@ -611,13 +586,13 @@ class CommunicationErrorResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'CommunicationError'},
+        'error': {'key': 'error', 'type': 'ChatError'},
     }
 
     def __init__(
         self,
         *,
-        error: "CommunicationError",
+        error: "ChatError",
         **kwargs
     ):
         super(CommunicationErrorResponse, self).__init__(**kwargs)
@@ -687,31 +662,6 @@ class CommunicationUserIdentifierModel(msrest.serialization.Model):
         self.id = id
 
 
-class CreateChatThreadErrors(msrest.serialization.Model):
-    """Errors encountered during the creation of the chat thread.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar invalid_participants: The participants that failed to be added to the chat thread.
-    :vartype invalid_participants: list[~azure.communication.chat.models.CommunicationError]
-    """
-
-    _validation = {
-        'invalid_participants': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'invalid_participants': {'key': 'invalidParticipants', 'type': '[CommunicationError]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CreateChatThreadErrors, self).__init__(**kwargs)
-        self.invalid_participants = None
-
-
 class CreateChatThreadRequest(msrest.serialization.Model):
     """Request payload for creating a chat thread.
 
@@ -719,13 +669,12 @@ class CreateChatThreadRequest(msrest.serialization.Model):
 
     :param topic: Required. The chat thread topic.
     :type topic: str
-    :param participants: Required. Participants to be added to the chat thread.
+    :param participants: Participants to be added to the chat thread.
     :type participants: list[~azure.communication.chat.models.ChatParticipant]
     """
 
     _validation = {
         'topic': {'required': True},
-        'participants': {'required': True},
     }
 
     _attribute_map = {
@@ -737,7 +686,7 @@ class CreateChatThreadRequest(msrest.serialization.Model):
         self,
         *,
         topic: str,
-        participants: List["ChatParticipant"],
+        participants: Optional[List["ChatParticipant"]] = None,
         **kwargs
     ):
         super(CreateChatThreadRequest, self).__init__(**kwargs)
@@ -748,27 +697,32 @@ class CreateChatThreadRequest(msrest.serialization.Model):
 class CreateChatThreadResult(msrest.serialization.Model):
     """Result of the create chat thread operation.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :param chat_thread: Chat thread.
-    :type chat_thread: ~azure.communication.chat.models.ChatThread
-    :param errors: Errors encountered during the creation of the chat thread.
-    :type errors: ~azure.communication.chat.models.CreateChatThreadErrors
+    :type chat_thread: ~azure.communication.chat.models.ChatThreadProperties
+    :ivar invalid_participants: The participants that failed to be added to the chat thread.
+    :vartype invalid_participants: list[~azure.communication.chat.models.ChatError]
     """
 
+    _validation = {
+        'invalid_participants': {'readonly': True},
+    }
+
     _attribute_map = {
-        'chat_thread': {'key': 'chatThread', 'type': 'ChatThread'},
-        'errors': {'key': 'errors', 'type': 'CreateChatThreadErrors'},
+        'chat_thread': {'key': 'chatThread', 'type': 'ChatThreadProperties'},
+        'invalid_participants': {'key': 'invalidParticipants', 'type': '[ChatError]'},
     }
 
     def __init__(
         self,
         *,
-        chat_thread: Optional["ChatThread"] = None,
-        errors: Optional["CreateChatThreadErrors"] = None,
+        chat_thread: Optional["ChatThreadProperties"] = None,
         **kwargs
     ):
         super(CreateChatThreadResult, self).__init__(**kwargs)
         self.chat_thread = chat_thread
-        self.errors = errors
+        self.invalid_participants = None
 
 
 class MicrosoftTeamsUserIdentifierModel(msrest.serialization.Model):

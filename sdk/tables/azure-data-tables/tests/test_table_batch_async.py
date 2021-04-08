@@ -174,7 +174,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         assert length ==  len(transaction.requests)
 
     #--Test cases for batch ---------------------------------------------
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @TablesPreparer()
     async def test_batch_single_insert(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -212,7 +211,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @TablesPreparer()
     async def test_batch_single_update(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -248,7 +246,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @TablesPreparer()
     async def test_batch_update(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -283,7 +280,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @TablesPreparer()
     async def test_batch_merge(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -323,7 +319,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @TablesPreparer()
     async def test_batch_update_if_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -353,7 +348,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @TablesPreparer()
     async def test_batch_update_if_doesnt_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -382,7 +376,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @TablesPreparer()
     async def test_batch_insert_replace(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -413,7 +406,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @TablesPreparer()
     async def test_batch_insert_merge(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -443,7 +435,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @TablesPreparer()
     async def test_batch_delete(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -476,7 +467,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @TablesPreparer()
     async def test_batch_inserts(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -514,7 +504,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @TablesPreparer()
     async def test_batch_all_operations_together(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -586,7 +575,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @TablesPreparer()
     async def test_batch_all_operations_together_context_manager(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -635,7 +623,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("This does not throw an error, but it should")
     @TablesPreparer()
     async def test_batch_same_row_operations_fail(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -661,7 +648,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @TablesPreparer()
     async def test_batch_different_partition_operations_fail(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -708,7 +694,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @TablesPreparer()
     async def test_new_non_existent_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -727,7 +712,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @TablesPreparer()
     async def test_new_invalid_key(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -749,7 +733,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         with pytest.raises(ClientAuthenticationError):
             resp = await self.table.send_batch(batch)
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @TablesPreparer()
     async def test_new_delete_nonexistent_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -766,7 +749,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @pytest.mark.live_test_only
     @TablesPreparer()
     async def test_batch_sas_auth(self, tables_storage_account_name, tables_primary_storage_account_key):

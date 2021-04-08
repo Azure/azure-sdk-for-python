@@ -320,6 +320,7 @@ class ServersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-12-01"
+        accept = "application/json"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -336,6 +337,7 @@ class ServersOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)

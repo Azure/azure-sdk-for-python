@@ -146,7 +146,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
             ]
           }
         }
-        result = self.compute_client.virtual_machines.create_or_update(group_name, vm_name, BODY)
+        result = self.compute_client.virtual_machines.begin_create_or_update(group_name, vm_name, BODY)
         result = result.result()
 
     def create_public_ip_addresses(self, group_name, location, public_ip_name):

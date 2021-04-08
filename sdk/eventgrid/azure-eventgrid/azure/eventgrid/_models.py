@@ -91,3 +91,8 @@ class EventGridEvent(InternalEventGridEvent):
         kwargs.setdefault("data_version", data_version)
 
         super(EventGridEvent, self).__init__(**kwargs)
+
+    def __repr__(self):
+        return "EventGridEvent(subject={}, event_type={}, id={}, event_time={})".format(
+            self.subject, self.event_type, self.id, self.event_time
+        )[:1024]
