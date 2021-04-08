@@ -20,9 +20,10 @@ if TYPE_CHECKING:
 from ._configuration import AzureStackManagementClientConfiguration
 from .operations import Operations
 from .operations import CloudManifestFileOperations
+from .operations import CustomerSubscriptionsOperations
 from .operations import ProductsOperations
 from .operations import RegistrationsOperations
-from .operations import CustomerSubscriptionsOperations
+from .operations import LinkedSubscriptionsOperations
 from . import models
 
 
@@ -33,12 +34,14 @@ class AzureStackManagementClient(object):
     :vartype operations: azure.mgmt.azurestack.operations.Operations
     :ivar cloud_manifest_file: CloudManifestFileOperations operations
     :vartype cloud_manifest_file: azure.mgmt.azurestack.operations.CloudManifestFileOperations
+    :ivar customer_subscriptions: CustomerSubscriptionsOperations operations
+    :vartype customer_subscriptions: azure.mgmt.azurestack.operations.CustomerSubscriptionsOperations
     :ivar products: ProductsOperations operations
     :vartype products: azure.mgmt.azurestack.operations.ProductsOperations
     :ivar registrations: RegistrationsOperations operations
     :vartype registrations: azure.mgmt.azurestack.operations.RegistrationsOperations
-    :ivar customer_subscriptions: CustomerSubscriptionsOperations operations
-    :vartype customer_subscriptions: azure.mgmt.azurestack.operations.CustomerSubscriptionsOperations
+    :ivar linked_subscriptions: LinkedSubscriptionsOperations operations
+    :vartype linked_subscriptions: azure.mgmt.azurestack.operations.LinkedSubscriptionsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Subscription credentials that uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
@@ -68,11 +71,13 @@ class AzureStackManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.cloud_manifest_file = CloudManifestFileOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.customer_subscriptions = CustomerSubscriptionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.products = ProductsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.registrations = RegistrationsOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.customer_subscriptions = CustomerSubscriptionsOperations(
+        self.linked_subscriptions = LinkedSubscriptionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def close(self):

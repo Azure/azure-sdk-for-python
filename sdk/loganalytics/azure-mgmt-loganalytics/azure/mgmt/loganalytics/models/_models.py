@@ -10,6 +10,46 @@ from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
+class AssociatedWorkspace(msrest.serialization.Model):
+    """The list of Log Analytics workspaces associated with the cluster.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar workspace_id: The id of the assigned workspace.
+    :vartype workspace_id: str
+    :ivar workspace_name: The name id the assigned workspace.
+    :vartype workspace_name: str
+    :ivar resource_id: The ResourceId id the assigned workspace.
+    :vartype resource_id: str
+    :ivar associate_date: The time of workspace association.
+    :vartype associate_date: str
+    """
+
+    _validation = {
+        'workspace_id': {'readonly': True},
+        'workspace_name': {'readonly': True},
+        'resource_id': {'readonly': True},
+        'associate_date': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
+        'workspace_name': {'key': 'workspaceName', 'type': 'str'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'associate_date': {'key': 'associateDate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AssociatedWorkspace, self).__init__(**kwargs)
+        self.workspace_id = None
+        self.workspace_name = None
+        self.resource_id = None
+        self.associate_date = None
+
+
 class AvailableServiceTier(msrest.serialization.Model):
     """Service Tier details.
 
@@ -144,6 +184,41 @@ class AzureEntityResource(Resource):
         self.etag = None
 
 
+class CapacityReservationProperties(msrest.serialization.Model):
+    """The Capacity Reservation properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar last_sku_update: The last time Sku was updated.
+    :vartype last_sku_update: str
+    :ivar min_capacity: Minimum CapacityReservation value in GB.
+    :vartype min_capacity: long
+    :ivar max_capacity: Maximum CapacityReservation value in GB.
+    :vartype max_capacity: long
+    """
+
+    _validation = {
+        'last_sku_update': {'readonly': True},
+        'min_capacity': {'readonly': True},
+        'max_capacity': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'last_sku_update': {'key': 'lastSkuUpdate', 'type': 'str'},
+        'min_capacity': {'key': 'minCapacity', 'type': 'long'},
+        'max_capacity': {'key': 'maxCapacity', 'type': 'long'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CapacityReservationProperties, self).__init__(**kwargs)
+        self.last_sku_update = None
+        self.min_capacity = None
+        self.max_capacity = None
+
+
 class TrackedResource(Resource):
     """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
 
@@ -212,15 +287,35 @@ class Cluster(TrackedResource):
     :type identity: ~azure.mgmt.loganalytics.models.Identity
     :param sku: The sku properties.
     :type sku: ~azure.mgmt.loganalytics.models.ClusterSku
-    :param next_link: The link used to get the next page of recommendations.
-    :type next_link: str
     :ivar cluster_id: The ID associated with the cluster.
     :vartype cluster_id: str
     :ivar provisioning_state: The provisioning state of the cluster. Possible values include:
      "Creating", "Succeeded", "Failed", "Canceled", "Deleting", "ProvisioningAccount", "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.loganalytics.models.ClusterEntityStatus
+    :param is_double_encryption_enabled: Configures whether cluster will use double encryption.
+     This Property can not be modified after cluster creation. Default value is 'true'.
+    :type is_double_encryption_enabled: bool
+    :param is_availability_zones_enabled: Sets whether the cluster will support availability zones.
+     This can be set as true only in regions where Azure Data Explorer support Availability Zones.
+     This Property can not be modified after cluster creation. Default value is 'true' if region
+     supports Availability Zones.
+    :type is_availability_zones_enabled: bool
+    :param billing_type: Configures whether billing will be only on the cluster or each workspace
+     will be billed by its proportional use. This does not change the overall billing, only how it
+     will be distributed. Default value is 'Cluster'. Possible values include: "Cluster",
+     "Workspaces".
+    :type billing_type: str or ~azure.mgmt.loganalytics.models.BillingType
     :param key_vault_properties: The associated key properties.
     :type key_vault_properties: ~azure.mgmt.loganalytics.models.KeyVaultProperties
+    :ivar last_modified_date: The last time the cluster was updated.
+    :vartype last_modified_date: str
+    :ivar created_date: The cluster creation time.
+    :vartype created_date: str
+    :param associated_workspaces: The list of Log Analytics workspaces associated with the cluster.
+    :type associated_workspaces: list[~azure.mgmt.loganalytics.models.AssociatedWorkspace]
+    :param capacity_reservation_properties: Additional properties for capacity reservation.
+    :type capacity_reservation_properties:
+     ~azure.mgmt.loganalytics.models.CapacityReservationProperties
     """
 
     _validation = {
@@ -230,6 +325,8 @@ class Cluster(TrackedResource):
         'location': {'required': True},
         'cluster_id': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'last_modified_date': {'readonly': True},
+        'created_date': {'readonly': True},
     }
 
     _attribute_map = {
@@ -240,10 +337,16 @@ class Cluster(TrackedResource):
         'location': {'key': 'location', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'Identity'},
         'sku': {'key': 'sku', 'type': 'ClusterSku'},
-        'next_link': {'key': 'properties.nextLink', 'type': 'str'},
         'cluster_id': {'key': 'properties.clusterId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'is_double_encryption_enabled': {'key': 'properties.isDoubleEncryptionEnabled', 'type': 'bool'},
+        'is_availability_zones_enabled': {'key': 'properties.isAvailabilityZonesEnabled', 'type': 'bool'},
+        'billing_type': {'key': 'properties.billingType', 'type': 'str'},
         'key_vault_properties': {'key': 'properties.keyVaultProperties', 'type': 'KeyVaultProperties'},
+        'last_modified_date': {'key': 'properties.lastModifiedDate', 'type': 'str'},
+        'created_date': {'key': 'properties.createdDate', 'type': 'str'},
+        'associated_workspaces': {'key': 'properties.associatedWorkspaces', 'type': '[AssociatedWorkspace]'},
+        'capacity_reservation_properties': {'key': 'properties.capacityReservationProperties', 'type': 'CapacityReservationProperties'},
     }
 
     def __init__(
@@ -253,29 +356,16 @@ class Cluster(TrackedResource):
         super(Cluster, self).__init__(**kwargs)
         self.identity = kwargs.get('identity', None)
         self.sku = kwargs.get('sku', None)
-        self.next_link = kwargs.get('next_link', None)
         self.cluster_id = None
         self.provisioning_state = None
+        self.is_double_encryption_enabled = kwargs.get('is_double_encryption_enabled', None)
+        self.is_availability_zones_enabled = kwargs.get('is_availability_zones_enabled', None)
+        self.billing_type = kwargs.get('billing_type', None)
         self.key_vault_properties = kwargs.get('key_vault_properties', None)
-
-
-class ClusterErrorResponse(msrest.serialization.Model):
-    """Error response indicates that the service is not able to process the incoming request. The reason is provided in the error message.
-
-    :param error: The details of the error.
-    :type error: ~azure.mgmt.loganalytics.models.ErrorResponse
-    """
-
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ClusterErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.last_modified_date = None
+        self.created_date = None
+        self.associated_workspaces = kwargs.get('associated_workspaces', None)
+        self.capacity_reservation_properties = kwargs.get('capacity_reservation_properties', None)
 
 
 class ClusterListResult(msrest.serialization.Model):
@@ -304,6 +394,8 @@ class ClusterListResult(msrest.serialization.Model):
 class ClusterPatch(msrest.serialization.Model):
     """The top level Log Analytics cluster resource container.
 
+    :param identity: The identity of the resource.
+    :type identity: ~azure.mgmt.loganalytics.models.Identity
     :param sku: The sku properties.
     :type sku: ~azure.mgmt.loganalytics.models.ClusterSku
     :param tags: A set of tags. Resource tags.
@@ -313,6 +405,7 @@ class ClusterPatch(msrest.serialization.Model):
     """
 
     _attribute_map = {
+        'identity': {'key': 'identity', 'type': 'Identity'},
         'sku': {'key': 'sku', 'type': 'ClusterSku'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'key_vault_properties': {'key': 'properties.keyVaultProperties', 'type': 'KeyVaultProperties'},
@@ -323,6 +416,7 @@ class ClusterPatch(msrest.serialization.Model):
         **kwargs
     ):
         super(ClusterPatch, self).__init__(**kwargs)
+        self.identity = kwargs.get('identity', None)
         self.sku = kwargs.get('sku', None)
         self.tags = kwargs.get('tags', None)
         self.key_vault_properties = kwargs.get('key_vault_properties', None)
@@ -380,7 +474,41 @@ class CoreSummary(msrest.serialization.Model):
         self.number_of_documents = kwargs['number_of_documents']
 
 
-class DataExport(Resource):
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class DataExport(ProxyResource):
     """The top level data export resource container.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -450,25 +578,6 @@ class DataExport(Resource):
         self.event_hub_name = kwargs.get('event_hub_name', None)
 
 
-class DataExportErrorResponse(msrest.serialization.Model):
-    """Error response indicates that the service is not able to process the incoming request. The reason is provided in the error message.
-
-    :param error: The details of the error.
-    :type error: ~azure.mgmt.loganalytics.models.ErrorResponse
-    """
-
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataExportErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
-
-
 class DataExportListResult(msrest.serialization.Model):
     """Result of the request to list data exports.
 
@@ -488,7 +597,7 @@ class DataExportListResult(msrest.serialization.Model):
         self.value = kwargs.get('value', None)
 
 
-class DataSource(Resource):
+class DataSource(ProxyResource):
     """Datasources under OMS Workspace.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -635,27 +744,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self.info = None
 
 
-class ErrorContract(msrest.serialization.Model):
-    """Contains details when the response code indicates an error.
-
-    :param error: The details of the error.
-    :type error: ~azure.mgmt.loganalytics.models.ErrorResponse
-    """
-
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorContract, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
-
-
-class ErrorResponse(msrest.serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+class ErrorDetail(msrest.serialization.Model):
+    """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -666,7 +756,7 @@ class ErrorResponse(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.loganalytics.models.ErrorResponse]
+    :vartype details: list[~azure.mgmt.loganalytics.models.ErrorDetail]
     :ivar additional_info: The error additional info.
     :vartype additional_info: list[~azure.mgmt.loganalytics.models.ErrorAdditionalInfo]
     """
@@ -683,7 +773,7 @@ class ErrorResponse(msrest.serialization.Model):
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorResponse]'},
+        'details': {'key': 'details', 'type': '[ErrorDetail]'},
         'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
     }
 
@@ -691,12 +781,31 @@ class ErrorResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(ErrorResponse, self).__init__(**kwargs)
+        super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
         self.details = None
         self.additional_info = None
+
+
+class ErrorResponse(msrest.serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+
+    :param error: The error object.
+    :type error: ~azure.mgmt.loganalytics.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorDetail'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
 
 
 class Identity(msrest.serialization.Model):
@@ -710,8 +819,14 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :param type: Required. The identity type. Possible values include: "SystemAssigned", "None".
+    :param type: Required. Type of managed service identity. Possible values include:
+     "SystemAssigned", "UserAssigned", "None".
     :type type: str or ~azure.mgmt.loganalytics.models.IdentityType
+    :param user_assigned_identities: The list of user identities associated with the resource. The
+     user identity dictionary key references will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.loganalytics.models.UserIdentityProperties]
     """
 
     _validation = {
@@ -724,6 +839,7 @@ class Identity(msrest.serialization.Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserIdentityProperties}'},
     }
 
     def __init__(
@@ -734,6 +850,7 @@ class Identity(msrest.serialization.Model):
         self.principal_id = None
         self.tenant_id = None
         self.type = kwargs['type']
+        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
 
 
 class IntelligencePack(msrest.serialization.Model):
@@ -773,12 +890,15 @@ class KeyVaultProperties(msrest.serialization.Model):
     :type key_name: str
     :param key_version: The version of the key associated with the Log Analytics cluster.
     :type key_version: str
+    :param key_rsa_size: Selected key minimum required size.
+    :type key_rsa_size: int
     """
 
     _attribute_map = {
         'key_vault_uri': {'key': 'keyVaultUri', 'type': 'str'},
         'key_name': {'key': 'keyName', 'type': 'str'},
         'key_version': {'key': 'keyVersion', 'type': 'str'},
+        'key_rsa_size': {'key': 'keyRsaSize', 'type': 'int'},
     }
 
     def __init__(
@@ -789,9 +909,10 @@ class KeyVaultProperties(msrest.serialization.Model):
         self.key_vault_uri = kwargs.get('key_vault_uri', None)
         self.key_name = kwargs.get('key_name', None)
         self.key_version = kwargs.get('key_version', None)
+        self.key_rsa_size = kwargs.get('key_rsa_size', None)
 
 
-class LinkedService(Resource):
+class LinkedService(ProxyResource):
     """The top level Linked service resource container.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -882,7 +1003,7 @@ class LinkedStorageAccountsListResult(msrest.serialization.Model):
         self.value = kwargs.get('value', None)
 
 
-class LinkedStorageAccountsResource(Resource):
+class LinkedStorageAccountsResource(ProxyResource):
     """Linked storage accounts top level resource container.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1142,41 +1263,7 @@ class PrivateLinkScopedResource(msrest.serialization.Model):
         self.scope_id = kwargs.get('scope_id', None)
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
-
-
-class SavedSearch(Resource):
+class SavedSearch(ProxyResource):
     """Value object for saved search results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1527,7 +1614,7 @@ class StorageAccount(msrest.serialization.Model):
         self.key = kwargs['key']
 
 
-class StorageInsight(Resource):
+class StorageInsight(ProxyResource):
     """The top level storage insight resource container.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1639,7 +1726,7 @@ class StorageInsightStatus(msrest.serialization.Model):
         self.description = kwargs.get('description', None)
 
 
-class Table(Resource):
+class Table(ProxyResource):
     """Workspace data table definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1652,16 +1739,25 @@ class Table(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param retention_in_days: The data table data retention in days, between 30 and 730. Setting
+    :param retention_in_days: The data table data retention in days, between 7 and 730. Setting
      this property to null will default to the workspace retention.
     :type retention_in_days: int
+    :ivar is_troubleshooting_allowed: Specifies if IsTroubleshootingEnabled property can be set for
+     this table.
+    :vartype is_troubleshooting_allowed: bool
+    :param is_troubleshoot_enabled: Enable or disable troubleshoot for this table.
+    :type is_troubleshoot_enabled: bool
+    :ivar last_troubleshoot_date: Last time when troubleshooting was set for this table.
+    :vartype last_troubleshoot_date: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'retention_in_days': {'maximum': 730, 'minimum': 30},
+        'retention_in_days': {'maximum': 730, 'minimum': 7},
+        'is_troubleshooting_allowed': {'readonly': True},
+        'last_troubleshoot_date': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1669,6 +1765,9 @@ class Table(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'retention_in_days': {'key': 'properties.retentionInDays', 'type': 'int'},
+        'is_troubleshooting_allowed': {'key': 'properties.isTroubleshootingAllowed', 'type': 'bool'},
+        'is_troubleshoot_enabled': {'key': 'properties.isTroubleshootEnabled', 'type': 'bool'},
+        'last_troubleshoot_date': {'key': 'properties.lastTroubleshootDate', 'type': 'str'},
     }
 
     def __init__(
@@ -1677,6 +1776,9 @@ class Table(Resource):
     ):
         super(Table, self).__init__(**kwargs)
         self.retention_in_days = kwargs.get('retention_in_days', None)
+        self.is_troubleshooting_allowed = None
+        self.is_troubleshoot_enabled = kwargs.get('is_troubleshoot_enabled', None)
+        self.last_troubleshoot_date = None
 
 
 class TablesListResult(msrest.serialization.Model):
@@ -1767,6 +1869,36 @@ class UsageMetric(msrest.serialization.Model):
         self.quota_period = kwargs.get('quota_period', None)
 
 
+class UserIdentityProperties(msrest.serialization.Model):
+    """User assigned identity properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(UserIdentityProperties, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
+
+
 class Workspace(TrackedResource):
     """The top level Workspace resource container.
 
@@ -1796,10 +1928,15 @@ class Workspace(TrackedResource):
     :vartype customer_id: str
     :param sku: The SKU of the workspace.
     :type sku: ~azure.mgmt.loganalytics.models.WorkspaceSku
-    :param retention_in_days: The workspace data retention in days, between 30 and 730.
+    :param retention_in_days: The workspace data retention in days. Allowed values are per pricing
+     plan. See pricing tiers documentation for details.
     :type retention_in_days: int
     :param workspace_capping: The daily volume cap for ingestion.
     :type workspace_capping: ~azure.mgmt.loganalytics.models.WorkspaceCapping
+    :ivar created_date: Workspace creation date.
+    :vartype created_date: str
+    :ivar modified_date: Workspace modification date.
+    :vartype modified_date: str
     :param public_network_access_for_ingestion: The network access type for accessing Log Analytics
      ingestion. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
     :type public_network_access_for_ingestion: str or
@@ -1808,9 +1945,14 @@ class Workspace(TrackedResource):
      query. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
     :type public_network_access_for_query: str or
      ~azure.mgmt.loganalytics.models.PublicNetworkAccessType
+    :param force_cmk_for_query: Indicates whether customer managed storage is mandatory for query
+     management.
+    :type force_cmk_for_query: bool
     :ivar private_link_scoped_resources: List of linked private link scope resources.
     :vartype private_link_scoped_resources:
      list[~azure.mgmt.loganalytics.models.PrivateLinkScopedResource]
+    :param features: Workspace features.
+    :type features: dict[str, object]
     """
 
     _validation = {
@@ -1819,7 +1961,8 @@ class Workspace(TrackedResource):
         'type': {'readonly': True},
         'location': {'required': True},
         'customer_id': {'readonly': True},
-        'retention_in_days': {'maximum': 730, 'minimum': 30},
+        'created_date': {'readonly': True},
+        'modified_date': {'readonly': True},
         'private_link_scoped_resources': {'readonly': True},
     }
 
@@ -1835,9 +1978,13 @@ class Workspace(TrackedResource):
         'sku': {'key': 'properties.sku', 'type': 'WorkspaceSku'},
         'retention_in_days': {'key': 'properties.retentionInDays', 'type': 'int'},
         'workspace_capping': {'key': 'properties.workspaceCapping', 'type': 'WorkspaceCapping'},
+        'created_date': {'key': 'properties.createdDate', 'type': 'str'},
+        'modified_date': {'key': 'properties.modifiedDate', 'type': 'str'},
         'public_network_access_for_ingestion': {'key': 'properties.publicNetworkAccessForIngestion', 'type': 'str'},
         'public_network_access_for_query': {'key': 'properties.publicNetworkAccessForQuery', 'type': 'str'},
+        'force_cmk_for_query': {'key': 'properties.forceCmkForQuery', 'type': 'bool'},
         'private_link_scoped_resources': {'key': 'properties.privateLinkScopedResources', 'type': '[PrivateLinkScopedResource]'},
+        'features': {'key': 'properties.features', 'type': '{object}'},
     }
 
     def __init__(
@@ -1851,9 +1998,13 @@ class Workspace(TrackedResource):
         self.sku = kwargs.get('sku', None)
         self.retention_in_days = kwargs.get('retention_in_days', None)
         self.workspace_capping = kwargs.get('workspace_capping', None)
+        self.created_date = None
+        self.modified_date = None
         self.public_network_access_for_ingestion = kwargs.get('public_network_access_for_ingestion', "Enabled")
         self.public_network_access_for_query = kwargs.get('public_network_access_for_query', "Enabled")
+        self.force_cmk_for_query = kwargs.get('force_cmk_for_query', None)
         self.private_link_scoped_resources = None
+        self.features = kwargs.get('features', None)
 
 
 class WorkspaceCapping(msrest.serialization.Model):
@@ -1974,10 +2125,15 @@ class WorkspacePatch(AzureEntityResource):
     :vartype customer_id: str
     :param sku: The SKU of the workspace.
     :type sku: ~azure.mgmt.loganalytics.models.WorkspaceSku
-    :param retention_in_days: The workspace data retention in days, between 30 and 730.
+    :param retention_in_days: The workspace data retention in days. Allowed values are per pricing
+     plan. See pricing tiers documentation for details.
     :type retention_in_days: int
     :param workspace_capping: The daily volume cap for ingestion.
     :type workspace_capping: ~azure.mgmt.loganalytics.models.WorkspaceCapping
+    :ivar created_date: Workspace creation date.
+    :vartype created_date: str
+    :ivar modified_date: Workspace modification date.
+    :vartype modified_date: str
     :param public_network_access_for_ingestion: The network access type for accessing Log Analytics
      ingestion. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
     :type public_network_access_for_ingestion: str or
@@ -1986,9 +2142,14 @@ class WorkspacePatch(AzureEntityResource):
      query. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
     :type public_network_access_for_query: str or
      ~azure.mgmt.loganalytics.models.PublicNetworkAccessType
+    :param force_cmk_for_query: Indicates whether customer managed storage is mandatory for query
+     management.
+    :type force_cmk_for_query: bool
     :ivar private_link_scoped_resources: List of linked private link scope resources.
     :vartype private_link_scoped_resources:
      list[~azure.mgmt.loganalytics.models.PrivateLinkScopedResource]
+    :param features: Workspace features.
+    :type features: dict[str, object]
     """
 
     _validation = {
@@ -1997,7 +2158,8 @@ class WorkspacePatch(AzureEntityResource):
         'type': {'readonly': True},
         'etag': {'readonly': True},
         'customer_id': {'readonly': True},
-        'retention_in_days': {'maximum': 730, 'minimum': 30},
+        'created_date': {'readonly': True},
+        'modified_date': {'readonly': True},
         'private_link_scoped_resources': {'readonly': True},
     }
 
@@ -2012,9 +2174,13 @@ class WorkspacePatch(AzureEntityResource):
         'sku': {'key': 'properties.sku', 'type': 'WorkspaceSku'},
         'retention_in_days': {'key': 'properties.retentionInDays', 'type': 'int'},
         'workspace_capping': {'key': 'properties.workspaceCapping', 'type': 'WorkspaceCapping'},
+        'created_date': {'key': 'properties.createdDate', 'type': 'str'},
+        'modified_date': {'key': 'properties.modifiedDate', 'type': 'str'},
         'public_network_access_for_ingestion': {'key': 'properties.publicNetworkAccessForIngestion', 'type': 'str'},
         'public_network_access_for_query': {'key': 'properties.publicNetworkAccessForQuery', 'type': 'str'},
+        'force_cmk_for_query': {'key': 'properties.forceCmkForQuery', 'type': 'bool'},
         'private_link_scoped_resources': {'key': 'properties.privateLinkScopedResources', 'type': '[PrivateLinkScopedResource]'},
+        'features': {'key': 'properties.features', 'type': '{object}'},
     }
 
     def __init__(
@@ -2028,9 +2194,13 @@ class WorkspacePatch(AzureEntityResource):
         self.sku = kwargs.get('sku', None)
         self.retention_in_days = kwargs.get('retention_in_days', None)
         self.workspace_capping = kwargs.get('workspace_capping', None)
+        self.created_date = None
+        self.modified_date = None
         self.public_network_access_for_ingestion = kwargs.get('public_network_access_for_ingestion', "Enabled")
         self.public_network_access_for_query = kwargs.get('public_network_access_for_query', "Enabled")
+        self.force_cmk_for_query = kwargs.get('force_cmk_for_query', None)
         self.private_link_scoped_resources = None
+        self.features = kwargs.get('features', None)
 
 
 class WorkspacePurgeBody(msrest.serialization.Model):
@@ -2159,7 +2329,7 @@ class WorkspaceSku(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required. The name of the SKU. Possible values include: "Free", "Standard",
-     "Premium", "PerNode", "PerGB2018", "Standalone", "CapacityReservation".
+     "Premium", "PerNode", "PerGB2018", "Standalone", "CapacityReservation", "LACluster".
     :type name: str or ~azure.mgmt.loganalytics.models.WorkspaceSkuNameEnum
     :param capacity_reservation_level: The capacity reservation level for this workspace, when
      CapacityReservation sku is selected.

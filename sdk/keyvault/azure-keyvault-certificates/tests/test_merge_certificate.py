@@ -5,29 +5,26 @@
 import base64
 import os
 
-from azure.keyvault.certificates import CertificateClient, CertificatePolicy, WellKnownIssuerNames
+from azure.keyvault.certificates import ApiVersion, CertificatePolicy, WellKnownIssuerNames
 from devtools_testutils import PowerShellPreparer
 from OpenSSL import crypto
+from parameterized import parameterized, param
 
 from _shared.json_attribute_matcher import json_attribute_matcher
 from _shared.test_case import KeyVaultTestCase
+from _test_case import CertificatesTestCase, suffixed_test_name
 
 
-class MergeCertificateTest(KeyVaultTestCase):
+class MergeCertificateTest(CertificatesTestCase, KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
         kwargs["match_body"] = False
         kwargs["custom_request_matchers"] = [json_attribute_matcher]
         super(MergeCertificateTest, self).__init__(*args, **kwargs)
 
-    def create_client(self, vault_uri, **kwargs):
-        credential = self.get_credential(CertificateClient)
-        return self.create_client_from_credential(
-            CertificateClient, credential=credential, vault_url=vault_uri, **kwargs
-        )
-
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @PowerShellPreparer("keyvault", azure_keyvault_url="https://vaultname.vault.azure.net")
     def test_merge_certificate(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
+        client = self.create_client(azure_keyvault_url, **kwargs)
 
         cert_name = self.get_resource_name("mergeCertificate")
         cert_policy = CertificatePolicy(
