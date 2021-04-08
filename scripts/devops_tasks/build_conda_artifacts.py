@@ -27,6 +27,18 @@ VERSION_REGEX = re.compile(r"\{\%\s*set\s*version\s*=\s*\"(.*)\"\s*\%\}")
 NAMESPACE_EXTENSION_TEMPLATE = """__path__ = __import__('pkgutil').extend_path(__path__, __name__)  # type: str
 """
 
+MANIFEST_TEMPLATE = """include *.md
+{namespace_includes}
+include LICENSE.txt
+recursive-include tests *.py
+recursive-include samples *.py *.md
+"""
+
+SETUP_CFG = """
+[bdist_wheel]
+universal=1
+"""
+
 CONDA_PKG_SETUP_TEMPLATE = """from setuptools import find_packages, setup
 
 setup(
@@ -51,7 +63,7 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=find_packages(exclude=[ {package_excludes} ]),
+    packages=find_packages(),
     install_requires=[]
 )
 """
@@ -95,6 +107,7 @@ def create_sdist_skeleton(build_directory, artifact_name, common_root):
 
     # after the below function, ns_dir will be the target destination for copying from our pkgs_from_consumption
     ns_dir = sdist_directory
+
     for ns in namespaces:
         ns_dir = os.path.join(ns_dir, ns)
         if not os.path.exists(ns_dir):
@@ -133,19 +146,43 @@ def get_version_from_meta(meta_yaml_location):
     return "0.0.0"
 
 
-def create_sdist_setup(build_directory, artifact_name, service, meta_yaml):
+def get_manifest_includes(common_root):
+    levels = common_root.split("/")
+    breadcrumbs = []
+    breadcrumb_string = ""
+
+    for ns in levels:
+        breadcrumb_string += ns + "/"
+        breadcrumbs.append(breadcrumb_string + "__init__.py")
+
+    return breadcrumbs
+
+
+def create_setup_files(build_directory, common_root, artifact_name, service, meta_yaml):
     sdist_directory = os.path.join(build_directory, artifact_name)
     setup_location = os.path.join(sdist_directory, "setup.py")
+    manifest_location = os.path.join(sdist_directory, "MANIFEST.in")
+    cfg_location = os.path.join(sdist_directory, "setup.cfg")
 
-    template = CONDA_PKG_SETUP_TEMPLATE.format(
+    setup_template = CONDA_PKG_SETUP_TEMPLATE.format(
         conda_package_name=artifact_name,
         version=get_version_from_meta(meta_yaml),
         service=service,
-        package_excludes="'azure', 'tests'",
+        package_excludes="'azure', 'tests', '{}'".format(common_root.replace("/", ".")),
     )
 
     with open(setup_location, "w") as f:
-        f.write(template)
+        f.write(setup_template)
+
+    manifest_template = MANIFEST_TEMPLATE.format(
+        namespace_includes="\n".join(get_manifest_includes(common_root))
+    )
+
+    with open(manifest_location, "w") as f:
+        f.write(manifest_template)
+
+    with open(cfg_location, "w") as f:
+        f.write(SETUP_CFG)
 
 
 def create_combined_sdist(
@@ -157,7 +194,9 @@ def create_combined_sdist(
 
     if not singular_dependency:
         create_sdist_skeleton(build_directory, artifact_name, common_root)
-        create_sdist_setup(build_directory, artifact_name, service, meta_yaml)
+        create_setup_files(
+            build_directory, common_root, artifact_name, service, meta_yaml
+        )
 
     sdist_location = os.path.join(build_directory, artifact_name)
 
