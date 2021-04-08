@@ -292,6 +292,7 @@ class AppConfigurationClientTest(AzureTestCase):
         ))
         assert len(items) == 1
         assert all(x.label == LABEL_RESERVED_CHARS for x in items)
+        client.delete_configuration_setting(resered_char_kv.key)
 
     @app_config_decorator
     def test_list_configuration_settings_contains(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
