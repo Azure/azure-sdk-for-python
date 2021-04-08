@@ -224,7 +224,7 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     async def test_set_manifest_properties(self, containerregistry_endpoint, containerregistry_resource_group):
-        repository = self.get_resource_name("repo_set_mani")
+        repository = self.get_resource_name("reposet")
         tag_identifier = self.get_resource_name("tag")
         self.import_repo_to_be_deleted(
             containerregistry_endpoint,
@@ -251,6 +251,19 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
             assert not received_permissions.content_permissions.can_read
             assert not received_permissions.content_permissions.can_list
             assert not received_permissions.content_permissions.can_write
+
+            # Reset and delete
+            await client.set_manifest_properties(
+                artifact.digest,
+                ContentPermissions(
+                    can_delete=True,
+                    can_list=True,
+                    can_read=True,
+                    can_write=True,
+                ),
+            )
+            self.sleep(10)
+            await client.delete()
 
             break
 

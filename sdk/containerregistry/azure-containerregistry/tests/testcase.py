@@ -35,6 +35,8 @@ class AcrBodyReplacer(RecordingProcessor):
     def __init__(self, replacement="redacted"):
         self._replacement = replacement
         self._401_replacement = 'Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"'
+        self._redacted_service = "https://fakeurl.azurecr.io"
+        self._regex = r'(https://)[a-zA-Z0-9]+(\.azurecr.io)'
 
     def _scrub_body(self, body):
         # type: (bytes) -> bytes
@@ -50,6 +52,8 @@ class AcrBodyReplacer(RecordingProcessor):
             [k, v] = pair.split("=")
             if k == "access_token" or k == "refresh_token":
                 v = REDACTED
+            if k == "service":
+                v = "fake_url.azurecr.io"
             s[idx] = "=".join([k, v])
         s = "&".join(s)
         return s.encode("utf-8")
@@ -59,6 +63,8 @@ class AcrBodyReplacer(RecordingProcessor):
         for k in ["access_token", "refresh_token"]:
             if k in new_body.keys():
                 new_body[k] = REDACTED
+        if "service" in new_body.keys():
+            new_body["service"] = "fake_url.azurecr.io"
         return new_body
 
     def process_request(self, request):
@@ -69,8 +75,9 @@ class AcrBodyReplacer(RecordingProcessor):
 
     def process_response(self, response):
         try:
+            self.process_url(response)
             headers = response["headers"]
-            auth_header = None
+
             if "www-authenticate" in headers:
                 response["headers"]["www-authenticate"] = self._401_replacement
 
@@ -82,10 +89,13 @@ class AcrBodyReplacer(RecordingProcessor):
                 refresh = json.loads(body["string"])
                 if "refresh_token" in refresh.keys():
                     refresh["refresh_token"] = REDACTED
-                    body["string"] = json.dumps(refresh)
                 if "access_token" in refresh.keys():
                     refresh["access_token"] = REDACTED
-                    body["string"] = json.dumps(refresh)
+                if "service" in refresh.keys():
+                    s = refresh["service"].split('.')
+                    s[0] = "fake_url"
+                    refresh["service"] = ".".join(s)
+                body["string"] = json.dumps(refresh)
             except ValueError:
                 # Python 2.7 doesn't have the below error
                 pass
@@ -95,6 +105,12 @@ class AcrBodyReplacer(RecordingProcessor):
             return response
         except (KeyError, ValueError):
             return response
+
+    def process_url(self, response):
+        try:
+            response["url"] = re.sub(self._regex, r'\1{}\2'.format("fake_url"), response["url"])
+        except KeyError:
+            pass
 
 
 class FakeTokenCredential(object):
