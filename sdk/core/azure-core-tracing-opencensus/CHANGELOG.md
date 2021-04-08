@@ -13,6 +13,10 @@
 
 ## 1.0.0b5 (2020-01-14)
 
+### Features
+
+- Implement new "change_context" API
+
 ### Bugfix
 
 - Fix context passing for multi-threading
@@ -23,8 +27,3 @@
 ### Features
 
 - Opencensus implementation of azure-core tracing protocol
-
-### Features
-
-- Implement new "change_context" API
-
