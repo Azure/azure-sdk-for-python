@@ -10,16 +10,15 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/repo308e19dd/_tags/tag308e19dd
   response:
     body:
-      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"repo308e19dd","Action":"metadata_read"}]}]}
-
-        '
+      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
+        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
+        "repository", "Name": "repo308e19dd", "Action": "metadata_read"}]}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '215'
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 17:58:18 GMT
+      date: Wed, 07 Apr 2021 12:55:48 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -28,12 +27,12 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankane.azurecr.io/acr/v1/repo308e19dd/_tags/tag308e19dd
+    url: https://fake_url.azurecr.io/acr/v1/repo308e19dd/_tags/tag308e19dd
 - request:
     body:
       access_token: REDACTED
       grant_type: access_token
-      service: seankane.azurecr.io
+      service: fake_url.azurecr.io
     headers:
       Accept:
       - application/json
@@ -47,21 +46,21 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 17:58:19 GMT
+      date: Wed, 07 Apr 2021 12:55:49 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '333.3'
+      x-ms-ratelimit-remaining-calls-per-second: '333.283333'
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/oauth2/exchange
+    url: https://fake_url.azurecr.io/oauth2/exchange
 - request:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
       scope: repository:repo308e19dd:metadata_read
-      service: seankane.azurecr.io
+      service: fake_url.azurecr.io
     headers:
       Accept:
       - application/json
@@ -75,15 +74,15 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 17:58:19 GMT
+      date: Wed, 07 Apr 2021 12:55:50 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '333.283333'
+      x-ms-ratelimit-remaining-calls-per-second: '333.216667'
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/oauth2/token
+    url: https://fake_url.azurecr.io/oauth2/token
 - request:
     body: null
     headers:
@@ -95,15 +94,17 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/repo308e19dd/_tags/tag308e19dd
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"repo308e19dd","tag":{"name":"tag308e19dd","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-03-31T15:28:44.8030566Z","lastUpdateTime":"2021-03-31T15:28:44.8030566Z","signed":false,"changeableAttributes":{"deleteEnabled":false,"writeEnabled":false,"readEnabled":false,"listEnabled":false}}}
-
-        '
+      string: '{"registry": "fake_url.azurecr.io", "imageName": "repo308e19dd", "tag":
+        {"name": "tag308e19dd", "digest": "sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24",
+        "createdTime": "2021-03-31T15:28:44.8030566Z", "lastUpdateTime": "2021-03-31T15:28:44.8030566Z",
+        "signed": false, "changeableAttributes": {"deleteEnabled": false, "writeEnabled":
+        false, "readEnabled": false, "listEnabled": false}}}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '390'
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 17:58:19 GMT
+      date: Wed, 07 Apr 2021 12:55:50 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -111,7 +112,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/acr/v1/repo308e19dd/_tags/tag308e19dd
+    url: https://fake_url.azurecr.io/acr/v1/repo308e19dd/_tags/tag308e19dd
 - request:
     body: '{"deleteEnabled": false, "writeEnabled": false, "listEnabled": false, "readEnabled":
       false}'
@@ -128,16 +129,15 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/repo308e19dd/_tags/tag308e19dd
   response:
     body:
-      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"repo308e19dd","Action":"metadata_write"}]}]}
-
-        '
+      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
+        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
+        "repository", "Name": "repo308e19dd", "Action": "metadata_write"}]}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '216'
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 17:58:19 GMT
+      date: Wed, 07 Apr 2021 12:55:50 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -146,12 +146,12 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankane.azurecr.io/acr/v1/repo308e19dd/_tags/tag308e19dd
+    url: https://fake_url.azurecr.io/acr/v1/repo308e19dd/_tags/tag308e19dd
 - request:
     body:
       access_token: REDACTED
       grant_type: access_token
-      service: seankane.azurecr.io
+      service: fake_url.azurecr.io
     headers:
       Accept:
       - application/json
@@ -165,21 +165,21 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 17:58:20 GMT
+      date: Wed, 07 Apr 2021 12:55:50 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '333.266667'
+      x-ms-ratelimit-remaining-calls-per-second: '333.2'
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/oauth2/exchange
+    url: https://fake_url.azurecr.io/oauth2/exchange
 - request:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
       scope: repository:repo308e19dd:metadata_write
-      service: seankane.azurecr.io
+      service: fake_url.azurecr.io
     headers:
       Accept:
       - application/json
@@ -193,15 +193,15 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 17:58:20 GMT
+      date: Wed, 07 Apr 2021 12:55:51 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '333.25'
+      x-ms-ratelimit-remaining-calls-per-second: '333.183333'
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/oauth2/token
+    url: https://fake_url.azurecr.io/oauth2/token
 - request:
     body: '{"deleteEnabled": false, "writeEnabled": false, "listEnabled": false, "readEnabled":
       false}'
@@ -218,15 +218,17 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/repo308e19dd/_tags/tag308e19dd
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"repo308e19dd","tag":{"name":"tag308e19dd","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-03-31T15:28:44.8030566Z","lastUpdateTime":"2021-03-31T15:28:44.8030566Z","signed":false,"changeableAttributes":{"deleteEnabled":false,"writeEnabled":false,"readEnabled":false,"listEnabled":false}}}
-
-        '
+      string: '{"registry": "fake_url.azurecr.io", "imageName": "repo308e19dd", "tag":
+        {"name": "tag308e19dd", "digest": "sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24",
+        "createdTime": "2021-03-31T15:28:44.8030566Z", "lastUpdateTime": "2021-03-31T15:28:44.8030566Z",
+        "signed": false, "changeableAttributes": {"deleteEnabled": false, "writeEnabled":
+        false, "readEnabled": false, "listEnabled": false}}}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '390'
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 17:58:20 GMT
+      date: Wed, 07 Apr 2021 12:55:51 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -234,5 +236,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/acr/v1/repo308e19dd/_tags/tag308e19dd
+    url: https://fake_url.azurecr.io/acr/v1/repo308e19dd/_tags/tag308e19dd
 version: 1

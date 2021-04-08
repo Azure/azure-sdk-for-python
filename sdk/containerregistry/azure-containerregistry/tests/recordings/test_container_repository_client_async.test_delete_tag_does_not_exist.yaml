@@ -10,16 +10,15 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
   response:
     body:
-      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"hello-world","Action":"delete"}]}]}
-
-        '
+      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
+        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
+        "repository", "Name": "hello-world", "Action": "delete"}]}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '207'
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 17:57:29 GMT
+      date: Wed, 07 Apr 2021 12:54:47 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -28,12 +27,12 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankane.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
+    url: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
 - request:
     body:
       access_token: REDACTED
       grant_type: access_token
-      service: seankane.azurecr.io
+      service: fake_url.azurecr.io
     headers:
       Accept:
       - application/json
@@ -47,21 +46,21 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 17:57:30 GMT
+      date: Wed, 07 Apr 2021 12:54:48 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '333.066667'
+      x-ms-ratelimit-remaining-calls-per-second: '333.133333'
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/oauth2/exchange
+    url: https://fake_url.azurecr.io/oauth2/exchange
 - request:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
       scope: repository:hello-world:delete
-      service: seankane.azurecr.io
+      service: fake_url.azurecr.io
     headers:
       Accept:
       - application/json
@@ -75,15 +74,15 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 17:57:30 GMT
+      date: Wed, 07 Apr 2021 12:54:48 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.833333'
+      x-ms-ratelimit-remaining-calls-per-second: '332.9'
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/oauth2/token
+    url: https://fake_url.azurecr.io/oauth2/token
 - request:
     body: null
     headers:
@@ -95,16 +94,14 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
   response:
     body:
-      string: '{"errors":[{"code":"TAG_UNKNOWN","message":"the specified tag does
-        not exist"}]}
-
-        '
+      string: '{"errors": [{"code": "TAG_UNKNOWN", "message": "the specified tag does
+        not exist"}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '81'
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 17:57:30 GMT
+      date: Wed, 07 Apr 2021 12:54:48 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -113,5 +110,5 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://seankane.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
+    url: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/to_be_deleted
 version: 1

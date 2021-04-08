@@ -18,10 +18,9 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/repoc58b1fc1/_manifests/sha256%3Aabcdef
   response:
     body:
-      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"repoc58b1fc1","Action":"metadata_write"}]}]}
-
-        '
+      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
+        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
+        "repository", "Name": "repoc58b1fc1", "Action": "metadata_write"}]}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -35,7 +34,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 17:59:40 GMT
+      - Wed, 07 Apr 2021 14:46:04 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -50,7 +49,7 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
-    body: grant_type=access_token&service=seankane.azurecr.io&access_token=REDACTED
+    body: grant_type=access_token&service=fake_url.azurecr.io&access_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -75,7 +74,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 17:59:42 GMT
+      - Wed, 07 Apr 2021 14:46:06 GMT
       server:
       - openresty
       strict-transport-security:
@@ -88,7 +87,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Arepoc58b1fc1%3Ametadata_write&refresh_token=REDACTED
+    body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=repository%3Arepoc58b1fc1%3Ametadata_write&refresh_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -113,7 +112,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 17:59:42 GMT
+      - Wed, 07 Apr 2021 14:46:06 GMT
       server:
       - openresty
       strict-transport-security:
@@ -144,9 +143,7 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/repoc58b1fc1/_manifests/sha256%3Aabcdef
   response:
     body:
-      string: '{"errors":[{"code":"MANIFEST_UNKNOWN","message":"manifest unknown"}]}
-
-        '
+      string: '{"errors": [{"code": "MANIFEST_UNKNOWN", "message": "manifest unknown"}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -160,7 +157,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 17:59:42 GMT
+      - Wed, 07 Apr 2021 14:46:07 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

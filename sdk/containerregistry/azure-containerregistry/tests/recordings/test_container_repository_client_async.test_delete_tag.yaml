@@ -10,16 +10,15 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
   response:
     body:
-      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"repo6ce51658","Action":"metadata_read"}]}]}
-
-        '
+      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
+        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
+        "repository", "Name": "repo6ce51658", "Action": "metadata_read"}]}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '215'
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 17:57:21 GMT
+      date: Wed, 07 Apr 2021 12:54:38 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -28,12 +27,12 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankane.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
+    url: https://fake_url.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
 - request:
     body:
       access_token: REDACTED
       grant_type: access_token
-      service: seankane.azurecr.io
+      service: fake_url.azurecr.io
     headers:
       Accept:
       - application/json
@@ -47,21 +46,21 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 17:57:22 GMT
+      date: Wed, 07 Apr 2021 12:54:39 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.416667'
+      x-ms-ratelimit-remaining-calls-per-second: '332.966667'
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/oauth2/exchange
+    url: https://fake_url.azurecr.io/oauth2/exchange
 - request:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
       scope: repository:repo6ce51658:metadata_read
-      service: seankane.azurecr.io
+      service: fake_url.azurecr.io
     headers:
       Accept:
       - application/json
@@ -75,15 +74,15 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 17:57:22 GMT
+      date: Wed, 07 Apr 2021 12:54:39 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.4'
+      x-ms-ratelimit-remaining-calls-per-second: '332.95'
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/oauth2/token
+    url: https://fake_url.azurecr.io/oauth2/token
 - request:
     body: null
     headers:
@@ -95,15 +94,17 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"repo6ce51658","tag":{"name":"to_be_deleted","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-04-05T17:57:12.6894864Z","lastUpdateTime":"2021-04-05T17:57:12.6894864Z","signed":false,"changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}}
-
-        '
+      string: '{"registry": "fake_url.azurecr.io", "imageName": "repo6ce51658", "tag":
+        {"name": "to_be_deleted", "digest": "sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24",
+        "createdTime": "2021-04-07T12:54:28.7529146Z", "lastUpdateTime": "2021-04-07T12:54:28.7529146Z",
+        "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
+        true, "readEnabled": true, "listEnabled": true}}}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '388'
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 17:57:22 GMT
+      date: Wed, 07 Apr 2021 12:54:39 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -111,7 +112,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
+    url: https://fake_url.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
 - request:
     body: null
     headers:
@@ -123,16 +124,15 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
   response:
     body:
-      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"repo6ce51658","Action":"delete"}]}]}
-
-        '
+      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
+        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
+        "repository", "Name": "repo6ce51658", "Action": "delete"}]}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '208'
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 17:57:22 GMT
+      date: Wed, 07 Apr 2021 12:54:40 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -141,12 +141,12 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankane.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
+    url: https://fake_url.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
 - request:
     body:
       access_token: REDACTED
       grant_type: access_token
-      service: seankane.azurecr.io
+      service: fake_url.azurecr.io
     headers:
       Accept:
       - application/json
@@ -160,21 +160,21 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 17:57:23 GMT
+      date: Wed, 07 Apr 2021 12:54:40 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.383333'
+      x-ms-ratelimit-remaining-calls-per-second: '332.933333'
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/oauth2/exchange
+    url: https://fake_url.azurecr.io/oauth2/exchange
 - request:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
       scope: repository:repo6ce51658:delete
-      service: seankane.azurecr.io
+      service: fake_url.azurecr.io
     headers:
       Accept:
       - application/json
@@ -188,15 +188,15 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 17:57:23 GMT
+      date: Wed, 07 Apr 2021 12:54:40 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.366667'
+      x-ms-ratelimit-remaining-calls-per-second: '332.916667'
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/oauth2/token
+    url: https://fake_url.azurecr.io/oauth2/token
 - request:
     body: null
     headers:
@@ -213,7 +213,7 @@ interactions:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '0'
-      date: Mon, 05 Apr 2021 17:57:23 GMT
+      date: Wed, 07 Apr 2021 12:54:40 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -223,7 +223,7 @@ interactions:
     status:
       code: 202
       message: Accepted
-    url: https://seankane.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
+    url: https://fake_url.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
 - request:
     body: null
     headers:
@@ -235,16 +235,15 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
   response:
     body:
-      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"repo6ce51658","Action":"metadata_read"}]}]}
-
-        '
+      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
+        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
+        "repository", "Name": "repo6ce51658", "Action": "metadata_read"}]}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '215'
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 17:57:28 GMT
+      date: Wed, 07 Apr 2021 12:54:46 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -253,12 +252,12 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://seankane.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
+    url: https://fake_url.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
 - request:
     body:
       access_token: REDACTED
       grant_type: access_token
-      service: seankane.azurecr.io
+      service: fake_url.azurecr.io
     headers:
       Accept:
       - application/json
@@ -272,21 +271,21 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 17:57:28 GMT
+      date: Wed, 07 Apr 2021 12:54:46 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.316667'
+      x-ms-ratelimit-remaining-calls-per-second: '333.1'
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/oauth2/exchange
+    url: https://fake_url.azurecr.io/oauth2/exchange
 - request:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
       scope: repository:repo6ce51658:metadata_read
-      service: seankane.azurecr.io
+      service: fake_url.azurecr.io
     headers:
       Accept:
       - application/json
@@ -300,15 +299,15 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 17:57:29 GMT
+      date: Wed, 07 Apr 2021 12:54:46 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.3'
+      x-ms-ratelimit-remaining-calls-per-second: '333'
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/oauth2/token
+    url: https://fake_url.azurecr.io/oauth2/token
 - request:
     body: null
     headers:
@@ -320,16 +319,14 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
   response:
     body:
-      string: '{"errors":[{"code":"TAG_UNKNOWN","message":"the specified tag does
-        not exist"}]}
-
-        '
+      string: '{"errors": [{"code": "TAG_UNKNOWN", "message": "the specified tag does
+        not exist"}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '81'
       content-type: application/json; charset=utf-8
-      date: Mon, 05 Apr 2021 17:57:29 GMT
+      date: Wed, 07 Apr 2021 12:54:46 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -337,5 +334,5 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://seankane.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
+    url: https://fake_url.azurecr.io/acr/v1/repo6ce51658/_tags/to_be_deleted
 version: 1
