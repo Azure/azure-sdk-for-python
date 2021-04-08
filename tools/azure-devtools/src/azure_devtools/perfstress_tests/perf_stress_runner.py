@@ -70,6 +70,7 @@ class PerfStressRunner:
         per_test_arg_parser.add_argument('-w', '--warmup', nargs='?', type=int, help='Duration of warmup in seconds.  Default is 5.', default=5)
         per_test_arg_parser.add_argument('--no-cleanup', action='store_true', help='Do not run cleanup logic.  Default is false.', default=False)
         per_test_arg_parser.add_argument('--sync', action='store_true', help='Run tests in sync mode.  Default is False.', default=False)
+        per_test_arg_parser.add_argument('--profile', action='store_true', help='Run tests with profiler.  Default is False.', default=False)
 
         # Per-test args
         self._test_class_to_run.add_arguments(per_test_arg_parser)
@@ -121,7 +122,11 @@ class PerfStressRunner:
                         title = "Test"
                         if self.per_test_args.iterations > 1:
                             title += " " + (i + 1)
-                        await self._run_tests(tests, self.per_test_args.duration, title)
+                        await self._run_tests(
+                            tests,
+                            self.per_test_args.duration,
+                            title,
+                            with_profiler=self.per_test_args.profile)
                 except Exception as e:
                     print("Exception: " + str(e))
                 finally:
@@ -138,7 +143,7 @@ class PerfStressRunner:
         finally:
             await asyncio.gather(*[test.close() for test in tests])
 
-    async def _run_tests(self, tests, duration, title):
+    async def _run_tests(self, tests, duration, title, with_profiler=False):
         self._completed_operations = [0] * len(tests)
         self._last_completion_times = [0] * len(tests)
         self._last_total_operations = -1
@@ -148,13 +153,16 @@ class PerfStressRunner:
         if self.per_test_args.sync:
             threads = []
             for id, test in enumerate(tests):
-                thread = threading.Thread(target=lambda: self._run_sync_loop(test, duration, id))
+                thread = threading.Thread(
+                    target=lambda: self._run_sync_loop(test, duration, id, with_profiler)
+                )
                 threads.append(thread)
                 thread.start()
             for thread in threads:
                 thread.join()
         else:
-            await asyncio.gather(*[self._run_async_loop(test, duration, id) for id, test in enumerate(tests)])
+            tasks = [self._run_async_loop(test, duration, id, with_profiler) for id, test in enumerate(tests)]
+            await asyncio.gather(*tasks)
 
         status_thread.stop()
 
@@ -170,23 +178,63 @@ class PerfStressRunner:
             total_operations, weighted_average_seconds, operations_per_second, seconds_per_operation))
         self.logger.info("")
 
-    def _run_sync_loop(self, test, duration, id):
+    def _run_sync_loop(self, test, duration, id, with_profiler):
         start = time.time()
         runtime = 0
-        while runtime < duration:
-            test.run_sync()
-            runtime = time.time() - start
-            self._completed_operations[id] += 1
-            self._last_completion_times[id] = runtime
+        if with_profiler:
+            import cProfile
+            profile = None
+            while runtime < duration:
+                profile = cProfile.Profile()
+                profile.enable()
+                test.run_sync()
+                profile.disable()
+                runtime = time.time() - start
+                self._completed_operations[id] += 1
+                self._last_completion_times[id] = runtime
+            
+            if profile:
+                # Store only profile for final iteration
+                profile_name = "{}/cProfile-{}-{}-sync.pstats".format(os.getcwd(), test.__class__.__name__, id)
+                print("Dumping profile data to {}".format(profile_name))
+                profile.dump_stats(profile_name)
+            else:
+                print("No profile generated.")
+        else:
+            while runtime < duration:
+                test.run_sync()
+                runtime = time.time() - start
+                self._completed_operations[id] += 1
+                self._last_completion_times[id] = runtime
 
-    async def _run_async_loop(self, test, duration, id):
+    async def _run_async_loop(self, test, duration, id, with_profiler):
         start = time.time()
         runtime = 0
-        while runtime < duration:
-            await test.run_async()
-            runtime = time.time() - start
-            self._completed_operations[id] += 1
-            self._last_completion_times[id] = runtime
+        if with_profiler:
+            import cProfile
+            profile = None
+            while runtime < duration:
+                profile = cProfile.Profile()
+                profile.enable()
+                await test.run_async()
+                profile.disable()
+                runtime = time.time() - start
+                self._completed_operations[id] += 1
+                self._last_completion_times[id] = runtime
+            
+            if profile:
+                # Store only profile for final iteration
+                profile_name = "{}/cProfile-{}-{}-async.pstats".format(os.getcwd(), test.__class__.__name__, id)
+                print("Dumping profile data to {}".format(profile_name))
+                profile.dump_stats(profile_name)
+            else:
+                print("No profile generated.")
+        else:
+            while runtime < duration:
+                await test.run_async()
+                runtime = time.time() - start
+                self._completed_operations[id] += 1
+                self._last_completion_times[id] = runtime
 
     def _print_status(self, title):
         if self._last_total_operations == -1:
