@@ -2,6 +2,9 @@
 
 ## 1.13.1 (Unreleased)
 
+### Bug fixes
+
+- Show all error details in exception    #14909
 
 ## 1.13.0 (2021-04-02)
 

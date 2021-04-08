@@ -285,7 +285,10 @@ class HttpResponseError(AzureError):
         # - parameter "message", OR
         # - generic meassage using "reason"
         if self.error:
-            message = str(self.error)
+            if isinstance(self.error, ODataV4Format):
+                message = self.error.message_details()
+            else:
+                message = str(self.error)
         else:
             message = message or "Operation returned an invalid status '{}'".format(
                 self.reason

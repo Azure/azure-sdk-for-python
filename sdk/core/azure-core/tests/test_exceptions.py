@@ -122,7 +122,7 @@ class TestExceptions(object):
         }
         response = _build_response(json.dumps(message).encode("utf-8"))
         error = FakeHttpResponse(response, FakeErrorOne())
-        assert error.message == "(FakeErrorOne) A fake error"
+        assert error.message == "Code: FakeErrorOne\nMessage: A fake error"
         assert str(error.error) == "(FakeErrorOne) A fake error"
         assert error.error.code == "FakeErrorOne"
         assert error.error.message == "A fake error"
@@ -149,7 +149,7 @@ class TestExceptions(object):
         }
         response = _build_response(json.dumps(message).encode("utf-8"))
         error = FakeHttpResponse(response, FakeErrorTwo())
-        assert error.message == "(FakeErrorTwo) A different fake error"
+        assert error.message == "Code: FakeErrorTwo\nMessage: A different fake error"
         assert str(error.error) == "(FakeErrorTwo) A different fake error"
         assert error.error.code == "FakeErrorTwo"
         assert error.error.message == "A different fake error"
