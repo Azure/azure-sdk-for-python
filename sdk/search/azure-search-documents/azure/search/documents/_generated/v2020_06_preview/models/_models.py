@@ -908,8 +908,8 @@ class SearchResult(msrest.serialization.Model):
         'additional_properties': {'key': '', 'type': '{object}'},
         'score': {'key': '@search\\.score', 'type': 'float'},
         'reranker_score': {'key': '@search\\.rerankerScore', 'type': 'float'},
-        'highlights': {'key': '@search\\.highlights', 'type': '{[str]}'},
-        'captions': {'key': '@search\\.captions', 'type': '{[CaptionResult]}'},
+        'highlights': {'key': '@search\\.highlights', 'type': '[str]'},
+        'captions': {'key': '@search\\.captions', 'type': '[CaptionResult]'},
     }
 
     def __init__(
