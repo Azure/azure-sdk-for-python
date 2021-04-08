@@ -1,0 +1,34 @@
+interactions:
+- request:
+    body: '{"phoneNumberType": "tollFree", "assignmentType": "application", "capabilities":
+      {"calling": "inbound", "sms": "inbound+outbound"}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '131'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/:search?api-version=2021-03-07
+  response:
+    body:
+      string: ''
+    headers:
+      access-control-expose-headers: Location,Operation-Location,operation-id,search-id
+      api-supported-versions: '2021-03-07'
+      content-length: '0'
+      date: Wed, 07 Apr 2021 18:49:02 GMT
+      ms-cv: eES0hVGbok+B4zAc1Oe1TA.0
+      operation-id: search_d6dc3b85-25dc-438d-906e-e83e1baf5765
+      operation-location: /phoneNumbers/operations/search_d6dc3b85-25dc-438d-906e-e83e1baf5765?api-version=2021-03-07
+      request-context: appId=
+      search-id: d6dc3b85-25dc-438d-906e-e83e1baf5765
+      x-processing-time: 3678ms
+    status:
+      code: 202
+      message: Accepted
+    url: https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/:search?api-version=2021-03-07
+version: 1

@@ -12,7 +12,7 @@ from datetime import datetime
 from msrest.serialization import TZ_UTC
 from azure.communication.chat import (
     ChatClient,
-    ChatThreadParticipant
+    ChatParticipant
 )
 from azure.communication.chat._shared.models import(
     CommunicationUserIdentifier
@@ -59,8 +59,8 @@ class TestChatClient(unittest.TestCase):
 
         topic="test topic"
         user = CommunicationUserIdentifier("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
-        participants=[ChatThreadParticipant(
-            user=user,
+        participants=[ChatParticipant(
+            identifier=user,
             display_name='name',
             share_history_time=datetime.utcnow()
         )]
@@ -93,8 +93,8 @@ class TestChatClient(unittest.TestCase):
 
         topic = "test topic"
         user = CommunicationUserIdentifier("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
-        participants = [ChatThreadParticipant(
-            user=user,
+        participants = [ChatParticipant(
+            identifier=user,
             display_name='name',
             share_history_time=datetime.utcnow()
         )]
@@ -116,8 +116,8 @@ class TestChatClient(unittest.TestCase):
 
         topic="test topic",
         user = CommunicationUserIdentifier("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
-        thread_participants=[ChatThreadParticipant(
-            user=user,
+        thread_participants=[ChatParticipant(
+            identifier=user,
             display_name='name',
             share_history_time=datetime.utcnow()
         )]

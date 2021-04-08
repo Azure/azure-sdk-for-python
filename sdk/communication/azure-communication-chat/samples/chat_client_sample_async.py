@@ -64,15 +64,15 @@ class ChatClientSamplesAsync(object):
         # [START create_thread]
         from datetime import datetime
         from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential
-        from azure.communication.chat import ChatThreadParticipant
+        from azure.communication.chat import ChatParticipant
 
         # set `endpoint` to an existing ACS endpoint
         chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
         async with chat_client:
 
             topic = "test topic"
-            participants = [ChatThreadParticipant(
-                user=self.user,
+            participants = [ChatParticipant(
+                identifier=self.user,
                 display_name='name',
                 share_history_time=datetime.utcnow()
             )]
