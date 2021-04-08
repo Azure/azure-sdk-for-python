@@ -8,7 +8,7 @@ import msrest
 
 from azure.core.pipeline import PipelineResponse
 
-
+from .._common_conversion import _is_cosmos_endpoint, _transform_patch_to_cosmos_post
 from .._models import UpdateMode
 from .._serialize import (
     _get_match_headers,
@@ -458,6 +458,8 @@ class TableBatchOperations(object):
         request = self._client._client.patch(  # pylint: disable=protected-access
             url, query_parameters, header_parameters, **body_content_kwargs
         )
+        if _is_cosmos_endpoint(url):
+            _transform_patch_to_cosmos_post(request)
         self._requests.append(request)
 
     _batch_merge_entity.metadata = {
