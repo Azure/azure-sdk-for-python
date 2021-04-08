@@ -106,9 +106,12 @@ def app_config_decorator(func, **kwargs):
         func(*args, **trimmed_kwargs)
 
         # do tearDown on client
-        for item in to_delete:
-            client.delete_configuration_setting(
-                key=item.key, label=item.label
-            )
+        for item in client.list_configuration_settings():
+            try:
+                client.delete_configuration_setting(
+                    key=item.key, label=item.label
+                )
+            except:
+                print("Issue deleting config with key {} and label {}".format(item.key, item.label))
 
     return wrapper

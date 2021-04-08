@@ -288,7 +288,6 @@ class AppConfigurationClientTest(AzureTestCase):
         resered_char_kv = client.add_configuration_setting(
             resered_char_kv
         )
-        self._delete_setting(client, resered_char_kv)
         escaped_label = re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", LABEL_RESERVED_CHARS)
         items = client.list_configuration_settings(
             label_filter=escaped_label
@@ -296,12 +295,12 @@ class AppConfigurationClientTest(AzureTestCase):
         assert len(items) == 1
         assert all(x.label == LABEL_RESERVED_CHARS for x in items)
 
-    @pytest.mark.skip("Bad Request")
+    # NOTE: Label filter does not support wildcard at beginning on filters. https://docs.microsoft.com/en-us/azure/azure-app-configuration/rest-api-key-value#supported-filters
     @app_config_decorator
     def test_list_configuration_settings_contains(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         items = client.list_configuration_settings(
-            label_filter="*" + LABEL + "*"
+            label_filter=LABEL + "*"
         )
         assert len(items) == 1
         assert all(x.label == LABEL for x in items)

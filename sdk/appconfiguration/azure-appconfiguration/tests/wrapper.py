@@ -103,7 +103,7 @@ def app_config_decorator(func, **kwargs):
 
         func(*args, **trimmed_kwargs)
 
-        for item in to_delete:
+        for item in client.list_configuration_settings():
             try:
                 client.delete_configuration_setting(
                     key=item.key, label=item.label
