@@ -9,11 +9,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Mar, 17 2021 16:24:36 GMT
+      - Apr, 08 2021 20:36:52.507079 GMT
     method: GET
     uri: https://fake_app_config.azconfig-test.io/kv?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309&label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
   response:
@@ -36,13 +36,13 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kvset+json; charset=utf-8
       date:
-      - Wed, 17 Mar 2021 16:22:28 GMT
+      - Thu, 08 Apr 2021 20:36:56 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDoxNyM3NTkzNjA4;sn=7593608
+      - zAJw6V16=MDoxNyM3OTg0NTk4;sn=7984598
       transfer-encoding:
       - chunked
     status:
@@ -66,19 +66,19 @@ interactions:
       If-None-Match:
       - '*'
       Sync-Token:
-      - zAJw6V16=MDoxNyM3NTkzNjA4
+      - zAJw6V16=MDoxNyM3OTg0NTk4
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
       - 5b/E4qQlXHTRod+n+f+xjK6c/tRVR8uxoC62FjvGJPw=
       x-ms-date:
-      - Mar, 17 2021 16:24:37 GMT
+      - Apr, 08 2021 20:36:53.064304 GMT
     method: PUT
     uri: https://fake_app_config.azconfig-test.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
   response:
     body:
-      string: '{"etag":"XWcr4ZPOP4R3cNrwdB0J1NV8k7C","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2021-03-17T16:24:37+00:00"}'
+      string: '{"etag":"WMjTGgi3poDZ4LHdLvAUS8h0Iw4","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2021-04-08T20:36:54+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -96,17 +96,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Wed, 17 Mar 2021 16:22:29 GMT
+      - Thu, 08 Apr 2021 20:36:56 GMT
       etag:
-      - '"XWcr4ZPOP4R3cNrwdB0J1NV8k7C"'
+      - '"WMjTGgi3poDZ4LHdLvAUS8h0Iw4"'
       last-modified:
-      - Wed, 17 Mar 2021 16:24:37 GMT
+      - Thu, 08 Apr 2021 20:36:54 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDoxNyM3NTkzNjA5;sn=7593609
+      - zAJw6V16=MDoxNyM3OTg0NTk5;sn=7984599
       transfer-encoding:
       - chunked
     status:
@@ -122,19 +122,19 @@ interactions:
       Connection:
       - keep-alive
       Sync-Token:
-      - zAJw6V16=MDoxNyM3NTkzNjA5
+      - zAJw6V16=MDoxNyM3OTg0NTk5
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Mar, 17 2021 16:24:37 GMT
+      - Apr, 08 2021 20:36:53.217381 GMT
     method: GET
     uri: https://fake_app_config.azconfig-test.io/kv?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309&api-version=1.0
   response:
     body:
-      string: '{"items":[{"etag":"XWcr4ZPOP4R3cNrwdB0J1NV8k7C","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2021-03-17T16:24:37+00:00"}]}'
+      string: '{"items":[{"etag":"WMjTGgi3poDZ4LHdLvAUS8h0Iw4","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2021-04-08T20:36:54+00:00"}]}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -152,13 +152,13 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kvset+json; charset=utf-8
       date:
-      - Wed, 17 Mar 2021 16:22:29 GMT
+      - Thu, 08 Apr 2021 20:36:56 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDoxNyM3NTkzNjA5;sn=7593609
+      - zAJw6V16=MDoxNyM3OTg0NTk5;sn=7984599
       transfer-encoding:
       - chunked
     status:
@@ -176,13 +176,13 @@ interactions:
       Content-Length:
       - '0'
       Sync-Token:
-      - zAJw6V16=MDoxNyM3NTkzNjA5
+      - zAJw6V16=MDoxNyM3OTg0NTk5
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Mar, 17 2021 16:24:37 GMT
+      - Apr, 08 2021 20:36:53.356663 GMT
     method: DELETE
     uri: https://fake_app_config.azconfig-test.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?api-version=1.0
   response:
@@ -205,7 +205,7 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Wed, 17 Mar 2021 16:22:29 GMT
+      - Thu, 08 Apr 2021 20:36:56 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
@@ -231,19 +231,19 @@ interactions:
       If-None-Match:
       - '*'
       Sync-Token:
-      - zAJw6V16=MDoxNyM3NTkzNjA5
+      - zAJw6V16=MDoxNyM3OTg0NTk5
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
       - 4rt07HteiPg5NxofrgzMmlQPTVbo1no7aKxDSI5uUU4=
       x-ms-date:
-      - Mar, 17 2021 16:24:37 GMT
+      - Apr, 08 2021 20:36:53.502349 GMT
     method: PUT
     uri: https://fake_app_config.azconfig-test.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?api-version=1.0
   response:
     body:
-      string: '{"etag":"5d2Q8xJLPGiImJ42aMaue2jGqbg","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2021-03-17T16:24:38+00:00"}'
+      string: '{"etag":"Nv1W7XBd8XKSaDbxyKZYpj84Qx7","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2021-04-08T20:36:54+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -261,17 +261,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Wed, 17 Mar 2021 16:22:29 GMT
+      - Thu, 08 Apr 2021 20:36:56 GMT
       etag:
-      - '"5d2Q8xJLPGiImJ42aMaue2jGqbg"'
+      - '"Nv1W7XBd8XKSaDbxyKZYpj84Qx7"'
       last-modified:
-      - Wed, 17 Mar 2021 16:24:38 GMT
+      - Thu, 08 Apr 2021 20:36:54 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDoxNyM3NTkzNjEw;sn=7593610
+      - zAJw6V16=MDoxNyM3OTg0NjAw;sn=7984600
       transfer-encoding:
       - chunked
     status:
@@ -279,10 +279,9 @@ interactions:
       message: OK
 - request:
     body: '{"key": ".appconfig.featureflag/breaking1", "content_type": "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
-      "value": "{\"id\": \".appconfig.featureflag/breaking1\", \"description\": null,
-      \"enabled\": true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.TimeWindow\",
-      \"parameters\": {\"Start\": \"bababooey, 31 Mar 2021 25:00:00 GMT\", \"End\":
-      \"Fri, 02 Apr 2021 04:00:00 GMT\"}}]}}", "tags": {}}'
+      "value": "{''enabled'': True, ''conditions'': {''client_filters'': [{''name'':
+      ''Microsoft.TimeWindow'', ''parameters'': {''Start'': ''bababooey, 31 Mar 2021
+      25:00:00 GMT'', ''End'': ''Fri, 02 Apr 2021 04:00:00 GMT''}}]}}", "tags": {}}'
     headers:
       Accept:
       - application/vnd.microsoft.appconfig.kv+json
@@ -291,26 +290,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '425'
+      - '336'
       Content-Type:
       - application/json; charset=utf-8
       Sync-Token:
-      - zAJw6V16=MDoxNyM3NTkzNjEw
+      - zAJw6V16=MDoxNyM3OTg0NjAw
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
-      - OVslYUrhMtTT3YJhsbDmIX8tbttZswQvn0BFULGjbgw=
+      - cL3+9wDSV8ZTTghuYzkD+hv0hYHnDwv5k1AD+x0rvBI=
       x-ms-date:
-      - Mar, 17 2021 16:24:37 GMT
+      - Apr, 08 2021 20:36:53.664721 GMT
     method: PUT
     uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking1?api-version=1.0
   response:
     body:
-      string: '{"etag":"YaAVRmwyJQM3WCLYmTUDmk6qHWK","key":".appconfig.featureflag/breaking1","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"id\":
-        \".appconfig.featureflag/breaking1\", \"description\": null, \"enabled\":
-        true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.TimeWindow\",
-        \"parameters\": {\"Start\": \"bababooey, 31 Mar 2021 25:00:00 GMT\", \"End\":
-        \"Fri, 02 Apr 2021 04:00:00 GMT\"}}]}}","tags":{},"locked":false,"last_modified":"2021-03-17T16:24:38+00:00"}'
+      string: '{"etag":"Ek4ymXsGQBP3OpXVNTu5FOMCHu9","key":".appconfig.featureflag/breaking1","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.TimeWindow'',
+        ''parameters'': {''Start'': ''bababooey, 31 Mar 2021 25:00:00 GMT'', ''End'':
+        ''Fri, 02 Apr 2021 04:00:00 GMT''}}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:54+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -328,17 +326,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Wed, 17 Mar 2021 16:22:29 GMT
+      - Thu, 08 Apr 2021 20:36:56 GMT
       etag:
-      - '"YaAVRmwyJQM3WCLYmTUDmk6qHWK"'
+      - '"Ek4ymXsGQBP3OpXVNTu5FOMCHu9"'
       last-modified:
-      - Wed, 17 Mar 2021 16:24:38 GMT
+      - Thu, 08 Apr 2021 20:36:54 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDoxNyM3NTkzNjEx;sn=7593611
+      - zAJw6V16=MDoxNyM3OTg0NjAx;sn=7984601
       transfer-encoding:
       - chunked
     status:
@@ -354,22 +352,21 @@ interactions:
       Connection:
       - keep-alive
       Sync-Token:
-      - zAJw6V16=MDoxNyM3NTkzNjEx
+      - zAJw6V16=MDoxNyM3OTg0NjAx
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Mar, 17 2021 16:24:37 GMT
+      - Apr, 08 2021 20:36:53.822812 GMT
     method: GET
     uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking1?api-version=1.0
   response:
     body:
-      string: '{"etag":"YaAVRmwyJQM3WCLYmTUDmk6qHWK","key":".appconfig.featureflag/breaking1","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"id\":
-        \".appconfig.featureflag/breaking1\", \"description\": null, \"enabled\":
-        true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.TimeWindow\",
-        \"parameters\": {\"Start\": \"bababooey, 31 Mar 2021 25:00:00 GMT\", \"End\":
-        \"Fri, 02 Apr 2021 04:00:00 GMT\"}}]}}","tags":{},"locked":false,"last_modified":"2021-03-17T16:24:38+00:00"}'
+      string: '{"etag":"Ek4ymXsGQBP3OpXVNTu5FOMCHu9","key":".appconfig.featureflag/breaking1","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.TimeWindow'',
+        ''parameters'': {''Start'': ''bababooey, 31 Mar 2021 25:00:00 GMT'', ''End'':
+        ''Fri, 02 Apr 2021 04:00:00 GMT''}}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:54+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -387,17 +384,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Wed, 17 Mar 2021 16:22:29 GMT
+      - Thu, 08 Apr 2021 20:36:56 GMT
       etag:
-      - '"YaAVRmwyJQM3WCLYmTUDmk6qHWK"'
+      - '"Ek4ymXsGQBP3OpXVNTu5FOMCHu9"'
       last-modified:
-      - Wed, 17 Mar 2021 16:24:38 GMT
+      - Thu, 08 Apr 2021 20:36:54 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDoxNyM3NTkzNjEx;sn=7593611
+      - zAJw6V16=MDoxNyM3OTg0NjAx;sn=7984601
       transfer-encoding:
       - chunked
     status:
@@ -405,10 +402,9 @@ interactions:
       message: OK
 - request:
     body: '{"key": ".appconfig.featureflag/breaking2", "content_type": "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
-      "value": "{\"id\": \".appconfig.featureflag/breaking2\", \"description\": null,
-      \"enabled\": true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.TimeWindow\",
-      \"parameters\": {\"Start\": \"bababooey, 31 Mar 2021 25:00:00 GMT\", \"End\":
-      \"not even trying to be a date\"}}]}}", "tags": {}}'
+      "value": "{''enabled'': True, ''conditions'': {''client_filters'': [{''name'':
+      ''Microsoft.TimeWindow'', ''parameters'': {''Start'': ''bababooey, 31 Mar 2021
+      25:00:00 GMT'', ''End'': ''not even trying to be a date''}}]}}", "tags": {}}'
     headers:
       Accept:
       - application/vnd.microsoft.appconfig.kv+json
@@ -417,26 +413,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '424'
+      - '335'
       Content-Type:
       - application/json; charset=utf-8
       Sync-Token:
-      - zAJw6V16=MDoxNyM3NTkzNjEx
+      - zAJw6V16=MDoxNyM3OTg0NjAx
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
-      - rBEm57kBG/DnuOZ3++mTEwKVeEAs3pogplAzMBbGOxg=
+      - e7VHAtQgWoQ8NvfSxIdzzsOIQ+/NNpij2jkp/fLMXGg=
       x-ms-date:
-      - Mar, 17 2021 16:24:38 GMT
+      - Apr, 08 2021 20:36:53.980711 GMT
     method: PUT
     uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking2?api-version=1.0
   response:
     body:
-      string: '{"etag":"7CSaY9Hql1dLLUvqItHRpx7UdgO","key":".appconfig.featureflag/breaking2","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"id\":
-        \".appconfig.featureflag/breaking2\", \"description\": null, \"enabled\":
-        true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.TimeWindow\",
-        \"parameters\": {\"Start\": \"bababooey, 31 Mar 2021 25:00:00 GMT\", \"End\":
-        \"not even trying to be a date\"}}]}}","tags":{},"locked":false,"last_modified":"2021-03-17T16:24:38+00:00"}'
+      string: '{"etag":"xSct8ulHbJBuH6RNvPCnwbxwEbE","key":".appconfig.featureflag/breaking2","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.TimeWindow'',
+        ''parameters'': {''Start'': ''bababooey, 31 Mar 2021 25:00:00 GMT'', ''End'':
+        ''not even trying to be a date''}}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:55+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -454,17 +449,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Wed, 17 Mar 2021 16:22:30 GMT
+      - Thu, 08 Apr 2021 20:36:57 GMT
       etag:
-      - '"7CSaY9Hql1dLLUvqItHRpx7UdgO"'
+      - '"xSct8ulHbJBuH6RNvPCnwbxwEbE"'
       last-modified:
-      - Wed, 17 Mar 2021 16:24:38 GMT
+      - Thu, 08 Apr 2021 20:36:55 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDoxNyM3NTkzNjEy;sn=7593612
+      - zAJw6V16=MDoxNyM3OTg0NjAy;sn=7984602
       transfer-encoding:
       - chunked
     status:
@@ -480,22 +475,21 @@ interactions:
       Connection:
       - keep-alive
       Sync-Token:
-      - zAJw6V16=MDoxNyM3NTkzNjEy
+      - zAJw6V16=MDoxNyM3OTg0NjAy
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Mar, 17 2021 16:24:38 GMT
+      - Apr, 08 2021 20:36:54.144059 GMT
     method: GET
     uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking2?api-version=1.0
   response:
     body:
-      string: '{"etag":"7CSaY9Hql1dLLUvqItHRpx7UdgO","key":".appconfig.featureflag/breaking2","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"id\":
-        \".appconfig.featureflag/breaking2\", \"description\": null, \"enabled\":
-        true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.TimeWindow\",
-        \"parameters\": {\"Start\": \"bababooey, 31 Mar 2021 25:00:00 GMT\", \"End\":
-        \"not even trying to be a date\"}}]}}","tags":{},"locked":false,"last_modified":"2021-03-17T16:24:38+00:00"}'
+      string: '{"etag":"xSct8ulHbJBuH6RNvPCnwbxwEbE","key":".appconfig.featureflag/breaking2","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.TimeWindow'',
+        ''parameters'': {''Start'': ''bababooey, 31 Mar 2021 25:00:00 GMT'', ''End'':
+        ''not even trying to be a date''}}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:55+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -513,17 +507,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Wed, 17 Mar 2021 16:22:30 GMT
+      - Thu, 08 Apr 2021 20:36:57 GMT
       etag:
-      - '"7CSaY9Hql1dLLUvqItHRpx7UdgO"'
+      - '"xSct8ulHbJBuH6RNvPCnwbxwEbE"'
       last-modified:
-      - Wed, 17 Mar 2021 16:24:38 GMT
+      - Thu, 08 Apr 2021 20:36:55 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDoxNyM3NTkzNjEy;sn=7593612
+      - zAJw6V16=MDoxNyM3OTg0NjAy;sn=7984602
       transfer-encoding:
       - chunked
     status:
@@ -531,10 +525,9 @@ interactions:
       message: OK
 - request:
     body: '{"key": ".appconfig.featureflag/breaking3", "content_type": "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
-      "value": "{\"id\": \".appconfig.featureflag/breaking3\", \"description\": null,
-      \"enabled\": true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.TimeWidow\",
-      \"parameters\": {\"Start\": \"bababooey, 31 Mar 2021 25:00:00 GMT\", \"End\":
-      \"not even trying to be a date\"}}]}}", "tags": {}}'
+      "value": "{''enabled'': True, ''conditions'': {''client_filters'': [{''name'':
+      ''Microsoft.TimeWindow'', ''parameters'': {''Start'': ''bababooey, 31 Mar 2021
+      25:00:00 GMT'', ''End'': ''not even trying to be a date''}}]}}", "tags": {}}'
     headers:
       Accept:
       - application/vnd.microsoft.appconfig.kv+json
@@ -543,26 +536,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '423'
+      - '335'
       Content-Type:
       - application/json; charset=utf-8
       Sync-Token:
-      - zAJw6V16=MDoxNyM3NTkzNjEy
+      - zAJw6V16=MDoxNyM3OTg0NjAy
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
-      - YBns2TAu7ZMdevYktWlXDgN641hVy16nXh1rkzCabJg=
+      - 3ChKEg7imAFUok9TDwkOzf5/pBA2MMAXdYdcFSwdUXY=
       x-ms-date:
-      - Mar, 17 2021 16:24:38 GMT
+      - Apr, 08 2021 20:36:54.296822 GMT
     method: PUT
     uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking3?api-version=1.0
   response:
     body:
-      string: '{"etag":"Kr8u9j7ihW1at2472LRkiEfE1Rr","key":".appconfig.featureflag/breaking3","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"id\":
-        \".appconfig.featureflag/breaking3\", \"description\": null, \"enabled\":
-        true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.TimeWidow\",
-        \"parameters\": {\"Start\": \"bababooey, 31 Mar 2021 25:00:00 GMT\", \"End\":
-        \"not even trying to be a date\"}}]}}","tags":{},"locked":false,"last_modified":"2021-03-17T16:24:39+00:00"}'
+      string: '{"etag":"QE6Q573bT4YIlZS3w8Bjd3ZE9xw","key":".appconfig.featureflag/breaking3","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.TimeWindow'',
+        ''parameters'': {''Start'': ''bababooey, 31 Mar 2021 25:00:00 GMT'', ''End'':
+        ''not even trying to be a date''}}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:55+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -580,17 +572,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Wed, 17 Mar 2021 16:22:30 GMT
+      - Thu, 08 Apr 2021 20:36:57 GMT
       etag:
-      - '"Kr8u9j7ihW1at2472LRkiEfE1Rr"'
+      - '"QE6Q573bT4YIlZS3w8Bjd3ZE9xw"'
       last-modified:
-      - Wed, 17 Mar 2021 16:24:39 GMT
+      - Thu, 08 Apr 2021 20:36:55 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDoxNyM3NTkzNjEz;sn=7593613
+      - zAJw6V16=MDoxNyM3OTg0NjAz;sn=7984603
       transfer-encoding:
       - chunked
     status:
@@ -606,22 +598,21 @@ interactions:
       Connection:
       - keep-alive
       Sync-Token:
-      - zAJw6V16=MDoxNyM3NTkzNjEz
+      - zAJw6V16=MDoxNyM3OTg0NjAz
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Mar, 17 2021 16:24:38 GMT
+      - Apr, 08 2021 20:36:54.454430 GMT
     method: GET
     uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking3?api-version=1.0
   response:
     body:
-      string: '{"etag":"Kr8u9j7ihW1at2472LRkiEfE1Rr","key":".appconfig.featureflag/breaking3","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"id\":
-        \".appconfig.featureflag/breaking3\", \"description\": null, \"enabled\":
-        true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.TimeWidow\",
-        \"parameters\": {\"Start\": \"bababooey, 31 Mar 2021 25:00:00 GMT\", \"End\":
-        \"not even trying to be a date\"}}]}}","tags":{},"locked":false,"last_modified":"2021-03-17T16:24:39+00:00"}'
+      string: '{"etag":"QE6Q573bT4YIlZS3w8Bjd3ZE9xw","key":".appconfig.featureflag/breaking3","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.TimeWindow'',
+        ''parameters'': {''Start'': ''bababooey, 31 Mar 2021 25:00:00 GMT'', ''End'':
+        ''not even trying to be a date''}}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:55+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -639,17 +630,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Wed, 17 Mar 2021 16:22:30 GMT
+      - Thu, 08 Apr 2021 20:36:57 GMT
       etag:
-      - '"Kr8u9j7ihW1at2472LRkiEfE1Rr"'
+      - '"QE6Q573bT4YIlZS3w8Bjd3ZE9xw"'
       last-modified:
-      - Wed, 17 Mar 2021 16:24:39 GMT
+      - Thu, 08 Apr 2021 20:36:55 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDoxNyM3NTkzNjEz;sn=7593613
+      - zAJw6V16=MDoxNyM3OTg0NjAz;sn=7984603
       transfer-encoding:
       - chunked
     status:
@@ -657,9 +648,8 @@ interactions:
       message: OK
 - request:
     body: '{"key": ".appconfig.featureflag/breaking4", "content_type": "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
-      "value": "{\"id\": \".appconfig.featureflag/breaking4\", \"description\": null,
-      \"enabled\": true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.TimeWidow\",
-      \"parameters\": \"stringystring\"}]}}", "tags": {}}'
+      "value": "{''enabled'': True, ''conditions'': {''client_filters'': [{''name'':
+      ''Microsoft.TimeWindow'', ''parameters'': ''stringystring''}]}}", "tags": {}}'
     headers:
       Accept:
       - application/vnd.microsoft.appconfig.kv+json
@@ -668,25 +658,24 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '345'
+      - '263'
       Content-Type:
       - application/json; charset=utf-8
       Sync-Token:
-      - zAJw6V16=MDoxNyM3NTkzNjEz
+      - zAJw6V16=MDoxNyM3OTg0NjAz
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
-      - PK9dk7WVMSqiuAD5irnSvjNBkhaS4pjNaUkPlCNdecI=
+      - y7bv7iZd3xYyvxrAPqZBDT6Brq5e1qjoDzmPkRcJMdc=
       x-ms-date:
-      - Mar, 17 2021 16:24:38 GMT
+      - Apr, 08 2021 20:36:54.610720 GMT
     method: PUT
     uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking4?api-version=1.0
   response:
     body:
-      string: '{"etag":"ZhWkjk6GKEN1wWlXNEpmYfkhwS9","key":".appconfig.featureflag/breaking4","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"id\":
-        \".appconfig.featureflag/breaking4\", \"description\": null, \"enabled\":
-        true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.TimeWidow\",
-        \"parameters\": \"stringystring\"}]}}","tags":{},"locked":false,"last_modified":"2021-03-17T16:24:39+00:00"}'
+      string: '{"etag":"LII7ChyccYKcEGiihJ0MjliKQ6L","key":".appconfig.featureflag/breaking4","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.TimeWindow'',
+        ''parameters'': ''stringystring''}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:55+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -704,17 +693,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Wed, 17 Mar 2021 16:22:30 GMT
+      - Thu, 08 Apr 2021 20:36:57 GMT
       etag:
-      - '"ZhWkjk6GKEN1wWlXNEpmYfkhwS9"'
+      - '"LII7ChyccYKcEGiihJ0MjliKQ6L"'
       last-modified:
-      - Wed, 17 Mar 2021 16:24:39 GMT
+      - Thu, 08 Apr 2021 20:36:55 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDoxNyM3NTkzNjE0;sn=7593614
+      - zAJw6V16=MDoxNyM3OTg0NjA0;sn=7984604
       transfer-encoding:
       - chunked
     status:
@@ -730,21 +719,20 @@ interactions:
       Connection:
       - keep-alive
       Sync-Token:
-      - zAJw6V16=MDoxNyM3NTkzNjE0
+      - zAJw6V16=MDoxNyM3OTg0NjA0
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Mar, 17 2021 16:24:39 GMT
+      - Apr, 08 2021 20:36:54.765994 GMT
     method: GET
     uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking4?api-version=1.0
   response:
     body:
-      string: '{"etag":"ZhWkjk6GKEN1wWlXNEpmYfkhwS9","key":".appconfig.featureflag/breaking4","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"id\":
-        \".appconfig.featureflag/breaking4\", \"description\": null, \"enabled\":
-        true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.TimeWidow\",
-        \"parameters\": \"stringystring\"}]}}","tags":{},"locked":false,"last_modified":"2021-03-17T16:24:39+00:00"}'
+      string: '{"etag":"LII7ChyccYKcEGiihJ0MjliKQ6L","key":".appconfig.featureflag/breaking4","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.TimeWindow'',
+        ''parameters'': ''stringystring''}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:55+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -762,17 +750,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Wed, 17 Mar 2021 16:22:31 GMT
+      - Thu, 08 Apr 2021 20:36:57 GMT
       etag:
-      - '"ZhWkjk6GKEN1wWlXNEpmYfkhwS9"'
+      - '"LII7ChyccYKcEGiihJ0MjliKQ6L"'
       last-modified:
-      - Wed, 17 Mar 2021 16:24:39 GMT
+      - Thu, 08 Apr 2021 20:36:55 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDoxNyM3NTkzNjE0;sn=7593614
+      - zAJw6V16=MDoxNyM3OTg0NjA0;sn=7984604
       transfer-encoding:
       - chunked
     status:
@@ -780,9 +768,9 @@ interactions:
       message: OK
 - request:
     body: '{"key": ".appconfig.featureflag/breaking5", "content_type": "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
-      "value": "{\"id\": \".appconfig.featureflag/breaking5\", \"description\": null,
-      \"enabled\": true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.Targeting\",
-      \"parameters\": {\"Audience\": {\"Users\": \"123\"}}}]}}", "tags": {}}'
+      "value": "{''enabled'': True, ''conditions'': {''client_filters'': [{''name'':
+      ''Microsoft.Targeting'', ''parameters'': {''Audience'': {''Users'': ''123''}}}]}}",
+      "tags": {}}'
     headers:
       Accept:
       - application/vnd.microsoft.appconfig.kv+json
@@ -791,25 +779,24 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '364'
+      - '277'
       Content-Type:
       - application/json; charset=utf-8
       Sync-Token:
-      - zAJw6V16=MDoxNyM3NTkzNjE0
+      - zAJw6V16=MDoxNyM3OTg0NjA0
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
-      - lz7MKJmptd+9poiG1kG4wkR55UCU6xRoVO8w2FXq3jI=
+      - bKEts0OLEa4IeXo3/5NHIAd+/cUJ4KvZt614Pa4877M=
       x-ms-date:
-      - Mar, 17 2021 16:24:39 GMT
+      - Apr, 08 2021 20:36:54.897812 GMT
     method: PUT
     uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking5?api-version=1.0
   response:
     body:
-      string: '{"etag":"NIjZi0q44c6vNcGe2LfylU4YunD","key":".appconfig.featureflag/breaking5","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"id\":
-        \".appconfig.featureflag/breaking5\", \"description\": null, \"enabled\":
-        true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.Targeting\",
-        \"parameters\": {\"Audience\": {\"Users\": \"123\"}}}]}}","tags":{},"locked":false,"last_modified":"2021-03-17T16:24:40+00:00"}'
+      string: '{"etag":"YGrOgi3NPjsQjmKTJwm8dNYDfpY","key":".appconfig.featureflag/breaking5","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.Targeting'',
+        ''parameters'': {''Audience'': {''Users'': ''123''}}}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:55+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -827,17 +814,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Wed, 17 Mar 2021 16:22:31 GMT
+      - Thu, 08 Apr 2021 20:36:58 GMT
       etag:
-      - '"NIjZi0q44c6vNcGe2LfylU4YunD"'
+      - '"YGrOgi3NPjsQjmKTJwm8dNYDfpY"'
       last-modified:
-      - Wed, 17 Mar 2021 16:24:40 GMT
+      - Thu, 08 Apr 2021 20:36:55 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDoxNyM3NTkzNjE1;sn=7593615
+      - zAJw6V16=MDoxNyM3OTg0NjA1;sn=7984605
       transfer-encoding:
       - chunked
     status:
@@ -853,21 +840,20 @@ interactions:
       Connection:
       - keep-alive
       Sync-Token:
-      - zAJw6V16=MDoxNyM3NTkzNjE1
+      - zAJw6V16=MDoxNyM3OTg0NjA1
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Mar, 17 2021 16:24:39 GMT
+      - Apr, 08 2021 20:36:55.045234 GMT
     method: GET
     uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking5?api-version=1.0
   response:
     body:
-      string: '{"etag":"NIjZi0q44c6vNcGe2LfylU4YunD","key":".appconfig.featureflag/breaking5","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"id\":
-        \".appconfig.featureflag/breaking5\", \"description\": null, \"enabled\":
-        true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.Targeting\",
-        \"parameters\": {\"Audience\": {\"Users\": \"123\"}}}]}}","tags":{},"locked":false,"last_modified":"2021-03-17T16:24:40+00:00"}'
+      string: '{"etag":"YGrOgi3NPjsQjmKTJwm8dNYDfpY","key":".appconfig.featureflag/breaking5","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.Targeting'',
+        ''parameters'': {''Audience'': {''Users'': ''123''}}}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:55+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -885,17 +871,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Wed, 17 Mar 2021 16:22:31 GMT
+      - Thu, 08 Apr 2021 20:36:58 GMT
       etag:
-      - '"NIjZi0q44c6vNcGe2LfylU4YunD"'
+      - '"YGrOgi3NPjsQjmKTJwm8dNYDfpY"'
       last-modified:
-      - Wed, 17 Mar 2021 16:24:40 GMT
+      - Thu, 08 Apr 2021 20:36:55 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDoxNyM3NTkzNjE1;sn=7593615
+      - zAJw6V16=MDoxNyM3OTg0NjA1;sn=7984605
       transfer-encoding:
       - chunked
     status:
@@ -903,9 +889,8 @@ interactions:
       message: OK
 - request:
     body: '{"key": ".appconfig.featureflag/breaking6", "content_type": "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
-      "value": "{\"id\": \".appconfig.featureflag/breaking6\", \"description\": null,
-      \"enabled\": true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.Targeting\",
-      \"parameters\": \"invalidformat\"}]}}", "tags": {}}'
+      "value": "{''enabled'': True, ''conditions'': {''client_filters'': [{''name'':
+      ''Microsoft.Targeting'', ''parameters'': ''invalidformat''}]}}", "tags": {}}'
     headers:
       Accept:
       - application/vnd.microsoft.appconfig.kv+json
@@ -914,25 +899,24 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '345'
+      - '262'
       Content-Type:
       - application/json; charset=utf-8
       Sync-Token:
-      - zAJw6V16=MDoxNyM3NTkzNjE1
+      - zAJw6V16=MDoxNyM3OTg0NjA1
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
-      - rbdP6sYs8dJ/HTKuTNepNJbYNt7aK2XlUol+IhhLuRw=
+      - aRWPVxMdeDWMj6WmNBT456KCdQ+cqqHFm67Ho/riKLQ=
       x-ms-date:
-      - Mar, 17 2021 16:24:39 GMT
+      - Apr, 08 2021 20:36:55.205963 GMT
     method: PUT
     uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking6?api-version=1.0
   response:
     body:
-      string: '{"etag":"TdW23S6blvw2yeDEcUsYnyyQEA8","key":".appconfig.featureflag/breaking6","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"id\":
-        \".appconfig.featureflag/breaking6\", \"description\": null, \"enabled\":
-        true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.Targeting\",
-        \"parameters\": \"invalidformat\"}]}}","tags":{},"locked":false,"last_modified":"2021-03-17T16:24:40+00:00"}'
+      string: '{"etag":"EiVwMWIu9Nxdc09auuBBx8TVnuf","key":".appconfig.featureflag/breaking6","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.Targeting'',
+        ''parameters'': ''invalidformat''}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:56+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -950,17 +934,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Wed, 17 Mar 2021 16:22:31 GMT
+      - Thu, 08 Apr 2021 20:36:58 GMT
       etag:
-      - '"TdW23S6blvw2yeDEcUsYnyyQEA8"'
+      - '"EiVwMWIu9Nxdc09auuBBx8TVnuf"'
       last-modified:
-      - Wed, 17 Mar 2021 16:24:40 GMT
+      - Thu, 08 Apr 2021 20:36:56 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDoxNyM3NTkzNjE2;sn=7593616
+      - zAJw6V16=MDoxNyM3OTg0NjA2;sn=7984606
       transfer-encoding:
       - chunked
     status:
@@ -976,21 +960,20 @@ interactions:
       Connection:
       - keep-alive
       Sync-Token:
-      - zAJw6V16=MDoxNyM3NTkzNjE2
+      - zAJw6V16=MDoxNyM3OTg0NjA2
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Mar, 17 2021 16:24:39 GMT
+      - Apr, 08 2021 20:36:55.365122 GMT
     method: GET
     uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking6?api-version=1.0
   response:
     body:
-      string: '{"etag":"TdW23S6blvw2yeDEcUsYnyyQEA8","key":".appconfig.featureflag/breaking6","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"id\":
-        \".appconfig.featureflag/breaking6\", \"description\": null, \"enabled\":
-        true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.Targeting\",
-        \"parameters\": \"invalidformat\"}]}}","tags":{},"locked":false,"last_modified":"2021-03-17T16:24:40+00:00"}'
+      string: '{"etag":"EiVwMWIu9Nxdc09auuBBx8TVnuf","key":".appconfig.featureflag/breaking6","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.Targeting'',
+        ''parameters'': ''invalidformat''}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:56+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -1008,17 +991,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Wed, 17 Mar 2021 16:22:31 GMT
+      - Thu, 08 Apr 2021 20:36:58 GMT
       etag:
-      - '"TdW23S6blvw2yeDEcUsYnyyQEA8"'
+      - '"EiVwMWIu9Nxdc09auuBBx8TVnuf"'
       last-modified:
-      - Wed, 17 Mar 2021 16:24:40 GMT
+      - Thu, 08 Apr 2021 20:36:56 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDoxNyM3NTkzNjE2;sn=7593616
+      - zAJw6V16=MDoxNyM3OTg0NjA2;sn=7984606
       transfer-encoding:
       - chunked
     status:
@@ -1026,9 +1009,8 @@ interactions:
       message: OK
 - request:
     body: '{"key": ".appconfig.featureflag/breaking7", "content_type": "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
-      "value": "{\"id\": \".appconfig.featureflag/breaking7\", \"description\": null,
-      \"enabled\": true, \"conditions\": {\"client_filters\": [{\"abc\": \"def\"}]}}",
-      "tags": {}}'
+      "value": "{''enabled'': True, ''conditions'': {''client_filters'': [{''abc'':
+      ''def''}]}}", "tags": {}}'
     headers:
       Accept:
       - application/vnd.microsoft.appconfig.kv+json
@@ -1037,24 +1019,23 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '293'
+      - '214'
       Content-Type:
       - application/json; charset=utf-8
       Sync-Token:
-      - zAJw6V16=MDoxNyM3NTkzNjE2
+      - zAJw6V16=MDoxNyM3OTg0NjA2
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
-      - +GFIqea0SmrIlOOQRBQP0ZIucpNxvgq2rymGl3Uk1vI=
+      - afqUWAJoTIu0T1AIQQi9an/xdK41wbYYQqq9WeK21zE=
       x-ms-date:
-      - Mar, 17 2021 16:24:39 GMT
+      - Apr, 08 2021 20:36:55.522119 GMT
     method: PUT
     uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking7?api-version=1.0
   response:
     body:
-      string: '{"etag":"tYURNFXvL0iNiYFMiTLu7vndhoM","key":".appconfig.featureflag/breaking7","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"id\":
-        \".appconfig.featureflag/breaking7\", \"description\": null, \"enabled\":
-        true, \"conditions\": {\"client_filters\": [{\"abc\": \"def\"}]}}","tags":{},"locked":false,"last_modified":"2021-03-17T16:24:40+00:00"}'
+      string: '{"etag":"BnF0EHYZsk4CqG6tATZk8p4a1ru","key":".appconfig.featureflag/breaking7","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''abc'': ''def''}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:56+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -1072,17 +1053,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Wed, 17 Mar 2021 16:22:31 GMT
+      - Thu, 08 Apr 2021 20:36:58 GMT
       etag:
-      - '"tYURNFXvL0iNiYFMiTLu7vndhoM"'
+      - '"BnF0EHYZsk4CqG6tATZk8p4a1ru"'
       last-modified:
-      - Wed, 17 Mar 2021 16:24:40 GMT
+      - Thu, 08 Apr 2021 20:36:56 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDoxNyM3NTkzNjE3;sn=7593617
+      - zAJw6V16=MDoxNyM3OTg0NjA3;sn=7984607
       transfer-encoding:
       - chunked
     status:
@@ -1098,20 +1079,19 @@ interactions:
       Connection:
       - keep-alive
       Sync-Token:
-      - zAJw6V16=MDoxNyM3NTkzNjE3
+      - zAJw6V16=MDoxNyM3OTg0NjA3
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Mar, 17 2021 16:24:40 GMT
+      - Apr, 08 2021 20:36:55.688554 GMT
     method: GET
     uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking7?api-version=1.0
   response:
     body:
-      string: '{"etag":"tYURNFXvL0iNiYFMiTLu7vndhoM","key":".appconfig.featureflag/breaking7","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"id\":
-        \".appconfig.featureflag/breaking7\", \"description\": null, \"enabled\":
-        true, \"conditions\": {\"client_filters\": [{\"abc\": \"def\"}]}}","tags":{},"locked":false,"last_modified":"2021-03-17T16:24:40+00:00"}'
+      string: '{"etag":"BnF0EHYZsk4CqG6tATZk8p4a1ru","key":".appconfig.featureflag/breaking7","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''abc'': ''def''}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:56+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -1129,17 +1109,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Wed, 17 Mar 2021 16:22:32 GMT
+      - Thu, 08 Apr 2021 20:36:58 GMT
       etag:
-      - '"tYURNFXvL0iNiYFMiTLu7vndhoM"'
+      - '"BnF0EHYZsk4CqG6tATZk8p4a1ru"'
       last-modified:
-      - Wed, 17 Mar 2021 16:24:40 GMT
+      - Thu, 08 Apr 2021 20:36:56 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDoxNyM3NTkzNjE3;sn=7593617
+      - zAJw6V16=MDoxNyM3OTg0NjA3;sn=7984607
       transfer-encoding:
       - chunked
     status:
@@ -1147,9 +1127,8 @@ interactions:
       message: OK
 - request:
     body: '{"key": ".appconfig.featureflag/breaking8", "content_type": "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
-      "value": "{\"id\": \".appconfig.featureflag/breaking8\", \"description\": null,
-      \"enabled\": true, \"conditions\": {\"client_filters\": [{\"abc\": \"def\"}]}}",
-      "tags": {}}'
+      "value": "{''enabled'': True, ''conditions'': {''client_filters'': [{''abc'':
+      ''def''}]}}", "tags": {}}'
     headers:
       Accept:
       - application/vnd.microsoft.appconfig.kv+json
@@ -1158,24 +1137,23 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '293'
+      - '214'
       Content-Type:
       - application/json; charset=utf-8
       Sync-Token:
-      - zAJw6V16=MDoxNyM3NTkzNjE3
+      - zAJw6V16=MDoxNyM3OTg0NjA3
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
-      - U7nrj6CPJ6syYvRhgqU+rairGy8+7sg+ytyhRx5StUo=
+      - FZdUG13zX0f4/Ti8za8LN0I7Ujj35umZmZLTCaqYxmQ=
       x-ms-date:
-      - Mar, 17 2021 16:24:40 GMT
+      - Apr, 08 2021 20:36:55.820538 GMT
     method: PUT
     uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking8?api-version=1.0
   response:
     body:
-      string: '{"etag":"GTgQAKv2JqmX7Xnqin0iYXgHlwb","key":".appconfig.featureflag/breaking8","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"id\":
-        \".appconfig.featureflag/breaking8\", \"description\": null, \"enabled\":
-        true, \"conditions\": {\"client_filters\": [{\"abc\": \"def\"}]}}","tags":{},"locked":false,"last_modified":"2021-03-17T16:24:41+00:00"}'
+      string: '{"etag":"vsILIfjna2EmDMOIz4HfFQnyAq8","key":".appconfig.featureflag/breaking8","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''abc'': ''def''}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:56+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -1193,17 +1171,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Wed, 17 Mar 2021 16:22:32 GMT
+      - Thu, 08 Apr 2021 20:36:58 GMT
       etag:
-      - '"GTgQAKv2JqmX7Xnqin0iYXgHlwb"'
+      - '"vsILIfjna2EmDMOIz4HfFQnyAq8"'
       last-modified:
-      - Wed, 17 Mar 2021 16:24:41 GMT
+      - Thu, 08 Apr 2021 20:36:56 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDoxNyM3NTkzNjE4;sn=7593618
+      - zAJw6V16=MDoxNyM3OTg0NjA4;sn=7984608
       transfer-encoding:
       - chunked
     status:
@@ -1219,20 +1197,19 @@ interactions:
       Connection:
       - keep-alive
       Sync-Token:
-      - zAJw6V16=MDoxNyM3NTkzNjE4
+      - zAJw6V16=MDoxNyM3OTg0NjA4
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Mar, 17 2021 16:24:40 GMT
+      - Apr, 08 2021 20:36:55.977390 GMT
     method: GET
     uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking8?api-version=1.0
   response:
     body:
-      string: '{"etag":"GTgQAKv2JqmX7Xnqin0iYXgHlwb","key":".appconfig.featureflag/breaking8","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"id\":
-        \".appconfig.featureflag/breaking8\", \"description\": null, \"enabled\":
-        true, \"conditions\": {\"client_filters\": [{\"abc\": \"def\"}]}}","tags":{},"locked":false,"last_modified":"2021-03-17T16:24:41+00:00"}'
+      string: '{"etag":"vsILIfjna2EmDMOIz4HfFQnyAq8","key":".appconfig.featureflag/breaking8","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''abc'': ''def''}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:56+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -1250,17 +1227,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Wed, 17 Mar 2021 16:22:32 GMT
+      - Thu, 08 Apr 2021 20:36:59 GMT
       etag:
-      - '"GTgQAKv2JqmX7Xnqin0iYXgHlwb"'
+      - '"vsILIfjna2EmDMOIz4HfFQnyAq8"'
       last-modified:
-      - Wed, 17 Mar 2021 16:24:41 GMT
+      - Thu, 08 Apr 2021 20:36:56 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDoxNyM3NTkzNjE4;sn=7593618
+      - zAJw6V16=MDoxNyM3OTg0NjA4;sn=7984608
       transfer-encoding:
       - chunked
     status:
@@ -1270,27 +1247,43 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/vnd.microsoft.appconfig.kv+json
+      - application/vnd.microsoft.appconfig.kvset+json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
-      Content-Length:
-      - '0'
       Sync-Token:
-      - zAJw6V16=MDoxNyM3NTkzNjE4
+      - zAJw6V16=MDoxNyM3OTg0NjA4
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Mar, 17 2021 16:24:40 GMT
-    method: DELETE
-    uri: https://fake_app_config.azconfig-test.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
+      - Apr, 08 2021 20:36:56.128849 GMT
+    method: GET
+    uri: https://fake_app_config.azconfig-test.io/kv?api-version=1.0
   response:
     body:
-      string: '{"etag":"XWcr4ZPOP4R3cNrwdB0J1NV8k7C","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2021-03-17T16:24:37+00:00"}'
+      string: '{"items":[{"etag":"Ek4ymXsGQBP3OpXVNTu5FOMCHu9","key":".appconfig.featureflag/breaking1","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.TimeWindow'',
+        ''parameters'': {''Start'': ''bababooey, 31 Mar 2021 25:00:00 GMT'', ''End'':
+        ''Fri, 02 Apr 2021 04:00:00 GMT''}}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:54+00:00"},{"etag":"xSct8ulHbJBuH6RNvPCnwbxwEbE","key":".appconfig.featureflag/breaking2","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.TimeWindow'',
+        ''parameters'': {''Start'': ''bababooey, 31 Mar 2021 25:00:00 GMT'', ''End'':
+        ''not even trying to be a date''}}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:55+00:00"},{"etag":"QE6Q573bT4YIlZS3w8Bjd3ZE9xw","key":".appconfig.featureflag/breaking3","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.TimeWindow'',
+        ''parameters'': {''Start'': ''bababooey, 31 Mar 2021 25:00:00 GMT'', ''End'':
+        ''not even trying to be a date''}}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:55+00:00"},{"etag":"LII7ChyccYKcEGiihJ0MjliKQ6L","key":".appconfig.featureflag/breaking4","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.TimeWindow'',
+        ''parameters'': ''stringystring''}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:55+00:00"},{"etag":"YGrOgi3NPjsQjmKTJwm8dNYDfpY","key":".appconfig.featureflag/breaking5","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.Targeting'',
+        ''parameters'': {''Audience'': {''Users'': ''123''}}}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:55+00:00"},{"etag":"EiVwMWIu9Nxdc09auuBBx8TVnuf","key":".appconfig.featureflag/breaking6","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.Targeting'',
+        ''parameters'': ''invalidformat''}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:56+00:00"},{"etag":"BnF0EHYZsk4CqG6tATZk8p4a1ru","key":".appconfig.featureflag/breaking7","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''abc'': ''def''}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:56+00:00"},{"etag":"vsILIfjna2EmDMOIz4HfFQnyAq8","key":".appconfig.featureflag/breaking8","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''abc'': ''def''}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:56+00:00"},{"etag":"Nv1W7XBd8XKSaDbxyKZYpj84Qx7","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2021-04-08T20:36:54+00:00"},{"etag":"WMjTGgi3poDZ4LHdLvAUS8h0Iw4","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2021-04-08T20:36:54+00:00"}]}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -1306,19 +1299,15 @@ interactions:
       connection:
       - keep-alive
       content-type:
-      - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
+      - application/vnd.microsoft.appconfig.kvset+json; charset=utf-8
       date:
-      - Wed, 17 Mar 2021 16:22:32 GMT
-      etag:
-      - '"XWcr4ZPOP4R3cNrwdB0J1NV8k7C"'
-      last-modified:
-      - Wed, 17 Mar 2021 16:24:37 GMT
+      - Thu, 08 Apr 2021 20:36:59 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDoxNyM3NTkzNjE5;sn=7593619
+      - zAJw6V16=MDoxNyM3OTg0NjA4;sn=7984608
       transfer-encoding:
       - chunked
     status:
@@ -1336,19 +1325,492 @@ interactions:
       Content-Length:
       - '0'
       Sync-Token:
-      - zAJw6V16=MDoxNyM3NTkzNjE5
+      - zAJw6V16=MDoxNyM3OTg0NjA4
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Mar, 17 2021 16:24:40 GMT
+      - Apr, 08 2021 20:36:56.280581 GMT
+    method: DELETE
+    uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking1?api-version=1.0
+  response:
+    body:
+      string: '{"etag":"Ek4ymXsGQBP3OpXVNTu5FOMCHu9","key":".appconfig.featureflag/breaking1","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.TimeWindow'',
+        ''parameters'': {''Start'': ''bababooey, 31 Mar 2021 25:00:00 GMT'', ''End'':
+        ''Fri, 02 Apr 2021 04:00:00 GMT''}}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:54+00:00"}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id,
+        x-ms-effective-locale, WWW-Authenticate
+      connection:
+      - keep-alive
+      content-type:
+      - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
+      date:
+      - Thu, 08 Apr 2021 20:36:59 GMT
+      etag:
+      - '"Ek4ymXsGQBP3OpXVNTu5FOMCHu9"'
+      last-modified:
+      - Thu, 08 Apr 2021 20:36:54 GMT
+      server:
+      - openresty/1.17.8.2
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      sync-token:
+      - zAJw6V16=MDoxNyM3OTg0NjA5;sn=7984609
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/vnd.microsoft.appconfig.kv+json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Sync-Token:
+      - zAJw6V16=MDoxNyM3OTg0NjA5
+      User-Agent:
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-content-sha256:
+      - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+      x-ms-date:
+      - Apr, 08 2021 20:36:56.435834 GMT
+    method: DELETE
+    uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking2?api-version=1.0
+  response:
+    body:
+      string: '{"etag":"xSct8ulHbJBuH6RNvPCnwbxwEbE","key":".appconfig.featureflag/breaking2","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.TimeWindow'',
+        ''parameters'': {''Start'': ''bababooey, 31 Mar 2021 25:00:00 GMT'', ''End'':
+        ''not even trying to be a date''}}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:55+00:00"}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id,
+        x-ms-effective-locale, WWW-Authenticate
+      connection:
+      - keep-alive
+      content-type:
+      - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
+      date:
+      - Thu, 08 Apr 2021 20:36:59 GMT
+      etag:
+      - '"xSct8ulHbJBuH6RNvPCnwbxwEbE"'
+      last-modified:
+      - Thu, 08 Apr 2021 20:36:55 GMT
+      server:
+      - openresty/1.17.8.2
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      sync-token:
+      - zAJw6V16=MDoxNyM3OTg0NjEw;sn=7984610
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/vnd.microsoft.appconfig.kv+json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Sync-Token:
+      - zAJw6V16=MDoxNyM3OTg0NjEw
+      User-Agent:
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-content-sha256:
+      - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+      x-ms-date:
+      - Apr, 08 2021 20:36:56.586796 GMT
+    method: DELETE
+    uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking3?api-version=1.0
+  response:
+    body:
+      string: '{"etag":"QE6Q573bT4YIlZS3w8Bjd3ZE9xw","key":".appconfig.featureflag/breaking3","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.TimeWindow'',
+        ''parameters'': {''Start'': ''bababooey, 31 Mar 2021 25:00:00 GMT'', ''End'':
+        ''not even trying to be a date''}}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:55+00:00"}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id,
+        x-ms-effective-locale, WWW-Authenticate
+      connection:
+      - keep-alive
+      content-type:
+      - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
+      date:
+      - Thu, 08 Apr 2021 20:36:59 GMT
+      etag:
+      - '"QE6Q573bT4YIlZS3w8Bjd3ZE9xw"'
+      last-modified:
+      - Thu, 08 Apr 2021 20:36:55 GMT
+      server:
+      - openresty/1.17.8.2
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      sync-token:
+      - zAJw6V16=MDoxNyM3OTg0NjEx;sn=7984611
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/vnd.microsoft.appconfig.kv+json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Sync-Token:
+      - zAJw6V16=MDoxNyM3OTg0NjEx
+      User-Agent:
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-content-sha256:
+      - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+      x-ms-date:
+      - Apr, 08 2021 20:36:56.719154 GMT
+    method: DELETE
+    uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking4?api-version=1.0
+  response:
+    body:
+      string: '{"etag":"LII7ChyccYKcEGiihJ0MjliKQ6L","key":".appconfig.featureflag/breaking4","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.TimeWindow'',
+        ''parameters'': ''stringystring''}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:55+00:00"}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id,
+        x-ms-effective-locale, WWW-Authenticate
+      connection:
+      - keep-alive
+      content-type:
+      - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
+      date:
+      - Thu, 08 Apr 2021 20:36:59 GMT
+      etag:
+      - '"LII7ChyccYKcEGiihJ0MjliKQ6L"'
+      last-modified:
+      - Thu, 08 Apr 2021 20:36:55 GMT
+      server:
+      - openresty/1.17.8.2
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      sync-token:
+      - zAJw6V16=MDoxNyM3OTg0NjEy;sn=7984612
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/vnd.microsoft.appconfig.kv+json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Sync-Token:
+      - zAJw6V16=MDoxNyM3OTg0NjEy
+      User-Agent:
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-content-sha256:
+      - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+      x-ms-date:
+      - Apr, 08 2021 20:36:56.872155 GMT
+    method: DELETE
+    uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking5?api-version=1.0
+  response:
+    body:
+      string: '{"etag":"YGrOgi3NPjsQjmKTJwm8dNYDfpY","key":".appconfig.featureflag/breaking5","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.Targeting'',
+        ''parameters'': {''Audience'': {''Users'': ''123''}}}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:55+00:00"}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id,
+        x-ms-effective-locale, WWW-Authenticate
+      connection:
+      - keep-alive
+      content-type:
+      - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
+      date:
+      - Thu, 08 Apr 2021 20:37:00 GMT
+      etag:
+      - '"YGrOgi3NPjsQjmKTJwm8dNYDfpY"'
+      last-modified:
+      - Thu, 08 Apr 2021 20:36:55 GMT
+      server:
+      - openresty/1.17.8.2
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      sync-token:
+      - zAJw6V16=MDoxNyM3OTg0NjEz;sn=7984613
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/vnd.microsoft.appconfig.kv+json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Sync-Token:
+      - zAJw6V16=MDoxNyM3OTg0NjEz
+      User-Agent:
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-content-sha256:
+      - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+      x-ms-date:
+      - Apr, 08 2021 20:36:57.002125 GMT
+    method: DELETE
+    uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking6?api-version=1.0
+  response:
+    body:
+      string: '{"etag":"EiVwMWIu9Nxdc09auuBBx8TVnuf","key":".appconfig.featureflag/breaking6","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''name'': ''Microsoft.Targeting'',
+        ''parameters'': ''invalidformat''}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:56+00:00"}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id,
+        x-ms-effective-locale, WWW-Authenticate
+      connection:
+      - keep-alive
+      content-type:
+      - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
+      date:
+      - Thu, 08 Apr 2021 20:37:00 GMT
+      etag:
+      - '"EiVwMWIu9Nxdc09auuBBx8TVnuf"'
+      last-modified:
+      - Thu, 08 Apr 2021 20:36:56 GMT
+      server:
+      - openresty/1.17.8.2
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      sync-token:
+      - zAJw6V16=MDoxNyM3OTg0NjE0;sn=7984614
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/vnd.microsoft.appconfig.kv+json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Sync-Token:
+      - zAJw6V16=MDoxNyM3OTg0NjE0
+      User-Agent:
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-content-sha256:
+      - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+      x-ms-date:
+      - Apr, 08 2021 20:36:57.141642 GMT
+    method: DELETE
+    uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking7?api-version=1.0
+  response:
+    body:
+      string: '{"etag":"BnF0EHYZsk4CqG6tATZk8p4a1ru","key":".appconfig.featureflag/breaking7","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''abc'': ''def''}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:56+00:00"}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id,
+        x-ms-effective-locale, WWW-Authenticate
+      connection:
+      - keep-alive
+      content-type:
+      - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
+      date:
+      - Thu, 08 Apr 2021 20:37:00 GMT
+      etag:
+      - '"BnF0EHYZsk4CqG6tATZk8p4a1ru"'
+      last-modified:
+      - Thu, 08 Apr 2021 20:36:56 GMT
+      server:
+      - openresty/1.17.8.2
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      sync-token:
+      - zAJw6V16=MDoxNyM3OTg0NjE1;sn=7984615
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/vnd.microsoft.appconfig.kv+json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Sync-Token:
+      - zAJw6V16=MDoxNyM3OTg0NjE1
+      User-Agent:
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-content-sha256:
+      - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+      x-ms-date:
+      - Apr, 08 2021 20:36:57.282641 GMT
+    method: DELETE
+    uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fbreaking8?api-version=1.0
+  response:
+    body:
+      string: '{"etag":"vsILIfjna2EmDMOIz4HfFQnyAq8","key":".appconfig.featureflag/breaking8","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{''enabled'':
+        True, ''conditions'': {''client_filters'': [{''abc'': ''def''}]}}","tags":{},"locked":false,"last_modified":"2021-04-08T20:36:56+00:00"}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id,
+        x-ms-effective-locale, WWW-Authenticate
+      connection:
+      - keep-alive
+      content-type:
+      - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
+      date:
+      - Thu, 08 Apr 2021 20:37:00 GMT
+      etag:
+      - '"vsILIfjna2EmDMOIz4HfFQnyAq8"'
+      last-modified:
+      - Thu, 08 Apr 2021 20:36:56 GMT
+      server:
+      - openresty/1.17.8.2
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      sync-token:
+      - zAJw6V16=MDoxNyM3OTg0NjE2;sn=7984616
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/vnd.microsoft.appconfig.kv+json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Sync-Token:
+      - zAJw6V16=MDoxNyM3OTg0NjE2
+      User-Agent:
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-content-sha256:
+      - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+      x-ms-date:
+      - Apr, 08 2021 20:36:57.420490 GMT
     method: DELETE
     uri: https://fake_app_config.azconfig-test.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?api-version=1.0
   response:
     body:
-      string: '{"etag":"5d2Q8xJLPGiImJ42aMaue2jGqbg","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2021-03-17T16:24:38+00:00"}'
+      string: '{"etag":"Nv1W7XBd8XKSaDbxyKZYpj84Qx7","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2021-04-08T20:36:54+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -1366,17 +1828,75 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Wed, 17 Mar 2021 16:22:32 GMT
+      - Thu, 08 Apr 2021 20:37:00 GMT
       etag:
-      - '"5d2Q8xJLPGiImJ42aMaue2jGqbg"'
+      - '"Nv1W7XBd8XKSaDbxyKZYpj84Qx7"'
       last-modified:
-      - Wed, 17 Mar 2021 16:24:38 GMT
+      - Thu, 08 Apr 2021 20:36:54 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDoxNyM3NTkzNjIw;sn=7593620
+      - zAJw6V16=MDoxNyM3OTg0NjE3;sn=7984617
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/vnd.microsoft.appconfig.kv+json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Sync-Token:
+      - zAJw6V16=MDoxNyM3OTg0NjE3
+      User-Agent:
+      - azsdk-python-appconfiguration/1.2.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-content-sha256:
+      - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+      x-ms-date:
+      - Apr, 08 2021 20:36:57.575782 GMT
+    method: DELETE
+    uri: https://fake_app_config.azconfig-test.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
+  response:
+    body:
+      string: '{"etag":"WMjTGgi3poDZ4LHdLvAUS8h0Iw4","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2021-04-08T20:36:54+00:00"}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id,
+        x-ms-effective-locale, WWW-Authenticate
+      connection:
+      - keep-alive
+      content-type:
+      - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
+      date:
+      - Thu, 08 Apr 2021 20:37:00 GMT
+      etag:
+      - '"WMjTGgi3poDZ4LHdLvAUS8h0Iw4"'
+      last-modified:
+      - Thu, 08 Apr 2021 20:36:54 GMT
+      server:
+      - openresty/1.17.8.2
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      sync-token:
+      - zAJw6V16=MDoxNyM3OTg0NjE4;sn=7984618
       transfer-encoding:
       - chunked
     status:

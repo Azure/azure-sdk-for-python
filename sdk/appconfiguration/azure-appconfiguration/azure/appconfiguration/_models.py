@@ -210,19 +210,21 @@ class FeatureFlagConfigurationSetting(
     def _from_generated(cls, key_value):
         # type: (KeyValue) -> FeatureFlagConfigurationSetting
         try:
+            filters = None
+            enabled = None
             if key_value is None:
                 return None
             if key_value.value:
                 try:
                     key_value.value = json.loads(key_value.value)
+                    filters = key_value.value["conditions"]["client_filters"]
+                    enabled = key_value.value["enabled"]
                 except json.decoder.JSONDecodeError:
                     pass
 
-            filters = key_value.value["conditions"]["client_filters"]
-
             return cls(
                 feature_id=key_value.key,
-                enabled=key_value.value["enabled"],
+                enabled=enabled,
                 label=key_value.label,
                 content_type=key_value.content_type,
                 last_modified=key_value.last_modified,
@@ -237,13 +239,6 @@ class FeatureFlagConfigurationSetting(
 
     def _to_generated(self):
         # type: (...) -> KeyValue
-        # value = {
-        #     u"id": self.key,
-        #     u"description": self.description,
-        #     u"enabled": self._enabled,
-        #     u"conditions": {u"client_filters": self._filters},
-        # }
-        # value = json.dumps(value)
 
         return KeyValue(
             key=self.key,
