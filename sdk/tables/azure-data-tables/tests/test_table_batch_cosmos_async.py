@@ -623,8 +623,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    # The same row operations do not fail on Cosmos
-    @pytest.mark.xfail
+    @pytest.mark.skip("The same row operations do not fail on Cosmos")
     @CosmosPreparer()
     async def test_batch_same_row_operations_fail(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
