@@ -36,7 +36,7 @@ from azure.core.pipeline.policies import (
     AzureSasCredentialPolicy
 )
 
-from ._common_conversion import _to_utc_datetime
+from ._common_conversion import _to_utc_datetime, _is_cosmos_endpoint
 from ._shared_access_signature import QueryStringConstants
 from ._constants import (
     STORAGE_OAUTH_SCOPE,
@@ -47,6 +47,7 @@ from ._constants import (
 from ._models import LocationMode, BatchTransactionResult
 from ._authentication import SharedKeyCredentialPolicy
 from ._policies import (
+    CosmosPatchTransformPolicy,
     StorageHeadersPolicy,
     StorageContentValidation,
     StorageRequestHook,
@@ -80,7 +81,7 @@ _SERVICE_PARAMS = {
 }
 
 
-class StorageAccountHostsMixin(object):
+class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         parsed_url,  # type: Any
@@ -92,6 +93,7 @@ class StorageAccountHostsMixin(object):
         self._location_mode = kwargs.get("_location_mode", LocationMode.PRIMARY)
         self._hosts = kwargs.get("_hosts")
         self.scheme = parsed_url.scheme
+        self._cosmos_endpoint = _is_cosmos_endpoint(parsed_url.hostname)
 
         if service not in ["blob", "queue", "file-share", "dfs", "table"]:
             raise ValueError("Invalid service: {}".format(service))
@@ -148,6 +150,9 @@ class StorageAccountHostsMixin(object):
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
+
+        if self._cosmos_endpoint:
+            self._policies.insert(0, CosmosPatchTransformPolicy())
 
     def __enter__(self):
         self._client.__enter__()

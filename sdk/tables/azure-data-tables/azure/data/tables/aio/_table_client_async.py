@@ -22,6 +22,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._base_client import parse_connection_str
+from .._common_conversion import _is_cosmos_endpoint
 from .._constants import CONNECTION_TIMEOUT
 from .._entity import TableEntity
 from .._generated.aio import AzureTable
@@ -71,6 +72,9 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             **kwargs
         )
         loop = kwargs.pop("loop", None)
+
+        self._cosmos_endpoint = _is_cosmos_endpoint(account_url)
+
         super(TableClient, self).__init__(
             account_url,
             table_name=table_name,

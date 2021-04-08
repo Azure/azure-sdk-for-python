@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Dec 2020 16:20:18 GMT
+      - Wed, 07 Apr 2021 21:28:58 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 16:20:18 GMT
+      - Wed, 07 Apr 2021 21:28:58 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Fri, 18 Dec 2020 16:20:20 GMT
+      - Wed, 07 Apr 2021 21:28:59 GMT
       etag:
-      - W/"datetime'2020-12-18T16%3A20%3A19.7209096Z'"
+      - W/"datetime'2021-04-07T21%3A28%3A59.5546120Z'"
       location:
       - https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttablee1c518b3')
       server:
@@ -60,11 +60,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Dec 2020 16:20:19 GMT
+      - Wed, 07 Apr 2021 21:28:59 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 16:20:19 GMT
+      - Wed, 07 Apr 2021 21:28:59 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -73,14 +73,14 @@ interactions:
     body:
       string: "{\"odata.error\":{\"code\":\"PropertiesNeedValue\",\"message\":{\"\
         lang\":\"en-us\",\"value\":\"PartitionKey/RowKey cannot be empty\\r\\nActivityId:\
-        \ ec19c428-414c-11eb-a277-58961df361d1, documentdb-dotnet-sdk/2.11.0 Host/64-bit\
-        \ MicrosoftWindowsNT/6.2.9200.0\\nRequestID:ec19c428-414c-11eb-a277-58961df361d1\\\
+        \ 442d2215-97e8-11eb-b9ff-58961df361ce, documentdb-dotnet-sdk/2.11.0 Host/64-bit\
+        \ MicrosoftWindowsNT/6.2.9200.0\\nRequestID:442d2215-97e8-11eb-b9ff-58961df361ce\\\
         n\"}}}\r\n"
     headers:
       content-type:
       - application/json;odata=fullmetadata
       date:
-      - Fri, 18 Dec 2020 16:20:20 GMT
+      - Wed, 07 Apr 2021 21:28:59 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -100,11 +100,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 18 Dec 2020 16:20:20 GMT
+      - Wed, 07 Apr 2021 21:28:59 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 16:20:20 GMT
+      - Wed, 07 Apr 2021 21:28:59 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -116,7 +116,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 18 Dec 2020 16:20:20 GMT
+      - Wed, 07 Apr 2021 21:29:00 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:
@@ -134,11 +134,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Dec 2020 16:20:20 GMT
+      - Wed, 07 Apr 2021 21:29:00 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 16:20:20 GMT
+      - Wed, 07 Apr 2021 21:29:00 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -150,7 +150,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Fri, 18 Dec 2020 16:20:20 GMT
+      - Wed, 07 Apr 2021 21:29:00 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:

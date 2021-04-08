@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Dec 2020 15:46:04 GMT
+      - Wed, 07 Apr 2021 19:56:28 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 15:46:04 GMT
+      - Wed, 07 Apr 2021 19:56:28 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Fri, 18 Dec 2020 15:46:06 GMT
+      - Wed, 07 Apr 2021 19:56:29 GMT
       etag:
-      - W/"datetime'2020-12-18T15%3A46%3A06.0046344Z'"
+      - W/"datetime'2021-04-07T19%3A56%3A29.6668168Z'"
       location:
       - https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttablebce617ff')
       server:
@@ -44,15 +44,15 @@ interactions:
       code: 201
       message: Ok
 - request:
-    body: "--batch_c32d12fa-233e-4d9d-a704-6b8a7b8ade4f\r\nContent-Type: multipart/mixed;\
-      \ boundary=changeset_ff7fe294-bb70-46f3-9700-a26290500a2a\r\n\r\n--changeset_ff7fe294-bb70-46f3-9700-a26290500a2a\r\
+    body: "--batch_32ea434d-f5c0-483f-a8ed-deaa302d9e5a\r\nContent-Type: multipart/mixed;\
+      \ boundary=changeset_92cdb1d8-9757-47e7-b7d1-f5dfc3e6573e\r\n\r\n--changeset_92cdb1d8-9757-47e7-b7d1-f5dfc3e6573e\r\
       \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
       \ 0\r\n\r\nDELETE https://seankaneprim.table.cosmos.azure.com/uttablebce617ff(PartitionKey='001',RowKey='batch_negative_1')\
       \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nIf-Match:\
-      \ *\r\nAccept: application/json;odata=minimalmetadata\r\nx-ms-date: Fri, 18\
-      \ Dec 2020 15:46:06 GMT\r\nDate: Fri, 18 Dec 2020 15:46:06 GMT\r\nx-ms-client-request-id:\
-      \ 2408d2f3-4148-11eb-84ee-58961df361d1\r\n\r\n\r\n--changeset_ff7fe294-bb70-46f3-9700-a26290500a2a--\r\
-      \n\r\n--batch_c32d12fa-233e-4d9d-a704-6b8a7b8ade4f--\r\n"
+      \ *\r\nAccept: application/json;odata=minimalmetadata\r\nx-ms-date: Wed, 07\
+      \ Apr 2021 19:56:29 GMT\r\nDate: Wed, 07 Apr 2021 19:56:29 GMT\r\nx-ms-client-request-id:\
+      \ 584738c3-97db-11eb-9a26-58961df361ce\r\n\r\n\r\n--changeset_92cdb1d8-9757-47e7-b7d1-f5dfc3e6573e--\r\
+      \n\r\n--batch_32ea434d-f5c0-483f-a8ed-deaa302d9e5a--\r\n"
     headers:
       Accept:
       - '*/*'
@@ -63,37 +63,37 @@ interactions:
       Content-Length:
       - '752'
       Content-Type:
-      - multipart/mixed; boundary=batch_c32d12fa-233e-4d9d-a704-6b8a7b8ade4f
+      - multipart/mixed; boundary=batch_32ea434d-f5c0-483f-a8ed-deaa302d9e5a
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Dec 2020 15:46:06 GMT
+      - Wed, 07 Apr 2021 19:56:29 GMT
       MaxDataServiceVersion:
       - 3.0;NetFx
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 15:46:06 GMT
+      - Wed, 07 Apr 2021 19:56:29 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
     uri: https://fake_cosmos_account.table.cosmos.azure.com/$batch
   response:
     body:
-      string: "--batchresponse_1a9a498e-52b5-4466-823a-ed4da9b334df\nContent-Type:\
-        \ multipart/mixed; boundary=changesetresponse_30f702e4-0f80-4fcd-9679-d9bfaa066d9c\r\
-        \n\r\n--changesetresponse_30f702e4-0f80-4fcd-9679-d9bfaa066d9c\nContent-Type:\
+      string: "--batchresponse_1d86f077-d120-404f-80fe-fb3455ea1e53\nContent-Type:\
+        \ multipart/mixed; boundary=changesetresponse_71382289-de03-48e8-9be7-0eee81539c8f\r\
+        \n\r\n--changesetresponse_71382289-de03-48e8-9be7-0eee81539c8f\nContent-Type:\
         \ application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1 404 Not\
         \ Found\r\nContent-Type: application/json;odata=fullmetadata\r\n\r\n{\"odata.error\"\
         :{\"code\":\"ResourceNotFound\",\"message\":{\"lang\":\"en-us\",\"value\"\
-        :\"0:The specified resource does not exist.\\n\\nRequestID:24092325-4148-11eb-b3da-58961df361d1\\\
-        n\"}}}\r\n--changesetresponse_30f702e4-0f80-4fcd-9679-d9bfaa066d9c--\n--batchresponse_1a9a498e-52b5-4466-823a-ed4da9b334df--\r\
+        :\"0:The specified resource does not exist.\\n\\nRequestID:58487ca1-97db-11eb-b94d-58961df361ce\\\
+        n\"}}}\r\n--changesetresponse_71382289-de03-48e8-9be7-0eee81539c8f--\n--batchresponse_1d86f077-d120-404f-80fe-fb3455ea1e53--\r\
         \n"
     headers:
       content-type:
-      - multipart/mixed; boundary=batchresponse_1a9a498e-52b5-4466-823a-ed4da9b334df
+      - multipart/mixed; boundary=batchresponse_1d86f077-d120-404f-80fe-fb3455ea1e53
       date:
-      - Fri, 18 Dec 2020 15:46:06 GMT
+      - Wed, 07 Apr 2021 19:56:30 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -113,11 +113,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 18 Dec 2020 15:46:06 GMT
+      - Wed, 07 Apr 2021 19:56:30 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 15:46:06 GMT
+      - Wed, 07 Apr 2021 19:56:30 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -129,7 +129,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 18 Dec 2020 15:46:06 GMT
+      - Wed, 07 Apr 2021 19:56:30 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:

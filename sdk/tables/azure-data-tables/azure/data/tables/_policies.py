@@ -41,6 +41,7 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
 
+from ._common_conversion import _transform_patch_to_cosmos_post
 from ._models import LocationMode
 
 try:
@@ -750,3 +751,12 @@ class LinearRetry(TablesRetryPolicy):
         )
         random_range_end = self.backoff + self.random_jitter_range
         return random_generator.uniform(random_range_start, random_range_end)
+
+
+class CosmosPatchTransformPolicy(SansIOHTTPPolicy):
+    """Policy to transform PATCH requests into POST requests with the "X-HTTP-Method":"MERGE" header set."""
+
+    def on_request(self, request):
+        # type: (PipelineRequest) -> Union[None, Awaitable[None]]
+        if request.http_request.method == "PATCH":
+            _transform_patch_to_cosmos_post(request.http_request)
