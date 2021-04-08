@@ -1,5 +1,18 @@
 # Release History
 
+## 8.0.0 (2021-03-31)
+
+**Features**
+
+  - Model QueryRequest has a new parameter management_groups
+  - Model QueryRequestOptions has a new parameter allow_partial_scopes
+
+**Breaking changes**
+
+  - Model QueryRequest no longer has parameter management_group_id
+  - Removed operation ResourceGraphClientOperationsMixin.resource_changes
+  - Removed operation ResourceGraphClientOperationsMixin.resource_change_details
+
 ## 7.0.0 (2020-12-15)
 
 - GA Release

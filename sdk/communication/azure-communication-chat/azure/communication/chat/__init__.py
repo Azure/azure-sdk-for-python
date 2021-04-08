@@ -9,7 +9,7 @@ from ._generated.models import (
 )
 
 from ._models import (
-    ChatThreadParticipant,
+    ChatParticipant,
     ChatMessage,
     ChatThreadProperties,
     ChatMessageReadReceipt,
@@ -39,7 +39,7 @@ __all__ = [
     'SendChatMessageResult',
     'ChatThreadProperties',
     'ChatThreadItem',
-    'ChatThreadParticipant',
+    'ChatParticipant',
     'ChatMessageType',
     'CreateChatThreadResult',
     'ChatError',

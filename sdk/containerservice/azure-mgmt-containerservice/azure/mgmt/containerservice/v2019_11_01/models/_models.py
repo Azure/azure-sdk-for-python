@@ -894,7 +894,7 @@ class ManagedCluster(Resource):
      ~azure.mgmt.containerservice.v2019_11_01.models.ManagedClusterAPIServerAccessProfile
     :param identity_profile: Identities associated with the cluster.
     :type identity_profile: dict[str,
-     ~azure.mgmt.containerservice.v2019_11_01.models.UserAssignedIdentity]
+     ~azure.mgmt.containerservice.v2019_11_01.models.ManagedClusterPropertiesIdentityProfileValue]
     """
 
     _validation = {
@@ -932,7 +932,7 @@ class ManagedCluster(Resource):
         'network_profile': {'key': 'properties.networkProfile', 'type': 'ContainerServiceNetworkProfile'},
         'aad_profile': {'key': 'properties.aadProfile', 'type': 'ManagedClusterAADProfile'},
         'api_server_access_profile': {'key': 'properties.apiServerAccessProfile', 'type': 'ManagedClusterAPIServerAccessProfile'},
-        'identity_profile': {'key': 'properties.identityProfile', 'type': '{UserAssignedIdentity}'},
+        'identity_profile': {'key': 'properties.identityProfile', 'type': '{ManagedClusterPropertiesIdentityProfileValue}'},
     }
 
     def __init__(
@@ -1057,7 +1057,8 @@ class ManagedClusterAddonProfile(msrest.serialization.Model):
     :param config: Key-value pairs for configuring an add-on.
     :type config: dict[str, str]
     :ivar identity: Information of user assigned identity used by this add-on.
-    :vartype identity: ~azure.mgmt.containerservice.v2019_11_01.models.UserAssignedIdentity
+    :vartype identity:
+     ~azure.mgmt.containerservice.v2019_11_01.models.ManagedClusterAddonProfileIdentity
     """
 
     _validation = {
@@ -1068,7 +1069,7 @@ class ManagedClusterAddonProfile(msrest.serialization.Model):
     _attribute_map = {
         'enabled': {'key': 'enabled', 'type': 'bool'},
         'config': {'key': 'config', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'UserAssignedIdentity'},
+        'identity': {'key': 'identity', 'type': 'ManagedClusterAddonProfileIdentity'},
     }
 
     def __init__(
