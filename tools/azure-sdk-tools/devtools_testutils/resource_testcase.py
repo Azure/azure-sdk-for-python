@@ -110,7 +110,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
                     raise AzureTestError("Timed out waiting for resource group to be deleted.")
                 else:
                     self.client.resource_groups.begin_delete(name, polling=False)
-            except Exception as err:
+            except Exception as err:  # NOTE: some track 1 libraries do not have azure-core installed. Cannot use HttpResponseError here
                 logging.info("Failed to delete resource group with name {}".format(name))
                 logging.info("{}".format(err))
                 pass
