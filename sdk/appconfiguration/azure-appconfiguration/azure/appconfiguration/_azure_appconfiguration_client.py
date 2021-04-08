@@ -26,7 +26,6 @@ from azure.core.exceptions import (
 )
 from ._azure_appconfiguration_error import ResourceReadOnlyError
 from ._generated import AzureAppConfiguration
-from ._generated.models import Error
 from ._generated._configuration import AzureAppConfigurationConfiguration
 from ._models import ConfigurationSetting
 from ._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
@@ -75,7 +74,7 @@ class AzureAppConfigurationClient:
         if not credential:
             raise ValueError("Missing credential")
 
-        self._credential_scopes = base_url.strip("/") + "/.default",
+        self._credential_scopes = base_url.strip("/") + "/.default"
 
         self._config = AzureAppConfigurationConfiguration(
             credential, base_url, credential_scopes=self._credential_scopes, **kwargs
