@@ -1,13 +1,25 @@
 parameters:
+- name: ServiceDirectory
+  type: string
+  default: not-specified
 - name: Artifacts
   type: object
   default: []
 - name: TestPipeline
   type: boolean
   default: false
-- name: ServiceDirectory
+- name: BeforePublishSteps
+  type: object
+  default: []
+- name: TestMarkArgument
   type: string
-  default: not-specified
+  default: ''
+- name: BuildTargetingString
+  type: string
+  default: azure-*
+- name: TestTimeoutInMinutes
+  type: number
+  default: 0
 - name: ToxEnvParallel
   type: string
   default: --tenvparallel
@@ -17,41 +29,61 @@ parameters:
 - name: BuildDocs
   type: boolean
   default: true
+- name: DevFeedName
+  type: string
+  default: public/azure-sdk-for-python
 - name: TargetDocRepoOwner
   type: string
   default: MicrosoftDocs
 - name: TargetDocRepoName
   type: string
   default: azure-docs-sdk-python
-- name: SkipPythonVersion
-  type: string
-  default: ''
-- name: AdditionalTestMatrix
+- name: MatrixConfigs
+  type: object
+  default:
+    - Name: Python_ci_test_base
+      Path: eng/pipelines/templates/stages/platform-matrix.json
+      Selection: sparse
+      GenerateVMJobs: true
+- name: AdditionalMatrixConfigs
   type: object
   default: []
-- name: DevFeedName
-  type: string
-  default: public/azure-sdk-for-python
-- name: BuildTargetingString
-  type: string
-  default: azure-*
+- name: MatrixFilters
+  type: object
+  default: []
+- name: MatrixReplace
+  type: object
+  default: []
 
 stages:
   - stage: Build
     jobs:
-    - template: ../jobs/archetype-sdk-client.yml
+    - template: /eng/pipelines/templates/jobs/ci.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         Artifacts: ${{ parameters.Artifacts }}
         ${{ if eq(parameters.ServiceDirectory, 'template') }}:
           TestPipeline: true
-        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
-        BuildDocs: ${{ parameters.BuildDocs }}
-        InjectedPackages: ${{ parameters.InjectedPackages }}
-        SkipPythonVersion: ${{ parameters.SkipPythonVersion }}
-        AdditionalTestMatrix: ${{ parameters.AdditionalTestMatrix }}
-        DevFeedName: ${{ parameters.DevFeedName }}
+        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
+        InjectedPackages: ${{ parameters.InjectedPackages }}
+        BuildDocs: ${{ parameters.BuildDocs }}
+        DevFeedName: ${{ parameters.DevFeedName }}
+        MatrixConfigs:
+          - ${{ each config in parameters.MatrixConfigs }}:
+            -  ${{ config }}
+          - ${{ each config in parameters.AdditionalMatrixConfigs }}:
+            -  ${{ config }}
+        MatrixFilters: ${{ parameters.MatrixFilters }}
+        MatrixReplace:
+          # Temporarily replace macOS agents with ubuntu agents because of ongoing pool capacity issues
+          - Pool=Azure.Pipelines/azsdk-pool-mms-ubuntu-1804-general
+          - OsVmImage=macOS-10.15/MMSUbuntu18.04
+          - ${{ each replacement in parameters.MatrixReplace }}:
+            - ${{ replacement }}
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:

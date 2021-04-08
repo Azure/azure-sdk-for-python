@@ -3,134 +3,326 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import functools
-import os
+from datetime import datetime
 import pytest
 
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureTestCase
 
 from azure.containerregistry import (
     ContainerRepositoryClient,
     ContainerRegistryClient,
-    RepositoryProperties,
     ContentPermissions,
+    DeletedRepositoryResult,
+    RepositoryProperties,
+    RegistryArtifactOrderBy,
+    RegistryArtifactProperties,
     TagProperties,
     TagOrderBy,
 )
+from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
 
-from testcase import ContainerRegistryTestClass
-
-acr_preparer = functools.partial(
-    PowerShellPreparer,
-    "containerregistry",
-    containerregistry_baseurl="fake_url.azurecr.io",
-)
+from testcase import ContainerRegistryTestClass, AcrBodyReplacer, FakeTokenCredential
+from constants import TO_BE_DELETED, DOES_NOT_EXIST
+from preparer import acr_preparer
 
 
-class TestContainerRepositoryClient(AzureTestCase, ContainerRegistryTestClass):
-
-    repository = "hello-world"
-
-    @pytest.mark.live_test_only
+class TestContainerRepositoryClient(ContainerRegistryTestClass):
     @acr_preparer()
-    def test_get_attributes(self, containerregistry_baseurl):
-        client = self.create_repository_client(containerregistry_baseurl, self.repository)
+    def test_delete_tag(self, containerregistry_endpoint, containerregistry_resource_group):
+        repo = self.get_resource_name("repo")
+        tag = self.get_resource_name("tag")
+        self._import_tag_to_be_deleted(
+            containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=repo, tag=tag
+        )
 
-        repo_attribs = client.get_properties()
+        client = self.create_repository_client(containerregistry_endpoint, repo)
 
-        assert repo_attribs is not None
-        assert repo_attribs.content_permissions is not None
+        tag_props = client.get_tag_properties(tag)
+        assert tag_props is not None
 
-    @pytest.mark.live_test_only
+        client.delete_tag(tag)
+        self.sleep(10)
+        with pytest.raises(ResourceNotFoundError):
+            client.get_tag_properties(tag)
+
     @acr_preparer()
-    def test_get_properties(self, containerregistry_baseurl):
-        reg_client = self.create_repository_client(containerregistry_baseurl, "hello-world")
+    def test_delete_tag_does_not_exist(self, containerregistry_endpoint):
+        client = self.create_repository_client(containerregistry_endpoint, "hello-world")
 
-        properties = reg_client.get_properties()
+        with pytest.raises(ResourceNotFoundError):
+            client.delete_tag(TO_BE_DELETED)
 
-        assert isinstance(properties, RepositoryProperties)
-        assert properties.name == "hello-world"
-        assert properties.registry == containerregistry_baseurl
-        assert properties.content_permissions is not None
+    @acr_preparer()
+    def test_get_properties(self, containerregistry_endpoint):
+        repo_client = self.create_repository_client(containerregistry_endpoint, "hello-world")
+
+        properties = repo_client.get_properties()
         assert isinstance(properties.content_permissions, ContentPermissions)
 
-    @pytest.mark.skip("Pending")
     @acr_preparer()
-    def test_get_registry_artifact_properties(self, containerregistry_baseurl):
-        reg_client = self.create_repository_client(containerregistry_baseurl, "hello-world")
-
-        digest = "sha256:90659bf80b44ce6be8234e6ff90a1ac34acbeb826903b02cfa0da11c82cbc042"
-        tag = "first"
-
-        properties = reg_client.get_registry_artifact_properties(digest)
-        first_properties = reg_client.get_registry_artifact_properties(tag)
-
-        self.assert_registry_artifact(properties, digest)
-        self.assert_registry_artifact(first_properties, tag)
-
-    @pytest.mark.live_test_only
-    @acr_preparer()
-    def test_get_tag(self, containerregistry_baseurl):
-        client = self.create_repository_client(containerregistry_baseurl, self.repository)
+    def test_get_tag(self, containerregistry_endpoint):
+        client = self.create_repository_client(containerregistry_endpoint, self.repository)
 
         tag = client.get_tag_properties("latest")
 
-        self.assert_tag(tag)
+        assert tag is not None
+        assert isinstance(tag, TagProperties)
 
-    @pytest.mark.live_test_only
     @acr_preparer()
-    def test_list_tags(self, containerregistry_baseurl):
-        client = self.create_repository_client(containerregistry_baseurl, self.repository)
+    def test_list_registry_artifacts(self, containerregistry_endpoint):
+        client = self.create_repository_client(containerregistry_endpoint, self.repository)
+
+        count = 0
+        for artifact in client.list_registry_artifacts():
+            assert artifact is not None
+            assert isinstance(artifact, RegistryArtifactProperties)
+            assert artifact.created_on is not None
+            assert isinstance(artifact.created_on, datetime)
+            assert artifact.last_updated_on is not None
+            assert isinstance(artifact.last_updated_on, datetime)
+            count += 1
+
+        assert count > 0
+
+    @acr_preparer()
+    def test_list_registry_artifacts_by_page(self, containerregistry_endpoint):
+        client = self.create_repository_client(containerregistry_endpoint, self.repository)
+        results_per_page = 2
+
+        pages = client.list_registry_artifacts(results_per_page=results_per_page)
+        page_count = 0
+        for page in pages.by_page():
+            reg_count = 0
+            for tag in page:
+                reg_count += 1
+            assert reg_count <= results_per_page
+            page_count += 1
+
+        assert page_count >= 1
+
+    @acr_preparer()
+    def test_list_registry_artifacts_descending(self, containerregistry_endpoint):
+        client = self.create_repository_client(containerregistry_endpoint, self.repository)
+
+        prev_last_updated_on = None
+        count = 0
+        for artifact in client.list_registry_artifacts(order_by=RegistryArtifactOrderBy.LAST_UPDATE_TIME_DESCENDING):
+            if prev_last_updated_on:
+                assert artifact.last_updated_on < prev_last_updated_on
+            prev_last_updated_on = artifact.last_updated_on
+            count += 1
+
+        assert count > 0
+
+    @acr_preparer()
+    def test_list_registry_artifacts_ascending(self, containerregistry_endpoint):
+        client = self.create_repository_client(containerregistry_endpoint, self.repository)
+
+        prev_last_updated_on = None
+        count = 0
+        for artifact in client.list_registry_artifacts(order_by=RegistryArtifactOrderBy.LAST_UPDATE_TIME_ASCENDING):
+            if prev_last_updated_on:
+                assert artifact.last_updated_on > prev_last_updated_on
+            prev_last_updated_on = artifact.last_updated_on
+            count += 1
+
+        assert count > 0
+
+    @acr_preparer()
+    def test_get_registry_artifact_properties(self, containerregistry_endpoint):
+        client = self.create_repository_client(containerregistry_endpoint, self.repository)
+
+        properties = client.get_registry_artifact_properties("latest")
+
+        assert isinstance(properties, RegistryArtifactProperties)
+        assert isinstance(properties.created_on, datetime)
+        assert isinstance(properties.last_updated_on, datetime)
+
+    @acr_preparer()
+    def test_list_tags(self, containerregistry_endpoint):
+        client = self.create_repository_client(containerregistry_endpoint, self.repository)
 
         tags = client.list_tags()
         assert isinstance(tags, ItemPaged)
         count = 0
         for tag in tags:
             count += 1
-            print(tag)
 
         assert count > 0
 
-    @pytest.mark.live_test_only
     @acr_preparer()
-    def test_list_tags_descending(self, containerregistry_baseurl):
-        client = self.create_repository_client(containerregistry_baseurl, self.repository)
+    def test_list_tags_by_page(self, containerregistry_endpoint):
+        client = self.create_repository_client(containerregistry_endpoint, self.repository)
 
-        # TODO: This is giving time in ascending order
-        tags = client.list_tags(order_by=TagOrderBy.LAST_UPDATE_TIME_DESCENDING)
-        assert isinstance(tags, ItemPaged)
-        last_updated_on = None
+        results_per_page = 2
+
+        pages = client.list_tags(results_per_page=results_per_page)
+        page_count = 0
+        for page in pages.by_page():
+            tag_count = 0
+            for tag in page:
+                tag_count += 1
+            assert tag_count <= results_per_page
+            page_count += 1
+
+        assert page_count >= 1
+
+    @acr_preparer()
+    def test_list_tags_descending(self, containerregistry_endpoint):
+        client = self.create_repository_client(containerregistry_endpoint, self.repository)
+
+        prev_last_updated_on = None
         count = 0
-        for tag in tags:
-            print(tag.last_updated_on)
-            # if last_updated_on:
-            #     assert tag.last_updated_on < last_updated_on
-            last_updated_on = tag.last_updated_on
+        for tag in client.list_tags(order_by=TagOrderBy.LAST_UPDATE_TIME_DESCENDING):
+            if prev_last_updated_on:
+                assert tag.last_updated_on < prev_last_updated_on
+            prev_last_updated_on = tag.last_updated_on
             count += 1
-            # print(tag)
 
         assert count > 0
 
-    @pytest.mark.skip("List pending")
     @acr_preparer()
-    def test_list_registry_artifacts(self, containerregistry_baseurl):
-        client = self.create_repository_client(containerregistry_baseurl, self.repository)
+    def test_list_tags_ascending(self, containerregistry_endpoint):
+        client = self.create_repository_client(containerregistry_endpoint, self.repository)
 
-        repo_attribs = client.list_registry_artifacts()
+        prev_last_updated_on = None
+        count = 0
+        for tag in client.list_tags(order_by=TagOrderBy.LAST_UPDATE_TIME_ASCENDING):
+            if prev_last_updated_on:
+                assert tag.last_updated_on > prev_last_updated_on
+            prev_last_updated_on = tag.last_updated_on
+            count += 1
 
-        print(repo_attribs)
+        assert count > 0
 
-    @pytest.mark.skip("Don't want to delete right now")
+    @pytest.mark.live_test_only  # Recordings error, recieves more than 100 headers, not that many present
     @acr_preparer()
-    def test_delete_repository(self, containerregistry_baseurl):
-        client = self.create_repository_client(containerregistry_baseurl, self.repository)
-        client.delete()
+    def test_set_tag_properties(self, containerregistry_endpoint, containerregistry_resource_group):
+        repository = self.get_resource_name("repo")
+        tag_identifier = self.get_resource_name("tag")
+        self.import_repo_to_be_deleted(
+            containerregistry_endpoint,
+            resource_group=containerregistry_resource_group,
+            tag=tag_identifier,
+            repository=repository,
+        )
 
-        reg_client = self.create_registry_client(containerregistry_baseurl)
+        client = self.create_repository_client(containerregistry_endpoint, repository)
 
-        repo_count = 0
-        for repo in reg_client.list_repositories():
-            repo_count += 1
+        tag_props = client.get_tag_properties(tag_identifier)
+        permissions = tag_props.content_permissions
 
-        assert repo_count == 0
+        received = client.set_tag_properties(
+            tag_identifier,
+            ContentPermissions(
+                can_delete=False,
+                can_list=False,
+                can_read=False,
+                can_write=False,
+            ),
+        )
+
+        assert not received.content_permissions.can_write
+        assert not received.content_permissions.can_read
+        assert not received.content_permissions.can_list
+        assert not received.content_permissions.can_delete
+
+    @pytest.mark.live_test_only  # Recordings error, recieves more than 100 headers, not that many present
+    @acr_preparer()
+    def test_set_tag_properties_does_not_exist(self, containerregistry_endpoint):
+        client = self.create_repository_client(containerregistry_endpoint, self.get_resource_name("repo"))
+
+        with pytest.raises(ResourceNotFoundError):
+            client.set_tag_properties("does_not_exist", ContentPermissions(can_delete=False))
+
+    @pytest.mark.live_test_only  # Recordings error, recieves more than 100 headers, not that many present
+    @acr_preparer()
+    def test_set_manifest_properties(self, containerregistry_endpoint, containerregistry_resource_group):
+        repository = self.get_resource_name("repo_set")
+        tag_identifier = self.get_resource_name("tag")
+        self.import_repo_to_be_deleted(
+            containerregistry_endpoint,
+            resource_group=containerregistry_resource_group,
+            tag=tag_identifier,
+            repository=repository,
+        )
+
+        client = self.create_repository_client(containerregistry_endpoint, repository)
+
+        for artifact in client.list_registry_artifacts():
+            permissions = artifact.content_permissions
+
+            received_permissions = client.set_manifest_properties(
+                artifact.digest,
+                ContentPermissions(
+                    can_delete=False,
+                    can_list=False,
+                    can_read=False,
+                    can_write=False,
+                ),
+            )
+
+            assert not received_permissions.content_permissions.can_delete
+            assert not received_permissions.content_permissions.can_read
+            assert not received_permissions.content_permissions.can_list
+            assert not received_permissions.content_permissions.can_write
+
+            break
+
+    @pytest.mark.live_test_only  # Recordings error, recieves more than 100 headers, not that many present
+    @acr_preparer()
+    def test_set_manifest_properties_does_not_exist(self, containerregistry_endpoint):
+        client = self.create_repository_client(containerregistry_endpoint, self.get_resource_name("repo"))
+
+        with pytest.raises(ResourceNotFoundError):
+            client.set_manifest_properties("sha256:abcdef", ContentPermissions(can_delete=False))
+
+    @acr_preparer()
+    def test_delete_repository(self, containerregistry_endpoint, containerregistry_resource_group):
+        self.import_repo_to_be_deleted(
+            containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=TO_BE_DELETED
+        )
+
+        reg_client = self.create_registry_client(containerregistry_endpoint)
+        existing_repos = list(reg_client.list_repositories())
+        assert TO_BE_DELETED in existing_repos
+
+        repo_client = self.create_repository_client(containerregistry_endpoint, TO_BE_DELETED)
+        result = repo_client.delete()
+        assert isinstance(result, DeletedRepositoryResult)
+        assert result.deleted_registry_artifact_digests is not None
+        assert result.deleted_tags is not None
+        self.sleep(5)
+
+        existing_repos = list(reg_client.list_repositories())
+        assert TO_BE_DELETED not in existing_repos
+
+    @acr_preparer()
+    def test_delete_repository_doesnt_exist(self, containerregistry_endpoint):
+        repo_client = self.create_repository_client(containerregistry_endpoint, DOES_NOT_EXIST)
+        with pytest.raises(ResourceNotFoundError):
+            repo_client.delete()
+
+    @acr_preparer()
+    def test_delete_registry_artifact(self, containerregistry_endpoint, containerregistry_resource_group):
+        repository = self.get_resource_name("repo")
+        self.import_repo_to_be_deleted(
+            containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=repository
+        )
+
+        repo_client = self.create_repository_client(containerregistry_endpoint, repository)
+
+        count = 0
+        for artifact in repo_client.list_registry_artifacts():
+            if count == 0:
+                repo_client.delete_registry_artifact(artifact.digest)
+            count += 1
+        assert count > 0
+
+        artifacts = []
+        for a in repo_client.list_registry_artifacts():
+            artifacts.append(a)
+
+        assert len(artifacts) > 0
+        assert len(artifacts) == count - 1

@@ -161,8 +161,10 @@ class OperatingSystemStateTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     """The OS State.
     """
 
-    GENERALIZED = "Generalized"  #: Generalized image. Needs to be provisioned during deployment time.
-    SPECIALIZED = "Specialized"  #: Specialized image. Contains already provisioned OS Disk.
+    #: Generalized image. Needs to be provisioned during deployment time.
+    GENERALIZED = "Generalized"
+    #: Specialized image. Contains already provisioned OS Disk.
+    SPECIALIZED = "Specialized"
 
 class OperatingSystemTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The operating system of the osDiskImage.

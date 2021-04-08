@@ -17,10 +17,6 @@ from ._models import (
     TagOrderBy,
     TagProperties,
 )
-from ._authentication_policy import (
-    ContainerRegistryUserCredential,
-    ContainerRegistryUserCredentialPolicy,
-)
 from ._version import VERSION
 
 __version__ = VERSION
@@ -35,6 +31,4 @@ __all__ = [
     "RepositoryProperties",
     "TagOrderBy",
     "TagProperties",
-    "ContainerRegistryUserCredential",
-    "ContainerRegistryUserCredentialPolicy",
 ]

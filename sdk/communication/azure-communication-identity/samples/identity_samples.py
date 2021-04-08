@@ -40,7 +40,7 @@ class CommunicationIdentityClientSamples(object):
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         user = identity_client.create_user()
-        print("Getting token for: " + user.identifier)
+        print("Getting token for: " + user.properties['id'])
         tokenresponse = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
         print("Token issued with value: " + tokenresponse.token)
 
@@ -71,7 +71,7 @@ class CommunicationIdentityClientSamples(object):
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         print("Creating new user")
         user = identity_client.create_user()
-        print("User created with id:" + user.identifier)
+        print("User created with id:" + user.properties['id'])
 
     def create_user_and_token(self):
         from azure.communication.identity import (
@@ -85,7 +85,7 @@ class CommunicationIdentityClientSamples(object):
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         print("Creating new user with token")
         user, tokenresponse = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
-        print("User created with id:" + user.identifier)
+        print("User created with id:" + user.properties['id'])
         print("Token issued with value: " + tokenresponse.token)
 
     def delete_user(self):
@@ -97,9 +97,9 @@ class CommunicationIdentityClientSamples(object):
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         user = identity_client.create_user()
-        print("Deleting user: " + user.identifier)
+        print("Deleting user: " + user.properties['id'])
         identity_client.delete_user(user)
-        print(user.identifier + " deleted")
+        print(user.properties['id'] + " deleted")
 
 if __name__ == '__main__':
     sample = CommunicationIdentityClientSamples()

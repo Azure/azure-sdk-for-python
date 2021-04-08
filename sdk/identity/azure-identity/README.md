@@ -88,7 +88,22 @@ the following mechanisms in this order, stopping when one succeeds:
 - Azure CLI - If a user has signed in via the Azure CLI `az login` command,
   `DefaultAzureCredential` will authenticate as that user.
 - Interactive - If enabled, `DefaultAzureCredential` will interactively
-  authenticate a user via the current system's default browser.
+  authenticate a user via the default browser.
+
+>DefaultAzureCredential is intended to simplify getting started with the SDK by handling common
+>scenarios with reasonable default behaviors. Developers who want more control or whose scenario
+>isn't served by the default settings should use other credential types.
+
+### Managed Identity
+`DefaultAzureCredential` and `ManagedIdentityCredential` support
+[managed identity authentication](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview)
+in any hosting environment which supports managed identities, such as (this list is not exhaustive):
+* [Azure Virtual Machines](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token)
+* [Azure App Service](https://docs.microsoft.com/azure/app-service/overview-managed-identity?tabs=dotnet)
+* [Azure Kubernetes Service](https://docs.microsoft.com/azure/aks/use-managed-identity)
+* [Azure Cloud Shell](https://docs.microsoft.com/azure/cloud-shell/msi-authorization)
+* [Azure Arc](https://docs.microsoft.com/azure/azure-arc/servers/managed-identity-authentication)
+* [Azure Service Fabric](https://docs.microsoft.com/azure/service-fabric/concepts-managed-identity)
 
 ## Examples
 
@@ -303,17 +318,10 @@ credential = DefaultAzureCredential(logging_enable=True)
 
 ### Client library support
 
-This is an incomplete list of client libraries accepting Azure Identity
-credentials. You can learn more about these libraries, and find additional
-documentation of them, at the links below.
-
-- [azure-appconfiguration][azure_appconfiguration]
-- [azure-eventhub][azure_eventhub]
-- [azure-keyvault-certificates][azure_keyvault_certificates]
-- [azure-keyvault-keys][azure_keyvault_keys]
-- [azure-keyvault-secrets][azure_keyvault_secrets]
-- [azure-storage-blob][azure_storage_blob]
-- [azure-storage-queue][azure_storage_queue]
+Client and management libraries listed on the
+[Azure SDK release page](https://azure.github.io/azure-sdk/releases/latest/python.html)
+which support Azure AD authentication accept credentials from this library. You can learn more
+about using these libraries in their documentation, which is linked from the release page.
 
 ### Provide Feedback
 

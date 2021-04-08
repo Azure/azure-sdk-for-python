@@ -59,7 +59,6 @@ setup(
         "Development Status :: 4 - Beta",
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
@@ -75,11 +74,11 @@ setup(
         'azure.monitor',
         'azure.monitor.opentelemetry'
     ]),
-    python_requires=">=3.5.0",
+    python_requires=">=3.6.0",
     install_requires=[
         "azure-core<2.0.0,>=1.6.0",
         "msrest>=0.6.10",
-        "opentelemetry-api == 1.0.0rc1",
-        "opentelemetry-sdk == 1.0.0rc1"
+        "opentelemetry-api<2.0.0,>=1.0.0",
+        "opentelemetry-sdk<2.0.0,>=1.0.0"
     ],
 )

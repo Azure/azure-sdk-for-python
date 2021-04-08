@@ -988,7 +988,7 @@ class ManagedCluster(Resource):
     :type disk_encryption_set_id: str
     :param identity_profile: Identities associated with the cluster.
     :type identity_profile: dict[str,
-     ~azure.mgmt.containerservice.v2020_02_01.models.UserAssignedIdentity]
+     ~azure.mgmt.containerservice.v2020_02_01.models.ManagedClusterPropertiesIdentityProfileValue]
     """
 
     _validation = {
@@ -1028,7 +1028,7 @@ class ManagedCluster(Resource):
         'auto_scaler_profile': {'key': 'properties.autoScalerProfile', 'type': 'ManagedClusterPropertiesAutoScalerProfile'},
         'api_server_access_profile': {'key': 'properties.apiServerAccessProfile', 'type': 'ManagedClusterAPIServerAccessProfile'},
         'disk_encryption_set_id': {'key': 'properties.diskEncryptionSetID', 'type': 'str'},
-        'identity_profile': {'key': 'properties.identityProfile', 'type': '{UserAssignedIdentity}'},
+        'identity_profile': {'key': 'properties.identityProfile', 'type': '{ManagedClusterPropertiesIdentityProfileValue}'},
     }
 
     def __init__(
@@ -1052,7 +1052,7 @@ class ManagedCluster(Resource):
         auto_scaler_profile: Optional["ManagedClusterPropertiesAutoScalerProfile"] = None,
         api_server_access_profile: Optional["ManagedClusterAPIServerAccessProfile"] = None,
         disk_encryption_set_id: Optional[str] = None,
-        identity_profile: Optional[Dict[str, "UserAssignedIdentity"]] = None,
+        identity_profile: Optional[Dict[str, "ManagedClusterPropertiesIdentityProfileValue"]] = None,
         **kwargs
     ):
         super(ManagedCluster, self).__init__(location=location, tags=tags, **kwargs)
@@ -1184,7 +1184,8 @@ class ManagedClusterAddonProfile(msrest.serialization.Model):
     :param config: Key-value pairs for configuring an add-on.
     :type config: dict[str, str]
     :ivar identity: Information of user assigned identity used by this add-on.
-    :vartype identity: ~azure.mgmt.containerservice.v2020_02_01.models.UserAssignedIdentity
+    :vartype identity:
+     ~azure.mgmt.containerservice.v2020_02_01.models.ManagedClusterAddonProfileIdentity
     """
 
     _validation = {
@@ -1195,7 +1196,7 @@ class ManagedClusterAddonProfile(msrest.serialization.Model):
     _attribute_map = {
         'enabled': {'key': 'enabled', 'type': 'bool'},
         'config': {'key': 'config', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'UserAssignedIdentity'},
+        'identity': {'key': 'identity', 'type': 'ManagedClusterAddonProfileIdentity'},
     }
 
     def __init__(

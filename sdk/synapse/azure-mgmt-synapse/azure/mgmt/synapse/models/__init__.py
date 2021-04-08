@@ -88,7 +88,6 @@ try:
     from ._models_py3 import ManagedIntegrationRuntimeStatus
     from ._models_py3 import ManagedVirtualNetworkSettings
     from ._models_py3 import MetadataSyncConfig
-    from ._models_py3 import NetworkSettings
     from ._models_py3 import OperationMetaLogSpecification
     from ._models_py3 import OperationMetaMetricDimensionSpecification
     from ._models_py3 import OperationMetaMetricSpecification
@@ -283,7 +282,6 @@ except (SyntaxError, ImportError):
     from ._models import ManagedIntegrationRuntimeStatus  # type: ignore
     from ._models import ManagedVirtualNetworkSettings  # type: ignore
     from ._models import MetadataSyncConfig  # type: ignore
-    from ._models import NetworkSettings  # type: ignore
     from ._models import OperationMetaLogSpecification  # type: ignore
     from ._models import OperationMetaMetricDimensionSpecification  # type: ignore
     from ._models import OperationMetaMetricSpecification  # type: ignore
@@ -539,7 +537,6 @@ __all__ = [
     'ManagedIntegrationRuntimeStatus',
     'ManagedVirtualNetworkSettings',
     'MetadataSyncConfig',
-    'NetworkSettings',
     'OperationMetaLogSpecification',
     'OperationMetaMetricDimensionSpecification',
     'OperationMetaMetricSpecification',
