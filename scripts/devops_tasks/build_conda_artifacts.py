@@ -5,17 +5,25 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-# Used to generate conda artifacts
-
-# TODO: parse ci.yml to get dependent artifact information
-# TODO: parse version out of meta.yaaml
-# TODO: do not generate a combined package if the target is a single package
+# Used to generate conda artifacts given a properly formatted build folder
+#
+#   EXAMPLE: examine the CondaArtifacts in /sdk/storage/meta.yaml
+#
+#   Grab the source code from each of the tags in the CondaArtifact.
+#
+#   Format the directory that you pass to the "build_directory" argument in this way
+#   <build directory>
+#       /azure-storage-blob <-- package folder from tag specified
+#           /setup.py
+#           /...
+#       /azure-storage-queue
+#       /azure-storage-file-datalake
+#       /azure-storage-fileshare
 
 import argparse
 import sys
 import os
 import shutil
-import pdb
 import re
 
 from common_tasks import process_glob_string, run_check_call, str_to_bool, parse_setup
