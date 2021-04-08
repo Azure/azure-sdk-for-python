@@ -21,8 +21,6 @@ steps:
     inputs:
       versionSpec: $(PythonVersion)
 
-  # use conda
-
   - script: |
       pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
@@ -44,12 +42,6 @@ steps:
       displayName: 'Clean Up Before Building ${{ artifact.name }}'
 
     - ${{ each checkout in artifact.checkout }}:
-      # - pwsh: |
-      #     Write-Host "${{checkout.package}}"
-      #     Write-Host "${{checkout.checkout_path}}"
-      #     Write-Host "${{checkout.version}}"
-      #   displayName: Write Variables for Debug
-
       - template: /eng/pipelines/templates/steps/get-tagged-code.yml
         parameters:
           DestinationDirectory: $(conda.build)/${{checkout.package}}

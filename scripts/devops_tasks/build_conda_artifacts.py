@@ -183,7 +183,7 @@ def create_setup_files(build_directory, common_root, artifact_name, service, met
         f.write(setup_template)
 
     manifest_template = MANIFEST_TEMPLATE.format(
-        namespace_includes="\n".join(get_manifest_includes(common_root))
+        namespace_includes="\n".join(["include " + ns for ns in get_manifest_includes(common_root)])
     )
 
     with open(manifest_location, "w") as f:
