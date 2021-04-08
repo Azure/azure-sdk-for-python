@@ -23,7 +23,7 @@ def get_model():
     # This API call will return a dictionary mapping DTMI to its corresponding model from
     # a DTDL document at the specified endpoint
     # i.e. https://devicemodels.azure.com/dtmi/com/example/temperaturecontroller-1.json
-    model_map = client.get_models([dtmi])
+    model_map = client.get_models(dtmi)
     pprint.pprint(model_map)
 
 

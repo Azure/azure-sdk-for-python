@@ -197,19 +197,21 @@ def _create_fetcher(location, **kwargs):
 
 def _create_pipeline(**kwargs):
     """Creates and returns a PipelineClient configured for the provided base_url and kwargs"""
-    transport = RequestsTransport(**kwargs)
+    transport = kwargs.get("transport", RequestsTransport(**kwargs))
     policies = [
-        UserAgentPolicy(_constants.USER_AGENT, **kwargs),
-        HeadersPolicy(**kwargs),
-        RetryPolicy(**kwargs),
-        RedirectPolicy(**kwargs),
-        NetworkTraceLoggingPolicy(**kwargs),
-        ProxyPolicy(**kwargs),
+        kwargs.get("user_agent_policy", UserAgentPolicy(_constants.USER_AGENT, **kwargs)),
+        kwargs.get("headers_policy", HeadersPolicy(**kwargs)),
+        kwargs.get("authentication_policy"),
+        kwargs.get("retry_policy", RetryPolicy(**kwargs)),
+        kwargs.get("redirect_policy", RedirectPolicy(**kwargs)),
+        kwargs.get("logging_policy", NetworkTraceLoggingPolicy(**kwargs),
+        kwargs.get("proxy_policy", ProxyPolicy(**kwargs))
     ]
     return Pipeline(policies=policies, transport=transport)
 
 
 def _sanitize_filesystem_path(path):
+    """Sanitize the filesystem path to be formatted correctly for the current OS"""
     path = os.path.normcase(path)
     path = os.path.normpath(path)
     return path

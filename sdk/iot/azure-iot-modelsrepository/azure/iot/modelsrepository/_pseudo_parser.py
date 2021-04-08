@@ -42,7 +42,7 @@ class PseudoParser(object):
 
     def _expand(self, model, model_map):
         _LOGGER.debug("Expanding model: %s", model["@id"])
-        dependencies = _get_dependency_list(model)
+        dependencies = _get_model_dependencies(model)
         dependencies_to_resolve = [
             dependency for dependency in dependencies if dependency not in model_map
         ]
@@ -57,8 +57,8 @@ class PseudoParser(object):
             _LOGGER.debug("No outstanding dependencies found")
 
 
-def _get_dependency_list(model):
-    """Return a list of DTMIs for model dependencies"""
+def _get_model_dependencies(model):
+    """Return a list of dependency DTMIs for a given model"""
     dependencies = []
 
     if "contents" in model:
@@ -80,7 +80,7 @@ def _get_dependency_list(model):
                     dependencies.append(item)
                 elif isinstance(item, dict):
                     # This is a nested model. Now go get its dependencies and add them
-                    dependencies += _get_dependency_list(item)
+                    dependencies += _get_model_dependencies(item)
 
     # Remove duplicate dependencies
     dependencies = list(set(dependencies))
