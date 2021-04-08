@@ -14,19 +14,17 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-resourcegraph/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resourcegraph/8.0.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
-    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2020-04-01-preview
+    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01
   response:
     body:
-      string: "{\"error\":{\"code\":\"BadRequest\",\"message\":\"Please provide below\
-        \ info when asking for support: timestamp = 2020-12-15T09:46:59.0405078Z,\
-        \ correlationId = c0a5961d-2258-4095-a131-5549202a1243.\",\"details\":[{\"\
-        code\":\"InvalidQuery\",\"message\":\"Query is invalid. Please refer to the\
-        \ documentation for the Azure Resource Graph service and fix the error before\
-        \ retrying.\"},{\"code\":\"ParserFailure\",\"message\":\"ParserFailure\",\"\
-        line\":1,\"characterPositionInLine\":34,\"token\":\"<EOF>\",\"expectedToken\"\
-        :\"\u0179\"}]}}"
+      string: "{\"error\":{\"code\":\"BadRequest\",\"message\":\"Please provide below
+        info when asking for support: timestamp = 2021-03-31T05:52:19.6841201Z, correlationId
+        = 6af413a8-23eb-4ce4-bbeb-69da916d1f74.\",\"details\":[{\"code\":\"InvalidQuery\",\"message\":\"Query
+        is invalid. Please refer to the documentation for the Azure Resource Graph
+        service and fix the error before retrying.\"},{\"code\":\"ParserFailure\",\"message\":\"ParserFailure\",\"line\":1,\"characterPositionInLine\":34,\"token\":\"<EOF>\",\"expectedToken\":\"\u01CF\"}]}}"
     headers:
       cache-control:
       - no-cache
@@ -35,7 +33,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 15 Dec 2020 09:46:58 GMT
+      - Wed, 31 Mar 2021 05:52:19 GMT
       expires:
       - '-1'
       pragma:
