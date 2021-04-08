@@ -8,13 +8,11 @@ param (
     [string] $TestApplicationSecret
 )
 
-Import-Module Az -Force
-
 $version = (Get-Module Az).Version
 # Detect if we are running an azure powershell version without the Import-AzContainerRegistryImage command
 $minimumVersion = New-Object -TypeName Version -ArgumentList "5.6.0"
 if ($version -lt $minimumVersion) {
-    Update-Module Az -RequiredVersion "5.7.0" -Force
+    Import-Module Az -Force -RequiredVersion 5.7.0
 }
 
 Import-AzContainerRegistryImage `
