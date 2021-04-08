@@ -482,7 +482,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             transaction_count = 0
 
             batch = self.table.create_batch()
-            for i in range(100):
+            for i in range(10):
                 entity.RowKey = str(i)
                 batch.create_entity(entity)
                 transaction_count += 1
@@ -500,7 +500,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
 
             # Assert
             assert entities is not None
-            assert 100 ==  length
+            assert 10 == length
         finally:
             await self._tear_down()
 
