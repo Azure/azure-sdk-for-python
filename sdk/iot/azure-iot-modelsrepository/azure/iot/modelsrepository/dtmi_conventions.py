@@ -19,8 +19,7 @@ def is_valid_dtmi(dtmi):
     )
     if not pattern.match(dtmi):
         return False
-    else:
-        return True
+    return True
 
 
 def get_model_uri(dtmi, repository_uri, expanded=False):
@@ -54,10 +53,7 @@ def _convert_dtmi_to_path(dtmi, expanded=False):
     :returns: Relative path of the model in a Models Repository
     :rtype: str
     """
-    pattern = re.compile(
-        "^dtmi:[A-Za-z](?:[A-Za-z0-9_]*[A-Za-z0-9])?(?::[A-Za-z](?:[A-Za-z0-9_]*[A-Za-z0-9])?)*;[1-9][0-9]{0,8}$"
-    )
-    if not pattern.match(dtmi):
+    if not is_valid_dtmi(dtmi):
         raise ValueError("Invalid DTMI")
     dtmi_path = dtmi.lower().replace(":", "/").replace(";", "-") + ".json"
     if expanded:

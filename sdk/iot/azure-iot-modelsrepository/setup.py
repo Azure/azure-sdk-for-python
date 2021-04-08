@@ -4,8 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from setuptools import setup, find_packages
 import re
+from setuptools import setup, find_packages
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
@@ -44,10 +44,14 @@ setup(
     author="Microsoft Corporation",
     author_email="azpysdkhelp@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python",
+    project_urls={
+        "Bug Tracker": "https://github.com/Azure/azure-sdk-for-python/issues",
+        "Source": "https://github.com/Azure/azure-sdk-for-python",
+    },
     long_description=_long_description,
     long_description_content_type="text/markdown",
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "License :: OSI Approved :: MIT License",
@@ -62,10 +66,10 @@ setup(
         "Programming Language :: Python :: 3.9",
     ],
     install_requires=[
-        "azure-core",
-        "six",
+        "azure-core<2.0.0,>=1.2.2",
+        "six>=1.11.0",
     ],
-    extras_require={":python_version<'3.0'": ["azure-iot-nspkg>=1.0.1"]},
+    extras_require={":python_version<'3.0'": ["azure-iot-nspkg"]},
     python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3*, !=3.4.*",
     packages=find_packages(
         exclude=[

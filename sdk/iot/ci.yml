@@ -30,5 +30,7 @@ extends:
   parameters:
     ServiceDirectory: iot
     Artifacts:
-    - name: azure_iot_nspkg
+    - name: azure-iot-modelsrepository
+      safeName: azureiotmodelsrepository
+    - name: azure-iot-nspkg
       safeName: azureiotnspkg

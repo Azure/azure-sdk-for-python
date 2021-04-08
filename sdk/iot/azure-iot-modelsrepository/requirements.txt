@@ -1,7 +1,0 @@
-pytest
-pytest-mock
-pytest-testdox
-flake8
-
-azure-core
-six

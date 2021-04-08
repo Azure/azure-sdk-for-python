@@ -4,10 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-import logging
 from azure.iot.modelsrepository import dtmi_conventions
-
-logging.basicConfig(level=logging.DEBUG)
 
 
 @pytest.mark.describe(".is_valid_dtmi()")
@@ -60,7 +57,19 @@ class TestGetModelURI(object):
                 "dtmi:com:somedomain:example:FooDTDL;1",
                 "file:///myrepository/",
                 "file:///myrepository/dtmi/com/somedomain/example/foodtdl-1.json",
-                id="Filesystem URI",
+                id="POSIX Filesystem URI",
+            ),
+            pytest.param(
+                "dtmi:com:somedomain:example:FooDTDL;1",
+                "file://c:/myrepository/",
+                "file://c:/myrepository/dtmi/com/somedomain/example/foodtdl-1.json",
+                id="Drive Letter Filesystem URI",
+            ),
+            pytest.param(
+                "dtmi:com:somedomain:example:FooDTDL;1",
+                "file://server/myrepository",
+                "file://server/myrepository/dtmi/com/somedomain/example/foodtdl-1.json",
+                id="Windows UNC Filesystem URI",
             ),
             pytest.param(
                 "dtmi:com:somedomain:example:FooDTDL;1",
@@ -86,21 +95,33 @@ class TestGetModelURI(object):
         [
             pytest.param(
                 "dtmi:com:somedomain:example:FooDTDL;1",
-                "https://myrepository/",
-                "https://myrepository/dtmi/com/somedomain/example/foodtdl-1.expanded.json",
+                "https://myfakerepository.com/",
+                "https://myfakerepository.com/dtmi/com/somedomain/example/foodtdl-1.expanded.json",
                 id="HTTPS repository URI",
             ),
             pytest.param(
                 "dtmi:com:somedomain:example:FooDTDL;1",
-                "http://myrepository/",
-                "http://myrepository/dtmi/com/somedomain/example/foodtdl-1.expanded.json",
+                "http://myfakerepository.com/",
+                "http://myfakerepository.com/dtmi/com/somedomain/example/foodtdl-1.expanded.json",
                 id="HTTP repository URI",
             ),
             pytest.param(
                 "dtmi:com:somedomain:example:FooDTDL;1",
                 "file:///myrepository/",
                 "file:///myrepository/dtmi/com/somedomain/example/foodtdl-1.expanded.json",
-                id="Filesystem URI",
+                id="POSIX Filesystem URI",
+            ),
+            pytest.param(
+                "dtmi:com:somedomain:example:FooDTDL;1",
+                "file://c:/myrepository/",
+                "file://c:/myrepository/dtmi/com/somedomain/example/foodtdl-1.expanded.json",
+                id="Drive Letter Filesystem URI",
+            ),
+            pytest.param(
+                "dtmi:com:somedomain:example:FooDTDL;1",
+                "file://server/myrepository",
+                "file://server/myrepository/dtmi/com/somedomain/example/foodtdl-1.expanded.json",
+                id="Windows UNC Filesystem URI",
             ),
             pytest.param(
                 "dtmi:com:somedomain:example:FooDTDL;1",
@@ -110,8 +131,8 @@ class TestGetModelURI(object):
             ),
             pytest.param(
                 "dtmi:com:somedomain:example:FooDTDL;1",
-                "http://myrepository",
-                "http://myrepository/dtmi/com/somedomain/example/foodtdl-1.expanded.json",
+                "http://myrepository.com",
+                "http://myrepository.com/dtmi/com/somedomain/example/foodtdl-1.expanded.json",
                 id="Repository URI without trailing '/'",
             ),
         ],

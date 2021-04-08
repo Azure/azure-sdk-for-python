@@ -15,4 +15,16 @@ from ._client import (
 )
 
 # Error handling
-from ._resolver import ResolverError
+from .exceptions import ModelError
+
+__all__ = [
+    "ModelsRepositoryClient",
+    "ModelError",
+    "DEPENDENCY_MODE_DISABLED",
+    "DEPENDENCY_MODE_ENABLED",
+    "DEPENDENCY_MODE_TRY_FROM_EXPANDED",
+]
+
+from ._constants import VERSION
+
+__version__ = VERSION
