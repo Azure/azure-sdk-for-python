@@ -76,6 +76,9 @@ class AcrBodyReplacer(RecordingProcessor):
 
             body = response["body"]
             try:
+                if body["string"] == b'':
+                    return response
+
                 refresh = json.loads(body["string"])
                 if "refresh_token" in refresh.keys():
                     refresh["refresh_token"] = REDACTED
@@ -83,7 +86,9 @@ class AcrBodyReplacer(RecordingProcessor):
                 if "access_token" in refresh.keys():
                     refresh["access_token"] = REDACTED
                     body["string"] = json.dumps(refresh)
-
+            except ValueError:
+                # Python 2.7 doesn't have the below error
+                pass
             except json.decoder.JSONDecodeError:
                 pass
 
@@ -172,16 +177,22 @@ class ContainerRegistryTestClass(AzureTestCase):
 
         reg_client = self.create_registry_client(endpoint)
         for repo in reg_client.list_repositories():
-            repo_client = self.create_repository_client(endpoint, repo)
-            for tag in repo_client.list_tags():
+            if repo.startswith("repo"):
+                repo_client = self.create_repository_client(endpoint, repo)
+                for tag in repo_client.list_tags():
 
-                p = tag.content_permissions
-                p.can_delete = True
-                repo_client.set_tag_properties(tag.digest, p)
+                    try:
+                        p = tag.content_permissions
+                        p.can_delete = True
+                        repo_client.set_tag_properties(tag.digest, p)
+                    except:
+                        pass
 
-            self.sleep(10)
-
-            reg_client.delete_repository(repo)
+                self.sleep(10)
+                try:
+                    reg_client.delete_repository(repo)
+                except:
+                    pass
 
     def get_credential(self):
         if self.is_live:
