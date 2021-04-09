@@ -22,9 +22,10 @@ jobs:
           targetType: filePath
           filePath: eng/scripts/update-docs-ci.ps1
           arguments: >
-            -DocRepoLocation $(Build.SourcesDirectory)/docs
-            -Configs "{'path_to_config':'package.json'}"
+            -DocRepoLocation $(Pipeline.Workspace)/docs
+            -Configs "{'targets': [{'path_to_config':'ci-configs/packages-preview.json','Mode':'Preview','content_folder':'docs-ref-services/preview'},{'path_to_config':'ci-configs/packages-latest.json','mode':'Latest','content_folder':'docs-ref-services/latest'}]}"
           pwsh: true
+
       - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
         parameters:
           BaseRepoBranch: 'a-test-branch'
