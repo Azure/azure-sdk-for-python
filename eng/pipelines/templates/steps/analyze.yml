@@ -15,14 +15,6 @@ steps:
       ServiceDirectory: "template"
       TestPipeline: ${{ parameters.TestPipeline }}
 
-  - ${{ each artifact in parameters.Artifacts }}:
-    - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
-      - template: /eng/common/pipelines/templates/steps/verify-changelog.yml
-        parameters:
-          PackageName: ${{artifact.name}}
-          ServiceName: ${{parameters.ServiceDirectory}}
-          ForRelease: false
-
     # Using --always-succeed so as not to block the build. Once package
     # target is based on data available per-package the --always-succeed should
     # be removed so this script can help enforce correct practices

@@ -1,2 +1,4 @@
+-e ../../../tools/azure-devtools
 -e ../../../tools/azure-sdk-tools
 -e ../../storage/azure-mgmt-storage
+azure-identity

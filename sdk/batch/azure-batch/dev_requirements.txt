@@ -1,2 +1,4 @@
 -e ../../../tools/azure-sdk-tools
 -e ../azure-mgmt-batch
+-e ../../identity/azure-identity
+-e ../../../tools/azure-devtools
