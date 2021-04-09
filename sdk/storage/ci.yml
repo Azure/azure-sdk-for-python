@@ -60,7 +60,7 @@ extends:
     - name: azure-mgmt-storagesync
       safeName: azuremgmtstoragesync
     - name: azure-mgmt-storageimportexport
-      safeName: azuremgmtstorageimportexportP
+      safeName: azuremgmtstorageimportexport
     CondaArtifacts:
     - name: azure-storage
       meta_source: meta.yaml
@@ -78,4 +78,3 @@ extends:
         - package: azure-storage-file-datalake
           checkout_path: sdk/storage
           version: 12.3.0
-
