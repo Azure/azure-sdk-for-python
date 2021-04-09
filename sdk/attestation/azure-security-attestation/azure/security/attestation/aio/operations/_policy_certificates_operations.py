@@ -24,7 +24,7 @@ class PolicyCertificatesOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.security.attestation.models
+    :type models: ~azure.attestation.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -49,7 +49,7 @@ class PolicyCertificatesOperations:
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyCertificatesResponse, or the result of cls(response)
-        :rtype: ~azure.security.attestation.models.PolicyCertificatesResponse
+        :rtype: ~azure.attestation.models.PolicyCertificatesResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyCertificatesResponse"]
@@ -81,7 +81,7 @@ class PolicyCertificatesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CloudError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('PolicyCertificatesResponse', pipeline_response)
@@ -106,7 +106,7 @@ class PolicyCertificatesOperations:
         :type policy_certificate_to_add: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyCertificatesModifyResponse, or the result of cls(response)
-        :rtype: ~azure.security.attestation.models.PolicyCertificatesModifyResponse
+        :rtype: ~azure.attestation.models.PolicyCertificatesModifyResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyCertificatesModifyResponse"]
@@ -143,7 +143,7 @@ class PolicyCertificatesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CloudError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('PolicyCertificatesModifyResponse', pipeline_response)
@@ -170,7 +170,7 @@ class PolicyCertificatesOperations:
         :type policy_certificate_to_remove: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyCertificatesModifyResponse, or the result of cls(response)
-        :rtype: ~azure.security.attestation.models.PolicyCertificatesModifyResponse
+        :rtype: ~azure.attestation.models.PolicyCertificatesModifyResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyCertificatesModifyResponse"]
@@ -207,7 +207,7 @@ class PolicyCertificatesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CloudError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('PolicyCertificatesModifyResponse', pipeline_response)

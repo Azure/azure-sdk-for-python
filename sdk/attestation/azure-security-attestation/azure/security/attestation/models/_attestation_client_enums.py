@@ -28,28 +28,39 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
 
 class AttestationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    SGX_ENCLAVE = "SgxEnclave"  #: Intel Software Guard eXtensions.
-    OPEN_ENCLAVE = "OpenEnclave"  #: OpenEnclave extensions to SGX.
-    TPM = "Tpm"  #: Edge TPM Virtualization Based Security.
+    #: Intel Software Guard eXtensions.
+    SGX_ENCLAVE = "SgxEnclave"
+    #: OpenEnclave extensions to SGX.
+    OPEN_ENCLAVE = "OpenEnclave"
+    #: Edge TPM Virtualization Based Security.
+    TPM = "Tpm"
 
 class CertificateModification(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The result of the operation
     """
 
-    IS_PRESENT = "IsPresent"  #: After the operation was performed, the certificate is in the set of certificates.
-    IS_ABSENT = "IsAbsent"  #: After the operation was performed, the certificate is no longer present in the set of certificates.
+    #: After the operation was performed, the certificate is in the set of certificates.
+    IS_PRESENT = "IsPresent"
+    #: After the operation was performed, the certificate is no longer present in the set of
+    #: certificates.
+    IS_ABSENT = "IsAbsent"
 
 class DataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the type of the data encoded contained within the "data" field of a "RuntimeData" or
     "InitTimeData" object
     """
 
-    BINARY = "Binary"  #: The contents of the field should be treated as binary and not interpreted by MAA.
-    JSON = "JSON"  #: The contents of the field should be treated as a JSON object and may be further interpreted by MAA.
+    #: The contents of the field should be treated as binary and not interpreted by MAA.
+    BINARY = "Binary"
+    #: The contents of the field should be treated as a JSON object and may be further interpreted by
+    #: MAA.
+    JSON = "JSON"
 
 class PolicyModification(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The result of the operation
     """
 
-    UPDATED = "Updated"  #: The specified policy object was updated.
-    REMOVED = "Removed"  #: The specified policy object was removed.
+    #: The specified policy object was updated.
+    UPDATED = "Updated"
+    #: The specified policy object was removed.
+    REMOVED = "Removed"

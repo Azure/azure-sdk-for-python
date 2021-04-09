@@ -28,7 +28,7 @@ class AttestationOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.security.attestation.models
+    :type models: ~azure.attestation.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -55,10 +55,10 @@ class AttestationOperations(object):
         dependent upon attestation policy.
 
         :param request: Request object containing the quote.
-        :type request: ~azure.security.attestation.models.AttestOpenEnclaveRequest
+        :type request: ~azure.attestation.models.AttestOpenEnclaveRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AttestationResponse, or the result of cls(response)
-        :rtype: ~azure.security.attestation.models.AttestationResponse
+        :rtype: ~azure.attestation.models.AttestationResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AttestationResponse"]
@@ -95,7 +95,7 @@ class AttestationOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CloudError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('AttestationResponse', pipeline_response)
@@ -118,10 +118,10 @@ class AttestationOperations(object):
         dependent upon attestation policy.
 
         :param request: Request object containing the quote.
-        :type request: ~azure.security.attestation.models.AttestSgxEnclaveRequest
+        :type request: ~azure.attestation.models.AttestSgxEnclaveRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AttestationResponse, or the result of cls(response)
-        :rtype: ~azure.security.attestation.models.AttestationResponse
+        :rtype: ~azure.attestation.models.AttestationResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AttestationResponse"]
@@ -158,7 +158,7 @@ class AttestationOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CloudError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('AttestationResponse', pipeline_response)
@@ -171,7 +171,7 @@ class AttestationOperations(object):
 
     def attest_tpm(
         self,
-        data=None,  # type: Optional[bytes]
+        request,  # type: "_models.TpmAttestationRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.TpmAttestationResponse"
@@ -180,11 +180,11 @@ class AttestationOperations(object):
         Processes attestation evidence from a VBS enclave, producing an attestation result. The
         attestation result produced is dependent upon the attestation policy.
 
-        :param data: Protocol data containing artifacts for attestation.
-        :type data: bytes
+        :param request: Request object.
+        :type request: ~azure.attestation.models.TpmAttestationRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TpmAttestationResponse, or the result of cls(response)
-        :rtype: ~azure.security.attestation.models.TpmAttestationResponse
+        :rtype: ~azure.attestation.models.TpmAttestationResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.TpmAttestationResponse"]
@@ -192,8 +192,6 @@ class AttestationOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _request = _models.TpmAttestationRequest(data=data)
         api_version = "2020-10-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -215,7 +213,7 @@ class AttestationOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_request, 'TpmAttestationRequest')
+        body_content = self._serialize.body(request, 'TpmAttestationRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -223,7 +221,7 @@ class AttestationOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CloudError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('TpmAttestationResponse', pipeline_response)

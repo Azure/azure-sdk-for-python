@@ -14,7 +14,7 @@ class AttestationCertificateManagementBody(msrest.serialization.Model):
     """The body of the JWT used for the PolicyCertificates APIs.
 
     :param policy_certificate: RFC 7517 Json Web Key describing the certificate.
-    :type policy_certificate: ~azure.security.attestation.models.JSONWebKey
+    :type policy_certificate: ~azure.attestation.models.JSONWebKey
     """
 
     _attribute_map = {
@@ -83,7 +83,7 @@ class AttestationResult(msrest.serialization.Model):
     :param verifier_type: The Attestation type being attested.
     :type verifier_type: str
     :param policy_signer: The certificate used to sign the policy object, if specified.
-    :type policy_signer: ~azure.security.attestation.models.JSONWebKey
+    :type policy_signer: ~azure.attestation.models.JSONWebKey
     :param policy_hash: The SHA256 hash of the BASE64URL encoded policy text used for attestation.
     :type policy_hash: bytes
     :param is_debuggable: True if the enclave is debuggable, false otherwise.
@@ -124,7 +124,7 @@ class AttestationResult(msrest.serialization.Model):
     :param deprecated_tee: DEPRECATED: Private Preview version of x-ms-tee.
     :type deprecated_tee: str
     :param deprecated_policy_signer: DEPRECATED: Private Preview version of x-ms-policy-signer.
-    :type deprecated_policy_signer: ~azure.security.attestation.models.JSONWebKey
+    :type deprecated_policy_signer: ~azure.attestation.models.JSONWebKey
     :param deprecated_policy_hash: DEPRECATED: Private Preview version of x-ms-policy-hash.
     :type deprecated_policy_hash: bytes
     :param deprecated_rp_data: DEPRECATED: Private Preview version of nonce.
@@ -217,15 +217,13 @@ class AttestOpenEnclaveRequest(msrest.serialization.Model):
     :param runtime_data: Runtime data provided by the enclave at the time of report generation. The
      MAA will verify that the first 32 bytes of the report_data field of the quote contains the
      SHA256 hash of the decoded "data" field of the runtime data.
-    :type runtime_data: ~azure.security.attestation.models.RuntimeData
+    :type runtime_data: ~azure.attestation.models.RuntimeData
     :param init_time_data: Base64Url encoded "InitTime data". The MAA will verify that the init
      data was known to the enclave. Note that InitTimeData is invalid for CoffeeLake processors.
-    :type init_time_data: ~azure.security.attestation.models.InitTimeData
+    :type init_time_data: ~azure.attestation.models.InitTimeData
     :param draft_policy_for_attestation: Attest against the provided draft policy. Note that the
      resulting token cannot be validated.
     :type draft_policy_for_attestation: str
-    :param nonce: Nonce for incoming request - emitted in the generated attestation token.
-    :type nonce: str
     """
 
     _attribute_map = {
@@ -233,7 +231,6 @@ class AttestOpenEnclaveRequest(msrest.serialization.Model):
         'runtime_data': {'key': 'runtimeData', 'type': 'RuntimeData'},
         'init_time_data': {'key': 'initTimeData', 'type': 'InitTimeData'},
         'draft_policy_for_attestation': {'key': 'draftPolicyForAttestation', 'type': 'str'},
-        'nonce': {'key': 'nonce', 'type': 'str'},
     }
 
     def __init__(
@@ -245,7 +242,6 @@ class AttestOpenEnclaveRequest(msrest.serialization.Model):
         self.runtime_data = kwargs.get('runtime_data', None)
         self.init_time_data = kwargs.get('init_time_data', None)
         self.draft_policy_for_attestation = kwargs.get('draft_policy_for_attestation', None)
-        self.nonce = kwargs.get('nonce', None)
 
 
 class AttestSgxEnclaveRequest(msrest.serialization.Model):
@@ -256,16 +252,14 @@ class AttestSgxEnclaveRequest(msrest.serialization.Model):
     :param runtime_data: Runtime data provided by the enclave at the time of quote generation. The
      MAA will verify that the first 32 bytes of the report_data field of the quote contains the
      SHA256 hash of the decoded "data" field of the runtime data.
-    :type runtime_data: ~azure.security.attestation.models.RuntimeData
+    :type runtime_data: ~azure.attestation.models.RuntimeData
     :param init_time_data: Initialization data provided when the enclave is created. MAA will
      verify that the init data was known to the enclave. Note that InitTimeData is invalid for
      CoffeeLake processors.
-    :type init_time_data: ~azure.security.attestation.models.InitTimeData
+    :type init_time_data: ~azure.attestation.models.InitTimeData
     :param draft_policy_for_attestation: Attest against the provided draft policy. Note that the
      resulting token cannot be validated.
     :type draft_policy_for_attestation: str
-    :param nonce: Nonce for incoming request - emitted in the generated attestation token.
-    :type nonce: str
     """
 
     _attribute_map = {
@@ -273,7 +267,6 @@ class AttestSgxEnclaveRequest(msrest.serialization.Model):
         'runtime_data': {'key': 'runtimeData', 'type': 'RuntimeData'},
         'init_time_data': {'key': 'initTimeData', 'type': 'InitTimeData'},
         'draft_policy_for_attestation': {'key': 'draftPolicyForAttestation', 'type': 'str'},
-        'nonce': {'key': 'nonce', 'type': 'str'},
     }
 
     def __init__(
@@ -285,14 +278,13 @@ class AttestSgxEnclaveRequest(msrest.serialization.Model):
         self.runtime_data = kwargs.get('runtime_data', None)
         self.init_time_data = kwargs.get('init_time_data', None)
         self.draft_policy_for_attestation = kwargs.get('draft_policy_for_attestation', None)
-        self.nonce = kwargs.get('nonce', None)
 
 
 class CloudError(msrest.serialization.Model):
     """An error response from Attestation.
 
     :param error: An error response from Attestation.
-    :type error: ~azure.security.attestation.models.CloudErrorBody
+    :type error: ~azure.attestation.models.CloudErrorBody
     """
 
     _attribute_map = {
@@ -340,7 +332,7 @@ class InitTimeData(msrest.serialization.Model):
     :type data: bytes
     :param data_type: The type of data contained within the "data" field. Possible values include:
      "Binary", "JSON".
-    :type data_type: str or ~azure.security.attestation.models.DataType
+    :type data_type: str or ~azure.attestation.models.DataType
     """
 
     _attribute_map = {
@@ -362,7 +354,7 @@ class JSONWebKey(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param alg: Required. The "alg" (algorithm) parameter identifies the algorithm intended for
+    :param alg: The "alg" (algorithm) parameter identifies the algorithm intended for
      use with the key.  The values used should either be registered in the
      IANA "JSON Web Signature and Encryption Algorithms" registry
      established by [JWA] or be a value that contains a Collision-
@@ -380,7 +372,7 @@ class JSONWebKey(msrest.serialization.Model):
     :type e: str
     :param k: Symmetric key.
     :type k: str
-    :param kid: Required. The "kid" (key ID) parameter is used to match a specific key.  This
+    :param kid: The "kid" (key ID) parameter is used to match a specific key.  This
      is used, for instance, to choose among a set of keys within a JWK Set
      during key rollover.  The structure of the "kid" value is
      unspecified.  When "kid" values are used within a JWK Set, different
@@ -404,7 +396,7 @@ class JSONWebKey(msrest.serialization.Model):
     :type q: str
     :param qi: RSA Private Key Parameter.
     :type qi: str
-    :param use: Required. Use ("public key use") identifies the intended use of
+    :param use: Use ("public key use") identifies the intended use of
      the public key. The "use" parameter is employed to indicate whether
      a public key is used for encrypting data or verifying the signature
      on data. Values are commonly "sig" (signature) or "enc" (encryption).
@@ -424,10 +416,7 @@ class JSONWebKey(msrest.serialization.Model):
     """
 
     _validation = {
-        'alg': {'required': True},
-        'kid': {'required': True},
         'kty': {'required': True},
-        'use': {'required': True},
     }
 
     _attribute_map = {
@@ -455,20 +444,20 @@ class JSONWebKey(msrest.serialization.Model):
         **kwargs
     ):
         super(JSONWebKey, self).__init__(**kwargs)
-        self.alg = kwargs['alg']
+        self.alg = kwargs.get('alg', None)
         self.crv = kwargs.get('crv', None)
         self.d = kwargs.get('d', None)
         self.dp = kwargs.get('dp', None)
         self.dq = kwargs.get('dq', None)
         self.e = kwargs.get('e', None)
         self.k = kwargs.get('k', None)
-        self.kid = kwargs['kid']
+        self.kid = kwargs.get('kid', None)
         self.kty = kwargs['kty']
         self.n = kwargs.get('n', None)
         self.p = kwargs.get('p', None)
         self.q = kwargs.get('q', None)
         self.qi = kwargs.get('qi', None)
-        self.use = kwargs['use']
+        self.use = kwargs.get('use', None)
         self.x = kwargs.get('x', None)
         self.x5_c = kwargs.get('x5_c', None)
         self.y = kwargs.get('y', None)
@@ -482,7 +471,7 @@ class JSONWebKeySet(msrest.serialization.Model):
      an order of preference among them, although applications of JWK Sets
      can choose to assign a meaning to the order for their purposes, if
      desired.
-    :type keys: list[~azure.security.attestation.models.JSONWebKey]
+    :type keys: list[~azure.attestation.models.JSONWebKey]
     """
 
     _attribute_map = {
@@ -505,7 +494,7 @@ class PolicyCertificatesModificationResult(msrest.serialization.Model):
     :type certificate_thumbprint: str
     :param certificate_resolution: The result of the operation. Possible values include:
      "IsPresent", "IsAbsent".
-    :type certificate_resolution: str or ~azure.security.attestation.models.CertificateModification
+    :type certificate_resolution: str or ~azure.attestation.models.CertificateModification
     """
 
     _attribute_map = {
@@ -575,7 +564,7 @@ class PolicyCertificatesResult(msrest.serialization.Model):
 
     :param policy_certificates: SHA256 Hash of the binary representation certificate which was
      added or removed.
-    :type policy_certificates: ~azure.security.attestation.models.JSONWebKeySet
+    :type policy_certificates: ~azure.attestation.models.JSONWebKeySet
     """
 
     _attribute_map = {
@@ -618,11 +607,11 @@ class PolicyResult(msrest.serialization.Model):
 
     :param policy_resolution: The result of the operation. Possible values include: "Updated",
      "Removed".
-    :type policy_resolution: str or ~azure.security.attestation.models.PolicyModification
+    :type policy_resolution: str or ~azure.attestation.models.PolicyModification
     :param policy_token_hash: The SHA256 hash of the policy object modified.
     :type policy_token_hash: bytes
     :param policy_signer: The certificate used to sign the policy object, if specified.
-    :type policy_signer: ~azure.security.attestation.models.JSONWebKey
+    :type policy_signer: ~azure.attestation.models.JSONWebKey
     :param policy: A JSON Web Token containing a StoredAttestationPolicy object with the
      attestation policy.
     :type policy: str
@@ -657,7 +646,7 @@ class RuntimeData(msrest.serialization.Model):
     :type data: bytes
     :param data_type: The type of data contained within the "data" field. Possible values include:
      "Binary", "JSON".
-    :type data_type: str or ~azure.security.attestation.models.DataType
+    :type data_type: str or ~azure.attestation.models.DataType
     """
 
     _attribute_map = {
