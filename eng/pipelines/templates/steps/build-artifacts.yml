@@ -92,7 +92,3 @@ steps:
       ArtifactPath: '$(Build.SourcesDirectory)/_docs'
       CustomCondition: ${{ parameters.BuildDocs }}
       ArtifactName: 'documentation'
-
-  - template: /eng/common/pipelines/templates/steps/create-apireview.yml
-    parameters:
-      Artifacts: ${{ parameters.Artifacts }}
