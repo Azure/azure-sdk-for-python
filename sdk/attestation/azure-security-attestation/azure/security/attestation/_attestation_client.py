@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from typing import Any
 
     from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._configuration import AttestationClientConfiguration
 from .operations import PolicyOperations
@@ -30,15 +31,15 @@ class AttestationClient(object):
     """Describes the interface for the per-tenant enclave service.
 
     :ivar policy: PolicyOperations operations
-    :vartype policy: azure.security.attestation.operations.PolicyOperations
+    :vartype policy: azure.attestation.operations.PolicyOperations
     :ivar policy_certificates: PolicyCertificatesOperations operations
-    :vartype policy_certificates: azure.security.attestation.operations.PolicyCertificatesOperations
+    :vartype policy_certificates: azure.attestation.operations.PolicyCertificatesOperations
     :ivar attestation: AttestationOperations operations
-    :vartype attestation: azure.security.attestation.operations.AttestationOperations
+    :vartype attestation: azure.attestation.operations.AttestationOperations
     :ivar signing_certificates: SigningCertificatesOperations operations
-    :vartype signing_certificates: azure.security.attestation.operations.SigningCertificatesOperations
+    :vartype signing_certificates: azure.attestation.operations.SigningCertificatesOperations
     :ivar metadata_configuration: MetadataConfigurationOperations operations
-    :vartype metadata_configuration: azure.security.attestation.operations.MetadataConfigurationOperations
+    :vartype metadata_configuration: azure.attestation.operations.MetadataConfigurationOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param instance_url: The attestation instance base URI, for example https://mytenant.attest.azure.net.
@@ -71,6 +72,24 @@ class AttestationClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.metadata_configuration = MetadataConfigurationOperations(
             self._client, self._config, self._serialize, self._deserialize)
+
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        """
+        path_format_arguments = {
+            'instanceUrl': self._serialize.url("self._config.instance_url", self._config.instance_url, 'str', skip_quote=True),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     def close(self):
         # type: () -> None

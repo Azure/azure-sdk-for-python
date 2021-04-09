@@ -24,7 +24,7 @@ class MetadataConfigurationOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.security.attestation.models
+    :type models: ~azure.attestation.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -79,7 +79,7 @@ class MetadataConfigurationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CloudError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('object', pipeline_response)
