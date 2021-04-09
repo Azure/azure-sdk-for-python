@@ -28,7 +28,7 @@ class PolicyCertificatesOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.attestation.models
+    :type models: ~azure.security.attestation._generated.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -54,7 +54,7 @@ class PolicyCertificatesOperations(object):
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyCertificatesResponse, or the result of cls(response)
-        :rtype: ~azure.attestation.models.PolicyCertificatesResponse
+        :rtype: ~azure.security.attestation._generated.models.PolicyCertificatesResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyCertificatesResponse"]
@@ -112,7 +112,7 @@ class PolicyCertificatesOperations(object):
         :type policy_certificate_to_add: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyCertificatesModifyResponse, or the result of cls(response)
-        :rtype: ~azure.attestation.models.PolicyCertificatesModifyResponse
+        :rtype: ~azure.security.attestation._generated.models.PolicyCertificatesModifyResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyCertificatesModifyResponse"]
@@ -177,7 +177,7 @@ class PolicyCertificatesOperations(object):
         :type policy_certificate_to_remove: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyCertificatesModifyResponse, or the result of cls(response)
-        :rtype: ~azure.attestation.models.PolicyCertificatesModifyResponse
+        :rtype: ~azure.security.attestation._generated.models.PolicyCertificatesModifyResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyCertificatesModifyResponse"]

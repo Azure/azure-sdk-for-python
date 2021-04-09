@@ -6,11 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._client import AttestationClient
+from ._azure_attestation_rest_client import AzureAttestationRestClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['AttestationClient']
+__all__ = ['AzureAttestationRestClient']
 
 try:
     from ._patch import patch_sdk  # type: ignore

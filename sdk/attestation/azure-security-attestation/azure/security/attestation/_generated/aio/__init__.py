@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._attestation_client import AttestationClient
-__all__ = ['AttestationClient']
+from ._azure_attestation_rest_client import AzureAttestationRestClient
+__all__ = ['AzureAttestationRestClient']

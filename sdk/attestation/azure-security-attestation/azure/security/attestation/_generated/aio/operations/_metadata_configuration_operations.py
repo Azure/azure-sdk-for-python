@@ -24,7 +24,7 @@ class MetadataConfigurationOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.attestation.models
+    :type models: ~azure.security.attestation._generated.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.

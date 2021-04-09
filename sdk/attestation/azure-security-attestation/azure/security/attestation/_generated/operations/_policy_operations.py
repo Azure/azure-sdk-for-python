@@ -28,7 +28,7 @@ class PolicyOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.attestation.models
+    :type models: ~azure.security.attestation._generated.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -55,10 +55,10 @@ class PolicyOperations(object):
 
         :param attestation_type: Specifies the trusted execution environment to be used to validate the
          evidence.
-        :type attestation_type: str or ~azure.attestation.models.AttestationType
+        :type attestation_type: str or ~azure.security.attestation._generated.models.AttestationType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyResponse, or the result of cls(response)
-        :rtype: ~azure.attestation.models.PolicyResponse
+        :rtype: ~azure.security.attestation._generated.models.PolicyResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyResponse"]
@@ -115,13 +115,13 @@ class PolicyOperations(object):
 
         :param attestation_type: Specifies the trusted execution environment to be used to validate the
          evidence.
-        :type attestation_type: str or ~azure.attestation.models.AttestationType
+        :type attestation_type: str or ~azure.security.attestation._generated.models.AttestationType
         :param new_attestation_policy: JWT Expressing the new policy whose body is a
          StoredAttestationPolicy object.
         :type new_attestation_policy: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyResponse, or the result of cls(response)
-        :rtype: ~azure.attestation.models.PolicyResponse
+        :rtype: ~azure.security.attestation._generated.models.PolicyResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyResponse"]
@@ -183,12 +183,12 @@ class PolicyOperations(object):
 
         :param attestation_type: Specifies the trusted execution environment to be used to validate the
          evidence.
-        :type attestation_type: str or ~azure.attestation.models.AttestationType
+        :type attestation_type: str or ~azure.security.attestation._generated.models.AttestationType
         :param policy_jws: JSON Web Signature with an empty policy document.
         :type policy_jws: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PolicyResponse, or the result of cls(response)
-        :rtype: ~azure.attestation.models.PolicyResponse
+        :rtype: ~azure.security.attestation._generated.models.PolicyResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyResponse"]
