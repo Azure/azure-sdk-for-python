@@ -14,9 +14,10 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/repoeb7113db/_tags/tageb7113db
   response:
     body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "repository", "Name": "repoeb7113db", "Action": "metadata_read"}]}]}'
+      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"repoeb7113db","Action":"metadata_read"}]}]}
+
+        '
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -30,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:43 GMT
+      - Fri, 09 Apr 2021 14:58:21 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -38,7 +39,8 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:repoeb7113db:metadata_read"
       x-content-type-options:
       - nosniff
     status:
@@ -70,7 +72,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:44 GMT
+      - Fri, 09 Apr 2021 14:58:22 GMT
       server:
       - openresty
       strict-transport-security:
@@ -78,7 +80,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.966667'
+      - '332.5'
     status:
       code: 200
       message: OK
@@ -108,7 +110,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:44 GMT
+      - Fri, 09 Apr 2021 14:58:22 GMT
       server:
       - openresty
       strict-transport-security:
@@ -116,7 +118,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.95'
+      - '332.483333'
     status:
       code: 200
       message: OK
@@ -137,7 +139,7 @@ interactions:
     body:
       string: '{"registry": "fake_url.azurecr.io", "imageName": "repoeb7113db", "tag":
         {"name": "tageb7113db", "digest": "sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24",
-        "createdTime": "2021-04-07T12:51:33.924208Z", "lastUpdateTime": "2021-04-07T12:51:33.924208Z",
+        "createdTime": "2021-04-09T14:58:13.4512193Z", "lastUpdateTime": "2021-04-09T14:58:13.4512193Z",
         "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
         true, "readEnabled": true, "listEnabled": true}}}'
     headers:
@@ -149,11 +151,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '384'
+      - '386'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:44 GMT
+      - Fri, 09 Apr 2021 14:58:23 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -183,9 +185,10 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/repoeb7113db/_tags/tageb7113db
   response:
     body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "repository", "Name": "repoeb7113db", "Action": "delete"}]}]}'
+      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"repoeb7113db","Action":"delete"}]}]}
+
+        '
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -199,7 +202,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:45 GMT
+      - Fri, 09 Apr 2021 14:58:23 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -207,7 +210,8 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:repoeb7113db:delete"
       x-content-type-options:
       - nosniff
     status:
@@ -239,7 +243,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:45 GMT
+      - Fri, 09 Apr 2021 14:58:23 GMT
       server:
       - openresty
       strict-transport-security:
@@ -247,7 +251,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.25'
+      - '332.466667'
     status:
       code: 200
       message: OK
@@ -277,7 +281,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:45 GMT
+      - Fri, 09 Apr 2021 14:58:23 GMT
       server:
       - openresty
       strict-transport-security:
@@ -285,7 +289,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.233333'
+      - '332.45'
     status:
       code: 200
       message: OK
@@ -318,7 +322,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 07 Apr 2021 12:51:45 GMT
+      - Fri, 09 Apr 2021 14:58:23 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -350,9 +354,10 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/repoeb7113db/_tags/tageb7113db
   response:
     body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "repository", "Name": "repoeb7113db", "Action": "metadata_read"}]}]}'
+      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"repoeb7113db","Action":"metadata_read"}]}]}
+
+        '
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -366,7 +371,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:55 GMT
+      - Fri, 09 Apr 2021 14:58:29 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -374,7 +379,8 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:repoeb7113db:metadata_read"
       x-content-type-options:
       - nosniff
     status:
@@ -406,7 +412,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:56 GMT
+      - Fri, 09 Apr 2021 14:58:29 GMT
       server:
       - openresty
       strict-transport-security:
@@ -414,7 +420,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.166667'
+      - '332.433333'
     status:
       code: 200
       message: OK
@@ -444,7 +450,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:56 GMT
+      - Fri, 09 Apr 2021 14:58:29 GMT
       server:
       - openresty
       strict-transport-security:
@@ -452,7 +458,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.15'
+      - '332.416667'
     status:
       code: 200
       message: OK
@@ -486,7 +492,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:56 GMT
+      - Fri, 09 Apr 2021 14:58:29 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
