@@ -160,7 +160,7 @@ class ContainerRegistryTestClass(AzureTestCase):
             "-Mode",
             "'Force'",
         ]
-        subprocess.check_call(command)
+        subprocess.check_call(command, shell=True)
 
     def _clean_up(self, endpoint):
         if not self.is_live:
