@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import base64
+import os
 
 import pytest
 
@@ -948,7 +949,8 @@ class StorageQuickQueryTest(StorageTestCase):
 
         blob_name = self._get_blob_reference()
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        with open("parquet.parquet", "rb") as parquet_data:
+        parquet_path = os.path.abspath("parquet.parquet")
+        with open(parquet_path, "rb") as parquet_data:
             blob_client.upload_blob(parquet_data, overwrite=True)
         errors = []
 
@@ -971,7 +973,8 @@ class StorageQuickQueryTest(StorageTestCase):
 
         blob_name = self._get_blob_reference()
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        with open("parquet.parquet", "rb") as parquet_data:
+        parquet_path = os.path.abspath("parquet.parquet")
+        with open(parquet_path, "rb") as parquet_data:
             blob_client.upload_blob(parquet_data, overwrite=True)
         errors = []
 
