@@ -712,6 +712,11 @@ class DelimitedTextDialect(BlobDelimitedTextDialect):
     """
 
 
+class ParquetDialect(object):
+    """Defines parquet input serialization for a file query request."""
+    pass
+
+
 class ArrowDialect(BlobArrowDialect):
     """field of an arrow schema.
 

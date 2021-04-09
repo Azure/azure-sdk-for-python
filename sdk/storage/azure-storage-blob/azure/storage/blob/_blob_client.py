@@ -898,7 +898,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :keyword blob_format:
             Optional. Defines the serialization of the data currently stored in the blob. The default is to
             treat the blob data as CSV data formatted in the default dialect. This can be overridden with
-            a custom DelimitedTextDialect, or alternatively a DelimitedJsonDialect.
+            a custom DelimitedTextDialect, or alternatively a DelimitedJsonDialect or ParquetDialect.
         :paramtype blob_format: ~azure.storage.blob.DelimitedTextDialect or ~azure.storage.blob.DelimitedJsonDialect
             or ~azure.storage.blob.ParquetDialect
         :keyword output_format:
