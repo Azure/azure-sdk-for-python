@@ -5,7 +5,6 @@
 # ------------------------------------
 import copy
 from datetime import datetime
-import http.client
 import json
 import re
 import six
@@ -131,10 +130,8 @@ class FakeTokenCredential(object):
 class ContainerRegistryTestClass(AzureTestCase):
     def __init__(self, method_name):
         super(ContainerRegistryTestClass, self).__init__(method_name)
-        # self.vcr.match_on = ["path", "method", "query"]
         self.recording_processors.append(AcrBodyReplacer())
         self.repository = "hello-world"
-        http.client._MAXHEADERS = 1000
 
     def sleep(self, t):
         if self.is_live:
