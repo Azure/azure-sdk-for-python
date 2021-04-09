@@ -5,6 +5,7 @@
 # ------------------------------------
 import copy
 from datetime import datetime
+import http.client
 import json
 import re
 import six
@@ -36,7 +37,7 @@ class AcrBodyReplacer(RecordingProcessor):
         self._replacement = replacement
         self._401_replacement = 'Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"'
         self._redacted_service = "https://fakeurl.azurecr.io"
-        self._regex = r'(https://)[a-zA-Z0-9]+(\.azurecr.io)'
+        self._regex = r"(https://)[a-zA-Z0-9]+(\.azurecr.io)"
 
     def _scrub_body(self, body):
         # type: (bytes) -> bytes
@@ -79,11 +80,13 @@ class AcrBodyReplacer(RecordingProcessor):
             headers = response["headers"]
 
             if "www-authenticate" in headers:
-                headers["www-authenticate"] = [self._401_replacement] if isinstance(headers["www-authenticeate"], list) else self._401_replacement
+                headers["www-authenticate"] = (
+                    [self._401_replacement] if isinstance(headers["www-authenticeate"], list) else self._401_replacement
+                )
 
             body = response["body"]
             try:
-                if body["string"] == b'':
+                if body["string"] == b"":
                     return response
 
                 refresh = json.loads(body["string"])
@@ -92,7 +95,7 @@ class AcrBodyReplacer(RecordingProcessor):
                 if "access_token" in refresh.keys():
                     refresh["access_token"] = REDACTED
                 if "service" in refresh.keys():
-                    s = refresh["service"].split('.')
+                    s = refresh["service"].split(".")
                     s[0] = "fake_url"
                     refresh["service"] = ".".join(s)
                 body["string"] = json.dumps(refresh)
@@ -108,7 +111,7 @@ class AcrBodyReplacer(RecordingProcessor):
 
     def process_url(self, response):
         try:
-            response["url"] = re.sub(self._regex, r'\1{}\2'.format("fake_url"), response["url"])
+            response["url"] = re.sub(self._regex, r"\1{}\2".format("fake_url"), response["url"])
         except KeyError:
             pass
 
@@ -131,7 +134,6 @@ class ContainerRegistryTestClass(AzureTestCase):
         # self.vcr.match_on = ["path", "method", "query"]
         self.recording_processors.append(AcrBodyReplacer())
         self.repository = "hello-world"
-        import http.client
         http.client._MAXHEADERS = 1000
 
     def sleep(self, t):

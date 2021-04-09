@@ -32,7 +32,9 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
     def test_delete_tag(self, containerregistry_endpoint, containerregistry_resource_group):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        self.import_repo(containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=repo, tag=tag)
+        self.import_repo(
+            containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=repo, tag=tag
+        )
 
         client = self.create_repository_client(containerregistry_endpoint, repo)
 
