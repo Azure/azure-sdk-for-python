@@ -29,7 +29,7 @@ from .._generated.models import (
 )
 from .._models import (
     ChatThreadProperties,
-    ChatThreadParticipant,
+    ChatParticipant,
     CreateChatThreadResult
 )
 from .._utils import ( # pylint: disable=unused-import
@@ -138,7 +138,7 @@ class ChatClient(object):
         :param topic: Required. The thread topic.
         :type topic: str
         :keyword thread_participants: Optional. Participants to be added to the thread.
-        :paramtype thread_participants: List[~azure.communication.chat.ChatThreadParticipant]
+        :paramtype thread_participants: List[~azure.communication.chat.ChatParticipant]
         :keyword idempotency_token: Optional. If specified, the client directs that the request is
          repeatable; that is, the client can make the request multiple times with the same
          Idempotency_Token and get back an appropriate response without the server executing the

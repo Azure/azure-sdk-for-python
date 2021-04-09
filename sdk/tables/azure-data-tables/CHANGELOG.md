@@ -1,7 +1,7 @@
 # Release History
 
 ## 12.0.0b7 (Unreleased)
-
+* Fixed issue with Cosmos merge operations
 
 ## 12.0.0b6 (2021-04-06)
 * Updated deserialization of datetime fields in entities to support preservation of the service format with additional decimal place.

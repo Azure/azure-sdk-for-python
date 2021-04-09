@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 14:40:54 GMT
+      - Fri, 09 Apr 2021 14:58:39 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -39,14 +39,15 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:hello-world:metadata_read"
       x-content-type-options:
       - nosniff
     status:
       code: 401
       message: Unauthorized
 - request:
-    body: grant_type=access_token&service=seankane.azurecr.io&access_token=REDACTED
+    body: grant_type=access_token&service=fake_url.azurecr.io&access_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -71,7 +72,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 14:40:55 GMT
+      - Fri, 09 Apr 2021 14:58:41 GMT
       server:
       - openresty
       strict-transport-security:
@@ -79,12 +80,12 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.466667'
+      - '332.75'
     status:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Ahello-world%3Ametadata_read&refresh_token=REDACTED
+    body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=repository%3Ahello-world%3Ametadata_read&refresh_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -109,7 +110,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 14:40:56 GMT
+      - Fri, 09 Apr 2021 14:58:41 GMT
       server:
       - openresty
       strict-transport-security:
@@ -117,7 +118,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.45'
+      - '332.733333'
     status:
       code: 200
       message: OK
@@ -136,9 +137,11 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/latest
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","tag":{"name":"latest","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-03-30T12:18:52.8272444Z","lastUpdateTime":"2021-03-30T12:18:52.8272444Z","signed":false,"quarantineState":"Passed","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true}}}
-
-        '
+      string: '{"registry": "fake_url.azurecr.io", "imageName": "hello-world", "tag":
+        {"name": "latest", "digest": "sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24",
+        "createdTime": "2021-03-30T12:18:52.8272444Z", "lastUpdateTime": "2021-03-30T12:18:52.8272444Z",
+        "signed": false, "quarantineState": "Passed", "changeableAttributes": {"deleteEnabled":
+        true, "writeEnabled": true, "readEnabled": true, "listEnabled": true}}}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -152,7 +155,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 14:40:56 GMT
+      - Fri, 09 Apr 2021 14:58:41 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

@@ -72,10 +72,12 @@ def get_client_credential(certificate_path, password=None, certificate_data=None
     """Load a certificate from a filesystem path or bytes, return it as a dict suitable for msal.ClientApplication"""
 
     if certificate_path:
+        if certificate_data:
+            raise ValueError('Please specify either "certificate_path" or "certificate_data", not both')
         with open(certificate_path, "rb") as f:
             certificate_data = f.read()
     elif not certificate_data:
-        raise ValueError('CertificateCredential requires a value for "certificate_path" or "certificate_data"')
+        raise ValueError('CertificateCredential requires a value for either "certificate_path" or "certificate_data"')
 
     if isinstance(password, six.text_type):
         password = password.encode(encoding="utf-8")
