@@ -10,7 +10,7 @@ jobs:
             - eng
           Repositories:
             - Name: MicrosoftDocs/azure-docs-sdk-python
-              Commitsh: master
+              Commitsh: durek/ci-automation-test
               WorkingDirectory: $(Pipeline.Workspace)/docs
             - Name: $(Build.Repository.Name)
               Commitish: $(Build.SourceVersion)
