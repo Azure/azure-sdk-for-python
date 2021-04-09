@@ -6,8 +6,11 @@ jobs:
       - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
         parameters:
           Paths:
-            - ci-configs
             - eng
+      - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+        parameters:
+          Paths:
+            - ci-configs
           Repositories:
             - Name: MicrosoftDocs/azure-docs-sdk-python
               Commitsh: master
