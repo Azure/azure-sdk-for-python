@@ -146,7 +146,7 @@ class ContainerRegistryTestClass(AzureTestCase):
         registry = endpoint.split(".")[0]
         command = [
             "powershell",
-            "Import-AzcontainerRegistryImage",
+            "Import-AzContainerRegistryImage",
             "-ResourceGroupName",
             "'{}'".format(resource_group),
             "-RegistryName",
@@ -160,7 +160,7 @@ class ContainerRegistryTestClass(AzureTestCase):
             "-Mode",
             "'Force'",
         ]
-        subprocess.check_call(command, shell=True)
+        subprocess.check_call(command)
 
     def _clean_up(self, endpoint):
         if not self.is_live:
