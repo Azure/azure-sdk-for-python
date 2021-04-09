@@ -23,6 +23,10 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+
+# This file contains long URLs/strings etc. Not too much value in warning about long lines.
+# pylint: disable=C0301
+
 """Cloud configuration metadata management.
 
 Example:
@@ -40,12 +44,10 @@ Example:
 'https://portal.azure.us'
 """
 
+
 import typing
 
-__all__ = [
-    "well_known",
-    "CloudConfig"
-]
+__all__ = ["well_known", "CloudConfig"]
 
 _raw_data = [
     {
@@ -54,10 +56,10 @@ _raw_data = [
             "loginEndpoint": "https://login.chinacloudapi.cn",
             "audiences": [
                 "https://management.core.chinacloudapi.cn",
-                "https://management.chinacloudapi.cn"
+                "https://management.chinacloudapi.cn",
             ],
             "tenant": "common",
-            "identityProvider": "AAD"
+            "identityProvider": "AAD",
         },
         "media": "https://rest.media.chinacloudapi.cn",
         "graphAudience": "https://graph.chinacloudapi.cn",
@@ -68,13 +70,13 @@ _raw_data = [
             "sqlServerHostname": "database.chinacloudapi.cn",
             "keyVaultDns": "vault.azure.cn",
             "storage": "core.chinacloudapi.cn",
-            "azureFrontDoorEndpointSuffix": ""
+            "azureFrontDoorEndpointSuffix": "",
         },
         "batch": "https://batch.chinacloudapi.cn",
         "resourceManager": "https://management.chinacloudapi.cn",
         "vmImageAliasDoc": "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-compute/quickstart-templates/aliases.json",
         "sqlManagement": "https://management.core.chinacloudapi.cn:8443",
-        "gallery": "https://gallery.chinacloudapi.cn"
+        "gallery": "https://gallery.chinacloudapi.cn",
     },
     {
         "portal": "https://portal.azure.us",
@@ -82,10 +84,10 @@ _raw_data = [
             "loginEndpoint": "https://login.microsoftonline.us",
             "audiences": [
                 "https://management.core.usgovcloudapi.net",
-                "https://management.usgovcloudapi.net"
+                "https://management.usgovcloudapi.net",
             ],
             "tenant": "common",
-            "identityProvider": "AAD"
+            "identityProvider": "AAD",
         },
         "media": "https://rest.media.usgovcloudapi.net",
         "graphAudience": "https://graph.windows.net",
@@ -96,13 +98,13 @@ _raw_data = [
             "sqlServerHostname": "database.usgovcloudapi.net",
             "keyVaultDns": "vault.usgovcloudapi.net",
             "storage": "core.usgovcloudapi.net",
-            "azureFrontDoorEndpointSuffix": ""
+            "azureFrontDoorEndpointSuffix": "",
         },
         "batch": "https://batch.core.usgovcloudapi.net",
         "resourceManager": "https://management.usgovcloudapi.net",
         "vmImageAliasDoc": "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-compute/quickstart-templates/aliases.json",
         "sqlManagement": "https://management.core.usgovcloudapi.net:8443",
-        "gallery": "https://gallery.usgovcloudapi.net"
+        "gallery": "https://gallery.usgovcloudapi.net",
     },
     {
         "portal": "https://portal.microsoftazure.de",
@@ -110,10 +112,10 @@ _raw_data = [
             "loginEndpoint": "https://login.microsoftonline.de",
             "audiences": [
                 "https://management.core.cloudapi.de",
-                "https://management.microsoftazure.de"
+                "https://management.microsoftazure.de",
             ],
             "tenant": "common",
-            "identityProvider": "AAD"
+            "identityProvider": "AAD",
         },
         "media": "https://rest.media.cloudapi.de",
         "graphAudience": "https://graph.cloudapi.de",
@@ -123,13 +125,13 @@ _raw_data = [
             "sqlServerHostname": "database.cloudapi.de",
             "keyVaultDns": "vault.microsoftazure.de",
             "storage": "core.cloudapi.de",
-            "azureFrontDoorEndpointSuffix": ""
+            "azureFrontDoorEndpointSuffix": "",
         },
         "batch": "https://batch.cloudapi.de",
         "resourceManager": "https://management.microsoftazure.de",
         "vmImageAliasDoc": "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-compute/quickstart-templates/aliases.json",
         "sqlManagement": "https://management.core.cloudapi.de:8443",
-        "gallery": "https://gallery.cloudapi.de"
+        "gallery": "https://gallery.cloudapi.de",
     },
     {
         "portal": "https://portal.azure.com",
@@ -137,10 +139,10 @@ _raw_data = [
             "loginEndpoint": "https://login.microsoftonline.com/",
             "audiences": [
                 "https://management.core.windows.net/",
-                "https://management.azure.com/"
+                "https://management.azure.com/",
             ],
             "tenant": "common",
-            "identityProvider": "AAD"
+            "identityProvider": "AAD",
         },
         "media": "https://rest.media.azure.net",
         "graphAudience": "https://graph.windows.net/",
@@ -153,101 +155,67 @@ _raw_data = [
             "azureDataLakeAnalyticsCatalogAndJob": "azuredatalakeanalytics.net",
             "keyVaultDns": "vault.azure.net",
             "storage": "core.windows.net",
-            "azureFrontDoorEndpointSuffix": "azurefd.net"
+            "azureFrontDoorEndpointSuffix": "azurefd.net",
         },
         "batch": "https://batch.core.windows.net/",
         "resourceManager": "https://management.azure.com/",
         "vmImageAliasDoc": "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-compute/quickstart-templates/aliases.json",
         "activeDirectoryDataLake": "https://datalake.azure.net/",
         "sqlManagement": "https://management.core.windows.net:8443/",
-        "gallery": "https://gallery.azure.com/"
+        "gallery": "https://gallery.azure.com/",
     },
 ]
 
+
 class CloudConfig(dict):
-        
+    """Configuration for a specific cloud instance"""
+
     @classmethod
     def from_metadata_dict(cls, data, **kwargs):
         """Load cloud configuration entry in format as returned from azure resource manager metadata
         endpoint (e.g. https://management.azure.com/metadata/endpoints)
-        
+
         :param data: One entry in metadata returned.
         :type data: ~dict
         :keyword api_version: Api Version (format) used to retrieve the data. Default value: 2019-05-01.
         :type api_version: ~str
         :rtype: ~CloudConfig
         """
-        if kwargs.pop('api_version', '2019-05-01') != '2019-05-01':
+        if kwargs.pop("api_version", "2019-05-01") != "2019-05-01":
             raise ValueError('Unknown API version - supported value is: "2019-05-01"')
 
         transformed_data = {
-            'batch': {
-                'endpoint': data.get('endpoint', None)
+            "batch": {"endpoint": data.get("endpoint", None)},
+            "containerRegistry": {"suffix": data.get("acrLoginServer", None)},
+            "dataLakeStorageFileSystem": {
+                "suffix": data.get("suffixes", {}).get("azureDataLakeStoreFileSystem")
             },
-            'containerRegistry': {
-                'suffix': data.get('acrLoginServer', None)
+            "dataLakeAnalyticsCatalogAndJob": {
+                "suffix": data.get("suffixes", {}).get(
+                    "azureDataLakeAnalyticsCatalogAndJob"
+                )
             },
-            'dataLakeStorageFileSystem': {
-                'suffix': data.get('suffixes', {}).get('azureDataLakeStoreFileSystem')
+            "gallery": {"endpoint": data.get("gallery", None)},
+            "graph": {
+                "endpoint": data.get("graph", None),
+                "authentication": {
+                    "audiences": [data["graphAudience"]]
+                    if data.get("graphAudience", None)
+                    else []
+                },
             },
-            'dataLakeAnalyticsCatalogAndJob': {
-                'suffix': data.get('suffixes', {}).get('azureDataLakeAnalyticsCatalogAndJob')
+            "keyVault": {"suffix": data.get("suffixes", {}).get("keyVaultDns")},
+            "media": {"endpoint": data.get("media", None)},
+            "portal": {"endpoint": data.get("portal", None)},
+            "resourceManager": {
+                "endpoint": data.get("resourceManager", None),
+                "authentication": data.get("authentication", {}),
             },
-            'gallery': {
-                'endpoint': data.get('gallery', None)
-            },
-            'graph': {
-                'endpoint': data.get('graph', None),
-                'authentication': {
-                    'audiences': [
-                        data['graphAudience']
-                    ] if data.get('graphAudience', None) else []
-                }
-            },
-            'keyVault': {
-                'suffix': data.get('suffixes', {}).get('keyVaultDns')
-            },
-            'media': {
-                'endpoint': data.get('media', None)
-            },
-            'portal': {
-                'endpoint': data.get('portal', None)
-            },
-            'resourceManager': {
-                'endpoint': data.get('resourceManager', None),
-                'authentication': data.get('authentication', {})
-            },
-            'sql': {
-                'suffix': data.get('suffixes', {}).get('sqlServerHostname')
-            },
-            'sqlManagement': {
-                'endpoint': data.get('sqlManagement', None)
-            },
-            'storage': {
-                'suffix': data.get('suffixes', {}).get('storage', None)
-            }
+            "sql": {"suffix": data.get("suffixes", {}).get("sqlServerHostname")},
+            "sqlManagement": {"endpoint": data.get("sqlManagement", None)},
+            "storage": {"suffix": data.get("suffixes", {}).get("storage", None)},
         }
         return cls(transformed_data)
 
-    @property
-    def endpoint(self):
-        # type: () -> typing.Optional[str]
-        return self['endpoint']
 
-    @property
-    def suffix(self):
-        # type: () -> typing.Optional[str]
-        return self['suffix']
-
-    @property
-    def authentication(self):
-        # type: () -> typing.Mapping[str, typing.Any]
-        return self['authentication']
-    
-well_known = {
-    item['name']: CloudConfig.from_metadata_dict(item)
-    for item in _raw_data
-}
-
-
-
+well_known = {item["name"]: CloudConfig.from_metadata_dict(item) for item in _raw_data}
