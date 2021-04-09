@@ -28,7 +28,7 @@ settings.tracing_implementation = OpenTelemetrySpan
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import ConsoleSpanExporter
-from opentelemetry.sdk.trace.export import SimpleExportSpanProcessor
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
 # Simple console exporter
 exporter = ConsoleSpanExporter()
@@ -36,7 +36,7 @@ exporter = ConsoleSpanExporter()
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
 trace.get_tracer_provider().add_span_processor(
-    SimpleExportSpanProcessor(exporter)
+    SimpleSpanProcessor(exporter)
 )
 
 # Example with Eventgrid SDKs

@@ -91,7 +91,7 @@ class SearchServicePreparer(AzureMgmtPreparer):
         from azure.mgmt.search.models import SearchService, Sku
 
         service_config = SearchService(location="West US", sku=Sku(name="free"))
-        resource = self.mgmt_client.services.create_or_update(
+        resource = self.mgmt_client.services.begin_create_or_update(
             group_name, self.service_name, service_config
         )
 

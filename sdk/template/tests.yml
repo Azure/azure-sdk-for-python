@@ -3,9 +3,10 @@ trigger: none
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      AllocateResourceGroup: 'false'
+      AllocateResourceGroup: false
       BuildTargetingString: $(BuildTargetingString)
       ServiceDirectory: template
+      TestSamples: true
       EnvVars:
         TEMPLATE_CONFIG_CONNECTION: $(python-template-connection-string) # Add variables/mappings as appropriate for your service.
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)

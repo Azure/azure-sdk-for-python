@@ -134,7 +134,7 @@ def set_dev_classifier(setup_py_location, version):
 def update_change_log(setup_py_location, version, service, package, is_unreleased, replace_latest_entry_title, release_date=None):
     script = os.path.join(root_dir, "eng", "common", "scripts", "Update-ChangeLog.ps1")
     pkg_root = os.path.abspath(os.path.join(setup_py_location, ".."))
-
+    changelog_path = os.path.join(pkg_root, "CHANGELOG.md")
     commands = [
         "pwsh",
         script,
@@ -146,10 +146,10 @@ def update_change_log(setup_py_location, version, service, package, is_unrelease
         package,
         "--Unreleased:${}".format(is_unreleased),
         "--ReplaceLatestEntryTitle:${}".format(replace_latest_entry_title),
+        "--ChangelogPath:{}".format(changelog_path)
     ]
     if release_date is not None:
-        commands.append("--ReleaseDate")
-        commands.append(release_date)
+        commands.append("--ReleaseDate:{}".format(release_date))
 
     # Run script to update change log
     run_check_call(commands, pkg_root)

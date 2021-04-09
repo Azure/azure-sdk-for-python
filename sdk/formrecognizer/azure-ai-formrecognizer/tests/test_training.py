@@ -17,7 +17,6 @@ from preparers import FormRecognizerPreparer
 
 GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
-
 class TestTraining(FormRecognizerTest):
 
     @FormRecognizerPreparer()
@@ -39,6 +38,7 @@ class TestTraining(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
+    @pytest.mark.skip("504 Gateway error with canary - fix in progress")
     def test_training_encoded_url(self, client):
         with self.assertRaises(HttpResponseError):
             poller = client.begin_training(
@@ -62,7 +62,7 @@ class TestTraining(FormRecognizerTest):
         model = poller.result()
 
         self.assertIsNotNone(model.model_id)
-        # self.assertEqual(model.model_name, "my unlabeled model")  # FIXME: bug in service
+        self.assertEqual(model.model_name, "my unlabeled model")
         self.assertIsNotNone(model.training_started_on)
         self.assertIsNotNone(model.training_completed_on)
         self.assertEqual(model.errors, [])

@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._microsoft_storage_sync import MicrosoftStorageSync
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['MicrosoftStorageSync']
 
 try:

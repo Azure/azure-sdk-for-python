@@ -11,11 +11,10 @@ import sys
 import os
 import logging
 from fnmatch import fnmatch
-from subprocess import check_call, CalledProcessError
 try:
-    from subprocess import TimeoutExpired
+    from subprocess import TimeoutExpired, check_call, CalledProcessError
 except ImportError:
-    pass
+    from subprocess32 import TimeoutExpired, check_call, CalledProcessError
 from common_tasks import (
     run_check_call,
     process_glob_string,
@@ -35,39 +34,37 @@ TIMEOUT_SAMPLES = {
 """
 TIMEOUT_SAMPLES = {
     "azure-eventhub": {
-        "authenticate_with_sas_token.py": (5),
-        "receive_batch_with_checkpoint.py": (5),
-        "recv.py": (5),
-        "recv_track_last_enqueued_event_prop.py": (5),
-        "recv_with_checkpoint_by_event_count.py": (5),
-        "recv_with_checkpoint_by_time_interval.py": (5),
-        "recv_with_checkpoint_store.py": (5),
-        "recv_with_custom_starting_position.py": (5),
+        "receive_batch_with_checkpoint.py": (10),
+        "recv.py": (10),
+        "recv_track_last_enqueued_event_prop.py": (10),
+        "recv_with_checkpoint_by_event_count.py": (10),
+        "recv_with_checkpoint_by_time_interval.py": (10),
+        "recv_with_checkpoint_store.py": (10),
+        "recv_with_custom_starting_position.py": (10),
         "sample_code_eventhub.py": (10),
-        "authenticate_with_sas_token_async.py": (5),
-        "receive_batch_with_checkpoint_async.py": (5),
-        "recv_async.py": (5),
-        "recv_track_last_enqueued_event_prop_async.py": (5),
-        "recv_with_checkpoint_by_event_count_async.py": (5),
-        "recv_with_checkpoint_by_time_interval_async.py": (5),
-        "recv_with_checkpoint_store_async.py": (5),
-        "recv_with_custom_starting_position_async.py": (5),
+        "receive_batch_with_checkpoint_async.py": (10),
+        "recv_async.py": (10),
+        "recv_track_last_enqueued_event_prop_async.py": (10),
+        "recv_with_checkpoint_by_event_count_async.py": (10),
+        "recv_with_checkpoint_by_time_interval_async.py": (10),
+        "recv_with_checkpoint_store_async.py": (10),
+        "recv_with_custom_starting_position_async.py": (10),
         "sample_code_eventhub_async.py": (10)
     },
     "azure-eventhub-checkpointstoreblob": {
-        "receive_events_using_checkpoint_store.py": (5),
-        "receive_events_using_checkpoint_store_storage_api_version.py": (5)
+        "receive_events_using_checkpoint_store.py": (10),
+        "receive_events_using_checkpoint_store_storage_api_version.py": (10)
     },
     "azure-eventhub-checkpointstoreblob-aio": {
-        "receive_events_using_checkpoint_store_async.py": (5),
-        "receive_events_using_checkpoint_store_storage_api_version_async.py": (5)
+        "receive_events_using_checkpoint_store_async.py": (10),
+        "receive_events_using_checkpoint_store_storage_api_version_async.py": (10)
     },
     "azure-servicebus": {
-        "failure_and_recovery.py": (5),
-        "receive_iterator_queue.py": (5),
+        "failure_and_recovery.py": (10),
+        "receive_iterator_queue.py": (10),
         "sample_code_servicebus.py": (30),
         "session_pool_receive.py": (20),
-        "receive_iterator_queue_async.py": (5),
+        "receive_iterator_queue_async.py": (10),
         "sample_code_servicebus_async.py": (30),
         "session_pool_receive_async.py": (20)
     }
@@ -103,10 +100,6 @@ IGNORED_SAMPLES = {
         "mgmt_topic_async.py",
         "proxy_async.py",
         "receive_deferred_message_queue_async.py"
-    ],
-    "azure-ai-formrecognizer": [
-        "sample_recognize_receipts_from_url.py",
-        "sample_recognize_receipts_from_url_async.py"
     ]
 }
 
@@ -221,11 +214,6 @@ def run_samples(targeted_package):
         execute_sample(sample, samples_errors, timed=False)
 
     for sample in timed_sample_paths:
-        if sys.version_info < (3, 5):  # currently don't have a solution to run python 2.7 timed samples
-            logging.info(
-                "Unable to run timed sample: {} with python 2.7".format(sample[0])
-            )
-            continue
         execute_sample(sample, samples_errors, timed=True)
 
     if samples_errors:

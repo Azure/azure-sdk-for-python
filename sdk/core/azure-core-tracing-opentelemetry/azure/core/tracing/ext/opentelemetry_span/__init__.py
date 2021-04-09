@@ -4,12 +4,12 @@
 # ------------------------------------
 """Implements azure.core.tracing.AbstractSpan to wrap OpenTelemetry spans."""
 
+import warnings
 from opentelemetry import trace
-from opentelemetry.trace import Span, Link, Tracer, SpanKind as OpenTelemetrySpanKind
+from opentelemetry.trace import Span, Tracer, SpanKind as OpenTelemetrySpanKind, Link as OpenTelemetryLink
 from opentelemetry.context import attach, detach, get_current
-from opentelemetry.propagators import extract, inject
+from opentelemetry.propagate import extract, inject
 from opentelemetry.trace.propagation import get_current_span as get_span_from_context
-from opentelemetry.trace.propagation.textmap import DictGetter
 
 from azure.core.tracing import SpanKind, HttpSpanMixin  # pylint: disable=no-name-in-module
 
@@ -21,7 +21,7 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Mapping, MutableMapping, Dict, Optional, Union, Callable, Sequence
+    from typing import Any, Mapping, Dict, Optional, Union, Callable, Sequence
 
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
     AttributeValue = Union[
@@ -39,24 +39,6 @@ if TYPE_CHECKING:
 __version__ = VERSION
 
 
-def _get_headers_from_http_request_headers(headers: "Mapping[str, Any]", key: str):
-    """Return headers that matches this key.
-
-    Must comply to opentelemetry.context.propagation.httptextformat.Getter:
-    Getter = typing.Callable[[_T, str], typing.List[str]]
-    """
-    return [headers.get(key, "")]
-
-
-def _set_headers_from_http_request_headers(headers: "MutableMapping[str, Any]", key: str, value: str):
-    """Set headers in the given headers dict.
-
-    Must comply to opentelemetry.context.propagation.httptextformat.Setter:
-    Setter = typing.Callable[[_T, str, str], None]
-    """
-    headers[key] = value
-
-
 class OpenTelemetrySpan(HttpSpanMixin, object):
     """OpenTelemetry plugin for Azure client libraries.
 
@@ -64,12 +46,43 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     :type span: ~OpenTelemetry.trace.Span
     :param name: The name of the OpenTelemetry span to create if a new span is needed
     :type name: str
+    :keyword SpanKind kind: The span kind of this span.
+    :keyword links: The list of links to be added to the span.
+    :paramtype links: list[~azure.core.tracing.Link]
     """
 
-    def __init__(self, span=None, name="span"):
-        # type: (Optional[Span], Optional[str]) -> None
+    def __init__(self, span=None, name="span", **kwargs):
+        # type: (Optional[Span], Optional[str], Any) -> None
         current_tracer = self.get_current_tracer()
-        self._span_instance = span or current_tracer.start_span(name=name)
+
+        ## kind
+        value = kwargs.pop('kind', None)
+        kind = (
+            OpenTelemetrySpanKind.CLIENT if value == SpanKind.CLIENT else
+            OpenTelemetrySpanKind.PRODUCER if value == SpanKind.PRODUCER else
+            OpenTelemetrySpanKind.SERVER if value == SpanKind.SERVER else
+            OpenTelemetrySpanKind.CONSUMER if value == SpanKind.CONSUMER else
+            OpenTelemetrySpanKind.INTERNAL if value == SpanKind.INTERNAL else
+            OpenTelemetrySpanKind.INTERNAL if value == SpanKind.UNSPECIFIED else
+            None
+        ) # type: SpanKind
+        if value and kind is None:
+            raise ValueError("Kind {} is not supported in OpenTelemetry".format(value))
+
+        links = kwargs.pop('links', None)
+        if links:
+            try:
+                ot_links = []
+                for link in links:
+                    ctx = extract(link.headers)
+                    span_ctx = get_span_from_context(ctx).get_span_context()
+                    ot_links.append(OpenTelemetryLink(span_ctx, link.attributes))
+                kwargs.setdefault('links', ot_links)
+            except AttributeError:
+                # we will just send the links as is if it's not ~azure.core.tracing.Link without any validation
+                # assuming user knows what they are doing.
+                kwargs.setdefault('links', links)
+        self._span_instance = span or current_tracer.start_span(name=name, kind=kind, **kwargs)
         self._current_ctxt_manager = None
 
     @property
@@ -80,15 +93,18 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         """
         return self._span_instance
 
-    def span(self, name="span"):
-        # type: (Optional[str]) -> OpenTelemetrySpan
+    def span(self, name="span", **kwargs):
+        # type: (Optional[str], Any) -> OpenTelemetrySpan
         """
         Create a child span for the current span and append it to the child spans list in the span instance.
         :param name: Name of the child span
         :type name: str
+        :keyword SpanKind kind: The span kind of this span.
+        :keyword links: The list of links to be added to the span.
+        :paramtype links: list[Link]
         :return: The OpenTelemetrySpan that is wrapping the child span instance
         """
-        return self.__class__(name=name)
+        return self.__class__(name=name, **kwargs)
 
     @property
     def kind(self):
@@ -120,18 +136,25 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         )
         if kind is None:
             raise ValueError("Kind {} is not supported in OpenTelemetry".format(value))
-        self.span_instance.kind = kind
+        try:
+            self._span_instance._kind = kind # pylint: disable=protected-access
+        except AttributeError:
+            warnings.warn(
+                """Kind must be set while creating the span for Opentelemetry. It might be possible
+                that one of the packages you are using doesn't follow the latest Opentelemtry Spec.
+                Try updating the azure packages to the latest versions."""
+            )
 
     def __enter__(self):
         """Start a span."""
-        self._current_ctxt_manager = self.get_current_tracer().use_span(self._span_instance, end_on_exit=True)
-        self._current_ctxt_manager.__enter__()
+        self._current_ctxt_manager = trace.use_span(self._span_instance, end_on_exit=True)
+        self._current_ctxt_manager.__enter__() # pylint: disable=no-member
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
         """Finish a span."""
         if self._current_ctxt_manager:
-            self._current_ctxt_manager.__exit__(exception_type, exception_value, traceback)
+            self._current_ctxt_manager.__exit__(exception_type, exception_value, traceback) # pylint: disable=no-member
             self._current_ctxt_manager = None
 
     def start(self):
@@ -150,7 +173,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         :return: A key value pair dictionary
         """
         temp_headers = {} # type: Dict[str, str]
-        inject(_set_headers_from_http_request_headers, temp_headers)
+        inject(temp_headers)
         return temp_headers
 
     def add_attribute(self, key, value):
@@ -203,10 +226,17 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         :param headers: A key value pair dictionary
         :type headers: dict
         """
-        ctx = extract(DictGetter(), headers)
+        ctx = extract(headers)
         span_ctx = get_span_from_context(ctx).get_span_context()
         current_span = cls.get_current_span()
-        current_span.links.append(Link(span_ctx, attributes))
+        try:
+            current_span._links.append(OpenTelemetryLink(span_ctx, attributes)) # pylint: disable=protected-access
+        except AttributeError:
+            warnings.warn(
+                """Link must be added while creating the span for Opentelemetry. It might be possible
+                that one of the packages you are using doesn't follow the latest Opentelemtry Spec.
+                Try updating the azure packages to the latest versions."""
+            )
 
     @classmethod
     def get_current_span(cls):
@@ -229,7 +259,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         # type: (Span) -> ContextManager
         """Change the context for the life of this context manager.
         """
-        return cls.get_current_tracer().use_span(span, end_on_exit=False)
+        return trace.use_span(span, end_on_exit=False)
 
     @classmethod
     def set_current_span(cls, span):

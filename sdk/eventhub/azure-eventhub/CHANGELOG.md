@@ -1,7 +1,50 @@
 # Release History
 
-## 5.3.2 (Unreleased)
+## 5.4.0 (2021-04-07)
 
+This version follows from version 5.3.1, rather than 5.4.0b1 so that the preview idempotent producer feature is not included.
+
+**New Features**
+
+- Added support for using `azure.core.credentials.AzureSasCredential` as credential for authenticating producer and consumer clients.
+- Updated `list_ownership`, `claim_ownership`, `update_checkpoint`, `list_checkpoints` on sync and async `CheckpointStore` to support taking `**kwargs`.
+  - WARNING: Implementing a custom checkpointstore that does not support taking `**kwargs` in the methods listed previously will result in the following pylint error: `W0221: Parameters differ from overridden ________ method (arguments-differ)`.
+- Updated `update_checkpoint` on sync and async `PartitionContext` to support taking `**kwargs`.
+
+**Bug Fixes**
+
+* Updated uAMQP dependency to 1.3.0.
+  - Fixed bug that sending message of large size triggering segmentation fault when the underlying socket connection is lost (#13739, #14543).
+  - Fixed bug in link flow control where link credit and delivery count should be calculated based on per message instead of per transfer frame (#16934).
+
+**Notes**
+
+- Updated azure-core dependency to 1.13.0.
+
+## 5.4.0b1 (2021-03-09)
+
+This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported.
+
+**New Features**
+
+- Added support for idempotent publishing which is supported by the service to endeavor to reduce the number of duplicate
+  events that are published.
+  - `EventHubProducerClient` constructor accepts two new parameters for idempotent publishing:
+    - `enable_idempotent_partitions`: A boolean value to tell the `EventHubProducerClient` whether to enable idempotency.
+    - `partition_config`: The set of configurations that can be specified to influence publishing behavior
+     specific to the configured Event Hub partition.
+  - Introduced a new method `get_partition_publishing_properties` on `EventHubProducerClient` to inspect the information
+    about the state of publishing for a partition.
+  - Introduced a new property `published_sequence_number` on `EventData` to get the publishing sequence number assigned
+    to the event at the time it was successfully published.
+  - Introduced a new property `starting_published_sequence_number` on `EventDataBatch` to get the publishing sequence 
+    number assigned to the first event in the batch at the time the batch was successfully published.
+  - Introduced a new class `azure.eventhub.PartitionPublishingConfiguration` which is a set of configurations that can be
+    specified to influence the behavior when publishing directly to an Event Hub partition.
+
+**Notes**
+
+- Updated uAMQP dependency to 1.2.15.
 
 ## 5.3.1 (2021-03-09)
 

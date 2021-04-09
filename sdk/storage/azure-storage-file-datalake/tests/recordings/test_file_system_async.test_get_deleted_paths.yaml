@@ -2,27 +2,29 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 4b555935-60f2-11eb-bc47-c8348e5fffbf
+      - 65f0c226-98f0-11eb-aa01-c8348e5fffbf
       x-ms-date:
-      - Wed, 27 Jan 2021 22:52:12 GMT
+      - Fri, 09 Apr 2021 04:59:43 GMT
       x-ms-version:
-      - '2020-04-08'
+      - '2020-06-12'
     method: PUT
     uri: https://storagename.blob.core.windows.net/filesystemac201283?restype=container
   response:
     body:
       string: ''
     headers:
-      Date: Wed, 27 Jan 2021 22:52:12 GMT
-      ETag: '"0x8D8C316300AAB7E"'
-      Last-Modified: Wed, 27 Jan 2021 22:52:13 GMT
+      Content-Length: '0'
+      Date: Fri, 09 Apr 2021 04:59:43 GMT
+      ETag: '"0x8D8FB144A5B1290"'
+      Last-Modified: Fri, 09 Apr 2021 04:59:43 GMT
       Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding: chunked
-      x-ms-request-id: 8432d23c-201e-0004-3bff-f46504000000
-      x-ms-version: '2020-04-08'
+      x-ms-request-id: 0e6d5285-301e-0040-04fd-2c4a98000000
+      x-ms-version: '2020-06-12'
     status:
       code: 201
       message: Created
@@ -30,12 +32,14 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 4b86e88f-60f2-11eb-8bd8-c8348e5fffbf
+      - 662ce0fb-98f0-11eb-8215-c8348e5fffbf
       x-ms-date:
-      - Wed, 27 Jan 2021 22:52:13 GMT
+      - Fri, 09 Apr 2021 04:59:43 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -47,11 +51,12 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Wed, 27 Jan 2021 22:52:12 GMT
-      ETag: '"0x8D8C316303C8258"'
-      Last-Modified: Wed, 27 Jan 2021 22:52:13 GMT
+      Date: Fri, 09 Apr 2021 04:59:43 GMT
+      ETag: '"0x8D8FB144AAA44AB"'
+      Last-Modified: Fri, 09 Apr 2021 04:59:44 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 0dcf7385-a01f-002b-39ff-f4e900000000
+      x-ms-request-id: f659c881-a01f-000f-53fd-2c3bcc000000
+      x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-06-12'
     status:
       code: 201
@@ -60,12 +65,14 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 4bb2a2d7-60f2-11eb-98f6-c8348e5fffbf
+      - 667a2c76-98f0-11eb-9627-c8348e5fffbf
       x-ms-date:
-      - Wed, 27 Jan 2021 22:52:13 GMT
+      - Fri, 09 Apr 2021 04:59:44 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -77,11 +84,12 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Wed, 27 Jan 2021 22:52:12 GMT
-      ETag: '"0x8D8C3163046B9F2"'
-      Last-Modified: Wed, 27 Jan 2021 22:52:13 GMT
+      Date: Fri, 09 Apr 2021 04:59:43 GMT
+      ETag: '"0x8D8FB144AB9BF70"'
+      Last-Modified: Fri, 09 Apr 2021 04:59:44 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 0dcf7388-a01f-002b-3aff-f4e900000000
+      x-ms-request-id: f659c884-a01f-000f-56fd-2c3bcc000000
+      x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-06-12'
     status:
       code: 201
@@ -90,12 +98,14 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 4bbcb4e0-60f2-11eb-becd-c8348e5fffbf
+      - 66898e41-98f0-11eb-a713-c8348e5fffbf
       x-ms-date:
-      - Wed, 27 Jan 2021 22:52:13 GMT
+      - Fri, 09 Apr 2021 04:59:44 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -107,11 +117,12 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Wed, 27 Jan 2021 22:52:13 GMT
-      ETag: '"0x8D8C31630504E73"'
-      Last-Modified: Wed, 27 Jan 2021 22:52:14 GMT
+      Date: Fri, 09 Apr 2021 04:59:43 GMT
+      ETag: '"0x8D8FB144AC81FE4"'
+      Last-Modified: Fri, 09 Apr 2021 04:59:44 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 0dcf7389-a01f-002b-3bff-f4e900000000
+      x-ms-request-id: f659c885-a01f-000f-57fd-2c3bcc000000
+      x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-06-12'
     status:
       code: 201
@@ -120,12 +131,14 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 4bc637f5-60f2-11eb-b75c-c8348e5fffbf
+      - 6697d38e-98f0-11eb-b5cc-c8348e5fffbf
       x-ms-date:
-      - Wed, 27 Jan 2021 22:52:13 GMT
+      - Fri, 09 Apr 2021 04:59:44 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -137,11 +150,12 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Wed, 27 Jan 2021 22:52:13 GMT
-      ETag: '"0x8D8C3163059D058"'
-      Last-Modified: Wed, 27 Jan 2021 22:52:14 GMT
+      Date: Fri, 09 Apr 2021 04:59:44 GMT
+      ETag: '"0x8D8FB144AD659D9"'
+      Last-Modified: Fri, 09 Apr 2021 04:59:44 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 0dcf738a-a01f-002b-3cff-f4e900000000
+      x-ms-request-id: f659c886-a01f-000f-58fd-2c3bcc000000
+      x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-06-12'
     status:
       code: 201
@@ -150,12 +164,14 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 4bcfac24-60f2-11eb-9c90-c8348e5fffbf
+      - 66a618df-98f0-11eb-a9fc-c8348e5fffbf
       x-ms-date:
-      - Wed, 27 Jan 2021 22:52:13 GMT
+      - Fri, 09 Apr 2021 04:59:44 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -167,11 +183,12 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Wed, 27 Jan 2021 22:52:13 GMT
-      ETag: '"0x8D8C31630634D0A"'
-      Last-Modified: Wed, 27 Jan 2021 22:52:14 GMT
+      Date: Fri, 09 Apr 2021 04:59:44 GMT
+      ETag: '"0x8D8FB144AE4E3A9"'
+      Last-Modified: Fri, 09 Apr 2021 04:59:44 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 0dcf738b-a01f-002b-3dff-f4e900000000
+      x-ms-request-id: f659c887-a01f-000f-59fd-2c3bcc000000
+      x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-06-12'
     status:
       code: 201
@@ -180,12 +197,14 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 4bd921f7-60f2-11eb-8cdf-c8348e5fffbf
+      - 66b4b5fb-98f0-11eb-995e-c8348e5fffbf
       x-ms-date:
-      - Wed, 27 Jan 2021 22:52:13 GMT
+      - Fri, 09 Apr 2021 04:59:44 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -197,11 +216,12 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Wed, 27 Jan 2021 22:52:13 GMT
-      ETag: '"0x8D8C316306D4F4E"'
-      Last-Modified: Wed, 27 Jan 2021 22:52:14 GMT
+      Date: Fri, 09 Apr 2021 04:59:44 GMT
+      ETag: '"0x8D8FB144AF4B2F5"'
+      Last-Modified: Fri, 09 Apr 2021 04:59:44 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 0dcf738c-a01f-002b-3eff-f4e900000000
+      x-ms-request-id: f659c888-a01f-000f-5afd-2c3bcc000000
+      x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-06-12'
     status:
       code: 201
@@ -210,12 +230,14 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 4be33413-60f2-11eb-8954-c8348e5fffbf
+      - 66c49340-98f0-11eb-b1d8-c8348e5fffbf
       x-ms-date:
-      - Wed, 27 Jan 2021 22:52:13 GMT
+      - Fri, 09 Apr 2021 04:59:44 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -227,11 +249,12 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Wed, 27 Jan 2021 22:52:13 GMT
-      ETag: '"0x8D8C3163078186E"'
-      Last-Modified: Wed, 27 Jan 2021 22:52:14 GMT
+      Date: Fri, 09 Apr 2021 04:59:44 GMT
+      ETag: '"0x8D8FB144B0738B7"'
+      Last-Modified: Fri, 09 Apr 2021 04:59:44 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 0dcf738d-a01f-002b-3fff-f4e900000000
+      x-ms-request-id: f659c889-a01f-000f-5bfd-2c3bcc000000
+      x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-06-12'
     status:
       code: 201
@@ -240,12 +263,14 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 4bedbb55-60f2-11eb-977a-c8348e5fffbf
+      - 66d77f1e-98f0-11eb-b8bb-c8348e5fffbf
       x-ms-date:
-      - Wed, 27 Jan 2021 22:52:13 GMT
+      - Fri, 09 Apr 2021 04:59:44 GMT
       x-ms-version:
       - '2020-06-12'
     method: DELETE
@@ -255,11 +280,11 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Wed, 27 Jan 2021 22:52:13 GMT
+      Date: Fri, 09 Apr 2021 04:59:44 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-delete-type-permanent: 'false'
-      x-ms-deletion-id: '132562615343457964'
-      x-ms-request-id: 0dcf738e-a01f-002b-40ff-f4e900000000
+      x-ms-deletion-id: '132624179854239734'
+      x-ms-request-id: f659c88a-a01f-000f-5cfd-2c3bcc000000
       x-ms-version: '2020-06-12'
     status:
       code: 200
@@ -268,12 +293,14 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 4bfa6593-60f2-11eb-9336-c8348e5fffbf
+      - 67229b2e-98f0-11eb-90b2-c8348e5fffbf
       x-ms-date:
-      - Wed, 27 Jan 2021 22:52:13 GMT
+      - Fri, 09 Apr 2021 04:59:45 GMT
       x-ms-version:
       - '2020-06-12'
     method: DELETE
@@ -283,11 +310,11 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Wed, 27 Jan 2021 22:52:13 GMT
+      Date: Fri, 09 Apr 2021 04:59:44 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-delete-type-permanent: 'false'
-      x-ms-deletion-id: '132562615344219694'
-      x-ms-request-id: 0dcf738f-a01f-002b-41ff-f4e900000000
+      x-ms-deletion-id: '132624179855451954'
+      x-ms-request-id: f659c88c-a01f-000f-5dfd-2c3bcc000000
       x-ms-version: '2020-06-12'
     status:
       code: 200
@@ -296,12 +323,14 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 4c067444-60f2-11eb-81e5-c8348e5fffbf
+      - 67349e3d-98f0-11eb-b7db-c8348e5fffbf
       x-ms-date:
-      - Wed, 27 Jan 2021 22:52:13 GMT
+      - Fri, 09 Apr 2021 04:59:45 GMT
       x-ms-version:
       - '2020-06-12'
     method: DELETE
@@ -311,11 +340,11 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Wed, 27 Jan 2021 22:52:13 GMT
+      Date: Fri, 09 Apr 2021 04:59:45 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-delete-type-permanent: 'false'
-      x-ms-deletion-id: '132562615345014937'
-      x-ms-request-id: 0dcf7390-a01f-002b-42ff-f4e900000000
+      x-ms-deletion-id: '132624179856631159'
+      x-ms-request-id: f659c88d-a01f-000f-5efd-2c3bcc000000
       x-ms-version: '2020-06-12'
     status:
       code: 200
@@ -324,12 +353,14 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 4c12339b-60f2-11eb-8927-c8348e5fffbf
+      - 6746f037-98f0-11eb-8a74-c8348e5fffbf
       x-ms-date:
-      - Wed, 27 Jan 2021 22:52:13 GMT
+      - Fri, 09 Apr 2021 04:59:45 GMT
       x-ms-version:
       - '2020-06-12'
     method: DELETE
@@ -339,11 +370,11 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Wed, 27 Jan 2021 22:52:13 GMT
+      Date: Fri, 09 Apr 2021 04:59:45 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-delete-type-permanent: 'false'
-      x-ms-deletion-id: '132562615345790096'
-      x-ms-request-id: 0dcf7391-a01f-002b-43ff-f4e900000000
+      x-ms-deletion-id: '132624179857809934'
+      x-ms-request-id: f659c88e-a01f-000f-5ffd-2c3bcc000000
       x-ms-version: '2020-06-12'
     status:
       code: 200
@@ -352,12 +383,14 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 4c1e4147-60f2-11eb-9cea-c8348e5fffbf
+      - 6762b5d6-98f0-11eb-914b-c8348e5fffbf
       x-ms-date:
-      - Wed, 27 Jan 2021 22:52:14 GMT
+      - Fri, 09 Apr 2021 04:59:45 GMT
       x-ms-version:
       - '2020-06-12'
     method: DELETE
@@ -367,11 +400,11 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Wed, 27 Jan 2021 22:52:13 GMT
+      Date: Fri, 09 Apr 2021 04:59:45 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-delete-type-permanent: 'false'
-      x-ms-deletion-id: '132562615346636843'
-      x-ms-request-id: 0dcf7392-a01f-002b-44ff-f4e900000000
+      x-ms-deletion-id: '132624179859739548'
+      x-ms-request-id: f659c890-a01f-000f-60fd-2c3bcc000000
       x-ms-version: '2020-06-12'
     status:
       code: 200
@@ -380,12 +413,14 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 4c2aeb85-60f2-11eb-80e8-c8348e5fffbf
+      - 67768b7e-98f0-11eb-8eb6-c8348e5fffbf
       x-ms-date:
-      - Wed, 27 Jan 2021 22:52:14 GMT
+      - Fri, 09 Apr 2021 04:59:46 GMT
       x-ms-version:
       - '2020-06-12'
     method: DELETE
@@ -395,11 +430,11 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Wed, 27 Jan 2021 22:52:13 GMT
+      Date: Fri, 09 Apr 2021 04:59:45 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-delete-type-permanent: 'false'
-      x-ms-deletion-id: '132562615347463522'
-      x-ms-request-id: 0dcf7393-a01f-002b-45ff-f4e900000000
+      x-ms-deletion-id: '132624179861674259'
+      x-ms-request-id: f659c891-a01f-000f-61fd-2c3bcc000000
       x-ms-version: '2020-06-12'
     status:
       code: 200
@@ -409,204 +444,208 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 4c3780ef-60f2-11eb-b9b4-c8348e5fffbf
+      - 67958534-98f0-11eb-8045-c8348e5fffbf
       x-ms-date:
-      - Wed, 27 Jan 2021 22:52:14 GMT
+      - Fri, 09 Apr 2021 04:59:46 GMT
       x-ms-version:
       - '2020-06-12'
     method: GET
-    uri: https://storagename.blob.core.windows.net/filesystemac201283?showonly=deleted&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/filesystemac201283?restype=container&comp=list&showonly=deleted
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"filesystemac201283\"><Blobs><Blob><Name>dir1</Name><DeletionId>132562615345014937</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
-        27 Jan 2021 22:52:14 GMT</Creation-Time><Last-Modified>Wed, 27 Jan 2021 22:52:14
-        GMT</Last-Modified><Expiry-Time>Sun, 31 Jan 2021 22:52:14 GMT</Expiry-Time><Etag>0x8D8C31630504E73</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"filesystemac201283\"><Blobs><Blob><Name>dir1</Name><DeletionId>132624179856631159</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Fri,
+        09 Apr 2021 04:59:44 GMT</Creation-Time><Last-Modified>Fri, 09 Apr 2021 04:59:44
+        GMT</Last-Modified><Expiry-Time>Wed, 14 Apr 2021 04:59:45 GMT</Expiry-Time><Etag>0x8D8FB144AC81FE4</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5
-        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Wed,
-        27 Jan 2021 22:52:14 GMT</DeletedTime><RemainingRetentionDays>3</RemainingRetentionDays></Properties><OrMetadata
-        /></Blob><Blob><Name>dir2</Name><DeletionId>132562615345790096</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
-        27 Jan 2021 22:52:14 GMT</Creation-Time><Last-Modified>Wed, 27 Jan 2021 22:52:14
-        GMT</Last-Modified><Expiry-Time>Sun, 31 Jan 2021 22:52:14 GMT</Expiry-Time><Etag>0x8D8C3163059D058</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri,
+        09 Apr 2021 04:59:45 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties><OrMetadata
+        /></Blob><Blob><Name>dir2</Name><DeletionId>132624179857809934</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Fri,
+        09 Apr 2021 04:59:44 GMT</Creation-Time><Last-Modified>Fri, 09 Apr 2021 04:59:44
+        GMT</Last-Modified><Expiry-Time>Wed, 14 Apr 2021 04:59:45 GMT</Expiry-Time><Etag>0x8D8FB144AD659D9</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5
-        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Wed,
-        27 Jan 2021 22:52:14 GMT</DeletedTime><RemainingRetentionDays>3</RemainingRetentionDays></Properties><OrMetadata
-        /></Blob><Blob><Name>dir3/file_in_dir3</Name><DeletionId>132562615346636843</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
-        27 Jan 2021 22:52:14 GMT</Creation-Time><Last-Modified>Wed, 27 Jan 2021 22:52:14
-        GMT</Last-Modified><Expiry-Time>Sun, 31 Jan 2021 22:52:14 GMT</Expiry-Time><Etag>0x8D8C316306D4F4E</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri,
+        09 Apr 2021 04:59:45 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties><OrMetadata
+        /></Blob><Blob><Name>dir3/file_in_dir3</Name><DeletionId>132624179859739548</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Fri,
+        09 Apr 2021 04:59:44 GMT</Creation-Time><Last-Modified>Fri, 09 Apr 2021 04:59:44
+        GMT</Last-Modified><Expiry-Time>Wed, 14 Apr 2021 04:59:45 GMT</Expiry-Time><Etag>0x8D8FB144AF4B2F5</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5
-        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Wed,
-        27 Jan 2021 22:52:14 GMT</DeletedTime><RemainingRetentionDays>3</RemainingRetentionDays></Properties><OrMetadata
-        /></Blob><Blob><Name>dir3/subdir/file_in_subdir</Name><DeletionId>132562615347463522</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
-        27 Jan 2021 22:52:14 GMT</Creation-Time><Last-Modified>Wed, 27 Jan 2021 22:52:14
-        GMT</Last-Modified><Expiry-Time>Sun, 31 Jan 2021 22:52:14 GMT</Expiry-Time><Etag>0x8D8C3163078186E</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri,
+        09 Apr 2021 04:59:45 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties><OrMetadata
+        /></Blob><Blob><Name>dir3/subdir/file_in_subdir</Name><DeletionId>132624179861674259</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Fri,
+        09 Apr 2021 04:59:44 GMT</Creation-Time><Last-Modified>Fri, 09 Apr 2021 04:59:44
+        GMT</Last-Modified><Expiry-Time>Wed, 14 Apr 2021 04:59:46 GMT</Expiry-Time><Etag>0x8D8FB144B0738B7</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5
-        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Wed,
-        27 Jan 2021 22:52:14 GMT</DeletedTime><RemainingRetentionDays>3</RemainingRetentionDays></Properties><OrMetadata
-        /></Blob><Blob><Name>file0</Name><DeletionId>132562615343457964</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
-        27 Jan 2021 22:52:13 GMT</Creation-Time><Last-Modified>Wed, 27 Jan 2021 22:52:13
-        GMT</Last-Modified><Expiry-Time>Sun, 31 Jan 2021 22:52:14 GMT</Expiry-Time><Etag>0x8D8C316303C8258</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri,
+        09 Apr 2021 04:59:46 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties><OrMetadata
+        /></Blob><Blob><Name>file0</Name><DeletionId>132624179854239734</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Fri,
+        09 Apr 2021 04:59:44 GMT</Creation-Time><Last-Modified>Fri, 09 Apr 2021 04:59:44
+        GMT</Last-Modified><Expiry-Time>Wed, 14 Apr 2021 04:59:45 GMT</Expiry-Time><Etag>0x8D8FB144AAA44AB</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5
-        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Wed,
-        27 Jan 2021 22:52:14 GMT</DeletedTime><RemainingRetentionDays>3</RemainingRetentionDays></Properties><OrMetadata
-        /></Blob><Blob><Name>file1</Name><DeletionId>132562615344219694</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
-        27 Jan 2021 22:52:13 GMT</Creation-Time><Last-Modified>Wed, 27 Jan 2021 22:52:13
-        GMT</Last-Modified><Expiry-Time>Sun, 31 Jan 2021 22:52:14 GMT</Expiry-Time><Etag>0x8D8C3163046B9F2</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri,
+        09 Apr 2021 04:59:45 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties><OrMetadata
+        /></Blob><Blob><Name>file1</Name><DeletionId>132624179855451954</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Fri,
+        09 Apr 2021 04:59:44 GMT</Creation-Time><Last-Modified>Fri, 09 Apr 2021 04:59:44
+        GMT</Last-Modified><Expiry-Time>Wed, 14 Apr 2021 04:59:45 GMT</Expiry-Time><Etag>0x8D8FB144AB9BF70</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5
-        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Wed,
-        27 Jan 2021 22:52:14 GMT</DeletedTime><RemainingRetentionDays>3</RemainingRetentionDays></Properties><OrMetadata
+        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri,
+        09 Apr 2021 04:59:45 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties><OrMetadata
         /></Blob></Blobs><NextMarker /></EnumerationResults>"
     headers:
       Content-Type: application/xml
-      Date: Wed, 27 Jan 2021 22:52:14 GMT
+      Date: Fri, 09 Apr 2021 04:59:45 GMT
       Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding: chunked
-      x-ms-request-id: 8432d24f-201e-0004-4aff-f46504000000
+      Vary: Origin
+      x-ms-request-id: 0e6d5e14-301e-0040-4cfd-2c4a98000000
       x-ms-version: '2020-06-12'
     status:
       code: 200
       message: OK
-    url: https://storagename.blob.core.windows.net/filesystemac201283?showonly=deleted&restype=container&comp=list
+    url: https://storagename.blob.core.windows.net/filesystemac201283?restype=container&comp=list&showonly=deleted
 - request:
     body: null
     headers:
       Accept:
-      - application/json
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 4c4a9e91-60f2-11eb-8d48-c8348e5fffbf
+      - 67b4cd06-98f0-11eb-883c-c8348e5fffbf
       x-ms-date:
-      - Wed, 27 Jan 2021 22:52:14 GMT
+      - Fri, 09 Apr 2021 04:59:46 GMT
       x-ms-version:
       - '2020-06-12'
     method: GET
-    uri: https://storagename.blob.core.windows.net/filesystemac201283?prefix=dir3/&showonly=deleted&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/filesystemac201283?restype=container&comp=list&prefix=dir3/&showonly=deleted
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"filesystemac201283\"><Prefix>dir3/</Prefix><Blobs><Blob><Name>dir3/file_in_dir3</Name><DeletionId>132562615346636843</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
-        27 Jan 2021 22:52:14 GMT</Creation-Time><Last-Modified>Wed, 27 Jan 2021 22:52:14
-        GMT</Last-Modified><Expiry-Time>Sun, 31 Jan 2021 22:52:14 GMT</Expiry-Time><Etag>0x8D8C316306D4F4E</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"filesystemac201283\"><Prefix>dir3/</Prefix><Blobs><Blob><Name>dir3/file_in_dir3</Name><DeletionId>132624179859739548</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Fri,
+        09 Apr 2021 04:59:44 GMT</Creation-Time><Last-Modified>Fri, 09 Apr 2021 04:59:44
+        GMT</Last-Modified><Expiry-Time>Wed, 14 Apr 2021 04:59:45 GMT</Expiry-Time><Etag>0x8D8FB144AF4B2F5</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5
-        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Wed,
-        27 Jan 2021 22:52:14 GMT</DeletedTime><RemainingRetentionDays>3</RemainingRetentionDays></Properties><OrMetadata
-        /></Blob><Blob><Name>dir3/subdir/file_in_subdir</Name><DeletionId>132562615347463522</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
-        27 Jan 2021 22:52:14 GMT</Creation-Time><Last-Modified>Wed, 27 Jan 2021 22:52:14
-        GMT</Last-Modified><Expiry-Time>Sun, 31 Jan 2021 22:52:14 GMT</Expiry-Time><Etag>0x8D8C3163078186E</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri,
+        09 Apr 2021 04:59:45 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties><OrMetadata
+        /></Blob><Blob><Name>dir3/subdir/file_in_subdir</Name><DeletionId>132624179861674259</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Fri,
+        09 Apr 2021 04:59:44 GMT</Creation-Time><Last-Modified>Fri, 09 Apr 2021 04:59:44
+        GMT</Last-Modified><Expiry-Time>Wed, 14 Apr 2021 04:59:46 GMT</Expiry-Time><Etag>0x8D8FB144B0738B7</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5
-        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Wed,
-        27 Jan 2021 22:52:14 GMT</DeletedTime><RemainingRetentionDays>3</RemainingRetentionDays></Properties><OrMetadata
+        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri,
+        09 Apr 2021 04:59:46 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties><OrMetadata
         /></Blob></Blobs><NextMarker /></EnumerationResults>"
     headers:
       Content-Type: application/xml
-      Date: Wed, 27 Jan 2021 22:52:14 GMT
+      Date: Fri, 09 Apr 2021 04:59:45 GMT
       Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding: chunked
-      x-ms-request-id: 8432d250-201e-0004-4bff-f46504000000
+      Vary: Origin
+      x-ms-request-id: 0e6d5f1f-301e-0040-5cfd-2c4a98000000
       x-ms-version: '2020-06-12'
     status:
       code: 200
       message: OK
-    url: https://storagename.blob.core.windows.net/filesystemac201283?prefix=dir3/&showonly=deleted&restype=container&comp=list
+    url: https://storagename.blob.core.windows.net/filesystemac201283?restype=container&comp=list&prefix=dir3/&showonly=deleted
 - request:
     body: null
     headers:
       Accept:
-      - application/json
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 4c548bd6-60f2-11eb-9fcd-c8348e5fffbf
+      - 67c3ca83-98f0-11eb-a7d8-c8348e5fffbf
       x-ms-date:
-      - Wed, 27 Jan 2021 22:52:14 GMT
+      - Fri, 09 Apr 2021 04:59:46 GMT
       x-ms-version:
       - '2020-06-12'
     method: GET
-    uri: https://storagename.blob.core.windows.net/filesystemac201283?maxResults=2&showonly=deleted&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/filesystemac201283?restype=container&comp=list&maxResults=2&showonly=deleted
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"filesystemac201283\"><MaxResults>2</MaxResults><Blobs><Blob><Name>dir1</Name><DeletionId>132562615345014937</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
-        27 Jan 2021 22:52:14 GMT</Creation-Time><Last-Modified>Wed, 27 Jan 2021 22:52:14
-        GMT</Last-Modified><Expiry-Time>Sun, 31 Jan 2021 22:52:14 GMT</Expiry-Time><Etag>0x8D8C31630504E73</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"filesystemac201283\"><MaxResults>2</MaxResults><Blobs><Blob><Name>dir1</Name><DeletionId>132624179856631159</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Fri,
+        09 Apr 2021 04:59:44 GMT</Creation-Time><Last-Modified>Fri, 09 Apr 2021 04:59:44
+        GMT</Last-Modified><Expiry-Time>Wed, 14 Apr 2021 04:59:45 GMT</Expiry-Time><Etag>0x8D8FB144AC81FE4</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5
-        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Wed,
-        27 Jan 2021 22:52:14 GMT</DeletedTime><RemainingRetentionDays>3</RemainingRetentionDays></Properties><OrMetadata
-        /></Blob><Blob><Name>dir2</Name><DeletionId>132562615345790096</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
-        27 Jan 2021 22:52:14 GMT</Creation-Time><Last-Modified>Wed, 27 Jan 2021 22:52:14
-        GMT</Last-Modified><Expiry-Time>Sun, 31 Jan 2021 22:52:14 GMT</Expiry-Time><Etag>0x8D8C3163059D058</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri,
+        09 Apr 2021 04:59:45 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties><OrMetadata
+        /></Blob><Blob><Name>dir2</Name><DeletionId>132624179857809934</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Fri,
+        09 Apr 2021 04:59:44 GMT</Creation-Time><Last-Modified>Fri, 09 Apr 2021 04:59:44
+        GMT</Last-Modified><Expiry-Time>Wed, 14 Apr 2021 04:59:45 GMT</Expiry-Time><Etag>0x8D8FB144AD659D9</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5
-        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Wed,
-        27 Jan 2021 22:52:14 GMT</DeletedTime><RemainingRetentionDays>3</RemainingRetentionDays></Properties><OrMetadata
-        /></Blob></Blobs><NextMarker>2!252!MDAwMTQ0IU9USXdPVGt4TnpRM016WTJOVGczT1RJeE1pQXdJQzl6WVdOb2FXNXpjMjltZEdSbGJHVjBaVE1CTURGRU5rVkNPVE13TmtFNU1VWTBPQzhrZEhKaGMyZ3ZabWxzWlhONWMzUmxiV0ZqTWpBeE1qZ3pBVEF4UkRaR05FWkdNRVE1TlRVMlFrWUNMMlJwY2pNQyEwMDAwMjghMjAyMS0wMS0yN1QyMjo1MjoxNS4wMDg5NzA5WiE-</NextMarker></EnumerationResults>"
+        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri,
+        09 Apr 2021 04:59:45 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties><OrMetadata
+        /></Blob></Blobs><NextMarker>2!248!MDAwMTQwIU1USTROREkwTkRRNE9UUTVNRFk1TWpZeU5qa2dNQ0F2YzJWaGJtNXpaV05oYm1GeWVRRXdNVVEyTURrME1EazNOMEV5UVVRekx5UjBjbUZ6YUM5bWFXeGxjM2x6ZEdWdFlXTXlNREV5T0RNQk1ERkVOekpEUmtReU4wVTBNekZCUlFJdlpHbHlNd0k9ITAwMDAyOCEyMDIxLTA0LTA5VDA0OjU5OjQ2LjYxMTk1MTFaIQ--</NextMarker></EnumerationResults>"
     headers:
       Content-Type: application/xml
-      Date: Wed, 27 Jan 2021 22:52:14 GMT
+      Date: Fri, 09 Apr 2021 04:59:45 GMT
       Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding: chunked
-      x-ms-request-id: 8432d254-201e-0004-4eff-f46504000000
+      Vary: Origin
+      x-ms-request-id: 0e6d5f7c-301e-0040-0cfd-2c4a98000000
       x-ms-version: '2020-06-12'
     status:
       code: 200
       message: OK
-    url: https://storagename.blob.core.windows.net/filesystemac201283?maxResults=2&showonly=deleted&restype=container&comp=list
+    url: https://storagename.blob.core.windows.net/filesystemac201283?restype=container&comp=list&maxResults=2&showonly=deleted
 - request:
     body: null
     headers:
       Accept:
-      - application/json
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 4c669132-60f2-11eb-88ef-c8348e5fffbf
+      - 67df68ca-98f0-11eb-abf0-c8348e5fffbf
       x-ms-date:
-      - Wed, 27 Jan 2021 22:52:14 GMT
+      - Fri, 09 Apr 2021 04:59:46 GMT
       x-ms-version:
       - '2020-06-12'
     method: GET
-    uri: https://storagename.blob.core.windows.net/filesystemac201283?marker=2!252!MDAwMTQ0IU9USXdPVGt4TnpRM016WTJOVGczT1RJeE1pQXdJQzl6WVdOb2FXNXpjMjltZEdSbGJHVjBaVE1CTURGRU5rVkNPVE13TmtFNU1VWTBPQzhrZEhKaGMyZ3ZabWxzWlhONWMzUmxiV0ZqTWpBeE1qZ3pBVEF4UkRaR05FWkdNRVE1TlRVMlFrWUNMMlJwY2pNQyEwMDAwMjghMjAyMS0wMS0yN1QyMjo1MjoxNS4wMDg5NzA5WiE-&maxResults=4&showonly=deleted&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/filesystemac201283?restype=container&comp=list&marker=2!248!MDAwMTQwIU1USTROREkwTkRRNE9UUTVNRFk1TWpZeU5qa2dNQ0F2YzJWaGJtNXpaV05oYm1GeWVRRXdNVVEyTURrME1EazNOMEV5UVVRekx5UjBjbUZ6YUM5bWFXeGxjM2x6ZEdWdFlXTXlNREV5T0RNQk1ERkVOekpEUmtReU4wVTBNekZCUlFJdlpHbHlNd0k9ITAwMDAyOCEyMDIxLTA0LTA5VDA0OjU5OjQ2LjYxMTk1MTFaIQ--&maxResults=4&showonly=deleted
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"filesystemac201283\"><Marker>2!252!MDAwMTQ0IU9USXdPVGt4TnpRM016WTJOVGczT1RJeE1pQXdJQzl6WVdOb2FXNXpjMjltZEdSbGJHVjBaVE1CTURGRU5rVkNPVE13TmtFNU1VWTBPQzhrZEhKaGMyZ3ZabWxzWlhONWMzUmxiV0ZqTWpBeE1qZ3pBVEF4UkRaR05FWkdNRVE1TlRVMlFrWUNMMlJwY2pNQyEwMDAwMjghMjAyMS0wMS0yN1QyMjo1MjoxNS4wMDg5NzA5WiE-</Marker><MaxResults>4</MaxResults><Blobs><Blob><Name>dir3/file_in_dir3</Name><DeletionId>132562615346636843</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
-        27 Jan 2021 22:52:14 GMT</Creation-Time><Last-Modified>Wed, 27 Jan 2021 22:52:14
-        GMT</Last-Modified><Expiry-Time>Sun, 31 Jan 2021 22:52:14 GMT</Expiry-Time><Etag>0x8D8C316306D4F4E</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"filesystemac201283\"><Marker>2!248!MDAwMTQwIU1USTROREkwTkRRNE9UUTVNRFk1TWpZeU5qa2dNQ0F2YzJWaGJtNXpaV05oYm1GeWVRRXdNVVEyTURrME1EazNOMEV5UVVRekx5UjBjbUZ6YUM5bWFXeGxjM2x6ZEdWdFlXTXlNREV5T0RNQk1ERkVOekpEUmtReU4wVTBNekZCUlFJdlpHbHlNd0k9ITAwMDAyOCEyMDIxLTA0LTA5VDA0OjU5OjQ2LjYxMTk1MTFaIQ--</Marker><MaxResults>4</MaxResults><Blobs><Blob><Name>dir3/file_in_dir3</Name><DeletionId>132624179859739548</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Fri,
+        09 Apr 2021 04:59:44 GMT</Creation-Time><Last-Modified>Fri, 09 Apr 2021 04:59:44
+        GMT</Last-Modified><Expiry-Time>Wed, 14 Apr 2021 04:59:45 GMT</Expiry-Time><Etag>0x8D8FB144AF4B2F5</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5
-        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Wed,
-        27 Jan 2021 22:52:14 GMT</DeletedTime><RemainingRetentionDays>3</RemainingRetentionDays></Properties><OrMetadata
-        /></Blob><Blob><Name>dir3/subdir/file_in_subdir</Name><DeletionId>132562615347463522</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
-        27 Jan 2021 22:52:14 GMT</Creation-Time><Last-Modified>Wed, 27 Jan 2021 22:52:14
-        GMT</Last-Modified><Expiry-Time>Sun, 31 Jan 2021 22:52:14 GMT</Expiry-Time><Etag>0x8D8C3163078186E</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri,
+        09 Apr 2021 04:59:45 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties><OrMetadata
+        /></Blob><Blob><Name>dir3/subdir/file_in_subdir</Name><DeletionId>132624179861674259</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Fri,
+        09 Apr 2021 04:59:44 GMT</Creation-Time><Last-Modified>Fri, 09 Apr 2021 04:59:44
+        GMT</Last-Modified><Expiry-Time>Wed, 14 Apr 2021 04:59:46 GMT</Expiry-Time><Etag>0x8D8FB144B0738B7</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5
-        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Wed,
-        27 Jan 2021 22:52:14 GMT</DeletedTime><RemainingRetentionDays>3</RemainingRetentionDays></Properties><OrMetadata
-        /></Blob><Blob><Name>file0</Name><DeletionId>132562615343457964</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
-        27 Jan 2021 22:52:13 GMT</Creation-Time><Last-Modified>Wed, 27 Jan 2021 22:52:13
-        GMT</Last-Modified><Expiry-Time>Sun, 31 Jan 2021 22:52:14 GMT</Expiry-Time><Etag>0x8D8C316303C8258</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri,
+        09 Apr 2021 04:59:46 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties><OrMetadata
+        /></Blob><Blob><Name>file0</Name><DeletionId>132624179854239734</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Fri,
+        09 Apr 2021 04:59:44 GMT</Creation-Time><Last-Modified>Fri, 09 Apr 2021 04:59:44
+        GMT</Last-Modified><Expiry-Time>Wed, 14 Apr 2021 04:59:45 GMT</Expiry-Time><Etag>0x8D8FB144AAA44AB</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5
-        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Wed,
-        27 Jan 2021 22:52:14 GMT</DeletedTime><RemainingRetentionDays>3</RemainingRetentionDays></Properties><OrMetadata
-        /></Blob><Blob><Name>file1</Name><DeletionId>132562615344219694</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Wed,
-        27 Jan 2021 22:52:13 GMT</Creation-Time><Last-Modified>Wed, 27 Jan 2021 22:52:13
-        GMT</Last-Modified><Expiry-Time>Sun, 31 Jan 2021 22:52:14 GMT</Expiry-Time><Etag>0x8D8C3163046B9F2</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri,
+        09 Apr 2021 04:59:45 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties><OrMetadata
+        /></Blob><Blob><Name>file1</Name><DeletionId>132624179855451954</DeletionId><Deleted>true</Deleted><Properties><Creation-Time>Fri,
+        09 Apr 2021 04:59:44 GMT</Creation-Time><Last-Modified>Fri, 09 Apr 2021 04:59:44
+        GMT</Last-Modified><Expiry-Time>Wed, 14 Apr 2021 04:59:45 GMT</Expiry-Time><Etag>0x8D8FB144AB9BF70</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64>AAAAAAAAAAA=</Content-CRC64><Content-MD5
-        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Wed,
-        27 Jan 2021 22:52:14 GMT</DeletedTime><RemainingRetentionDays>3</RemainingRetentionDays></Properties><OrMetadata
+        /><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri,
+        09 Apr 2021 04:59:45 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties><OrMetadata
         /></Blob></Blobs><NextMarker /></EnumerationResults>"
     headers:
       Content-Type: application/xml
-      Date: Wed, 27 Jan 2021 22:52:14 GMT
+      Date: Fri, 09 Apr 2021 04:59:46 GMT
       Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding: chunked
-      x-ms-request-id: 8432d255-201e-0004-4fff-f46504000000
+      Vary: Origin
+      x-ms-request-id: 0e6d6057-301e-0040-02fd-2c4a98000000
       x-ms-version: '2020-06-12'
     status:
       code: 200
       message: OK
-    url: https://storagename.blob.core.windows.net/filesystemac201283?marker=2!252!MDAwMTQ0IU9USXdPVGt4TnpRM016WTJOVGczT1RJeE1pQXdJQzl6WVdOb2FXNXpjMjltZEdSbGJHVjBaVE1CTURGRU5rVkNPVE13TmtFNU1VWTBPQzhrZEhKaGMyZ3ZabWxzWlhONWMzUmxiV0ZqTWpBeE1qZ3pBVEF4UkRaR05FWkdNRVE1TlRVMlFrWUNMMlJwY2pNQyEwMDAwMjghMjAyMS0wMS0yN1QyMjo1MjoxNS4wMDg5NzA5WiE-&maxResults=4&showonly=deleted&restype=container&comp=list
+    url: https://storagename.blob.core.windows.net/filesystemac201283?restype=container&comp=list&marker=2!248!MDAwMTQwIU1USTROREkwTkRRNE9UUTVNRFk1TWpZeU5qa2dNQ0F2YzJWaGJtNXpaV05oYm1GeWVRRXdNVVEyTURrME1EazNOMEV5UVVRekx5UjBjbUZ6YUM5bWFXeGxjM2x6ZEdWdFlXTXlNREV5T0RNQk1ERkVOekpEUmtReU4wVTBNekZCUlFJdlpHbHlNd0k9ITAwMDAyOCEyMDIxLTA0LTA5VDA0OjU5OjQ2LjYxMTk1MTFaIQ--&maxResults=4&showonly=deleted
 version: 1

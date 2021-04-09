@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Dec 2020 17:06:31 GMT
+      - Wed, 07 Apr 2021 21:32:45 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 17:06:31 GMT
+      - Wed, 07 Apr 2021 21:32:45 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Fri, 18 Dec 2020 17:06:32 GMT
+      - Wed, 07 Apr 2021 21:32:46 GMT
       etag:
-      - W/"datetime'2020-12-18T17%3A06%3A31.9409160Z'"
+      - W/"datetime'2021-04-07T21%3A32%3A46.6778120Z'"
       location:
       - https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttable5dfd1e10')
       server:
@@ -55,11 +55,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 18 Dec 2020 17:06:32 GMT
+      - Wed, 07 Apr 2021 21:32:46 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 17:06:32 GMT
+      - Wed, 07 Apr 2021 21:32:46 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -71,7 +71,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 18 Dec 2020 17:06:32 GMT
+      - Wed, 07 Apr 2021 21:32:46 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:
@@ -89,11 +89,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Dec 2020 17:06:32 GMT
+      - Wed, 07 Apr 2021 21:32:47 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 17:06:32 GMT
+      - Wed, 07 Apr 2021 21:32:47 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -105,7 +105,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Fri, 18 Dec 2020 17:06:32 GMT
+      - Wed, 07 Apr 2021 21:32:46 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:

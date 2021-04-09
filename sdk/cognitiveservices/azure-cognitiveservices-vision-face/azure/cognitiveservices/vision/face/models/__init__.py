@@ -37,6 +37,7 @@ try:
     from ._models_py3 import LargeFaceList
     from ._models_py3 import LargePersonGroup
     from ._models_py3 import Makeup
+    from ._models_py3 import Mask
     from ._models_py3 import MetaDataContract
     from ._models_py3 import NameAndUserDataContract
     from ._models_py3 import Noise
@@ -82,6 +83,7 @@ except (SyntaxError, ImportError):
     from ._models import LargeFaceList
     from ._models import LargePersonGroup
     from ._models import Makeup
+    from ._models import Mask
     from ._models import MetaDataContract
     from ._models import NameAndUserDataContract
     from ._models import Noise
@@ -109,6 +111,7 @@ from ._face_client_enums import (
     Gender,
     GlassesType,
     HairColorType,
+    MaskType,
     NoiseLevel,
     OperationStatusType,
     RecognitionModel,
@@ -145,6 +148,7 @@ __all__ = [
     'LargeFaceList',
     'LargePersonGroup',
     'Makeup',
+    'Mask',
     'MetaDataContract',
     'NameAndUserDataContract',
     'Noise',
@@ -170,6 +174,7 @@ __all__ = [
     'BlurLevel',
     'ExposureLevel',
     'NoiseLevel',
+    'MaskType',
     'FindSimilarMatchMode',
     'TrainingStatusType',
     'SnapshotApplyMode',

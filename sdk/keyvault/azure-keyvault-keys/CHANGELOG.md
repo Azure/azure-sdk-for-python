@@ -1,28 +1,34 @@
 # Release History
 
-## 4.4.0b4 (Unreleased)
+## 4.4.0b5 (Unreleased)
 
 
-## 4.4.0b3 (2021-3-11)
+## 4.4.0b4 (2021-04-06)
+
+### Added
+- `CryptographyClient` can perform AES-CBCPAD encryption and decryption locally
+  ([#17762](https://github.com/Azure/azure-sdk-for-python/pull/17762))
+
+## 4.4.0b3 (2021-03-11)
 ### Added
 - `CryptographyClient` will perform all operations locally if initialized with
   the `.from_jwk` factory method
   ([#16565](https://github.com/Azure/azure-sdk-for-python/pull/16565))
 - Added requirement for six>=1.12.0
 
-## 4.4.0b2 (2021-2-10)
+## 4.4.0b2 (2021-02-10)
 ### Fixed
 - API versions older than 7.2-preview no longer raise `ImportError` when
   performing async operations ([#16680](https://github.com/Azure/azure-sdk-for-python/pull/16680))
 
-## 4.4.0b1 (2021-2-10)
+## 4.4.0b1 (2021-02-10)
 ### Changed
 - Key Vault API version 7.2-preview is now the default
 - Updated msrest requirement to >=0.6.21
 
 ### Added
 - Support for Key Vault API version 7.2-preview
-([#16566](https://github.com/Azure/azure-sdk-for-python/pull/16566))
+  ([#16566](https://github.com/Azure/azure-sdk-for-python/pull/16566))
   - Added `oct_hsm` to `KeyType`
   - Added 128-, 192-, and 256-bit AES-GCM, AES-CBC, and AES-CBCPAD encryption
     algorithms to `EncryptionAlgorithm`

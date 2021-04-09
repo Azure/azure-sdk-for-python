@@ -11,6 +11,7 @@ import datetime
 from azure.identity import EnvironmentCredential
 from azure.eventhub import EventData, EventHubProducerClient, EventHubConsumerClient, EventHubSharedKeyCredential
 from azure.eventhub._client_base import EventHubSASTokenCredential
+from azure.core.credentials import AzureSasCredential
 
 @pytest.mark.liveTest
 def test_client_secret_credential(live_eventhub):
@@ -81,3 +82,28 @@ def test_client_sas_credential(live_eventhub):
         batch = conn_str_producer_client.create_batch(partition_id='0')
         batch.add(EventData(body='A single message'))
         conn_str_producer_client.send_batch(batch)
+
+
+@pytest.mark.liveTest
+def test_client_azure_sas_credential(live_eventhub):
+    # This should "just work" to validate known-good.
+    hostname = live_eventhub['hostname']
+    producer_client = EventHubProducerClient.from_connection_string(live_eventhub['connection_str'], eventhub_name = live_eventhub['event_hub'])
+
+    with producer_client:
+        batch = producer_client.create_batch(partition_id='0')
+        batch.add(EventData(body='A single message'))
+        producer_client.send_batch(batch)
+
+    # This should also work, but now using SAS tokens.
+    credential = EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
+    auth_uri = "sb://{}/{}".format(hostname, live_eventhub['event_hub'])
+    token = credential.get_token(auth_uri).token.decode()
+    producer_client = EventHubProducerClient(fully_qualified_namespace=hostname,
+                                             eventhub_name=live_eventhub['event_hub'],
+                                             credential=AzureSasCredential(token))
+
+    with producer_client:
+        batch = producer_client.create_batch(partition_id='0')
+        batch.add(EventData(body='A single message'))
+        producer_client.send_batch(batch)
