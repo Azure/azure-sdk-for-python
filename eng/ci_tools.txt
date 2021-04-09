@@ -1,8 +1,9 @@
 # requirements leveraged by ci tools
+cryptography==3.1
 setuptools==44.1.0; python_version == '2.7'
 setuptools==46.4.0; python_version >= '3.5'
 virtualenv==20.0.23
-wheel==0.34.2 
+wheel==0.34.2
 Jinja2==2.11.2
 packaging==20.4
 tox==3.15.0
@@ -17,6 +18,7 @@ coverage==4.5.4
 codecov==2.1.0
 beautifulsoup4==4.9.1
 pkginfo==1.5.0.1
+pip==20.2
 
 # locking packages defined as deps from azure-sdk-tools or azure-devtools
 pytoml==0.1.21

@@ -21,8 +21,15 @@ from azure.mgmt.keyvault.models import (
     VaultCreateOrUpdateParameters,
 )
 
-from azure_devtools.scenario_tests.exceptions import(
-    AzureTestError, NameInUseError, ReservedResourceNameError
+try:
+    from azure.mgmt.keyvault.models import SkuFamily
+except ImportError:
+    pass
+
+from azure_devtools.scenario_tests.exceptions import (
+    AzureTestError,
+    NameInUseError,
+    ReservedResourceNameError,
 )
 
 from . import AzureMgmtPreparer, ResourceGroupPreparer
@@ -38,6 +45,7 @@ DEFAULT_PERMISSIONS = Permissions(
 DEFAULT_SKU = SkuName.premium.value
 CLIENT_OID = "00000000-0000-0000-0000-000000000000"
 
+
 class KeyVaultPreparer(AzureMgmtPreparer):
     def __init__(
         self,
@@ -48,19 +56,22 @@ class KeyVaultPreparer(AzureMgmtPreparer):
         enabled_for_disk_encryption=True,
         enabled_for_template_deployment=True,
         enable_soft_delete=None,
-        location='westus',
-        parameter_name='vault_uri',
+        location="westus",
+        parameter_name="vault_uri",
         resource_group_parameter_name=RESOURCE_GROUP_PARAM,
         disable_recording=True,
         playback_fake_resource=None,
         client_kwargs=None,
-        random_name_enabled=True
+        random_name_enabled=True,
     ):
-        super(KeyVaultPreparer, self).__init__(name_prefix, 24,
-                                                     disable_recording=disable_recording,
-                                                     playback_fake_resource=playback_fake_resource,
-                                                     client_kwargs=client_kwargs,
-                                                     random_name_enabled=random_name_enabled)
+        super(KeyVaultPreparer, self).__init__(
+            name_prefix,
+            24,
+            disable_recording=disable_recording,
+            playback_fake_resource=playback_fake_resource,
+            client_kwargs=client_kwargs,
+            random_name_enabled=random_name_enabled,
+        )
         self.location = location
         self.sku = sku
         self.permissions = permissions
@@ -75,7 +86,9 @@ class KeyVaultPreparer(AzureMgmtPreparer):
         self.client_oid = None
 
     def create_resource(self, name, **kwargs):
-        self.client_oid = self.test_class_instance.set_value_to_scrub("CLIENT_OID", CLIENT_OID)
+        self.client_oid = self.test_class_instance.set_value_to_scrub(
+            "CLIENT_OID", CLIENT_OID
+        )
         if self.is_live:
             group = self._get_resource_group(**kwargs).name
             access_policies = [
@@ -87,7 +100,9 @@ class KeyVaultPreparer(AzureMgmtPreparer):
             ]
             properties = VaultProperties(
                 tenant_id=self.test_class_instance.get_settings_value("TENANT_ID"),
-                sku=Sku(name=self.sku),
+                sku=Sku(name=self.sku, family=SkuFamily.A)
+                if SkuFamily
+                else Sku(name=self.sku),
                 access_policies=access_policies,
                 vault_uri=None,
                 enabled_for_deployment=self.enabled_for_deployment,
@@ -96,14 +111,18 @@ class KeyVaultPreparer(AzureMgmtPreparer):
                 enable_soft_delete=self.enable_soft_delete,
                 enable_purge_protection=None,
             )
-            parameters = VaultCreateOrUpdateParameters(location=self.location, properties=properties)
+            parameters = VaultCreateOrUpdateParameters(
+                location=self.location, properties=properties
+            )
             self.client = self.create_mgmt_client(KeyVaultManagementClient)
 
             # ARM may return not found at first even though the resource group has been created
             retries = 4
             for i in range(retries):
                 try:
-                    vault = self.client.vaults.create_or_update(group, name, parameters).result()
+                    vault = self.client.vaults.begin_create_or_update(
+                        group, name, parameters
+                    ).result()
                     break
                 except Exception as ex:
                     if "VaultAlreadyExists" in str(ex):
@@ -114,8 +133,7 @@ class KeyVaultPreparer(AzureMgmtPreparer):
                         raise
                     time.sleep(3)
             self.test_class_instance.scrubber.register_name_pair(
-                name,
-                self.resource_moniker
+                name, self.resource_moniker
             )
             vault_uri = vault.properties.vault_uri
         else:

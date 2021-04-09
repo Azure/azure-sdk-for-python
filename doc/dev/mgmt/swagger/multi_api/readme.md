@@ -8,7 +8,7 @@ This is the AutoRest configuration file for Network.
 
 ## Getting Started
 
-To build the SDK for Network, simply [Install AutoRest](https://github.com/Azure/autorest/blob/master/docs/installing-autorest.md) and in this folder, run:
+To build the SDK for Network, simply [Install AutoRest](https://github.com/Azure/autorest/blob/master/docs/install/readme.md) and in this folder, run:
 
 > `autorest`
 

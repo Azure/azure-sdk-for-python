@@ -10,7 +10,7 @@ Nowadays, swagger files are actually not the input for Autorest, the input is _r
 autorest readme.md --python
 ```
 
-In practical terms, we want to control the version of Autorest used, the output folder, etc. but this article will focus on Swagger and Readme. For more details about generation, see the [generation page](./generation.md).
+In practical terms, we want to control the version of Autorest used, the output folder, etc. but this article will focus on Swagger and Readme. For more details about generation, see the [generation page](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/mgmt/generation.md).
 
 ## Writing the readme
 

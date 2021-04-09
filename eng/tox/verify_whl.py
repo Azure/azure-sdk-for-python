@@ -46,14 +46,14 @@ def extract_whl(dist_dir, version):
     return extract_location
 
 
-def verify_whl_root_directory(dist_dir, version):
-    # This method ensures root directory in whl is azure only
-
+def verify_whl_root_directory(dist_dir, expected_top_level_module, version):
+    # This method ensures root directory in whl is the directoy indicated by our top level namespace
     extract_location = extract_whl(dist_dir, version)
     root_folders = os.listdir(extract_location)
+
     # check for non 'azure' folder as root folder
     non_azure_folders = [
-        d for d in root_folders if d != "azure" and not d.endswith(".dist-info")
+        d for d in root_folders if d != expected_top_level_module and not d.endswith(".dist-info")
     ]
     if non_azure_folders:
         logging.error(
@@ -107,11 +107,13 @@ if __name__ == "__main__":
 
     # get target package name from target package path
     pkg_dir = os.path.abspath(args.target_package)
-    pkg_name, _, ver = get_package_details(os.path.join(pkg_dir, "setup.py"))
+    pkg_name, namespace, ver = get_package_details(os.path.join(pkg_dir, "setup.py"))
+
+    top_level_module = namespace.split('.')[0]
 
     if should_verify_package(pkg_name):
         logging.info("Verifying root directory in whl for package: [%s]", pkg_name)
-        if verify_whl_root_directory(args.dist_dir, ver):
+        if verify_whl_root_directory(args.dist_dir, top_level_module, ver):
             logging.info("Verified root directory in whl for package: [%s]", pkg_name)
         else:
             logging.info(

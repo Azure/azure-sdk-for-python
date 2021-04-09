@@ -13,17 +13,16 @@ parameters:
   RunCoverage: ne(variables['CoverageArg'], '--disablecov')
   ToxEnvParallel: ''
   InjectedPackages: ''
+  DevFeedName: 'public/azure-sdk-for-python'
+  TestSamples: false
 
 steps:
   - pwsh: |
       gci -r $(Build.ArtifactStagingDirectory)
 
-  - task: UsePythonVersion@0
-    displayName: 'Use Python ${{ parameters.PythonVersion }}'
-    inputs:
+  - template: /eng/pipelines/templates/steps/use-python-version.yml
+    parameters:
       versionSpec: '${{ parameters.PythonVersion }}'
-
-  - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
 
   - script: |
       python -m pip install pip==20.1
@@ -31,6 +30,11 @@ steps:
       pip --version
       pip freeze
     displayName: 'Prep Environment'
+
+  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+    - template: ../steps/auth-dev-feed.yml
+      parameters:
+        DevFeedName: ${{ parameters.DevFeedName }}
 
   - ${{ parameters.BeforeTestSteps }}
 
@@ -49,7 +53,33 @@ steps:
         ${{ parameters.ToxEnvParallel }}
     env: ${{ parameters.EnvVars }}
 
+  - task: PublishPipelineArtifact@1
+    displayName: Publish Tox Logs
+    condition: failed()
+    continueOnError: true
+    inputs:
+      targetPath: '$(Build.SourcesDirectory)/_tox_logs'
+      artifactType: 'pipeline'
+
   - ${{ parameters.AfterTestSteps }}
+
+  - pwsh: |
+      if (Test-Path -Path '.\_coverage\') {
+        Get-ChildItem .\_coverage\ -Recurse |
+        Foreach-Object {
+          Get-Content $_
+        }
+      }
+    displayName: 'Show .coverage files'
+    condition: and(succeeded(), ${{ parameters.RunCoverage }})
+
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish .coverage files'
+    continueOnError: true
+    condition: and(succeeded(), ${{ parameters.RunCoverage }})
+    inputs:
+      targetPath: '$(Build.SourcesDirectory)/_coverage'
+      artifactType: 'pipeline'
 
   - task: PublishTestResults@2
     condition: always()
@@ -58,6 +88,13 @@ steps:
       testRunTitle: '$(OSName) Python ${{ parameters.PythonVersion }}'
       failTaskOnFailedTests: true
 
-  - template: publish-coverage.yml
-    parameters:
-      RunCoverage: ${{ parameters.RunCoverage }}
+  - ${{ if eq(parameters['TestSamples'], true) }}:
+    - task: PythonScript@0
+      displayName: 'Test Samples'
+      inputs:
+        scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+        arguments: >-
+          "${{ parameters.BuildTargetingString }}"
+          --service="${{ parameters.ServiceDirectory }}"
+          --toxenv="samples"
+      env: ${{ parameters.EnvVars }}

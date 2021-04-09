@@ -10,7 +10,7 @@ from .swaggertosdk.SwaggerToSdkCore import (
     read_config,
     CONFIG_FILE,
 )
-from azure_devtools.ci_tools.git_tools import get_diff_file_list
+from azure_devtools.ci_tools.git_tools import get_add_diff_file_list
 from .swaggertosdk.autorest_tools  import build_autorest_options
 from .generate_sdk import generate
 
@@ -21,7 +21,7 @@ DEFAULT_DEST_FOLDER = "./dist"
 
 
 def get_package_names(sdk_folder):
-    files = get_diff_file_list(sdk_folder)
+    files = get_add_diff_file_list(sdk_folder)
     matches = {_SDK_FOLDER_RE.search(f) for f in files}
     package_names = {match.groups() for match in matches if match is not None}
     return package_names

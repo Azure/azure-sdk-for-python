@@ -1,17 +1,22 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import os
-from azure.identity import DefaultAzureCredential, KnownAuthorities
+from azure.identity import AzureAuthorityHosts, DefaultAzureCredential
+
 
 class KeyVaultBase:
     credential_type = DefaultAzureCredential
     host_alias_map = {
-        'AzureChinaCloud': KnownAuthorities.AZURE_CHINA,
-        'AzureGermanCloud': KnownAuthorities.AZURE_GERMANY,
-        'AzureUSGovernment': KnownAuthorities.AZURE_GOVERNMENT,
-        'AzureCloud': KnownAuthorities.AZURE_PUBLIC_CLOUD,
+        "AzureChinaCloud": (AzureAuthorityHosts.AZURE_CHINA, "2016-10-01"),
+        "AzureGermanCloud": (AzureAuthorityHosts.AZURE_GERMANY, "2016-10-01"),
+        "AzureUSGovernment": (AzureAuthorityHosts.AZURE_GOVERNMENT, "2016-10-01"),
+        "AzureCloud": (AzureAuthorityHosts.AZURE_PUBLIC_CLOUD, "7.1"),
     }
 
-    # Instantiate a default credential based on the credential_type
-    def get_default_credential(self, authority_host_alias=None):
-        alias = authority_host_alias or os.environ.get("AZURE_CLOUD")
-        authority_host = self.host_alias_map.get(alias, KnownAuthorities.AZURE_PUBLIC_CLOUD)
-        return self.credential_type(authority=authority_host)
+    def get_client_args(self, authority_host_alias=None):
+        alias = authority_host_alias or os.environ.get("AZURE_CLOUD", "AzureCloud")
+        authority_host, api_version = self.host_alias_map[alias]
+        credential = self.credential_type(authority=authority_host)
+        return {"api_version": api_version, "credential": credential, "vault_url": os.environ["AZURE_PROJECT_URL"]}

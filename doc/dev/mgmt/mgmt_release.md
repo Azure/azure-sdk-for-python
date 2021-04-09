@@ -16,7 +16,23 @@ Once Swagger PR is merged, SDK automation will create pull request to Azure SDK 
 
 Once you have a PR that contains accurate with correct tests (or no tests at all, but CI is green), this page explains how to prepare for a release.
 
-IMPORTANT NOTE: All the commands in this page assumes you have loaded the [dev_setup](../dev_setup.md) in your currently loaded virtual environment.
+IMPORTANT NOTE: All the commands in this page assumes you have loaded the [dev_setup](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/dev_setup.md) in your currently loaded virtual environment.
+
+## Manual generation
+
+If the automation is not doing its job to create an auto PR, Python has a SwaggerToSdk CLI that can be used to generate a specific Readme. You need
+a virtual environment loaded with at least `tools/azure-sdk-tools` installed.
+
+```shell
+# Using default configuration (this can be a Github raw link)
+generate_sdk -v -m ..\azure-rest-api-specs\specification\compute\resource-manager\readme.md
+
+# Forcing Track1 generation
+generate_sdk -v -c eng\swagger_to_sdk_config_v4.json -m ..\azure-rest-api-specs\specification\cognitiveservices\data-plane\Face\readme.md
+
+# For more details about the available options
+generate_sdk --help
+```
 
 ## Building the packaging information
 

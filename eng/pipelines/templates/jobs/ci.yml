@@ -1,0 +1,132 @@
+parameters:
+  - name: ServiceDirectory
+    type: string
+    default: ''
+  - name: Artifacts
+    type: object
+    default: []
+  - name: TestPipeline
+    type: boolean
+    default: false
+  - name: BeforePublishSteps
+    type: object
+    default: []
+  - name: TestMarkArgument
+    type: string
+    default: ''
+  - name: BuildTargetingString
+    type: string
+    default: 'azure-*'
+  - name: TestTimeoutInMinutes
+    type: number
+    default: 0
+  - name: ToxEnvParallel
+    type: string
+    default: '--tenvparallel'
+  - name: InjectedPackages
+    type: string
+    default: ''
+  - name: BuildDocs
+    type: boolean
+    default: true
+  - name: DevFeedName
+    type: string
+    default: 'public/azure-sdk-for-python'
+  - name: MatrixConfigs
+    type: object
+  - name: MatrixFilters
+    type: object
+    default: []
+  - name: MatrixReplace
+    type: object
+    default: []
+
+jobs:
+  - job: 'Build'
+    timeoutInMinutes: 90
+    variables:
+    - template: ../variables/globals.yml
+
+    pool:
+      name: azsdk-pool-mms-ubuntu-1804-general
+      vmImage: MMSUbuntu18.04
+
+    steps:
+    - template: ../steps/build-artifacts.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+        BuildDocs: ${{ parameters.BuildDocs }}
+        TestPipeline: ${{ parameters.TestPipeline }}
+        Artifacts: ${{ parameters.Artifacts }}
+
+  - job: 'Analyze'
+    condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
+    variables:
+    - template: ../variables/globals.yml
+
+    dependsOn:
+      - 'Build'
+
+    pool:
+      name: azsdk-pool-mms-ubuntu-1804-general
+      vmImage: MMSUbuntu18.04
+
+    steps:
+    - template: /eng/common/pipelines/templates/steps/verify-links.yml
+      parameters:
+        ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+          Directory: ''
+          Urls: (eng/common/scripts/get-markdown-files-from-changed-files.ps1)
+        ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+          Directory: sdk/${{ parameters.ServiceDirectory }}
+        CheckLinkGuidance: $true
+
+    - template: ../steps/analyze.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        TestPipeline: ${{ parameters.TestPipeline }}
+        Artifacts: ${{ parameters.Artifacts }}
+
+  - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+    parameters:
+      JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
+      DependsOn:
+        - 'Build'
+      MatrixConfigs: ${{ parameters.MatrixConfigs }}
+      MatrixFilters: ${{ parameters.MatrixFilters }}
+      MatrixReplace: ${{ parameters.MatrixReplace }}
+      CloudConfig:
+        Cloud: Public
+      AdditionalParameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestPipeline: ${{ parameters.TestPipeline }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
+        InjectedPackages: ${{ parameters.InjectedPackages }}
+
+  - job: 'RunRegression'
+    condition: and(succeededOrFailed(), or(eq(variables['Run.Regression'], 'true'), and(eq(variables['Build.Reason'], 'Schedule'), eq(variables['System.TeamProject'],'internal'))))
+    displayName: 'Run Regression'
+    timeoutInMinutes: 120
+    variables:
+    - template: ../variables/globals.yml
+
+    dependsOn:
+      - 'Build'
+
+    pool:
+      name: azsdk-pool-mms-ubuntu-1804-general
+      vmImage: MMSUbuntu18.04
+
+    steps:
+    - template: ../steps/test_regression.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}

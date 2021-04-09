@@ -1,20 +1,19 @@
 {
   "meta": {
     "autorest_options": {
-      "version": "V2",
-      "use": "@microsoft.azure/autorest.python@~4.0.71",
+      "version": "3.0.6369",
+      "use": "@autorest/python@5.6.2",
       "python": "",
       "python-mode": "update",
       "sdkrel:python-sdks-folder": "./sdk/.",
       "multiapi": "",
-      "keep-version-file" :"",
-      "no-async": ""
+      "track2": ""
     },
     "advanced_options": {
       "create_sdk_pull_requests": true,
       "sdk_generation_pull_request_base": "integration_branch"
     },
-    "repotag": "azure-sdk-for-python",
+    "repotag": "azure-sdk-for-python-track2",
     "version": "0.2.0"
   }
 }

@@ -29,6 +29,9 @@ logging.getLogger().setLevel(logging.INFO)
 
 MINIMUM_VERSION_SUPPORTED_OVERRIDE = {
     'azure-common': '1.1.10',
+    'msrest': '0.6.10',
+    'six': '1.9',
+    'typing-extensions': '3.6.5'
 }
 
 def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
@@ -60,7 +63,7 @@ def find_released_packages(setup_py_path, dependency_type):
     # this method returns list of required available package on PyPI in format <package-name>==<version>
 
     # parse setup.py and find install requires
-    requires = [r for r in get_install_requires(setup_py_path) if r.startswith('azure') and '-nspkg' not in r]
+    requires = [r for r in get_install_requires(setup_py_path) if '-nspkg' not in r]
 
     # Get available version on PyPI for each required package
     avlble_packages = [x for x in map(lambda x: process_requirement(x, dependency_type), requires) if x]
@@ -82,7 +85,7 @@ def process_requirement(req, dependency_type):
 
     # get available versions on PyPI
     client = PyPIClient()
-    versions = [str(v) for v in client.get_ordered_versions(pkg_name)]
+    versions = [str(v) for v in client.get_ordered_versions(pkg_name, True)]
     logging.info("Versions available on PyPI for %s: %s", pkg_name, versions)
 
     if pkg_name in MINIMUM_VERSION_SUPPORTED_OVERRIDE:

@@ -1,0 +1,19 @@
+parameters:
+  BuildTargetingString: 'azure-*'
+  ServiceDirectory: ''
+  TestMarkArgument: ''
+  EnvVars: {}
+
+steps:
+  - task: PythonScript@0
+    displayName: 'Run Breaking Changes'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      arguments: >-
+        "${{ parameters.BuildTargetingString }}"
+        --mark_arg="${{ parameters.TestMarkArgument }}"
+        --service="${{ parameters.ServiceDirectory }}"
+        --toxenv="breaking"
+        --disablecov
+    env: ${{ parameters.EnvVars }}
+    condition: and(succeededOrFailed(), ne(variables['Skip.BreakingChanges'],'true'))

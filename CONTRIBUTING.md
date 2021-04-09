@@ -1,7 +1,7 @@
 # Contributing to Azure Python SDK
 
 If you would like to become an active contributor to this project please
-follow the instructions provided in [Microsoft Azure Projects Contribution Guidelines](http://azure.github.io/guidelines/).
+follow the instructions provided in [Microsoft Azure Projects Contribution Guidelines](https://opensource.microsoft.com/collaborate/).
 
 ## Building and Testing
 
@@ -111,9 +111,17 @@ Mypy install and run.
 **Example: Invoke tox, breaking into the debugger on failure**
 `tox -e whl -c ../../../eng/tox/tox.ini -- --pdb`
 
-### Daily Dev Build
-Daily dev build version of Azure sdk packages for python are available and are uploaded to Azure devops feed nightly. We have also created a tox environment to test a package against dev built version of dependent packages. Below is the link to Azure devops feed.
-`https://dev.azure.com/azure-sdk/public/_packaging?_a=feed&feed=azure-sdk-for-python`
+### Performance Testing
+
+SDK performance testing is supported via the custom `perfstress` framework. For full details on this framework, and how to write and run tests for an SDK - see the [perfstress tests documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/perfstress_tests.md).
+
+### More Reading
+
+We maintain an [additional document](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/eng_sys_checks.md) that has a ton of detail as to what is actually _happening_ in these executions.
+
+### Dev Feed
+Daily dev build version of Azure sdk packages for python are available and are uploaded to Azure devops feed daily. We have also created a tox environment to test a package against dev built version of dependent packages. Below is the link to Azure devops feed.
+[`https://dev.azure.com/azure-sdk/public/_packaging?_a=feed&feed=azure-sdk-for-python`](https://dev.azure.com/azure-sdk/public/_packaging?_a=feed&feed=azure-sdk-for-python)
 
 ##### To install latest dev build version of a package
 ```
@@ -139,4 +147,4 @@ This tox test( devtest) will fail if installed dependent packages are not dev bu
 ## Code of Conduct
 This project's code of conduct can be found in the
 [CODE_OF_CONDUCT.md file](https://github.com/Azure/azure-sdk-for-python/blob/master/CODE_OF_CONDUCT.md)
-(v1.4.0 of the http://contributor-covenant.org/ CoC).
+(v1.4.0 of the https://contributor-covenant.org/ CoC).

@@ -14,7 +14,7 @@ Because there is different flavors of Azure that are not necessarly provided wit
 
 ### Why a multi-api package?
 
-Indeed, a simple solution would be to write down explictly what version of SDK supports what API version. Example: 1.0 supports 2015-06-01, 2.0 supports 2017-07-01, etc. The story for customers then would be to pin the specific SDK version for the specific API version they need. However, this was considered unacceptable in an end-to-end scenario:
+Indeed, a simple solution would be to write down explicitly what version of SDK supports what API version. Example: 1.0 supports 2015-06-01, 2.0 supports 2017-07-01, etc. The story for customers then would be to pin the specific SDK version for the specific API version they need. However, this was considered unacceptable in an end-to-end scenario:
 - It means you cannot install in the same Python environment packages that would target different cloud (Python doesn't allow installation of different versions of the same package together). Azure CLI or Ansible supports for different clouds would then be extremely complicated.
 - This forces customers to use old SDK, that might have been fixed on different axis than API version (security fixes, new SDK features like async, etc.)
 - Customers rarely needs only one package, but a set of them (storage, compute, network, etc.) and having to keep track of the correct list of packages is challenging.
@@ -44,7 +44,7 @@ Network interfaces operations are defines in a [network interface file](https://
 
 **Python multi-api packaging is based on the assumptions that it's true.** If it's not, it's usually ok but requires a little more subtle packaging (see final section here)
 
-Being that a given Swagger defines only *one* fixed API version, doing multi-api version in one package implies shipping several Swagger files into one package. This is achived by the `batch` directive of Autorest. More details on how to write Readme for Swagger in the specific page for it [swagger_conf.md](./swagger_conf.md).
+Being that a given Swagger defines only *one* fixed API version, doing multi-api version in one package implies shipping several Swagger files into one package. This is archived by the `batch` directive of Autorest. More details on how to write Readme for Swagger in the specific page for it [swagger_conf.md](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/mgmt/swagger_conf.md).
 
 Python SDK team is responsible to design the correct set of tags to set for the `batch` node. Each line of the batch directive should contains only *one* api version to match the folder name used. this might require adding new tags in the readme.md that are specific to only one API version. These tags are usually suffixed by "-only" ([example with compute](https://github.com/Azure/azure-rest-api-specs/tree/master/specification/compute/resource-manager#tag-package-2019-03-01-only))
 
