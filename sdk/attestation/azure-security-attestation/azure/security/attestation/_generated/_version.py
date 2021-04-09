@@ -6,14 +6,4 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._client import AttestationClient
-from ._version import VERSION
-
-__version__ = VERSION
-__all__ = ['AttestationClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
+VERSION = "1.0.0b2"

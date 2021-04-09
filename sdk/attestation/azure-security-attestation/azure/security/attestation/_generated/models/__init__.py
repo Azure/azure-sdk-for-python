@@ -49,7 +49,7 @@ except (SyntaxError, ImportError):
     from ._models import TpmAttestationRequest  # type: ignore
     from ._models import TpmAttestationResponse  # type: ignore
 
-from ._attestation_client_enums import (
+from ._azure_attestation_rest_client_enums import (
     AttestationType,
     CertificateModification,
     DataType,

@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AttestationClientConfiguration(Configuration):
-    """Configuration for AttestationClient.
+class AzureAttestationRestClientConfiguration(Configuration):
+    """Configuration for AzureAttestationRestClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -40,7 +40,7 @@ class AttestationClientConfiguration(Configuration):
             raise ValueError("Parameter 'credential' must not be None.")
         if instance_url is None:
             raise ValueError("Parameter 'instance_url' must not be None.")
-        super(AttestationClientConfiguration, self).__init__(**kwargs)
+        super(AzureAttestationRestClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.instance_url = instance_url

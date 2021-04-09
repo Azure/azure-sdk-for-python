@@ -21,14 +21,14 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class MetadataConfigurationOperations(object):
-    """MetadataConfigurationOperations operations.
+class SigningCertificatesOperations(object):
+    """SigningCertificatesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.attestation.models
+    :type models: ~azure.security.attestation._generated.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -47,22 +47,22 @@ class MetadataConfigurationOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> object
-        """Retrieves the OpenID Configuration data for the Azure Attestation Service.
+        # type: (...) -> "_models.JSONWebKeySet"
+        """Retrieves the attestation signing keys in use by the attestation service.
 
-        Retrieves metadata about the attestation signing keys in use by the attestation service.
+        Retrieves metadata signing certificates in use by the attestation service.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: object, or the result of cls(response)
-        :rtype: object
+        :return: JSONWebKeySet, or the result of cls(response)
+        :rtype: ~azure.security.attestation._generated.models.JSONWebKeySet
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JSONWebKeySet"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        accept = "application/json"
+        accept = "application/jwk+json, application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
@@ -87,10 +87,10 @@ class MetadataConfigurationOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('object', pipeline_response)
+        deserialized = self._deserialize('JSONWebKeySet', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/.well-known/openid-configuration'}  # type: ignore
+    get.metadata = {'url': '/certs'}  # type: ignore

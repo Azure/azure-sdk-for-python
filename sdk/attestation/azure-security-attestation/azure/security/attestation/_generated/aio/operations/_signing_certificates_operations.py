@@ -24,7 +24,7 @@ class SigningCertificatesOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.attestation.models
+    :type models: ~azure.security.attestation._generated.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -49,7 +49,7 @@ class SigningCertificatesOperations:
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: JSONWebKeySet, or the result of cls(response)
-        :rtype: ~azure.attestation.models.JSONWebKeySet
+        :rtype: ~azure.security.attestation._generated.models.JSONWebKeySet
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.JSONWebKeySet"]

@@ -6,53 +6,56 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
-from azure.core import AsyncPipelineClient
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials_async import AsyncTokenCredential
+    from typing import Any
 
-from ._configuration import AttestationClientConfiguration
+    from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+
+from ._configuration import AzureAttestationRestClientConfiguration
 from .operations import PolicyOperations
 from .operations import PolicyCertificatesOperations
 from .operations import AttestationOperations
 from .operations import SigningCertificatesOperations
 from .operations import MetadataConfigurationOperations
-from .. import models
+from . import models
 
 
-class AttestationClient(object):
+class AzureAttestationRestClient(object):
     """Describes the interface for the per-tenant enclave service.
 
     :ivar policy: PolicyOperations operations
-    :vartype policy: azure.attestation.aio.operations.PolicyOperations
+    :vartype policy: azure.security.attestation._generated.operations.PolicyOperations
     :ivar policy_certificates: PolicyCertificatesOperations operations
-    :vartype policy_certificates: azure.attestation.aio.operations.PolicyCertificatesOperations
+    :vartype policy_certificates: azure.security.attestation._generated.operations.PolicyCertificatesOperations
     :ivar attestation: AttestationOperations operations
-    :vartype attestation: azure.attestation.aio.operations.AttestationOperations
+    :vartype attestation: azure.security.attestation._generated.operations.AttestationOperations
     :ivar signing_certificates: SigningCertificatesOperations operations
-    :vartype signing_certificates: azure.attestation.aio.operations.SigningCertificatesOperations
+    :vartype signing_certificates: azure.security.attestation._generated.operations.SigningCertificatesOperations
     :ivar metadata_configuration: MetadataConfigurationOperations operations
-    :vartype metadata_configuration: azure.attestation.aio.operations.MetadataConfigurationOperations
+    :vartype metadata_configuration: azure.security.attestation._generated.operations.MetadataConfigurationOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param instance_url: The attestation instance base URI, for example https://mytenant.attest.azure.net.
     :type instance_url: str
     """
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
-        instance_url: str,
-        **kwargs: Any
-    ) -> None:
+        credential,  # type: "TokenCredential"
+        instance_url,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         base_url = '{instanceUrl}'
-        self._config = AttestationClientConfiguration(credential, instance_url, **kwargs)
-        self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = AzureAttestationRestClientConfiguration(credential, instance_url, **kwargs)
+        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -70,29 +73,33 @@ class AttestationClient(object):
         self.metadata_configuration = MetadataConfigurationOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
-    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
         """Runs the network request through the client's chained policies.
 
         :param http_request: The network request you want to make. Required.
         :type http_request: ~azure.core.pipeline.transport.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
         """
         path_format_arguments = {
             'instanceUrl': self._serialize.url("self._config.instance_url", self._config.instance_url, 'str', skip_quote=True),
         }
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
         stream = kwargs.pop("stream", True)
-        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
         return pipeline_response.http_response
 
-    async def close(self) -> None:
-        await self._client.close()
+    def close(self):
+        # type: () -> None
+        self._client.close()
 
-    async def __aenter__(self) -> "AttestationClient":
-        await self._client.__aenter__()
+    def __enter__(self):
+        # type: () -> AzureAttestationRestClient
+        self._client.__enter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
-        await self._client.__aexit__(*exc_details)
+    def __exit__(self, *exc_details):
+        # type: (Any) -> None
+        self._client.__exit__(*exc_details)

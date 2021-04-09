@@ -6,19 +6,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional, Union
-
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
-
-from ._attestation_client_enums import *
 
 
 class AttestationCertificateManagementBody(msrest.serialization.Model):
     """The body of the JWT used for the PolicyCertificates APIs.
 
     :param policy_certificate: RFC 7517 Json Web Key describing the certificate.
-    :type policy_certificate: ~azure.attestation.models.JSONWebKey
+    :type policy_certificate: ~azure.security.attestation._generated.models.JSONWebKey
     """
 
     _attribute_map = {
@@ -27,12 +23,10 @@ class AttestationCertificateManagementBody(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        policy_certificate: Optional["JSONWebKey"] = None,
         **kwargs
     ):
         super(AttestationCertificateManagementBody, self).__init__(**kwargs)
-        self.policy_certificate = policy_certificate
+        self.policy_certificate = kwargs.get('policy_certificate', None)
 
 
 class AttestationResponse(msrest.serialization.Model):
@@ -52,12 +46,10 @@ class AttestationResponse(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        token: Optional[str] = None,
         **kwargs
     ):
         super(AttestationResponse, self).__init__(**kwargs)
-        self.token = token
+        self.token = kwargs.get('token', None)
 
 
 class AttestationResult(msrest.serialization.Model):
@@ -91,7 +83,7 @@ class AttestationResult(msrest.serialization.Model):
     :param verifier_type: The Attestation type being attested.
     :type verifier_type: str
     :param policy_signer: The certificate used to sign the policy object, if specified.
-    :type policy_signer: ~azure.attestation.models.JSONWebKey
+    :type policy_signer: ~azure.security.attestation._generated.models.JSONWebKey
     :param policy_hash: The SHA256 hash of the BASE64URL encoded policy text used for attestation.
     :type policy_hash: bytes
     :param is_debuggable: True if the enclave is debuggable, false otherwise.
@@ -132,7 +124,7 @@ class AttestationResult(msrest.serialization.Model):
     :param deprecated_tee: DEPRECATED: Private Preview version of x-ms-tee.
     :type deprecated_tee: str
     :param deprecated_policy_signer: DEPRECATED: Private Preview version of x-ms-policy-signer.
-    :type deprecated_policy_signer: ~azure.attestation.models.JSONWebKey
+    :type deprecated_policy_signer: ~azure.security.attestation._generated.models.JSONWebKey
     :param deprecated_policy_hash: DEPRECATED: Private Preview version of x-ms-policy-hash.
     :type deprecated_policy_hash: bytes
     :param deprecated_rp_data: DEPRECATED: Private Preview version of nonce.
@@ -178,78 +170,43 @@ class AttestationResult(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        jti: Optional[str] = None,
-        iss: Optional[str] = None,
-        iat: Optional[float] = None,
-        exp: Optional[float] = None,
-        nbf: Optional[float] = None,
-        cnf: Optional[object] = None,
-        nonce: Optional[str] = None,
-        version: Optional[str] = None,
-        runtime_claims: Optional[object] = None,
-        inittime_claims: Optional[object] = None,
-        policy_claims: Optional[object] = None,
-        verifier_type: Optional[str] = None,
-        policy_signer: Optional["JSONWebKey"] = None,
-        policy_hash: Optional[bytes] = None,
-        is_debuggable: Optional[bool] = None,
-        product_id: Optional[float] = None,
-        mr_enclave: Optional[str] = None,
-        mr_signer: Optional[str] = None,
-        svn: Optional[float] = None,
-        enclave_held_data: Optional[bytes] = None,
-        sgx_collateral: Optional[object] = None,
-        deprecated_version: Optional[str] = None,
-        deprecated_is_debuggable: Optional[bool] = None,
-        deprecated_sgx_collateral: Optional[object] = None,
-        deprecated_enclave_held_data: Optional[bytes] = None,
-        deprecated_enclave_held_data2: Optional[bytes] = None,
-        deprecated_product_id: Optional[float] = None,
-        deprecated_mr_enclave: Optional[str] = None,
-        deprecated_mr_signer: Optional[str] = None,
-        deprecated_svn: Optional[float] = None,
-        deprecated_tee: Optional[str] = None,
-        deprecated_policy_signer: Optional["JSONWebKey"] = None,
-        deprecated_policy_hash: Optional[bytes] = None,
-        deprecated_rp_data: Optional[str] = None,
         **kwargs
     ):
         super(AttestationResult, self).__init__(**kwargs)
-        self.jti = jti
-        self.iss = iss
-        self.iat = iat
-        self.exp = exp
-        self.nbf = nbf
-        self.cnf = cnf
-        self.nonce = nonce
-        self.version = version
-        self.runtime_claims = runtime_claims
-        self.inittime_claims = inittime_claims
-        self.policy_claims = policy_claims
-        self.verifier_type = verifier_type
-        self.policy_signer = policy_signer
-        self.policy_hash = policy_hash
-        self.is_debuggable = is_debuggable
-        self.product_id = product_id
-        self.mr_enclave = mr_enclave
-        self.mr_signer = mr_signer
-        self.svn = svn
-        self.enclave_held_data = enclave_held_data
-        self.sgx_collateral = sgx_collateral
-        self.deprecated_version = deprecated_version
-        self.deprecated_is_debuggable = deprecated_is_debuggable
-        self.deprecated_sgx_collateral = deprecated_sgx_collateral
-        self.deprecated_enclave_held_data = deprecated_enclave_held_data
-        self.deprecated_enclave_held_data2 = deprecated_enclave_held_data2
-        self.deprecated_product_id = deprecated_product_id
-        self.deprecated_mr_enclave = deprecated_mr_enclave
-        self.deprecated_mr_signer = deprecated_mr_signer
-        self.deprecated_svn = deprecated_svn
-        self.deprecated_tee = deprecated_tee
-        self.deprecated_policy_signer = deprecated_policy_signer
-        self.deprecated_policy_hash = deprecated_policy_hash
-        self.deprecated_rp_data = deprecated_rp_data
+        self.jti = kwargs.get('jti', None)
+        self.iss = kwargs.get('iss', None)
+        self.iat = kwargs.get('iat', None)
+        self.exp = kwargs.get('exp', None)
+        self.nbf = kwargs.get('nbf', None)
+        self.cnf = kwargs.get('cnf', None)
+        self.nonce = kwargs.get('nonce', None)
+        self.version = kwargs.get('version', None)
+        self.runtime_claims = kwargs.get('runtime_claims', None)
+        self.inittime_claims = kwargs.get('inittime_claims', None)
+        self.policy_claims = kwargs.get('policy_claims', None)
+        self.verifier_type = kwargs.get('verifier_type', None)
+        self.policy_signer = kwargs.get('policy_signer', None)
+        self.policy_hash = kwargs.get('policy_hash', None)
+        self.is_debuggable = kwargs.get('is_debuggable', None)
+        self.product_id = kwargs.get('product_id', None)
+        self.mr_enclave = kwargs.get('mr_enclave', None)
+        self.mr_signer = kwargs.get('mr_signer', None)
+        self.svn = kwargs.get('svn', None)
+        self.enclave_held_data = kwargs.get('enclave_held_data', None)
+        self.sgx_collateral = kwargs.get('sgx_collateral', None)
+        self.deprecated_version = kwargs.get('deprecated_version', None)
+        self.deprecated_is_debuggable = kwargs.get('deprecated_is_debuggable', None)
+        self.deprecated_sgx_collateral = kwargs.get('deprecated_sgx_collateral', None)
+        self.deprecated_enclave_held_data = kwargs.get('deprecated_enclave_held_data', None)
+        self.deprecated_enclave_held_data2 = kwargs.get('deprecated_enclave_held_data2', None)
+        self.deprecated_product_id = kwargs.get('deprecated_product_id', None)
+        self.deprecated_mr_enclave = kwargs.get('deprecated_mr_enclave', None)
+        self.deprecated_mr_signer = kwargs.get('deprecated_mr_signer', None)
+        self.deprecated_svn = kwargs.get('deprecated_svn', None)
+        self.deprecated_tee = kwargs.get('deprecated_tee', None)
+        self.deprecated_policy_signer = kwargs.get('deprecated_policy_signer', None)
+        self.deprecated_policy_hash = kwargs.get('deprecated_policy_hash', None)
+        self.deprecated_rp_data = kwargs.get('deprecated_rp_data', None)
 
 
 class AttestOpenEnclaveRequest(msrest.serialization.Model):
@@ -260,10 +217,10 @@ class AttestOpenEnclaveRequest(msrest.serialization.Model):
     :param runtime_data: Runtime data provided by the enclave at the time of report generation. The
      MAA will verify that the first 32 bytes of the report_data field of the quote contains the
      SHA256 hash of the decoded "data" field of the runtime data.
-    :type runtime_data: ~azure.attestation.models.RuntimeData
+    :type runtime_data: ~azure.security.attestation._generated.models.RuntimeData
     :param init_time_data: Base64Url encoded "InitTime data". The MAA will verify that the init
      data was known to the enclave. Note that InitTimeData is invalid for CoffeeLake processors.
-    :type init_time_data: ~azure.attestation.models.InitTimeData
+    :type init_time_data: ~azure.security.attestation._generated.models.InitTimeData
     :param draft_policy_for_attestation: Attest against the provided draft policy. Note that the
      resulting token cannot be validated.
     :type draft_policy_for_attestation: str
@@ -278,18 +235,13 @@ class AttestOpenEnclaveRequest(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        report: Optional[bytes] = None,
-        runtime_data: Optional["RuntimeData"] = None,
-        init_time_data: Optional["InitTimeData"] = None,
-        draft_policy_for_attestation: Optional[str] = None,
         **kwargs
     ):
         super(AttestOpenEnclaveRequest, self).__init__(**kwargs)
-        self.report = report
-        self.runtime_data = runtime_data
-        self.init_time_data = init_time_data
-        self.draft_policy_for_attestation = draft_policy_for_attestation
+        self.report = kwargs.get('report', None)
+        self.runtime_data = kwargs.get('runtime_data', None)
+        self.init_time_data = kwargs.get('init_time_data', None)
+        self.draft_policy_for_attestation = kwargs.get('draft_policy_for_attestation', None)
 
 
 class AttestSgxEnclaveRequest(msrest.serialization.Model):
@@ -300,11 +252,11 @@ class AttestSgxEnclaveRequest(msrest.serialization.Model):
     :param runtime_data: Runtime data provided by the enclave at the time of quote generation. The
      MAA will verify that the first 32 bytes of the report_data field of the quote contains the
      SHA256 hash of the decoded "data" field of the runtime data.
-    :type runtime_data: ~azure.attestation.models.RuntimeData
+    :type runtime_data: ~azure.security.attestation._generated.models.RuntimeData
     :param init_time_data: Initialization data provided when the enclave is created. MAA will
      verify that the init data was known to the enclave. Note that InitTimeData is invalid for
      CoffeeLake processors.
-    :type init_time_data: ~azure.attestation.models.InitTimeData
+    :type init_time_data: ~azure.security.attestation._generated.models.InitTimeData
     :param draft_policy_for_attestation: Attest against the provided draft policy. Note that the
      resulting token cannot be validated.
     :type draft_policy_for_attestation: str
@@ -319,25 +271,20 @@ class AttestSgxEnclaveRequest(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        quote: Optional[bytes] = None,
-        runtime_data: Optional["RuntimeData"] = None,
-        init_time_data: Optional["InitTimeData"] = None,
-        draft_policy_for_attestation: Optional[str] = None,
         **kwargs
     ):
         super(AttestSgxEnclaveRequest, self).__init__(**kwargs)
-        self.quote = quote
-        self.runtime_data = runtime_data
-        self.init_time_data = init_time_data
-        self.draft_policy_for_attestation = draft_policy_for_attestation
+        self.quote = kwargs.get('quote', None)
+        self.runtime_data = kwargs.get('runtime_data', None)
+        self.init_time_data = kwargs.get('init_time_data', None)
+        self.draft_policy_for_attestation = kwargs.get('draft_policy_for_attestation', None)
 
 
 class CloudError(msrest.serialization.Model):
     """An error response from Attestation.
 
     :param error: An error response from Attestation.
-    :type error: ~azure.attestation.models.CloudErrorBody
+    :type error: ~azure.security.attestation._generated.models.CloudErrorBody
     """
 
     _attribute_map = {
@@ -346,12 +293,10 @@ class CloudError(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        error: Optional["CloudErrorBody"] = None,
         **kwargs
     ):
         super(CloudError, self).__init__(**kwargs)
-        self.error = error
+        self.error = kwargs.get('error', None)
 
 
 class CloudErrorBody(msrest.serialization.Model):
@@ -372,14 +317,11 @@ class CloudErrorBody(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
         **kwargs
     ):
         super(CloudErrorBody, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
 
 
 class InitTimeData(msrest.serialization.Model):
@@ -390,7 +332,7 @@ class InitTimeData(msrest.serialization.Model):
     :type data: bytes
     :param data_type: The type of data contained within the "data" field. Possible values include:
      "Binary", "JSON".
-    :type data_type: str or ~azure.attestation.models.DataType
+    :type data_type: str or ~azure.security.attestation._generated.models.DataType
     """
 
     _attribute_map = {
@@ -400,14 +342,11 @@ class InitTimeData(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        data: Optional[bytes] = None,
-        data_type: Optional[Union[str, "DataType"]] = None,
         **kwargs
     ):
         super(InitTimeData, self).__init__(**kwargs)
-        self.data = data
-        self.data_type = data_type
+        self.data = kwargs.get('data', None)
+        self.data_type = kwargs.get('data_type', None)
 
 
 class JSONWebKey(msrest.serialization.Model):
@@ -502,44 +441,26 @@ class JSONWebKey(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        kty: str,
-        alg: Optional[str] = None,
-        crv: Optional[str] = None,
-        d: Optional[str] = None,
-        dp: Optional[str] = None,
-        dq: Optional[str] = None,
-        e: Optional[str] = None,
-        k: Optional[str] = None,
-        kid: Optional[str] = None,
-        n: Optional[str] = None,
-        p: Optional[str] = None,
-        q: Optional[str] = None,
-        qi: Optional[str] = None,
-        use: Optional[str] = None,
-        x: Optional[str] = None,
-        x5_c: Optional[List[str]] = None,
-        y: Optional[str] = None,
         **kwargs
     ):
         super(JSONWebKey, self).__init__(**kwargs)
-        self.alg = alg
-        self.crv = crv
-        self.d = d
-        self.dp = dp
-        self.dq = dq
-        self.e = e
-        self.k = k
-        self.kid = kid
-        self.kty = kty
-        self.n = n
-        self.p = p
-        self.q = q
-        self.qi = qi
-        self.use = use
-        self.x = x
-        self.x5_c = x5_c
-        self.y = y
+        self.alg = kwargs.get('alg', None)
+        self.crv = kwargs.get('crv', None)
+        self.d = kwargs.get('d', None)
+        self.dp = kwargs.get('dp', None)
+        self.dq = kwargs.get('dq', None)
+        self.e = kwargs.get('e', None)
+        self.k = kwargs.get('k', None)
+        self.kid = kwargs.get('kid', None)
+        self.kty = kwargs['kty']
+        self.n = kwargs.get('n', None)
+        self.p = kwargs.get('p', None)
+        self.q = kwargs.get('q', None)
+        self.qi = kwargs.get('qi', None)
+        self.use = kwargs.get('use', None)
+        self.x = kwargs.get('x', None)
+        self.x5_c = kwargs.get('x5_c', None)
+        self.y = kwargs.get('y', None)
 
 
 class JSONWebKeySet(msrest.serialization.Model):
@@ -550,7 +471,7 @@ class JSONWebKeySet(msrest.serialization.Model):
      an order of preference among them, although applications of JWK Sets
      can choose to assign a meaning to the order for their purposes, if
      desired.
-    :type keys: list[~azure.attestation.models.JSONWebKey]
+    :type keys: list[~azure.security.attestation._generated.models.JSONWebKey]
     """
 
     _attribute_map = {
@@ -559,12 +480,10 @@ class JSONWebKeySet(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        keys: Optional[List["JSONWebKey"]] = None,
         **kwargs
     ):
         super(JSONWebKeySet, self).__init__(**kwargs)
-        self.keys = keys
+        self.keys = kwargs.get('keys', None)
 
 
 class PolicyCertificatesModificationResult(msrest.serialization.Model):
@@ -575,7 +494,8 @@ class PolicyCertificatesModificationResult(msrest.serialization.Model):
     :type certificate_thumbprint: str
     :param certificate_resolution: The result of the operation. Possible values include:
      "IsPresent", "IsAbsent".
-    :type certificate_resolution: str or ~azure.attestation.models.CertificateModification
+    :type certificate_resolution: str or
+     ~azure.security.attestation._generated.models.CertificateModification
     """
 
     _attribute_map = {
@@ -585,14 +505,11 @@ class PolicyCertificatesModificationResult(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        certificate_thumbprint: Optional[str] = None,
-        certificate_resolution: Optional[Union[str, "CertificateModification"]] = None,
         **kwargs
     ):
         super(PolicyCertificatesModificationResult, self).__init__(**kwargs)
-        self.certificate_thumbprint = certificate_thumbprint
-        self.certificate_resolution = certificate_resolution
+        self.certificate_thumbprint = kwargs.get('certificate_thumbprint', None)
+        self.certificate_resolution = kwargs.get('certificate_resolution', None)
 
 
 class PolicyCertificatesModifyResponse(msrest.serialization.Model):
@@ -613,12 +530,10 @@ class PolicyCertificatesModifyResponse(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        token: Optional[str] = None,
         **kwargs
     ):
         super(PolicyCertificatesModifyResponse, self).__init__(**kwargs)
-        self.token = token
+        self.token = kwargs.get('token', None)
 
 
 class PolicyCertificatesResponse(msrest.serialization.Model):
@@ -639,12 +554,10 @@ class PolicyCertificatesResponse(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        token: Optional[str] = None,
         **kwargs
     ):
         super(PolicyCertificatesResponse, self).__init__(**kwargs)
-        self.token = token
+        self.token = kwargs.get('token', None)
 
 
 class PolicyCertificatesResult(msrest.serialization.Model):
@@ -652,7 +565,7 @@ class PolicyCertificatesResult(msrest.serialization.Model):
 
     :param policy_certificates: SHA256 Hash of the binary representation certificate which was
      added or removed.
-    :type policy_certificates: ~azure.attestation.models.JSONWebKeySet
+    :type policy_certificates: ~azure.security.attestation._generated.models.JSONWebKeySet
     """
 
     _attribute_map = {
@@ -661,12 +574,10 @@ class PolicyCertificatesResult(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        policy_certificates: Optional["JSONWebKeySet"] = None,
         **kwargs
     ):
         super(PolicyCertificatesResult, self).__init__(**kwargs)
-        self.policy_certificates = policy_certificates
+        self.policy_certificates = kwargs.get('policy_certificates', None)
 
 
 class PolicyResponse(msrest.serialization.Model):
@@ -686,12 +597,10 @@ class PolicyResponse(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        token: Optional[str] = None,
         **kwargs
     ):
         super(PolicyResponse, self).__init__(**kwargs)
-        self.token = token
+        self.token = kwargs.get('token', None)
 
 
 class PolicyResult(msrest.serialization.Model):
@@ -699,11 +608,12 @@ class PolicyResult(msrest.serialization.Model):
 
     :param policy_resolution: The result of the operation. Possible values include: "Updated",
      "Removed".
-    :type policy_resolution: str or ~azure.attestation.models.PolicyModification
+    :type policy_resolution: str or
+     ~azure.security.attestation._generated.models.PolicyModification
     :param policy_token_hash: The SHA256 hash of the policy object modified.
     :type policy_token_hash: bytes
     :param policy_signer: The certificate used to sign the policy object, if specified.
-    :type policy_signer: ~azure.attestation.models.JSONWebKey
+    :type policy_signer: ~azure.security.attestation._generated.models.JSONWebKey
     :param policy: A JSON Web Token containing a StoredAttestationPolicy object with the
      attestation policy.
     :type policy: str
@@ -722,18 +632,13 @@ class PolicyResult(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        policy_resolution: Optional[Union[str, "PolicyModification"]] = None,
-        policy_token_hash: Optional[bytes] = None,
-        policy_signer: Optional["JSONWebKey"] = None,
-        policy: Optional[str] = None,
         **kwargs
     ):
         super(PolicyResult, self).__init__(**kwargs)
-        self.policy_resolution = policy_resolution
-        self.policy_token_hash = policy_token_hash
-        self.policy_signer = policy_signer
-        self.policy = policy
+        self.policy_resolution = kwargs.get('policy_resolution', None)
+        self.policy_token_hash = kwargs.get('policy_token_hash', None)
+        self.policy_signer = kwargs.get('policy_signer', None)
+        self.policy = kwargs.get('policy', None)
 
 
 class RuntimeData(msrest.serialization.Model):
@@ -743,7 +648,7 @@ class RuntimeData(msrest.serialization.Model):
     :type data: bytes
     :param data_type: The type of data contained within the "data" field. Possible values include:
      "Binary", "JSON".
-    :type data_type: str or ~azure.attestation.models.DataType
+    :type data_type: str or ~azure.security.attestation._generated.models.DataType
     """
 
     _attribute_map = {
@@ -753,14 +658,11 @@ class RuntimeData(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        data: Optional[bytes] = None,
-        data_type: Optional[Union[str, "DataType"]] = None,
         **kwargs
     ):
         super(RuntimeData, self).__init__(**kwargs)
-        self.data = data
-        self.data_type = data_type
+        self.data = kwargs.get('data', None)
+        self.data_type = kwargs.get('data_type', None)
 
 
 class StoredAttestationPolicy(msrest.serialization.Model):
@@ -776,12 +678,10 @@ class StoredAttestationPolicy(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        attestation_policy: Optional[bytes] = None,
         **kwargs
     ):
         super(StoredAttestationPolicy, self).__init__(**kwargs)
-        self.attestation_policy = attestation_policy
+        self.attestation_policy = kwargs.get('attestation_policy', None)
 
 
 class TpmAttestationRequest(msrest.serialization.Model):
@@ -797,12 +697,10 @@ class TpmAttestationRequest(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        data: Optional[bytes] = None,
         **kwargs
     ):
         super(TpmAttestationRequest, self).__init__(**kwargs)
-        self.data = data
+        self.data = kwargs.get('data', None)
 
 
 class TpmAttestationResponse(msrest.serialization.Model):
@@ -818,9 +716,7 @@ class TpmAttestationResponse(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        data: Optional[bytes] = None,
         **kwargs
     ):
         super(TpmAttestationResponse, self).__init__(**kwargs)
-        self.data = data
+        self.data = kwargs.get('data', None)
