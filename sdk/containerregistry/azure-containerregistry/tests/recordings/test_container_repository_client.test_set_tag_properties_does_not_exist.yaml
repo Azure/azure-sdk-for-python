@@ -18,10 +18,9 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/repo2b291da6/_tags/does_not_exist
   response:
     body:
-      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"repo2b291da6","Action":"metadata_write"}]}]}
-
-        '
+      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
+        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
+        "repository", "Name": "repo2b291da6", "Action": "metadata_write"}]}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -35,7 +34,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 18:00:01 GMT
+      - Wed, 07 Apr 2021 12:53:21 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -50,7 +49,7 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
-    body: grant_type=access_token&service=seankane.azurecr.io&access_token=REDACTED
+    body: grant_type=access_token&service=fake_url.azurecr.io&access_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -75,7 +74,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 18:00:02 GMT
+      - Wed, 07 Apr 2021 12:53:22 GMT
       server:
       - openresty
       strict-transport-security:
@@ -83,12 +82,12 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.266667'
+      - '333.283333'
     status:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Arepo2b291da6%3Ametadata_write&refresh_token=REDACTED
+    body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=repository%3Arepo2b291da6%3Ametadata_write&refresh_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -113,7 +112,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 18:00:03 GMT
+      - Wed, 07 Apr 2021 12:53:22 GMT
       server:
       - openresty
       strict-transport-security:
@@ -121,7 +120,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.366667'
+      - '333.233333'
     status:
       code: 200
       message: OK
@@ -144,10 +143,8 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/repo2b291da6/_tags/does_not_exist
   response:
     body:
-      string: '{"errors":[{"code":"TAG_UNKNOWN","message":"the specified tag does
-        not exist"}]}
-
-        '
+      string: '{"errors": [{"code": "TAG_UNKNOWN", "message": "the specified tag does
+        not exist"}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -161,7 +158,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 18:00:03 GMT
+      - Wed, 07 Apr 2021 12:53:23 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

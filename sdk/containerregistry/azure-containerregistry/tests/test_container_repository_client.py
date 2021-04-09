@@ -239,7 +239,7 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
     @pytest.mark.live_test_only  # Recordings error, recieves more than 100 headers, not that many present
     @acr_preparer()
     def test_set_manifest_properties(self, containerregistry_endpoint, containerregistry_resource_group):
-        repository = self.get_resource_name("repo_set")
+        repository = self.get_resource_name("reposetmani")
         tag_identifier = self.get_resource_name("tag")
         self.import_repo_to_be_deleted(
             containerregistry_endpoint,
@@ -268,6 +268,18 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
             assert not received_permissions.content_permissions.can_list
             assert not received_permissions.content_permissions.can_write
 
+            # Reset and delete
+            client.set_manifest_properties(
+                artifact.digest,
+                ContentPermissions(
+                    can_delete=True,
+                    can_list=True,
+                    can_read=True,
+                    can_write=True,
+                ),
+            )
+            self.sleep(10)
+            client.delete()
             break
 
     @pytest.mark.live_test_only  # Recordings error, recieves more than 100 headers, not that many present

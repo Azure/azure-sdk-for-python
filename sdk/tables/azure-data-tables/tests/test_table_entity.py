@@ -947,7 +947,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
 
-            # resp = self.table.update_item(sent_entity, response_hook=lambda e, h: h)
             resp = self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
@@ -1569,7 +1568,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             entities = list(table.query_entities(injected_query))
             assert len(entities) ==  2
 
-            entities = list(table.query_entities(is_user_admin, parameters={'first': injection}))            
+            entities = list(table.query_entities(is_user_admin, parameters={'first': injection}))
             assert len(entities) ==  0
         finally:
             self.ts.delete_table(table_name)
@@ -1589,18 +1588,18 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             all_entities = list(table.query_entities("PartitionKey eq ':@'"))
             assert len(all_entities) == 2
-        
+
             parameters = {'key': ':@'}
             all_entities = list(table.query_entities("PartitionKey eq @key", parameters=parameters))
             assert len(all_entities) == 2
-            
+
             query = "PartitionKey eq ':@' and RowKey eq '+,$' and Chars eq '?''/!_^#'"
             entities = list(table.query_entities(query))
             assert len(entities) == 1
 
             query = "PartitionKey eq @key and RowKey eq @row and Chars eq @quote"
             parameters = {'key': ':@', 'row': '+,$', 'quote': "?'/!_^#"}
-            entities = list(table.query_entities(query, parameters=parameters))            
+            entities = list(table.query_entities(query, parameters=parameters))
             assert len(entities) ==  1
 
             query = "PartitionKey eq ':@' and RowKey eq '=& ' and Chars eq '?\"\\{}<>%'"
@@ -1609,7 +1608,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             query = "PartitionKey eq @key and RowKey eq @row and Chars eq @quote"
             parameters = {'key': ':@', 'row': '=& ', 'quote': r'?"\{}<>%'}
-            entities = list(table.query_entities(query, parameters=parameters))            
+            entities = list(table.query_entities(query, parameters=parameters))
             assert len(entities) ==  1
 
         finally:
