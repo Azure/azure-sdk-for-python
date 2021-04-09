@@ -14,9 +14,10 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/hello-world/_tags/latest
   response:
     body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "repository", "Name": "hello-world", "Action": "metadata_read"}]}]}'
+      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"hello-world","Action":"metadata_read"}]}]}
+
+        '
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -30,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:52:03 GMT
+      - Fri, 09 Apr 2021 14:58:36 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -38,7 +39,8 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:hello-world:metadata_read"
       x-content-type-options:
       - nosniff
     status:
@@ -70,7 +72,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:52:04 GMT
+      - Fri, 09 Apr 2021 14:58:37 GMT
       server:
       - openresty
       strict-transport-security:
@@ -78,7 +80,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.3'
+      - '332.666667'
     status:
       code: 200
       message: OK
@@ -108,7 +110,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:52:05 GMT
+      - Fri, 09 Apr 2021 14:58:37 GMT
       server:
       - openresty
       strict-transport-security:
@@ -116,7 +118,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.233333'
+      - '332.166667'
     status:
       code: 200
       message: OK
@@ -153,7 +155,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:52:05 GMT
+      - Fri, 09 Apr 2021 14:58:38 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -181,9 +183,10 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/hello-world/_manifests/sha256%3A308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24
   response:
     body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "repository", "Name": "hello-world", "Action": "metadata_read"}]}]}'
+      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"hello-world","Action":"metadata_read"}]}]}
+
+        '
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -197,7 +200,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:52:05 GMT
+      - Fri, 09 Apr 2021 14:58:38 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -205,7 +208,8 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:hello-world:metadata_read"
       x-content-type-options:
       - nosniff
     status:
@@ -237,7 +241,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:52:05 GMT
+      - Fri, 09 Apr 2021 14:58:38 GMT
       server:
       - openresty
       strict-transport-security:
@@ -245,7 +249,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.216667'
+      - '332.15'
     status:
       code: 200
       message: OK
@@ -275,7 +279,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:52:05 GMT
+      - Fri, 09 Apr 2021 14:58:38 GMT
       server:
       - openresty
       strict-transport-security:
@@ -283,7 +287,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.2'
+      - '332.133333'
     status:
       code: 200
       message: OK
@@ -308,8 +312,8 @@ interactions:
         "2021-03-30T12:18:47.4863064Z", "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
         "tags": ["latest"], "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
         false, "readEnabled": true, "listEnabled": true, "quarantineDetails": "{\"state\":\"Scan
-        Failed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure Security Monitoring-Qualys
-        Scanner\",\"result\":{\"version\":\"4/6/2021 2:59:55 PM\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
+        InProgress\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure Security
+        Monitoring-Qualys Scanner\",\"result\":{\"version\":\"4/8/2021 5:48:51 PM\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
         "quarantineState": "Passed"}, "references": [{"digest": "sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792",
         "architecture": "amd64", "os": "linux"}, {"digest": "sha256:e5785cb0c62cebbed4965129bae371f0589cadd6d84798fb58c2c5f9e237efd9",
         "architecture": "arm", "os": "linux"}, {"digest": "sha256:50b8560ad574c779908da71f7ce370c0a2471c098d44d1c8f6b513c5a55eeeb1",
@@ -329,11 +333,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '1903'
+      - '1907'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:52:06 GMT
+      - Fri, 09 Apr 2021 14:58:38 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
