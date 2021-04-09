@@ -165,6 +165,7 @@ def serialize_query_format(formater):
     if isinstance(formater, ParquetDialect):
         qq_format = QueryFormat(
             type=QueryFormatType.PARQUET,
+            parquet_text_configuration=' '
         )
     elif isinstance(formater, DelimitedJsonDialect):
         serialization_settings = JsonTextConfiguration(
