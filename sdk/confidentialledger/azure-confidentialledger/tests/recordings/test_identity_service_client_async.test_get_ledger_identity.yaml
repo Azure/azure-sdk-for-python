@@ -1,0 +1,27 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-confidentialledger/0.1.0 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: GET
+    uri: https://identity.accledger.azure.com/ledgerIdentity/fake-ledger-id?api-version=0.1-preview
+  response:
+    body:
+      string: '{"ledgerTlsCertificate":"-----BEGIN CERTIFICATE-----\nMIIBtjCCAT2gAwIBAgIQcA9sdtvJF6m6aM1mtG0JYjAKBggqhkjOPQQDAzAWMRQw\nEgYDVQQDDAtDQ0YgTmV0d29yazAeFw0yMTAzMTEwMDAwMDBaFw0yMzA2MTEyMzU5\nNTlaMBYxFDASBgNVBAMMC0NDRiBOZXR3b3JrMHYwEAYHKoZIzj0CAQYFK4EEACID\nYgAEvylqGu9OXk9lo+yj+EgGqyasW0eZT/sFb0ToXqk3LHSo6VmqhJBe87R4MvzL\nLOUgDkS0vzoU1b+gh9svwc4C9bBWp+QiHGkGQV94OqR3cj6wSQz5j2lK8JvaaYdD\n0LXPo1AwTjAMBgNVHRMEBTADAQH/MB0GA1UdDgQWBBTvlHoCJb6/FwTYN/Ml1kzl\nWByy4DAfBgNVHSMEGDAWgBTvlHoCJb6/FwTYN/Ml1kzlWByy4DAKBggqhkjOPQQD\nAwNnADBkAjA5Ip3KMzfBdmvwF5aEFUBID+/Fcv2UO15gjA9rmtPO2DVedzDnqQy6\n3Jn7uCHsyioCMFo3oBdyHjE0TCnlnuXBEb2yeL7wihbPqYYYOdk2EtLrv+JnoMv5\nepgZtBq2j5rjrg==\n-----END
+        CERTIFICATE-----\n\u0000","ledgerId":"fake-ledger-id"}'
+    headers:
+      content-type: application/json; charset=utf-8
+      date: Fri, 09 Apr 2021 21:59:57 GMT
+      server: Kestrel
+      transfer-encoding: chunked
+      x-ms-image-digest: sha256:441ef03425e3f7f2edb0b1e6b89f554443c8cdcdb4fd94bf80b6e2aa78a89f8d
+      x-ms-image-tag: latest-20210408061706412-0bd695e0
+      x-ms-machinename: identityservice-75f9cdb475-jz9rg
+    status:
+      code: 200
+      message: OK
+    url: https://identity.accledger.azure.com/ledgerIdentity/lyshi-sdk-ledger?api-version=0.1-preview
+version: 1

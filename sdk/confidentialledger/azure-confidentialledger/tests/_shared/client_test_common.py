@@ -140,7 +140,7 @@ class ConfidentialLedgerClientTestMixin:
 
         def test_range_query(self):
             modulus = 5
-            num_messages_sent = 100
+            num_messages_sent = 201  # Should result in 2 pages.
 
             messages = {m: [] for m in range(modulus)}
             for i in range(num_messages_sent):
