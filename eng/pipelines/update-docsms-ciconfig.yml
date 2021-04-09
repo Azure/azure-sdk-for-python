@@ -2,6 +2,8 @@ jobs:
   - job: UpdateDocMsCIConfig
     pool:
       vmImage: 'ubuntu-18.04'
+    variables:
+      DocsLocation: $(Pipeline.Workspace)/docs
     steps:
       - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
         parameters:
@@ -11,7 +13,7 @@ jobs:
           Repositories:
             - Name: MicrosoftDocs/azure-docs-sdk-python
               Commitish: djurek/ci-automation-test
-              WorkingDirectory: $(Pipeline.Workspace)/docs
+              WorkingDirectory: $(DocsLocation)
             - Name: $(Build.Repository.Name)
               Commitish: $(Build.SourceVersion)
               WorkingDirectory: $(System.DefaultWorkingDirectory)
@@ -22,7 +24,7 @@ jobs:
           targetType: filePath
           filePath: eng/scripts/update-docs-ci.ps1
           arguments: >
-            -DocRepoLocation $(Pipeline.Workspace)/docs
+            -DocRepoLocation $(DocsLocation)
             -Configs "{'targets': [{'path_to_config':'ci-configs/packages-preview.json','Mode':'Preview','content_folder':'docs-ref-services/preview'},{'path_to_config':'ci-configs/packages-latest.json','mode':'Latest','content_folder':'docs-ref-services/latest'}]}"
           pwsh: true
 
@@ -33,5 +35,5 @@ jobs:
           CommitMsg: "Update targeting packages based on release csv."
           TargetRepoName: 'azure-docs-sdk-python'
           TargetRepoOwner: 'MicrosoftDocs'
-          WorkingDirectory: $(Build.SourcesDirectory)/docs
+          WorkingDirectory: $(DocsLocation)
           ScriptDirectory: $(Build.SourcesDirectory)/eng/common/scripts
