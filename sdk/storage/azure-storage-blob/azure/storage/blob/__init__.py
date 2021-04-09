@@ -54,6 +54,7 @@ from ._models import (
     BlobQueryError,
     DelimitedJsonDialect,
     DelimitedTextDialect,
+    ParquetDialect,
     ArrowDialect,
     ArrowType,
     ObjectReplicationPolicy,
@@ -225,6 +226,7 @@ __all__ = [
     'BlobQueryError',
     'DelimitedJsonDialect',
     'DelimitedTextDialect',
+    'ParquetDialect'
     'ArrowDialect',
     'ArrowType',
     'BlobQueryReader',
