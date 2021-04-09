@@ -209,9 +209,9 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-loganalytics msrest>=0.6.21
 #override azure-mgmt-synapse msrest>=0.6.21
 #override azure-mgmt-compute msrest>=0.6.21
+#override azure-mgmt-appplatform msrest>=0.6.21
 #override azure-mgmt-customproviders msrest>=0.6.21
 #override azure-mgmt-azurestack msrest>=0.6.21
 #override azure-mgmt-storagesync msrest>=0.6.21
 #override azure-mgmt-resourcegraph msrest>=0.6.21
 #override azure-mgmt-containerservice msrest>=0.6.21
-
