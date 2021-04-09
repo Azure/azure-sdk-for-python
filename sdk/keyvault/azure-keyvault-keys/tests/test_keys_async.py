@@ -11,9 +11,10 @@ import logging
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.keys import JsonWebKey
+from azure.keyvault.keys import JsonWebKey, KeyExportParameters, KeyReleasePolicy
 from azure.keyvault.keys.aio import KeyClient
 from six import byte2int
+import pytest
 
 from _shared.test_case_async import KeyVaultTestCase
 from _test_case import client_setup, get_decorator, KeysTestCase
@@ -238,6 +239,51 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         key = await self._create_rsa_key(client, key_name, hardware_protected=True, public_exponent=17)
         public_exponent = byte2int(key.key.e)
         assert public_exponent == 17
+
+    @pytest.mark.skip("Key export is not yet supported by the service")
+    async def test_key_export_mhsm(self, **kwargs):
+        self._skip_if_not_configured(True)
+        endpoint_url = self.managed_hsm_url
+
+        client = self.create_key_client(endpoint_url, is_async=True)
+        assert client is not None
+
+        # create key to export
+        key_name = self.get_resource_name("rsa-key")
+        json_policy = {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "claim": "x-ms-attestation-type",
+                  "equals": "sevsnpvm"
+                },
+                {
+                  "claim": "x-ms-sevsnpvm-authorkeydigest",
+                  "equals": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+                },
+                {
+                  "claim": "x-ms-runtime.vm-configuration.secure-boot",
+                  "equals": True
+                }
+              ],
+              "authority": "https://sharedeus.eus.test.attest.azure.net/"
+            }
+          ],
+          "version": "1.0.0"
+        }
+        policy_string = json.dumps(json_policy).encode()
+        policy = KeyReleasePolicy(policy_string)
+        key = await self._create_rsa_key(
+            client, key_name, hardware_protected=True, exportable=True, release_policy=policy
+        )
+
+        # create key for encrypting the exported key
+        export_key = await self._create_rsa_key(
+            client, self.get_resource_name("export-key"), hardware_protected=True, key_operations=["export"]
+        )
+        export_parameters = KeyExportParameters(export_key.key, algorithm="CKM_RSA_AES_KEY_WRAP")
+        exported_key = await client.export_key(key_name, key.properties.version, export_parameters)
 
     @all_api_versions()
     @client_setup
