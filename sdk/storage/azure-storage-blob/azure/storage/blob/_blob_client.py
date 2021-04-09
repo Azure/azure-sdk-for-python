@@ -846,7 +846,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 except AttributeError:
                     pass
         else:
-            output_format = input_format if not input_parquet_format else None #I'm assuming here that sending no output format will default to CSV
+            output_format = input_format if not input_parquet_format else None
         query_request = QueryRequest(
             expression=query_expression,
             input_serialization=serialize_query_format(input_format),
@@ -895,8 +895,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             or ~azure.storage.blob.ParquetDialect
         :keyword output_format:
             Optional. Defines the output serialization for the data stream. By default the data will be returned
-            as it is represented in the blob. By providing an output format, the blob data will be reformatted
-            according to that profile. This value can be a DelimitedTextDialect or a DelimitedJsonDialect.
+            as it is represented in the blob (Parquet formats default to DelimitedTextDialect).
+            By providing an output format, the blob data will be reformatted according to that profile.
+            This value can be a DelimitedTextDialect or a DelimitedJsonDialect or ArrowDialect.
         :paramtype output_format: ~azure.storage.blob.DelimitedTextDialect, ~azure.storage.blob.DelimitedJsonDialect
             or list[~azure.storage.blob.ArrowDialect]
         :keyword lease:
