@@ -35,9 +35,10 @@ setup(
 
     # ensure that these are updated to reflect the package owners' information
     long_description=long_description,
+    long_description_content_type='text/markdown',
     url='https://github.com/Azure/azure-sdk-for-python',
     author='Microsoft Corporation',
-    author_email='accledger@microsoft.com',
+    author_email='accledgerdevs@microsoft.com',
 
     license='MIT License',
     # ensure that the development status reflects the status of your package
@@ -48,10 +49,10 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'License :: OSI Approved :: MIT License',
     ],
     packages=find_packages(exclude=[
