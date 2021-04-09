@@ -93,7 +93,7 @@ steps:
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
 
   - task: DownloadPipelineArtifact@2
-    condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
+    condition: succeededOrFailed()
     inputs:
       artifactName: 'packages'
       targetPath: $(Build.ArtifactStagingDirectory)
