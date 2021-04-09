@@ -1,0 +1,32 @@
+jobs:
+  - job: UpdateDocMsCIConfig
+    pool:
+      vmImage: 'ubuntu-18.04'
+    steps:
+    - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+      parameters:
+        Paths:
+          - ci-configs
+        Repositories:
+          - Name: MicrosoftDocs/azure-docs-sdk-python
+            Commitsh: master
+            WorkingDirectory: $(Pipeline.Workspace)/docs
+
+    - task: PowerShell@2
+      displayName: 'Update Docs.MS CI Targeted Packages'
+      inputs:
+        targetType: filePath
+        filePath: eng/scripts/update-docs-ci.ps1
+        arguments: >
+          -DocRepoLocation $(Build.SourcesDirectory)/docs
+          -Configs "{'path_to_config':'package.json'}"
+        pwsh: true
+    - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
+      parameters:
+        BaseRepoBranch: 'a-test-branch'
+        BaseRepoOwner: 'MicrosoftDocs'
+        CommitMsg: "Update targeting packages based on release csv."
+        TargetRepoName: 'azure-docs-sdk-python'
+        TargetRepoOwner: 'MicrosoftDocs'
+        WorkingDirectory: $(Build.SourcesDirectory)/docs
+        ScriptDirectory: $(Build.SourcesDirectory)/eng/common/scripts

@@ -162,68 +162,112 @@ function Get-python-GithubIoDocIndex()
   GenerateDocfxTocContent -tocContent $tocContent -lang "Python"
 }
 
+function Get-DocsCiObjectForPackage($packageName, $packageVersion = $null) { 
+  $output = [PSCustomObject]@{
+    exclude_path = @("test*", "example*", "sample*", "doc*");
+    package_info = [PSCustomObject]@{
+      name = $packageName;
+      install_type = 'pypi';
+      prefer_source_distribution = 'true';
+    }
+  }
+
+  if ($packageVersion) { 
+    $output.package_info.version = ">=$packageVersion"
+  }
+
+  return $output;
+}
+
 # Updates a python CI configuration json.
 # For "latest", the version attribute is cleared, as default behavior is to pull latest "non-preview".
 # For "preview", we update to >= the target releasing package version.
-function Update-python-CIConfig($pkgs, $ciRepo, $locationInDocRepo, $monikerId=$null)
+function Update-python-CIConfig($ciRepo, $locationInDocRepo)
 {
-  $pkgJsonLoc = (Join-Path -Path $ciRepo -ChildPath $locationInDocRepo)
+  $publishedPackages = Get-CSVMetadata `
+    | Where-Object { $_.New -eq 'true' -and $_.Hide -ne 'true' }
 
-  if (-not (Test-Path $pkgJsonLoc)) {
-    Write-Error "Unable to locate package json at location $pkgJsonLoc, exiting."
-    exit(1)
+
+  # Update "Latest" packages
+  $latestConfig = $locationInDocRepo `
+    | Where-Object { $_.Mode -eq 'Latest' } `
+    | Select-Object -First 1 
+  $latestConfigPath = Join-Path $ciRepo $latestConfig.path_to_config -Resolve
+  Write-Host "Updating latest configuration: $latestConfigPath"
+  $latestPackages = Get-Content $latestConfigPath -Raw | ConvertFrom-Json
+
+  $latestPackageHash = @{}
+  foreach ($package in $latestPackages.packages) {
+    if (-not $package.package_info.name) { 
+      # There is no package name, nothing to hash in this context
+      continue 
+    }
+    $latestPackageHash[$package.package_info.name] = $true
   }
 
-  $allJson  = Get-Content $pkgJsonLoc | ConvertFrom-Json
-  $visibleInCI = @{}
+  $gaPackages = $publishedPackages | Where-Object { $_.VersionGA.trim() -ne '' }
+  foreach ($package in $gaPackages) { 
+    if ($latestPackageHash.ContainsKey($package.Package)) { 
+      # Onboarded packages already contains this package, skip
+      continue
+    }
 
-  for ($i=0; $i -lt $allJson.packages.Length; $i++) {
-    $pkgDef = $allJson.packages[$i]
+    Write-Host "Add latest package: $($package.Package)"
+    $latestPackages.packages += Get-DocsCiObjectForPackage($package.Package) 
+  }
 
-    if ($pkgDef.package_info.name) {
-      $visibleInCI[$pkgDef.package_info.name] = $i
+  $latestPackages | ConvertTo-Json -Depth 100 | Set-Content $latestConfigPath
+
+  # Update "preview" packages
+  $previewConfig = $locationInDocRepo `
+    | Where-Object { $_.Mode -eq 'Preview' } `
+    | Select-Object -First 1 
+  $previewConfigPath = Join-Path $ciRepo $previewConfig.path_to_config -Resolve
+  Write-Host "Updating preview configuration: $previewConfigPath"
+  $previewPackages = Get-Content $previewConfigPath -Raw | ConvertFrom-Json
+
+  $outputPackages = @()
+  foreach ($package in $previewPackages.packages) { 
+    $matchingMetadataPackages = $publishedPackages | Where-Object { $_.Package -eq $package.package_info.name }
+
+    # If this package does not match any published packages keep it in the list
+    if (-not $matchingMetadataPackages) {
+        Write-Host "Keep non-tracked preview package: $($package.package_info.name)@$($package.package_info.version)"
+        $outputPackages += $package
+        continue
+    }
+
+    # If the metadata contains a package with a preview version keep it in the list
+    if ($matchingMetadataPackages | Where-Object { $_.VersionPreview.Trim() -ne '' }) {
+      Write-Host "Keep tracked preview package: $($package.package_info.name)@$($package.package_info.version)"
+      $outputPackages += $package
+    } else { 
+      Write-Host "Removing superseded package: $($package.package_info.name)@$($package.package_info.version)"
     }
   }
 
-  foreach ($releasingPkg in $pkgs) {
-    if ($visibleInCI.ContainsKey($releasingPkg.PackageId)) {
-      $packagesIndex = $visibleInCI[$releasingPkg.PackageId]
-      $existingPackageDef = $allJson.packages[$packagesIndex]
-
-      if ($releasingPkg.IsPrerelease) {
-        if (-not $existingPackageDef.package_info.version) {
-          $existingPackageDef.package_info | Add-Member -NotePropertyName version -NotePropertyValue ""
-        }
-
-        $existingPackageDef.package_info.version = ">=$($releasingPkg.PackageVersion)"
-      }
-      else {
-        if ($existingPackageDef.package_info.version) {
-          $existingPackageDef.package_info.PSObject.Properties.Remove('version')
-        }
-      }
+  $outputPackagesHash = @{}
+  foreach ($package in $outputPackages) {
+    if (-not $package.package_info.name) { 
+      # There is no package name, nothing to hash in this context
+      continue 
     }
-    else {
-      $newItem = New-Object PSObject -Property @{ 
-        package_info = New-Object PSObject -Property @{
-          prefer_source_distribution = "true"
-          install_type = "pypi"
-          name=$releasingPkg.PackageId
-        }
-        exclude_path = @("test*","example*","sample*","doc*")
-      }
-
-      if ($releasingPkg.IsPrerelease) {
-        $newItem.package_info | Add-Member -NotePropertyName version -NotePropertyValue ">=$($releasingPkg.PackageVersion)"
-      }
-
-      $allJson.packages += $newItem
-    }
+    $outputPackagesHash[$package.package_info.name] = $true
   }
 
-  $jsonContent = $allJson | ConvertTo-Json -Depth 10 | % {$_ -replace "(?m)  (?<=^(?:  )*)", "  " }
+  $remainingPreviewPackages = $publishedPackages `
+    | Where-Object { 
+      $_.VersionPreview.Trim() -ne '' `
+      -and (-not $outputPackagesHash.ContainsKey($_.Package))
+    }
+  foreach ($package in $remainingPreviewPackages) {
+    Write-Host "Add preview package: $($package.Package)@$($package.VersionPreview)"
+    $outputPackages += Get-DocsCiObjectForPackage($package.Package, $package.VersionPreview)
+  }
 
-  Set-Content -Path $pkgJsonLoc -Value $jsonContent
+  $previewPackages.packages = $outputPackages
+
+  $previewPackages | ConvertTo-Json -Depth 100 | Set-Content $previewConfigPath
 }
 
 # function is used to auto generate API View
