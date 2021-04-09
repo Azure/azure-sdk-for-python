@@ -185,6 +185,16 @@ class ConfidentialLedgerClientTestMixin:
 
             self.client.delete_user(user_id)
 
+            user = self.client.create_or_update_user(user_id, LedgerUserRole.READER)
+            self.assertEqual(user.id, user_id)
+            self.assertEqual(user.role, LedgerUserRole.READER)
+
+            user = self.client.get_user(user_id)
+            self.assertEqual(user.id, user_id)
+            self.assertEqual(user.role, LedgerUserRole.READER)
+
+            self.client.delete_user(user_id)
+
         def test_verification_methods(self):
             consortium = self.client.get_consortium()
             self.assertEqual(len(consortium.members), 1)

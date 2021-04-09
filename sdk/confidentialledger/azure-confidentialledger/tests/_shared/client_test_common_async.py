@@ -203,6 +203,18 @@ class AsyncConfidentialLedgerClientTestMixin:
 
             await self.client.delete_user(user_id)
 
+            user = await self.client.create_or_update_user(
+                user_id, LedgerUserRole.READER
+            )
+            self.assertEqual(user.id, user_id)
+            self.assertEqual(user.role, LedgerUserRole.READER)
+
+            user = await self.client.get_user(user_id)
+            self.assertEqual(user.id, user_id)
+            self.assertEqual(user.role, LedgerUserRole.READER)
+
+            await self.client.delete_user(user_id)
+
         @AzureTestCase.await_prepared_test
         async def test_verification_methods(self):
             consortium = await self.client.get_consortium()

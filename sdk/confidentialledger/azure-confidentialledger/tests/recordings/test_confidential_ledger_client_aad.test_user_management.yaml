@@ -25,7 +25,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '5.6970'
+      - '5.8155'
     status:
       code: 200
       message: OK
@@ -55,7 +55,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '5.6972'
+      - '5.8157'
     status:
       code: 200
       message: OK
@@ -81,7 +81,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '5.6972'
+      - '5.8157'
     status:
       code: 200
       message: OK
@@ -107,7 +107,89 @@ interactions:
       content-length:
       - '0'
       x-ms-ccf-transaction-id:
-      - '5.6973'
+      - '5.8158'
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: '{"assignedRole": "Reader"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '26'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-confidentialledger/0.1.0 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: PATCH
+    uri: https://fake-confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+  response:
+    body:
+      string: '{"assignedRole":"Reader","userId":"000000000000000000000000000000000000"}'
+    headers:
+      content-length:
+      - '73'
+      content-type:
+      - application/json
+      x-ms-ccf-transaction-id:
+      - '5.8159'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-confidentialledger/0.1.0 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: GET
+    uri: https://fake-confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+  response:
+    body:
+      string: '{"assignedRole":"Reader","userId":"000000000000000000000000000000000000"}'
+    headers:
+      content-length:
+      - '73'
+      content-type:
+      - application/json
+      x-ms-ccf-transaction-id:
+      - '5.8159'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-confidentialledger/0.1.0 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: DELETE
+    uri: https://fake-confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      x-ms-ccf-transaction-id:
+      - '5.8161'
     status:
       code: 204
       message: No Content
