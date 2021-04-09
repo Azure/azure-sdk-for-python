@@ -6,15 +6,15 @@ jobs:
       - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
         parameters:
           Paths:
-            - eng
-      - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-        parameters:
-          Paths:
             - ci-configs
+            - eng
           Repositories:
             - Name: MicrosoftDocs/azure-docs-sdk-python
               Commitsh: master
               WorkingDirectory: $(Pipeline.Workspace)/docs
+            - Name: $(Build.Repository.Name)
+              Commitish: $(Build.SourceVersion)
+              WorkingDirectory: $(System.DefaultWorkingDirectory)
 
       - task: PowerShell@2
         displayName: 'Update Docs.MS CI Targeted Packages'
