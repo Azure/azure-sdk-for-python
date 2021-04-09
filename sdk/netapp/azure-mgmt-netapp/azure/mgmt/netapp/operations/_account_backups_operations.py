@@ -71,7 +71,7 @@ class AccountBackupsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -135,7 +135,7 @@ class AccountBackupsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -185,7 +185,7 @@ class AccountBackupsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01"
+        api_version = "2020-12-01"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -275,7 +275,7 @@ class AccountBackupsOperations(object):
             'backupName': self._serialize.url("backup_name", backup_name, 'str'),
         }
 
-        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

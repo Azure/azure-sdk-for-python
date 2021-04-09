@@ -8,8 +8,9 @@ try:
 except ImportError:
     from cStringIO import StringIO as BytesIO
 import sys
-import mock
+from unittest.mock import Mock
 import pytest
+from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import AzureError, ServiceResponseError, ServiceResponseTimeoutError
 from azure.core.pipeline.policies import (
     AsyncRetryPolicy,
@@ -216,31 +217,44 @@ async def test_retry_seekable_file():
         await pipeline.run(http_request)
     os.unlink(f.name)
 
+
 @pytest.mark.asyncio
 async def test_retry_timeout():
-    class MockTransport(AsyncHttpTransport):
-        def __init__(self):
-            self.count = 0
+    timeout = 1
 
-        async def __aexit__(self, exc_type, exc_val, exc_tb):
-            pass
-        async def close(self):
-            pass
-        async def open(self):
-            pass
+    def send(request, **kwargs):
+        assert kwargs["connection_timeout"] <= timeout, "policy should set connection_timeout not to exceed timeout"
+        raise ServiceResponseError("oops")
 
-        async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
-            self.count += 1
-            if self.count > 2:
-                assert self.count <= 2
-            time.sleep(0.5)
-            raise ServiceResponseError('timeout')
+    transport = Mock(
+        spec=AsyncHttpTransport,
+        send=Mock(wraps=send),
+        connection_config=ConnectionConfiguration(connection_timeout=timeout * 2),
+        sleep=asyncio.sleep,
+    )
+    pipeline = AsyncPipeline(transport, [AsyncRetryPolicy(timeout=timeout)])
 
-    http_request = HttpRequest('GET', 'http://127.0.0.1/')
-    headers = {'Content-Type': "multipart/form-data"}
-    http_request.headers = headers
-    http_retry = AsyncRetryPolicy(retry_total=10, timeout=1)
-    pipeline = AsyncPipeline(MockTransport(), [http_retry])
     with pytest.raises(ServiceResponseTimeoutError):
-        await pipeline.run(http_request)
+        await pipeline.run(HttpRequest("GET", "http://127.0.0.1/"))
 
+
+@pytest.mark.asyncio
+async def test_timeout_defaults():
+    """When "timeout" is not set, the policy should not override the transport's timeout configuration"""
+
+    async def send(request, **kwargs):
+        for arg in ("connection_timeout", "read_timeout"):
+            assert arg not in kwargs, "policy should defer to transport configuration when not given a timeout"
+        response = HttpResponse(request, None)
+        response.status_code = 200
+        return response
+
+    transport = Mock(
+        spec_set=AsyncHttpTransport,
+        send=Mock(wraps=send),
+        sleep=Mock(side_effect=Exception("policy should not sleep: its first send succeeded")),
+    )
+    pipeline = AsyncPipeline(transport, [AsyncRetryPolicy()])
+
+    await pipeline.run(HttpRequest("GET", "http://127.0.0.1/"))
+    assert transport.send.call_count == 1, "policy should not retry: its first send succeeded"

@@ -7,16 +7,16 @@ from typing import TYPE_CHECKING
 import msal
 
 from .._internal import AadClient, AsyncContextManager
-from .._internal.decorators import log_get_token_async
+from .._internal.get_token_mixin import GetTokenMixin
 from ..._internal import validate_tenant_id
-from ..._persistent_cache import _load_persistent_cache, TokenCachePersistenceOptions
+from ..._persistent_cache import _load_persistent_cache
 
 if TYPE_CHECKING:
-    from typing import Any
+    from typing import Any, Optional
     from azure.core.credentials import AccessToken
 
 
-class ClientSecretCredential(AsyncContextManager):
+class ClientSecretCredential(AsyncContextManager, GetTokenMixin):
     """Authenticates as a service principal using a client ID and client secret.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
@@ -31,8 +31,7 @@ class ClientSecretCredential(AsyncContextManager):
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     """
 
-    def __init__(self, tenant_id, client_id, client_secret, **kwargs):
-        # type: (str, str, str, **Any) -> None
+    def __init__(self, tenant_id: str, client_id: str, client_secret: str, **kwargs: "Any") -> None:
         if not client_id:
             raise ValueError("client_id should be the id of an Azure Active Directory application")
         if not client_secret:
@@ -52,6 +51,7 @@ class ClientSecretCredential(AsyncContextManager):
         self._client = AadClient(tenant_id, client_id, cache=cache, **kwargs)
         self._client_id = client_id
         self._secret = client_secret
+        super().__init__()
 
     async def __aenter__(self):
         await self._client.__aenter__()
@@ -62,27 +62,8 @@ class ClientSecretCredential(AsyncContextManager):
 
         await self._client.__aexit__()
 
-    @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
-        """Asynchronously request an access token for `scopes`.
+    async def _acquire_token_silently(self, *scopes: str) -> "Optional[AccessToken]":
+        return self._client.get_cached_access_token(scopes, query={"client_id": self._client_id})
 
-        This method is called automatically by Azure SDK clients.
-
-        :param str scopes: desired scopes for the access token. This method requires at least one scope.
-        :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
-          attribute gives a reason. Any error response from Azure Active Directory is available as the error's
-          ``response`` attribute.
-        """
-        if not scopes:
-            raise ValueError("'get_token' requires at least one scope")
-
-        token = self._client.get_cached_access_token(scopes, query={"client_id": self._client_id})
-        if not token:
-            token = await self._client.obtain_token_by_client_secret(scopes, self._secret, **kwargs)
-        elif self._client.should_refresh(token):
-            try:
-                await self._client.obtain_token_by_client_secret(scopes, self._secret, **kwargs)
-            except Exception:  # pylint: disable=broad-except
-                pass
-        return token
+    async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+        return await self._client.obtain_token_by_client_secret(scopes, self._secret, **kwargs)

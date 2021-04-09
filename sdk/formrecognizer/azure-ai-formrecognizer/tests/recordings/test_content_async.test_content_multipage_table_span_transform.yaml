@@ -8,58 +8,35 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/layout/analyze
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyze?readingOrder=basic
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 6480369d-172b-4087-b9f5-93a288ce3656
+      apim-request-id: 97731022-fff0-4ec0-9bf0-da3cb8c735c9
       content-length: '0'
-      date: Thu, 29 Oct 2020 23:59:11 GMT
-      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/layout/analyzeResults/6480369d-172b-4087-b9f5-93a288ce3656
+      date: Wed, 03 Mar 2021 19:28:21 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyzeResults/97731022-fff0-4ec0-9bf0-da3cb8c735c9
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '157'
+      x-envoy-upstream-service-time: '167'
     status:
       code: 202
       message: Accepted
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.2/layout/analyze
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyze?readingOrder=basic
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/layout/analyzeResults/6480369d-172b-4087-b9f5-93a288ce3656
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyzeResults/97731022-fff0-4ec0-9bf0-da3cb8c735c9
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2020-10-29T23:59:12Z", "lastUpdatedDateTime":
-        "2020-10-29T23:59:12Z"}'
-    headers:
-      apim-request-id: b1f4a326-14f9-4ad1-8033-ed0e78e61e8c
-      content-length: '106'
-      content-type: application/json; charset=utf-8
-      date: Thu, 29 Oct 2020 23:59:16 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '11'
-    status:
-      code: 200
-      message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/layout/analyzeResults/6480369d-172b-4087-b9f5-93a288ce3656
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/layout/analyzeResults/6480369d-172b-4087-b9f5-93a288ce3656
-  response:
-    body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-10-29T23:59:12Z",
-        "lastUpdatedDateTime": "2020-10-29T23:59:18Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-03-03T19:28:21Z",
+        "lastUpdatedDateTime": "2021-03-03T19:28:25Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
         "unit": "inch", "lines": [{"boundingBox": [1.0119, 1.6855, 3.9147, 1.6855,
         3.9147, 1.8775, 1.0119, 1.8775], "text": "Quarterly Sales Update: Q3 2019",
@@ -639,16 +616,14 @@ interactions:
         {"boundingBox": [7.4627, 9.8142, 7.7628, 9.8142, 7.7628, 9.8988, 7.4627, 9.8988],
         "text": "7.00%", "appearance": {"style": {"name": "other", "confidence": 1}},
         "words": [{"boundingBox": [7.4627, 9.8142, 7.7628, 9.8142, 7.7628, 9.8988,
-        7.4627, 9.8988], "text": "7.00%", "confidence": 1}]}], "selectionMarks": [{"boundingBox":
-        [3.3622, 2.4501, 3.4551, 2.4501, 3.4551, 2.5407, 3.3622, 2.5407], "confidence":
-        0.806, "state": "unselected"}]}, {"page": 2, "angle": 0, "width": 8.5, "height":
-        11, "unit": "inch", "lines": [{"boundingBox": [3.3371, 1.0463, 3.4282, 1.0463,
-        3.4282, 1.1269, 3.3371, 1.1269], "text": "IN", "appearance": {"style": {"name":
-        "other", "confidence": 1}}, "words": [{"boundingBox": [3.3371, 1.0463, 3.4282,
-        1.0463, 3.4282, 1.1269, 3.3371, 1.1269], "text": "IN", "confidence": 1}]},
-        {"boundingBox": [6.8227, 1.0538, 6.9997, 1.0538, 6.9997, 1.136, 6.8227, 1.136],
-        "text": "781", "appearance": {"style": {"name": "other", "confidence": 1}},
-        "words": [{"boundingBox": [6.8227, 1.0538, 6.9997, 1.0538, 6.9997, 1.136,
+        7.4627, 9.8988], "text": "7.00%", "confidence": 1}]}]}, {"page": 2, "angle":
+        0, "width": 8.5, "height": 11, "unit": "inch", "lines": [{"boundingBox": [3.3371,
+        1.0463, 3.4282, 1.0463, 3.4282, 1.1269, 3.3371, 1.1269], "text": "IN", "appearance":
+        {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [3.3371,
+        1.0463, 3.4282, 1.0463, 3.4282, 1.1269, 3.3371, 1.1269], "text": "IN", "confidence":
+        1}]}, {"boundingBox": [6.8227, 1.0538, 6.9997, 1.0538, 6.9997, 1.136, 6.8227,
+        1.136], "text": "781", "appearance": {"style": {"name": "other", "confidence":
+        1}}, "words": [{"boundingBox": [6.8227, 1.0538, 6.9997, 1.0538, 6.9997, 1.136,
         6.8227, 1.136], "text": "781", "confidence": 1}]}, {"boundingBox": [7.3994,
         1.0525, 7.7624, 1.0525, 7.7624, 1.1371, 7.3994, 1.1371], "text": "34.20%",
         "appearance": {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox":
@@ -998,9 +973,9 @@ interactions:
         "CT, ME, MA, NH, RI, VT", "boundingBox": [3.2764, 2.4049, 5.2184, 2.4049,
         5.2184, 2.5799, 3.2764, 2.5799], "elements": ["#/readResults/0/lines/8/words/0",
         "#/readResults/0/lines/8/words/1", "#/readResults/0/lines/8/words/2", "#/readResults/0/lines/8/words/3",
-        "#/readResults/0/lines/8/words/4", "#/readResults/0/lines/8/words/5", "#/readResults/0/selectionMarks/0"]},
-        {"rowIndex": 1, "columnIndex": 2, "text": "526", "boundingBox": [5.2184, 2.4049,
-        7.1672, 2.4049, 7.1672, 2.5799, 5.2184, 2.5799], "elements": ["#/readResults/0/lines/9/words/0"]},
+        "#/readResults/0/lines/8/words/4", "#/readResults/0/lines/8/words/5"]}, {"rowIndex":
+        1, "columnIndex": 2, "text": "526", "boundingBox": [5.2184, 2.4049, 7.1672,
+        2.4049, 7.1672, 2.5799, 5.2184, 2.5799], "elements": ["#/readResults/0/lines/9/words/0"]},
         {"rowIndex": 1, "columnIndex": 3, "text": "0.7%", "boundingBox": [7.1672,
         2.4049, 7.8348, 2.4049, 7.8348, 2.5799, 7.1672, 2.5799], "elements": ["#/readResults/0/lines/10/words/0"]},
         {"rowIndex": 2, "columnIndex": 0, "rowSpan": 2, "text": "Mid-Atlantic", "boundingBox":
@@ -1503,15 +1478,15 @@ interactions:
         5.0913, 7.0785, 5.0844], "elements": ["#/readResults/1/lines/76/words/0"]}],
         "boundingBox": [1.0424, 1.0041, 7.877, 1.0068, 7.8741, 5.1081, 1.037, 5.1044]}]}]}}'
     headers:
-      apim-request-id: 03e756b9-a4ba-4594-bc6f-01ca392016a4
-      content-length: '105400'
+      apim-request-id: e5e31725-ccde-4e52-acaf-177ee58f47e6
+      content-length: '105808'
       content-type: application/json; charset=utf-8
-      date: Thu, 29 Oct 2020 23:59:21 GMT
+      date: Wed, 03 Mar 2021 19:28:25 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '46'
+      x-envoy-upstream-service-time: '70'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/layout/analyzeResults/6480369d-172b-4087-b9f5-93a288ce3656
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyzeResults/97731022-fff0-4ec0-9bf0-da3cb8c735c9
 version: 1

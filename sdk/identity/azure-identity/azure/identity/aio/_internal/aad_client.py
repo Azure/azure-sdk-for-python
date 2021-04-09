@@ -55,14 +55,14 @@ class AadClient(AadClientBase):
             scopes=scopes, code=code, redirect_uri=redirect_uri, client_secret=client_secret
         )
         now = int(time.time())
-        response = await self._pipeline.run(request, **kwargs)
+        response = await self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)
         return self._process_response(response, now)
 
     async def obtain_token_by_client_certificate(self, scopes, certificate, **kwargs):
         # type: (Iterable[str], AadClientCertificate, **Any) -> AccessToken
         request = self._get_client_certificate_request(scopes, certificate)
         now = int(time.time())
-        response = await self._pipeline.run(request, stream=False, **kwargs)
+        response = await self._pipeline.run(request, stream=False, retry_on_methods=self._POST, **kwargs)
         return self._process_response(response, now)
 
     async def obtain_token_by_client_secret(
@@ -70,7 +70,7 @@ class AadClient(AadClientBase):
     ) -> "AccessToken":
         request = self._get_client_secret_request(scopes, secret)
         now = int(time.time())
-        response = await self._pipeline.run(request, **kwargs)
+        response = await self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)
         return self._process_response(response, now)
 
     async def obtain_token_by_refresh_token(
@@ -78,7 +78,7 @@ class AadClient(AadClientBase):
     ) -> "AccessToken":
         request = self._get_refresh_token_request(scopes, refresh_token)
         now = int(time.time())
-        response = await self._pipeline.run(request, **kwargs)
+        response = await self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)
         return self._process_response(response, now)
 
     # pylint:disable=no-self-use

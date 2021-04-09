@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import datetime
 from typing import Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
@@ -229,6 +230,8 @@ class CustomerSubscription(Resource):
     :vartype type: str
     :param etag: The entity tag used for optimistic concurrency when modifying the resource.
     :type etag: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.azurestack.models.SystemData
     :param tenant_id: Tenant Id.
     :type tenant_id: str
     """
@@ -237,6 +240,7 @@ class CustomerSubscription(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
@@ -244,6 +248,7 @@ class CustomerSubscription(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
     }
 
@@ -255,6 +260,7 @@ class CustomerSubscription(Resource):
         **kwargs
     ):
         super(CustomerSubscription, self).__init__(etag=etag, **kwargs)
+        self.system_data = None
         self.tenant_id = tenant_id
 
 
@@ -728,6 +734,231 @@ class IconUris(msrest.serialization.Model):
         self.hero = hero
 
 
+class TrackedResource(msrest.serialization.Model):
+    """Base resource object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: ID of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of Resource.
+    :vartype type: str
+    :ivar kind: The kind of the resource.
+    :vartype kind: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.azurestack.models.SystemData
+    :param location: Required. Location of the resource. Possible values include: "global".
+    :type location: str or ~azure.mgmt.azurestack.models.Location
+    :param tags: A set of tags. Custom tags for the resource.
+    :type tags: dict[str, str]
+    :param etag: The entity tag used for optimistic concurrency when modifying the resource.
+    :type etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'readonly': True},
+        'system_data': {'readonly': True},
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'etag': {'key': 'etag', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Union[str, "Location"],
+        tags: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        **kwargs
+    ):
+        super(TrackedResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.kind = None
+        self.system_data = None
+        self.location = location
+        self.tags = tags
+        self.etag = etag
+
+
+class LinkedSubscription(TrackedResource):
+    """Linked Subscription information.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: ID of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of Resource.
+    :vartype type: str
+    :ivar kind: The kind of the resource.
+    :vartype kind: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.azurestack.models.SystemData
+    :param location: Required. Location of the resource. Possible values include: "global".
+    :type location: str or ~azure.mgmt.azurestack.models.Location
+    :param tags: A set of tags. Custom tags for the resource.
+    :type tags: dict[str, str]
+    :param etag: The entity tag used for optimistic concurrency when modifying the resource.
+    :type etag: str
+    :param linked_subscription_id: The identifier associated with the device subscription.
+    :type linked_subscription_id: str
+    :param registration_resource_id: The identifier associated with the device registration.
+    :type registration_resource_id: str
+    :ivar device_id: The identifier of the Azure Stack device for remote management.
+    :vartype device_id: str
+    :ivar device_object_id: The object identifier associated with the Azure Stack device connecting
+     to Azure.
+    :vartype device_object_id: str
+    :ivar device_link_state: The connection state of the Azure Stack device.
+    :vartype device_link_state: str
+    :ivar last_connected_time: The last remote management connection time for the Azure Stack
+     device connected to the linked subscription resource.
+    :vartype last_connected_time: str
+    :ivar device_connection_status: The status of the remote management connection of the Azure
+     Stack device.
+    :vartype device_connection_status: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'readonly': True},
+        'system_data': {'readonly': True},
+        'location': {'required': True},
+        'device_id': {'readonly': True},
+        'device_object_id': {'readonly': True},
+        'device_link_state': {'readonly': True},
+        'last_connected_time': {'readonly': True},
+        'device_connection_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'linked_subscription_id': {'key': 'properties.linkedSubscriptionId', 'type': 'str'},
+        'registration_resource_id': {'key': 'properties.registrationResourceId', 'type': 'str'},
+        'device_id': {'key': 'properties.deviceId', 'type': 'str'},
+        'device_object_id': {'key': 'properties.deviceObjectId', 'type': 'str'},
+        'device_link_state': {'key': 'properties.deviceLinkState', 'type': 'str'},
+        'last_connected_time': {'key': 'properties.lastConnectedTime', 'type': 'str'},
+        'device_connection_status': {'key': 'properties.deviceConnectionStatus', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Union[str, "Location"],
+        tags: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        linked_subscription_id: Optional[str] = None,
+        registration_resource_id: Optional[str] = None,
+        **kwargs
+    ):
+        super(LinkedSubscription, self).__init__(location=location, tags=tags, etag=etag, **kwargs)
+        self.linked_subscription_id = linked_subscription_id
+        self.registration_resource_id = registration_resource_id
+        self.device_id = None
+        self.device_object_id = None
+        self.device_link_state = None
+        self.last_connected_time = None
+        self.device_connection_status = None
+
+
+class LinkedSubscriptionParameter(msrest.serialization.Model):
+    """Linked Subscription resource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: Required. Location of the resource. Possible values include: "global".
+    :type location: str or ~azure.mgmt.azurestack.models.Location
+    :param linked_subscription_id: Required. The identifier associated with the device
+     subscription.
+    :type linked_subscription_id: str
+    :param registration_resource_id: Required. The identifier associated with the device
+     registration.
+    :type registration_resource_id: str
+    """
+
+    _validation = {
+        'location': {'required': True},
+        'linked_subscription_id': {'required': True},
+        'registration_resource_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'linked_subscription_id': {'key': 'properties.linkedSubscriptionId', 'type': 'str'},
+        'registration_resource_id': {'key': 'properties.registrationResourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Union[str, "Location"],
+        linked_subscription_id: str,
+        registration_resource_id: str,
+        **kwargs
+    ):
+        super(LinkedSubscriptionParameter, self).__init__(**kwargs)
+        self.location = location
+        self.linked_subscription_id = linked_subscription_id
+        self.registration_resource_id = registration_resource_id
+
+
+class LinkedSubscriptionsList(msrest.serialization.Model):
+    """List of linked subscriptions with paging support.
+
+    :param next_link: URI to the next page.
+    :type next_link: str
+    :param value: List of Linked Subscriptions.
+    :type value: list[~azure.mgmt.azurestack.models.LinkedSubscription]
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[LinkedSubscription]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[List["LinkedSubscription"]] = None,
+        **kwargs
+    ):
+        super(LinkedSubscriptionsList, self).__init__(**kwargs)
+        self.next_link = next_link
+        self.value = value
+
+
 class MarketplaceProductLogUpdate(msrest.serialization.Model):
     """Update details for product log.
 
@@ -870,6 +1101,8 @@ class Product(Resource):
     :vartype type: str
     :param etag: The entity tag used for optimistic concurrency when modifying the resource.
     :type etag: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.azurestack.models.SystemData
     :param display_name: The display name of the product.
     :type display_name: str
     :param description: The description of the product.
@@ -912,6 +1145,7 @@ class Product(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
@@ -919,6 +1153,7 @@ class Product(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'publisher_display_name': {'key': 'properties.publisherDisplayName', 'type': 'str'},
@@ -964,6 +1199,7 @@ class Product(Resource):
         **kwargs
     ):
         super(Product, self).__init__(etag=etag, **kwargs)
+        self.system_data = None
         self.display_name = display_name
         self.description = description
         self.publisher_display_name = publisher_display_name
@@ -1132,60 +1368,6 @@ class ProductProperties(msrest.serialization.Model):
         self.version = version
 
 
-class TrackedResource(msrest.serialization.Model):
-    """Base resource object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: ID of the resource.
-    :vartype id: str
-    :ivar name: Name of the resource.
-    :vartype name: str
-    :ivar type: Type of Resource.
-    :vartype type: str
-    :param location: Required. Location of the resource. Possible values include: "global".
-    :type location: str or ~azure.mgmt.azurestack.models.Location
-    :param tags: A set of tags. Custom tags for the resource.
-    :type tags: dict[str, str]
-    :param etag: The entity tag used for optimistic concurrency when modifying the resource.
-    :type etag: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: Union[str, "Location"],
-        tags: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        **kwargs
-    ):
-        super(TrackedResource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = location
-        self.tags = tags
-        self.etag = etag
-
-
 class Registration(TrackedResource):
     """Registration information.
 
@@ -1199,6 +1381,10 @@ class Registration(TrackedResource):
     :vartype name: str
     :ivar type: Type of Resource.
     :vartype type: str
+    :ivar kind: The kind of the resource.
+    :vartype kind: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.azurestack.models.SystemData
     :param location: Required. Location of the resource. Possible values include: "global".
     :type location: str or ~azure.mgmt.azurestack.models.Location
     :param tags: A set of tags. Custom tags for the resource.
@@ -1217,6 +1403,8 @@ class Registration(TrackedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'kind': {'readonly': True},
+        'system_data': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -1224,6 +1412,8 @@ class Registration(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -1306,3 +1496,51 @@ class RegistrationParameter(msrest.serialization.Model):
         super(RegistrationParameter, self).__init__(**kwargs)
         self.location = location
         self.registration_token = registration_token
+
+
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource. Possible values
+     include: "User", "Application", "ManagedIdentity", "Key".
+    :type created_by_type: str or ~azure.mgmt.azurestack.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :type last_modified_by_type: str or ~azure.mgmt.azurestack.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at

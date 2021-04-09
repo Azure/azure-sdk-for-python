@@ -123,12 +123,12 @@ class BlobCheckpointStore(CheckpointStore):
             self._cached_blob_clients[blob_name] = result
         return result
 
-    def _upload_ownership(self, ownership, metadata):
+    def _upload_ownership(self, ownership, metadata, **kwargs):
         etag = ownership.get("etag")
         if etag:
-            etag_match = {"if_match": etag}
+            kwargs["if_match"] = etag
         else:
-            etag_match = {"if_none_match": "*"}
+            kwargs["if_none_match"] = "*"
         blob_name = "{}/{}/{}/ownership/{}".format(
             ownership["fully_qualified_namespace"],
             ownership["eventhub_name"],
@@ -138,11 +138,11 @@ class BlobCheckpointStore(CheckpointStore):
         blob_name = blob_name.lower()
         blob_client = self._get_blob_client(blob_name)
         try:
-            uploaded_blob_properties = blob_client.set_blob_metadata(metadata, **etag_match)
+            uploaded_blob_properties = blob_client.set_blob_metadata(metadata, **kwargs)
         except ResourceNotFoundError:
             logger.info("Upload ownership blob %r because it hasn't existed in the container yet.", blob_name)
             uploaded_blob_properties = blob_client.upload_blob(
-                data=UPLOAD_DATA, overwrite=True, metadata=metadata, **etag_match
+                data=UPLOAD_DATA, overwrite=True, metadata=metadata, **kwargs
             )
         ownership["etag"] = uploaded_blob_properties["etag"]
         ownership["last_modified_time"] = _to_timestamp(
@@ -150,7 +150,7 @@ class BlobCheckpointStore(CheckpointStore):
         )
         ownership.update(metadata)
 
-    def _claim_one_partition(self, ownership):
+    def _claim_one_partition(self, ownership, **kwargs):
         partition_id = ownership["partition_id"]
         fully_qualified_namespace = ownership["fully_qualified_namespace"]
         eventhub_name = ownership["eventhub_name"]
@@ -158,7 +158,7 @@ class BlobCheckpointStore(CheckpointStore):
         owner_id = ownership["owner_id"]
         metadata = {"ownerid": owner_id}
         try:
-            self._upload_ownership(ownership, metadata)
+            self._upload_ownership(ownership, metadata, **kwargs)
             return ownership
         except (ResourceModifiedError, ResourceExistsError):
             logger.info(
@@ -186,8 +186,8 @@ class BlobCheckpointStore(CheckpointStore):
             )
             return ownership  # Keep the ownership if an unexpected error happens
 
-    def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group):
-        # type: (str, str, str) -> Iterable[Dict[str, Any]]
+    def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs):
+        # type: (str, str, str, Any) -> Iterable[Dict[str, Any]]
         """Retrieves a complete ownership list from the storage blob.
 
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
@@ -213,7 +213,7 @@ class BlobCheckpointStore(CheckpointStore):
                 fully_qualified_namespace, eventhub_name, consumer_group
             )
             blobs = self._container_client.list_blobs(
-                name_starts_with=blob_prefix.lower(), include=["metadata"]
+                name_starts_with=blob_prefix.lower(), include=["metadata"], **kwargs
             )
             result = []
             for blob in blobs:
@@ -240,8 +240,8 @@ class BlobCheckpointStore(CheckpointStore):
             )
             raise
 
-    def claim_ownership(self, ownership_list):
-        # type: (Iterable[Dict[str, Any]]) -> Iterable[Dict[str, Any]]
+    def claim_ownership(self, ownership_list, **kwargs):
+        # type: (Iterable[Dict[str, Any]], Any) -> Iterable[Dict[str, Any]]
         """Tries to claim ownership for a list of specified partitions.
 
         :param Iterable[Dict[str,Any]] ownership_list: Iterable of dictionaries containing all the ownerships to claim.
@@ -261,13 +261,13 @@ class BlobCheckpointStore(CheckpointStore):
         gathered_results = []
         for x in ownership_list:
             try:
-                gathered_results.append(self._claim_one_partition(x))
+                gathered_results.append(self._claim_one_partition(x, **kwargs))
             except OwnershipLostError:
                 pass
         return gathered_results
 
-    def update_checkpoint(self, checkpoint):
-        # type: (Dict[str, Optional[Union[str, int]]]) -> None
+    def update_checkpoint(self, checkpoint, **kwargs):
+        # type: (Dict[str, Optional[Union[str, int]]], Any) -> None
         """Updates the checkpoint using the given information for the offset, associated partition and
         consumer group in the storage blob.
 
@@ -302,17 +302,17 @@ class BlobCheckpointStore(CheckpointStore):
         blob_name = blob_name.lower()
         blob_client = self._get_blob_client(blob_name)
         try:
-            blob_client.set_blob_metadata(metadata)
+            blob_client.set_blob_metadata(metadata, **kwargs)
         except ResourceNotFoundError:
             logger.info("Upload checkpoint blob %r because it hasn't existed in the container yet.", blob_name)
             blob_client.upload_blob(
-                data=UPLOAD_DATA, overwrite=True, metadata=metadata
+                data=UPLOAD_DATA, overwrite=True, metadata=metadata, **kwargs
             )
 
     def list_checkpoints(
-        self, fully_qualified_namespace, eventhub_name, consumer_group
+        self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs
     ):
-        # type: (str, str, str) -> Iterable[Dict[str, Any]]
+        # type: (str, str, str, Any) -> Iterable[Dict[str, Any]]
         """List the updated checkpoints from the storage blob.
 
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
@@ -335,7 +335,7 @@ class BlobCheckpointStore(CheckpointStore):
             fully_qualified_namespace, eventhub_name, consumer_group
         )
         blobs = self._container_client.list_blobs(
-            name_starts_with=blob_prefix.lower(), include=["metadata"]
+            name_starts_with=blob_prefix.lower(), include=["metadata"], **kwargs
         )
         result = []
         for b in blobs:

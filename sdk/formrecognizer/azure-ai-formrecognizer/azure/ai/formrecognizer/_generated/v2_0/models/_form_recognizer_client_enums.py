@@ -30,10 +30,14 @@ class ContentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Content type for upload
     """
 
-    APPLICATION_PDF = "application/pdf"  #: Content Type 'application/pdf'.
-    IMAGE_JPEG = "image/jpeg"  #: Content Type 'image/jpeg'.
-    IMAGE_PNG = "image/png"  #: Content Type 'image/png'.
-    IMAGE_TIFF = "image/tiff"  #: Content Type 'image/tiff'.
+    #: Content Type 'application/pdf'.
+    APPLICATION_PDF = "application/pdf"
+    #: Content Type 'image/jpeg'.
+    IMAGE_JPEG = "image/jpeg"
+    #: Content Type 'image/png'.
+    IMAGE_PNG = "image/png"
+    #: Content Type 'image/tiff'.
+    IMAGE_TIFF = "image/tiff"
 
 class FieldValueType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Semantic data type of the field value.

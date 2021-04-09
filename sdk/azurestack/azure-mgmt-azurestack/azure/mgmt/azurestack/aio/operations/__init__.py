@@ -8,14 +8,16 @@
 
 from ._operations import Operations
 from ._cloud_manifest_file_operations import CloudManifestFileOperations
+from ._customer_subscriptions_operations import CustomerSubscriptionsOperations
 from ._products_operations import ProductsOperations
 from ._registrations_operations import RegistrationsOperations
-from ._customer_subscriptions_operations import CustomerSubscriptionsOperations
+from ._linked_subscriptions_operations import LinkedSubscriptionsOperations
 
 __all__ = [
     'Operations',
     'CloudManifestFileOperations',
+    'CustomerSubscriptionsOperations',
     'ProductsOperations',
     'RegistrationsOperations',
-    'CustomerSubscriptionsOperations',
+    'LinkedSubscriptionsOperations',
 ]

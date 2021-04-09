@@ -6,6 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._disks_operations import DisksOperations
+from ._snapshots_operations import SnapshotsOperations
+from ._disk_encryption_sets_operations import DiskEncryptionSetsOperations
+from ._disk_accesses_operations import DiskAccessesOperations
+from ._disk_restore_point_operations import DiskRestorePointOperations
 from ._operations import Operations
 from ._availability_sets_operations import AvailabilitySetsOperations
 from ._proximity_placement_groups_operations import ProximityPlacementGroupsOperations
@@ -30,6 +35,11 @@ from ._virtual_machine_run_commands_operations import VirtualMachineRunCommandsO
 from ._virtual_machine_scale_set_vm_run_commands_operations import VirtualMachineScaleSetVMRunCommandsOperations
 
 __all__ = [
+    'DisksOperations',
+    'SnapshotsOperations',
+    'DiskEncryptionSetsOperations',
+    'DiskAccessesOperations',
+    'DiskRestorePointOperations',
     'Operations',
     'AvailabilitySetsOperations',
     'ProximityPlacementGroupsOperations',
