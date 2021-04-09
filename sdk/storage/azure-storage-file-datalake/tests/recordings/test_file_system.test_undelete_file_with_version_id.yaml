@@ -13,9 +13,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - c925c631-96fb-11eb-ad8c-c8348e5fffbf
+      - 22edf54b-98f0-11eb-b813-c8348e5fffbf
       x-ms-date:
-      - Tue, 06 Apr 2021 17:16:12 GMT
+      - Fri, 09 Apr 2021 04:57:51 GMT
       x-ms-version:
       - '2020-06-12'
     method: PUT
@@ -27,15 +27,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Tue, 06 Apr 2021 17:16:12 GMT
+      - Fri, 09 Apr 2021 04:57:51 GMT
       ETag:
-      - '"0x8D8F91FADB2F1B4"'
+      - '"0x8D8FB140784D2B9"'
       Last-Modified:
-      - Tue, 06 Apr 2021 17:16:12 GMT
+      - Fri, 09 Apr 2021 04:57:51 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - 7b2cf78f-601e-0062-5508-2b8f87000000
+      - 5a438fc7-b01e-003c-6efc-2c6467000000
       x-ms-version:
       - '2020-06-12'
     status:
@@ -55,9 +55,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - c98985b8-96fb-11eb-9ffe-c8348e5fffbf
+      - 235ac06a-98f0-11eb-a682-c8348e5fffbf
       x-ms-date:
-      - Tue, 06 Apr 2021 17:16:12 GMT
+      - Fri, 09 Apr 2021 04:57:51 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -71,15 +71,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Tue, 06 Apr 2021 17:16:12 GMT
+      - Fri, 09 Apr 2021 04:57:52 GMT
       ETag:
-      - '"0x8D8F91FAE28BFD9"'
+      - '"0x8D8FB1407FD32D0"'
       Last-Modified:
-      - Tue, 06 Apr 2021 17:16:13 GMT
+      - Fri, 09 Apr 2021 04:57:52 GMT
       Server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - 036ccca5-d01f-0058-0608-2b95ff000000
+      - d806c18e-101f-009c-29fc-2ce0c6000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -101,9 +101,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - c9fbf927-96fb-11eb-a9fe-c8348e5fffbf
+      - 23cc6ec8-98f0-11eb-acac-c8348e5fffbf
       x-ms-date:
-      - Tue, 06 Apr 2021 17:16:13 GMT
+      - Fri, 09 Apr 2021 04:57:52 GMT
       x-ms-version:
       - '2020-06-12'
     method: DELETE
@@ -115,15 +115,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Tue, 06 Apr 2021 17:16:13 GMT
+      - Fri, 09 Apr 2021 04:57:52 GMT
       Server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-delete-type-permanent:
       - 'false'
       x-ms-deletion-id:
-      - '132622029736513453'
+      - '132624178727549652'
       x-ms-request-id:
-      - 036ccca7-d01f-0058-0708-2b95ff000000
+      - d806c18f-101f-009c-2afc-2ce0c6000000
       x-ms-version:
       - '2020-06-12'
     status:
@@ -141,9 +141,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - ca2b7499-96fb-11eb-84c6-c8348e5fffbf
+      - 23fa5cb0-98f0-11eb-b2c8-c8348e5fffbf
       x-ms-date:
-      - Tue, 06 Apr 2021 17:16:13 GMT
+      - Fri, 09 Apr 2021 04:57:52 GMT
       x-ms-encryption-algorithm:
       - AES256
       x-ms-version:
@@ -155,7 +155,7 @@ interactions:
       string: ''
     headers:
       Date:
-      - Tue, 06 Apr 2021 17:16:13 GMT
+      - Fri, 09 Apr 2021 04:57:52 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
@@ -165,7 +165,7 @@ interactions:
       x-ms-error-code:
       - BlobNotFound
       x-ms-request-id:
-      - 7b2cf83d-601e-0062-6408-2b8f87000000
+      - 5a43929f-b01e-003c-16fc-2c6467000000
       x-ms-version:
       - '2020-06-12'
     status:
@@ -185,11 +185,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - ca451c7d-96fb-11eb-98f9-c8348e5fffbf
+      - 241229e1-98f0-11eb-9ef6-c8348e5fffbf
       x-ms-date:
-      - Tue, 06 Apr 2021 17:16:13 GMT
+      - Fri, 09 Apr 2021 04:57:52 GMT
       x-ms-undelete-source:
-      - dir10/file%C5%87?deletionid=132622029736513453
+      - dir10/file%C5%87?deletionid=132624178727549652
       x-ms-version:
       - '2020-06-12'
     method: PUT
@@ -201,13 +201,13 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Tue, 06 Apr 2021 17:16:13 GMT
+      - Fri, 09 Apr 2021 04:57:52 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-creation-time:
-      - Tue, 06 Apr 2021 17:16:13 GMT
+      - Fri, 09 Apr 2021 04:57:52 GMT
       x-ms-request-id:
-      - 7b2cf85e-601e-0062-0208-2b8f87000000
+      - 5a439303-b01e-003c-51fc-2c6467000000
       x-ms-resource-type:
       - file
       x-ms-version:
@@ -227,9 +227,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.3.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - ca7281ac-96fb-11eb-8757-c8348e5fffbf
+      - 2438c4bb-98f0-11eb-80b5-c8348e5fffbf
       x-ms-date:
-      - Tue, 06 Apr 2021 17:16:14 GMT
+      - Fri, 09 Apr 2021 04:57:53 GMT
       x-ms-encryption-algorithm:
       - AES256
       x-ms-version:
@@ -247,11 +247,11 @@ interactions:
       Content-Type:
       - application/octet-stream
       Date:
-      - Tue, 06 Apr 2021 17:16:13 GMT
+      - Fri, 09 Apr 2021 04:57:52 GMT
       ETag:
-      - '"0x8D8F91FAE28BFD9"'
+      - '"0x8D8FB1407FD32D0"'
       Last-Modified:
-      - Tue, 06 Apr 2021 17:16:13 GMT
+      - Fri, 09 Apr 2021 04:57:52 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       Vary:
@@ -263,7 +263,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 06 Apr 2021 17:16:13 GMT
+      - Fri, 09 Apr 2021 04:57:52 GMT
       x-ms-group:
       - $superuser
       x-ms-lease-state:
@@ -275,7 +275,7 @@ interactions:
       x-ms-permissions:
       - rw-r-----
       x-ms-request-id:
-      - 7b2cf8a5-601e-0062-3f08-2b8f87000000
+      - 5a439389-b01e-003c-20fc-2c6467000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
