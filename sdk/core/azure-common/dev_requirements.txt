@@ -1,2 +1,4 @@
 -e ../../../tools/azure-sdk-tools
 -e ../azure-core
+msrestazure
+-e ../../../tools/azure-devtools
