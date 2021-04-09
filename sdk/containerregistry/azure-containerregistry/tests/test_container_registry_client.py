@@ -63,7 +63,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     def test_delete_repository(self, containerregistry_endpoint, containerregistry_resource_group):
         repository = self.get_resource_name("repo")
-        self._import_tag_to_be_deleted(
+        self.import_repo(
             containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=repository
         )
         client = self.create_registry_client(containerregistry_endpoint)
@@ -72,8 +72,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         assert isinstance(result, DeletedRepositoryResult)
         assert result.deleted_registry_artifact_digests is not None
         assert result.deleted_tags is not None
-
-        self.sleep(5)
 
         for repo in client.list_repositories():
             if repo == repository:

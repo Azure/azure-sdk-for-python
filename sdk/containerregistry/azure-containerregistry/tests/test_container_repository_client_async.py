@@ -84,27 +84,9 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
         assert page_count >= 1
 
     @acr_preparer()
-    async def test_list_tags_descending(self, containerregistry_endpoint):
-        client = self.create_repository_client(containerregistry_endpoint, self.repository)
-
-        # TODO: This is giving time in ascending order
-        tags = client.list_tags(order_by=TagOrderBy.LAST_UPDATE_TIME_DESCENDING)
-        assert isinstance(tags, AsyncItemPaged)
-        last_updated_on = None
-        count = 0
-        async for tag in tags:
-            print(tag.last_updated_on)
-            # if last_updated_on:
-            #     assert tag.last_updated_on < last_updated_on
-            last_updated_on = tag.last_updated_on
-            count += 1
-
-        assert count > 0
-
-    @acr_preparer()
     async def test_delete_tag(self, containerregistry_endpoint, containerregistry_resource_group):
         repo = self.get_resource_name("repo")
-        self._import_tag_to_be_deleted(
+        self.import_repo(
             containerregistry_endpoint,
             resource_group=containerregistry_resource_group,
             repository=repo,
@@ -131,7 +113,7 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     async def test_delete_repository(self, containerregistry_endpoint, containerregistry_resource_group):
-        self.import_repo_to_be_deleted(
+        self.import_repo(
             containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=TO_BE_DELETED
         )
 
@@ -146,7 +128,6 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
         assert isinstance(result, DeletedRepositoryResult)
         assert result.deleted_registry_artifact_digests is not None
         assert result.deleted_tags is not None
-        self.sleep(5)
 
         existing_repos = []
         async for repo in reg_client.list_repositories():
@@ -164,7 +145,7 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
     @acr_preparer()
     async def test_delete_registry_artifact(self, containerregistry_endpoint, containerregistry_resource_group):
         repository = self.get_resource_name("repo")
-        self.import_repo_to_be_deleted(
+        self.import_repo(
             containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=repository
         )
 
@@ -188,7 +169,7 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
     async def test_set_tag_properties(self, containerregistry_endpoint, containerregistry_resource_group):
         repository = self.get_resource_name("repo")
         tag_identifier = self.get_resource_name("tag")
-        self.import_repo_to_be_deleted(
+        self.import_repo(
             containerregistry_endpoint,
             resource_group=containerregistry_resource_group,
             tag=tag_identifier,
@@ -226,7 +207,7 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
     async def test_set_manifest_properties(self, containerregistry_endpoint, containerregistry_resource_group):
         repository = self.get_resource_name("reposet")
         tag_identifier = self.get_resource_name("tag")
-        self.import_repo_to_be_deleted(
+        self.import_repo(
             containerregistry_endpoint,
             resource_group=containerregistry_resource_group,
             tag=tag_identifier,
@@ -262,7 +243,6 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
                     can_write=True,
                 ),
             )
-            self.sleep(10)
             await client.delete()
 
             break

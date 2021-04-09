@@ -14,9 +14,10 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/repo2e8319c5/_manifests
   response:
     body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "repository", "Name": "repo2e8319c5", "Action": "metadata_read"}]}]}'
+      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"repo2e8319c5","Action":"metadata_read"}]}]}
+
+        '
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -30,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:50:39 GMT
+      - Fri, 09 Apr 2021 14:57:29 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -38,7 +39,8 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:repo2e8319c5:metadata_read"
       x-content-type-options:
       - nosniff
     status:
@@ -70,7 +72,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:50:40 GMT
+      - Fri, 09 Apr 2021 14:57:30 GMT
       server:
       - openresty
       strict-transport-security:
@@ -78,7 +80,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.883333'
+      - '333.25'
     status:
       code: 200
       message: OK
@@ -108,7 +110,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:50:40 GMT
+      - Fri, 09 Apr 2021 14:57:30 GMT
       server:
       - openresty
       strict-transport-security:
@@ -116,7 +118,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.866667'
+      - '333.233333'
     status:
       code: 200
       message: OK
@@ -137,8 +139,8 @@ interactions:
     body:
       string: '{"registry": "fake_url.azurecr.io", "imageName": "repo2e8319c5", "manifests":
         [{"digest": "sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792",
-        "imageSize": 0, "createdTime": "2021-04-07T12:50:29.8611116Z", "lastUpdateTime":
-        "2021-04-07T12:50:29.8611116Z", "architecture": "amd64", "os": "linux", "mediaType":
+        "imageSize": 0, "createdTime": "2021-04-09T14:57:19.5726646Z", "lastUpdateTime":
+        "2021-04-09T14:57:19.5726646Z", "architecture": "amd64", "os": "linux", "mediaType":
         "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
         true, "quarantineState": "Passed"}}, {"digest": "sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24",
@@ -197,7 +199,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:50:41 GMT
+      - Fri, 09 Apr 2021 14:57:31 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -229,9 +231,10 @@ interactions:
     uri: https://fake_url.azurecr.io/v2/repo2e8319c5/manifests/sha256%3A1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792
   response:
     body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "repository", "Name": "repo2e8319c5", "Action": "delete"}]}]}'
+      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"repo2e8319c5","Action":"delete"}]}]}
+
+        '
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -245,7 +248,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:50:41 GMT
+      - Fri, 09 Apr 2021 14:57:31 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -253,7 +256,8 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:repo2e8319c5:delete"
       x-content-type-options:
       - nosniff
     status:
@@ -285,7 +289,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:50:41 GMT
+      - Fri, 09 Apr 2021 14:57:32 GMT
       server:
       - openresty
       strict-transport-security:
@@ -293,7 +297,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.85'
+      - '333.216667'
     status:
       code: 200
       message: OK
@@ -323,7 +327,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:50:41 GMT
+      - Fri, 09 Apr 2021 14:57:32 GMT
       server:
       - openresty
       strict-transport-security:
@@ -331,7 +335,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.833333'
+      - '333.2'
     status:
       code: 200
       message: OK
@@ -364,7 +368,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 07 Apr 2021 12:50:42 GMT
+      - Fri, 09 Apr 2021 14:57:33 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -394,9 +398,10 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/repo2e8319c5/_manifests
   response:
     body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "repository", "Name": "repo2e8319c5", "Action": "metadata_read"}]}]}'
+      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"repo2e8319c5","Action":"metadata_read"}]}]}
+
+        '
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -410,7 +415,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:50:42 GMT
+      - Fri, 09 Apr 2021 14:57:33 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -418,7 +423,8 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:repo2e8319c5:metadata_read"
       x-content-type-options:
       - nosniff
     status:
@@ -450,7 +456,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:50:43 GMT
+      - Fri, 09 Apr 2021 14:57:33 GMT
       server:
       - openresty
       strict-transport-security:
@@ -458,7 +464,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.816667'
+      - '333.183333'
     status:
       code: 200
       message: OK
@@ -488,7 +494,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:50:43 GMT
+      - Fri, 09 Apr 2021 14:57:33 GMT
       server:
       - openresty
       strict-transport-security:
@@ -496,7 +502,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.8'
+      - '333.166667'
     status:
       code: 200
       message: OK
@@ -572,7 +578,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:50:43 GMT
+      - Fri, 09 Apr 2021 14:57:34 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
