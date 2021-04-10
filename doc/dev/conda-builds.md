@@ -90,7 +90,7 @@ python `build_conda_artifacts.py`
 
 Locally, from the anaconda prompt, set the environment variable `STORAGE_SOURCE_DISTRIBUTION` to the location of the generated sdist. After that:
 
-```
+```bash
+export STORAGE_SOURCE_DISTRUBTION=<path/to/generated/sdist>
 cd <meta.yml directory>
 conda-build . --output-folder <conda.output>
-```
