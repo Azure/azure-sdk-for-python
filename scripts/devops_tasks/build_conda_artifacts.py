@@ -37,7 +37,6 @@ NAMESPACE_EXTENSION_TEMPLATE = """__path__ = __import__('pkgutil').extend_path(_
 
 MANIFEST_TEMPLATE = """include *.md
 {namespace_includes}
-include LICENSE.txt
 recursive-include tests *.py
 recursive-include samples *.py *.md
 """
@@ -53,6 +52,7 @@ setup(
     name=\"{conda_package_name}\",
     version=\"{version}\",
     description='Microsoft Azure SDK For Python {service} Combined Conda Library',
+    long_description_content_type='text/markdown',
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
@@ -63,7 +63,6 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',

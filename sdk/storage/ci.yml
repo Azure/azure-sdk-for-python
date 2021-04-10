@@ -41,7 +41,6 @@ extends:
         Path: eng/pipelines/templates/stages/platform-matrix-cryptography-dependency.json
         Selection: sparse
         GenerateVMJobs: true
-    BuildDocs: false
     Artifacts:
     - name: azure-storage-blob
       safeName: azurestorageblob
