@@ -47,7 +47,7 @@ Example:
 
 import typing
 
-__all__ = ["well_known", "CloudConfig"]
+__all__ = ["well_known", "CloudConfiguration"]
 
 _raw_data = [
     {
@@ -167,7 +167,7 @@ _raw_data = [
 ]
 
 
-class CloudConfig(dict):
+class CloudConfiguration(dict):
     """Configuration for a specific cloud instance"""
 
     @classmethod
@@ -185,6 +185,12 @@ class CloudConfig(dict):
             raise ValueError('Unknown API version - supported value is: "2019-05-01"')
 
         transformed_data = {
+            "global": {
+                "authentication": {
+                    "endpoint": data.get("authentication", {}).get("loginEndpoint", None),
+                    "audiences": data.get("authentication", {}).get("audiences", []),
+                },
+            },
             "batch": {"endpoint": data.get("endpoint", None)},
             "containerRegistry": {"suffix": data.get("acrLoginServer", None)},
             "dataLakeStorageFileSystem": {
@@ -209,7 +215,6 @@ class CloudConfig(dict):
             "portal": {"endpoint": data.get("portal", None)},
             "resourceManager": {
                 "endpoint": data.get("resourceManager", None),
-                "authentication": data.get("authentication", {}),
             },
             "sql": {"suffix": data.get("suffixes", {}).get("sqlServerHostname")},
             "sqlManagement": {"endpoint": data.get("sqlManagement", None)},
@@ -218,4 +223,4 @@ class CloudConfig(dict):
         return cls(transformed_data)
 
 
-well_known = {item["name"]: CloudConfig.from_metadata_dict(item) for item in _raw_data}
+well_known = {item["name"]: CloudConfiguration.from_metadata_dict(item) for item in _raw_data}

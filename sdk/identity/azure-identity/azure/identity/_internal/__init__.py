@@ -4,6 +4,7 @@
 # ------------------------------------
 import os
 
+from azure.core.settings import settings as core_settings
 from six.moves.urllib_parse import urlparse
 
 from .._constants import EnvironmentVariables, KnownAuthorities
@@ -26,7 +27,10 @@ def normalize_authority(authority):
 
 def get_default_authority():
     # type: () -> str
-    authority = os.environ.get(EnvironmentVariables.AZURE_AUTHORITY_HOST, KnownAuthorities.AZURE_PUBLIC_CLOUD)
+    authority = os.environ.get(EnvironmentVariables.AZURE_AUTHORITY_HOST)
+    if not authority:
+        config = core_settings.cloud_configuration().get('global', {})
+        authority = config.get('authentication', {}).get('endpoint', KnownAuthorities.AZURE_PUBLIC_CLOUD)
     return normalize_authority(authority)
 
 
