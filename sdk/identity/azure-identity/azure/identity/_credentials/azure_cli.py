@@ -53,7 +53,11 @@ class AzureCliCredential(object):
         """
 
         resource = _scopes_to_resource(*scopes)
-        output, error = _run_command(COMMAND_LINE.format(resource))
+        if tenant:
+            COMMAND_LINE = COMMAND_LINE + " --tenant {}"
+            output, error = _run_command(COMMAND_LINE.format(resource, tenant))
+        else:
+            output, error = _run_command(COMMAND_LINE.format(resource))
         if error:
             raise error
 
