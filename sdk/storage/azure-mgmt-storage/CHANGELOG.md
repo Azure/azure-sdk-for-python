@@ -1,5 +1,18 @@
 # Release History
 
+## 17.1.0 (2021-04-12)
+
+**Features**
+
+  - Model StorageAccountCreateParameters has a new parameter key_policy
+  - Model StorageAccountCreateParameters has a new parameter sas_policy
+  - Model StorageAccount has a new parameter key_policy
+  - Model StorageAccount has a new parameter key_creation_time
+  - Model StorageAccount has a new parameter sas_policy
+  - Model StorageAccountKey has a new parameter creation_time
+  - Model StorageAccountUpdateParameters has a new parameter key_policy
+  - Model StorageAccountUpdateParameters has a new parameter sas_policy
+
 ## 17.0.0 (2021-02-20)
 
 **Features**
