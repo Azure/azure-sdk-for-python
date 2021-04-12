@@ -18,7 +18,6 @@ steps:
       if (!(Test-Path $targetPath)) {
         mkdir $targetPath
       }
-      Remove-Item -Path $targetPath/* -Recurse
 
       Write-Host "##vso[task.setvariable variable=Package.Clone]$targetPath"
     displayName: 'Prep for Sparse Checkout'
@@ -41,3 +40,7 @@ steps:
 
       Copy-Item -Path $pathForCopy -Destination ${{ parameters.DestinationDirectory }} -Recurse
     displayName: 'Copy Source to Target Directory'
+
+  - pwsh: |
+      Get-ChildItem -Recurse "$(Package.Clone)"
+      Remove-Item -Path "$(Package.Clone)/*" -Recurse
