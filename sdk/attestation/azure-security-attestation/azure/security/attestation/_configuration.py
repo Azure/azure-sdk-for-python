@@ -6,17 +6,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import NoReturn, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 from ._version import VERSION
+from ._models import TokenValidationOptions
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
-
     from azure.core.credentials import TokenCredential
 
 
@@ -30,6 +30,8 @@ class AttestationClientConfiguration(Configuration):
     :type credential: ~azure.core.credentials.TokenCredential
     :param instance_url: The attestation instance base URI, for example https://mytenant.attest.azure.net.
     :type instance_url: str
+    :keyword validation_options: Optional token validation options.
+    :type validation_options: TokenValidationOptions
     """
 
     def __init__(
@@ -45,6 +47,9 @@ class AttestationClientConfiguration(Configuration):
             raise ValueError("Parameter 'instance_url' must not be None.")
         super(AttestationClientConfiguration, self).__init__(**kwargs)
 
+        self.token_validation_options = kwargs.get('validation_options') # type: TokenValidationOptions
+        if (self.token_validation_options == None):
+            self.token_validation_options = TokenValidationOptions(validate_token=True)
         self.credential = credential
         self.instance_url = instance_url
         self.api_version = "2020-10-01"

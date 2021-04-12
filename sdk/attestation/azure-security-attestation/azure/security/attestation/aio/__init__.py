@@ -6,23 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._client import AttestationClient
-from ._administration_client import AttestationAdministrationClient
-from ._models import AttestationResult, AttestationSigner, AttestationToken
-from ._generated.models import AttestationType
-from ._configuration import TokenValidationOptions
-from ._version import VERSION
+from ._client_async import AttestationClient
+#from .._administration_client import AttestationAdministrationClient
+from .._generated.models import AttestationType
+from .._version import VERSION
 
 __version__ = VERSION
 __all__ = [
-    'AttestationClient',
-    'AttestationAdministrationClient',
-    'AttestationType',
-    'AttestationToken',
-    'AttestationSigner',
-    'AttestationResult',
-    'TokenValidationOptions',
-]
+    'AttestationClient', 
+#'AttestationAdministrationClient', 
+    'AttestationType']
 
 try:
     from ._patch import patch_sdk  # type: ignore

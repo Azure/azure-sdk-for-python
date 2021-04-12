@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 
 from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
+from six import python_2_unicode_compatible
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -19,16 +20,19 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._generated import AzureAttestationRestClient
+from ._generated.models import AttestationType, PolicyResult, StoredAttestationPolicy
 from ._configuration import AttestationClientConfiguration
-from ._models import AttestationSigner
-import base64
+from ._models import AttestationSigner, AttestationToken, AttestationResult
+from ._common import Base64Url
 import cryptography
 import cryptography.x509
 from typing import List, Any
 from azure.core.tracing.decorator import distributed_trace
+import base64
+from threading import Lock, Thread
 
 
-class AttestationClient(object):
+class AttestationAdministrationClient(object):
     """Describes the interface for the per-tenant enclave service.
     :param str base_url: base url of the service
     :param credential: An object which can provide secrets for the attestation service
@@ -50,30 +54,47 @@ class AttestationClient(object):
             raise ValueError("Missing credential.")
         self._config = AttestationClientConfiguration(credential, instance_url, **kwargs)
         self._client = AzureAttestationRestClient(credential, instance_url, **kwargs)
+        self._statelock = Lock()
+        self._signing_certificates = None
 
     @distributed_trace
-    def get_openidmetadata(self):
-        """ Retrieves the OpenID metadata configuration document for this attestation instance.
+    def get_policy(self, attestation_type: AttestationType) -> AttestationResult[str]:
+        """ Retrieves the attestation policy for a specified attestation type.
+        :param attestation_type - The attestation parameter type.
+        :type attestation_type: AttestationType
         """
-        return self._client.metadata_configuration.get()
+        
+        policyResult = self._client.policy.get(attestation_type)
+        token = AttestationToken[PolicyResult](policyResult.token)
+        token_body = token.get_body()
+        stored_policy = AttestationToken[StoredAttestationPolicy](token_body['x-ms-policy'])
+
+        actual_policy = Base64Url.decode(stored_policy.get_body()['AttestationPolicy']).decode()
+
+        if self._config.token_validation_options.validate_token:
+            token.validate_token(self._config.token_validation_options, self._get_signers())
+
+        return AttestationResult[str](token, actual_policy)
+
 
     @distributed_trace
-    def get_signing_certificates(self) -> List[AttestationSigner]:
+    def _get_signers(self) -> List[AttestationSigner]:
         """ Returns the set of signing certificates used to sign attestation tokens.
         """
-        signing_certificates = self._client.signing_certificates.get()
-        assert signing_certificates.keys is not None
-        signers = []
-        for key in signing_certificates.keys:
-            assert key.x5_c is not None
 
-            # Convert the returned certificate chain into an array of X.509 Certificates.
-            certificates = []
-            for x5c in key.x5_c:
-                der_cert = base64.b64decode(x5c)
-                cert = cryptography.x509.load_der_x509_certificate(der_cert)
-                certificates.append(cert)
-            signers.append(AttestationSigner(certificates, key.kid))
+        with self._statelock:
+            if (self._signing_certificates == None):
+                signing_certificates = self._client.signing_certificates.get()
+                self._signing_certificates = []
+                for key in signing_certificates.keys:
+                    # Convert the returned certificate chain into an array of X.509 Certificates.
+                    certificates = []
+                    for x5c in key.x5_c:
+                        der_cert = base64.b64decode(x5c)
+                        cert = cryptography.x509.load_der_x509_certificate(der_cert)
+                        certificates.append(cert)
+                    self._signing_certificates.append(AttestationSigner(certificates, key.kid))
+            signers = self._signing_certificates
         return signers
 
     def close(self):
@@ -81,7 +102,7 @@ class AttestationClient(object):
         self._client.close()
 
     def __enter__(self):
-        # type: () -> AttestationClient
+        # type: () -> AttestationAdministrationClient
         self._client.__enter__()
         return self
 

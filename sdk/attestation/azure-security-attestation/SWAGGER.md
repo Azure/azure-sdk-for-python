@@ -17,8 +17,8 @@ autorest SWAGGER.md
 
 ```yaml
 title: AzureAttestationRestClient
-input-file: 
-  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/specification/attestation/data-plane/Microsoft.Attestation/stable/2020-10-01/attestation.json
+require: 
+  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/specification/attestation/data-plane/readme.md
 output-folder: azure/security/attestation/_generated
 namespace: azure.security.attestation._generated
 no-namespace-folders: true

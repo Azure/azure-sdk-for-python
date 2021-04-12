@@ -19,14 +19,11 @@
 import unittest
 from devtools_testutils import AzureTestCase, ResourceGroupPreparer, PowerShellPreparer
 import functools
-import json
 import cryptography
 import cryptography.x509
 import base64
-import jwt
 import pytest
-
-from azure.security.attestation import AttestationClient
+from azure.security.attestation import AttestationClient, AttestationAdministrationClient, AttestationType
 
 AttestationPreparer = functools.partial(
             PowerShellPreparer, "attestation",
@@ -62,13 +59,14 @@ class AzureAttestationTest(AzureTestCase):
     def setUp(self):
             super(AzureAttestationTest, self).setUp()
 
+    @AttestationPreparer()
     def test_shared_getopenidmetadata(self, attestation_location_short_name):
         attest_client = self.shared_client(attestation_location_short_name)
         open_id_metadata = attest_client.get_openidmetadata()
         print ('{}'.format(open_id_metadata))
         assert open_id_metadata["response_types_supported"] is not None
-        assert open_id_metadata["jwks_uri"] == self.shared_base_uri()+"/certs"
-        assert open_id_metadata["issuer"] == self.shared_base_uri()
+        assert open_id_metadata["jwks_uri"] == self.shared_base_uri(attestation_location_short_name)+"/certs"
+        assert open_id_metadata["issuer"] == self.shared_base_uri(attestation_location_short_name)
 
     @AttestationPreparer()
     def test_aad_getopenidmetadata(self, attestation_aad_url):
@@ -112,64 +110,13 @@ class AzureAttestationTest(AzureTestCase):
             x5c = cert.certificates[0] # type: cryptography.x509.Certificate
             print('Cert  iss:', x5c.issuer, '; subject:', x5c.subject)
 
-#     @AttestationPreparer()
-#     def test_aad_getsigningcertificates(self, attestation_aad_url):
-# #        attest_client = self.aad_client()
-#         attest_client = self.create_client(attestation_aad_url)
-#         signing_certificates = attest_client.signing_certificates.get()
-#         print ('{}'.format(signing_certificates))
-#         assert signing_certificates.keys is not None
-#         assert len(signing_certificates.keys) != 0
-#         for key in signing_certificates.keys:
-#             assert key.x5_c is not None
-#             x5cs = key.x5_c
-#             assert len(x5cs) >= 1
-#             print('Found key with x5c, length = ', len(x5cs))
-#             for x5c in x5cs:
-#                 der_cert = base64.b64decode(x5c)
-#                 cert = cryptography.x509.load_der_x509_certificate(der_cert)
-#                 print('Cert  iss:', cert.issuer, '; subject:', cert.subject)
-
-#     @AttestationPreparer()
-#     def test_isolated_getsigningcertificates(self, attestation_isolated_url):
-#         attest_client = self.create_client(attestation_isolated_url)
-#         signing_certificates = attest_client.signing_certificates.get()
-#         print ('{}'.format(signing_certificates))
-#         assert signing_certificates.keys is not None
-#         assert len(signing_certificates.keys) != 0
-#         for key in signing_certificates.keys:
-#             assert key.x5_c is not None
-#             x5cs = key.x5_c
-#             assert len(x5cs) >= 1
-#             print('Found key with x5c, length = ', len(x5cs))
-#             for x5c in x5cs:
-#                 der_cert = base64.b64decode(x5c)
-#                 cert = cryptography.x509.load_der_x509_certificate(der_cert)
-#                 print('Cert  iss:', cert.issuer, '; subject:', cert.subject)
-
-
-#     def test_shared_get_policy_sgx(self):
-#         attest_client = self.shared_client()
-#         default_policy_response = attest_client.policy.get(AttestationType.SGX_ENCLAVE)
-#         default_policy = default_policy_response.token
-#         policy_token = jwt.decode(
-#             default_policy,
-#             options={"verify_signature":False, 'verify_exp': False},
-#             leeway=10,
-#             algorithms=["none", "RS256"])
-        
-#         verifyToken=True
-#         unverified_header = jwt.get_unverified_header(policy_token["x-ms-policy"])
-#         if (unverified_header.get('alg')=='none'):
-#           verifyToken = False
-#         policyjwt = jwt.decode(
-#             policy_token["x-ms-policy"],
-#             leeway=10,
-#             algorithms=["none", "RS256"],
-#             options={"verify_signature":False, 'verify_exp': False})
-#         base64urlpolicy = policyjwt.get("AttestationPolicy")
-#         policy = Base64Url.decode(encoded=base64urlpolicy)
-#         print("Default Policy: ", policy)
+    @AttestationPreparer()
+    def test_shared_get_policy_sgx(self, attestation_location_short_name):
+        attest_client = self.shared_admin_client(attestation_location_short_name)
+        policy_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+        print('Shared policy: ', policy_response.value)
+        assert(policy_response.value.startswith('version'))
+        print('Token: ', policy_response.token)
 
 #     @AttestationPreparer()
 #     def test_isolated_get_policy_sgx(self, attestation_isolated_url):
@@ -267,9 +214,7 @@ class AzureAttestationTest(AzureTestCase):
 #             cert = cryptography.x509.load_der_x509_certificate(der_cert)
 #             print('Policy Management Certificate iss:', cert.issuer, '}; subject: ', cert.subject)
             
-
-
-    def create_client(self, base_uri):
+    def create_client(self, base_uri) -> AttestationClient:
             """
             docstring
             """
@@ -279,31 +224,46 @@ class AzureAttestationTest(AzureTestCase):
                 instance_url=base_uri)
             return attest_client
 
-    def shared_client(self, location_name: str):
+    def create_admin_client(self, base_uri) -> AttestationAdministrationClient:
             """
             docstring
             """
-            shared_url = 'https://shared'+location_name+'.'+location_name+'.attest.azure.net'
-            return self.create_client(shared_url)
+            credential = self.get_credential(AttestationAdministrationClient)
+            attest_client = self.create_client_from_credential(AttestationAdministrationClient,
+                credential=credential,
+                instance_url=base_uri)
+            return attest_client
+
+    def shared_client(self, location_name: str) -> AttestationClient:
+            """
+            docstring
+            """
+            return self.create_client(self.shared_base_uri(location_name))
+
+    def shared_admin_client(self, location_name: str) -> AttestationAdministrationClient:
+            """
+            docstring
+            """
+            return self.create_admin_client(self.shared_base_uri(location_name))
+
 
     @staticmethod
-    def shared_base_uri():
-        return "https://shareduks.uks.test.attest.azure.net"
-
+    def shared_base_uri(location_name: str):
+        return 'https://shared'+location_name+'.'+location_name+'.attest.azure.net'
    
 class Base64Url:
-        @staticmethod
-        def encode(unencoded):
-            base64val= base64.b64encode(unencoded)
-            strip_trailing=base64val.split("=")[0] # pick the string before the trailing =
-            converted = strip_trailing.replace("+", "-").replace("/", "_")
-            return converted
+    @staticmethod
+    def encode(unencoded):
+        base64val= base64.b64encode(unencoded)
+        strip_trailing=base64val.split("=")[0] # pick the string before the trailing =
+        converted = strip_trailing.replace("+", "-").replace("/", "_")
+        return converted
 
-        @staticmethod
-        def decode(encoded):
-            converted = encoded.replace("-", "+").replace("_", "/")
-            padding_added = converted + "=" * ((len(converted)* -1) % 4)
-            return base64.b64decode(padding_added)
+    @staticmethod
+    def decode(encoded):
+        converted = encoded.replace("-", "+").replace("_", "/")
+        padding_added = converted + "=" * ((len(converted)* -1) % 4)
+        return base64.b64decode(padding_added)
 
 
 

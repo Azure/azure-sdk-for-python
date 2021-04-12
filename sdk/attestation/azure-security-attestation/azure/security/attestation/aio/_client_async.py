@@ -18,14 +18,14 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from ._generated import AzureAttestationRestClient
-from ._configuration import AttestationClientConfiguration
-from ._models import AttestationSigner
+from .._generated.aio._azure_attestation_rest_client import AzureAttestationRestClient
+from .._configuration import AttestationClientConfiguration
+from .._models import AttestationSigner
 import base64
 import cryptography
 import cryptography.x509
 from typing import List, Any
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 
 
 class AttestationClient(object):
@@ -51,17 +51,17 @@ class AttestationClient(object):
         self._config = AttestationClientConfiguration(credential, instance_url, **kwargs)
         self._client = AzureAttestationRestClient(credential, instance_url, **kwargs)
 
-    @distributed_trace
-    def get_openidmetadata(self):
+    @distributed_trace_async
+    async def get_openidmetadata(self):
         """ Retrieves the OpenID metadata configuration document for this attestation instance.
         """
-        return self._client.metadata_configuration.get()
+        return await self._client.metadata_configuration.get()
 
-    @distributed_trace
-    def get_signing_certificates(self) -> List[AttestationSigner]:
+    @distributed_trace_async
+    async def get_signing_certificates(self) -> List[AttestationSigner]:
         """ Returns the set of signing certificates used to sign attestation tokens.
         """
-        signing_certificates = self._client.signing_certificates.get()
+        signing_certificates = await self._client.signing_certificates.get()
         assert signing_certificates.keys is not None
         signers = []
         for key in signing_certificates.keys:
@@ -76,15 +76,15 @@ class AttestationClient(object):
             signers.append(AttestationSigner(certificates, key.kid))
         return signers
 
-    def close(self):
+    async def close(self):
         # type: () -> None
         self._client.close()
 
-    def __enter__(self):
+    async def __aenter__(self):
         # type: () -> AttestationClient
-        self._client.__enter__()
+        self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
+    async def __aexit__(self, *exc_details):
         # type: (Any) -> None
-        self._client.__exit__(*exc_details)
+        self._client.__aexit__(*exc_details)
