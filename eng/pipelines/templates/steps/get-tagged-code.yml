@@ -31,6 +31,7 @@ steps:
         - Name: "Azure/azure-sdk-for-python"
           Commitish: "${{ parameters.Package }}_${{ parameters.Version }}"
           WorkingDirectory: "$(Package.Clone)"
+      NoneCheckout: false
 
   - pwsh: |
       $pathForCopy = Join-Path -Path "$(Package.Clone)" -ChildPath "${{ parameters.CheckoutPath }}/${{ parameters.Package }}"
