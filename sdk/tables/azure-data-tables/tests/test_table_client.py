@@ -388,20 +388,20 @@ class TestTableUnitTests(TableTestCase):
             assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
 
         service = TableServiceClient(account_url=custom_account_url)
-        assert service.account_name ==  None
+        assert service.account_name == "custom"
         assert service.credential ==  None
         assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
         service = TableClient(account_url=custom_account_url, table_name="foo")
-        assert service.account_name ==  None
+        assert service.account_name == "custom"
         assert service.table_name ==  "foo"
         assert service.credential ==  None
         assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
         service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + token)
-        assert service.account_name ==  None
+        assert service.account_name == "custom"
         assert service.table_name ==  "foo"
         assert service.credential ==  None
         assert service._primary_hostname ==  'local-machine:11002/custom/account/path'

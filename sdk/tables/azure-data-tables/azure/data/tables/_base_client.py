@@ -104,8 +104,14 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                 account = parsed_url.netloc.split(".{}.cosmos.".format(service_name))
             self.account_name = account[0] if len(account) > 1 else None
         else:
-            self.account_name = parsed_url.path.split("/")[1]
-            account = [self.account_name, parsed_url.netloc]
+            self.account_name = parsed_url.path.split("/")
+            if len(self.account_name) > 1:
+                self.account_name = self.account_name[1]
+                account = [self.account_name, parsed_url.netloc]
+            else:
+                # If format doesn't fit Azurite, default to standard parsing
+                account = parsed_url.netloc.split(".{}.core.".format(service_name))
+                self.account_name = account[0] if len(account) > 1 else None
         secondary_hostname = None
 
         self.credential = format_shared_key_credential(account, credential)
