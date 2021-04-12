@@ -215,3 +215,4 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-storagesync msrest>=0.6.21
 #override azure-mgmt-resourcegraph msrest>=0.6.21
 #override azure-mgmt-containerservice msrest>=0.6.21
+#override azure-mgmt-hanaonazure msrest>=0.6.21
