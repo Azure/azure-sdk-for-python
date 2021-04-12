@@ -14,7 +14,7 @@ parameters:
           
 steps:
   - pwsh: |
-      $targetPath = "$(Agent.TempDirectory)/cln"
+      $targetPath = "$(Build.SourcesDirectory)/cln"
       if (!(Test-Path $targetPath)) {
         mkdir $targetPath
       }
