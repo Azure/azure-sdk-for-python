@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -29,14 +29,14 @@ class PrivateLinkResourcesOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.keyvault.v2018_02_14.models
+    :type models: ~azure.mgmt.keyvault.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class PrivateLinkResourcesOperations(object):
         vault_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PrivateLinkResourceListResult"
+        # type: (...) -> "_models.PrivateLinkResourceListResult"
         """Gets the private link resources supported for the key vault.
 
         :param resource_group_name: Name of the resource group that contains the key vault.
@@ -59,10 +59,10 @@ class PrivateLinkResourcesOperations(object):
         :type vault_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateLinkResourceListResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.keyvault.v2018_02_14.models.PrivateLinkResourceListResult
+        :rtype: ~azure.mgmt.keyvault.models.PrivateLinkResourceListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkResourceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResourceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

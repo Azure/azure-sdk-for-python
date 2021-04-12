@@ -20,6 +20,7 @@ from .operations import VaultsOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
 from .operations import Operations
+from .operations import KeysOperations
 from .. import models
 
 
@@ -27,13 +28,15 @@ class KeyVaultManagementClient(object):
     """The Azure management API provides a RESTful set of web services that interact with Azure Key Vault.
 
     :ivar vaults: VaultsOperations operations
-    :vartype vaults: azure.mgmt.keyvault.v2019_09_01.aio.operations.VaultsOperations
+    :vartype vaults: azure.mgmt.keyvault.aio.operations.VaultsOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
-    :vartype private_endpoint_connections: azure.mgmt.keyvault.v2019_09_01.aio.operations.PrivateEndpointConnectionsOperations
+    :vartype private_endpoint_connections: azure.mgmt.keyvault.aio.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
-    :vartype private_link_resources: azure.mgmt.keyvault.v2019_09_01.aio.operations.PrivateLinkResourcesOperations
+    :vartype private_link_resources: azure.mgmt.keyvault.aio.operations.PrivateLinkResourcesOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.keyvault.v2019_09_01.aio.operations.Operations
+    :vartype operations: azure.mgmt.keyvault.aio.operations.Operations
+    :ivar keys: KeysOperations operations
+    :vartype keys: azure.mgmt.keyvault.aio.operations.KeysOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
@@ -56,6 +59,7 @@ class KeyVaultManagementClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.vaults = VaultsOperations(
@@ -65,6 +69,8 @@ class KeyVaultManagementClient(object):
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.keys = KeysOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     async def close(self) -> None:
