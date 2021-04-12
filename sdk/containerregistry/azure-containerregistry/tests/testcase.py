@@ -146,7 +146,7 @@ class ContainerRegistryTestClass(AzureTestCase):
         registry = endpoint.split(".")[0]
         command = [
             # "powershell",
-            "Import-AzContainerRegistryImage",
+            "Az.ContainerRegistry\Import-AzContainerRegistryImage",
             "-ResourceGroupName",
             "'{}'".format(resource_group),
             "-RegistryName",
