@@ -66,6 +66,7 @@ setup(
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-communication-nspkg'],
+        ":python_version<'3.8'": ["typing-extensions"]
     },
     project_urls={
         'Bug Reports': 'https://github.com/Azure/azure-sdk-for-python/issues',
