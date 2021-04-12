@@ -1,5 +1,34 @@
 # Release History
 
+## 9.0.0 (2021-04-12)
+
+**Features**
+
+  - Model Vault has a new parameter system_data
+  - Model Operation has a new parameter is_data_action
+  - Model VaultProperties has a new parameter provisioning_state
+  - Model PrivateLinkServiceConnectionState has a new parameter actions_required
+  - Model ManagedHsm has a new parameter system_data
+  - Model ManagedHsmResource has a new parameter system_data
+  - Model ManagedHsmProperties has a new parameter public_network_access
+  - Model ManagedHsmProperties has a new parameter private_endpoint_connections
+  - Model ManagedHsmProperties has a new parameter scheduled_purge_date
+  - Model ManagedHsmProperties has a new parameter network_acls
+  - Model DeletedVaultProperties has a new parameter purge_protection_enabled
+  - Model PrivateEndpointConnection has a new parameter etag
+  - Added operation ManagedHsmsOperations.get_deleted
+  - Added operation ManagedHsmsOperations.list_deleted
+  - Added operation ManagedHsmsOperations.begin_purge_deleted
+  - Added operation PrivateEndpointConnectionsOperations.list_by_resource
+  - Added operation group KeysOperations
+  - Added operation group MHSMPrivateLinkResourcesOperations
+  - Added operation group MHSMPrivateEndpointConnectionsOperations
+  - Added operation group SecretsOperations
+
+**Breaking changes**
+
+  - Model PrivateLinkServiceConnectionState no longer has parameter action_required
+
 ## 8.0.0 (2020-09-29)
 
 **Features**
