@@ -8,26 +8,24 @@ parameters:
       - Name: $(Build.Repository.Name)
         Commitish: $(Build.SourceVersion)
         WorkingDirectory: $(System.DefaultWorkingDirectory)
-  - name: MultipleCheckout
+  - name: SkipDefaultCheckout
     type: boolean
     default: false
 
 steps:
-  - ${{ if not(parameters.MultipleCheckout) }}:
+  - ${{ if not(parameters.SkipDefaultCheckout) }}:
     - checkout: none
 
   - ${{ each repo in parameters.Repositories }}:
     - pwsh: |
         $dir = "${{ coalesce(repo.WorkingDirectory, format('{0}/{1}', '$(System.DefaultWorkingDirectory)', repo.Name)) }}"
         New-Item $dir -ItemType Directory -Force
-
     - pwsh: |
         git clone --no-checkout --filter=tree:0 git://github.com/${{ repo.Name }} .
         git sparse-checkout init
         git sparse-checkout set eng
       displayName: Init sparse checkout ${{ repo.Name }}
       workingDirectory: ${{ coalesce(repo.WorkingDirectory, format('{0}/{1}', '$(System.DefaultWorkingDirectory)', repo.Name)) }}
-
     - ${{ each path in parameters.Paths }}:
       - pwsh: git sparse-checkout add ${{ path }}
         displayName: Add sparse checkout path ${{ path }}
@@ -36,3 +34,4 @@ steps:
     - pwsh: git checkout ${{ repo.Commitish }}
       displayName: Sparse checkout at ${{ repo.Commitish }}
       workingDirectory: ${{ coalesce(repo.WorkingDirectory, format('{0}/{1}', '$(System.DefaultWorkingDirectory)', repo.Name)) }}
+      

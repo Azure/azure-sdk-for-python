@@ -415,7 +415,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             # Act
             with pytest.raises(ResourceExistsError):
-                # self.table.create_item(entity)
+                # self.table.create_entity(entity)
                 await self.table.create_entity(entity=entity)
 
             # Assert
@@ -732,11 +732,9 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
 
-            # resp = self.table.update_item(sent_entity, response_hook=lambda e, h: h)
             resp = await self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
-            #  assert resp
             received_entity = await self.table.get_entity(
                 partition_key=entity.PartitionKey,
                 row_key=entity.RowKey)
@@ -1309,7 +1307,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                 entities.append(e)
             assert len(entities) ==  2
 
-            entity_query = table.query_entities(is_user_admin, parameters={'first': injection})           
+            entity_query = table.query_entities(is_user_admin, parameters={'first': injection})
             entities = []
             async for e in entity_query:
                 entities.append(e)
@@ -1335,14 +1333,14 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             async for e in all_entities:
                 entities.append(e)
             assert len(entities) == 2
-        
+
             entities = []
             parameters = {'key': ':@'}
             all_entities = table.query_entities("PartitionKey eq @key", parameters=parameters)
             async for e in all_entities:
                 entities.append(e)
             assert len(entities) == 2
-            
+
             entities = []
             query = "PartitionKey eq ':@' and RowKey eq '+,$' and Chars eq '?''/!_^#'"
             query_entities = table.query_entities(query)

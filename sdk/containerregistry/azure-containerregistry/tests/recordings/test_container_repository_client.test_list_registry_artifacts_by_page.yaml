@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 21:51:40 GMT
+      - Fri, 09 Apr 2021 14:58:48 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -39,14 +39,15 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:hello-world:metadata_read"
       x-content-type-options:
       - nosniff
     status:
       code: 401
       message: Unauthorized
 - request:
-    body: grant_type=access_token&service=seankane.azurecr.io&access_token=REDACTED
+    body: grant_type=access_token&service=fake_url.azurecr.io&access_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -71,7 +72,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 21:51:41 GMT
+      - Fri, 09 Apr 2021 14:58:50 GMT
       server:
       - openresty
       strict-transport-security:
@@ -79,12 +80,12 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.116667'
+      - '332.933333'
     status:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Ahello-world%3Ametadata_read&refresh_token=REDACTED
+    body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=repository%3Ahello-world%3Ametadata_read&refresh_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -109,7 +110,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 21:51:41 GMT
+      - Fri, 09 Apr 2021 14:58:50 GMT
       server:
       - openresty
       strict-transport-security:
@@ -117,7 +118,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333'
+      - '332.833333'
     status:
       code: 200
       message: OK
@@ -136,9 +137,17 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/hello-world/_manifests?n=2
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","manifests":[{"digest":"sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792","imageSize":0,"createdTime":"2021-03-30T12:18:47.6437335Z","lastUpdateTime":"2021-03-30T12:18:47.6437335Z","architecture":"amd64","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","imageSize":0,"createdTime":"2021-03-30T12:18:47.4863064Z","lastUpdateTime":"2021-03-30T12:18:47.4863064Z","mediaType":"application/vnd.docker.distribution.manifest.list.v2+json","tags":["latest"],"changeableAttributes":{"deleteEnabled":true,"writeEnabled":false,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}}]}
-
-        '
+      string: '{"registry": "fake_url.azurecr.io", "imageName": "hello-world", "manifests":
+        [{"digest": "sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792",
+        "imageSize": 0, "createdTime": "2021-03-30T12:18:47.6437335Z", "lastUpdateTime":
+        "2021-03-30T12:18:47.6437335Z", "architecture": "amd64", "os": "linux", "mediaType":
+        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineState": "Passed"}}, {"digest": "sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24",
+        "imageSize": 0, "createdTime": "2021-03-30T12:18:47.4863064Z", "lastUpdateTime":
+        "2021-03-30T12:18:47.4863064Z", "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
+        "tags": ["latest"], "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
+        false, "readEnabled": true, "listEnabled": true, "quarantineState": "Passed"}}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -152,7 +161,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 21:51:42 GMT
+      - Fri, 09 Apr 2021 14:58:50 GMT
       docker-distribution-api-version:
       - registry/2.0
       link:
@@ -200,7 +209,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 21:51:42 GMT
+      - Fri, 09 Apr 2021 14:58:51 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -208,14 +217,15 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:hello-world:metadata_read"
       x-content-type-options:
       - nosniff
     status:
       code: 401
       message: Unauthorized
 - request:
-    body: grant_type=access_token&service=seankane.azurecr.io&access_token=REDACTED
+    body: grant_type=access_token&service=fake_url.azurecr.io&access_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -240,7 +250,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 21:51:42 GMT
+      - Fri, 09 Apr 2021 14:58:51 GMT
       server:
       - openresty
       strict-transport-security:
@@ -248,12 +258,12 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.983333'
+      - '332.816667'
     status:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Ahello-world%3Ametadata_read&refresh_token=REDACTED
+    body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=repository%3Ahello-world%3Ametadata_read&refresh_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -278,7 +288,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 21:51:42 GMT
+      - Fri, 09 Apr 2021 14:58:51 GMT
       server:
       - openresty
       strict-transport-security:
@@ -286,7 +296,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.966667'
+      - '332.8'
     status:
       code: 200
       message: OK
@@ -305,9 +315,18 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/hello-world/_manifests?last=sha256%3A308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24&n=2&orderby=
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","manifests":[{"digest":"sha256:50b8560ad574c779908da71f7ce370c0a2471c098d44d1c8f6b513c5a55eeeb1","imageSize":0,"createdTime":"2021-03-30T12:18:48.9950981Z","lastUpdateTime":"2021-03-30T12:18:48.9950981Z","architecture":"arm","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:88b2e00179bd6c4064612403c8d42a13de7ca809d61fee966ce9e129860a8a90","imageSize":0,"createdTime":"2021-03-30T12:18:48.0921265Z","lastUpdateTime":"2021-03-30T12:18:48.0921265Z","architecture":"mips64le","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}}]}
-
-        '
+      string: '{"registry": "fake_url.azurecr.io", "imageName": "hello-world", "manifests":
+        [{"digest": "sha256:50b8560ad574c779908da71f7ce370c0a2471c098d44d1c8f6b513c5a55eeeb1",
+        "imageSize": 0, "createdTime": "2021-03-30T12:18:48.9950981Z", "lastUpdateTime":
+        "2021-03-30T12:18:48.9950981Z", "architecture": "arm", "os": "linux", "mediaType":
+        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineState": "Passed"}}, {"digest": "sha256:88b2e00179bd6c4064612403c8d42a13de7ca809d61fee966ce9e129860a8a90",
+        "imageSize": 0, "createdTime": "2021-03-30T12:18:48.0921265Z", "lastUpdateTime":
+        "2021-03-30T12:18:48.0921265Z", "architecture": "mips64le", "os": "linux",
+        "mediaType": "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineState": "Passed"}}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -321,7 +340,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 21:51:42 GMT
+      - Fri, 09 Apr 2021 14:58:51 GMT
       docker-distribution-api-version:
       - registry/2.0
       link:
@@ -369,7 +388,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 21:51:43 GMT
+      - Fri, 09 Apr 2021 14:58:51 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -377,14 +396,15 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:hello-world:metadata_read"
       x-content-type-options:
       - nosniff
     status:
       code: 401
       message: Unauthorized
 - request:
-    body: grant_type=access_token&service=seankane.azurecr.io&access_token=REDACTED
+    body: grant_type=access_token&service=fake_url.azurecr.io&access_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -409,7 +429,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 21:51:43 GMT
+      - Fri, 09 Apr 2021 14:58:52 GMT
       server:
       - openresty
       strict-transport-security:
@@ -417,12 +437,12 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.95'
+      - '332.783333'
     status:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Ahello-world%3Ametadata_read&refresh_token=REDACTED
+    body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=repository%3Ahello-world%3Ametadata_read&refresh_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -447,7 +467,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 21:51:43 GMT
+      - Fri, 09 Apr 2021 14:58:52 GMT
       server:
       - openresty
       strict-transport-security:
@@ -455,7 +475,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.933333'
+      - '332.766667'
     status:
       code: 200
       message: OK
@@ -474,9 +494,18 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/hello-world/_manifests?last=sha256%3A88b2e00179bd6c4064612403c8d42a13de7ca809d61fee966ce9e129860a8a90&n=2&orderby=
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","manifests":[{"digest":"sha256:963612c5503f3f1674f315c67089dee577d8cc6afc18565e0b4183ae355fb343","imageSize":0,"createdTime":"2021-03-30T12:18:47.9641681Z","lastUpdateTime":"2021-03-30T12:18:47.9641681Z","architecture":"arm64","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:b0408a0f1d74eced127a2658429f336ed8fa48e36d59878f155b19865e5dbd70","imageSize":0,"createdTime":"2021-03-30T12:18:48.6908523Z","lastUpdateTime":"2021-03-30T12:18:48.6908523Z","architecture":"amd64","os":"windows","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}}]}
-
-        '
+      string: '{"registry": "fake_url.azurecr.io", "imageName": "hello-world", "manifests":
+        [{"digest": "sha256:963612c5503f3f1674f315c67089dee577d8cc6afc18565e0b4183ae355fb343",
+        "imageSize": 0, "createdTime": "2021-03-30T12:18:47.9641681Z", "lastUpdateTime":
+        "2021-03-30T12:18:47.9641681Z", "architecture": "arm64", "os": "linux", "mediaType":
+        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineState": "Passed"}}, {"digest": "sha256:b0408a0f1d74eced127a2658429f336ed8fa48e36d59878f155b19865e5dbd70",
+        "imageSize": 0, "createdTime": "2021-03-30T12:18:48.6908523Z", "lastUpdateTime":
+        "2021-03-30T12:18:48.6908523Z", "architecture": "amd64", "os": "windows",
+        "mediaType": "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineState": "Passed"}}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -490,7 +519,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 21:51:43 GMT
+      - Fri, 09 Apr 2021 14:58:52 GMT
       docker-distribution-api-version:
       - registry/2.0
       link:
@@ -538,7 +567,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 21:51:44 GMT
+      - Fri, 09 Apr 2021 14:58:52 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -546,14 +575,15 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:hello-world:metadata_read"
       x-content-type-options:
       - nosniff
     status:
       code: 401
       message: Unauthorized
 - request:
-    body: grant_type=access_token&service=seankane.azurecr.io&access_token=REDACTED
+    body: grant_type=access_token&service=fake_url.azurecr.io&access_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -578,7 +608,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 21:51:44 GMT
+      - Fri, 09 Apr 2021 14:58:53 GMT
       server:
       - openresty
       strict-transport-security:
@@ -586,12 +616,12 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.916667'
+      - '332.75'
     status:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Ahello-world%3Ametadata_read&refresh_token=REDACTED
+    body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=repository%3Ahello-world%3Ametadata_read&refresh_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -616,7 +646,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 21:51:44 GMT
+      - Fri, 09 Apr 2021 14:58:53 GMT
       server:
       - openresty
       strict-transport-security:
@@ -624,7 +654,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.9'
+      - '332.733333'
     status:
       code: 200
       message: OK
@@ -643,9 +673,18 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/hello-world/_manifests?last=sha256%3Ab0408a0f1d74eced127a2658429f336ed8fa48e36d59878f155b19865e5dbd70&n=2&orderby=
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","manifests":[{"digest":"sha256:bb7ab0fa94fdd78aca84b27a1bd46c4b811051f9b69905d81f5f267fc6546a9d","imageSize":0,"createdTime":"2021-03-30T12:18:48.2834053Z","lastUpdateTime":"2021-03-30T12:18:48.2834053Z","architecture":"ppc64le","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:cb55d8f7347376e1ba38ca740904b43c9a52f66c7d2ae1ef1a0de1bc9f40df98","imageSize":0,"createdTime":"2021-03-30T12:18:48.1605587Z","lastUpdateTime":"2021-03-30T12:18:48.1605587Z","architecture":"386","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}}]}
-
-        '
+      string: '{"registry": "fake_url.azurecr.io", "imageName": "hello-world", "manifests":
+        [{"digest": "sha256:bb7ab0fa94fdd78aca84b27a1bd46c4b811051f9b69905d81f5f267fc6546a9d",
+        "imageSize": 0, "createdTime": "2021-03-30T12:18:48.2834053Z", "lastUpdateTime":
+        "2021-03-30T12:18:48.2834053Z", "architecture": "ppc64le", "os": "linux",
+        "mediaType": "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineState": "Passed"}}, {"digest": "sha256:cb55d8f7347376e1ba38ca740904b43c9a52f66c7d2ae1ef1a0de1bc9f40df98",
+        "imageSize": 0, "createdTime": "2021-03-30T12:18:48.1605587Z", "lastUpdateTime":
+        "2021-03-30T12:18:48.1605587Z", "architecture": "386", "os": "linux", "mediaType":
+        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineState": "Passed"}}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -659,7 +698,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 21:51:44 GMT
+      - Fri, 09 Apr 2021 14:58:53 GMT
       docker-distribution-api-version:
       - registry/2.0
       link:
@@ -707,7 +746,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 21:51:45 GMT
+      - Fri, 09 Apr 2021 14:58:53 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -715,14 +754,15 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:hello-world:metadata_read"
       x-content-type-options:
       - nosniff
     status:
       code: 401
       message: Unauthorized
 - request:
-    body: grant_type=access_token&service=seankane.azurecr.io&access_token=REDACTED
+    body: grant_type=access_token&service=fake_url.azurecr.io&access_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -747,7 +787,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 21:51:45 GMT
+      - Fri, 09 Apr 2021 14:58:54 GMT
       server:
       - openresty
       strict-transport-security:
@@ -755,12 +795,12 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.016667'
+      - '332.716667'
     status:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Ahello-world%3Ametadata_read&refresh_token=REDACTED
+    body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=repository%3Ahello-world%3Ametadata_read&refresh_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -785,7 +825,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 21:51:45 GMT
+      - Fri, 09 Apr 2021 14:58:54 GMT
       server:
       - openresty
       strict-transport-security:
@@ -793,7 +833,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333'
+      - '332.7'
     status:
       code: 200
       message: OK
@@ -812,9 +852,18 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/hello-world/_manifests?last=sha256%3Acb55d8f7347376e1ba38ca740904b43c9a52f66c7d2ae1ef1a0de1bc9f40df98&n=2&orderby=
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"hello-world","manifests":[{"digest":"sha256:e49abad529e5d9bd6787f3abeab94e09ba274fe34731349556a850b9aebbf7bf","imageSize":0,"createdTime":"2021-03-30T12:18:48.5864242Z","lastUpdateTime":"2021-03-30T12:18:48.5864242Z","architecture":"s390x","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}},{"digest":"sha256:e5785cb0c62cebbed4965129bae371f0589cadd6d84798fb58c2c5f9e237efd9","imageSize":0,"createdTime":"2021-03-30T12:18:48.4392605Z","lastUpdateTime":"2021-03-30T12:18:48.4392605Z","architecture":"arm","os":"linux","mediaType":"application/vnd.docker.distribution.manifest.v2+json","changeableAttributes":{"deleteEnabled":true,"writeEnabled":true,"readEnabled":true,"listEnabled":true,"quarantineState":"Passed"}}]}
-
-        '
+      string: '{"registry": "fake_url.azurecr.io", "imageName": "hello-world", "manifests":
+        [{"digest": "sha256:e49abad529e5d9bd6787f3abeab94e09ba274fe34731349556a850b9aebbf7bf",
+        "imageSize": 0, "createdTime": "2021-03-30T12:18:48.5864242Z", "lastUpdateTime":
+        "2021-03-30T12:18:48.5864242Z", "architecture": "s390x", "os": "linux", "mediaType":
+        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineState": "Passed"}}, {"digest": "sha256:e5785cb0c62cebbed4965129bae371f0589cadd6d84798fb58c2c5f9e237efd9",
+        "imageSize": 0, "createdTime": "2021-03-30T12:18:48.4392605Z", "lastUpdateTime":
+        "2021-03-30T12:18:48.4392605Z", "architecture": "arm", "os": "linux", "mediaType":
+        "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineState": "Passed"}}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -828,7 +877,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 05 Apr 2021 21:51:45 GMT
+      - Fri, 09 Apr 2021 14:58:54 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
