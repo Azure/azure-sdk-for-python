@@ -46,7 +46,7 @@ class CustomPersister(object):
         try:
             with open(cassette_path) as f:
                 cassette_content = f.read()
-        except OSError, IOError:
+        except (OSError, IOError):
             raise ValueError("Cassette not found.")
         cassette = deserialize(cassette_content, serializer)
         return cassette
