@@ -146,7 +146,7 @@ class ContainerRegistryTestClass(AzureTestCase):
         registry = endpoint.split(".")[0]
         command = [
             "pwsh",
-            "Az.ContainerRegistry\Import-AzContainerRegistryImage",
+            "Import-AzContainerRegistryImage",
             "-ResourceGroupName",
             "'{}'".format(resource_group),
             "-RegistryName",
