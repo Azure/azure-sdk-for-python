@@ -16,6 +16,7 @@ import vcr
 
 from .config import TestConfig
 from .const import ENV_TEST_DIAGNOSE
+from .custom_vcr import CustomPersister
 from .utilities import create_random_name
 from .decorators import live_only
 
@@ -113,6 +114,7 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
             filter_headers=self.FILTER_HEADERS
         )
         self.vcr.register_matcher('query', self._custom_request_query_matcher)
+        self.vcr.register_persister(CustomPersister)
         if match_body:
             self.vcr.match_on += ('body',)
         for matcher in custom_request_matchers or []:
