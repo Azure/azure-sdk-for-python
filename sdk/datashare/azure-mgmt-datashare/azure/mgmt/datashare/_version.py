@@ -6,5 +6,4 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.0.0b1"
-
+VERSION = "2019-11-01T00:00:00.000Z"

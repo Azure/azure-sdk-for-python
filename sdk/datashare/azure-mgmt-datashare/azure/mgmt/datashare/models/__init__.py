@@ -70,11 +70,14 @@ try:
     from ._models_py3 import SqlDBTableDataSetMapping
     from ._models_py3 import SqlDWTableDataSet
     from ._models_py3 import SqlDWTableDataSetMapping
+    from ._models_py3 import SynapseWorkspaceSqlPoolTableDataSet
+    from ._models_py3 import SynapseWorkspaceSqlPoolTableDataSetMapping
     from ._models_py3 import SynchronizationDetails
     from ._models_py3 import SynchronizationDetailsList
     from ._models_py3 import SynchronizationSetting
     from ._models_py3 import SynchronizationSettingList
     from ._models_py3 import Synchronize
+    from ._models_py3 import SystemData
     from ._models_py3 import Trigger
     from ._models_py3 import TriggerList
 except (SyntaxError, ImportError):
@@ -141,26 +144,35 @@ except (SyntaxError, ImportError):
     from ._models import SqlDBTableDataSetMapping  # type: ignore
     from ._models import SqlDWTableDataSet  # type: ignore
     from ._models import SqlDWTableDataSetMapping  # type: ignore
+    from ._models import SynapseWorkspaceSqlPoolTableDataSet  # type: ignore
+    from ._models import SynapseWorkspaceSqlPoolTableDataSetMapping  # type: ignore
     from ._models import SynchronizationDetails  # type: ignore
     from ._models import SynchronizationDetailsList  # type: ignore
     from ._models import SynchronizationSetting  # type: ignore
     from ._models import SynchronizationSettingList  # type: ignore
     from ._models import Synchronize  # type: ignore
+    from ._models import SystemData  # type: ignore
     from ._models import Trigger  # type: ignore
     from ._models import TriggerList  # type: ignore
 
 from ._data_share_management_client_enums import (
+    CreatedByType,
+    DataSetKind,
+    DataSetMappingKind,
     DataSetMappingStatus,
     DataSetType,
     InvitationStatus,
-    Kind,
+    LastModifiedByType,
     OutputType,
     ProvisioningState,
     RecurrenceInterval,
     ShareKind,
     ShareSubscriptionStatus,
+    SourceShareSynchronizationSettingKind,
     Status,
     SynchronizationMode,
+    SynchronizationSettingKind,
+    TriggerKind,
     TriggerStatus,
     Type,
 )
@@ -229,24 +241,33 @@ __all__ = [
     'SqlDBTableDataSetMapping',
     'SqlDWTableDataSet',
     'SqlDWTableDataSetMapping',
+    'SynapseWorkspaceSqlPoolTableDataSet',
+    'SynapseWorkspaceSqlPoolTableDataSetMapping',
     'SynchronizationDetails',
     'SynchronizationDetailsList',
     'SynchronizationSetting',
     'SynchronizationSettingList',
     'Synchronize',
+    'SystemData',
     'Trigger',
     'TriggerList',
+    'CreatedByType',
+    'DataSetKind',
+    'DataSetMappingKind',
     'DataSetMappingStatus',
     'DataSetType',
     'InvitationStatus',
-    'Kind',
+    'LastModifiedByType',
     'OutputType',
     'ProvisioningState',
     'RecurrenceInterval',
     'ShareKind',
     'ShareSubscriptionStatus',
+    'SourceShareSynchronizationSettingKind',
     'Status',
     'SynchronizationMode',
+    'SynchronizationSettingKind',
+    'TriggerKind',
     'TriggerStatus',
     'Type',
 ]
