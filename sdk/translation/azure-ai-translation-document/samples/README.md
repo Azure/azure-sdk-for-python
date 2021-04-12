@@ -5,7 +5,7 @@ languages:
 products:
   - azure
   - azure-cognitive-services
-  - azure-document-translation
+  - azure-translator
 urlFragment: documenttranslation-samples
 ---
 
