@@ -8,13 +8,13 @@ parameters:
       - Name: $(Build.Repository.Name)
         Commitish: $(Build.SourceVersion)
         WorkingDirectory: $(System.DefaultWorkingDirectory)
-  - name: NoneCheckout
+  - name: MultipleCheckout
     type: boolean
-    default: true
+    default: false
 
 steps:
-  - checkout: none
-    condition: parameters.NoneCheckout
+  ${{ if not(parameters.NoneCheckout) }}:
+    - checkout: none
 
   - ${{ each repo in parameters.Repositories }}:
     - pwsh: |
