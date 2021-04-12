@@ -14,22 +14,19 @@ ATTRIBUTES_TO_COMPARE = ["body", "headers", "host", "method", "path", "protocol"
 def trim_duplicates(cassette_dict):
     # Dict[str] -> Dict[str]
     cassette_copy = copy.deepcopy(cassette_dict)
-    requests = cassette_dict['requests']
-    responses = cassette_dict['responses']
+    requests = cassette_dict["requests"]
+    responses = cassette_dict["responses"]
     pairs_to_keep = []
     for i in range(1, len(requests)):
-        if not same_requests(requests[i-1], requests[i]):
-            pairs_to_keep.append(i-1)
+        if not same_requests(requests[i - 1], requests[i]):
+            pairs_to_keep.append(i - 1)
     # Always keep the last one
     pairs_to_keep.append(i)
-    ret = {
-        "requests": [],
-        "responses": []
-    }
+    ret = {"requests": [], "responses": []}
 
     for p in pairs_to_keep:
-        ret['requests'].append(requests[p])
-        ret['responses'].append(responses[p])
+        ret["requests"].append(requests[p])
+        ret["responses"].append(responses[p])
 
     return ret
 
@@ -49,7 +46,7 @@ class CustomPersister(object):
         try:
             with open(cassette_path) as f:
                 cassette_content = f.read()
-        except OSError:
+        except OSError, IOError:
             raise ValueError("Cassette not found.")
         cassette = deserialize(cassette_content, serializer)
         return cassette
