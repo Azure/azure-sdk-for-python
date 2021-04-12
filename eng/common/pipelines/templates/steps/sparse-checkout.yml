@@ -13,7 +13,7 @@ parameters:
     default: false
 
 steps:
-  - ${{ if not(parameters.NoneCheckout) }}:
+  - ${{ if not(parameters.MultipleCheckout) }}:
     - checkout: none
 
   - ${{ each repo in parameters.Repositories }}:
