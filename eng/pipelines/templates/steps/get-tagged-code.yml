@@ -13,22 +13,24 @@ parameters:
     default: ''
           
 steps:
-    # TODO, re-use eng/common sparse-checkout.yml
   - pwsh: |
       $targetPath = "$(Agent.TempDirectory)/cln"
       if (!(Test-Path $targetPath)) {
         mkdir $targetPath
       }
       Remove-Item -Path $targetPath/* -Recurse
-      
-      git clone --no-checkout --filter=tree:0 git://github.com/Azure/azure-sdk-for-python $targetPath
-      cd $targetPath
-      git sparse-checkout init
-      git sparse-checkout set ${{ parameters.CheckoutPath }}/${{ parameters.Package }}
-      git checkout ${{ parameters.Package }}_${{ parameters.Version }}
 
       Write-Host "##vso[task.setvariable variable=Package.Clone]$targetPath"
-    displayName: 'Sparse Checkout Code into Temp Directory'
+    displayName: 'Prep for Sparse Checkout'
+
+  - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+    parameters:
+      Paths:
+        - "${{ parameters.CheckoutPath }}/${{ parameters.Package }}"
+      Repositories:
+        - Name: "Azure/azure-sdk-for-python"
+          Commitish: "${{ parameters.Package }}_${{ parameters.Version }}"
+          WorkingDirectory: "$(Package.Clone)"
 
   - pwsh: |
       $pathForCopy = Join-Path -Path "$(Package.Clone)" -ChildPath "${{ parameters.CheckoutPath }}/${{ parameters.Package }}"
