@@ -19,8 +19,9 @@ def trim_duplicates(cassette_dict):
     pairs_to_keep = []
     for i in range(1, len(requests)):
         if not same_requests(requests[i-1], requests[i]):
-            pairs_to_keep.append(i)
-
+            pairs_to_keep.append(i-1)
+    # Always keep the last one
+    pairs_to_keep.append(i)
     ret = {
         "requests": [],
         "responses": []
