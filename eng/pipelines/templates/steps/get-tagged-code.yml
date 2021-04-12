@@ -14,7 +14,7 @@ parameters:
           
 steps:
   - pwsh: |
-      $targetPath = "$(Build.SourcesDirectory)/cln"
+      $targetPath = "$(Agent.TempDirectory)/${{ parameters.Package }}"
       if (!(Test-Path $targetPath)) {
         mkdir $targetPath
       }
@@ -40,7 +40,3 @@ steps:
 
       Copy-Item -Path $pathForCopy -Destination ${{ parameters.DestinationDirectory }} -Recurse
     displayName: 'Copy Source to Target Directory'
-
-  - pwsh: |
-      Get-ChildItem -Recurse "$(Package.Clone)"
-      Remove-Item -Path "$(Package.Clone)/*" -Recurse
