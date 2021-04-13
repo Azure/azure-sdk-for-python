@@ -22,24 +22,22 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._base_client import parse_connection_str
-from .._common_conversion import _is_cosmos_endpoint
 from .._entity import TableEntity
 from .._generated.aio import AzureTable
 from .._generated.models import SignedIdentifier, TableProperties
 from .._models import AccessPolicy, BatchTransactionResult
 from .._serialize import serialize_iso
 from .._deserialize import _return_headers_and_deserialized
-from .._error import _process_table_error
+from .._error import _process_table_error, _validate_table_name
 from .._models import UpdateMode
 from .._deserialize import _convert_to_entity, _trim_service_metadata
 from .._serialize import _add_entity_properties, _get_match_headers
-from .._table_client_base import TableClientBase
-from ._base_client_async import AsyncStorageAccountHostsMixin
+from ._base_client_async import AsyncTablesBaseClient
 from ._models import TableEntityPropertiesPaged
 from ._table_batch_async import TableBatchOperations
 
 
-class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
+class TableClient(AsyncTablesBaseClient):
     """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
 
     def __init__(
@@ -66,19 +64,27 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
         :returns: None
         """
-        self._cosmos_endpoint = _is_cosmos_endpoint(account_url)
+        if not table_name:
+            raise ValueError("Please specify a table name.")
+        _validate_table_name(table_name)
+        self.table_name = table_name
         super(TableClient, self).__init__(
             account_url,
             table_name=table_name,
             credential=credential,
             **kwargs
         )
-        self._configure_policies(**kwargs)
         self._client = AzureTable(
             self.url,
             policies=kwargs.pop('policies', self._policies),
             **kwargs
         )
+
+    def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+        """
+        return "{}://{}{}".format(self.scheme, hostname, self._query_str)
 
     @classmethod
     def from_connection_string(
@@ -198,7 +204,6 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._validate_signed_identifiers(signed_identifiers)
         identifiers = []
         for key, value in signed_identifiers.items():
             if value:

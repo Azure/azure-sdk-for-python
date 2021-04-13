@@ -54,6 +54,31 @@ def _get_match_headers(kwargs, match_param, etag_param):
     return if_match, if_none_match
 
 
+def _parameter_filter_substitution(parameters, query_filter):
+    # type: (Dict[str, str], str) -> str
+    """Replace user defined parameter in filter
+    :param parameters: User defined parameters
+    :param filter: Filter for querying
+    """
+    if parameters:
+        filter_strings = query_filter.split(' ')
+        for index, word in enumerate(filter_strings):
+            if word[0] == u'@':
+                val = parameters[word[1:]]
+                if val in [True, False]:
+                    filter_strings[index] = str(val).lower()
+                elif isinstance(val, (float, six.integer_types)):
+                    filter_strings[index] = str(val)
+                elif isinstance(val, datetime):
+                    filter_strings[index] = "datetime'{}'".format(_to_utc_datetime(val))
+                elif isinstance(val, UUID):
+                    filter_strings[index] = "guid'{}'".format(str(val))
+                else:
+                    filter_strings[index] = "'{}'".format(val.replace("'", "''"))
+        return ' '.join(filter_strings)
+    return query_filter
+
+
 def get_api_version(kwargs, default):
     # type: (Dict[str, Any], str) -> str
     api_version = kwargs.pop("api_version", None)

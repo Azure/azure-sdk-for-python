@@ -23,15 +23,14 @@ from .._generated.aio._azure_table import AzureTable
 from .._generated.models import TableServiceProperties, TableProperties
 from .._models import service_stats_deserialize, service_properties_deserialize
 from .._error import _process_table_error
-from .._table_service_client_base import TableServiceClientBase
 from .._models import TableItem
 from ._policies_async import ExponentialRetry
 from ._table_client_async import TableClient
-from ._base_client_async import AsyncStorageAccountHostsMixin
+from ._base_client_async import AsyncTablesBaseClient
 from ._models import TablePropertiesPaged
 
 
-class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
+class TableServiceClient(AsyncTablesBaseClient):
     """A client to interact with the Table Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -83,21 +82,18 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(
-            **kwargs
-        )
-        loop = kwargs.pop("loop", None)
-        super(TableServiceClient, self).__init__(  # type: ignore
-            account_url, service="table", credential=credential, loop=loop, **kwargs
-        )
-        kwargs['connection_timeout'] = kwargs.get('connection_timeout') or CONNECTION_TIMEOUT
-        self._configure_policies(**kwargs)
+        super(TableServiceClient, self).__init__(account_url, credential=credential, **kwargs)
         self._client = AzureTable(
             self.url,
             policies=kwargs.pop('policies', self._policies),
             **kwargs
         )
-        self._loop = loop
+
+    def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+        """
+        return "{}://{}{}".format(self.scheme, hostname, self._query_str)
 
     @classmethod
     def from_connection_string(

@@ -28,19 +28,22 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     UserAgentPolicy,
     ProxyPolicy,
-    AzureSasCredentialPolicy
+    AzureSasCredentialPolicy,
+    RequestIdPolicy,
+    CustomHookPolicy,
+    NetworkTraceLoggingPolicy
 )
 from azure.core.pipeline.transport import (
     AsyncHttpTransport,
     HttpRequest,
 )
 
+from .._base_client import AccountHostsMixin
 from .._authentication import SharedKeyCredentialPolicy
 from .._constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT, READ_TIMEOUT
 from .._generated.aio._configuration import AzureTableConfiguration
 from .._models import BatchErrorException, BatchTransactionResult
 from .._policies import (
-    CosmosPatchTransformPolicy,
     StorageContentValidation,
     StorageRequestHook,
     StorageHosts,
@@ -48,24 +51,10 @@ from .._policies import (
     StorageLoggingPolicy,
 )
 from .._sdk_moniker import SDK_MONIKER
-from ._policies_async import (
-    AsyncStorageResponseHook,
-    AsyncTablesRetryPolicy
-)
-
-if TYPE_CHECKING:
-    from azure.core.pipeline import Pipeline
-    from azure.core.configuration import Configuration
-
-_LOGGER = logging.getLogger(__name__)
+from ._policies_async import AsyncTablesRetryPolicy)
 
 
-class AsyncStorageAccountHostsMixin(object):
-    def __enter__(self):
-        raise TypeError("Async client only supports 'async with'.")
-
-    def __exit__(self, *args):
-        pass
+class AsyncTablesBaseClient(AccountHostsMixin):
 
     async def __aenter__(self):
         await self._client.__aenter__()
@@ -95,37 +84,21 @@ class AsyncStorageAccountHostsMixin(object):
             raise TypeError("Unsupported credential: {}".format(credential))
 
     def _configure_policies(self, **kwargs):
-        # type: (**Any) -> None
-        try:
-            from azure.core.pipeline.transport import AioHttpTransport
-            if not kwargs.get("transport"):
-                kwargs.setdefault("transport", AioHttpTransport(**kwargs))
-        except ImportError:
-            raise ImportError(
-                "Unable to create async transport. Please check aiohttp is installed."
-            )
-
-        kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
-        kwargs.setdefault("read_timeout", READ_TIMEOUT)
-        self._policies = [
+        return [
+            RequestIdPolicy(**kwargs),
             StorageHeadersPolicy(**kwargs),
-            ProxyPolicy(**kwargs),
             UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
-            StorageContentValidation(),
-            StorageRequestHook(**kwargs),
-            self._credential_policy,
+            ProxyPolicy(**kwargs),
             ContentDecodePolicy(response_encoding="utf-8"),
             AsyncRedirectPolicy(**kwargs),
-            StorageHosts(hosts=self._hosts, **kwargs),
             AsyncTablesRetryPolicy(**kwargs),
-            StorageLoggingPolicy(**kwargs),
-            AsyncStorageResponseHook(**kwargs),
+            self._credential_policy,
+            StorageHosts(**kwargs),
+            CustomHookPolicy(**kwargs),
+            NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
-
-        if self._cosmos_endpoint:
-            self._policies.insert(0, CosmosPatchTransformPolicy())
 
     async def _batch_send(
         self,

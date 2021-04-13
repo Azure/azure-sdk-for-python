@@ -11,7 +11,6 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
 
-from ._constants import CONNECTION_TIMEOUT
 from ._generated import AzureTable
 from ._generated.models import TableProperties, TableServiceProperties
 from ._models import (
@@ -20,14 +19,13 @@ from ._models import (
     service_properties_deserialize,
     TableItem
 )
-from ._base_client import parse_connection_str
+from ._base_client import parse_connection_str, AccountHostsMixin
 from ._models import LocationMode
 from ._error import _process_table_error
 from ._table_client import TableClient
-from ._table_service_client_base import TableServiceClientBase
 
 
-class TableServiceClient(TableServiceClientBase):
+class TableServiceClient(AccountHostsMixin):
     """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
 
     def __init__(
@@ -66,15 +64,18 @@ class TableServiceClient(TableServiceClientBase):
                 :dedent: 8
                 :caption: Authenticating a TableServiceClient from a Shared Account Key
         """
-        super(TableServiceClient, self).__init__(
-            account_url, service="table", credential=credential, **kwargs
-        )
-        kwargs['connection_timeout'] = kwargs.get('connection_timeout') or CONNECTION_TIMEOUT
+        super(TableServiceClient, self).__init__(account_url, credential=credential, **kwargs)
         self._client = AzureTable(
             self.url,
             policies=kwargs.pop('policies', self._policies),
             **kwargs
         )
+
+    def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+        """
+        return "{}://{}{}".format(self.scheme, hostname, self._query_str)
 
     @classmethod
     def from_connection_string(

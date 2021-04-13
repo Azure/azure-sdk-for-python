@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Tuple, Dict
 
 import logging
 from uuid import uuid4, UUID
@@ -12,9 +12,9 @@ from datetime import datetime
 import six
 
 try:
-    from urllib.parse import parse_qs, quote
+    from urllib.parse import parse_qs, quote, urlparse
 except ImportError:
-    from urlparse import parse_qs  # type: ignore
+    from urlparse import parse_qs, urlparse  # type: ignore
     from urllib2 import quote  # type: ignore
 
 from azure.core.configuration import Configuration
@@ -40,7 +40,7 @@ from azure.core.pipeline.policies import (
     RequestIdPolicy
 )
 
-from ._common_conversion import _to_utc_datetime, _is_cosmos_endpoint
+from ._common_conversion import _is_cosmos_endpoint
 from ._shared_access_signature import QueryStringConstants
 from ._constants import (
     STORAGE_OAUTH_SCOPE,
@@ -65,14 +65,30 @@ if TYPE_CHECKING:
     )
 
 
-class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
+class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
-        parsed_url,  # type: Any
+        account_url,  # type: Any
         credential=None,  # type: Optional[Any]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+        try:
+            if not account_url.lower().startswith("http"):
+                account_url = "https://" + account_url
+        except AttributeError:
+            raise ValueError("Account URL must be a string.")
+        self._cosmos_endpoint = _is_cosmos_endpoint(account_url)
+        parsed_url = urlparse(account_url.rstrip("/"))
+        if not parsed_url.netloc:
+            raise ValueError("Invalid URL: {}".format(account_url))
+
+        _, sas_token = parse_query(parsed_url.query)
+        if not sas_token and not credential:
+            raise ValueError(
+                "You need to provide either a SAS token or an account shared key to authenticate."
+            )
+        self._query_str, credential = format_query_string(sas_token, credential)
         self._location_mode = kwargs.get("location_mode", LocationMode.PRIMARY)
         self._hosts = kwargs.get("_hosts")
         self.scheme = parsed_url.scheme
@@ -107,36 +123,9 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             }
 
         self._configure_credential(self.credential)
-        self._policies = [
-            RequestIdPolicy(**kwargs),
-            StorageHeadersPolicy(**kwargs),
-            UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
-            ProxyPolicy(**kwargs),
-            ContentDecodePolicy(response_encoding="utf-8"),
-            RedirectPolicy(**kwargs),
-            TablesRetryPolicy(**kwargs),
-            self._credential_policy,
-            StorageHosts(hosts=self._hosts, **kwargs),
-            CustomHookPolicy(**kwargs),
-            NetworkTraceLoggingPolicy(**kwargs),
-            DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs),
-        ]
+        self._policies = self._configure_policies(hosts=self._hosts, **kwargs)
         if self._cosmos_endpoint:
             self._policies.insert(0, CosmosPatchTransformPolicy())
-
-    def __enter__(self):
-        self._client.__enter__()
-        return self
-
-    def __exit__(self, *args):
-        self._client.__exit__(*args)
-
-    def close(self):
-        """This method is to close the sockets opened by the client.
-        It need not be used when using with a context manager.
-        """
-        self._client.close()
 
     @property
     def url(self):
@@ -207,23 +196,32 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         """
         return self._client._config.version  # pylint: disable=protected-access
 
-    def _format_query_string(
-        self, sas_token, credential, snapshot=None, share_snapshot=None
-    ):
-        query_str = "?"
-        if snapshot:
-            query_str += "snapshot={}&".format(self.snapshot)
-        if share_snapshot:
-            query_str += "sharesnapshot={}&".format(self.snapshot)
-        if sas_token and isinstance(credential, AzureSasCredential):
-            raise ValueError(
-                "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
-        if sas_token and not credential:
-            query_str += sas_token
-        elif is_credential_sastoken(credential):
-            query_str += credential.lstrip("?")
-            credential = None
-        return query_str.rstrip("?&"), credential
+
+class TablesBaseClient(AccountHostsMixin):
+
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._client.__exit__(*args)
+    
+    def _configure_policies(self, **kwargs):
+        return [
+            RequestIdPolicy(**kwargs),
+            StorageHeadersPolicy(**kwargs),
+            UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
+            ProxyPolicy(**kwargs),
+            ContentDecodePolicy(response_encoding="utf-8"),
+            RedirectPolicy(**kwargs),
+            TablesRetryPolicy(**kwargs),
+            self._credential_policy,
+            StorageHosts(**kwargs),
+            CustomHookPolicy(**kwargs),
+            NetworkTraceLoggingPolicy(**kwargs),
+            DistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs),
+        ]
 
     def _configure_credential(self, credential):
         # type: (Any) -> Tuple[Configuration, Pipeline]
@@ -306,33 +304,11 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                 )
         return transaction_result
 
-    def _parameter_filter_substitution(  # pylint: disable=no-self-use
-            self,
-            parameters,  # type: dict[str,str]
-            filter  # type: str  pylint: disable=redefined-builtin
-    ):
-        """Replace user defined parameter in filter
-        :param parameters: User defined parameters
-        :param filter: Filter for querying
+    def close(self):
+        """This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
         """
-        if parameters:
-            filter_strings = filter.split(' ')
-            for index, word in enumerate(filter_strings):
-                if word[0] == u'@':
-                    val = parameters[word[1:]]
-                    if val in [True, False]:
-                        filter_strings[index] = str(val).lower()
-                    elif isinstance(val, (float, six.integer_types)):
-                        filter_strings[index] = str(val)
-                    elif isinstance(val, datetime):
-                        filter_strings[index] = "datetime'{}'".format(_to_utc_datetime(val))
-                    elif isinstance(val, UUID):
-                        filter_strings[index] = "guid'{}'".format(str(val))
-                    else:
-                        filter_strings[index] = "'{}'".format(val.replace("'", "''"))
-            return ' '.join(filter_strings)
-
-        return filter
+        self._client.close()
 
 
 class TransportWrapper(HttpTransport):
@@ -376,49 +352,41 @@ def format_shared_key_credential(account, credential):
     return credential
 
 
-def parse_connection_str(conn_str, credential, service, keyword_args):
-    conn_str = conn_str.rstrip(";")
-    conn_settings = [s.split("=", 1) for s in conn_str.split(";")]
-    if any(len(tup) != 2 for tup in conn_settings):
-        raise ValueError("Connection string is either blank or malformed.")
-    conn_settings = dict(conn_settings)
-    endpoints = {"primary": "TableEndpoint", "secondary": "TableSecondaryEndpoint"}
+def parse_connection_str(conn_str, credential, keyword_args):
+    conn_settings = parse_connection_string(conn_str)
     primary = None
     secondary = None
     if not credential:
         try:
             credential = {
-                "account_name": conn_settings["AccountName"],
-                "account_key": conn_settings["AccountKey"],
+                "account_name": conn_settings["accountname"],
+                "account_key": conn_settings["accountkey"],
             }
         except KeyError:
-            credential = conn_settings.get("SharedAccessSignature")
-    if endpoints["primary"] in conn_settings:
-        primary = conn_settings[endpoints["primary"]]
-        if endpoints["secondary"] in conn_settings:
-            secondary = conn_settings[endpoints["secondary"]]
-    else:
-        if endpoints["secondary"] in conn_settings:
+            credential = conn_settings.get("sharedaccesssignature")
+
+    primary = conn_settings.get("tableendpoint")
+    secondary = conn_settings.get("tablesecondaryendpoint")
+    if not primary:
+        if secondary:
             raise ValueError("Connection string specifies only secondary endpoint.")
         try:
-            primary = "{}://{}.{}.{}".format(
-                conn_settings["DefaultEndpointsProtocol"],
-                conn_settings["AccountName"],
-                service,
-                conn_settings["EndpointSuffix"],
+            primary = "{}://{}.table.{}".format(
+                conn_settings["defaultendpointsprotocol"],
+                conn_settings["accountname"],
+                conn_settings["endpointsuffix"],
             )
-            secondary = "{}-secondary.{}.{}".format(
-                conn_settings["AccountName"], service, conn_settings["EndpointSuffix"]
+            secondary = "{}-secondary.table.{}".format(
+                conn_settings["accountname"], conn_settings["endpointsuffix"]
             )
         except KeyError:
             pass
 
     if not primary:
         try:
-            primary = "https://{}.{}.{}".format(
-                conn_settings["AccountName"],
-                service,
-                conn_settings.get("EndpointSuffix", SERVICE_HOST_BASE),
+            primary = "https://{}.table.{}".format(
+                conn_settings["accountname"],
+                conn_settings.get("endpointsuffix", SERVICE_HOST_BASE),
             )
         except KeyError:
             raise ValueError("Connection string missing required connection details.")
@@ -427,6 +395,19 @@ def parse_connection_str(conn_str, credential, service, keyword_args):
         keyword_args["secondary_hostname"] = secondary
 
     return primary, credential
+
+
+def format_query_string(sas_token, credential):
+    query_str = "?"
+    if sas_token and isinstance(credential, AzureSasCredential):
+        raise ValueError(
+            "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
+    if sas_token and not credential:
+        query_str += sas_token
+    elif is_credential_sastoken(credential):
+        query_str += credential.lstrip("?")
+        credential = None
+    return query_str.rstrip("?&"), credential
 
 
 def parse_query(query_str):

@@ -18,18 +18,16 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
-from ._constants import CONNECTION_TIMEOUT
 from ._deserialize import _convert_to_entity, _trim_service_metadata
 from ._entity import TableEntity
-from ._error import _process_table_error
+from ._error import _process_table_error, _validate_table_name
 from ._generated import AzureTable
 from ._generated.models import (
     SignedIdentifier,
     TableProperties,
 )
 from ._serialize import _get_match_headers, _add_entity_properties
-from ._base_client import parse_connection_str
-from ._table_client_base import TableClientBase
+from ._base_client import parse_connection_str, AccountHostsMixin
 from ._serialize import serialize_iso
 from ._deserialize import _return_headers_and_deserialized
 from ._table_batch import TableBatchOperations
@@ -38,7 +36,8 @@ from ._models import TableEntityPropertiesPaged, UpdateMode, AccessPolicy
 if TYPE_CHECKING:
     from typing import Optional, Any, Union  # pylint: disable=ungrouped-imports
 
-class TableClient(TableClientBase):
+
+class TableClient(AccountHostsMixin):
     """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
 
     def __init__(
@@ -65,15 +64,24 @@ class TableClient(TableClientBase):
 
         :returns: None
         """
+        if not table_name:
+            raise ValueError("Please specify a table name.")
+        _validate_table_name(table_name)
+        self.table_name = table_name
         super(TableClient, self).__init__(
             account_url, table_name, credential=credential, **kwargs
         )
-        kwargs['connection_timeout'] = kwargs.get('connection_timeout') or CONNECTION_TIMEOUT
         self._client = AzureTable(
             self.url,
             policies=kwargs.pop('policies', self._policies),
             **kwargs
         )
+
+    def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+        """
+        return "{}://{}{}".format(self.scheme, hostname, self._query_str)
 
     @classmethod
     def from_connection_string(
@@ -188,7 +196,6 @@ class TableClient(TableClientBase):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._validate_signed_identifiers(signed_identifiers)
         identifiers = []
         for key, value in signed_identifiers.items():
             if value:
