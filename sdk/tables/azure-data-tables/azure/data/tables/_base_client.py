@@ -19,6 +19,7 @@ except ImportError:
 
 from azure.core.configuration import Configuration
 from azure.core.credentials import AzureSasCredential
+from azure.core.utils import parse_connection_string
 from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import (
@@ -33,7 +34,10 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     UserAgentPolicy,
-    AzureSasCredentialPolicy
+    AzureSasCredentialPolicy,
+    NetworkTraceLoggingPolicy,
+    CustomHookPolicy,
+    RequestIdPolicy
 )
 
 from ._common_conversion import _to_utc_datetime, _is_cosmos_endpoint
@@ -41,18 +45,12 @@ from ._shared_access_signature import QueryStringConstants
 from ._constants import (
     STORAGE_OAUTH_SCOPE,
     SERVICE_HOST_BASE,
-    CONNECTION_TIMEOUT,
-    READ_TIMEOUT,
 )
 from ._models import LocationMode, BatchTransactionResult
 from ._authentication import SharedKeyCredentialPolicy
 from ._policies import (
     CosmosPatchTransformPolicy,
     StorageHeadersPolicy,
-    StorageContentValidation,
-    StorageRequestHook,
-    StorageResponseHook,
-    StorageLoggingPolicy,
     StorageHosts,
     TablesRetryPolicy,
 )
@@ -60,47 +58,29 @@ from ._models import BatchErrorException
 from ._sdk_moniker import SDK_MONIKER
 
 if TYPE_CHECKING:
-    from typing import (  # pylint: disable=ungrouped-imports
-        Union,
+    from typing import (
         Optional,
         Any,
-        Iterable,
-        Dict,
         List,
-        Type,
-        Tuple,
     )
-
-_LOGGER = logging.getLogger(__name__)
-_SERVICE_PARAMS = {
-    "blob": {"primary": "BlobEndpoint", "secondary": "BlobSecondaryEndpoint"},
-    "queue": {"primary": "QueueEndpoint", "secondary": "QueueSecondaryEndpoint"},
-    "file": {"primary": "FileEndpoint", "secondary": "FileSecondaryEndpoint"},
-    "dfs": {"primary": "BlobEndpoint", "secondary": "BlobEndpoint"},
-    "table": {"primary": "TableEndpoint", "secondary": "TableSecondaryEndpoint"},
-}
 
 
 class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         parsed_url,  # type: Any
-        service,  # type: str
         credential=None,  # type: Optional[Any]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        self._location_mode = kwargs.get("_location_mode", LocationMode.PRIMARY)
+        self._location_mode = kwargs.get("location_mode", LocationMode.PRIMARY)
         self._hosts = kwargs.get("_hosts")
         self.scheme = parsed_url.scheme
         self._cosmos_endpoint = _is_cosmos_endpoint(parsed_url.hostname)
 
-        if service not in ["blob", "queue", "file-share", "dfs", "table"]:
-            raise ValueError("Invalid service: {}".format(service))
-        service_name = service.split("-")[0]
-        account = parsed_url.netloc.split(".{}.core.".format(service_name))
+        account = parsed_url.netloc.split(".table.core.")
         if "cosmos" in parsed_url.netloc:
-            account = parsed_url.netloc.split(".{}.cosmos.".format(service_name))
+            account = parsed_url.netloc.split(".table.cosmos.")
         self.account_name = account[0] if len(account) > 1 else None
         secondary_hostname = None
 
@@ -109,8 +89,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             raise ValueError("Token credential is only supported with HTTPS.")
         if hasattr(self.credential, "account_name"):
             self.account_name = self.credential.account_name
-            secondary_hostname = "{}-secondary.{}.{}".format(
-                self.credential.account_name, service_name, SERVICE_HOST_BASE
+            secondary_hostname = "{}-secondary.table.{}".format(
+                self.credential.account_name, SERVICE_HOST_BASE
             )
 
         if not self._hosts:
@@ -127,26 +107,21 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             }
 
         self._configure_credential(self.credential)
-        kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
-        kwargs.setdefault("read_timeout", READ_TIMEOUT)
-
         self._policies = [
+            RequestIdPolicy(**kwargs),
             StorageHeadersPolicy(**kwargs),
-            ProxyPolicy(**kwargs),
             UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
-            StorageContentValidation(),
-            StorageRequestHook(**kwargs),
-            self._credential_policy,
+            ProxyPolicy(**kwargs),
             ContentDecodePolicy(response_encoding="utf-8"),
             RedirectPolicy(**kwargs),
+            TablesRetryPolicy(**kwargs),
+            self._credential_policy,
             StorageHosts(hosts=self._hosts, **kwargs),
-            kwargs.get("retry_policy") or TablesRetryPolicy(**kwargs),
-            StorageLoggingPolicy(**kwargs),
-            StorageResponseHook(**kwargs),
+            CustomHookPolicy(**kwargs),
+            NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
-
         if self._cosmos_endpoint:
             self._policies.insert(0, CosmosPatchTransformPolicy())
 
@@ -224,14 +199,6 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
 
         return self._location_mode
 
-    @location_mode.setter
-    def location_mode(self, value):
-        if self._hosts.get(value):
-            self._location_mode = value
-            self._client._config.url = self.url  # pylint: disable=protected-access
-        else:
-            raise ValueError("No host URL for location mode: {}".format(value))
-
     @property
     def api_version(self):
         """The version of the Storage API used for requests.
@@ -259,7 +226,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         return query_str.rstrip("?&"), credential
 
     def _configure_credential(self, credential):
-        # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
+        # type: (Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None
         if hasattr(credential, "get_token"):
             self._credential_policy = BearerTokenCredentialPolicy(
@@ -415,7 +382,7 @@ def parse_connection_str(conn_str, credential, service, keyword_args):
     if any(len(tup) != 2 for tup in conn_settings):
         raise ValueError("Connection string is either blank or malformed.")
     conn_settings = dict(conn_settings)
-    endpoints = _SERVICE_PARAMS[service]
+    endpoints = {"primary": "TableEndpoint", "secondary": "TableSecondaryEndpoint"}
     primary = None
     secondary = None
     if not credential:

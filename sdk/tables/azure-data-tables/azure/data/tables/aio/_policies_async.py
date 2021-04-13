@@ -37,59 +37,6 @@ async def retry_hook(settings, **kwargs):
             )
 
 
-class AsyncStorageResponseHook(AsyncHTTPPolicy):
-    def __init__(self, **kwargs):
-        self._response_callback = kwargs.get("raw_response_hook")
-        super(AsyncStorageResponseHook, self).__init__()
-
-    async def send(self, request):
-        # type: (PipelineRequest) -> PipelineResponse
-        data_stream_total = request.context.get(
-            "data_stream_total"
-        ) or request.context.options.pop("data_stream_total", None)
-        download_stream_current = request.context.get(
-            "download_stream_current"
-        ) or request.context.options.pop("download_stream_current", None)
-        upload_stream_current = request.context.get(
-            "upload_stream_current"
-        ) or request.context.options.pop("upload_stream_current", None)
-        response_callback = request.context.get(
-            "response_callback"
-        ) or request.context.options.pop("raw_response_hook", self._response_callback)
-
-        response = await self.next.send(request)
-        await response.http_response.load_body()
-
-        will_retry = is_retry(response, request.context.options.get("mode"))
-        if not will_retry and download_stream_current is not None:
-            download_stream_current += int(
-                response.http_response.headers.get("Content-Length", 0)
-            )
-            if data_stream_total is None:
-                content_range = response.http_response.headers.get("Content-Range")
-                if content_range:
-                    data_stream_total = int(
-                        content_range.split(" ", 1)[1].split("/", 1)[1]
-                    )
-                else:
-                    data_stream_total = download_stream_current
-        elif not will_retry and upload_stream_current is not None:
-            upload_stream_current += int(
-                response.http_request.headers.get("Content-Length", 0)
-            )
-        for pipeline_obj in [request, response]:
-            pipeline_obj.context["data_stream_total"] = data_stream_total
-            pipeline_obj.context["download_stream_current"] = download_stream_current
-            pipeline_obj.context["upload_stream_current"] = upload_stream_current
-        if response_callback:
-            if asyncio.iscoroutine(response_callback):
-                await response_callback(response)
-            else:
-                response_callback(response)
-            request.context["response_callback"] = response_callback
-        return response
-
-
 class AsyncTablesRetryPolicy(AsyncRetryPolicy, TablesRetryPolicy):
     """Exponential retry."""
 

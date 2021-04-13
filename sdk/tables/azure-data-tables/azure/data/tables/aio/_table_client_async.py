@@ -23,7 +23,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._base_client import parse_connection_str
 from .._common_conversion import _is_cosmos_endpoint
-from .._constants import CONNECTION_TIMEOUT
 from .._entity import TableEntity
 from .._generated.aio import AzureTable
 from .._generated.models import SignedIdentifier, TableProperties
@@ -37,7 +36,6 @@ from .._serialize import _add_entity_properties, _get_match_headers
 from .._table_client_base import TableClientBase
 from ._base_client_async import AsyncStorageAccountHostsMixin
 from ._models import TableEntityPropertiesPaged
-from ._policies_async import ExponentialRetry
 from ._table_batch_async import TableBatchOperations
 
 
@@ -68,29 +66,19 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
         :returns: None
         """
-        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(
-            **kwargs
-        )
-        loop = kwargs.pop("loop", None)
-
         self._cosmos_endpoint = _is_cosmos_endpoint(account_url)
-
         super(TableClient, self).__init__(
             account_url,
             table_name=table_name,
             credential=credential,
-            loop=loop,
             **kwargs
         )
-        kwargs['connection_timeout'] = kwargs.get('connection_timeout') or CONNECTION_TIMEOUT
         self._configure_policies(**kwargs)
         self._client = AzureTable(
             self.url,
             policies=kwargs.pop('policies', self._policies),
-            loop=loop,
             **kwargs
         )
-        self._loop = loop
 
     @classmethod
     def from_connection_string(
@@ -120,7 +108,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :caption: Creating the TableClient from a connection string.
         """
         account_url, credential = parse_connection_str(
-            conn_str=conn_str, credential=None, service="table", keyword_args=kwargs
+            conn_str=conn_str, credential=None, keyword_args=kwargs
         )
         return cls(account_url, table_name=table_name, credential=credential, **kwargs)
 
