@@ -201,10 +201,10 @@ class ContainerRegistryTestClass(AzureTestCase):
     def assert_content_permission(self, content_perm, content_perm2):
         assert isinstance(content_perm, ContentPermissions)
         assert isinstance(content_perm2, ContentPermissions)
-        assert content_perm.can_delete == content_perm.can_delete
-        assert content_perm.can_list == content_perm.can_list
-        assert content_perm.can_read == content_perm.can_read
-        assert content_perm.can_write == content_perm.can_write
+        assert content_perm.can_delete == content_perm2.can_delete
+        assert content_perm.can_list == content_perm2.can_list
+        assert content_perm.can_read == content_perm2.can_read
+        assert content_perm.can_write == content_perm2.can_write
 
     def assert_tag(
         self,

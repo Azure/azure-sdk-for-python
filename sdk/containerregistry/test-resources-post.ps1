@@ -12,6 +12,11 @@ if ($IsMacOS) {
     Update-Module -Name Az.ContainerRegistry -Force
 }
 
+az acr import --name $DeploymentOutputs['CONTAINERREGISTRY_USERNAME'] --resource-group $DeploymentOutputs['CONTAINERREGISTRY_RESOURCE_GROUP'] docker.io/library/hello-world:latest -t library/hello-world:latest -t library/hello-world:latest:v1 -t library/hello-world:latest:v2 -t library/hello-world:latest:v3 -t library/hello-world:latest:v4 --force
+az acr import --name $DeploymentOutputs['CONTAINERREGISTRY_USERNAME'] --resource-group $DeploymentOutputs['CONTAINERREGISTRY_RESOURCE_GROUP'] docker.io/library/alpine:latest -t library/alpine --force
+az acr import --name $DeploymentOutputs['CONTAINERREGISTRY_USERNAME'] --resource-group $DeploymentOutputs['CONTAINERREGISTRY_RESOURCE_GROUP'] docker.io/library/busybox:latest -t library/busybox --force
+
+
 Import-AzContainerRegistryImage `
     -ResourceGroupName $DeploymentOutputs['CONTAINERREGISTRY_RESOURCE_GROUP'] `
     -RegistryName $DeploymentOutputs['CONTAINERREGISTRY_USERNAME'] `
