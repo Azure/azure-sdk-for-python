@@ -85,7 +85,7 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     async def test_delete_tag(self, containerregistry_endpoint, containerregistry_resource_group):
-        self.import_image(repo, ["{}:{}".format(HELLO_WORLD, TO_BE_DELETED)])
+        self.import_image(HELLO_WORLD, ["{}:{}".format(HELLO_WORLD, TO_BE_DELETED)])
 
         client = self.create_repository_client(containerregistry_endpoint, HELLO_WORLD)
 
