@@ -263,7 +263,7 @@ class DatalakeServiceTest(StorageTestCase):
 
     @record
     def test_set_hour_metrics(self):
-        hour_metrics = Metrics(retention_policy=RetentionPolicy(enabled=True, days=5))
+        hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
         self.dsc.set_service_properties(hour_metrics=hour_metrics)
@@ -274,7 +274,8 @@ class DatalakeServiceTest(StorageTestCase):
 
     @record
     def test_set_minute_metrics(self):
-        minute_metrics = Metrics(retention_policy=RetentionPolicy(enabled=True, days=5))
+        minute_metrics = Metrics(enabled=True, include_apis=True,
+                                 retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
         self.dsc.set_service_properties(minute_metrics=minute_metrics)
