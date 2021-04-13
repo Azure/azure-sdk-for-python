@@ -59,6 +59,11 @@ steps:
     condition: and(succeededOrFailed(), ne(variables['Build.Reason'],'PullRequest'))
     displayName: 'Component Detection'
 
+  - pwsh: |
+      Get-ChildItem $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}} -Filter *.md -Recurse `
+        | eng/scripts/Find-InvalidSlug.ps1 -IncludeParents
+    displayName: Verify Slugs
+
   - task: PythonScript@0
     displayName: 'Verify sdist'
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifySdist'],'true'))
