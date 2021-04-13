@@ -6,6 +6,7 @@
 import copy
 from datetime import datetime
 import json
+import os
 import re
 import six
 import subprocess
@@ -20,6 +21,8 @@ from azure.containerregistry import (
 )
 
 from azure.core.credentials import AccessToken
+from azure.mgmt.containerregistry import ContainerRegistryManagementClient
+from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
 from azure.identity import DefaultAzureCredential
 
 from azure_devtools.scenario_tests import RecordingProcessor
@@ -85,7 +88,7 @@ class AcrBodyReplacer(RecordingProcessor):
 
             body = response["body"]
             try:
-                if body["string"] == b"":
+                if body["string"] == b"" or body["string"] == "null":
                     return response
 
                 refresh = json.loads(body["string"])
@@ -136,6 +139,36 @@ class ContainerRegistryTestClass(AzureTestCase):
     def sleep(self, t):
         if self.is_live:
             time.sleep(t)
+
+    def import_image(self, repository, tags):
+        # type: (str, List[str]) -> None
+        if not self.is_live:
+            return
+
+        mgmt_client = ContainerRegistryManagementClient(DefaultAzureCredential(), os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"])
+        registry_uri = "registry.hub.docker.com"
+        rg_name = os.environ["CONTAINERREGISTRY_RESOURCE_GROUP"]
+        registry_name = os.environ["CONTAINERREGISTRY_REGISTRY_NAME"]
+
+        import_source = ImportSource(
+            source_image=repository,
+            registry_uri=registry_uri
+        )
+
+        import_params = ImportImageParameters(
+            mode=ImportMode.Force,
+            source=import_source,
+            target_tags=tags
+        )
+
+        result = mgmt_client.registries.begin_import_image(
+            rg_name,
+            registry_name,
+            parameters=import_params,
+        )
+
+        while not result.done():
+            self.sleep(2)
 
     def import_repo(self, endpoint, repository="hello-world", resource_group="fake_rg", tag=None):
         if not self.is_live:
