@@ -5,7 +5,7 @@ Start be creating a new virtual environment for your perf tests. This will need 
 
 ### Setup for test resources
 
-These tests will run against a pre-configured metrics advisor service. The following environment variable will need to be set for the tests to access the live resources:
+These tests will run against a pre-configured metrics advisor service(see [Setting up Resource for Perf test Guide](https://microsoft.sharepoint.com/teams/AzureDeveloperExperience/_layouts/15/Doc.aspx?sourcedoc={b489fb65-ef3e-410c-a69e-c23fccf5fcca}&action=edit&wd=target%28Untitled%20Section.one%7C93e23c77-5539-4c7a-9059-efa745a43f58%2FSetting%20up%20Resource%20for%20Perf%20test%20Guide%7C395ad307-9fd1-4971-bcd5-6d336dde77cd%2F%29&wdorigin=703) about how to setup the instance and ingest data). The following environment variable will need to be set for the tests to access the live resources:
 ```
 AZURE_METRICS_ADVISOR_ENDPOINT=<service endpoint>
 AZURE_METRICS_ADVISOR_SUBSCRIPTION_KEY=<service subscription key>
