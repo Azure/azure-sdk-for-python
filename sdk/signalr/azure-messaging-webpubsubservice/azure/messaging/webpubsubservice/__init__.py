@@ -11,6 +11,7 @@
 
 __all__ = ["build_authentication_token", "WebPubSubServiceClient"]
 
+from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 
 import jwt
@@ -19,12 +20,12 @@ import azure.core.pipeline as corepipeline
 import azure.core.pipeline.policies as corepolicies
 import azure.core.pipeline.transport as coretransport
 
-from datetime import datetime, timedelta
 
 # Temporary location for types that eventually graduate to Azure Core
 from .core import rest as corerest
 
 from ._policies import JwtCredentialPolicy
+from ._utils import UTC as _UTC
 
 if TYPE_CHECKING:
     import azure.core.credentials as corecredentials
@@ -45,10 +46,10 @@ def build_authentication_token(endpoint, hub, key, **kwargs):
     :type ttl: ~datetime.timedelta
     :keyword user: Optional user name (subject) for the token. Default is no user.
     :type user: ~str
-    :keyword claims: Additional claims for the token.
-    :type claims: ~dict
+    :keyword roles: Roles for the token.
+    :type roles: typing.List[str]. Default is no roles.
     :returns: ~dict containing the web socket endpoint, the token and a url with the generated access token.
-    :rtype: ~str
+    :rtype: ~dict
 
 
     Example:
@@ -60,8 +61,8 @@ def build_authentication_token(endpoint, hub, key, **kwargs):
     }
     """
     user = kwargs.pop("user", None)
-    claims = kwargs.pop("claims", {})
     ttl = kwargs.pop("ttl", timedelta(hours=1))
+    roles = kwargs.pop('roles', [])
     endpoint = endpoint.lower()
     if not endpoint.startswith("http://") and not endpoint.startswith("https://"):
         raise ValueError(
@@ -77,11 +78,12 @@ def build_authentication_token(endpoint, hub, key, **kwargs):
     client_endpoint = "ws" + endpoint[4:]
     client_url = "{}/client/hubs/{}".format(client_endpoint, hub)
     audience = "{}/client/hubs/{}".format(endpoint, hub)
-    
-    payload = {"aud": audience, "iat": datetime.utcnow(), "exp": datetime.utcnow() + ttl}
-    payload.update(claims)
+
+    payload = {"aud": audience, "iat": datetime.now(tz=_UTC), "exp": datetime.now(tz=_UTC) + ttl}
     if user:
-        payload.setdefault("sub", user)
+        payload["sub"] = user
+    if roles:
+        payload["Roles"] = roles
 
     token = jwt.encode(payload, key, algorithm="HS256")
     return {

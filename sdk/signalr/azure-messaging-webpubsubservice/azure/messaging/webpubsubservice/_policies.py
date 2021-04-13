@@ -30,27 +30,11 @@ import jwt
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
+from ._utils import UTC
+
 if typing.TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
     from azure.core.pipeline import PipelineRequest
-
-
-class _UTC_TZ(datetime.tzinfo):
-    """from https://docs.python.org/2/library/datetime.html#tzinfo-objects"""
-
-    ZERO = datetime.timedelta(0)
-
-    def utcoffset(self, dt):
-        return self.__class__.ZERO
-
-    def tzname(self, dt):
-        return "UTC"
-
-    def dst(self, dt):
-        return self.__class__.ZERO
-
-
-_UTC = _UTC_TZ()
 
 
 class JwtCredentialPolicy(SansIOHTTPPolicy):
@@ -87,7 +71,7 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
         # type: (AzureKeyCredential) -> str
         data = {
             "aud": url,
-            "exp": datetime.datetime.now(tz=_UTC) + datetime.timedelta(seconds=60),
+            "exp": datetime.datetime.now(tz=UTC) + datetime.timedelta(seconds=60),
         }
         if self._user:
             data[self.NAME_CLAIM_TYPE] = self._user
