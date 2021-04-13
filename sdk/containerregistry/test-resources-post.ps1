@@ -10,6 +10,7 @@ param (
 
 if ($IsMacOS) {
     Update-Module -Name Az.ContainerRegistry -Force
+    Import-Module Az.ContainerRegistry
 }
 
 Import-AzContainerRegistryImage `

@@ -62,7 +62,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
     @acr_preparer()
     def test_delete_repository(self, containerregistry_endpoint, containerregistry_resource_group):
-        self.import_image("library/hello-world", [TO_BE_DELETED])
+        self.import_image(HELLO_WORLD, [TO_BE_DELETED])
         client = self.create_registry_client(containerregistry_endpoint)
 
         result = client.delete_repository(TO_BE_DELETED)
