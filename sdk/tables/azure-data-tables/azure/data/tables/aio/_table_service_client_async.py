@@ -383,12 +383,12 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
         The table need not already exist.
 
-        :param table:
+        :param table_name:
             The queue. This can either be the name of the queue,
             or an instance of QueueProperties.
-        :type table: str or ~azure.storage.table.TableProperties
+        :type table_name: str or ~azure.storage.table.TableProperties
         :returns: A :class:`~azure.data.tables.TableClient` object.
-        :rtype: ~azure.data.tables.TableClient
+        :rtype:  :class:`~azure.data.tables.TableClient`
 
         """
         _pipeline = AsyncPipeline(

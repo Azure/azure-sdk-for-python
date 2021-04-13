@@ -176,7 +176,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         used with Shared Access Signatures.
 
         :return: Dictionary of SignedIdentifiers
-        :rtype: dict[str,~azure.data.tables.AccessPolicy]
+        :rtype: Dict[str,~azure.data.tables.AccessPolicy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         timeout = kwargs.pop("timeout", None)
@@ -233,7 +233,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         """Creates a new table under the given account.
 
         :return: Dictionary of operation metadata returned from service
-        :rtype: dict[str,str]
+        :rtype: Dict[str,str]
         :raises ~azure.core.exceptions.ResourceExistsError: If the table already exists
 
         .. admonition:: Example:
@@ -342,7 +342,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :param entity: The properties for the table entity.
         :type entity: TableEntity or dict[str,str]
         :return: Dictionary mapping operation metadata returned from the service
-        :rtype: dict[str,str]
+        :rtype: Dict[str,str]
         :raises ~azure.core.exceptions.ResourceExistsError: If the entity already exists
 
         .. admonition:: Example:
@@ -388,7 +388,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :keyword str etag: Etag of the entity
         :keyword ~azure.core.MatchConditions match_condition: MatchCondition
         :return: Dictionary of operation metadata returned from service
-        :rtype: dict[str,str]
+        :rtype: Dict[str,str]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -579,7 +579,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.data.tables.UpdateMode
         :return: Dictionary mapping operation metadata returned from the service
-        :rtype: dict[str,str]
+        :rtype: Dict[str,str]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:

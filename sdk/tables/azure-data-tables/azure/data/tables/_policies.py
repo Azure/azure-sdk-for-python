@@ -516,6 +516,7 @@ class TablesRetryPolicy(RetryPolicy):
         super(TablesRetryPolicy, self).__init__(**kwargs)
 
     def get_backoff_time(self, settings):
+        # type: (Dict) -> Int
         """
         Calculates how long to sleep before retrying.
         :param dict settings:
@@ -523,7 +524,7 @@ class TablesRetryPolicy(RetryPolicy):
         :return:
             An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
-        :rtype: int or None
+        :rtype: Int
         """
         random_generator = random.Random()
         backoff = self.initial_backoff + (
@@ -537,15 +538,13 @@ class TablesRetryPolicy(RetryPolicy):
         random_range_end = backoff + self.random_jitter_range
         return random_generator.uniform(random_range_start, random_range_end)
 
-    def configure_retries(
-        self, request
-    ):  # pylint: disable=no-self-use, arguments-differ
-        # type: (...) -> Dict[Any, Any]
+    def configure_retries(self, request):  # pylint: disable=no-self-use, arguments-differ
+        # type: (HttpRequest) -> Dict[Any, Any]
         """
         :param Any request:
         :param kwargs:
-        :return:
-        :rtype:dict
+        :return: Retries information
+        :rtype: Dict[Any, Any]
         """
         body_position = None
         if hasattr(request.http_request.body, "read"):
@@ -572,11 +571,11 @@ class TablesRetryPolicy(RetryPolicy):
         }
 
     def sleep(self, settings, transport):  # pylint: disable=arguments-differ
-        # type: (...) -> None
+        # type: (Any, Any) -> None
         """
         :param Any settings:
         :param Any transport:
-        :return:None
+        :return: None
         """
         backoff = self.get_backoff_time(
             settings,
@@ -586,8 +585,10 @@ class TablesRetryPolicy(RetryPolicy):
         transport.sleep(backoff)
 
     def send(self, request):
+        # type: (HttpRequest) -> None
         """
-        :param Any request:
+        :param request:
+        :type request: :class:`~azure.core.pipeline.HttpRequest`
         :return: None
         """
         retries_remaining = True
@@ -675,6 +676,7 @@ class ExponentialRetry(TablesRetryPolicy):
         )
 
     def get_backoff_time(self, settings):
+        # type: (Dict[str]) -> int
         """
         Calculates how long to sleep before retrying.
         :param dict settings:
@@ -731,6 +733,7 @@ class LinearRetry(TablesRetryPolicy):
         )
 
     def get_backoff_time(self, settings):
+        # type: (Dict[str]) -> int
         """
         Calculates how long to sleep before retrying.
 

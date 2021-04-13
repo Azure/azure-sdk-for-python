@@ -106,14 +106,14 @@ class TableServiceClient(TableServiceClientBase):
 
     @distributed_trace
     def get_service_stats(self, **kwargs):
-        # type: (...) -> dict[str,object]
+        # type: (Dict[str, Any]) -> TableServiceStats
         """Retrieves statistics related to replication for the Table service. It is only available on the secondary
         location endpoint when read-access geo-redundant replication is enabled for the account.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Dictionary of service stats
-        :rtype: ~azure.data.tables.models.TableServiceStats
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :rtype: :class:`~azure.data.tables.models.TableServiceStats`
+        :raises :class:`~azure.core.exceptions.HttpResponseError:`
         """
         try:
             timeout = kwargs.pop("timeout", None)
@@ -126,12 +126,12 @@ class TableServiceClient(TableServiceClientBase):
 
     @distributed_trace
     def get_service_properties(self, **kwargs):
-        # type: (...) -> dict[str,Any]
+        # type: (...) -> Dict[str, Any]
         """Gets the properties of an account's Table service,
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :return: Dictionary of service properties
-        :rtype:dict[str, Any]
+        :rtype: Dict[str, Any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         timeout = kwargs.pop("timeout", None)

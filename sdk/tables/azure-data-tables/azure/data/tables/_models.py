@@ -400,12 +400,15 @@ class TableSasPermissions(object):
         self.delete = kwargs.pop("delete", None) or ("d" in _str)
 
     def __or__(self, other):
+        # type: (TableSasPermissions) -> TableSasPermissions
         return TableSasPermissions(_str=str(self) + str(other))
 
     def __add__(self, other):
+        # type: (TableSasPermissions) -> TableSasPermissions
         return TableSasPermissions(_str=str(self) + str(other))
 
     def __str__(self):
+        # type: () -> TableSasPermissions
         return (
             ("r" if self.read else "")
             + ("a" if self.add else "")
@@ -416,9 +419,10 @@ class TableSasPermissions(object):
     @classmethod
     def from_string(
         cls,
-        permission,  # type: str
+        permission,
         **kwargs
     ):
+        # Type: (str, **Dict[str]) -> AccountSasPermissions
         """Create AccountSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to
@@ -541,12 +545,16 @@ class PartialBatchErrorException(HttpResponseError):
 class BatchErrorException(HttpResponseError):
     """There is a failure in batch operations.
 
-    :param str message: The message of the exception.
+    :param message: The message of the exception.
+    :type message: str
     :param response: Server response to be deserialized.
-    :param list parts: A list of the parts in multipart response.
+    :type response: str
+    :param parts: A list of the parts in multipart response.
+    :type parts: List[str]
     """
 
     def __init__(self, message, response, parts, *args, **kwargs):
+        # type: (str, str, List[str], *List, **Dict) -> None
         self.parts = parts
         super(BatchErrorException, self).__init__(
             message=message, response=response, *args, **kwargs
@@ -557,28 +565,57 @@ class BatchTransactionResult(object):
     """The result of a successful batch operation, can be used by a user to
     recreate a request in the case of BatchErrorException
 
-    :param List[HttpRequest] requests: The requests of the batch
-    :param List[HttpResponse] results: The HTTP response of each request
+    :param requests: The requests of the batch
+    :type requests: List[:class:~azure.core.pipeline.HttpRequest]
+    :param results: The HTTP response of each request
+    :type results: List[:class:~azure.core.pipeline.HttpResponse]
+    :param entities: Entities submitted for the batch
+    :type entities: List[:class:~azure.data.tables.TableEntity]
     """
 
     def __init__(self, requests, results, entities):
+        # type: (List[HttpRequest], List[HttpResponse], List[TableEntity]) -> None
         self.requests = requests
         self.results = results
         self.entities = entities
 
     def get_entity(self, row_key):
+        """Get entity for a given row key
+
+        :param row_key: The row_key correlating to an entity
+        :type row_key: str
+        :return: TableEntity or Dictionary submitted
+        :rtype: Union[Dict[str], TableEntity]
+        """
+        # type: (str) -> Union[TableEntity, Dict[str]]
         for entity in self.entities:
             if entity["RowKey"] == row_key:
                 return entity
         return None
 
     def get_request(self, row_key):
+        """Get request for a given row key
+
+        :param row_key: The row_key correlating to an entity
+        :type row_key: str
+        :return: HTTP Request for a row key
+        :rtype: :class:`~azure.core.pipeline.transport.HttpRequest`
+        """
+        # type: (str) -> HttpRequest
         for i, entity in enumerate(self.entities):
             if entity["RowKey"] == row_key:
                 return self.requests[i]
         return None
 
     def get_result(self, row_key):
+        """Get response for a given row key
+
+        :param row_key: The row_key correlating to an entity
+        :type row_key: str
+        :return: HTTP Response for a row key
+        :rtype: :class:`~azure.core.pipeline.HttpResponse`
+        """
+        # type: (str) -> HttpResponse
         for i, entity in enumerate(self.entities):
             if entity["RowKey"] == row_key:
                 return self.results[i]
@@ -609,9 +646,8 @@ class ResourceTypes(object):
         Access to object-level APIs for tables (e.g. Get/Create/Query Entity etc.)
     """
 
-    def __init__(
-        self, service=False, object=False
-    ):  # pylint: disable=redefined-builtin
+    def __init__(self, service=False, object=False):  # pylint: disable=redefined-builtin
+        # type: (bool, bool) -> None
         self.service = service
         self.object = object
         self._str = ("s" if self.service else "") + ("o" if self.object else "")
@@ -621,6 +657,7 @@ class ResourceTypes(object):
 
     @classmethod
     def from_string(cls, string):
+        # type: (str) -> ResourceTypes
         """Create a ResourceTypes from a string.
 
         To specify service, container, or object you need only to
@@ -696,6 +733,7 @@ class AccountSasPermissions(object):
 
     @classmethod
     def from_string(cls, permission, **kwargs):
+        # type: (str, Dict[str]) - AccountSasPermissions
         """Create AccountSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to

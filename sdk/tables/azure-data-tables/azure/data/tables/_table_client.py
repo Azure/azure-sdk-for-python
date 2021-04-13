@@ -158,7 +158,7 @@ class TableClient(TableClientBase):
         used with Shared Access Signatures.
 
         :return: Dictionary of SignedIdentifiers
-        :rtype: dict[str,AccessPolicy]
+        :rtype: Dict[str,AccessPolicy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         timeout = kwargs.pop("timeout", None)
@@ -211,7 +211,7 @@ class TableClient(TableClientBase):
         """Creates a new table under the current account.
 
         :return: Dictionary of operation metadata returned from service
-        :rtype: dict[str,str]
+        :rtype: Dict[str,str]
         :raises ~azure.core.exceptions.ResourceExistsError: If the table already exists
 
         .. admonition:: Example:
@@ -320,9 +320,9 @@ class TableClient(TableClientBase):
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: TableEntity or dict[str,str]
+        :type entity: TableEntity or Dict[str,str]
         :return: Dictionary mapping operation metadata returned from the service
-        :rtype: dict[str,str]
+        :rtype: Dict[str,str]
         :raises ~azure.core.exceptions.ResourceExistsError: If the entity already exists
 
         .. admonition:: Example:
@@ -368,7 +368,7 @@ class TableClient(TableClientBase):
         :keyword str etag: Etag of the entity
         :keyword ~azure.core.MatchConditions match_condition: MatchCondition
         :return: Dictionary mapping operation metadata returned from the service
-        :rtype: dict[str,str]
+        :rtype: Dict[str,str]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -560,7 +560,7 @@ class TableClient(TableClientBase):
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.data.tables.UpdateMode
         :return: Dictionary mapping operation metadata returned from the service
-        :rtype: dict[str,str]
+        :rtype: Dict[str,str]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -607,14 +607,12 @@ class TableClient(TableClientBase):
         except HttpResponseError as error:
             _process_table_error(error)
 
-    def create_batch(
-        self, **kwargs  # type: Dict[str, Any]
-    ):
-        # type: (...) -> azure.data.tables.TableBatchOperations
+    def create_batch(self, **kwargs):
+        # type: (Dict[str, Any]) -> TableBatchOperations
         """Create a Batching object from a Table Client
 
         :return: Object containing requests and responses
-        :rtype: ~azure.data.tables.TableBatchOperations
+        :rtype: :class:`~azure.data.tables.TableBatchOperations`
 
         .. admonition:: Example:
 
@@ -636,15 +634,13 @@ class TableClient(TableClientBase):
             **kwargs
         )
 
-    def send_batch(
-        self,
-        batch,  # type: azure.data.tables.BatchTransactionResult
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> BatchTransactionResult
+    def send_batch(self, batch, **kwargs):
+        # type: (TableBatchOperations, Dict[str, Any]) -> BatchTransactionResult
         """Commit a TableBatchOperations to send requests to the server
 
-        :return: Object containing requests and responses
+        :param batch: Batch of operations
+        :type batch: :class:`~azure.data.tables.TableBatchOperations`
+        :return: Object containing requests, responses, and original entities
         :rtype: ~azure.data.tables.BatchTransactionResult
         :raises ~azure.data.tables.BatchErrorException:
 
