@@ -43,7 +43,7 @@ AttestationPreparer = functools.partial(
             attestation_isolated_signing_key='xxxx',
             attestation_isolated_signing_certificate='xxxx',
             attestation_service_management_url='https://management.core.windows.net/',
-            attestation_location_short_name='xxxx',
+            attestation_location_short_name='unk',
             attestation_client_id='xxxx',
             attestation_client_secret='secret',
             attestation_tenant_id='tenant',
@@ -233,7 +233,10 @@ class AzureAttestationTest(AzureTestCase):
 
     @staticmethod
     def shared_base_uri(location_name: str):
-        return 'https://shared'+location_name+'.'+location_name+'.attest.azure.net'
+        # When run with recorded tests, the location_name may be 'None', deal with it.
+        if location_name is not None:
+            return 'https://shared'+location_name+'.'+location_name+'.attest.azure.net'
+        return 'https://sharedxxx.xxx.attest.azure.net'
    
 class Base64Url:
     @staticmethod
