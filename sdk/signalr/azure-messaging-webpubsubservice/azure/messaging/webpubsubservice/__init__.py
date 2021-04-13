@@ -83,7 +83,7 @@ def build_authentication_token(endpoint, hub, key, **kwargs):
     if user:
         payload["sub"] = user
     if roles:
-        payload["Roles"] = roles
+        payload["roles"] = roles
 
     token = jwt.encode(payload, key, algorithm="HS256")
     return {
