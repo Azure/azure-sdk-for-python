@@ -892,6 +892,11 @@ class Metrics(GenMetrics):
 
     :keyword str version:
         The version of Storage Analytics to configure. The default value is 1.0.
+    :keyword bool enabled:
+        Indicates whether metrics are enabled for the Datalake service.
+        The default value is `False`.
+    :keyword bool include_apis:
+        Indicates whether metrics should generate summary statistics for called API operations.
     :keyword ~azure.storage.filedatalake.RetentionPolicy retention_policy:
         Determines how long the associated data should persist. If not specified the retention
         policy will be disabled by default.
@@ -899,8 +904,8 @@ class Metrics(GenMetrics):
 
     def __init__(self, **kwargs):
         self.version = kwargs.get('version', u'1.0')
-        self.enabled = False
-        self.include_apis = None
+        self.enabled = kwargs.get('enabled', False)
+        self.include_apis = kwargs.get('include_apis')
         self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
 
     @classmethod
