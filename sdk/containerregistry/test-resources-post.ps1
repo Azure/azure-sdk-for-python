@@ -9,6 +9,14 @@ param (
 )
 
 try {
+    Import-Module -Name Az.Accounts -MinimumVersion 2.2.8
+}
+catch {
+    Install-Module -Name Az.Accounts -MinimumVersion 2.2.8 -Force -AllowClobber
+    Import-Module -Name Az.Accounts -MinimumVersion 2.2.8
+}
+
+try {
     Import-Module -Name Az.ContainerRegistry -MinimumVersion 2.0.0
 }
 catch {
