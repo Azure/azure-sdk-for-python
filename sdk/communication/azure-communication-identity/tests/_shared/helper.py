@@ -9,8 +9,10 @@ class URIIdentityReplacer(RecordingProcessor):
     """Replace the identity in request uri"""
     def process_request(self, request):
         import re
-        request.uri = re.sub('/identities/([^/?]+)', '/identities/sanitized', request.uri)
-        request.uri = re.sub('^(.*?)\\.communication.azure.com', 'https://sanitized.communication.azure.com', request.uri)
+        from urllib.parse import urlparse
+        resource_group = (urlparse(request.uri).netloc).split('.')[0]
+        request.uri = re.sub('/identities/([^/?]+)', '/identities/sanitized', request.uri) 
+        request.uri = re.sub(resource_group, 'sanitized', request.uri)
         return request
     
     def process_response(self, response):

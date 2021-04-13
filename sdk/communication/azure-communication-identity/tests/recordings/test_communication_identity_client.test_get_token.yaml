@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 09 Apr 2021 00:28:59 GMT
+      - Tue, 13 Apr 2021 16:52:01 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -29,9 +29,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 00:28:53 GMT
+      - Tue, 13 Apr 2021 16:52:02 GMT
       ms-cv:
-      - DlxPC+ghsEqXB9PpK57UDg.0
+      - aq14onULRki1NLbSUGWabA.0
       request-context:
       - appId=
       strict-transport-security:
@@ -39,7 +39,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 19ms
+      - 12ms
     status:
       code: 201
       message: Created
@@ -57,7 +57,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 09 Apr 2021 00:28:59 GMT
+      - Tue, 13 Apr 2021 16:52:01 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -66,16 +66,16 @@ interactions:
     uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-04-10T00:28:53.6730828+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2021-04-14T16:52:01.4335531+00:00"}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 00:28:54 GMT
+      - Tue, 13 Apr 2021 16:52:02 GMT
       ms-cv:
-      - ORB8smdzVEmBhdsGyB0Qhw.0
+      - REO5w0wQk0uL2QskabgjOg.0
       request-context:
       - appId=
       strict-transport-security:
@@ -83,7 +83,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 151ms
+      - 26ms
     status:
       code: 200
       message: OK

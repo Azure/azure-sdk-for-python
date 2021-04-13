@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 09 Apr 2021 00:28:52 GMT
+      - Tue, 13 Apr 2021 16:51:55 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -29,9 +29,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 00:28:46 GMT
+      - Tue, 13 Apr 2021 16:51:57 GMT
       ms-cv:
-      - WVLr72cx30G2nouhjEI91A.0
+      - CfoCEhN1dESd6lovVI/LoQ.0
       request-context:
       - appId=
       strict-transport-security:
@@ -39,7 +39,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 13ms
+      - 21ms
     status:
       code: 201
       message: Created

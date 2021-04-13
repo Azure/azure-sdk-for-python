@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 09 Apr 2021 00:28:53 GMT
+      - Tue, 13 Apr 2021 16:51:56 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -23,16 +23,16 @@ interactions:
   response:
     body:
       string: '{"identity": {"id": "sanitized"}, "accessToken": {"token": "sanitized",
-        "expiresOn": "2021-04-10T00:28:47.5210027+00:00"}}'
+        "expiresOn": "2021-04-14T16:51:56.7712133+00:00"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 00:28:48 GMT
+      - Tue, 13 Apr 2021 16:51:57 GMT
       ms-cv:
-      - 1Z7U5D7REkm4NwyNy0l/mg.0
+      - KUp9ARYxs0aX7qtDGzxY4g.0
       request-context:
       - appId=
       strict-transport-security:
@@ -40,7 +40,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 278ms
+      - 311ms
     status:
       code: 201
       message: Created

@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 09 Apr 2021 00:29:10 GMT
+      - Tue, 13 Apr 2021 16:52:12 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -22,12 +22,12 @@ interactions:
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Fri, 09 Apr 2021 00:29:05 GMT
-      ms-cv: WGuboYfs+kaeGmif/nFD/A.0
+      date: Tue, 13 Apr 2021 16:52:12 GMT
+      ms-cv: 7PzbjCB/+06Ei9HZqjyt/A.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 12ms
+      x-processing-time: 14ms
     status:
       code: 201
       message: Created
@@ -42,7 +42,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 09 Apr 2021 00:29:11 GMT
+      - Tue, 13 Apr 2021 16:52:12 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -51,16 +51,16 @@ interactions:
     uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-04-10T00:29:05.1077628+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2021-04-14T16:52:12.1719631+00:00"}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Fri, 09 Apr 2021 00:29:05 GMT
-      ms-cv: utu+yEF++EeoxnO/IZXgMA.0
+      date: Tue, 13 Apr 2021 16:52:12 GMT
+      ms-cv: zNjzHS37rUOrfAw25Lxhew.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 146ms
+      x-processing-time: 32ms
     status:
       code: 200
       message: OK

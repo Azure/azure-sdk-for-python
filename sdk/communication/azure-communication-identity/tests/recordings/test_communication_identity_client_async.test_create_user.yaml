@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 09 Apr 2021 00:29:05 GMT
+      - Tue, 13 Apr 2021 16:52:06 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -22,8 +22,8 @@ interactions:
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Fri, 09 Apr 2021 00:28:59 GMT
-      ms-cv: z6ARSYiahEq3vIs0jmJmZg.0
+      date: Tue, 13 Apr 2021 16:52:06 GMT
+      ms-cv: AlKrXB3gu02dDDjsadd5Kg.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
