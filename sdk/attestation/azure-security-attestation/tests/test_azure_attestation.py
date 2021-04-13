@@ -198,7 +198,7 @@ class AzureAttestationTest(AzureTestCase):
 #             cert = cryptography.x509.load_der_x509_certificate(der_cert)
 #             print('Policy Management Certificate iss:', cert.issuer, '}; subject: ', cert.subject)
             
-    def create_client(self, base_uri) -> AttestationClient:
+    def create_client(self, base_uri): #type() -> AttestationClient
             """
             docstring
             """
@@ -208,7 +208,7 @@ class AzureAttestationTest(AzureTestCase):
                 instance_url=base_uri)
             return attest_client
 
-    def create_admin_client(self, base_uri) -> AttestationAdministrationClient:
+    def create_admin_client(self, base_uri): #type() -> AttestationAdministrationClient:
             """
             docstring
             """
@@ -218,13 +218,13 @@ class AzureAttestationTest(AzureTestCase):
                 instance_url=base_uri)
             return attest_client
 
-    def shared_client(self, location_name: str) -> AttestationClient:
+    def shared_client(self, location_name: str): #type() -> AttestationClient:
             """
             docstring
             """
             return self.create_client(self.shared_base_uri(location_name))
 
-    def shared_admin_client(self, location_name: str) -> AttestationAdministrationClient:
+    def shared_admin_client(self, location_name: str): #type() -> AttestationAdministrationClient:
             """
             docstring
             """

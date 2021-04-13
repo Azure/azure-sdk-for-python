@@ -58,7 +58,7 @@ class AttestationClient(object):
         return self._client.metadata_configuration.get()
 
     @distributed_trace
-    def get_signing_certificates(self) -> List[AttestationSigner]:
+    def get_signing_certificates(self): # type: () ->List[AttestationSigner]
         """ Returns the set of signing certificates used to sign attestation tokens.
         """
         signing_certificates = self._client.signing_certificates.get()
