@@ -15,16 +15,15 @@ if TYPE_CHECKING:
 import base64
 
 class Base64Url:
+    """Equivalent to base64.urlsafe_b64encode, but strips padding from the encoded and decoded strings.
+    """
     @staticmethod
     def encode(unencoded):
-        base64val= base64.b64encode(unencoded)
-        strip_trailing=base64val.split("=")[0] # pick the string before the trailing =
-        converted = strip_trailing.replace("+", "-").replace("/", "_")
-        return converted
+        base64val= base64.urlsafe_b64encode(unencoded)
+        strip_trailing=base64val.split(b'=')[0] # pick the string before the trailing =
+        return str(strip_trailing, 'utf-8')
 
     @staticmethod
     def decode(encoded):
-        converted = encoded.replace("-", "+").replace("_", "/")
-        padding_added = converted + "=" * ((len(converted)* -1) % 4)
-        return base64.b64decode(padding_added)
-
+        padding_added = encoded + "=" * ((len(encoded)* -1) % 4)
+        return base64.urlsafe_b64decode(padding_added)

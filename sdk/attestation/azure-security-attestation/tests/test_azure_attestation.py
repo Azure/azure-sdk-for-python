@@ -17,12 +17,11 @@
 # ----------------------
 
 import unittest
-from devtools_testutils import AzureTestCase, ResourceGroupPreparer, PowerShellPreparer
+from devtools_testutils import AzureTestCase, PowerShellPreparer
 import functools
 import cryptography
 import cryptography.x509
 import base64
-import pytest
 from azure.security.attestation import AttestationClient, AttestationAdministrationClient, AttestationType
 
 AttestationPreparer = functools.partial(
@@ -118,53 +117,39 @@ class AzureAttestationTest(AzureTestCase):
         assert(policy_response.value.startswith('version'))
         print('Token: ', policy_response.token)
 
-#     @AttestationPreparer()
-#     def test_isolated_get_policy_sgx(self, attestation_isolated_url):
-#         attest_client = self.create_client(attestation_isolated_url)
-#         default_policy_response = attest_client.policy.get(AttestationType.SGX_ENCLAVE)
-#         default_policy = default_policy_response.token
-#         policy_token = jwt.decode(
-#             default_policy, 
-#             options={"verify_signature":False, "verify_exp": False}, 
-#             leeway=10, 
-#             algorithms=["none", "RS256"])
-        
-#         verifyToken=True
-#         unverified_header = jwt.get_unverified_header(policy_token["x-ms-policy"])
-#         if (unverified_header.get('alg')=='none'):
-#           verifyToken = False
-#         policyjwt = jwt.decode(
-#             policy_token["x-ms-policy"],
-#             leeway=10,
-#             algorithms=["none", "RS256"],
-#             options={"verify_signature":False, 'verify_exp': False})
-#         base64urlpolicy = policyjwt.get("AttestationPolicy")
-#         policy = Base64Url.decode(encoded=base64urlpolicy)
-#         print("Default Policy: ", policy)
+    @AttestationPreparer()
+    def test_shared_get_policy_openenclave(self, attestation_location_short_name):
+        attest_client = self.shared_admin_client(attestation_location_short_name)
+        policy_response = attest_client.get_policy(AttestationType.OPEN_ENCLAVE)
+        print('Shared policy: ', policy_response.value)
+        assert(policy_response.value.startswith('version'))
+        print('Token: ', policy_response.token)
 
-#     @AttestationPreparer()
-#     def test_aad_get_policy_sgx(self, attestation_aad_url):
-#         attest_client = self.create_client(attestation_aad_url)
-#         default_policy_response = attest_client.policy.get(AttestationType.SGX_ENCLAVE)
-#         default_policy = default_policy_response.token
-#         policy_token = jwt.decode(
-#             default_policy, 
-#             options={"verify_signature":False, 'verify_exp': False},
-#             leeway=10, 
-#             algorithms=["none", "RS256"])
 
-#         verifyToken=True
-#         unverified_header = jwt.get_unverified_header(policy_token["x-ms-policy"])
-#         if (unverified_header.get('alg')=='none'):
-#           verifyToken = False
-#         policyjwt = jwt.decode(
-#             policy_token["x-ms-policy"],
-#             leeway=10,
-#             algorithms=["none", "RS256"],
-#             options={"verify_signature":False, 'verify_exp': False})
-#         base64urlpolicy = policyjwt.get("AttestationPolicy")
-#         policy = Base64Url.decode(encoded=base64urlpolicy)
-#         print("Default Policy: ", policy)
+    @AttestationPreparer()
+    def test_isolated_get_policy_sgx(self, attestation_isolated_url):
+        attest_client = self.create_admin_client(attestation_isolated_url)
+        policy_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+        print('Shared policy: ', policy_response.value)
+        assert(policy_response.value.startswith('version'))
+        print('Token: ', policy_response.token)
+
+    @AttestationPreparer()
+    def test_aad_get_policy_sgx(self, attestation_aad_url):
+        attest_client = self.create_admin_client(attestation_aad_url)
+        policy_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+        print('Shared policy: ', policy_response.value)
+        assert(policy_response.value.startswith('version'))
+        print('Token: ', policy_response.token)
+
+    @AttestationPreparer()
+    def test_aad_set_policy_sgx(self, attestation_aad_url):
+        attestation_policy = "version=1.0; authorizationrules{=> permit();}; issuancerules{};"
+
+        attest_client = self.create_admin_client(attestation_aad_url)
+        policy_set_response = attest_client.set_policy(AttestationType.SGX_ENCLAVE, attestation_policy)
+        policy_get_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+        assert policy_get_response.value == attestation_policy
 
 #     @AttestationPreparer()
 #     def test_aad_get_policy_management_signers(self, attestation_aad_url):

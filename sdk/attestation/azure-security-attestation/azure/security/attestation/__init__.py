@@ -8,7 +8,7 @@
 
 from ._client import AttestationClient
 from ._administration_client import AttestationAdministrationClient
-from ._models import AttestationResult, AttestationSigner, AttestationToken
+from ._models import AttestationResult, AttestationSigner, AttestationToken, SigningKey
 from ._generated.models import AttestationType
 from ._configuration import TokenValidationOptions
 from ._version import VERSION
@@ -22,6 +22,7 @@ __all__ = [
     'AttestationSigner',
     'AttestationResult',
     'TokenValidationOptions',
+    'SigningKey',
 ]
 
 try:
