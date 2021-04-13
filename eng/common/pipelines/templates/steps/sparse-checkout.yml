@@ -34,4 +34,3 @@ steps:
     - pwsh: git checkout ${{ repo.Commitish }}
       displayName: Sparse checkout at ${{ repo.Commitish }}
       workingDirectory: ${{ coalesce(repo.WorkingDirectory, format('{0}/{1}', '$(System.DefaultWorkingDirectory)', repo.Name)) }}
-      
