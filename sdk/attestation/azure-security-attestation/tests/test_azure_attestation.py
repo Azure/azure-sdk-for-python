@@ -30,7 +30,6 @@ AttestationPreparer = functools.partial(
 #            attestation_resource_group='yyyy',
 #            attestation_subscription_id='xxx',
 #            attestation_environment='AzureCloud',
-            attestation_location_short_name='luna',
             attestation_policy_signing_key0='keyvalue',
             attestation_policy_signing_key1='keyvalue',
             attestation_policy_signing_key2='keyvalue',
