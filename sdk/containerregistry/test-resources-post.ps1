@@ -8,9 +8,12 @@ param (
     [string] $TestApplicationSecret
 )
 
-if ($IsMacOS) {
-    Update-Module -Name Az.ContainerRegistry -Force
-    Import-Module Az.ContainerRegistry
+try {
+    Import-Module -Name Az.ContainerRegistry -MinimumVersion 2.0.0
+}
+catch {
+    Install-Module -Name Az.ContainerRegistry -MinimumVersion 2.0.0 -Force -AllowClobber
+    Import-Module -Name Az.ContainerRegistry -MinimumVersion 2.0.0
 }
 
 Import-AzContainerRegistryImage `
