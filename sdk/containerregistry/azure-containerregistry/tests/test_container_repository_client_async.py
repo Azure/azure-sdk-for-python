@@ -22,7 +22,7 @@ from azure.core.async_paging import AsyncItemPaged
 
 from asynctestcase import AsyncContainerRegistryTestClass
 from preparer import acr_preparer
-from constants import TO_BE_DELETED
+from constants import TO_BE_DELETED, DOES_NOT_EXIST, HELLO_WORLD
 
 
 class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
@@ -101,7 +101,7 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     async def test_delete_tag_does_not_exist(self, containerregistry_endpoint):
-        client = self.create_repository_client(containerregistry_endpoint, "hello-world")
+        client = self.create_repository_client(containerregistry_endpoint, HELLO_WORLD)
 
         with pytest.raises(ResourceNotFoundError):
             await client.delete_tag(TO_BE_DELETED)
@@ -129,8 +129,6 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     async def test_delete_repository_doesnt_exist(self, containerregistry_endpoint):
-        DOES_NOT_EXIST = "does_not_exist"
-
         repo_client = self.create_repository_client(containerregistry_endpoint, DOES_NOT_EXIST)
         with pytest.raises(ResourceNotFoundError):
             await repo_client.delete()
@@ -198,7 +196,7 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
         client = self.create_repository_client(containerregistry_endpoint, self.get_resource_name("repo"))
 
         with pytest.raises(ResourceNotFoundError):
-            await client.set_tag_properties("does_not_exist", ContentPermissions(can_delete=False))
+            await client.set_tag_properties(DOES_NOT_EXIST, ContentPermissions(can_delete=False))
 
     @acr_preparer()
     async def test_set_manifest_properties(self, containerregistry_endpoint, containerregistry_resource_group):

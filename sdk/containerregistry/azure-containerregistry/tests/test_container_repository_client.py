@@ -23,7 +23,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
 
 from testcase import ContainerRegistryTestClass, AcrBodyReplacer, FakeTokenCredential
-from constants import TO_BE_DELETED, DOES_NOT_EXIST
+from constants import TO_BE_DELETED, DOES_NOT_EXIST, HELLO_WORLD
 from preparer import acr_preparer
 
 
@@ -46,14 +46,14 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
     @acr_preparer()
     def test_delete_tag_does_not_exist(self, containerregistry_endpoint):
-        client = self.create_repository_client(containerregistry_endpoint, "hello-world")
+        client = self.create_repository_client(containerregistry_endpoint, HELLO_WORLD)
 
         with pytest.raises(ResourceNotFoundError):
             client.delete_tag(TO_BE_DELETED)
 
     @acr_preparer()
     def test_get_properties(self, containerregistry_endpoint):
-        repo_client = self.create_repository_client(containerregistry_endpoint, "hello-world")
+        repo_client = self.create_repository_client(containerregistry_endpoint, HELLO_WORLD)
 
         properties = repo_client.get_properties()
         assert isinstance(properties.content_permissions, ContentPermissions)
@@ -235,7 +235,7 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
         client = self.create_repository_client(containerregistry_endpoint, self.get_resource_name("repo"))
 
         with pytest.raises(ResourceNotFoundError):
-            client.set_tag_properties("does_not_exist", ContentPermissions(can_delete=False))
+            client.set_tag_properties(DOES_NOT_EXIST, ContentPermissions(can_delete=False))
 
     @acr_preparer()
     def test_set_manifest_properties(self, containerregistry_endpoint, containerregistry_resource_group):
