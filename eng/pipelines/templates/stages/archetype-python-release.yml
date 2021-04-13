@@ -56,7 +56,8 @@ stages:
                         ReleaseSha: $(Build.SourceVersion)
                         RepoId: Azure/azure-sdk-for-python
                         WorkingDirectory: $(System.DefaultWorkingDirectory)
-
+                    - template: eng/common/pipelines/templates/steps/retain-run.yml
+                    
           - ${{if ne(artifact.skipPublishPackage, 'true')}}:
             - deployment: PublishPackage
               displayName: "Publish to PyPI"
