@@ -10,7 +10,6 @@ import os
 import pytest
 import re
 import six
-import subprocess
 import time
 
 from azure.containerregistry import (
@@ -148,30 +147,7 @@ class ContainerRegistryTestClass(AzureTestCase):
         if not self.is_live:
             return
 
-        mgmt_client = ContainerRegistryManagementClient(DefaultAzureCredential(), os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"])
-        registry_uri = "registry.hub.docker.com"
-        rg_name = os.environ["CONTAINERREGISTRY_RESOURCE_GROUP"]
-        registry_name = os.environ["CONTAINERREGISTRY_REGISTRY_NAME"]
-
-        import_source = ImportSource(
-            source_image=repository,
-            registry_uri=registry_uri
-        )
-
-        import_params = ImportImageParameters(
-            mode=ImportMode.Force,
-            source=import_source,
-            target_tags=tags
-        )
-
-        result = mgmt_client.registries.begin_import_image(
-            rg_name,
-            registry_name,
-            parameters=import_params,
-        )
-
-        while not result.done():
-            pass
+        import_image(repository, tags)
 
     def _clean_up(self, endpoint):
         if not self.is_live:
@@ -256,22 +232,18 @@ class ContainerRegistryTestClass(AzureTestCase):
         assert tag_or_digest == expected_tag_or_digest
 
 
+# Moving this out of testcase so the fixture and individual tests can use it
 def import_image(repository, tags):
-    mgmt_client = ContainerRegistryManagementClient(DefaultAzureCredential(), os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"])
+    mgmt_client = ContainerRegistryManagementClient(
+        DefaultAzureCredential(), os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"]
+    )
     registry_uri = "registry.hub.docker.com"
     rg_name = os.environ["CONTAINERREGISTRY_RESOURCE_GROUP"]
     registry_name = os.environ["CONTAINERREGISTRY_REGISTRY_NAME"]
 
-    import_source = ImportSource(
-        source_image=repository,
-        registry_uri=registry_uri
-    )
+    import_source = ImportSource(source_image=repository, registry_uri=registry_uri)
 
-    import_params = ImportImageParameters(
-        mode=ImportMode.Force,
-        source=import_source,
-        target_tags=tags
-    )
+    import_params = ImportImageParameters(mode=ImportMode.Force, source=import_source, target_tags=tags)
 
     result = mgmt_client.registries.begin_import_image(
         rg_name,
@@ -292,7 +264,11 @@ def load_registry():
     ]
     tags = [
         [
-            "library/hello-world:latest", "library/hello-world:v1", "library/hello-world:v2", "library/hello-world:v3", "library/hello-world:v4"
+            "library/hello-world:latest",
+            "library/hello-world:v1",
+            "library/hello-world:v2",
+            "library/hello-world:v3",
+            "library/hello-world:v4",
         ],
         ["library/alpine"],
         ["library/busybox"],
