@@ -1,10 +1,10 @@
 ---
-topic: sample
+page_type: sample
 languages:
   - python
 products:
   - azure
-  - azure-search-documents
+  - azure-search
 ---
 
 # Samples for Azure Cognitive Search client library for Python
@@ -41,6 +41,8 @@ Then for common search index operations:
 * CRUD operations for indexers: [sample_indexers_operations.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/search/azure-search-documents/samples/sample_indexers_operations.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/search/azure-search-documents/samples/async_samples/sample_indexers_operations_async.py))
 
 * General workflow of indexer, datasource and index: [sample_indexer_datasource_skillset.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/search/azure-search-documents/samples/sample_indexer_datasource_skillset.py)
+
+* Semantic search: [sample_semantic_search.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/search/azure-search-documents/samples/sample_semantic_search.py)
 
 ## Prerequisites
 * Python 2.7, or 3.5 or later is required to use this package (3.5 or later if using asyncio)
