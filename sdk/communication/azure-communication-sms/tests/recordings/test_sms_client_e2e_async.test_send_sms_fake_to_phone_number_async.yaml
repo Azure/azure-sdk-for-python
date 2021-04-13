@@ -11,7 +11,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Sat, 10 Apr 2021 01:23:21 GMT
+      - Tue, 13 Apr 2021 18:38:09 GMT
       User-Agent:
       - azsdk-python-communication-sms/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -25,11 +25,11 @@ interactions:
     headers:
       api-supported-versions: 2020-07-20-preview1, 2020-08-20-preview, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Sat, 10 Apr 2021 01:23:16 GMT
-      ms-cv: IcKiMTowhUaSiaVY1iHXGg.0
+      date: Tue, 13 Apr 2021 18:38:10 GMT
+      ms-cv: XiBqPF17n0uN6sU/BdaG8A.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 494ms
+      x-processing-time: 403ms
     status:
       code: 202
       message: Accepted
