@@ -7,6 +7,7 @@ import copy
 from datetime import datetime
 import json
 import os
+import pytest
 import re
 import six
 import subprocess
@@ -253,3 +254,51 @@ class ContainerRegistryTestClass(AzureTestCase):
     def assert_registry_artifact(self, tag_or_digest, expected_tag_or_digest):
         assert isinstance(tag_or_digest, RegistryArtifactProperties)
         assert tag_or_digest == expected_tag_or_digest
+
+
+def import_image(repository, tags):
+    mgmt_client = ContainerRegistryManagementClient(DefaultAzureCredential(), os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"])
+    registry_uri = "registry.hub.docker.com"
+    rg_name = os.environ["CONTAINERREGISTRY_RESOURCE_GROUP"]
+    registry_name = os.environ["CONTAINERREGISTRY_REGISTRY_NAME"]
+
+    import_source = ImportSource(
+        source_image=repository,
+        registry_uri=registry_uri
+    )
+
+    import_params = ImportImageParameters(
+        mode=ImportMode.Force,
+        source=import_source,
+        target_tags=tags
+    )
+
+    result = mgmt_client.registries.begin_import_image(
+        rg_name,
+        registry_name,
+        parameters=import_params,
+    )
+
+    while not result.done():
+        pass
+
+
+@pytest.fixture(scope="session")
+def load_registry():
+    repos = [
+        "library/hello-world",
+        "library/alpine",
+        "library/busybox",
+    ]
+    tags = [
+        [
+            "library/hello-world:latest", "library/hello-world:v1", "library/hello-world:v2", "library/hello-world:v3", "library/hello-world:v4"
+        ],
+        ["library/alpine"],
+        ["library/busybox"],
+    ]
+    for repo, tag in zip(repos, tags):
+        try:
+            import_image(repo, tag)
+        except Exception as e:
+            print(e)
