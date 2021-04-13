@@ -32,9 +32,10 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
     def test_delete_tag(self, containerregistry_endpoint, containerregistry_resource_group):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        self.import_repo(
-            containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=repo, tag=tag
-        )
+        self.import_image("library/hello-world", ["{}:{}".format(repo, tag)])
+        # self.import_repo(
+        #     containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=repo, tag=tag
+        # )
 
         client = self.create_repository_client(containerregistry_endpoint, repo)
 
@@ -200,12 +201,13 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
     def test_set_tag_properties(self, containerregistry_endpoint, containerregistry_resource_group):
         repository = self.get_resource_name("repo")
         tag_identifier = self.get_resource_name("tag")
-        self.import_repo(
-            containerregistry_endpoint,
-            resource_group=containerregistry_resource_group,
-            tag=tag_identifier,
-            repository=repository,
-        )
+        self.import_image("library/hello-world", ["{}:{}".format(repository, tag_identifier)])
+        # self.import_repo(
+        #     containerregistry_endpoint,
+        #     resource_group=containerregistry_resource_group,
+        #     tag=tag_identifier,
+        #     repository=repository,
+        # )
 
         client = self.create_repository_client(containerregistry_endpoint, repository)
 
@@ -238,12 +240,13 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
     def test_set_manifest_properties(self, containerregistry_endpoint, containerregistry_resource_group):
         repository = self.get_resource_name("reposetmani")
         tag_identifier = self.get_resource_name("tag")
-        self.import_repo(
-            containerregistry_endpoint,
-            resource_group=containerregistry_resource_group,
-            tag=tag_identifier,
-            repository=repository,
-        )
+        self.import_image("library/hello-world", ["{}:{}".format(repository, tag_identifier)])
+        # self.import_repo(
+        #     containerregistry_endpoint,
+        #     resource_group=containerregistry_resource_group,
+        #     tag=tag_identifier,
+        #     repository=repository,
+        # )
 
         client = self.create_repository_client(containerregistry_endpoint, repository)
 
@@ -287,9 +290,10 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
     @acr_preparer()
     def test_delete_repository(self, containerregistry_endpoint, containerregistry_resource_group):
-        self.import_repo(
-            containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=TO_BE_DELETED
-        )
+        self.import_image("library/hello-world", [TO_BE_DELETED])
+        # self.import_repo(
+        #     containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=TO_BE_DELETED
+        # )
 
         reg_client = self.create_registry_client(containerregistry_endpoint)
         existing_repos = list(reg_client.list_repositories())
@@ -313,9 +317,10 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
     @acr_preparer()
     def test_delete_registry_artifact(self, containerregistry_endpoint, containerregistry_resource_group):
         repository = self.get_resource_name("repo")
-        self.import_repo(
-            containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=repository
-        )
+        self.import_image("library/hello-world", [repository])
+        # self.import_repo(
+        #     containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=repository
+        # )
 
         repo_client = self.create_repository_client(containerregistry_endpoint, repository)
 

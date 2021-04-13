@@ -142,6 +142,8 @@ class ContainerRegistryTestClass(AzureTestCase):
 
     def import_image(self, repository, tags):
         # type: (str, List[str]) -> None
+        # repository must be a docker hub repository
+        # tags is a List of repository/tag combos in the format <repository>:<tag>
         if not self.is_live:
             return
 
@@ -168,7 +170,7 @@ class ContainerRegistryTestClass(AzureTestCase):
         )
 
         while not result.done():
-            self.sleep(2)
+            pass
 
     def import_repo(self, endpoint, repository="hello-world", resource_group="fake_rg", tag=None):
         if not self.is_live:
