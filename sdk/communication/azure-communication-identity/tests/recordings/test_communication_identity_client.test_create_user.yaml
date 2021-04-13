@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Tue, 13 Apr 2021 16:51:55 GMT
+      - Tue, 13 Apr 2021 17:01:47 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -29,9 +29,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Apr 2021 16:51:57 GMT
+      - Tue, 13 Apr 2021 17:01:48 GMT
       ms-cv:
-      - CfoCEhN1dESd6lovVI/LoQ.0
+      - i3OIAYplJUen4KAdpFywJA.0
       request-context:
       - appId=
       strict-transport-security:

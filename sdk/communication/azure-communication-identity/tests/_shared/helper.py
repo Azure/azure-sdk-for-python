@@ -10,9 +10,9 @@ class URIIdentityReplacer(RecordingProcessor):
     def process_request(self, request):
         import re
         from urllib.parse import urlparse
-        resource_group = (urlparse(request.uri).netloc).split('.')[0]
+        resource = (urlparse(request.uri).netloc).split('.')[0]
         request.uri = re.sub('/identities/([^/?]+)', '/identities/sanitized', request.uri) 
-        request.uri = re.sub(resource_group, 'sanitized', request.uri)
+        request.uri = re.sub(resource, 'sanitized', request.uri)
         return request
     
     def process_response(self, response):
