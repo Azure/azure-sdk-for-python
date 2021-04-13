@@ -9,52 +9,54 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 29 Jan 2021 22:33:25 GMT
+      - Tue, 13 Apr 2021 17:54:37 GMT
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
-      api-supported-versions: 2020-07-20-preview2, 2021-03-07
+      api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Fri, 29 Jan 2021 22:33:24 GMT
-      ms-cv: E+HUdaa+gE+cpD1TJJKNSg.0
+      date: Tue, 13 Apr 2021 17:54:38 GMT
+      ms-cv: 1yFV4s+3E02VnBtVpTsgMw.0
+      request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 19ms
+      x-processing-time: 11ms
     status:
       code: 201
       message: Created
-    url: https://communicationzgvvggklwoa.communication.azure.com/identities?api-version=2021-03-07
+    url: https://lakshmanscommunication-communication.communication.azure.com/identities?api-version=2021-03-07
 - request:
     body: ''
     headers:
       Accept:
       - application/json
       Date:
-      - Fri, 29 Jan 2021 22:33:25 GMT
+      - Tue, 13 Apr 2021 17:54:37 GMT
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://communicationegrcrs.communication.azure.com/identities/sanitized?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/identities/sanitized?api-version=2021-03-07
   response:
     body:
       string: ''
     headers:
-      api-supported-versions: 2020-07-20-preview2, 2021-03-07
-      date: Fri, 29 Jan 2021 22:33:25 GMT
-      ms-cv: q02XjOHx2EKny82QMeoybA.0
+      api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
+      date: Tue, 13 Apr 2021 17:54:38 GMT
+      ms-cv: yrGfSuBG/E+5SV1IVD3agg.0
+      request-context: appId=
       strict-transport-security: max-age=2592000
-      x-processing-time: 854ms
+      x-processing-time: 479ms
     status:
       code: 204
       message: No Content
-    url: https://communicationzgvvggklwoa.communication.azure.com/identities/sanitized?api-version=2021-03-07
+    url: https://lakshmanscommunication-communication.communication.azure.com/identities/sanitized?api-version=2021-03-07
 version: 1
