@@ -400,9 +400,6 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             self.url,
             table_name=table_name,
             credential=self.credential,
-            key_resolver_function=self.key_resolver_function,
-            require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
             api_version=self.api_version,
             transport=self._client._client._pipeline._transport,  # pylint: disable=protected-access
             policies=self._policies,

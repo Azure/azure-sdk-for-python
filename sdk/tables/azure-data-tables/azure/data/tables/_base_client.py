@@ -126,10 +126,6 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                 LocationMode.SECONDARY: secondary_hostname,
             }
 
-        self.require_encryption = kwargs.get("require_encryption", False)
-        self.key_encryption_key = kwargs.get("key_encryption_key")
-        self.key_resolver_function = kwargs.get("key_resolver_function")
-
         self._configure_credential(self.credential)
         kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
