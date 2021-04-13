@@ -19,6 +19,8 @@ import azure.core.pipeline as corepipeline
 import azure.core.pipeline.policies as corepolicies
 import azure.core.pipeline.transport as coretransport
 
+from datetime import datetime, timedelta
+
 # Temporary location for types that eventually graduate to Azure Core
 from .core import rest as corerest
 
@@ -39,6 +41,8 @@ def build_authentication_token(endpoint, hub, key, **kwargs):
     :type hub: ~str
     :param key: Key to sign the token with.
     :type key: ~str
+    :keyword ttl: Optional ttl timedelta for the token. Default is 1 hour.
+    :type ttl: ~datetime.timedelta
     :keyword user: Optional user name (subject) for the token. Default is no user.
     :type user: ~str
     :keyword claims: Additional claims for the token.
@@ -52,11 +56,12 @@ def build_authentication_token(endpoint, hub, key, **kwargs):
     {
         'baseUrl': 'wss://contoso.com/api/webpubsub/client/hubs/theHub',
         'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...',
-        'url': 'wss://contoso.com/api/webpubsub/client/hubs/theHub?accessToken=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...'
+        'url': 'wss://contoso.com/api/webpubsub/client/hubs/theHub?access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...'
     }
     """
     user = kwargs.pop("user", None)
     claims = kwargs.pop("claims", {})
+    ttl = kwargs.pop("ttl", timedelta(hours=1))
     endpoint = endpoint.lower()
     if not endpoint.startswith("http://") and not endpoint.startswith("https://"):
         raise ValueError(
@@ -72,17 +77,17 @@ def build_authentication_token(endpoint, hub, key, **kwargs):
     client_endpoint = "ws" + endpoint[4:]
     client_url = "{}/client/hubs/{}".format(client_endpoint, hub)
     audience = "{}/client/hubs/{}".format(endpoint, hub)
-
-    payload = {"audience": audience, "expiresIn": "1h"}
+    
+    payload = {"aud": audience, "iat": datetime.utcnow(), "exp": datetime.utcnow() + ttl}
     payload.update(claims)
     if user:
-        payload.setdefault("subject", user)
+        payload.setdefault("sub", user)
 
     token = jwt.encode(payload, key, algorithm="HS256")
     return {
         "baseUrl": client_url,
         "token": token,
-        "url": "{}?accessToken={}".format(client_url, token),
+        "url": "{}?access_token={}".format(client_url, token),
     }
 
 
