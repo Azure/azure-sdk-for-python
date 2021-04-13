@@ -21,19 +21,18 @@ class ListIncidentsTest(PerfStressTest):
         self.service_client = SyncClient(service_endpoint, MetricsAdvisorKeyCredential(subscription_key, api_key))
         self.async_service_client = AsyncClient(service_endpoint, MetricsAdvisorKeyCredential(subscription_key, api_key))
 
-    async def global_setup(self):
-        await super().global_setup()
-
     async def close(self):
         await self.async_service_client.close()
         await super().close()
 
     def run_sync(self):
-        ret = list(self.service_client.list_incidents(
+        results = self.service_client.list_incidents(
             detection_configuration_id=self.anomaly_detection_configuration_id,
             start_time=datetime.datetime(2020, 1, 1, tzinfo=datetime.timezone.utc),
             end_time=datetime.datetime(2020, 10, 21, tzinfo=datetime.timezone.utc),
-        ))
+        )
+        for _ in results:
+            pass
 
     async def run_async(self):
         results = self.async_service_client.list_incidents(
@@ -41,6 +40,5 @@ class ListIncidentsTest(PerfStressTest):
             start_time=datetime.datetime(2020, 1, 1, tzinfo=datetime.timezone.utc),
             end_time=datetime.datetime(2020, 10, 21, tzinfo=datetime.timezone.utc),
         )
-        tolist = []
-        async for result in results:
-            tolist.append(result)
+        async for _ in results:
+            pass
