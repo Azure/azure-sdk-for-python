@@ -226,7 +226,7 @@ __all__ = [
     'BlobQueryError',
     'DelimitedJsonDialect',
     'DelimitedTextDialect',
-    'ParquetDialect'
+    'ParquetDialect',
     'ArrowDialect',
     'ArrowType',
     'BlobQueryReader',
