@@ -119,7 +119,6 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
         default_api_version = self._client._config.version  # pylint: disable=protected-access
         self._client._config.version = get_api_version(kwargs, default_api_version)  # pylint: disable=protected-access
-        self._loop = kwargs.get('loop', None)
 
     @distributed_trace_async
     async def create_container(self, metadata=None, public_access=None, **kwargs):
@@ -1207,4 +1206,4 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function, loop=self._loop)
+            key_resolver_function=self.key_resolver_function)
