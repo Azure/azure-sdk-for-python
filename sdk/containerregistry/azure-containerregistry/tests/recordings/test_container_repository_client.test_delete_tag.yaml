@@ -1,5 +1,94 @@
 interactions:
 - request:
+    body: '{"source": {"registryUri": "registry.hub.docker.com", "sourceImage": "library/hello-world"},
+      "targetTags": ["repoeb7113db:tageb7113db"], "mode": "Force"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '153'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/8.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://management.azure.com/subscriptions/2cd617ea-1866-46b1-90e3-fffb087ebf9b/resourceGroups/fake_rg/providers/Microsoft.ContainerRegistry/registries/seankane/importImage?api-version=2019-05-01
+  response:
+    body:
+      string: 'null'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '4'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 13 Apr 2021 16:25:24 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/2cd617ea-1866-46b1-90e3-fffb087ebf9b/providers/Microsoft.ContainerRegistry/locations/WESTUS2/operationResults/registries-d95c2805-9c74-11eb-9841-002b67128e4c?api-version=2019-05-01
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/8.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/2cd617ea-1866-46b1-90e3-fffb087ebf9b/providers/Microsoft.ContainerRegistry/locations/WESTUS2/operationResults/registries-d95c2805-9c74-11eb-9841-002b67128e4c?api-version=2019-05-01
+  response:
+    body:
+      string: '{"status": "Succeeded"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '22'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 13 Apr 2021 16:25:37 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
     body: null
     headers:
       Accept:
@@ -31,7 +120,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 14:58:21 GMT
+      - Tue, 13 Apr 2021 16:25:38 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -72,7 +161,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 14:58:22 GMT
+      - Tue, 13 Apr 2021 16:25:40 GMT
       server:
       - openresty
       strict-transport-security:
@@ -80,7 +169,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.5'
+      - '166.616667'
     status:
       code: 200
       message: OK
@@ -110,7 +199,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 14:58:22 GMT
+      - Tue, 13 Apr 2021 16:25:40 GMT
       server:
       - openresty
       strict-transport-security:
@@ -118,7 +207,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.483333'
+      - '166.6'
     status:
       code: 200
       message: OK
@@ -139,7 +228,7 @@ interactions:
     body:
       string: '{"registry": "fake_url.azurecr.io", "imageName": "repoeb7113db", "tag":
         {"name": "tageb7113db", "digest": "sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24",
-        "createdTime": "2021-04-09T14:58:13.4512193Z", "lastUpdateTime": "2021-04-09T14:58:13.4512193Z",
+        "createdTime": "2021-04-13T16:25:28.2023232Z", "lastUpdateTime": "2021-04-13T16:25:28.2023232Z",
         "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
         true, "readEnabled": true, "listEnabled": true}}}'
     headers:
@@ -155,7 +244,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 14:58:23 GMT
+      - Tue, 13 Apr 2021 16:25:40 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -202,7 +291,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 14:58:23 GMT
+      - Tue, 13 Apr 2021 16:25:40 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -243,7 +332,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 14:58:23 GMT
+      - Tue, 13 Apr 2021 16:25:41 GMT
       server:
       - openresty
       strict-transport-security:
@@ -251,7 +340,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.466667'
+      - '166.583333'
     status:
       code: 200
       message: OK
@@ -281,7 +370,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 14:58:23 GMT
+      - Tue, 13 Apr 2021 16:25:41 GMT
       server:
       - openresty
       strict-transport-security:
@@ -289,7 +378,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.45'
+      - '166.566667'
     status:
       code: 200
       message: OK
@@ -322,7 +411,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 09 Apr 2021 14:58:23 GMT
+      - Tue, 13 Apr 2021 16:25:42 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -335,7 +424,7 @@ interactions:
       x-ms-int-docker-content-digest:
       - sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24
       x-ms-ratelimit-remaining-calls-per-second:
-      - '32.000000'
+      - '8.000000'
     status:
       code: 202
       message: Accepted
@@ -371,7 +460,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 14:58:29 GMT
+      - Tue, 13 Apr 2021 16:25:47 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -412,7 +501,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 14:58:29 GMT
+      - Tue, 13 Apr 2021 16:25:48 GMT
       server:
       - openresty
       strict-transport-security:
@@ -420,7 +509,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.433333'
+      - '166.55'
     status:
       code: 200
       message: OK
@@ -450,7 +539,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 14:58:29 GMT
+      - Tue, 13 Apr 2021 16:25:48 GMT
       server:
       - openresty
       strict-transport-security:
@@ -458,7 +547,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.416667'
+      - '166.1'
     status:
       code: 200
       message: OK
@@ -492,7 +581,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 14:58:29 GMT
+      - Tue, 13 Apr 2021 16:25:48 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
