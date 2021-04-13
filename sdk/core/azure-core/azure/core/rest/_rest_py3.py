@@ -545,6 +545,12 @@ class _HttpResponseBase:
         :rtype: iterator[bytes]
         """
 
+    def _validate_streaming_access(self) -> None:
+        if self.is_closed:
+            raise TypeError("Can not iterate over stream, it is closed.")
+        if self.is_stream_consumed:
+            raise TypeError("Can not iterate over stream, it has been fully consumed")
+
 class HttpResponse(_HttpResponseBase):
 
     @property
@@ -567,9 +573,16 @@ class HttpResponse(_HttpResponseBase):
         Read the response's bytes.
 
         """
-        if not hasattr(self, "_content"):
-            self._content = self._internal_response.internal_response.read()
-        return self._content
+        try:
+            return self._content
+        except AttributeError:
+            self._validate_streaming_access()
+            self._content = (
+                self._internal_response.body() or
+                b"".join(self.iter_raw())
+            )
+            self._close_stream()
+            return self._content
 
     def iter_bytes(self, chunk_size: int = None) -> Iterator[bytes]:
         """Iterate over the bytes in the response stream
@@ -596,20 +609,20 @@ class HttpResponse(_HttpResponseBase):
             for line in lines:
                 yield line
 
+    def _close_stream(self) -> None:
+        self.is_stream_consumed = True
+        self.close()
+
     def iter_raw(self, chunk_size: int = None) -> Iterator[bytes]:
         """Iterate over the raw response bytes
         """
-        if self.is_closed:
-            raise TypeError("Can not iterate over stream, it is closed.")
-        if self.is_stream_consumed:
-            raise TypeError("Can not iterate over stream, it has been fully consumed")
+        self._validate_streaming_access()
         stream_download = self._internal_response.stream_download(None, chunk_size=chunk_size)
         for raw_bytes in stream_download:
             self._num_bytes_downloaded += len(raw_bytes)
             yield raw_bytes
 
-        self.is_stream_consumed = True
-        self.close()  # close after iterating through everything
+        self._close_stream()
 
 
 class AsyncHttpResponse(_HttpResponseBase):
@@ -621,14 +634,23 @@ class AsyncHttpResponse(_HttpResponseBase):
         except AttributeError:
             raise TypeError("You have not read in the response's bytes yet. Call response.read() first.")
 
+    async def _close_stream(self) -> None:
+        self.is_stream_consumed = True
+        await self.close()
+
     async def read(self) -> bytes:
         """
         Read the response's bytes.
 
         """
-        if not hasattr(self, "_content"):
-            self._content = await self._internal_response.internal_response.read()
-        return self._content
+        try:
+            return self._content
+        except AttributeError:
+            self._validate_streaming_access()
+            await self._internal_response.load_body()
+            self._content = self._internal_response._body
+            await self._close_stream()
+            return self._content
 
     async def iter_bytes(self, chunk_size: int = None) -> Iterator[bytes]:
         """Iterate over the bytes in the response stream
@@ -658,17 +680,13 @@ class AsyncHttpResponse(_HttpResponseBase):
     async def iter_raw(self, chunk_size: int = None) -> Iterator[bytes]:
         """Iterate over the raw response bytes
         """
-        if self.is_closed:
-            raise TypeError("Can not iterate over stream, it is closed.")
-        if self.is_stream_consumed:
-            raise TypeError("Can not iterate over stream, it has been fully consumed")
+        self._validate_streaming_access()
         stream_download = self._internal_response.stream_download(None, chunk_size=chunk_size)
         async for raw_bytes in stream_download:
             self._num_bytes_downloaded += len(raw_bytes)
             yield raw_bytes
 
-        self.is_stream_consumed = True
-        await self.close()  # close after iterating through everything
+        await self._close_stream()
 
     async def close(self) -> None:
         self.is_closed = True

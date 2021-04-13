@@ -154,7 +154,6 @@ def test_rest_sync_streaming_response():
     assert response.content == file_bytes
     assert response.is_closed
 
-
 def test_rest_cannot_read_after_stream_consumed():
     response = _create_http_response(url="https://httpbin.org/image/jpeg")
 

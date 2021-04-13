@@ -111,6 +111,7 @@ def test_rest_response_repr():
         content=b"Hello, world!",
         headers=headers
     )
+    response.read()
     assert repr(response) == "<HttpResponse: 200 OK, Content-Type: text-plain>"
 
 def test_rest_response_content_type_encoding():

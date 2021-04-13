@@ -48,7 +48,8 @@ async def test_rest_response():
 
     assert response.status_code == 200
     assert response.reason == "OK"
-    await response.read()
+    content = await response.read()
+    assert content == b"Hello, world!"
     assert response.text == "Hello, world!"
     assert response.request.method == "GET"
     assert response.request.url == "https://example.org"
@@ -61,7 +62,8 @@ async def test_rest_response_content():
 
     assert response.status_code == 200
     assert response.reason == "OK"
-    await response.read()
+    content = await response.read()
+    assert content == b"Hello, world!"
     assert response.text == "Hello, world!"
     response.raise_for_status()
 
@@ -75,7 +77,8 @@ async def test_rest_response_text():
 
     assert response.status_code == 200
     assert response.reason == "OK"
-    await response.read()
+    content = await response.read()
+    assert content == b"Hello, world!"
     assert response.text == "Hello, world!"
     assert response.headers == {
         "Content-Length": "13",
@@ -90,7 +93,8 @@ async def test_rest_response_html():
 
     assert response.status_code == 200
     assert response.reason == "OK"
-    await response.read()
+    content = await response.read()
+    assert content == b"<html><body>Hello, world!</html></body>"
     assert response.text == "<html><body>Hello, world!</html></body>"
     response.raise_for_status()
 
@@ -131,7 +135,8 @@ async def test_rest_response_content_type_encoding():
         content=content,
         headers=headers,
     )
-    await response.read()
+    content == await response.read()
+    assert content == b'Latin 1: \xff'
     assert response.text == "Latin 1: ÿ"
     assert response.encoding == "latin-1"
 
@@ -183,7 +188,8 @@ async def test_rest_response_no_charset_with_ascii_content():
     )
     assert response.status_code == 200
     assert response.encoding is None
-    await response.read()
+    content = await response.read()
+    assert content == b"Hello, world!"
     assert response.text == "Hello, world!"
 
 
@@ -200,7 +206,8 @@ async def test_rest_response_no_charset_with_iso_8859_1_content():
         content=content,
         headers=headers,
     )
-    await response.read()
+    content = await response.read()
+    assert content == b'Accented: \xd6sterreich'
     assert response.text == "Accented: Österreich"
     assert response.encoding is None
 
@@ -215,7 +222,8 @@ async def test_rest_response_set_explicit_encoding():
         headers=headers,
     )
     response.encoding = "latin-1"
-    await response.read()
+    content = await response.read()
+    assert content == b'Latin 1: \xff'
     assert response.text == "Latin 1: ÿ"
     assert response.encoding == "latin-1"
 
