@@ -109,9 +109,6 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
     @acr_preparer()
     async def test_delete_repository(self, containerregistry_endpoint, containerregistry_resource_group):
         self.import_image("library/hello-world", [TO_BE_DELETED])
-        # self.import_repo(
-        #     containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=TO_BE_DELETED
-        # )
 
         reg_client = self.create_registry_client(containerregistry_endpoint)
         existing_repos = []
@@ -142,9 +139,6 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
     async def test_delete_registry_artifact(self, containerregistry_endpoint, containerregistry_resource_group):
         repository = self.get_resource_name("repo")
         self.import_image("library/hello-world", [repository])
-        # self.import_repo(
-        #     containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=repository
-        # )
 
         repo_client = self.create_repository_client(containerregistry_endpoint, repository)
 
@@ -167,12 +161,6 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
         repository = self.get_resource_name("repo")
         tag_identifier = self.get_resource_name("tag")
         self.import_image("library/hello-world", ["{}:{}".format(repository, tag_identifier)])
-        # self.import_repo(
-        #     containerregistry_endpoint,
-        #     resource_group=containerregistry_resource_group,
-        #     tag=tag_identifier,
-        #     repository=repository,
-        # )
 
         client = self.create_repository_client(containerregistry_endpoint, repository)
 
@@ -194,6 +182,17 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
         assert not received.content_permissions.can_list
         assert not received.content_permissions.can_delete
 
+        # Reset them
+        await client.set_tag_properties(
+            tag_identifier,
+            ContentPermissions(
+                can_delete=True,
+                can_list=True,
+                can_read=True,
+                can_write=True,
+            ),
+        )
+
     @acr_preparer()
     async def test_set_tag_properties_does_not_exist(self, containerregistry_endpoint):
         client = self.create_repository_client(containerregistry_endpoint, self.get_resource_name("repo"))
@@ -206,12 +205,6 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
         repository = self.get_resource_name("reposet")
         tag_identifier = self.get_resource_name("tag")
         self.import_image("library/hello-world", ["{}:{}".format(repository, tag_identifier)])
-        # self.import_repo(
-        #     containerregistry_endpoint,
-        #     resource_group=containerregistry_resource_group,
-        #     tag=tag_identifier,
-        #     repository=repository,
-        # )
 
         client = self.create_repository_client(containerregistry_endpoint, repository)
 

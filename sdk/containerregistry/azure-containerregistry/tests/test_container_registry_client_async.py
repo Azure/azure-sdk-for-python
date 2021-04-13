@@ -64,9 +64,6 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     async def test_delete_repository(self, containerregistry_endpoint, containerregistry_resource_group):
         repository = self.get_resource_name("repo")
         self.import_image("library/hello-world", [repository])
-        # self.import_repo(
-        #     containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=repository
-        # )
         client = self.create_registry_client(containerregistry_endpoint)
 
         result = await client.delete_repository(repository)

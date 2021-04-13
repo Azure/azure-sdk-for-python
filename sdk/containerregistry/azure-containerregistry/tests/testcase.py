@@ -134,7 +134,7 @@ class ContainerRegistryTestClass(AzureTestCase):
     def __init__(self, method_name):
         super(ContainerRegistryTestClass, self).__init__(method_name)
         self.recording_processors.append(AcrBodyReplacer())
-        self.repository = "hello-world"
+        self.repository = "library/hello-world"
 
     def sleep(self, t):
         if self.is_live:
@@ -172,34 +172,6 @@ class ContainerRegistryTestClass(AzureTestCase):
         while not result.done():
             pass
 
-    def import_repo(self, endpoint, repository="hello-world", resource_group="fake_rg", tag=None):
-        if not self.is_live:
-            return
-
-        if tag:
-            repository = "{}:{}".format(repository, tag)
-        registry = endpoint.split(".")[0]
-        command = [
-            "pwsh",
-            "-Command",
-            "Get-Module",
-            "Az",
-            # "Import-AzContainerRegistryImage",
-            # "-ResourceGroupName",
-            # "'{}'".format(resource_group),
-            # "-RegistryName",
-            # "'{}'".format(registry),
-            # "-SourceImage",
-            # "'library/hello-world'",
-            # "-SourceRegistryUri",
-            # "'registry.hub.docker.com'",
-            # "-TargetTag",
-            # "'{}'".format(repository),
-            # "-Mode",
-            # "'Force'",
-        ]
-        subprocess.check_call(command)
-
     def _clean_up(self, endpoint):
         if not self.is_live:
             return
@@ -217,10 +189,19 @@ class ContainerRegistryTestClass(AzureTestCase):
                     except:
                         pass
 
-                try:
-                    reg_client.delete_repository(repo)
-                except:
-                    pass
+                for manifest in repo_client.list_registry_artifacts():
+                    try:
+                        p = manifest.content_permissions
+                        p.can_delete = True
+                        repo_client.set_manifest_properties(tag.digest, p)
+                    except:
+                        pass
+
+        for repo in reg_client.list_repositories():
+            try:
+                reg_client.delete_repository(repo)
+            except:
+                pass
 
     def get_credential(self):
         if self.is_live:

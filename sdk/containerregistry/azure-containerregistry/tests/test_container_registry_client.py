@@ -24,6 +24,7 @@ from preparer import acr_preparer
 class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     def test_list_repositories(self, containerregistry_endpoint):
+        self._clean_up(containerregistry_endpoint)
         client = self.create_registry_client(containerregistry_endpoint)
 
         repositories = client.list_repositories()
@@ -64,9 +65,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     def test_delete_repository(self, containerregistry_endpoint, containerregistry_resource_group):
         repository = self.get_resource_name("repo")
         self.import_image("library/hello-world", [repository])
-        # self.import_repo(
-        #     containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=repository
-        # )
         client = self.create_registry_client(containerregistry_endpoint)
 
         result = client.delete_repository(repository)
