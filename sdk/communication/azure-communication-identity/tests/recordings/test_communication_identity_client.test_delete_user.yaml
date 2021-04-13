@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Tue, 13 Apr 2021 17:01:50 GMT
+      - Tue, 13 Apr 2021 17:54:26 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -29,9 +29,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Apr 2021 17:01:50 GMT
+      - Tue, 13 Apr 2021 17:54:27 GMT
       ms-cv:
-      - VUajeho2E02NWRUMAB+j4A.0
+      - NpGxr/VCv0i3/F8p8B/PEw.0
       request-context:
       - appId=
       strict-transport-security:
@@ -55,7 +55,7 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Tue, 13 Apr 2021 17:01:50 GMT
+      - Tue, 13 Apr 2021 17:54:27 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -69,15 +69,15 @@ interactions:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
       date:
-      - Tue, 13 Apr 2021 17:01:51 GMT
+      - Tue, 13 Apr 2021 17:54:27 GMT
       ms-cv:
-      - HZXGrDDZo0+g437iN0b8kQ.0
+      - zRztRbFrrEe9RLXIARPN7w.0
       request-context:
       - appId=
       strict-transport-security:
       - max-age=2592000
       x-processing-time:
-      - 782ms
+      - 583ms
     status:
       code: 204
       message: No Content
