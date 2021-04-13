@@ -832,7 +832,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (str, **Any) -> Dict[str, Any]
         delimiter = '\n'
         input_format = kwargs.pop('blob_format', None)
-        input_parquet_format = type(input_format).__name__ == "ParquetDialect"
+        input_parquet_format = isinstance(input_format, ParquetDialect)
         if input_format and not input_parquet_format:
             try:
                 delimiter = input_format.lineterminator
@@ -844,7 +844,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                                      "DelimitedJsonDialect or ParquetDialect")
         output_format = kwargs.pop('output_format', None)
         if output_format:
-            if type(output_format).__name__ == "ParquetDialect":
+            if isinstance(output_format, ParquetDialect):
                 raise ValueError("ParquetDialect is invalid as an output format.")
             try:
                 delimiter = output_format.lineterminator
