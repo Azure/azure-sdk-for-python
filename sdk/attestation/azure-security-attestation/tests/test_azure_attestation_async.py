@@ -51,8 +51,9 @@ class AsyncAzureAttestationTest(AzureTestCase):
         open_id_metadata = (await attest_client.get_openidmetadata())
         print ('{}'.format(open_id_metadata))
         assert open_id_metadata["response_types_supported"] is not None
-        assert open_id_metadata["jwks_uri"] == self.shared_base_uri(attestation_location_short_name)+"/certs"
-        assert open_id_metadata["issuer"] == self.shared_base_uri(attestation_location_short_name)
+        if self.is_live:
+            assert open_id_metadata["jwks_uri"] == self.shared_base_uri(attestation_location_short_name)+"/certs"
+            assert open_id_metadata["issuer"] == self.shared_base_uri(attestation_location_short_name)
 
     def create_client(self, base_uri):
             """

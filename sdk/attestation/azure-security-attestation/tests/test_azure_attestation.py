@@ -63,8 +63,9 @@ class AzureAttestationTest(AzureTestCase):
         open_id_metadata = attest_client.get_openidmetadata()
         print ('{}'.format(open_id_metadata))
         assert open_id_metadata["response_types_supported"] is not None
-        assert open_id_metadata["jwks_uri"] == self.shared_base_uri(attestation_location_short_name)+"/certs"
-        assert open_id_metadata["issuer"] == self.shared_base_uri(attestation_location_short_name)
+        if self.is_live:
+            assert open_id_metadata["jwks_uri"] == self.shared_base_uri(attestation_location_short_name)+"/certs"
+            assert open_id_metadata["issuer"] == self.shared_base_uri(attestation_location_short_name)
 
     @AttestationPreparer()
     def test_aad_getopenidmetadata(self, attestation_aad_url):
@@ -72,8 +73,9 @@ class AzureAttestationTest(AzureTestCase):
         open_id_metadata = attest_client.get_openidmetadata()
         print ('{}'.format(open_id_metadata))
         assert open_id_metadata["response_types_supported"] is not None
-        assert open_id_metadata["jwks_uri"] == attestation_aad_url+"/certs"
-        assert open_id_metadata["issuer"] == attestation_aad_url
+        if self.is_live:
+            assert open_id_metadata["jwks_uri"] == attestation_aad_url+"/certs"
+            assert open_id_metadata["issuer"] == attestation_aad_url
 
     @AttestationPreparer()
     def test_isolated_getopenidmetadata(self, attestation_isolated_url):
@@ -81,8 +83,9 @@ class AzureAttestationTest(AzureTestCase):
         open_id_metadata = attest_client.get_openidmetadata()
         print ('{}'.format(open_id_metadata))
         assert open_id_metadata["response_types_supported"] is not None
-        assert open_id_metadata["jwks_uri"] == attestation_isolated_url+"/certs"
-        assert open_id_metadata["issuer"] == attestation_isolated_url
+        if self.is_live:
+            assert open_id_metadata["jwks_uri"] == attestation_isolated_url+"/certs"
+            assert open_id_metadata["issuer"] == attestation_isolated_url
 
     @AttestationPreparer()
     def test_shared_getsigningcertificates(self, attestation_location_short_name):
