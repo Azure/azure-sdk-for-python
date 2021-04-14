@@ -9,12 +9,15 @@ steps:
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
 
   - ${{ each artifact in parameters.Artifacts }}:
+
+    # Re-use the same script, differentiate on different args
     - task: PythonScript@0
       displayName: Generating code for ${{artifact.name}}
-      scriptPath: 'scripts/devops_tasks/generate_autorest.py'
-      arguments: >
-        --artifact=${{artifact.name}}
-        --
+      inputs:
+        scriptPath: 'scripts/devops_tasks/verify_autorest.py'
+        arguments: >
+          --artifact=${{artifact.name}}
+          --create_prs=True
 
 
 

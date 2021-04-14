@@ -75,8 +75,18 @@ if __name__ == "__main__":
         "--service_directory", help="Directory of the package being tested"
     )
 
-    args = parser.parse_args()
-    folders = run_autorest(args.service_directory)
+    parser.add_argument(
+        "--artifact", help="Package to generate autorest code for"
+    )
 
-    if len(folders):
-        check_diff()
+    args = parser.parse_args()
+
+    if args.artifact:
+        logging.info("Running autorest to generate PRs")
+        
+
+    if args.service_directory:
+        folders = run_autorest(args.service_directory)
+
+        if len(folders):
+            check_diff()

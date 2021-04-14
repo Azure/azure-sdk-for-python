@@ -57,6 +57,9 @@ parameters:
 - name: MatrixReplace
   type: object
   default: []
+- name: GenerateAutorest
+  type: boolean
+  default: false
 
 stages:
   - stage: Build
@@ -115,4 +118,4 @@ stages:
         ArtifactName: conda
         ${{ if eq(parameters.ServiceDirectory, 'template') }}:
           TestPipeline: true
-        
+
