@@ -205,7 +205,16 @@ class TableClient(AsyncTablesBaseClient):
                 table=self.table_name, table_acl=signed_identifiers or None, **kwargs
             )
         except HttpResponseError as error:
-            _process_table_error(error)
+            try:
+                _process_table_error(error)
+            except HttpResponseError as table_error:
+                if (table_error.error_code == 'InvalidXmlDocument'
+                and len(signed_identifiers) > 5):
+                    raise ValueError(
+                        'Too many access policies provided. The server does not support setting '
+                        'more than 5 access policies on a single resource.'
+                    )
+                raise
 
     @distributed_trace_async
     async def create_table(
