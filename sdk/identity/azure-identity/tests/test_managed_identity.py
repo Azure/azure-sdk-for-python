@@ -11,9 +11,12 @@ except ImportError:  # python < 3.3
     import mock  # type: ignore
 
 from azure.core.credentials import AccessToken
-from azure.core.exceptions import ClientAuthenticationError
+from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
+from azure.core.pipeline.policies import RetryPolicy
+from azure.core.pipeline.transport import HttpRequest
 from azure.identity import ManagedIdentityCredential
 from azure.identity._constants import Endpoints, EnvironmentVariables
+from azure.identity._internal.managed_identity_client import ManagedIdentityClient
 from azure.identity._internal.user_agent import USER_AGENT
 import pytest
 
@@ -670,3 +673,20 @@ def test_azure_arc_client_id():
 
     with pytest.raises(ClientAuthenticationError):
         credential.get_token("scope")
+
+
+def test_managed_identity_client_retry():
+    """ManagedIdentityClient should retry token requests"""
+
+    message = "can't connect"
+    transport = mock.Mock(send=mock.Mock(side_effect=ServiceRequestError(message)))
+    request_factory = mock.Mock()
+
+    client = ManagedIdentityClient(request_factory, transport=transport)
+
+    for method in ("GET", "POST"):
+        request_factory.return_value = HttpRequest(method, "https://localhost")
+        with pytest.raises(ServiceRequestError, match=message):
+            client.request_token("scope")
+        assert transport.send.call_count > 1
+        transport.send.reset_mock()

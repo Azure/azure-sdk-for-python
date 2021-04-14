@@ -1,0 +1,48 @@
+{% set name = "azure-core" %}
+{% set version = "2021.05.01" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: {{ environ.get('CORE_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  script_env:
+    - CORE_SOURCE_DISTRIBUTION
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - pip
+    - python
+    - requests >=2.18.4
+    - six >=1.11.0
+  run:
+    - python
+    - requests >=2.18.4
+    - six >=1.11.0
+
+test:
+  imports:
+    - azure.core
+    - azure.core.pipeline
+    - azure.core.pipeline.policies
+    - azure.core.pipeline.transport
+    - azure.core.polling
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Core Library for Python"
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - lmazuel,xiangyan99

@@ -31,16 +31,12 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: identity
-    AdditionalTestMatrix:
-      Linux_Python35_msal:
-        Pool: Azure Pipelines
-        OSVmImage: 'ubuntu-18.04'
-        PythonVersion: '3.5'
-        CoverageArg: ''
-        RunForPR: false
-        InjectedPackages: 'git+https://github.com/AzureAD/microsoft-authentication-library-for-python@dev'
-
-
+    # Override the base matrix due to https://github.com/Azure/azure-sdk-for-python/issues/17837
+    MatrixConfigs:
+      - Name: identity_ci_matrix
+        Path: sdk/identity/platform-matrix.json
+        Selection: sparse
+        GenerateVMJobs: true
     Artifacts:
-    - name: azure-identity
-      safeName: azureidentity
+     - name: azure-identity
+       safeName: azureidentity

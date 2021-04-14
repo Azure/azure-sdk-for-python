@@ -18,14 +18,14 @@ settings.tracing_implementation = OpenTelemetrySpan
 # for details
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
 
 # azure monitor trace exporter to send telemetry to appinsights
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
-span_processor = BatchExportSpanProcessor(
+span_processor = BatchSpanProcessor(
     AzureMonitorTraceExporter.from_connection_string(
         os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
     )

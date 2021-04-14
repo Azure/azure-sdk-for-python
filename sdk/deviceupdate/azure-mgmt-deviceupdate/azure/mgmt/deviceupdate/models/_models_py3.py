@@ -228,61 +228,92 @@ class AccountUpdate(TagUpdate):
         self.location = location
 
 
-class ErrorDefinition(msrest.serialization.Model):
-    """Error definition.
+class ErrorAdditionalInfo(msrest.serialization.Model):
+    """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar code: Error status code.
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: object
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorDefinition(msrest.serialization.Model):
+    """Error response indicates that the service is not able to process the incoming request.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar error: Error details.
+    :vartype error: ~device_update.models.ErrorResponse
+    """
+
+    _validation = {
+        'error': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorDefinition, self).__init__(**kwargs)
+        self.error = None
+
+
+class ErrorResponse(msrest.serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
     :vartype code: str
-    :ivar message: Error message.
+    :ivar message: The error message.
     :vartype message: str
-    :param details: Error details.
-    :type details: list[~device_update.models.ErrorDefinition]
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~device_update.models.ErrorResponse]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~device_update.models.ErrorAdditionalInfo]
     """
 
     _validation = {
         'code': {'readonly': True},
         'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
     }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDefinition]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        details: Optional[List["ErrorDefinition"]] = None,
-        **kwargs
-    ):
-        super(ErrorDefinition, self).__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.details = details
-
-
-class ErrorResponse(msrest.serialization.Model):
-    """Error response indicates that the service is not able to process the incoming request.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar code: Error status code.
-    :vartype code: str
-    :ivar error: Error details.
-    :vartype error: ~device_update.models.ErrorDefinition
-    """
-
-    _validation = {
-        'code': {'readonly': True},
-        'error': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorDefinition'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorResponse]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
     }
 
     def __init__(
@@ -291,7 +322,10 @@ class ErrorResponse(msrest.serialization.Model):
     ):
         super(ErrorResponse, self).__init__(**kwargs)
         self.code = None
-        self.error = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
 
 
 class Instance(TrackedResource):

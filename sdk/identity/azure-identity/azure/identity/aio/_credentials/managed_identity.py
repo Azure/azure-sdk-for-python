@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import abc
 import logging
 import os
 from typing import TYPE_CHECKING
@@ -14,6 +13,7 @@ from azure.core.pipeline.policies import AsyncRetryPolicy
 from .._authn_client import AsyncAuthnClient
 from .._internal import AsyncContextManager
 from .._internal.decorators import log_get_token_async
+from .._internal.get_token_mixin import GetTokenMixin
 from ... import CredentialUnavailableError
 from ..._constants import Endpoints, EnvironmentVariables
 from ..._credentials.managed_identity import _ManagedIdentityBase
@@ -109,17 +109,13 @@ class _AsyncManagedIdentityBase(_ManagedIdentityBase, AsyncContextManager):
 
         await self._client.__aexit__()
 
-    @abc.abstractmethod
-    async def get_token(self, *scopes, **kwargs):
-        pass
-
     @staticmethod
     def _create_config(**kwargs: "Any") -> "Configuration":
         """Build a default configuration for the credential's HTTP pipeline."""
         return _ManagedIdentityBase._create_config(retry_policy=AsyncRetryPolicy, **kwargs)
 
 
-class ImdsCredential(_AsyncManagedIdentityBase):
+class ImdsCredential(_AsyncManagedIdentityBase, GetTokenMixin):
     """Asynchronously authenticates with a managed identity via the IMDS endpoint.
 
     :keyword str client_id: ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
@@ -129,15 +125,10 @@ class ImdsCredential(_AsyncManagedIdentityBase):
         super().__init__(endpoint=Endpoints.IMDS, **kwargs)
         self._endpoint_available = None  # type: Optional[bool]
 
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> AccessToken:  # pylint:disable=unused-argument
-        """Asynchronously request an access token for `scopes`.
+    async def _acquire_token_silently(self, *scopes: str) -> "Optional[AccessToken]":
+        return self._client.get_cached_token(scopes)
 
-        This method is called automatically by Azure SDK clients.
-
-        :param str scopes: desired scope for the access token. This credential allows only one scope per request.
-        :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.identity.CredentialUnavailableError: the IMDS endpoint is unreachable
-        """
+    async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
         if self._endpoint_available is None:
             # Lacking another way to determine whether the IMDS endpoint is listening,
             # we send a request it would immediately reject (missing a required header),
@@ -160,18 +151,6 @@ class ImdsCredential(_AsyncManagedIdentityBase):
         if len(scopes) != 1:
             raise ValueError("This credential requires exactly one scope per token request.")
 
-        token = self._client.get_cached_token(scopes)
-        if not token:
-            token = await self._refresh_token(*scopes)
-        elif self._client.should_refresh(token):
-            try:
-                token = await self._refresh_token(*scopes)
-            except Exception:  # pylint: disable=broad-except
-                pass
-
-        return token
-
-    async def _refresh_token(self, *scopes):
         resource = scopes[0]
         if resource.endswith("/.default"):
             resource = resource[: -len("/.default")]

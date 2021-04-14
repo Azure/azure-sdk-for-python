@@ -1,0 +1,97 @@
+interactions:
+- request:
+    body: '!!! The request body has been omitted from the recording because its size
+      200581 is larger than 128KB. !!!'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '200581'
+      Content-Type:
+      - image/jpeg
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyze?includeTextDetails=false&pages=1
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - 91ef4348-a99c-4569-869f-799100c77106
+      content-length:
+      - '0'
+      date:
+      - Thu, 11 Mar 2021 18:03:01 GMT
+      operation-location:
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyzeResults/91ef4348-a99c-4569-869f-799100c77106
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '119'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyzeResults/91ef4348-a99c-4569-869f-799100c77106
+  response:
+    body:
+      string: '{"status": "succeeded", "createdDateTime": "2021-03-11T18:03:01Z",
+        "lastUpdatedDateTime": "2021-03-11T18:03:04Z", "analyzeResult": {"version":
+        "2.1.0", "readResults": [{"page": 1, "angle": -0.1897, "width": 795, "height":
+        501, "unit": "pixel"}], "documentResults": [{"docType": "prebuilt:idDocument:driverLicense",
+        "docTypeConfidence": 0.995, "pageRange": [1, 1], "fields": {"Address": {"type":
+        "string", "valueString": "123 NORTH MAIN STREET APT. 1 NORTH QUINCY, MA 02171-1748",
+        "text": "123 NORTH MAIN STREET APT. 1 NORTH QUINCY, MA 02171-1748", "boundingBox":
+        [339, 334, 636, 334, 636, 404, 339, 404], "page": 1, "confidence": 0.8}, "Country":
+        {"type": "country", "valueCountry": "USA", "confidence": 0.99}, "DateOfBirth":
+        {"type": "date", "valueDate": "1959-01-12", "text": "01/12/1959", "boundingBox":
+        [611, 198, 761, 198, 761, 227, 611, 228], "page": 1, "confidence": 0.994},
+        "DateOfExpiration": {"type": "date", "valueDate": "2021-01-12", "text": "01/12/2021",
+        "boundingBox": [444, 198, 569, 197, 568, 222, 445, 222], "page": 1, "confidence":
+        0.99}, "DocumentNumber": {"type": "string", "valueString": "S99988801", "text":
+        "S99988801", "boundingBox": [614, 154, 765, 153, 765, 183, 614, 183], "page":
+        1, "confidence": 0.99}, "FirstName": {"type": "string", "valueString": "CONNOR",
+        "text": "CONNOR", "boundingBox": [339, 308, 420, 306, 419, 325, 339, 326],
+        "page": 1, "confidence": 0.907}, "LastName": {"type": "string", "valueString":
+        "SAMPLE", "text": "SAMPLE", "boundingBox": [341, 271, 460, 272, 459, 303,
+        341, 303], "page": 1, "confidence": 0.951}, "Region": {"type": "string", "valueString":
+        "Massachusetts", "confidence": 0.99}, "Sex": {"type": "gender", "valueGender":
+        "M", "text": "M", "boundingBox": [398, 436, 409, 436, 408, 455, 398, 455],
+        "page": 1, "confidence": 0.99}}}]}}'
+    headers:
+      apim-request-id:
+      - cd684aac-3384-4552-9d3a-1ef9aebe46a5
+      content-length:
+      - '1612'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 11 Mar 2021 18:03:06 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '34'
+    status:
+      code: 200
+      message: OK
+version: 1

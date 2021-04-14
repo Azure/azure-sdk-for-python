@@ -12,7 +12,7 @@ from typing import Any, TYPE_CHECKING
 from azure.core.pipeline.policies import AsyncHTTPPolicy, AsyncRetryPolicy
 from azure.core.exceptions import AzureError
 
-from .._policies import is_retry, TablesRetryPolicy
+from .._policies import is_retry, increment, TablesRetryPolicy
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -168,8 +168,10 @@ class AsyncTablesRetryPolicy(AsyncRetryPolicy, TablesRetryPolicy):
             try:
                 response = await self.next.send(request)
                 if is_retry(response, retry_settings["mode"]):
-                    retries_remaining = self.increment(
-                        retry_settings, response=response.http_response
+                    retries_remaining = increment(
+                        retry_settings,
+                        request=request.http_request,
+                        response=response.http_response
                     )
                     if retries_remaining:
                         await retry_hook(
@@ -182,7 +184,8 @@ class AsyncTablesRetryPolicy(AsyncRetryPolicy, TablesRetryPolicy):
                         continue
                 break
             except AzureError as err:
-                retries_remaining = self.increment(retry_settings, error=err)
+                retries_remaining = increment(
+                    retry_settings, request=request.http_request, error=err)
                 if retries_remaining:
                     await retry_hook(
                         retry_settings,

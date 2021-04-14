@@ -9,24 +9,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
-      api-supported-versions: 2020-07-20-preview2, 2021-03-07
+      api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Fri, 29 Jan 2021 22:36:49 GMT
-      ms-cv: cUzRyy4LbUigYrZ7lbi4wA.0
+      date: Tue, 13 Apr 2021 17:54:45 GMT
+      ms-cv: 7i9QSGm+qU+VzI7p4eQEig.0
+      request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 238ms
+      x-processing-time: 12ms
     status:
       code: 201
       message: Created
-    url: https://communication5brewzlj3te.communication.azure.com/identities?api-version=2021-03-07
+    url: https://lakshmanscommunication-communication.communication.azure.com/identities?api-version=2021-03-07
 - request:
     body: '{"scopes": ["chat"]}'
     headers:
@@ -37,22 +38,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://communicationegrcrs.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-01-30T22:36:48.7283566+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2021-04-14T17:54:45.0423527+00:00"}'
     headers:
-      api-supported-versions: 2020-07-20-preview2, 2021-03-07
+      api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Fri, 29 Jan 2021 22:36:49 GMT
-      ms-cv: bFRoAJk3ikGgv2ot2Vwh4A.0
+      date: Tue, 13 Apr 2021 17:54:45 GMT
+      ms-cv: FgTOvdMakkCOCXl3WaKySQ.0
+      request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 26ms
+      x-processing-time: 126ms
     status:
       code: 200
       message: OK
-    url: https://communication5brewzlj3te.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
+    url: https://lakshmanscommunication-communication.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
 version: 1

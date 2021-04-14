@@ -79,12 +79,6 @@ class InAvailabilityReasonType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
 
-class KeySource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Encryption Key Source. Possible values are: 'Microsoft.NetApp'.
-    """
-
-    MICROSOFT_NET_APP = "Microsoft.NetApp"  #: The service manages the keys.
-
 class MirrorState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the replication
     """

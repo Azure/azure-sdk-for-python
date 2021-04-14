@@ -17,27 +17,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBForMySQL/servers/testserver21341?api-version=2017-12-01
   response:
     body:
-      string: '{"operation":"UpsertElasticServer","startTime":"2020-12-29T02:57:24.19Z"}'
+      string: '{"operation":"UpsertElasticServer","startTime":"2021-03-19T02:18:53.633Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/2d5e6d76-5d2b-4c97-a766-b7023790802e?api-version=2017-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/a8e9c1d6-8b27-4bb8-8d9f-1fe6e770b276?api-version=2017-12-01
       cache-control:
       - no-cache
       content-length:
-      - '73'
+      - '74'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 02:57:24 GMT
+      - Fri, 19 Mar 2021 02:18:54 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/operationResults/2d5e6d76-5d2b-4c97-a766-b7023790802e?api-version=2017-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/operationResults/a8e9c1d6-8b27-4bb8-8d9f-1fe6e770b276?api-version=2017-12-01
       pragma:
       - no-cache
       server:
@@ -61,12 +62,56 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/2d5e6d76-5d2b-4c97-a766-b7023790802e?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/a8e9c1d6-8b27-4bb8-8d9f-1fe6e770b276?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"2d5e6d76-5d2b-4c97-a766-b7023790802e","status":"InProgress","startTime":"2020-12-29T02:57:24.19Z"}'
+      string: '{"name":"a8e9c1d6-8b27-4bb8-8d9f-1fe6e770b276","status":"InProgress","startTime":"2021-03-19T02:18:53.633Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 19 Mar 2021 02:19:54 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/a8e9c1d6-8b27-4bb8-8d9f-1fe6e770b276?api-version=2017-12-01
+  response:
+    body:
+      string: '{"name":"a8e9c1d6-8b27-4bb8-8d9f-1fe6e770b276","status":"Succeeded","startTime":"2021-03-19T02:18:53.633Z"}'
     headers:
       cache-control:
       - no-cache
@@ -75,7 +120,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 02:58:24 GMT
+      - Fri, 19 Mar 2021 02:20:54 GMT
       expires:
       - '-1'
       pragma:
@@ -103,105 +148,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/2d5e6d76-5d2b-4c97-a766-b7023790802e?api-version=2017-12-01
-  response:
-    body:
-      string: '{"name":"2d5e6d76-5d2b-4c97-a766-b7023790802e","status":"InProgress","startTime":"2020-12-29T02:57:24.19Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '107'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 29 Dec 2020 02:59:25 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/2d5e6d76-5d2b-4c97-a766-b7023790802e?api-version=2017-12-01
-  response:
-    body:
-      string: '{"name":"2d5e6d76-5d2b-4c97-a766-b7023790802e","status":"Succeeded","startTime":"2020-12-29T02:57:24.19Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '106'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 29 Dec 2020 03:00:26 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBForMySQL/servers/testserver21341?api-version=2017-12-01
   response:
     body:
-      string: '{"sku":{"name":"GP_Gen5_2","tier":"GeneralPurpose","family":"Gen5","capacity":2},"properties":{"administratorLogin":"cloudsa","storageProfile":{"storageMB":128000,"backupRetentionDays":7,"geoRedundantBackup":"Enabled","storageAutogrow":"Disabled"},"version":"5.7","sslEnforcement":"Enabled","minimalTlsVersion":"TLSEnforcementDisabled","userVisibleState":"Ready","fullyQualifiedDomainName":"testserver21341.mysql.database.azure.com","earliestRestoreDate":"2020-12-29T03:07:24.473+00:00","replicationRole":"None","masterServerId":"","replicaCapacity":5,"byokEnforcement":"Disabled","privateEndpointConnections":[],"infrastructureEncryption":"Disabled","publicNetworkAccess":"Enabled"},"location":"eastus","tags":{"elastic_server":"1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBforMySQL/servers/testserver21341","name":"testserver21341","type":"Microsoft.DBforMySQL/servers"}'
+      string: '{"sku":{"name":"GP_Gen5_2","tier":"GeneralPurpose","family":"Gen5","capacity":2},"properties":{"administratorLogin":"cloudsa","storageProfile":{"storageMB":128000,"backupRetentionDays":7,"geoRedundantBackup":"Enabled","storageAutogrow":"Disabled"},"version":"5.7","sslEnforcement":"Enabled","minimalTlsVersion":"TLSEnforcementDisabled","userVisibleState":"Ready","fullyQualifiedDomainName":"testserver21341.mysql.database.azure.com","earliestRestoreDate":"2021-03-19T02:28:54.01+00:00","replicationRole":"None","masterServerId":"","replicaCapacity":5,"byokEnforcement":"Disabled","privateEndpointConnections":[],"infrastructureEncryption":"Disabled","publicNetworkAccess":"Enabled"},"location":"eastus","tags":{"elastic_server":"1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBforMySQL/servers/testserver21341","name":"testserver21341","type":"Microsoft.DBforMySQL/servers"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '965'
+      - '964'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:00:26 GMT
+      - Fri, 19 Mar 2021 02:20:55 GMT
       expires:
       - '-1'
       pragma:
@@ -234,15 +196,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBForMySQL/servers/serverreplica21341?api-version=2017-12-01
   response:
     body:
-      string: '{"operation":"CreateElasticServerContinuousCopy","startTime":"2020-12-29T03:00:34.287Z"}'
+      string: '{"operation":"CreateElasticServerContinuousCopy","startTime":"2021-03-19T02:20:56.103Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/4f8d2705-afce-4f50-91a7-a752a110946c?api-version=2017-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/d18171c5-7ebb-43b8-9873-ee7cabb5de33?api-version=2017-12-01
       cache-control:
       - no-cache
       content-length:
@@ -250,11 +213,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:00:33 GMT
+      - Fri, 19 Mar 2021 02:20:56 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/operationResults/4f8d2705-afce-4f50-91a7-a752a110946c?api-version=2017-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/operationResults/d18171c5-7ebb-43b8-9873-ee7cabb5de33?api-version=2017-12-01
       pragma:
       - no-cache
       server:
@@ -278,12 +241,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/4f8d2705-afce-4f50-91a7-a752a110946c?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/d18171c5-7ebb-43b8-9873-ee7cabb5de33?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"4f8d2705-afce-4f50-91a7-a752a110946c","status":"InProgress","startTime":"2020-12-29T03:00:34.287Z"}'
+      string: '{"name":"d18171c5-7ebb-43b8-9873-ee7cabb5de33","status":"InProgress","startTime":"2021-03-19T02:20:56.103Z"}'
     headers:
       cache-control:
       - no-cache
@@ -292,7 +256,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:01:04 GMT
+      - Fri, 19 Mar 2021 02:21:26 GMT
       expires:
       - '-1'
       pragma:
@@ -320,12 +284,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/4f8d2705-afce-4f50-91a7-a752a110946c?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/d18171c5-7ebb-43b8-9873-ee7cabb5de33?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"4f8d2705-afce-4f50-91a7-a752a110946c","status":"InProgress","startTime":"2020-12-29T03:00:34.287Z"}'
+      string: '{"name":"d18171c5-7ebb-43b8-9873-ee7cabb5de33","status":"InProgress","startTime":"2021-03-19T02:20:56.103Z"}'
     headers:
       cache-control:
       - no-cache
@@ -334,7 +299,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:01:34 GMT
+      - Fri, 19 Mar 2021 02:21:55 GMT
       expires:
       - '-1'
       pragma:
@@ -362,12 +327,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/4f8d2705-afce-4f50-91a7-a752a110946c?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/d18171c5-7ebb-43b8-9873-ee7cabb5de33?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"4f8d2705-afce-4f50-91a7-a752a110946c","status":"InProgress","startTime":"2020-12-29T03:00:34.287Z"}'
+      string: '{"name":"d18171c5-7ebb-43b8-9873-ee7cabb5de33","status":"InProgress","startTime":"2021-03-19T02:20:56.103Z"}'
     headers:
       cache-control:
       - no-cache
@@ -376,7 +342,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:02:04 GMT
+      - Fri, 19 Mar 2021 02:22:26 GMT
       expires:
       - '-1'
       pragma:
@@ -404,12 +370,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/4f8d2705-afce-4f50-91a7-a752a110946c?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/d18171c5-7ebb-43b8-9873-ee7cabb5de33?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"4f8d2705-afce-4f50-91a7-a752a110946c","status":"InProgress","startTime":"2020-12-29T03:00:34.287Z"}'
+      string: '{"name":"d18171c5-7ebb-43b8-9873-ee7cabb5de33","status":"InProgress","startTime":"2021-03-19T02:20:56.103Z"}'
     headers:
       cache-control:
       - no-cache
@@ -418,7 +385,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:02:35 GMT
+      - Fri, 19 Mar 2021 02:22:55 GMT
       expires:
       - '-1'
       pragma:
@@ -446,12 +413,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/4f8d2705-afce-4f50-91a7-a752a110946c?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/d18171c5-7ebb-43b8-9873-ee7cabb5de33?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"4f8d2705-afce-4f50-91a7-a752a110946c","status":"InProgress","startTime":"2020-12-29T03:00:34.287Z"}'
+      string: '{"name":"d18171c5-7ebb-43b8-9873-ee7cabb5de33","status":"InProgress","startTime":"2021-03-19T02:20:56.103Z"}'
     headers:
       cache-control:
       - no-cache
@@ -460,7 +428,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:03:06 GMT
+      - Fri, 19 Mar 2021 02:23:26 GMT
       expires:
       - '-1'
       pragma:
@@ -488,12 +456,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/4f8d2705-afce-4f50-91a7-a752a110946c?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/d18171c5-7ebb-43b8-9873-ee7cabb5de33?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"4f8d2705-afce-4f50-91a7-a752a110946c","status":"InProgress","startTime":"2020-12-29T03:00:34.287Z"}'
+      string: '{"name":"d18171c5-7ebb-43b8-9873-ee7cabb5de33","status":"InProgress","startTime":"2021-03-19T02:20:56.103Z"}'
     headers:
       cache-control:
       - no-cache
@@ -502,7 +471,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:03:36 GMT
+      - Fri, 19 Mar 2021 02:23:56 GMT
       expires:
       - '-1'
       pragma:
@@ -530,12 +499,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/4f8d2705-afce-4f50-91a7-a752a110946c?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/d18171c5-7ebb-43b8-9873-ee7cabb5de33?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"4f8d2705-afce-4f50-91a7-a752a110946c","status":"InProgress","startTime":"2020-12-29T03:00:34.287Z"}'
+      string: '{"name":"d18171c5-7ebb-43b8-9873-ee7cabb5de33","status":"InProgress","startTime":"2021-03-19T02:20:56.103Z"}'
     headers:
       cache-control:
       - no-cache
@@ -544,7 +514,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:04:06 GMT
+      - Fri, 19 Mar 2021 02:24:26 GMT
       expires:
       - '-1'
       pragma:
@@ -572,12 +542,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/4f8d2705-afce-4f50-91a7-a752a110946c?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/d18171c5-7ebb-43b8-9873-ee7cabb5de33?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"4f8d2705-afce-4f50-91a7-a752a110946c","status":"InProgress","startTime":"2020-12-29T03:00:34.287Z"}'
+      string: '{"name":"d18171c5-7ebb-43b8-9873-ee7cabb5de33","status":"InProgress","startTime":"2021-03-19T02:20:56.103Z"}'
     headers:
       cache-control:
       - no-cache
@@ -586,7 +557,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:04:37 GMT
+      - Fri, 19 Mar 2021 02:24:56 GMT
       expires:
       - '-1'
       pragma:
@@ -614,12 +585,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/4f8d2705-afce-4f50-91a7-a752a110946c?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/d18171c5-7ebb-43b8-9873-ee7cabb5de33?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"4f8d2705-afce-4f50-91a7-a752a110946c","status":"InProgress","startTime":"2020-12-29T03:00:34.287Z"}'
+      string: '{"name":"d18171c5-7ebb-43b8-9873-ee7cabb5de33","status":"InProgress","startTime":"2021-03-19T02:20:56.103Z"}'
     headers:
       cache-control:
       - no-cache
@@ -628,7 +600,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:05:07 GMT
+      - Fri, 19 Mar 2021 02:25:27 GMT
       expires:
       - '-1'
       pragma:
@@ -656,12 +628,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/4f8d2705-afce-4f50-91a7-a752a110946c?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/d18171c5-7ebb-43b8-9873-ee7cabb5de33?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"4f8d2705-afce-4f50-91a7-a752a110946c","status":"InProgress","startTime":"2020-12-29T03:00:34.287Z"}'
+      string: '{"name":"d18171c5-7ebb-43b8-9873-ee7cabb5de33","status":"InProgress","startTime":"2021-03-19T02:20:56.103Z"}'
     headers:
       cache-control:
       - no-cache
@@ -670,7 +643,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:05:38 GMT
+      - Fri, 19 Mar 2021 02:25:56 GMT
       expires:
       - '-1'
       pragma:
@@ -698,12 +671,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/4f8d2705-afce-4f50-91a7-a752a110946c?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/d18171c5-7ebb-43b8-9873-ee7cabb5de33?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"4f8d2705-afce-4f50-91a7-a752a110946c","status":"InProgress","startTime":"2020-12-29T03:00:34.287Z"}'
+      string: '{"name":"d18171c5-7ebb-43b8-9873-ee7cabb5de33","status":"InProgress","startTime":"2021-03-19T02:20:56.103Z"}'
     headers:
       cache-control:
       - no-cache
@@ -712,7 +686,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:06:08 GMT
+      - Fri, 19 Mar 2021 02:26:27 GMT
       expires:
       - '-1'
       pragma:
@@ -740,12 +714,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/4f8d2705-afce-4f50-91a7-a752a110946c?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/d18171c5-7ebb-43b8-9873-ee7cabb5de33?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"4f8d2705-afce-4f50-91a7-a752a110946c","status":"InProgress","startTime":"2020-12-29T03:00:34.287Z"}'
+      string: '{"name":"d18171c5-7ebb-43b8-9873-ee7cabb5de33","status":"InProgress","startTime":"2021-03-19T02:20:56.103Z"}'
     headers:
       cache-control:
       - no-cache
@@ -754,7 +729,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:06:38 GMT
+      - Fri, 19 Mar 2021 02:26:57 GMT
       expires:
       - '-1'
       pragma:
@@ -782,12 +757,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/4f8d2705-afce-4f50-91a7-a752a110946c?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/d18171c5-7ebb-43b8-9873-ee7cabb5de33?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"4f8d2705-afce-4f50-91a7-a752a110946c","status":"InProgress","startTime":"2020-12-29T03:00:34.287Z"}'
+      string: '{"name":"d18171c5-7ebb-43b8-9873-ee7cabb5de33","status":"InProgress","startTime":"2021-03-19T02:20:56.103Z"}'
     headers:
       cache-control:
       - no-cache
@@ -796,7 +772,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:07:10 GMT
+      - Fri, 19 Mar 2021 02:27:26 GMT
       expires:
       - '-1'
       pragma:
@@ -824,12 +800,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/4f8d2705-afce-4f50-91a7-a752a110946c?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/d18171c5-7ebb-43b8-9873-ee7cabb5de33?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"4f8d2705-afce-4f50-91a7-a752a110946c","status":"InProgress","startTime":"2020-12-29T03:00:34.287Z"}'
+      string: '{"name":"d18171c5-7ebb-43b8-9873-ee7cabb5de33","status":"InProgress","startTime":"2021-03-19T02:20:56.103Z"}'
     headers:
       cache-control:
       - no-cache
@@ -838,7 +815,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:07:40 GMT
+      - Fri, 19 Mar 2021 02:27:57 GMT
       expires:
       - '-1'
       pragma:
@@ -866,12 +843,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/4f8d2705-afce-4f50-91a7-a752a110946c?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/d18171c5-7ebb-43b8-9873-ee7cabb5de33?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"4f8d2705-afce-4f50-91a7-a752a110946c","status":"InProgress","startTime":"2020-12-29T03:00:34.287Z"}'
+      string: '{"name":"d18171c5-7ebb-43b8-9873-ee7cabb5de33","status":"InProgress","startTime":"2021-03-19T02:20:56.103Z"}'
     headers:
       cache-control:
       - no-cache
@@ -880,7 +858,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:08:10 GMT
+      - Fri, 19 Mar 2021 02:28:27 GMT
       expires:
       - '-1'
       pragma:
@@ -908,12 +886,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/4f8d2705-afce-4f50-91a7-a752a110946c?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/d18171c5-7ebb-43b8-9873-ee7cabb5de33?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"4f8d2705-afce-4f50-91a7-a752a110946c","status":"InProgress","startTime":"2020-12-29T03:00:34.287Z"}'
+      string: '{"name":"d18171c5-7ebb-43b8-9873-ee7cabb5de33","status":"InProgress","startTime":"2021-03-19T02:20:56.103Z"}'
     headers:
       cache-control:
       - no-cache
@@ -922,7 +901,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:08:40 GMT
+      - Fri, 19 Mar 2021 02:28:57 GMT
       expires:
       - '-1'
       pragma:
@@ -950,12 +929,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/4f8d2705-afce-4f50-91a7-a752a110946c?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/d18171c5-7ebb-43b8-9873-ee7cabb5de33?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"4f8d2705-afce-4f50-91a7-a752a110946c","status":"InProgress","startTime":"2020-12-29T03:00:34.287Z"}'
+      string: '{"name":"d18171c5-7ebb-43b8-9873-ee7cabb5de33","status":"InProgress","startTime":"2021-03-19T02:20:56.103Z"}'
     headers:
       cache-control:
       - no-cache
@@ -964,7 +944,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:09:11 GMT
+      - Fri, 19 Mar 2021 02:29:27 GMT
       expires:
       - '-1'
       pragma:
@@ -992,12 +972,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/4f8d2705-afce-4f50-91a7-a752a110946c?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/d18171c5-7ebb-43b8-9873-ee7cabb5de33?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"4f8d2705-afce-4f50-91a7-a752a110946c","status":"Succeeded","startTime":"2020-12-29T03:00:34.287Z"}'
+      string: '{"name":"d18171c5-7ebb-43b8-9873-ee7cabb5de33","status":"Succeeded","startTime":"2021-03-19T02:20:56.103Z"}'
     headers:
       cache-control:
       - no-cache
@@ -1006,7 +987,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:09:41 GMT
+      - Fri, 19 Mar 2021 02:29:57 GMT
       expires:
       - '-1'
       pragma:
@@ -1034,21 +1015,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBForMySQL/servers/serverreplica21341?api-version=2017-12-01
   response:
     body:
-      string: '{"sku":{"name":"GP_Gen5_2","tier":"GeneralPurpose","family":"Gen5","capacity":2},"properties":{"administratorLogin":"cloudsa","storageProfile":{"storageMB":128000,"backupRetentionDays":7,"geoRedundantBackup":"Enabled","storageAutogrow":"Enabled"},"version":"5.7","sslEnforcement":"Enabled","minimalTlsVersion":"TLSEnforcementDisabled","userVisibleState":"Ready","fullyQualifiedDomainName":"serverreplica21341.mysql.database.azure.com","earliestRestoreDate":"2020-12-29T03:11:50.943+00:00","replicationRole":"Replica","masterServerId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBforMySQL/servers/testserver21341","replicaCapacity":0,"byokEnforcement":"Disabled","privateEndpointConnections":[],"infrastructureEncryption":"Disabled","publicNetworkAccess":"Enabled"},"location":"eastus","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBforMySQL/servers/serverreplica21341","name":"serverreplica21341","type":"Microsoft.DBforMySQL/servers"}'
+      string: '{"sku":{"name":"GP_Gen5_2","tier":"GeneralPurpose","family":"Gen5","capacity":2},"properties":{"administratorLogin":"cloudsa","storageProfile":{"storageMB":128000,"backupRetentionDays":7,"geoRedundantBackup":"Enabled","storageAutogrow":"Enabled"},"version":"5.7","sslEnforcement":"Enabled","minimalTlsVersion":"TLSEnforcementDisabled","userVisibleState":"Ready","fullyQualifiedDomainName":"serverreplica21341.mysql.database.azure.com","earliestRestoreDate":"2021-03-19T02:32:09.01+00:00","replicationRole":"Replica","masterServerId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBforMySQL/servers/testserver21341","replicaCapacity":0,"byokEnforcement":"Disabled","privateEndpointConnections":[],"infrastructureEncryption":"Disabled","publicNetworkAccess":"Enabled"},"location":"eastus","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBforMySQL/servers/serverreplica21341","name":"serverreplica21341","type":"Microsoft.DBforMySQL/servers"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1106'
+      - '1105'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:09:42 GMT
+      - Fri, 19 Mar 2021 02:29:57 GMT
       expires:
       - '-1'
       pragma:
@@ -1080,27 +1062,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBForMySQL/servers/testserver21341/databases/testdatabase21341?api-version=2017-12-01
   response:
     body:
-      string: '{"operation":"UpsertElasticServerDatabase","startTime":"2020-12-29T03:09:42.84Z"}'
+      string: '{"operation":"UpsertElasticServerDatabase","startTime":"2021-03-19T02:29:58.193Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/8b9ba731-2ff5-4c26-b542-58222601447b?api-version=2017-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/008a47d9-7e5c-49c9-bea5-990ae2905d7f?api-version=2017-12-01
       cache-control:
       - no-cache
       content-length:
-      - '81'
+      - '82'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:09:42 GMT
+      - Fri, 19 Mar 2021 02:29:58 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/operationResults/8b9ba731-2ff5-4c26-b542-58222601447b?api-version=2017-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/operationResults/008a47d9-7e5c-49c9-bea5-990ae2905d7f?api-version=2017-12-01
       pragma:
       - no-cache
       server:
@@ -1124,21 +1107,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/8b9ba731-2ff5-4c26-b542-58222601447b?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/008a47d9-7e5c-49c9-bea5-990ae2905d7f?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"8b9ba731-2ff5-4c26-b542-58222601447b","status":"Succeeded","startTime":"2020-12-29T03:09:42.84Z"}'
+      string: '{"name":"008a47d9-7e5c-49c9-bea5-990ae2905d7f","status":"Succeeded","startTime":"2021-03-19T02:29:58.193Z"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '106'
+      - '107'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:09:58 GMT
+      - Fri, 19 Mar 2021 02:30:12 GMT
       expires:
       - '-1'
       pragma:
@@ -1166,7 +1150,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBForMySQL/servers/testserver21341/databases/testdatabase21341?api-version=2017-12-01
   response:
@@ -1180,7 +1165,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:09:59 GMT
+      - Fri, 19 Mar 2021 02:30:13 GMT
       expires:
       - '-1'
       pragma:
@@ -1212,27 +1197,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBForMySQL/servers/testserver21341/firewallRules/firewallrule?api-version=2017-12-01
   response:
     body:
-      string: '{"operation":"UpsertElasticServerFirewallRules","startTime":"2020-12-29T03:09:59.98Z"}'
+      string: '{"operation":"UpsertElasticServerFirewallRules","startTime":"2021-03-19T02:30:13.723Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/35c43d8b-91b3-4e69-839d-aca437ee37bd?api-version=2017-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/e4a5d4a1-cb22-47be-a58f-c3c046f648a0?api-version=2017-12-01
       cache-control:
       - no-cache
       content-length:
-      - '86'
+      - '87'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:09:59 GMT
+      - Fri, 19 Mar 2021 02:30:13 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/operationResults/35c43d8b-91b3-4e69-839d-aca437ee37bd?api-version=2017-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/operationResults/e4a5d4a1-cb22-47be-a58f-c3c046f648a0?api-version=2017-12-01
       pragma:
       - no-cache
       server:
@@ -1256,21 +1242,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/35c43d8b-91b3-4e69-839d-aca437ee37bd?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/e4a5d4a1-cb22-47be-a58f-c3c046f648a0?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"35c43d8b-91b3-4e69-839d-aca437ee37bd","status":"Succeeded","startTime":"2020-12-29T03:09:59.98Z"}'
+      string: '{"name":"e4a5d4a1-cb22-47be-a58f-c3c046f648a0","status":"Succeeded","startTime":"2021-03-19T02:30:13.723Z"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '106'
+      - '107'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:10:15 GMT
+      - Fri, 19 Mar 2021 02:30:28 GMT
       expires:
       - '-1'
       pragma:
@@ -1298,7 +1285,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBForMySQL/servers/testserver21341/firewallRules/firewallrule?api-version=2017-12-01
   response:
@@ -1312,7 +1300,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:10:15 GMT
+      - Fri, 19 Mar 2021 02:30:28 GMT
       expires:
       - '-1'
       pragma:
@@ -1344,15 +1332,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBforMySQL/servers/testserver21341/securityAlertPolicies/securityalertpolicy?api-version=2017-12-01
   response:
     body:
-      string: '{"operation":"UpsertServerThreatDetectionPolicy","startTime":"2020-12-29T03:10:16.947Z"}'
+      string: '{"operation":"UpsertServerThreatDetectionPolicy","startTime":"2021-03-19T02:30:29.537Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/East%20US/securityAlertPoliciesAzureAsyncOperation/51dc8c8a-d2bd-48ff-8871-5101a64830d9?api-version=2017-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/East%20US/securityAlertPoliciesAzureAsyncOperation/0c3ec0c3-a112-4863-8bad-0330a085fae0?api-version=2017-12-01
       cache-control:
       - no-cache
       content-length:
@@ -1360,11 +1349,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:10:16 GMT
+      - Fri, 19 Mar 2021 02:30:28 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/East%20US/securityAlertPoliciesOperationResults/51dc8c8a-d2bd-48ff-8871-5101a64830d9?api-version=2017-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/East%20US/securityAlertPoliciesOperationResults/0c3ec0c3-a112-4863-8bad-0330a085fae0?api-version=2017-12-01
       pragma:
       - no-cache
       server:
@@ -1388,12 +1377,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/East%20US/securityAlertPoliciesAzureAsyncOperation/51dc8c8a-d2bd-48ff-8871-5101a64830d9?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/East%20US/securityAlertPoliciesAzureAsyncOperation/0c3ec0c3-a112-4863-8bad-0330a085fae0?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"51dc8c8a-d2bd-48ff-8871-5101a64830d9","status":"Succeeded","startTime":"2020-12-29T03:10:16.947Z"}'
+      string: '{"name":"0c3ec0c3-a112-4863-8bad-0330a085fae0","status":"Succeeded","startTime":"2021-03-19T02:30:29.537Z"}'
     headers:
       cache-control:
       - no-cache
@@ -1402,7 +1392,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:10:20 GMT
+      - Fri, 19 Mar 2021 02:30:32 GMT
       expires:
       - '-1'
       pragma:
@@ -1430,12 +1420,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBforMySQL/servers/testserver21341/securityAlertPolicies/securityalertpolicy?api-version=2017-12-01
   response:
     body:
-      string: '{"properties":{"state":"Enabled","disabledAlerts":[""],"emailAddresses":[""],"emailAccountAdmins":false,"storageEndpoint":"","storageAccountAccessKey":"","retentionDays":0,"creationTime":"2020-12-29T03:10:17.073Z"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBforMySQL/servers/testserver21341/securityAlertPolicies/securityalertpolicy","name":"securityalertpolicy","type":"Microsoft.DBforMySQL/servers/securityAlertPolicies"}'
+      string: '{"properties":{"state":"Enabled","disabledAlerts":[""],"emailAddresses":[""],"emailAccountAdmins":false,"storageEndpoint":"","storageAccountAccessKey":"","retentionDays":0,"creationTime":"2021-03-19T02:30:29.677Z"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBforMySQL/servers/testserver21341/securityAlertPolicies/securityalertpolicy","name":"securityalertpolicy","type":"Microsoft.DBforMySQL/servers/securityAlertPolicies"}'
     headers:
       cache-control:
       - no-cache
@@ -1444,7 +1435,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:10:20 GMT
+      - Fri, 19 Mar 2021 02:30:32 GMT
       expires:
       - '-1'
       pragma:
@@ -1476,15 +1467,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBforMySQL/servers/testserver21341/securityAlertPolicies/securityalertpolicy?api-version=2017-12-01
   response:
     body:
-      string: '{"operation":"UpsertServerThreatDetectionPolicy","startTime":"2020-12-29T03:10:21.903Z"}'
+      string: '{"operation":"UpsertServerThreatDetectionPolicy","startTime":"2021-03-19T02:30:32.913Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/East%20US/securityAlertPoliciesAzureAsyncOperation/cf9ec490-0e96-4207-9f01-973066bb313a?api-version=2017-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/East%20US/securityAlertPoliciesAzureAsyncOperation/b757bde9-2555-4fe6-bc57-d1efcade41be?api-version=2017-12-01
       cache-control:
       - no-cache
       content-length:
@@ -1492,11 +1484,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:10:21 GMT
+      - Fri, 19 Mar 2021 02:30:32 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/East%20US/securityAlertPoliciesOperationResults/cf9ec490-0e96-4207-9f01-973066bb313a?api-version=2017-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/East%20US/securityAlertPoliciesOperationResults/b757bde9-2555-4fe6-bc57-d1efcade41be?api-version=2017-12-01
       pragma:
       - no-cache
       server:
@@ -1520,12 +1512,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/East%20US/securityAlertPoliciesAzureAsyncOperation/cf9ec490-0e96-4207-9f01-973066bb313a?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/East%20US/securityAlertPoliciesAzureAsyncOperation/b757bde9-2555-4fe6-bc57-d1efcade41be?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"cf9ec490-0e96-4207-9f01-973066bb313a","status":"Succeeded","startTime":"2020-12-29T03:10:21.903Z"}'
+      string: '{"name":"b757bde9-2555-4fe6-bc57-d1efcade41be","status":"Succeeded","startTime":"2021-03-19T02:30:32.913Z"}'
     headers:
       cache-control:
       - no-cache
@@ -1534,7 +1527,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:10:24 GMT
+      - Fri, 19 Mar 2021 02:30:35 GMT
       expires:
       - '-1'
       pragma:
@@ -1562,12 +1555,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBforMySQL/servers/testserver21341/securityAlertPolicies/securityalertpolicy?api-version=2017-12-01
   response:
     body:
-      string: '{"properties":{"state":"Disabled","disabledAlerts":[""],"emailAddresses":[""],"emailAccountAdmins":false,"storageEndpoint":"","storageAccountAccessKey":"","retentionDays":0,"creationTime":"2020-12-29T03:10:17.073Z"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBforMySQL/servers/testserver21341/securityAlertPolicies/securityalertpolicy","name":"securityalertpolicy","type":"Microsoft.DBforMySQL/servers/securityAlertPolicies"}'
+      string: '{"properties":{"state":"Disabled","disabledAlerts":[""],"emailAddresses":[""],"emailAccountAdmins":false,"storageEndpoint":"","storageAccountAccessKey":"","retentionDays":0,"creationTime":"2021-03-19T02:30:29.677Z"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBforMySQL/servers/testserver21341/securityAlertPolicies/securityalertpolicy","name":"securityalertpolicy","type":"Microsoft.DBforMySQL/servers/securityAlertPolicies"}'
     headers:
       cache-control:
       - no-cache
@@ -1576,7 +1570,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:10:25 GMT
+      - Fri, 19 Mar 2021 02:30:35 GMT
       expires:
       - '-1'
       pragma:
@@ -1604,12 +1598,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBforMySQL/servers/testserver21341/securityAlertPolicies/securityalertpolicy?api-version=2017-12-01
   response:
     body:
-      string: '{"properties":{"state":"Disabled","disabledAlerts":[""],"emailAddresses":[""],"emailAccountAdmins":false,"storageEndpoint":"","storageAccountAccessKey":"","retentionDays":0,"creationTime":"2020-12-29T03:10:17.073Z"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBforMySQL/servers/testserver21341/securityAlertPolicies/securityalertpolicy","name":"securityalertpolicy","type":"Microsoft.DBforMySQL/servers/securityAlertPolicies"}'
+      string: '{"properties":{"state":"Disabled","disabledAlerts":[""],"emailAddresses":[""],"emailAccountAdmins":false,"storageEndpoint":"","storageAccountAccessKey":"","retentionDays":0,"creationTime":"2021-03-19T02:30:29.677Z"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBforMySQL/servers/testserver21341/securityAlertPolicies/securityalertpolicy","name":"securityalertpolicy","type":"Microsoft.DBforMySQL/servers/securityAlertPolicies"}'
     headers:
       cache-control:
       - no-cache
@@ -1618,7 +1613,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:10:25 GMT
+      - Fri, 19 Mar 2021 02:30:35 GMT
       expires:
       - '-1'
       pragma:
@@ -1646,7 +1641,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBForMySQL/servers/testserver21341/firewallRules/firewallrule?api-version=2017-12-01
   response:
@@ -1660,7 +1656,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:10:26 GMT
+      - Fri, 19 Mar 2021 02:30:35 GMT
       expires:
       - '-1'
       pragma:
@@ -1688,7 +1684,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBForMySQL/servers/testserver21341/databases/testdatabase21341?api-version=2017-12-01
   response:
@@ -1702,7 +1699,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:10:26 GMT
+      - Fri, 19 Mar 2021 02:30:35 GMT
       expires:
       - '-1'
       pragma:
@@ -1730,21 +1727,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBForMySQL/servers/testserver21341?api-version=2017-12-01
   response:
     body:
-      string: '{"sku":{"name":"GP_Gen5_2","tier":"GeneralPurpose","family":"Gen5","capacity":2},"properties":{"administratorLogin":"cloudsa","storageProfile":{"storageMB":128000,"backupRetentionDays":7,"geoRedundantBackup":"Enabled","storageAutogrow":"Disabled"},"version":"5.7","sslEnforcement":"Enabled","minimalTlsVersion":"TLSEnforcementDisabled","userVisibleState":"Ready","fullyQualifiedDomainName":"testserver21341.mysql.database.azure.com","earliestRestoreDate":"2020-12-29T03:07:24.473+00:00","replicationRole":"Master","masterServerId":"","replicaCapacity":5,"byokEnforcement":"Disabled","privateEndpointConnections":[],"infrastructureEncryption":"Disabled","publicNetworkAccess":"Enabled"},"location":"eastus","tags":{"elastic_server":"1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBforMySQL/servers/testserver21341","name":"testserver21341","type":"Microsoft.DBforMySQL/servers"}'
+      string: '{"sku":{"name":"GP_Gen5_2","tier":"GeneralPurpose","family":"Gen5","capacity":2},"properties":{"administratorLogin":"cloudsa","storageProfile":{"storageMB":128000,"backupRetentionDays":7,"geoRedundantBackup":"Enabled","storageAutogrow":"Disabled"},"version":"5.7","sslEnforcement":"Enabled","minimalTlsVersion":"TLSEnforcementDisabled","userVisibleState":"Ready","fullyQualifiedDomainName":"testserver21341.mysql.database.azure.com","earliestRestoreDate":"2021-03-19T02:28:54.01+00:00","replicationRole":"Master","masterServerId":"","replicaCapacity":5,"byokEnforcement":"Disabled","privateEndpointConnections":[],"infrastructureEncryption":"Disabled","publicNetworkAccess":"Enabled"},"location":"eastus","tags":{"elastic_server":"1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBforMySQL/servers/testserver21341","name":"testserver21341","type":"Microsoft.DBforMySQL/servers"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '967'
+      - '966'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:10:26 GMT
+      - Fri, 19 Mar 2021 02:30:35 GMT
       expires:
       - '-1'
       pragma:
@@ -1772,7 +1770,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/providers/Microsoft.DBForMySQL/operations?api-version=2017-12-01
   response:
@@ -1904,7 +1903,9 @@ interactions:
         a server with the specified parameters or update the properties or tags for
         the specified server."}},{"name":"Microsoft.DBforMySQL/servers/delete","display":{"provider":"Microsoft
         DB for MySQL","resource":"MySQL Server","operation":"Delete MySQL Server","description":"Deletes
-        an existing server."}},{"name":"Microsoft.DBforMySQL/locations/operationResults/read","display":{"provider":"Microsoft
+        an existing server."}},{"name":"Microsoft.DBforMySQL/servers/performanceTiers/read","display":{"provider":"Microsoft
+        DB for MySQL","resource":"Performance Tiers","operation":"List Performance
+        Tiers","description":"Returns the list of Performance Tiers available."}},{"name":"Microsoft.DBforMySQL/locations/operationResults/read","display":{"provider":"Microsoft
         DB for MySQL","resource":"MySQL Server Operation Results","operation":"Get
         MySQL Server Operation Results","description":"Return MySQL Server Operation
         Results"}},{"name":"Microsoft.DBforMySQL/servers/restart/action","display":{"provider":"Microsoft
@@ -2036,11 +2037,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '31639'
+      - '31882'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:10:27 GMT
+      - Fri, 19 Mar 2021 02:30:36 GMT
       expires:
       - '-1'
       pragma:
@@ -2070,15 +2071,16 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBForMySQL/servers/testserver21341/restart?api-version=2017-12-01
   response:
     body:
-      string: '{"operation":"RestartElasticServer","startTime":"2020-12-29T03:10:28.937Z"}'
+      string: '{"operation":"RestartElasticServer","startTime":"2021-03-19T02:30:37.117Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/411bd491-3357-4908-83d8-76d3074a2c69?api-version=2017-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/30df9e01-eb86-4455-b500-9cb82fb9e721?api-version=2017-12-01
       cache-control:
       - no-cache
       content-length:
@@ -2086,11 +2088,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:10:28 GMT
+      - Fri, 19 Mar 2021 02:30:36 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/operationResults/411bd491-3357-4908-83d8-76d3074a2c69?api-version=2017-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/operationResults/30df9e01-eb86-4455-b500-9cb82fb9e721?api-version=2017-12-01
       pragma:
       - no-cache
       server:
@@ -2114,12 +2116,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/411bd491-3357-4908-83d8-76d3074a2c69?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/30df9e01-eb86-4455-b500-9cb82fb9e721?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"411bd491-3357-4908-83d8-76d3074a2c69","status":"InProgress","startTime":"2020-12-29T03:10:28.937Z"}'
+      string: '{"name":"30df9e01-eb86-4455-b500-9cb82fb9e721","status":"InProgress","startTime":"2021-03-19T02:30:37.117Z"}'
     headers:
       cache-control:
       - no-cache
@@ -2128,7 +2131,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:10:43 GMT
+      - Fri, 19 Mar 2021 02:30:51 GMT
       expires:
       - '-1'
       pragma:
@@ -2156,12 +2159,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/411bd491-3357-4908-83d8-76d3074a2c69?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/30df9e01-eb86-4455-b500-9cb82fb9e721?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"411bd491-3357-4908-83d8-76d3074a2c69","status":"InProgress","startTime":"2020-12-29T03:10:28.937Z"}'
+      string: '{"name":"30df9e01-eb86-4455-b500-9cb82fb9e721","status":"InProgress","startTime":"2021-03-19T02:30:37.117Z"}'
     headers:
       cache-control:
       - no-cache
@@ -2170,7 +2174,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:10:59 GMT
+      - Fri, 19 Mar 2021 02:31:07 GMT
       expires:
       - '-1'
       pragma:
@@ -2198,12 +2202,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/411bd491-3357-4908-83d8-76d3074a2c69?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/30df9e01-eb86-4455-b500-9cb82fb9e721?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"411bd491-3357-4908-83d8-76d3074a2c69","status":"InProgress","startTime":"2020-12-29T03:10:28.937Z"}'
+      string: '{"name":"30df9e01-eb86-4455-b500-9cb82fb9e721","status":"InProgress","startTime":"2021-03-19T02:30:37.117Z"}'
     headers:
       cache-control:
       - no-cache
@@ -2212,7 +2217,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:11:14 GMT
+      - Fri, 19 Mar 2021 02:31:22 GMT
       expires:
       - '-1'
       pragma:
@@ -2240,180 +2245,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/411bd491-3357-4908-83d8-76d3074a2c69?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/30df9e01-eb86-4455-b500-9cb82fb9e721?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"411bd491-3357-4908-83d8-76d3074a2c69","status":"InProgress","startTime":"2020-12-29T03:10:28.937Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 29 Dec 2020 03:11:30 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/411bd491-3357-4908-83d8-76d3074a2c69?api-version=2017-12-01
-  response:
-    body:
-      string: '{"name":"411bd491-3357-4908-83d8-76d3074a2c69","status":"InProgress","startTime":"2020-12-29T03:10:28.937Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 29 Dec 2020 03:11:45 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/411bd491-3357-4908-83d8-76d3074a2c69?api-version=2017-12-01
-  response:
-    body:
-      string: '{"name":"411bd491-3357-4908-83d8-76d3074a2c69","status":"InProgress","startTime":"2020-12-29T03:10:28.937Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 29 Dec 2020 03:12:01 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/411bd491-3357-4908-83d8-76d3074a2c69?api-version=2017-12-01
-  response:
-    body:
-      string: '{"name":"411bd491-3357-4908-83d8-76d3074a2c69","status":"InProgress","startTime":"2020-12-29T03:10:28.937Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 29 Dec 2020 03:12:16 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/411bd491-3357-4908-83d8-76d3074a2c69?api-version=2017-12-01
-  response:
-    body:
-      string: '{"name":"411bd491-3357-4908-83d8-76d3074a2c69","status":"Succeeded","startTime":"2020-12-29T03:10:28.937Z"}'
+      string: '{"name":"30df9e01-eb86-4455-b500-9cb82fb9e721","status":"Succeeded","startTime":"2021-03-19T02:30:37.117Z"}'
     headers:
       cache-control:
       - no-cache
@@ -2422,7 +2260,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:12:31 GMT
+      - Fri, 19 Mar 2021 02:31:38 GMT
       expires:
       - '-1'
       pragma:
@@ -2450,9 +2288,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/operationResults/411bd491-3357-4908-83d8-76d3074a2c69?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/operationResults/30df9e01-eb86-4455-b500-9cb82fb9e721?api-version=2017-12-01
   response:
     body:
       string: ''
@@ -2462,7 +2301,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 29 Dec 2020 03:12:32 GMT
+      - Fri, 19 Mar 2021 02:31:38 GMT
       expires:
       - '-1'
       pragma:
@@ -2490,15 +2329,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBForMySQL/servers/testserver21341?api-version=2017-12-01
   response:
     body:
-      string: '{"operation":"UpsertElasticServer","startTime":"2020-12-29T03:12:32.873Z"}'
+      string: '{"operation":"UpsertElasticServer","startTime":"2021-03-19T02:31:39.333Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/3a888c53-61d9-4d64-bae2-82fef7070b75?api-version=2017-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/9bb11f0a-8b2a-43b0-ae0b-bc9aa1fc2e79?api-version=2017-12-01
       cache-control:
       - no-cache
       content-length:
@@ -2506,11 +2346,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:12:33 GMT
+      - Fri, 19 Mar 2021 02:31:39 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/operationResults/3a888c53-61d9-4d64-bae2-82fef7070b75?api-version=2017-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/operationResults/9bb11f0a-8b2a-43b0-ae0b-bc9aa1fc2e79?api-version=2017-12-01
       pragma:
       - no-cache
       server:
@@ -2534,12 +2374,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/3a888c53-61d9-4d64-bae2-82fef7070b75?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/9bb11f0a-8b2a-43b0-ae0b-bc9aa1fc2e79?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"3a888c53-61d9-4d64-bae2-82fef7070b75","status":"Succeeded","startTime":"2020-12-29T03:12:32.873Z"}'
+      string: '{"name":"9bb11f0a-8b2a-43b0-ae0b-bc9aa1fc2e79","status":"Succeeded","startTime":"2021-03-19T02:31:39.333Z"}'
     headers:
       cache-control:
       - no-cache
@@ -2548,7 +2389,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:13:33 GMT
+      - Fri, 19 Mar 2021 02:32:39 GMT
       expires:
       - '-1'
       pragma:
@@ -2576,21 +2417,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBForMySQL/servers/testserver21341?api-version=2017-12-01
   response:
     body:
-      string: '{"sku":{"name":"GP_Gen5_2","tier":"GeneralPurpose","family":"Gen5","capacity":2},"properties":{"administratorLogin":"cloudsa","storageProfile":{"storageMB":128000,"backupRetentionDays":7,"geoRedundantBackup":"Enabled","storageAutogrow":"Disabled"},"version":"5.7","sslEnforcement":"Enabled","minimalTlsVersion":"TLSEnforcementDisabled","userVisibleState":"Ready","fullyQualifiedDomainName":"testserver21341.mysql.database.azure.com","earliestRestoreDate":"2020-12-29T03:07:24.473+00:00","replicationRole":"Master","masterServerId":"","replicaCapacity":5,"byokEnforcement":"Disabled","privateEndpointConnections":[],"infrastructureEncryption":"Disabled","publicNetworkAccess":"Enabled"},"location":"eastus","tags":{"elastic_server":"1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBforMySQL/servers/testserver21341","name":"testserver21341","type":"Microsoft.DBforMySQL/servers"}'
+      string: '{"sku":{"name":"GP_Gen5_2","tier":"GeneralPurpose","family":"Gen5","capacity":2},"properties":{"administratorLogin":"cloudsa","storageProfile":{"storageMB":128000,"backupRetentionDays":7,"geoRedundantBackup":"Enabled","storageAutogrow":"Disabled"},"version":"5.7","sslEnforcement":"Enabled","minimalTlsVersion":"TLSEnforcementDisabled","userVisibleState":"Ready","fullyQualifiedDomainName":"testserver21341.mysql.database.azure.com","earliestRestoreDate":"2021-03-19T02:28:54.01+00:00","replicationRole":"Master","masterServerId":"","replicaCapacity":5,"byokEnforcement":"Disabled","privateEndpointConnections":[],"infrastructureEncryption":"Disabled","publicNetworkAccess":"Enabled"},"location":"eastus","tags":{"elastic_server":"1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBforMySQL/servers/testserver21341","name":"testserver21341","type":"Microsoft.DBforMySQL/servers"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '967'
+      - '966'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:13:33 GMT
+      - Fri, 19 Mar 2021 02:32:40 GMT
       expires:
       - '-1'
       pragma:
@@ -2622,7 +2464,8 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBForMySQL/checkNameAvailability?api-version=2017-12-01
   response:
@@ -2636,7 +2479,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:13:35 GMT
+      - Fri, 19 Mar 2021 02:32:41 GMT
       expires:
       - '-1'
       pragma:
@@ -2668,27 +2511,28 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBForMySQL/servers/testserver21341/firewallRules/firewallrule?api-version=2017-12-01
   response:
     body:
-      string: '{"operation":"DropElasticServerFirewallRule","startTime":"2020-12-29T03:13:36.89Z"}'
+      string: '{"operation":"DropElasticServerFirewallRule","startTime":"2021-03-19T02:32:42.053Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/2f8024c7-171a-4da4-92f3-cce183edc439?api-version=2017-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/086b1f70-b2cd-489f-abd0-718a1b23c348?api-version=2017-12-01
       cache-control:
       - no-cache
       content-length:
-      - '83'
+      - '84'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:13:37 GMT
+      - Fri, 19 Mar 2021 02:32:43 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/operationResults/2f8024c7-171a-4da4-92f3-cce183edc439?api-version=2017-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/operationResults/086b1f70-b2cd-489f-abd0-718a1b23c348?api-version=2017-12-01
       pragma:
       - no-cache
       server:
@@ -2712,21 +2556,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/2f8024c7-171a-4da4-92f3-cce183edc439?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/086b1f70-b2cd-489f-abd0-718a1b23c348?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"2f8024c7-171a-4da4-92f3-cce183edc439","status":"Succeeded","startTime":"2020-12-29T03:13:36.89Z"}'
+      string: '{"name":"086b1f70-b2cd-489f-abd0-718a1b23c348","status":"Succeeded","startTime":"2021-03-19T02:32:42.053Z"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '106'
+      - '107'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:13:52 GMT
+      - Fri, 19 Mar 2021 02:32:58 GMT
       expires:
       - '-1'
       pragma:
@@ -2756,15 +2601,16 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBForMySQL/servers/testserver21341/databases/testdatabase21341?api-version=2017-12-01
   response:
     body:
-      string: '{"operation":"DropElasticServerDatabase","startTime":"2020-12-29T03:13:53.733Z"}'
+      string: '{"operation":"DropElasticServerDatabase","startTime":"2021-03-19T02:32:59.383Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/293836f3-0e7f-472b-8210-e164fc0f5045?api-version=2017-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/e5f17ca6-b482-4a3c-acbf-462eddffcb7d?api-version=2017-12-01
       cache-control:
       - no-cache
       content-length:
@@ -2772,11 +2618,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:13:52 GMT
+      - Fri, 19 Mar 2021 02:32:58 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/operationResults/293836f3-0e7f-472b-8210-e164fc0f5045?api-version=2017-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/operationResults/e5f17ca6-b482-4a3c-acbf-462eddffcb7d?api-version=2017-12-01
       pragma:
       - no-cache
       server:
@@ -2800,12 +2646,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/293836f3-0e7f-472b-8210-e164fc0f5045?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/e5f17ca6-b482-4a3c-acbf-462eddffcb7d?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"293836f3-0e7f-472b-8210-e164fc0f5045","status":"Succeeded","startTime":"2020-12-29T03:13:53.733Z"}'
+      string: '{"name":"e5f17ca6-b482-4a3c-acbf-462eddffcb7d","status":"Succeeded","startTime":"2021-03-19T02:32:59.383Z"}'
     headers:
       cache-control:
       - no-cache
@@ -2814,7 +2661,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:14:09 GMT
+      - Fri, 19 Mar 2021 02:33:14 GMT
       expires:
       - '-1'
       pragma:
@@ -2844,27 +2691,28 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mysql_test_mysqlc1430c84/providers/Microsoft.DBForMySQL/servers/testserver21341?api-version=2017-12-01
   response:
     body:
-      string: '{"operation":"DropElasticServer","startTime":"2020-12-29T03:14:10.47Z"}'
+      string: '{"operation":"DropElasticServer","startTime":"2021-03-19T02:33:14.757Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/55ccc733-a4fc-48c3-8716-d83d59e48454?api-version=2017-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/610e9538-97a7-4f39-8001-a2c199464301?api-version=2017-12-01
       cache-control:
       - no-cache
       content-length:
-      - '71'
+      - '72'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:14:10 GMT
+      - Fri, 19 Mar 2021 02:33:14 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/operationResults/55ccc733-a4fc-48c3-8716-d83d59e48454?api-version=2017-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/operationResults/610e9538-97a7-4f39-8001-a2c199464301?api-version=2017-12-01
       pragma:
       - no-cache
       server:
@@ -2888,21 +2736,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-rdbms/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-rdbms/unknown Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/55ccc733-a4fc-48c3-8716-d83d59e48454?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/eastus/azureAsyncOperation/610e9538-97a7-4f39-8001-a2c199464301?api-version=2017-12-01
   response:
     body:
-      string: '{"name":"55ccc733-a4fc-48c3-8716-d83d59e48454","status":"Succeeded","startTime":"2020-12-29T03:14:10.47Z"}'
+      string: '{"name":"610e9538-97a7-4f39-8001-a2c199464301","status":"Succeeded","startTime":"2021-03-19T02:33:14.757Z"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '106'
+      - '107'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 29 Dec 2020 03:14:25 GMT
+      - Fri, 19 Mar 2021 02:33:29 GMT
       expires:
       - '-1'
       pragma:

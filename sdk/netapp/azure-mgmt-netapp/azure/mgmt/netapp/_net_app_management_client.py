@@ -25,6 +25,7 @@ from .operations import PoolsOperations
 from .operations import VolumesOperations
 from .operations import SnapshotsOperations
 from .operations import SnapshotPoliciesOperations
+from .operations import VolumeBackupStatusOperations
 from .operations import AccountBackupsOperations
 from .operations import BackupsOperations
 from .operations import BackupPoliciesOperations
@@ -33,7 +34,7 @@ from . import models
 
 
 class NetAppManagementClient(object):
-    """Microsoft NetApp Azure Resource Provider specification.
+    """Microsoft NetApp Files Azure Resource Provider specification.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.netapp.operations.Operations
@@ -49,6 +50,8 @@ class NetAppManagementClient(object):
     :vartype snapshots: azure.mgmt.netapp.operations.SnapshotsOperations
     :ivar snapshot_policies: SnapshotPoliciesOperations operations
     :vartype snapshot_policies: azure.mgmt.netapp.operations.SnapshotPoliciesOperations
+    :ivar volume_backup_status: VolumeBackupStatusOperations operations
+    :vartype volume_backup_status: azure.mgmt.netapp.operations.VolumeBackupStatusOperations
     :ivar account_backups: AccountBackupsOperations operations
     :vartype account_backups: azure.mgmt.netapp.operations.AccountBackupsOperations
     :ivar backups: BackupsOperations operations
@@ -95,6 +98,8 @@ class NetAppManagementClient(object):
         self.snapshots = SnapshotsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.snapshot_policies = SnapshotPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.volume_backup_status = VolumeBackupStatusOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.account_backups = AccountBackupsOperations(
             self._client, self._config, self._serialize, self._deserialize)

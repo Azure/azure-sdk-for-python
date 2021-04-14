@@ -18,4 +18,4 @@ def main(event: func.EventGridEvent):
     logging.info(result)
     deserialized_event = EventGridEvent.from_dict(json.loads(result))
     ## can only be EventGridEvent
-    print("model: {}".format(event.model))
+    print("event: {}".format(event))

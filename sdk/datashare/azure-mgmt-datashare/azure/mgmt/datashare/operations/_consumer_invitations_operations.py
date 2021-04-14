@@ -67,7 +67,7 @@ class ConsumerInvitationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-11-01"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -105,7 +105,7 @@ class ConsumerInvitationsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DataShareError, response)
+                error = self._deserialize.failsafe_deserialize(_models.DataShareError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -114,7 +114,7 @@ class ConsumerInvitationsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_invitations.metadata = {'url': '/providers/Microsoft.DataShare/ListInvitations'}  # type: ignore
+    list_invitations.metadata = {'url': '/providers/Microsoft.DataShare/listInvitations'}  # type: ignore
 
     def get(
         self,
@@ -141,7 +141,7 @@ class ConsumerInvitationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-11-01"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         # Construct URL
@@ -166,7 +166,7 @@ class ConsumerInvitationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DataShareError, response)
+            error = self._deserialize.failsafe_deserialize(_models.DataShareError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ConsumerInvitation', pipeline_response)
@@ -202,7 +202,7 @@ class ConsumerInvitationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-11-01"
+        api_version = "2020-09-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -231,7 +231,7 @@ class ConsumerInvitationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DataShareError, response)
+            error = self._deserialize.failsafe_deserialize(_models.DataShareError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ConsumerInvitation', pipeline_response)
@@ -240,4 +240,4 @@ class ConsumerInvitationsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    reject_invitation.metadata = {'url': '/providers/Microsoft.DataShare/locations/{location}/RejectInvitation'}  # type: ignore
+    reject_invitation.metadata = {'url': '/providers/Microsoft.DataShare/locations/{location}/rejectInvitation'}  # type: ignore

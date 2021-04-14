@@ -42,6 +42,8 @@ if TYPE_CHECKING:
 
 
 class AadClientBase(ABC):
+    _POST = ["POST"]
+
     def __init__(self, tenant_id, client_id, authority=None, cache=None, **kwargs):
         # type: (str, str, Optional[str], Optional[TokenCache], **Any) -> None
         authority = normalize_authority(authority) if authority else get_default_authority()
@@ -66,19 +68,6 @@ class AadClientBase(ABC):
         # type: (Iterable[str]) -> List[dict]
         """Assumes all cached refresh tokens belong to the same user"""
         return self._cache.find(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes))
-
-    def should_refresh(self, token):
-        # type: (AccessToken) -> bool
-        """ check if the token needs refresh or not
-        """
-        expires_on = int(token.expires_on)
-        now = int(time.time())
-        if expires_on - now > self._token_refresh_offset:
-            return False
-        if now - self._last_refresh_time < self._token_refresh_retry_delay:
-            return False
-        return True
-
 
     @abc.abstractmethod
     def obtain_token_by_authorization_code(self, scopes, code, redirect_uri, client_secret=None, **kwargs):
@@ -127,7 +116,7 @@ class AadClientBase(ABC):
                     self._cache.update_rt(cache_entries[0], content["refresh_token"])
                     del content["refresh_token"]  # prevent caching a redundant entry
 
-        _raise_for_error(content)
+        _raise_for_error(response, content)
 
         if "expires_on" in content:
             expires_on = int(content["expires_on"])
@@ -246,14 +235,14 @@ def _scrub_secrets(response):
             response[secret] = "***"
 
 
-def _raise_for_error(response):
-    # type: (dict) -> None
-    if "error" not in response:
+def _raise_for_error(response, content):
+    # type: (PipelineResponse, dict) -> None
+    if "error" not in content:
         return
 
-    _scrub_secrets(response)
-    if "error_description" in response:
-        message = "Azure Active Directory error '({}) {}'".format(response["error"], response["error_description"])
+    _scrub_secrets(content)
+    if "error_description" in content:
+        message = "Azure Active Directory error '({}) {}'".format(content["error"], content["error_description"])
     else:
-        message = "Azure Active Directory error '{}'".format(response)
-    raise ClientAuthenticationError(message=message)
+        message = "Azure Active Directory error '{}'".format(content)
+    raise ClientAuthenticationError(message=message, response=response.http_response)

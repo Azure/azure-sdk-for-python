@@ -48,6 +48,7 @@ from .operations import EmailTemplateOperations
 from .operations import GatewayOperations
 from .operations import GatewayHostnameConfigurationOperations
 from .operations import GatewayApiOperations
+from .operations import GatewayCertificateAuthorityOperations
 from .operations import GroupOperations
 from .operations import GroupUserOperations
 from .operations import IdentityProviderOperations
@@ -62,6 +63,7 @@ from .operations import OpenIdConnectProviderOperations
 from .operations import PolicyOperations
 from .operations import PolicyDescriptionOperations
 from .operations import PortalRevisionOperations
+from .operations import PortalSettingsOperations
 from .operations import SignInSettingsOperations
 from .operations import SignUpSettingsOperations
 from .operations import DelegationSettingsOperations
@@ -74,6 +76,8 @@ from .operations import QuotaByCounterKeysOperations
 from .operations import QuotaByPeriodKeysOperations
 from .operations import RegionOperations
 from .operations import ReportsOperations
+from .operations import TenantSettingsOperations
+from .operations import ApiManagementSkusOperations
 from .operations import SubscriptionOperations
 from .operations import TagResourceOperations
 from .operations import TenantAccessOperations
@@ -154,6 +158,8 @@ class ApiManagementClient(object):
     :vartype gateway_hostname_configuration: azure.mgmt.apimanagement.aio.operations.GatewayHostnameConfigurationOperations
     :ivar gateway_api: GatewayApiOperations operations
     :vartype gateway_api: azure.mgmt.apimanagement.aio.operations.GatewayApiOperations
+    :ivar gateway_certificate_authority: GatewayCertificateAuthorityOperations operations
+    :vartype gateway_certificate_authority: azure.mgmt.apimanagement.aio.operations.GatewayCertificateAuthorityOperations
     :ivar group: GroupOperations operations
     :vartype group: azure.mgmt.apimanagement.aio.operations.GroupOperations
     :ivar group_user: GroupUserOperations operations
@@ -182,6 +188,8 @@ class ApiManagementClient(object):
     :vartype policy_description: azure.mgmt.apimanagement.aio.operations.PolicyDescriptionOperations
     :ivar portal_revision: PortalRevisionOperations operations
     :vartype portal_revision: azure.mgmt.apimanagement.aio.operations.PortalRevisionOperations
+    :ivar portal_settings: PortalSettingsOperations operations
+    :vartype portal_settings: azure.mgmt.apimanagement.aio.operations.PortalSettingsOperations
     :ivar sign_in_settings: SignInSettingsOperations operations
     :vartype sign_in_settings: azure.mgmt.apimanagement.aio.operations.SignInSettingsOperations
     :ivar sign_up_settings: SignUpSettingsOperations operations
@@ -206,6 +214,10 @@ class ApiManagementClient(object):
     :vartype region: azure.mgmt.apimanagement.aio.operations.RegionOperations
     :ivar reports: ReportsOperations operations
     :vartype reports: azure.mgmt.apimanagement.aio.operations.ReportsOperations
+    :ivar tenant_settings: TenantSettingsOperations operations
+    :vartype tenant_settings: azure.mgmt.apimanagement.aio.operations.TenantSettingsOperations
+    :ivar api_management_skus: ApiManagementSkusOperations operations
+    :vartype api_management_skus: azure.mgmt.apimanagement.aio.operations.ApiManagementSkusOperations
     :ivar subscription: SubscriptionOperations operations
     :vartype subscription: azure.mgmt.apimanagement.aio.operations.SubscriptionOperations
     :ivar tag_resource: TagResourceOperations operations
@@ -315,6 +327,8 @@ class ApiManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.gateway_api = GatewayApiOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.gateway_certificate_authority = GatewayCertificateAuthorityOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.group = GroupOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.group_user = GroupUserOperations(
@@ -343,6 +357,8 @@ class ApiManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.portal_revision = PortalRevisionOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.portal_settings = PortalSettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.sign_in_settings = SignInSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.sign_up_settings = SignUpSettingsOperations(
@@ -366,6 +382,10 @@ class ApiManagementClient(object):
         self.region = RegionOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.reports = ReportsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.tenant_settings = TenantSettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.api_management_skus = ApiManagementSkusOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.subscription = SubscriptionOperations(
             self._client, self._config, self._serialize, self._deserialize)
