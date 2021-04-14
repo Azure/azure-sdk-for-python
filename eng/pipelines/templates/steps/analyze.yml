@@ -116,6 +116,11 @@ steps:
     parameters:
       Artifacts: ${{ parameters.Artifacts }}
 
+  - template: /eng/common/pipelines/templates/steps/generate-autorest.yml
+    parameters:
+      Artifacts: ${{ parameters.Artifacts }}
+      GenerateAutorest: ${{ parameters.GenerateAutorest }}
+      
   - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
 
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
