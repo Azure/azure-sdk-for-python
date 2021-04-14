@@ -111,7 +111,7 @@ class TableClient(AccountHostsMixin):
                 :caption: Authenticating a TableServiceClient from a connection_string
         """
         account_url, credential = parse_connection_str(
-            conn_str=conn_str, credential=None, service="table", keyword_args=kwargs
+            conn_str=conn_str, credential=None, keyword_args=kwargs
         )
         return cls(account_url, table_name=table_name, credential=credential, **kwargs)
 

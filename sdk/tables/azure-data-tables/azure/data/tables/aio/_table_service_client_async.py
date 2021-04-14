@@ -17,14 +17,12 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .. import LocationMode
-from .._constants import CONNECTION_TIMEOUT
 from .._base_client import parse_connection_str
 from .._generated.aio._azure_table import AzureTable
-from .._generated.models import TableServiceProperties, TableProperties
+from .._generated.models import TableServiceProperties
 from .._models import service_stats_deserialize, service_properties_deserialize
 from .._error import _process_table_error
 from .._models import TableItem
-from ._policies_async import ExponentialRetry
 from ._table_client_async import TableClient
 from ._base_client_async import AsyncTablesBaseClient
 from ._models import TablePropertiesPaged
@@ -120,7 +118,7 @@ class TableServiceClient(AsyncTablesBaseClient):
 
         """
         account_url, credential = parse_connection_str(
-            conn_str=conn_str, credential=None, service="table", keyword_args=kwargs
+            conn_str=conn_str, credential=None, keyword_args=kwargs
         )
         return cls(account_url, credential=credential, **kwargs)
 
@@ -326,14 +324,14 @@ class TableServiceClient(AsyncTablesBaseClient):
     @distributed_trace
     def query_tables(
         self,
-        filter,  # type: str    pylint: disable=redefined-builtin
+        query_filter,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[TableItem]
         """Queries tables under the given account.
 
-        :param filter: Specify a filter to return certain tables.
-        :type filter: str
+        :param query_filter: Specify a filter to return certain tables.
+        :type query_filter: str
         :keyword int results_per_page: Number of tables per page in return ItemPaged
         :keyword select: Specify desired properties of a table to return certain tables
         :paramtype select: str or list[str]
@@ -352,20 +350,19 @@ class TableServiceClient(AsyncTablesBaseClient):
                 :caption: Querying tables in an account given specific parameters
         """
         parameters = kwargs.pop("parameters", None)
-        filter = self._parameter_filter_substitution(
-            parameters, filter
-        )  # pylint: disable=redefined-builtin
+        query_filter = self._parameter_filter_substitution(
+            parameters, query_filter
+        )
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
             user_select = ", ".join(user_select)
         top = kwargs.pop("results_per_page", None)
-
         command = functools.partial(self._client.table.query, **kwargs)
         return AsyncItemPaged(
             command,
             results_per_page=top,
             select=user_select,
-            filter=filter,
+            filter=query_filter,
             page_iterator_class=TablePropertiesPaged,
         )
 

@@ -101,7 +101,7 @@ class TableServiceClient(AccountHostsMixin):
                 :caption: Authenticating a TableServiceClient from a connection_string
         """
         account_url, credential = parse_connection_str(
-            conn_str=conn_str, credential=None, service="table", keyword_args=kwargs
+            conn_str=conn_str, credential=None, keyword_args=kwargs
         )
         return cls(account_url, credential=credential, **kwargs)
 
@@ -269,7 +269,7 @@ class TableServiceClient(AccountHostsMixin):
     @distributed_trace
     def query_tables(
         self,
-        filter,  # pylint: disable=redefined-builtin
+        query_filter,
         **kwargs  # type: Any
     ):
         # type: (...) -> ItemPaged[TableItem]
@@ -295,9 +295,9 @@ class TableServiceClient(AccountHostsMixin):
                 :caption: Querying tables in a storage account
         """
         parameters = kwargs.pop("parameters", None)
-        filter = self._parameter_filter_substitution(
-            parameters, filter
-        )  # pylint: disable=redefined-builtin
+        query_filter = self._parameter_filter_substitution(
+            parameters, query_filter
+        )
         top = kwargs.pop("results_per_page", None)
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
@@ -307,7 +307,7 @@ class TableServiceClient(AccountHostsMixin):
         return ItemPaged(
             command,
             results_per_page=top,
-            filter=filter,
+            filter=query_filter,
             select=user_select,
             page_iterator_class=TablePropertiesPaged,
         )
