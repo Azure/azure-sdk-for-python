@@ -516,10 +516,11 @@ class TablesRetryPolicy(RetryPolicy):
         super(TablesRetryPolicy, self).__init__(**kwargs)
 
     def get_backoff_time(self, settings):
-        # type: (Dict) -> Int
+        # type: (Dict[str, Any]) -> Int
         """
         Calculates how long to sleep before retrying.
-        :param dict settings:
+        :param settings:
+        :type settings: Dict[str, Any]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return:
             An integer indicating how long to wait before retrying the request,
@@ -542,7 +543,7 @@ class TablesRetryPolicy(RetryPolicy):
         # type: (HttpRequest) -> Dict[Any, Any]
         """
         :param Any request:
-        :param kwargs:
+        :type request: :class:`~azure.core.pipeline.transport.HttpRequest`
         :return: Retries information
         :rtype: Dict[Any, Any]
         """
@@ -679,7 +680,8 @@ class ExponentialRetry(TablesRetryPolicy):
         # type: (Dict[str]) -> int
         """
         Calculates how long to sleep before retrying.
-        :param dict settings:
+        :param settings:
+        :type settings: Dict[str, Any]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return:
             An integer indicating how long to wait before retrying the request,
@@ -737,7 +739,8 @@ class LinearRetry(TablesRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :param dict settings:
+        :param settings:
+        :type settings: Dict[str, Any]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return:
             An integer indicating how long to wait before retrying the request,

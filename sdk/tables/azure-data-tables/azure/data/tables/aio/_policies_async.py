@@ -135,6 +135,8 @@ class AsyncTablesRetryPolicy(AsyncRetryPolicy, TablesRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
+        :param settings:
+        :type settings: Dict[str, Any]
         :return:
             An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
@@ -247,6 +249,8 @@ class ExponentialRetry(AsyncTablesRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
+        :param settings:
+        :type settings: Dict[str, Any]
         :return:
             An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.

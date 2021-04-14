@@ -554,7 +554,7 @@ class BatchErrorException(HttpResponseError):
     """
 
     def __init__(self, message, response, parts, *args, **kwargs):
-        # type: (str, str, List[str], *List, **Dict) -> None
+        # type: (str, str, List[str], List[str], Dict[str, Any]) -> None
         self.parts = parts
         super(BatchErrorException, self).__init__(
             message=message, response=response, *args, **kwargs
@@ -580,6 +580,7 @@ class BatchTransactionResult(object):
         self.entities = entities
 
     def get_entity(self, row_key):
+        # type: (str) -> Union[Dict[str], TableEntity]
         """Get entity for a given row key
 
         :param row_key: The row_key correlating to an entity
@@ -587,13 +588,13 @@ class BatchTransactionResult(object):
         :return: TableEntity or Dictionary submitted
         :rtype: Union[Dict[str], TableEntity]
         """
-        # type: (str) -> Union[TableEntity, Dict[str]]
         for entity in self.entities:
             if entity["RowKey"] == row_key:
                 return entity
         return None
 
     def get_request(self, row_key):
+        # type: (str) -> HttpRequest
         """Get request for a given row key
 
         :param row_key: The row_key correlating to an entity
@@ -601,13 +602,13 @@ class BatchTransactionResult(object):
         :return: HTTP Request for a row key
         :rtype: :class:`~azure.core.pipeline.transport.HttpRequest`
         """
-        # type: (str) -> HttpRequest
         for i, entity in enumerate(self.entities):
             if entity["RowKey"] == row_key:
                 return self.requests[i]
         return None
 
     def get_result(self, row_key):
+        # type: (str) -> HttpResponse
         """Get response for a given row key
 
         :param row_key: The row_key correlating to an entity
@@ -615,7 +616,6 @@ class BatchTransactionResult(object):
         :return: HTTP Response for a row key
         :rtype: :class:`~azure.core.pipeline.HttpResponse`
         """
-        # type: (str) -> HttpResponse
         for i, entity in enumerate(self.entities):
             if entity["RowKey"] == row_key:
                 return self.results[i]
@@ -733,18 +733,18 @@ class AccountSasPermissions(object):
 
     @classmethod
     def from_string(cls, permission, **kwargs):
-        # type: (str, Dict[str]) - AccountSasPermissions
+        # type: (str, Dict[str]) -> AccountSasPermissions
         """Create AccountSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to
         include the first letter of the word in the string. E.g. for read and write
         permissions you would provide a string "rw".
 
-        :param str permission: Specify permissions in
-            the string with the first letter of the word.
+        :param permission: Specify permissions in the string with the first letter of the word.
+        :type permission: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: A AccountSasPermissions object
-        :rtype: ~azure.data.tables.AccountSasPermissions
+        :rtype: :class:`~azure.data.tables.AccountSasPermissions`
         """
         p_read = "r" in permission
         p_write = "w" in permission

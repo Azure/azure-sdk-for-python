@@ -55,7 +55,7 @@ pip install --pre azure-data-tables
 |------------|------------------|
 |`Equal`|`eq`|
 |`GreaterThan`|`gt`|
-|`GreaterTahnOrEqual`|`ge`|
+|`GreaterThanOrEqual`|`ge`|
 |`LessThan`|`lt`|
 |`LessThanOrEqual`|`le`|
 |`NotEqual`|`ne`|
