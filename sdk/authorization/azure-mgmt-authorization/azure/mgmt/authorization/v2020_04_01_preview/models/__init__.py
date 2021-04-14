@@ -10,10 +10,16 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorDetail
+    from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import RoleAssignment
     from ._models_py3 import RoleAssignmentCreateParameters
     from ._models_py3 import RoleAssignmentFilter
 except (SyntaxError, ImportError):
+    from ._models import ErrorAdditionalInfo
+    from ._models import ErrorDetail
+    from ._models import ErrorResponse, ErrorResponseException
     from ._models import RoleAssignment
     from ._models import RoleAssignmentCreateParameters
     from ._models import RoleAssignmentFilter
@@ -23,6 +29,9 @@ from ._authorization_management_client_enums import (
 )
 
 __all__ = [
+    'ErrorAdditionalInfo',
+    'ErrorDetail',
+    'ErrorResponse', 'ErrorResponseException',
     'RoleAssignment',
     'RoleAssignmentCreateParameters',
     'RoleAssignmentFilter',

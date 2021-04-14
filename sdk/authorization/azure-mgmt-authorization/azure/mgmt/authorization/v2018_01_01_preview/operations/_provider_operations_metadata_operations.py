@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -57,7 +56,8 @@ class ProviderOperationsMetadataOperations(object):
         :rtype:
          ~azure.mgmt.authorization.v2018_01_01_preview.models.ProviderOperationsMetadata
          or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.authorization.v2018_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -68,7 +68,7 @@ class ProviderOperationsMetadataOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
         if expand is not None:
             query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
@@ -87,9 +87,7 @@ class ProviderOperationsMetadataOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -116,7 +114,8 @@ class ProviderOperationsMetadataOperations(object):
         :return: An iterator like instance of ProviderOperationsMetadata
         :rtype:
          ~azure.mgmt.authorization.v2018_01_01_preview.models.ProviderOperationsMetadataPaged[~azure.mgmt.authorization.v2018_01_01_preview.models.ProviderOperationsMetadata]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.authorization.v2018_01_01_preview.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -125,7 +124,7 @@ class ProviderOperationsMetadataOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
                 if expand is not None:
                     query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
@@ -153,9 +152,7 @@ class ProviderOperationsMetadataOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 

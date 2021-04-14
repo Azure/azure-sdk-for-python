@@ -13,11 +13,17 @@ try:
     from ._models_py3 import DenyAssignment
     from ._models_py3 import DenyAssignmentFilter
     from ._models_py3 import DenyAssignmentPermission
+    from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorDetail
+    from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import Principal
 except (SyntaxError, ImportError):
     from ._models import DenyAssignment
     from ._models import DenyAssignmentFilter
     from ._models import DenyAssignmentPermission
+    from ._models import ErrorAdditionalInfo
+    from ._models import ErrorDetail
+    from ._models import ErrorResponse, ErrorResponseException
     from ._models import Principal
 from ._paged_models import DenyAssignmentPaged
 
@@ -25,6 +31,9 @@ __all__ = [
     'DenyAssignment',
     'DenyAssignmentFilter',
     'DenyAssignmentPermission',
+    'ErrorAdditionalInfo',
+    'ErrorDetail',
+    'ErrorResponse', 'ErrorResponseException',
     'Principal',
     'DenyAssignmentPaged',
 ]

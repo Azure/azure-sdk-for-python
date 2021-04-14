@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -56,7 +55,8 @@ class RoleDefinitionsOperations(object):
         :rtype:
          ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleDefinition or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.authorization.v2018_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -68,7 +68,7 @@ class RoleDefinitionsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -84,10 +84,8 @@ class RoleDefinitionsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200, 204]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -117,7 +115,8 @@ class RoleDefinitionsOperations(object):
         :rtype:
          ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleDefinition or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.authorization.v2018_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -129,7 +128,7 @@ class RoleDefinitionsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -146,9 +145,7 @@ class RoleDefinitionsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -181,7 +178,8 @@ class RoleDefinitionsOperations(object):
         :rtype:
          ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleDefinition or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.authorization.v2018_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -193,7 +191,7 @@ class RoleDefinitionsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -214,9 +212,7 @@ class RoleDefinitionsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 201:
@@ -246,7 +242,8 @@ class RoleDefinitionsOperations(object):
         :return: An iterator like instance of RoleDefinition
         :rtype:
          ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleDefinitionPaged[~azure.mgmt.authorization.v2018_01_01_preview.models.RoleDefinition]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.authorization.v2018_01_01_preview.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -261,7 +258,7 @@ class RoleDefinitionsOperations(object):
                 query_parameters = {}
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
             else:
                 url = next_link
@@ -287,9 +284,7 @@ class RoleDefinitionsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -322,7 +317,8 @@ class RoleDefinitionsOperations(object):
         :rtype:
          ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleDefinition or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.authorization.v2018_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_by_id.metadata['url']
@@ -333,7 +329,7 @@ class RoleDefinitionsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -350,9 +346,7 @@ class RoleDefinitionsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:

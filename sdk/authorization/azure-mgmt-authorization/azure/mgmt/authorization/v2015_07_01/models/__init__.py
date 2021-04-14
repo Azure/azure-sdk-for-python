@@ -11,6 +11,9 @@
 
 try:
     from ._models_py3 import ClassicAdministrator
+    from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorDetail
+    from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import Permission
     from ._models_py3 import ProviderOperation
     from ._models_py3 import ProviderOperationsMetadata
@@ -24,6 +27,9 @@ try:
     from ._models_py3 import RoleDefinitionFilter
 except (SyntaxError, ImportError):
     from ._models import ClassicAdministrator
+    from ._models import ErrorAdditionalInfo
+    from ._models import ErrorDetail
+    from ._models import ErrorResponse, ErrorResponseException
     from ._models import Permission
     from ._models import ProviderOperation
     from ._models import ProviderOperationsMetadata
@@ -43,6 +49,9 @@ from ._paged_models import RoleDefinitionPaged
 
 __all__ = [
     'ClassicAdministrator',
+    'ErrorAdditionalInfo',
+    'ErrorDetail',
+    'ErrorResponse', 'ErrorResponseException',
     'Permission',
     'ProviderOperation',
     'ProviderOperationsMetadata',

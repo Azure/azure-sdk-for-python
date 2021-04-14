@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -43,8 +42,8 @@ class PermissionsOperations(object):
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Gets all permissions the caller has for a resource group.
 
-        :param resource_group_name: The name of the resource group to get the
-         permissions for. The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -54,21 +53,22 @@ class PermissionsOperations(object):
         :return: An iterator like instance of Permission
         :rtype:
          ~azure.mgmt.authorization.v2015_07_01.models.PermissionPaged[~azure.mgmt.authorization.v2015_07_01.models.Permission]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.authorization.v2015_07_01.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_for_resource_group.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
             else:
                 url = next_link
@@ -94,9 +94,7 @@ class PermissionsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -113,8 +111,8 @@ class PermissionsOperations(object):
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, custom_headers=None, raw=False, **operation_config):
         """Gets all permissions the caller has for a resource.
 
-        :param resource_group_name: The name of the resource group containing
-         the resource. The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param resource_provider_namespace: The namespace of the resource
          provider.
@@ -134,25 +132,26 @@ class PermissionsOperations(object):
         :return: An iterator like instance of Permission
         :rtype:
          ~azure.mgmt.authorization.v2015_07_01.models.PermissionPaged[~azure.mgmt.authorization.v2015_07_01.models.Permission]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.authorization.v2015_07_01.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_for_resource.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
                     'parentResourcePath': self._serialize.url("parent_resource_path", parent_resource_path, 'str', skip_quote=True),
                     'resourceType': self._serialize.url("resource_type", resource_type, 'str', skip_quote=True),
                     'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
             else:
                 url = next_link
@@ -178,9 +177,7 @@ class PermissionsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 

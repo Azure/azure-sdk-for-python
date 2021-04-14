@@ -11,11 +11,20 @@
 
 try:
     from ._models_py3 import ClassicAdministrator
+    from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorDetail
+    from ._models_py3 import ErrorResponse, ErrorResponseException
 except (SyntaxError, ImportError):
     from ._models import ClassicAdministrator
+    from ._models import ErrorAdditionalInfo
+    from ._models import ErrorDetail
+    from ._models import ErrorResponse, ErrorResponseException
 from ._paged_models import ClassicAdministratorPaged
 
 __all__ = [
     'ClassicAdministrator',
+    'ErrorAdditionalInfo',
+    'ErrorDetail',
+    'ErrorResponse', 'ErrorResponseException',
     'ClassicAdministratorPaged',
 ]

@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -25,6 +24,7 @@ class ProviderOperationsMetadataOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
+    :ivar api_version: The API version to use for this operation. Constant value: "2015-07-01".
     """
 
     models = models
@@ -34,18 +34,17 @@ class ProviderOperationsMetadataOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2015-07-01"
 
         self.config = config
 
     def get(
-            self, resource_provider_namespace, api_version, expand="resourceTypes", custom_headers=None, raw=False, **operation_config):
+            self, resource_provider_namespace, expand="resourceTypes", custom_headers=None, raw=False, **operation_config):
         """Gets provider operations metadata for the specified resource provider.
 
         :param resource_provider_namespace: The namespace of the resource
          provider.
         :type resource_provider_namespace: str
-        :param api_version: The API version to use for the operation.
-        :type api_version: str
         :param expand: Specifies whether to expand the values.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
@@ -57,7 +56,8 @@ class ProviderOperationsMetadataOperations(object):
         :rtype:
          ~azure.mgmt.authorization.v2015_07_01.models.ProviderOperationsMetadata
          or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.authorization.v2015_07_01.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -68,7 +68,7 @@ class ProviderOperationsMetadataOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
         if expand is not None:
             query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
@@ -87,9 +87,7 @@ class ProviderOperationsMetadataOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -103,11 +101,9 @@ class ProviderOperationsMetadataOperations(object):
     get.metadata = {'url': '/providers/Microsoft.Authorization/providerOperations/{resourceProviderNamespace}'}
 
     def list(
-            self, api_version, expand="resourceTypes", custom_headers=None, raw=False, **operation_config):
+            self, expand="resourceTypes", custom_headers=None, raw=False, **operation_config):
         """Gets provider operations metadata for all resource providers.
 
-        :param api_version: The API version to use for this operation.
-        :type api_version: str
         :param expand: Specifies whether to expand the values.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
@@ -118,7 +114,8 @@ class ProviderOperationsMetadataOperations(object):
         :return: An iterator like instance of ProviderOperationsMetadata
         :rtype:
          ~azure.mgmt.authorization.v2015_07_01.models.ProviderOperationsMetadataPaged[~azure.mgmt.authorization.v2015_07_01.models.ProviderOperationsMetadata]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.authorization.v2015_07_01.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -127,7 +124,7 @@ class ProviderOperationsMetadataOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
                 if expand is not None:
                     query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
@@ -155,9 +152,7 @@ class ProviderOperationsMetadataOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 

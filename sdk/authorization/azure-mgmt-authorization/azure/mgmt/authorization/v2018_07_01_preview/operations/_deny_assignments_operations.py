@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -43,7 +42,8 @@ class DenyAssignmentsOperations(object):
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Gets deny assignments for a resource.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param resource_provider_namespace: The namespace of the resource
          provider.
@@ -78,15 +78,16 @@ class DenyAssignmentsOperations(object):
         :return: An iterator like instance of DenyAssignment
         :rtype:
          ~azure.mgmt.authorization.v2018_07_01_preview.models.DenyAssignmentPaged[~azure.mgmt.authorization.v2018_07_01_preview.models.DenyAssignment]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.authorization.v2018_07_01_preview.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_for_resource.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
                     'parentResourcePath': self._serialize.url("parent_resource_path", parent_resource_path, 'str', skip_quote=True),
                     'resourceType': self._serialize.url("resource_type", resource_type, 'str', skip_quote=True),
@@ -96,7 +97,7 @@ class DenyAssignmentsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
@@ -124,9 +125,7 @@ class DenyAssignmentsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -143,7 +142,8 @@ class DenyAssignmentsOperations(object):
             self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Gets deny assignments for a resource group.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param filter: The filter to apply on the operation. Use
          $filter=atScope() to return all deny assignments at or above the
@@ -168,21 +168,22 @@ class DenyAssignmentsOperations(object):
         :return: An iterator like instance of DenyAssignment
         :rtype:
          ~azure.mgmt.authorization.v2018_07_01_preview.models.DenyAssignmentPaged[~azure.mgmt.authorization.v2018_07_01_preview.models.DenyAssignment]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.authorization.v2018_07_01_preview.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_for_resource_group.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
@@ -210,9 +211,7 @@ class DenyAssignmentsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -252,20 +251,21 @@ class DenyAssignmentsOperations(object):
         :return: An iterator like instance of DenyAssignment
         :rtype:
          ~azure.mgmt.authorization.v2018_07_01_preview.models.DenyAssignmentPaged[~azure.mgmt.authorization.v2018_07_01_preview.models.DenyAssignment]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.authorization.v2018_07_01_preview.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
@@ -293,9 +293,7 @@ class DenyAssignmentsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -325,7 +323,8 @@ class DenyAssignmentsOperations(object):
         :rtype:
          ~azure.mgmt.authorization.v2018_07_01_preview.models.DenyAssignment or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.authorization.v2018_07_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -337,7 +336,7 @@ class DenyAssignmentsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -354,9 +353,7 @@ class DenyAssignmentsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -389,7 +386,8 @@ class DenyAssignmentsOperations(object):
         :rtype:
          ~azure.mgmt.authorization.v2018_07_01_preview.models.DenyAssignment or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.authorization.v2018_07_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_by_id.metadata['url']
@@ -400,7 +398,7 @@ class DenyAssignmentsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -417,9 +415,7 @@ class DenyAssignmentsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -461,7 +457,8 @@ class DenyAssignmentsOperations(object):
         :return: An iterator like instance of DenyAssignment
         :rtype:
          ~azure.mgmt.authorization.v2018_07_01_preview.models.DenyAssignmentPaged[~azure.mgmt.authorization.v2018_07_01_preview.models.DenyAssignment]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.authorization.v2018_07_01_preview.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -474,7 +471,7 @@ class DenyAssignmentsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
@@ -502,9 +499,7 @@ class DenyAssignmentsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
