@@ -63,7 +63,8 @@ class TrioStreamDownloadGenerator(AsyncIterator):
         self.block_size = response.block_size
         self._raw = raw
         self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
-        if self._raw and hasattr(self.response.internal_response.raw, 'stream'):
+        if self._raw and hasattr(self.response.internal_response, 'raw') \
+                and hasattr(self.response.internal_response.raw, 'stream'):
             delattr(self.response.internal_response.raw.__class__, 'stream')
         self.content_length = int(response.headers.get('Content-Length', 0))
 
