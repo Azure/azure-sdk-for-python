@@ -218,3 +218,4 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-hanaonazure msrest>=0.6.21
 #override azure-mgmt-datashare msrest>=0.6.21
 #override azure-mgmt-healthcareapis msrest>=0.6.21
+#override azure-mgmt-dns msrest>=0.6.21
