@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-kw6c0f1684?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-kw6c0f1684?api-version=7.3-preview
   response:
     body:
       string: ''
@@ -38,13 +38,13 @@ interactions:
       x-frame-options:
       - SAMEORIGIN
       x-ms-server-latency:
-      - '0'
+      - '1'
     status:
       code: 401
       message: Unauthorized
 - request:
-    body: '{"key": {"kty": "oct-HSM", "key_ops": ["encrypt", "decrypt", "wrapKey",
-      "unwrapKey"], "k": "4n7QyEUSu9VbavQ00jfBH-ujEYcPgPLC4zZCYPMcgsg"}}'
+    body: '{"key": {"key_ops": ["encrypt", "decrypt", "wrapKey", "unwrapKey"], "k":
+      "4n7QyEUSu9VbavQ00jfBH-ujEYcPgPLC4zZCYPMcgsg", "kty": "oct-HSM"}}'
     headers:
       Accept:
       - application/json
@@ -57,12 +57,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-kw6c0f1684?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-kw6c0f1684?api-version=7.3-preview
   response:
     body:
-      string: '{"attributes":{"created":1616195127,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1616195127},"key":{"key_ops":["encrypt","decrypt","unwrapKey","wrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-kw6c0f1684/487b6e1ac75c00642fe22cbc5e295fec","kty":"oct-HSM"}}'
+      string: '{"attributes":{"created":1618441022,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1618441022},"key":{"key_ops":["encrypt","decrypt","unwrapKey","wrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-kw6c0f1684/ed7aa48b0e7d4a40a808507ce74cbe7b","kty":"oct-HSM"}}'
     headers:
       cache-control:
       - no-cache
@@ -79,11 +79,11 @@ interactions:
       x-frame-options:
       - SAMEORIGIN
       x-ms-keyvault-network-info:
-      - addr=172.92.159.124
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region:
       - eastus2
       x-ms-server-latency:
-      - '203'
+      - '216'
     status:
       code: 200
       message: OK
@@ -97,12 +97,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-kw6c0f1684/487b6e1ac75c00642fe22cbc5e295fec?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-kw6c0f1684/ed7aa48b0e7d4a40a808507ce74cbe7b?api-version=7.3-preview
   response:
     body:
-      string: '{"attributes":{"created":1616195127,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1616195127},"key":{"key_ops":["decrypt","encrypt","wrapKey","unwrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-kw6c0f1684/487b6e1ac75c00642fe22cbc5e295fec","kty":"oct-HSM"}}'
+      string: '{"attributes":{"created":1618441022,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1618441022},"key":{"key_ops":["decrypt","encrypt","wrapKey","unwrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-kw6c0f1684/ed7aa48b0e7d4a40a808507ce74cbe7b","kty":"oct-HSM"}}'
     headers:
       cache-control:
       - no-cache
@@ -119,13 +119,13 @@ interactions:
       x-frame-options:
       - SAMEORIGIN
       x-ms-build-version:
-      - 1.0.20210306-1-6fb7c19a-develop
+      - 1.0.20210407-3-27236ed1-develop
       x-ms-keyvault-network-info:
-      - addr=172.92.159.124
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region:
       - eastus2
       x-ms-server-latency:
-      - '58'
+      - '64'
     status:
       code: 200
       message: OK

@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa?api-version=7.3-preview
   response:
     body:
       string: ''
@@ -29,10 +29,10 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa?api-version=7.3-preview
 - request:
-    body: '{"key": {"k": "4n7QyEUSu9VbavQ00jfBH-ujEYcPgPLC4zZCYPMcgsg", "kty": "oct-HSM",
-      "key_ops": ["encrypt", "decrypt", "wrapKey", "unwrapKey"]}}'
+    body: '{"key": {"key_ops": ["encrypt", "decrypt", "wrapKey", "unwrapKey"], "k":
+      "4n7QyEUSu9VbavQ00jfBH-ujEYcPgPLC4zZCYPMcgsg", "kty": "oct-HSM"}}'
     headers:
       Accept:
       - application/json
@@ -41,12 +41,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa?api-version=7.3-preview
   response:
     body:
-      string: '{"attributes":{"created":1616196444,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1616196444},"key":{"key_ops":["encrypt","decrypt","unwrapKey","wrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/ea488fc2c29640d51694149191a4e11e","kty":"oct-HSM"}}'
+      string: '{"attributes":{"created":1618441123,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1618441123},"key":{"key_ops":["encrypt","decrypt","unwrapKey","wrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/c66a45af43fb0929152291ea4a2226a3","kty":"oct-HSM"}}'
     headers:
       cache-control: no-cache
       content-length: '358'
@@ -55,43 +55,16 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
-      x-ms-server-latency: '218'
+      x-ms-server-latency: '213'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa?api-version=7.3-preview
 - request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/ea488fc2c29640d51694149191a4e11e?api-version=7.2-preview
-  response:
-    body:
-      string: '{"attributes":{"created":1616196444,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1616196444},"key":{"key_ops":["decrypt","encrypt","wrapKey","unwrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/ea488fc2c29640d51694149191a4e11e","kty":"oct-HSM"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '358'
-      content-security-policy: default-src 'self'
-      content-type: application/json; charset=utf-8
-      strict-transport-security: max-age=31536000; includeSubDomains
-      x-content-type-options: nosniff
-      x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210306-1-6fb7c19a-develop
-      x-ms-keyvault-network-info: addr=172.92.159.124
-      x-ms-keyvault-region: eastus2
-      x-ms-server-latency: '53'
-    status:
-      code: 200
-      message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/ea488fc2c29640d51694149191a4e11e?api-version=7.2-preview
-- request:
-    body: '{"alg": "A256GCM", "aad": "dGVzdA", "value": "NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
+    body: '{"alg": "A256GCM", "value": "NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ",
+      "aad": "dGVzdA"}'
     headers:
       Accept:
       - application/json
@@ -100,44 +73,44 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/ea488fc2c29640d51694149191a4e11e/encrypt?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/c66a45af43fb0929152291ea4a2226a3/encrypt?api-version=7.3-preview
   response:
     body:
-      string: '{"aad":"dGVzdA","alg":"A256GCM","iv":"F_T1j195YgL0MAfXAAAAAA","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/ea488fc2c29640d51694149191a4e11e","tag":"jdbde19hdF7VFtEuwDRJjg","value":"4MyzbRpDLJpEJl1DlHV7ta-xhflZNvdJio3AijzpsfQDEnNumHUz5kCsZfbuePzDoqIElnXvnzGBrWlJXiA7uzxr7KkoHH2KPD4I9IcY-GtTJc-T9r0l9xZXDpU7Z-2aBbBWERjWUW35xRV7DU36AmBS8Ykdu2Z_UDlaVqhGKLye3Cmd1Qk9iC7dh5qB7s8ULvX4IjNPNB5tcFaxw4SZBtWHMhr3erMG2PyXpbMts9WF_GG1Gvr1RJ4JKfuhvVhfS47MNgN02NE"}'
+      string: '{"aad":"dGVzdA","alg":"A256GCM","iv":"yahjPrs3gOt1Wd4h","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/c66a45af43fb0929152291ea4a2226a3","tag":"oCDMYib3AbzZFct_K_fWtw","value":"UJISl4foSefX9UHo383INyTnNswtHf0CyOA5BUgvUrpA-TQK6RvuZcrfKJnlAlWJ1z5guVAJZUOApk0uO4B6APh9aku_F63pYbzsRwZSpvme2YhQk3pPlWaAKBptNjYTMqPFSQl_fvgkxfgjUwBObYFoYUigH_DlSl5i576YBtOTgiril8J3xVe0mgAhS1fZGeTA7k6q2clBXzwfezG5nBmRuXHPJBl0LZZg_CCwD1U3XSXNntKQwmtNFw_N3GdVF10rP-p54fg"}'
     headers:
       cache-control: no-cache
-      content-length: '498'
+      content-length: '492'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
-      x-ms-server-latency: '1'
+      x-ms-server-latency: '77'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/ea488fc2c29640d51694149191a4e11e/encrypt?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/c66a45af43fb0929152291ea4a2226a3/encrypt?api-version=7.3-preview
 - request:
-    body: '{"alg": "A256GCM", "value": "4MyzbRpDLJpEJl1DlHV7ta-xhflZNvdJio3AijzpsfQDEnNumHUz5kCsZfbuePzDoqIElnXvnzGBrWlJXiA7uzxr7KkoHH2KPD4I9IcY-GtTJc-T9r0l9xZXDpU7Z-2aBbBWERjWUW35xRV7DU36AmBS8Ykdu2Z_UDlaVqhGKLye3Cmd1Qk9iC7dh5qB7s8ULvX4IjNPNB5tcFaxw4SZBtWHMhr3erMG2PyXpbMts9WF_GG1Gvr1RJ4JKfuhvVhfS47MNgN02NE",
-      "aad": "dGVzdA", "tag": "jdbde19hdF7VFtEuwDRJjg", "iv": "F_T1j195YgL0MAfXAAAAAA"}'
+    body: '{"value": "UJISl4foSefX9UHo383INyTnNswtHf0CyOA5BUgvUrpA-TQK6RvuZcrfKJnlAlWJ1z5guVAJZUOApk0uO4B6APh9aku_F63pYbzsRwZSpvme2YhQk3pPlWaAKBptNjYTMqPFSQl_fvgkxfgjUwBObYFoYUigH_DlSl5i576YBtOTgiril8J3xVe0mgAhS1fZGeTA7k6q2clBXzwfezG5nBmRuXHPJBl0LZZg_CCwD1U3XSXNntKQwmtNFw_N3GdVF10rP-p54fg",
+      "alg": "A256GCM", "iv": "yahjPrs3gOt1Wd4h", "aad": "dGVzdA", "tag": "oCDMYib3AbzZFct_K_fWtw"}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '380'
+      - '374'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/ea488fc2c29640d51694149191a4e11e/decrypt?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/c66a45af43fb0929152291ea4a2226a3/decrypt?api-version=7.3-preview
   response:
     body:
-      string: '{"alg":"A256GCM","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/ea488fc2c29640d51694149191a4e11e","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
+      string: '{"alg":"A256GCM","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/c66a45af43fb0929152291ea4a2226a3","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
     headers:
       cache-control: no-cache
       content-length: '422'
@@ -146,16 +119,16 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
       x-ms-server-latency: '0'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/ea488fc2c29640d51694149191a4e11e/decrypt?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/c66a45af43fb0929152291ea4a2226a3/decrypt?api-version=7.3-preview
 - request:
-    body: '{"alg": "A256CBC", "aad": "dGVzdA", "value": "NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ",
-      "iv": "ibitv7BzReNZiTKgnFF0QQ"}'
+    body: '{"value": "NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ",
+      "alg": "A256CBC", "iv": "ibitv7BzReNZiTKgnFF0QQ", "aad": "dGVzdA"}'
     headers:
       Accept:
       - application/json
@@ -164,12 +137,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/ea488fc2c29640d51694149191a4e11e/encrypt?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/c66a45af43fb0929152291ea4a2226a3/encrypt?api-version=7.3-preview
   response:
     body:
-      string: '{"alg":"A256CBC","iv":"ibitv7BzReNZiTKgnFF0QQ","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/ea488fc2c29640d51694149191a4e11e","value":"LMKuK63LOzPyZzk-GMl79Lciw-LNxXt5H9zA7ZTgfpIHvM5_XY9h8q0ils-y85LvB-Bj8jx7KmDAacxkXIXxrdhHz7c5URCoOh0HrwXW7QqBVnWarK4D04X_2KG2otO0DFTFfuVcs3flnFUF2bAEujPb3SA5FHlBLPhDge4elcbWn3XXtJVOzCian2Z3O04xyI_QAZp8Ds4K4XSHtU_P238YWRvcNc399qEYptrlWjHNxxFxxAC4Hc44pAGus3cCJfUmfl8S8IDlUyQKOpqmtA"}'
+      string: '{"alg":"A256CBC","iv":"ibitv7BzReNZiTKgnFF0QQ","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/c66a45af43fb0929152291ea4a2226a3","value":"LMKuK63LOzPyZzk-GMl79Lciw-LNxXt5H9zA7ZTgfpIHvM5_XY9h8q0ils-y85LvB-Bj8jx7KmDAacxkXIXxrdhHz7c5URCoOh0HrwXW7QqBVnWarK4D04X_2KG2otO0DFTFfuVcs3flnFUF2bAEujPb3SA5FHlBLPhDge4elcbWn3XXtJVOzCian2Z3O04xyI_QAZp8Ds4K4XSHtU_P238YWRvcNc399qEYptrlWjHNxxFxxAC4Hc44pAGus3cCJfUmfl8S8IDlUyQKOpqmtA"}'
     headers:
       cache-control: no-cache
       content-length: '463'
@@ -178,16 +151,16 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
-      x-ms-server-latency: '0'
+      x-ms-server-latency: '1'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/ea488fc2c29640d51694149191a4e11e/encrypt?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/c66a45af43fb0929152291ea4a2226a3/encrypt?api-version=7.3-preview
 - request:
-    body: '{"alg": "A256CBC", "aad": "dGVzdA", "value": "LMKuK63LOzPyZzk-GMl79Lciw-LNxXt5H9zA7ZTgfpIHvM5_XY9h8q0ils-y85LvB-Bj8jx7KmDAacxkXIXxrdhHz7c5URCoOh0HrwXW7QqBVnWarK4D04X_2KG2otO0DFTFfuVcs3flnFUF2bAEujPb3SA5FHlBLPhDge4elcbWn3XXtJVOzCian2Z3O04xyI_QAZp8Ds4K4XSHtU_P238YWRvcNc399qEYptrlWjHNxxFxxAC4Hc44pAGus3cCJfUmfl8S8IDlUyQKOpqmtA",
-      "iv": "ibitv7BzReNZiTKgnFF0QQ"}'
+    body: '{"value": "LMKuK63LOzPyZzk-GMl79Lciw-LNxXt5H9zA7ZTgfpIHvM5_XY9h8q0ils-y85LvB-Bj8jx7KmDAacxkXIXxrdhHz7c5URCoOh0HrwXW7QqBVnWarK4D04X_2KG2otO0DFTFfuVcs3flnFUF2bAEujPb3SA5FHlBLPhDge4elcbWn3XXtJVOzCian2Z3O04xyI_QAZp8Ds4K4XSHtU_P238YWRvcNc399qEYptrlWjHNxxFxxAC4Hc44pAGus3cCJfUmfl8S8IDlUyQKOpqmtA",
+      "alg": "A256CBC", "iv": "ibitv7BzReNZiTKgnFF0QQ", "aad": "dGVzdA"}'
     headers:
       Accept:
       - application/json
@@ -196,12 +169,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/ea488fc2c29640d51694149191a4e11e/decrypt?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/c66a45af43fb0929152291ea4a2226a3/decrypt?api-version=7.3-preview
   response:
     body:
-      string: '{"alg":"A256CBC","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/ea488fc2c29640d51694149191a4e11e","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQAAAAAAAAAAA"}'
+      string: '{"alg":"A256CBC","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/c66a45af43fb0929152291ea4a2226a3","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQAAAAAAAAAAA"}'
     headers:
       cache-control: no-cache
       content-length: '433'
@@ -210,16 +183,16 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
       x-ms-server-latency: '1'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/ea488fc2c29640d51694149191a4e11e/decrypt?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/c66a45af43fb0929152291ea4a2226a3/decrypt?api-version=7.3-preview
 - request:
-    body: '{"alg": "A256CBCPAD", "aad": "dGVzdA", "value": "NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ",
-      "iv": "ibitv7BzReNZiTKgnFF0QQ"}'
+    body: '{"value": "NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ",
+      "alg": "A256CBCPAD", "iv": "ibitv7BzReNZiTKgnFF0QQ", "aad": "dGVzdA"}'
     headers:
       Accept:
       - application/json
@@ -228,12 +201,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/ea488fc2c29640d51694149191a4e11e/encrypt?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/c66a45af43fb0929152291ea4a2226a3/encrypt?api-version=7.3-preview
   response:
     body:
-      string: '{"alg":"A256CBCPAD","iv":"ibitv7BzReNZiTKgnFF0QQ","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/ea488fc2c29640d51694149191a4e11e","value":"LMKuK63LOzPyZzk-GMl79Lciw-LNxXt5H9zA7ZTgfpIHvM5_XY9h8q0ils-y85LvB-Bj8jx7KmDAacxkXIXxrdhHz7c5URCoOh0HrwXW7QqBVnWarK4D04X_2KG2otO0DFTFfuVcs3flnFUF2bAEujPb3SA5FHlBLPhDge4elcbWn3XXtJVOzCian2Z3O04xyI_QAZp8Ds4K4XSHtU_P238YWRvcNc399qEYptrlWjHNxxFxxAC4Hc44pAGus3cCiqWw_oS3hdD48u_EhIUSvg"}'
+      string: '{"alg":"A256CBCPAD","iv":"ibitv7BzReNZiTKgnFF0QQ","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/c66a45af43fb0929152291ea4a2226a3","value":"LMKuK63LOzPyZzk-GMl79Lciw-LNxXt5H9zA7ZTgfpIHvM5_XY9h8q0ils-y85LvB-Bj8jx7KmDAacxkXIXxrdhHz7c5URCoOh0HrwXW7QqBVnWarK4D04X_2KG2otO0DFTFfuVcs3flnFUF2bAEujPb3SA5FHlBLPhDge4elcbWn3XXtJVOzCian2Z3O04xyI_QAZp8Ds4K4XSHtU_P238YWRvcNc399qEYptrlWjHNxxFxxAC4Hc44pAGus3cCiqWw_oS3hdD48u_EhIUSvg"}'
     headers:
       cache-control: no-cache
       content-length: '466'
@@ -242,16 +215,16 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
       x-ms-server-latency: '0'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/ea488fc2c29640d51694149191a4e11e/encrypt?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/c66a45af43fb0929152291ea4a2226a3/encrypt?api-version=7.3-preview
 - request:
-    body: '{"alg": "A256CBCPAD", "aad": "dGVzdA", "value": "LMKuK63LOzPyZzk-GMl79Lciw-LNxXt5H9zA7ZTgfpIHvM5_XY9h8q0ils-y85LvB-Bj8jx7KmDAacxkXIXxrdhHz7c5URCoOh0HrwXW7QqBVnWarK4D04X_2KG2otO0DFTFfuVcs3flnFUF2bAEujPb3SA5FHlBLPhDge4elcbWn3XXtJVOzCian2Z3O04xyI_QAZp8Ds4K4XSHtU_P238YWRvcNc399qEYptrlWjHNxxFxxAC4Hc44pAGus3cCiqWw_oS3hdD48u_EhIUSvg",
-      "iv": "ibitv7BzReNZiTKgnFF0QQ"}'
+    body: '{"value": "LMKuK63LOzPyZzk-GMl79Lciw-LNxXt5H9zA7ZTgfpIHvM5_XY9h8q0ils-y85LvB-Bj8jx7KmDAacxkXIXxrdhHz7c5URCoOh0HrwXW7QqBVnWarK4D04X_2KG2otO0DFTFfuVcs3flnFUF2bAEujPb3SA5FHlBLPhDge4elcbWn3XXtJVOzCian2Z3O04xyI_QAZp8Ds4K4XSHtU_P238YWRvcNc399qEYptrlWjHNxxFxxAC4Hc44pAGus3cCiqWw_oS3hdD48u_EhIUSvg",
+      "alg": "A256CBCPAD", "iv": "ibitv7BzReNZiTKgnFF0QQ", "aad": "dGVzdA"}'
     headers:
       Accept:
       - application/json
@@ -260,12 +233,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/ea488fc2c29640d51694149191a4e11e/decrypt?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/c66a45af43fb0929152291ea4a2226a3/decrypt?api-version=7.3-preview
   response:
     body:
-      string: '{"alg":"A256CBCPAD","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/ea488fc2c29640d51694149191a4e11e","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
+      string: '{"alg":"A256CBCPAD","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/c66a45af43fb0929152291ea4a2226a3","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
     headers:
       cache-control: no-cache
       content-length: '425'
@@ -274,11 +247,11 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
       x-ms-server-latency: '1'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/ea488fc2c29640d51694149191a4e11e/decrypt?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt63c21aaa/c66a45af43fb0929152291ea4a2226a3/decrypt?api-version=7.3-preview
 version: 1

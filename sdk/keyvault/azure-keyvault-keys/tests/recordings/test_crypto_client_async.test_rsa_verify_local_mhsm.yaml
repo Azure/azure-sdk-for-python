@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/create?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/create?api-version=7.3-preview
   response:
     body:
       string: ''
@@ -29,7 +29,7 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/create?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/create?api-version=7.3-preview
 - request:
     body: '{"key_size": 2048, "kty": "RSA-HSM"}'
     headers:
@@ -40,12 +40,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/create?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/create?api-version=7.3-preview
   response:
     body:
-      string: '{"attributes":{"created":1616196418,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1616196418},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/68895bd4434e0ca522599eeb70fc60d3","kty":"RSA-HSM","n":"nXM7UJKtXRJldRNNR5mbB-ElrnTqBST9NKKTTZl-vrQx1fyR35fU25r-T8iGqot4AjmqSiK5I0LJ9EYlz068_PJAIja6AyjGd2Jo8DPDVpTbU5KPwZtCer-ShCrdn4B3wOzEyicrEdffB2SxR7BkllKF59v9Uv4qECBrxEoTX_Cvbs0CzixarF_gSuZiwQ8KiT9zktYqePdeP2MYQsLs9Z1dtvfGTyoKBj8M36OCUSzivtfq_evImV9N7ei4bACYPIj_OtXQBMY1Cywhe0mpyOtQtTM7zsRd8ARqA7ytxPSHxcWl8anO9f2C-L35FGokMvbWH_bOOVEdUVCOcz8thw"}}'
+      string: '{"attributes":{"created":1618441109,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1618441109},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/d5662e8cee8f03d2927e48c37d3b5c52","kty":"RSA-HSM","n":"jOpDcIK0MykaMTmLsJQNrYr8sr3fDK_z2Tc9lskAB7BNqUBcPzs171uNHkypWS6xd0847wxkY12NBJsgMBrNR7ZxWX4xxa6CFv-PB056LNnumUWvR5rZJxgnICpKqxEuDLbKnvnzW6cQnpc1Bc03eGi31Kje-1ltJaBKa5We0-grzKEJeu4BJYTBn1xWVOnCoEr_zFursaKKpMgZghUh6FYfFrILW9MTEHTTb-a8zL3f1Ed9XVfhb8kxM_fltxgVMK5cz4w1nmhdy4BS7faacdotkD-FX85xo1YQBELh1wdOgU-NBKPL-vGHJwL7Sdd2felx7Cf6azDTgBcNoTZR5Q"}}'
     headers:
       cache-control: no-cache
       content-length: '732'
@@ -54,13 +54,13 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
-      x-ms-server-latency: '242'
+      x-ms-server-latency: '227'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/create?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/create?api-version=7.3-preview
 - request:
     body: '{"alg": "PS256", "value": "vgZc0NQUb6WMKX___V2JntcFRO_vszKwSAj7R2rL1zg"}'
     headers:
@@ -71,12 +71,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/68895bd4434e0ca522599eeb70fc60d3/sign?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/d5662e8cee8f03d2927e48c37d3b5c52/sign?api-version=7.3-preview
   response:
     body:
-      string: '{"alg":"PS256","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/68895bd4434e0ca522599eeb70fc60d3","value":"hvNWjfaPJ-WewxWE--DmcWsC6BTS9xLcYowUBq5ayhrPS50_htmMxfDZGYwK9t0XMG2-p6nqTst7GQc8e3C8CyBEJy4GXOTuWEGzXiOTJAscJ0-K_yCQTUJSMFqnTG0C6U9JbcK3CnKoLgLKT4XjMUTfWZv1d7kqIHxdlSdXE8muBXgD_UUCDawvtWpY-038u7PcHCUiPXhtEgpCWtk_mjIRpSvm2WD9nmR-zMDNA0bBMhkvMuP93825n9ZKgSXCClhVyWBpYWZNDLLMm-KB5wmFocpZvcweXJrmfsA5OWFAQqm3uYfFJTE2T0lYAsmZESUpwTgBgMyJs7RVomBsqQ"}'
+      string: '{"alg":"PS256","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/d5662e8cee8f03d2927e48c37d3b5c52","value":"JP_WCHrX8a7cCGv-sBtyd4PFVpLbY2FlcGmL4E3mG_Cj85mjvlVvl5JkacQ5sTPjjtrP2pvsp0fgaf_47dDubAqR4eh366_vHC7dlNbwyRWLfT3eKpm9xzLhvnpkVQ7Uv6dQcb2SMU0x9mBMdIA18znQfKiLqMV0fIUXvbZNshjyrEibd_1-pcDLAGhaxIkTH1wBkGCO2XO86lvSTFENxlxmFf4D7qPBKTD-K897oFdlZvwLUKygyfJaRWFegfZGQhew9jYg7nvntKFpeinHy9WMuFADldAsMYv4O6rbLboi-SMLnJyMy27sXykeeffXY76E0QixR_vhdnWpfH2Q5Q"}'
     headers:
       cache-control: no-cache
       content-length: '493'
@@ -85,13 +85,13 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
-      x-ms-server-latency: '80'
+      x-ms-server-latency: '112'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/68895bd4434e0ca522599eeb70fc60d3/sign?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/d5662e8cee8f03d2927e48c37d3b5c52/sign?api-version=7.3-preview
 - request:
     body: '{"alg": "PS384", "value": "OnZY76NXJ8_MBkjnc9b9RiaL5OYscmrTal040wQuLFlRrnLvJFecIvZl2KjXqwVB"}'
     headers:
@@ -102,12 +102,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/68895bd4434e0ca522599eeb70fc60d3/sign?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/d5662e8cee8f03d2927e48c37d3b5c52/sign?api-version=7.3-preview
   response:
     body:
-      string: '{"alg":"PS384","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/68895bd4434e0ca522599eeb70fc60d3","value":"UQ-70bMZZzWYQHizghK_V8Q6BNclZJKWCm4ldmWdRaylNFBFcZz1-dmIHx6oAmR22TNmubw8J9yoOX5pcwpw8KcxBpDRi95QeYR1c9Gj0utdxpUZdyYRL_BAmYltAhh9q4BCXkK5JDoKhkQPKU_gNMGajQLFVlbgDBul8mBt3LbVB2v2N5eYuWBHqm3JHZTMjxBoL9qlj8_2JJkFOjtohVsUoWRXmxGFuodRZNU7DvSVoxSHlAho9Noozp0G7JM-yaIqfDc7wPHEF2MrfnO3LPdQRyFwxyQwMfjfMRD4yVGrtc9FxwhKN8QyL4V-gQiwz-SFd_J4eAWiV7lQHR-JaA"}'
+      string: '{"alg":"PS384","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/d5662e8cee8f03d2927e48c37d3b5c52","value":"egG7l8NGdUdVroGdrMDGQYN9h7sSURAkO1wm2vBLQMdkZzhUrVWddn3apB-XoScDkx9ENlQ-yG7swER-mpFDFD1axR9GqDzt4TLVLP75UtZ5iWVb3BX-WRL3RLpElB7Oo8sAQgzBVcKxy0raE6Zg-cbsQUa_bERSgjS7JQRJ6EUZa3VOan3RXyPY3lyffMH4lCAx8MgkAvC-kcBFsK-YIbwBYFiggrSg3mAHZoDJkj1TVogPXdpW16U8qFyomjdV9Oz4m5tXEadAuVxWGi54_zX1zTmNcPAifs1MyKt3t9sETM8xBwjNrYvtb0P8JgZkcxodNLWDUPvdAio5FLBaRg"}'
     headers:
       cache-control: no-cache
       content-length: '493'
@@ -116,13 +116,13 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
-      x-ms-server-latency: '3'
+      x-ms-server-latency: '2'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/68895bd4434e0ca522599eeb70fc60d3/sign?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/d5662e8cee8f03d2927e48c37d3b5c52/sign?api-version=7.3-preview
 - request:
     body: '{"alg": "PS512", "value": "zZyL-eOHDnnq34aZaWgBMobx4x2Pm3mPRo4eqnRmLK6sE0jsXZFOFhMXaTcvILQxovTsMMh9JupeojYCnDvfrQ"}'
     headers:
@@ -133,12 +133,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/68895bd4434e0ca522599eeb70fc60d3/sign?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/d5662e8cee8f03d2927e48c37d3b5c52/sign?api-version=7.3-preview
   response:
     body:
-      string: '{"alg":"PS512","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/68895bd4434e0ca522599eeb70fc60d3","value":"fdpaekYr2MYFLWjYJvHg-7KdJvxS9S70nslb3h6KfzmoCvjfTsouqwvcYjyZ89TlGvsdt8OFmtYsD6vI7YcTgCqn3b-8rhqd61XTyuRazbRcpgtv9gY-JeZb2pXolI7FLhM9_NsJOL8fXHDWUzedAmjHRGEKdMEK5RJKyEUZh2xdfGVhEi0N7pKGxP3WTvOPz8gvZjeQzw9IOHsJmJnniZsFBCajUfRtOQyC7W4gq9U5Rf86o3apZhU-C3yYJU9XBP4O7xf1Sgc7wh-BZW_fCtbUYbs9U7y0dzos0BafHwDCkbvEG6dj87ji9cypBMP0PzNZi7R3ydSsn52nXjBwTQ"}'
+      string: '{"alg":"PS512","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/d5662e8cee8f03d2927e48c37d3b5c52","value":"cTV0fVm5ivGgj7LvRDB965dJYE35kiKgPSRsIVbliA40y10ierRaoEDWLrXTLqsnaVLI_Nnz6SJDHo7Q1z0eICHFtqgSfCIL4FkBlm2w1NOHGtPQY3rg3MVa20qxyJLVwcwPAVVyo8_2l-Mg_gIgF2SrTfm6B52TJ61ZkgVoRcvstkqt2d71Cpy5VHZOZ0Kp1apa1ql7aZCfteUUSbZKnwVVjCE0wsYZd6cysNzbWTn5ZsOYqK3huIkFHkqOXfeDmWRH8TyFFSTzoWiKADHZbPOLQqDkYgJ_6Pju5v-QYMelsGXRGrys_tLdIANAfCFkVoakdJ74gh9iKgNh5SYvhA"}'
     headers:
       cache-control: no-cache
       content-length: '493'
@@ -147,13 +147,13 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
-      x-ms-server-latency: '3'
+      x-ms-server-latency: '2'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/68895bd4434e0ca522599eeb70fc60d3/sign?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/d5662e8cee8f03d2927e48c37d3b5c52/sign?api-version=7.3-preview
 - request:
     body: '{"alg": "RS256", "value": "vgZc0NQUb6WMKX___V2JntcFRO_vszKwSAj7R2rL1zg"}'
     headers:
@@ -164,12 +164,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/68895bd4434e0ca522599eeb70fc60d3/sign?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/d5662e8cee8f03d2927e48c37d3b5c52/sign?api-version=7.3-preview
   response:
     body:
-      string: '{"alg":"RS256","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/68895bd4434e0ca522599eeb70fc60d3","value":"YBYKbJz-NXfV8c9_HU0QM5Q_k_6f4zYtaWjfmL-wfuAYKml6DqnTQUpaJWeAFOpg_yNPDaA00NoumkA8CJhY0R3E_0INpVelrwT0iCB3hOloo3wyz_ndsCDP7erz9xvahdlbBAOFVQlbeTj6pNVyyfOPDn_96mgkXQz1LITz-fTwb1lhqU0mqhZ6Ujg7ubKi-l2bYSyEZeQBd0Q62VCJkcaP7j2o-MG9CRncMRd4iPC4nJA9kX0UA7z2C3H2sc-7FppnNiGBbB8m9wKxJYW7JnpoNyR37HRq4zOfatlstIe9e7WUZquYs3rMgPu5nwW75T1300_XaGfgKpFBnKxLow"}'
+      string: '{"alg":"RS256","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/d5662e8cee8f03d2927e48c37d3b5c52","value":"IrUpjty4fKJqsUyUZ-lzgC6pDOC_UtcI-d-vw76qvMFVNSB5m_aZqlplsvSRD3W84cS-tXH5T48YQMv2X-ONmaYmc5Kq7OEKOChPcE2HtcFpvh5LcPutWiOkG2CeoN4W8XH1nbXCDPsRYDrSBWS03MvcGqm8Y-sz7MN03HxZqxBZwzHX-9poR0OG8UwpOke6HaGZlf4CbaOTdQMgF1Kh4_DXwnkI44gWFKUSZ5nq_0SQKreDRUbA72Wy56xTB29hV48bU5vdLbIUvJ2ogMBS4GSCr_N2WFbU_Acx3ky1lgB1WyQwbZm-5ITXosyYyncX85e4T8Mx9Xz8S_I40dh4LA"}'
     headers:
       cache-control: no-cache
       content-length: '493'
@@ -178,13 +178,13 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
       x-ms-server-latency: '2'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/68895bd4434e0ca522599eeb70fc60d3/sign?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/d5662e8cee8f03d2927e48c37d3b5c52/sign?api-version=7.3-preview
 - request:
     body: '{"alg": "RS384", "value": "OnZY76NXJ8_MBkjnc9b9RiaL5OYscmrTal040wQuLFlRrnLvJFecIvZl2KjXqwVB"}'
     headers:
@@ -195,12 +195,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/68895bd4434e0ca522599eeb70fc60d3/sign?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/d5662e8cee8f03d2927e48c37d3b5c52/sign?api-version=7.3-preview
   response:
     body:
-      string: '{"alg":"RS384","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/68895bd4434e0ca522599eeb70fc60d3","value":"LCMSlHAd599mCdMFOavhDdr5VHo6EgcH8ZcN4vx-uPtP3zRMjM1aw_ZACRl5hUNOPnhbh1fDpGTyF91ctzdLjQVmneXpxgWatwly5Y5Zgc_-FY7v02SxYVDOwVQm7Cjyux5huv2yD-C9LSy3Zn94zykETzLiG6IMxftynu_zppsKEiXprLTulvPFezwm8Qvp1xdNLx8yIXAaemVOCAZcuSUsXBqOPS9fDwQZ7nrTDXkzXM9TpQi7ZegOyetDjrPVEFciLhJpMZCBNwYDtBJmfYOTJRAP9DDUlXsZdTIC1xVsSrEsE453J9wRAe0nBElnasmMFzFuCGe0YZGlJ5-Yfw"}'
+      string: '{"alg":"RS384","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/d5662e8cee8f03d2927e48c37d3b5c52","value":"QUQZ8DfE6CJeMIV5XmU9wJd_I0-_ZpXWqoHAdSlqxqScTGH0pQXYXmqGsrCnn4f3V8hKv1FSVnmy7FAd7w9bFGIg8ukAjBZjbh6dQDjLHmupCrZrnzYWjXnkf_2vslrc3ZaLF3ZIJBZv-SNc2eGGeHttUTVgYXX29gwU1xirT33MsNGxOpW0gXpMvwJdc7_T5WtPWz2cegxUzrUjC6f002lkcXzqZUCX76mKgRdiFXQ113tCJzij9olrISueFHJ1bDU8nLql7oHJTyRVGYlT5_vDet5-57HFpSAx82XK5k5sjiRSE10o47k4YjAv6Gi5BDfdPxpB_mEhmxSkhowTrQ"}'
     headers:
       cache-control: no-cache
       content-length: '493'
@@ -209,13 +209,13 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
-      x-ms-server-latency: '3'
+      x-ms-server-latency: '2'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/68895bd4434e0ca522599eeb70fc60d3/sign?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/d5662e8cee8f03d2927e48c37d3b5c52/sign?api-version=7.3-preview
 - request:
     body: '{"alg": "RS512", "value": "zZyL-eOHDnnq34aZaWgBMobx4x2Pm3mPRo4eqnRmLK6sE0jsXZFOFhMXaTcvILQxovTsMMh9JupeojYCnDvfrQ"}'
     headers:
@@ -226,12 +226,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/68895bd4434e0ca522599eeb70fc60d3/sign?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/d5662e8cee8f03d2927e48c37d3b5c52/sign?api-version=7.3-preview
   response:
     body:
-      string: '{"alg":"RS512","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/68895bd4434e0ca522599eeb70fc60d3","value":"Akh3e2M7HPArg3qj5cWWKH6ILAwUqWmbHMSqxi5PyLMWTyUuJhyMbupPmLgHhBRG5vpSZDPdUV44RtUU7Tt2e0PIibkBVy6NxV8NsXOKP0oI8-ieTqcukRUZ4YvDWebopAa-CvMii_2_yk9YxH0al82QyrPzDT_JPjm1e0qxzmTPl10sg86se9Py_MU6r-wt6C74YUrXkM66F8ACWQVLvUjyk-IwvqaQfe39B6npzYm4UBiJXFclzUXUOnXLus0x6OuI1TdgTaCU65omMbiZL13RGzBs_qaZ1OeBwC_rXkua13FB0OsBP7n3911nFztq7ke-NZs4XlYImYjHRDCadA"}'
+      string: '{"alg":"RS512","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/d5662e8cee8f03d2927e48c37d3b5c52","value":"LlbEvtuQH1ql-QC5nclSM8SE4CI2EF1vRClgWUqhrIsn-Ou3_lBl8TK_BUmdTTLKKbvOevanVCr2WlEcxBh8TqQKQSkpU7ip7qu18C7PaQzK1D6jobsbrsd1IVAEmN-IhRFjtSRjxhU9x8DUgtT5dQOTD0HpbL4CE7NUdBi_-6rj1wfmcWaHmTWPy2StgpnRuk7lu1GvSYDlTTU7h2BOisJKNCFBp1z17NdE0XJDuwpStzRcB-6vztmovGpbpvbxl-UOyMk-W3rLoI-ZB9QuPAs2DFVSWtuJzRD982f-5rAsEGGs0rl_4JUmeW-uhqznuW_qDHDdyWdtelMiVL7-vw"}'
     headers:
       cache-control: no-cache
       content-length: '493'
@@ -240,13 +240,13 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
       x-ms-server-latency: '3'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/68895bd4434e0ca522599eeb70fc60d3/sign?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-2048283b1521/d5662e8cee8f03d2927e48c37d3b5c52/sign?api-version=7.3-preview
 - request:
     body: '{"key_size": 3072, "kty": "RSA-HSM"}'
     headers:
@@ -257,12 +257,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/create?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/create?api-version=7.3-preview
   response:
     body:
-      string: '{"attributes":{"created":1616196422,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1616196422},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/1e8f4552bb9f0c35897809e231d4f4ed","kty":"RSA-HSM","n":"nwc7JuTHfnsJORJezdx7kJYTg1RHEKKkMq2hsHLJM2N-B6wq5Qgqw42UOKuLpIj3SVfxK_3-r_DjuUxtuAKw4VKnYi7fpW7unbYMATHHbvncH4j-u7PzknrzaDTsgPNcjyrR0Q5PF7K7v2chdXfiljqrftDS4yk1YhEDOIqAaCc-nZh64Qn0rBLlR9sVK5hgIItZHxWfLWoxUjsGuq1MaCshev3RNdED0y0q-5HEmNiba9XfiTl7zsyuUvoLygKbQxXeI4f42hA26mCaL4tcCnosJf6Ao1QUA0A5q4D1jzmZRQeYjjuA9RQv_9XeUr4sJhtM65XVHSsIiU_4u5kuJq9BoWNAnnYo_VtSvkokgjFtmgjmINC50fqiVKOB10rxlaHlGrdDIRqeCjh1HHzwldJk0QygUFKqJKOeVfdK0eIPj2RdBErGABMqCF7lLX9YgHvrtggCdvyciuWSh7e2ckWVMwAI-xPgNBj4ZFemZaF6zQSLSK14k0Riq8P8olnx"}}'
+      string: '{"attributes":{"created":1618441113,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1618441113},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/6ce43509156a06d4aa6c902a50146f19","kty":"RSA-HSM","n":"tJnFZiDXMZwC9tcYQhHJ99xSU9D1UIRYdMU3k9pWIduRVMAYwVULONF7aQxpeqhac_Y5h_gLEdTVIN9JdGUxqW_S5kN-MhvxyUKMiiudTaOkcVMBzG810SEV63Y8zNx0LvjviROZesk5qRntW-n4BXZNZgYXraitfFoOP94TdOaWMLyc9AlyS-stPENkn7edp5U33Mk13FFvJVNv0oFxCaWdtMPRr7oQ9-XV6m1yd8kjoIxae-DHqOku7lqtjlmVdb8jwvZ3FpQJuCp4WTl8yeP9Mk6uhTuDvTz-GsnWPNcW92CHMTsQMZ5gKh6urGFAH4THO8uG0TeddKYYEAg5FQPFm7BJF_qTCbE86FkNUsau-UnVujJTHTaG8s3NOBWU5hjKvkgAB8Vs9B5SCodL-YwKy_YxGESqS2T5P2NNyNxlSAcJc5OGs8f1aUT7eMvueIQlQr-6MKPEFd6ur9Mt-auRAQOJsM-azW5B6jT_nzYXAtUZ8Vl0vgdhy_F1ati_"}}'
     headers:
       cache-control: no-cache
       content-length: '902'
@@ -271,13 +271,13 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
-      x-ms-server-latency: '243'
+      x-ms-server-latency: '231'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/create?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/create?api-version=7.3-preview
 - request:
     body: '{"alg": "PS256", "value": "vgZc0NQUb6WMKX___V2JntcFRO_vszKwSAj7R2rL1zg"}'
     headers:
@@ -288,12 +288,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/1e8f4552bb9f0c35897809e231d4f4ed/sign?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/6ce43509156a06d4aa6c902a50146f19/sign?api-version=7.3-preview
   response:
     body:
-      string: '{"alg":"PS256","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/1e8f4552bb9f0c35897809e231d4f4ed","value":"Ui03wEraxnayRN_losOHzePpd1JEdIPcMRG_8HxKrl8FHk1ZgnQLvBBvrghwNhawbjzOe1O3OA9W2IhAoJLG34AMXW_a5gyQLHxGrL02rO1wJo5lMk1WxWq3gQG6qEg3zXtarXrKqR66GjMeT5vkst4yFDd2FodTjpTnH4RbJvNPCLbwwrIjOL6XgGrtH3QLQ_ghHZWZZmEQGRjwYei6VTU12ryOob2QxswZVMV2zMS3D8d4gvl5hWBdQKqVAOj1_g7tyxTsRf_sSljkbhdsdEwoBk3W58HR7onFZOBDvASnl5WRo6cPfDowDbUAfEN1-CFixks5W33wXrEwu92MFeYXIGEsUx5Wl0jL_g3PYDEmJuc24Jf-Wu0qkHb-tA59-rHfjQ7X-oS75z7hgQCDQeuKBRJm-4vyk1aXVCvoWFsDSgKeFlYOxp4OSzATDvRgnhNFmo0f1T8DG5h-JZXRDy1zBwOQ7kYJKIgwfi77L70L8h6zfs0ng3TgbfOgIwO4"}'
+      string: '{"alg":"PS256","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/6ce43509156a06d4aa6c902a50146f19","value":"bW3EByfuRnaccXQWugQyhT8J0km7ScRCw8ib0nWA_O-3QaXLDkLXerDGOfMFDwHLAtWboT3kaFZp7BIPn0XnF6lSirOfyz6N5HbF707G5Bgkj13-wuT_6eK_1f6Ij5L_t34KvwRcUCcJ80uBxyV0uDAqzD9IcIHibkKJz-jFtoiYkmEjqYczBrHHtMjrzekrqykrkG9f8UclPBuHYRVs0KVeTDc_dv_4szBhgWXMoEOs5blMtff2gebPSUYVgTCKlVwCwSv4v-QLjdoD165xdVuDXRx5dedQdwqmXMOzNRLCBnW9--qp-wuhyi7cXledC3e15JqpZDYVCAFkznSFAAA1nzLPL7ntyEbIH6GpO69l2nSQzIclHHTX0fr9duQ21OLh_om9bv-DeKxW9SCot6UewfaLKWtDAmGllYKt-UETp1QFP-wYW-8LxH9sOEHf35hTwsqe4INjQXR6Nn_MZbPM7H6d-zjOtD9kqJxAyLgD5HS4n5-8lcwLwr9RhYNy"}'
     headers:
       cache-control: no-cache
       content-length: '663'
@@ -302,13 +302,13 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
-      x-ms-server-latency: '99'
+      x-ms-server-latency: '149'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/1e8f4552bb9f0c35897809e231d4f4ed/sign?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/6ce43509156a06d4aa6c902a50146f19/sign?api-version=7.3-preview
 - request:
     body: '{"alg": "PS384", "value": "OnZY76NXJ8_MBkjnc9b9RiaL5OYscmrTal040wQuLFlRrnLvJFecIvZl2KjXqwVB"}'
     headers:
@@ -319,12 +319,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/1e8f4552bb9f0c35897809e231d4f4ed/sign?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/6ce43509156a06d4aa6c902a50146f19/sign?api-version=7.3-preview
   response:
     body:
-      string: '{"alg":"PS384","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/1e8f4552bb9f0c35897809e231d4f4ed","value":"COsa_aUq3VjE1Bs6AzNRCM52T9pV3ZVscqIalZUw2xgmdc5pSkqvey0-wrgpHuxzVj0Y_IXsrmdA93PuElX2p9hJMMKxMOCVMM_xiEZsK-jZ6GjTMXlEsdKw8KRZ0_LCNfdOsyFsAZaSslHOj0KyoF5C3nb_bQHekSuBPntPm13TmaMgexNrzEbdZ692u-GQ51EveVJh51PFE_F5yJ4sTUf8lJdhRYsjT35JeyNoNvpTaeJaU2cErLNYuP6WKBZfF75Cg0u_ZsSqYrgi_hThNVgmmpM9CrmZr8dWQm1KEI2akDQhud2Dzoag_-W0l2q4UwpGRn3JHWwmzbSYfV3strT-e1cfiRgZ47R1BVJYZYw5Yo_yPpPT0ZqRz5oAdY-mofdB1FgYTuW777kF-R8bm803GxscIt95A7HrmYch_3e4bxjujn0gvRD06bMKNBlVSTK8TobQ6uP1hVnwwbrZBD4PPAhve5bf58SYvaks-21hB-QpfzNV6apzPh5EycQ0"}'
+      string: '{"alg":"PS384","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/6ce43509156a06d4aa6c902a50146f19","value":"AFi9jPt7msMr_aT0D6lyUSdvTK39RR4bJUqQofJOT2SqHx5lGFGiCDhZqA-yagWg6FbPCt31OxLX--k9bS0k5v5-z19sIVh3Hfas1xiXrufRG7WE-RG4hqZEAqFcHu99lhsLGteGyzIhEJthbe6Ak25FD23BXMkCHyWXBQNhWpe4aumZ2-SM_TYmLCbCo3iAKBOaFKfyleuylUMIsRWzZKBAmhX7bpjiXZhDTtAQ34MZxCtk2A9an8GFxY4UBk8KbTBJAfJ0PK9X3XYGWcv6yFN-gxWr781DiFKrd2yHNfkE7F4-Qi-q-ph59BRsHv3KvRkvVJEYFoeCts074DAoYP-NUegWoTytNt1RUiVCqDx_lShewBiNAwwS4DUiiGDZIvJISBEpRutl3HrpWvSJMDvTRgwLwIteOQQYvddffz4T0nLHoQ6lMYIkc16kMoVvKmkc1TiJ2Cp-mUIuAVsMp39GKcJVLS3VvAt9o5vOO6E2n9vcSlYVJcrVXrRlRlsA"}'
     headers:
       cache-control: no-cache
       content-length: '663'
@@ -333,13 +333,13 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
-      x-ms-server-latency: '6'
+      x-ms-server-latency: '7'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/1e8f4552bb9f0c35897809e231d4f4ed/sign?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/6ce43509156a06d4aa6c902a50146f19/sign?api-version=7.3-preview
 - request:
     body: '{"alg": "PS512", "value": "zZyL-eOHDnnq34aZaWgBMobx4x2Pm3mPRo4eqnRmLK6sE0jsXZFOFhMXaTcvILQxovTsMMh9JupeojYCnDvfrQ"}'
     headers:
@@ -350,12 +350,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/1e8f4552bb9f0c35897809e231d4f4ed/sign?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/6ce43509156a06d4aa6c902a50146f19/sign?api-version=7.3-preview
   response:
     body:
-      string: '{"alg":"PS512","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/1e8f4552bb9f0c35897809e231d4f4ed","value":"Ya7rH24LfSHu_ybZhPyIS3SX_D40quwVHA6gR-y9fAe5axHcLYqaUVhu0qJRdB0Z7asiMgVdXxGDM7nH6ujGcsGrP6w9QNqBpi8JHq59zoR7evqpHLFk_Bbj0WMGq-d6R8ZaAphXEFcar7xOfnmApnSBXSQmVlqWMd59K2Wlrki0m1uJ_1pRUlq787GwH920cXw9ET9yGhv-Du4SNR64MnVvAmbTHlLrE2Etx_U-rToMfYuSJpEMAG7qBv_lTiY_cgUZwoNviZd8r2FnY6bduwfgG50Cubxp6VtdzpoRytHVzeKILe-RWQq--fYkjq9UOwm62alLUoIbliKGobtPEVM1I8urfv4nXTTCqnV_POMPlAOEWmUoXM3k8SHe_PuSVw7d3MxGVr2uW8bTi9tc8fU_tYHMCl7vi5NeQzylR4toK4duxQampTva9PvLwko0_3qKcKJ7Qmdl3BmdXPrS6zkfc22VoUG9m4Ck6nc8GXtI4KvbKlljRWGPWaoq_Wdq"}'
+      string: '{"alg":"PS512","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/6ce43509156a06d4aa6c902a50146f19","value":"jX3NYkrZZgeyNZ0_iDeedK679JKDPNHYK3vPWg3EqMfti3hwhPUIH4TT8ZaCtiU41A_8bozVsKDBMjcMjJ1Y9a5jSeSYeo-zDvFVlGL8yBxzy73zEQAJw-tO2BV9gDE8fFGNxZeKWQk-KTKIWAE1JDsj2DNUnh4WVwwxNYItcXcpowQfMQ5drBsJMqnXuo9BN4M440YKNQUj3gOqzxuPYNLj8f5DJbXTjUyi2okJlTvzLiwkJFhqm0-0kPkUSKpyvocpbtuTOYeS-UwTV50xoGZYXbetn_bu0sMoO8kr9lwVI-gCjVHyttcL1f3eRfZOmHVxVVgCmp1g1aijUKAkUPjgfM1_M7TCp1EXVqTH4pjpChePhuhmfs3hPlrIOP8K3KUVtNKOzE8qHwlCVqKFMXCSlc4UktBLn8NjuL69ol5s5nA7X8lUlwM-HjRgqjO7UrqmGHslqwLq_0twWv53iy7F4GGI9Ke7sujSS0P6IUXlSN9iKlJDu28ce3kLNPXu"}'
     headers:
       cache-control: no-cache
       content-length: '663'
@@ -364,13 +364,13 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
       x-ms-server-latency: '6'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/1e8f4552bb9f0c35897809e231d4f4ed/sign?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/6ce43509156a06d4aa6c902a50146f19/sign?api-version=7.3-preview
 - request:
     body: '{"alg": "RS256", "value": "vgZc0NQUb6WMKX___V2JntcFRO_vszKwSAj7R2rL1zg"}'
     headers:
@@ -381,12 +381,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/1e8f4552bb9f0c35897809e231d4f4ed/sign?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/6ce43509156a06d4aa6c902a50146f19/sign?api-version=7.3-preview
   response:
     body:
-      string: '{"alg":"RS256","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/1e8f4552bb9f0c35897809e231d4f4ed","value":"VsYn4yGfluSMYwvH3W2kMMNMFrvi9rHceVTV334D_6sFZTkdV4OoPVzwpF5G7IsUCSWoN0_Nyb63dLIwJFahOv0fXh_zPBs1H0nXQC9sQz1oofAQiS-3bpG-S3IEdc7Xe9dGd0ISLT5GP316tK6HsJGJQT1WuwYR5XvEzmxxcFyVpPv176eQtSM7Fin6vj5lo-Ste8mG_DUfsj6Dn_Z1lvelwtTT9wSKwK7uxDABGYSIC0GCO7e5bVEppFwTRgoNXfveJq1NPlHKc9vQWtswpIIekEIQJoXTsoNJDp0Pa7SPO0r-gfxT5ysOzE4iYd5oKTk9ySPI_dv8kt4AntHt3Ch6lDEo4KJZ_ro16Pt-Rf0ZTN7avON_3DsJ2I9sal6e3Vv8j2uBdqX4f2tYANA4mGP3tUeytRjdD4gPUx7zi0ILZRIQmW8VPs1RdUL83U3WmENLQDxiqSA8FDQ7UUHiW2aY8hFeFvdIOooIqwUJHthScA_Gy0ycB6-64xc7mlDO"}'
+      string: '{"alg":"RS256","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/6ce43509156a06d4aa6c902a50146f19","value":"EYi1oP9wbfcEiVwUTz1iBU6RmlMI-jZ0a6S9UNmuHbO868T2Q7U--k2KHTS5mrZl-PFFcYZgGWWbq_5Tgqa-D3QLMKNthJLSjReWMBQ60OV-QvxWBNAFkrAorMG18U8BjbqO8yD_6jM73TKgcfRMtf7STuhakY_wVVL6ZS_MM4UT-PBANvKmWqFLhGSCbkDrfOqtTtt08G3mfOFA7vW_UqtRvbTaQy7Tj5Vws_P9Lrj_Dc5iBhOzej1yNbYj5_IkAYHxq4mwgMEB9uQRE_aLTLfU8-bFBBNr-QtQ6Bv2QGaWp-tSs1viX5_KlIEVDHbsEdjooXbS9NnAggbGET8QTx_VfuhRr8wVmICDHAi4Ik9giZzMVnb7VHqmuy5yimne1PVJLev0nVPuBsMe2H5YP7Brgmwn1ddb0R2x-1IsRFfIzsZikNhT6WDbDhcHK2pF-GqbIpjdbUr8D2WoEqgadhmedV6JEN7FcHRD6VoFtUMA84XUIZ9ZziJIpRY-FTQq"}'
     headers:
       cache-control: no-cache
       content-length: '663'
@@ -395,13 +395,13 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
-      x-ms-server-latency: '7'
+      x-ms-server-latency: '6'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/1e8f4552bb9f0c35897809e231d4f4ed/sign?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/6ce43509156a06d4aa6c902a50146f19/sign?api-version=7.3-preview
 - request:
     body: '{"alg": "RS384", "value": "OnZY76NXJ8_MBkjnc9b9RiaL5OYscmrTal040wQuLFlRrnLvJFecIvZl2KjXqwVB"}'
     headers:
@@ -412,12 +412,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/1e8f4552bb9f0c35897809e231d4f4ed/sign?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/6ce43509156a06d4aa6c902a50146f19/sign?api-version=7.3-preview
   response:
     body:
-      string: '{"alg":"RS384","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/1e8f4552bb9f0c35897809e231d4f4ed","value":"IE9j0C8C1h2cSnA03eCN1dOHGf4BSSngCUGltrbYeRTbbX-FI1N4HfVP-_ObUGyHaUgfQtgq49vV3WPpf40trKyQOny7dmDzuG8YuHPOOJSsPgqfC9tNeNvP0b5aLxqH8h-M8LnGT3tGhBuMXI2Nl6pPcr_ik_DJYE4kT9UjwnS16Hp1C81VGFS1UX-AKHUWjtQDqLHfGLKwjJjQzaJkQygVhaq0QsxOrkBiaT7PKD11ImrfFSzdGPKAX7YoiUWkA6m-FOC6gvOIyMK_JTa7v0YhZ1ZMcAz9Qb_JzSOaK6eRfXwoZjLMHYyLThIcIqsQx-0bIns4QgyoPa9PQtlkq4i1bqnDGHuQKusQEQ1OY5ywP3bxJwRMaxJFNeIIBlceKq-IkULoxhK1qsF-TfLWwo5wqCwgomvMtz9tSUHy4qwHImV1QfxuyhZxu6E0HIGcCzRoTxL6FTL3cMhAU0ct3pFUuOJneg8lRDEuBqXili9_8vURhNCGqaQXbQ7FzQA2"}'
+      string: '{"alg":"RS384","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/6ce43509156a06d4aa6c902a50146f19","value":"LVHlYGwcu2RUQvLNHm45KH2eaVokjn0UcTNKFlzqJx_r6Ay2MqbPbGx4EfgelPP_X0Od8LPd8VVP5UIiO5OhQM4HsQ3b-RB_A_SnbygAwkE-ZoBV7z973wK_tQED4xxDeKf4us7tpHjzUxQL-r0_DfowqhG79MeiMM-oKPx3jG6UswFGecPQRyqoPjIVu8JQp9o-cXlrTKmpPCSyhn8Tiz_3FeyUC14JF_zz8uutmyx6UkTsXdIPwwZJWIj8-w1M6p5o1XAvcUcemO4ppmayWbhP8MGx3axIXTVi0bc18lDQddLw7PGYYOi9Yqe2RtQLTeHUa0jk39ufdggO_MTVgUz8wHpw_6i1IEWRBEeTHw6VWe1UnhXyF_JGyV_vm6jQYFuUxXD8iwEGXEpsAgL8LtwaQ9s3qOh0dWQ0Qasf4zeJBRRhhAtua8uSR1o8zMgthzLnLoM-yRXKiyEcQtDaz1afbw2TIWnDT0r_7PKIVqnfDpNNthqeJWZcA3QgFHiA"}'
     headers:
       cache-control: no-cache
       content-length: '663'
@@ -426,13 +426,13 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
       x-ms-server-latency: '6'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/1e8f4552bb9f0c35897809e231d4f4ed/sign?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/6ce43509156a06d4aa6c902a50146f19/sign?api-version=7.3-preview
 - request:
     body: '{"alg": "RS512", "value": "zZyL-eOHDnnq34aZaWgBMobx4x2Pm3mPRo4eqnRmLK6sE0jsXZFOFhMXaTcvILQxovTsMMh9JupeojYCnDvfrQ"}'
     headers:
@@ -443,12 +443,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/1e8f4552bb9f0c35897809e231d4f4ed/sign?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/6ce43509156a06d4aa6c902a50146f19/sign?api-version=7.3-preview
   response:
     body:
-      string: '{"alg":"RS512","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/1e8f4552bb9f0c35897809e231d4f4ed","value":"kQ_ZP6m7O35mLWhGGyajU_4OW9EXuwH6NUAE3GqDZzwlGc473usy3yLJON8GIVTqcbxbWNEcmHgN2gbBYqSksQhVWzBoDLhAcnX3xupuYMZXOx_v7Ujbd1Q4YbL1f7BLXr8Z0Y9nq9P4L_982NJZuBS6ti7C6o65aev7LfqlzVApsSZnNrUx1jy4EJ_UBhj1ipl_n99C8gmq9rI6LpDPVetrzhZGb2tnN-iAH9c177aCwSKylNLEAyCS6GumUJkmZGPP_a2p0fKvs918JfgPvfHbKJWCI4y7Q0lJeiDd6pwBip4JfSwp04n5pq7K9hLGnKXIRpdX1Skc-PSH1TebnPu6hZ40_1-_IHoA1HWxplCm66MUOodMB6jdzs5tZJrAZLprnGhB0xkYHH-KUyU3rON4hEd9-jwfwc4vtAqQe_W-xj12FF0gGp7qsrY15YWoHxN1BP9wEA1EypmcrpM__fqE2233NgEDzCLWYCgTRc0cP3jRDgUIQ1bqdknoH3FD"}'
+      string: '{"alg":"RS512","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/6ce43509156a06d4aa6c902a50146f19","value":"jbVJ3QY8KrCoVWZObFuzSEVrMXwYS_5R-lutu8MjlXLF7OAFrJ8CZzF0dVvhOn4S4QEsEAUxPr_oO_NIJ3U7eAoOB4vZvegw98lYnphoWJZb-YOWSRIlo3TYHK8w_41W0ChKRBVgzYaZZNDWJdqP-8BDQa4wt09GR3fqvwmaVGkgOU8iqRgcA-z_ctNYzBTe755Rc56Yufwk8y8myBrUe23aQHnKUTErShKm0uioKu9xGokTjE3y2s8SuhpyWrMYvctJAy9CteCcFJnQtK9D3YEQa7hn2qXwyG8NHHG9Or2aELJCtBkVbtmobSGurnFBwAA0p8diHlyNABxU2c4EiH1DQL4qVIxmak7teG3vME_gwsUe5m8S-WWIppPB7Z3ruVFVMQXY2ZcIsPcxofS0AlcRzfrr26DRiKcg6ti82vcmm0jmJDxrrYMzPbAD_YTRGB9KPYP06MHZ7yDQtq6CvNIXf0rWPI8gL5bFmjq0zn9IxlY_EY_IEN7aJjTjR-VZ"}'
     headers:
       cache-control: no-cache
       content-length: '663'
@@ -457,13 +457,13 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
-      x-ms-server-latency: '6'
+      x-ms-server-latency: '7'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/1e8f4552bb9f0c35897809e231d4f4ed/sign?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-3072283b1521/6ce43509156a06d4aa6c902a50146f19/sign?api-version=7.3-preview
 - request:
     body: '{"key_size": 4096, "kty": "RSA-HSM"}'
     headers:
@@ -474,12 +474,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/create?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/create?api-version=7.3-preview
   response:
     body:
-      string: '{"attributes":{"created":1616196426,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1616196426},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/02c55635cf2705189b27795a65e80238","kty":"RSA-HSM","n":"4oUv-0i4iP4McyCYV0sV0NvrjOzbC3w17iYdmnRlcL1EPEBQhoryAn2Q6j5QtZSF72fabOAJ2zezgzF_8S-tccMW8hqnt_k0jR9z9OvKjoyerCHe3xicxopx6i4xJDHLVw7Y_IHU48H555m6fPtNKLPQBax9Xj83t07ZlHDU8vaCIfLRxCI_2LT-OWYxr8lricVZFgUUBBZGm3zd3oZ1aZKyDdHU3jrUquHd10zX9lZph4kN5ey9b2Jp29Jt-2r-_-rsc8fMebOSci7A6qVOjP8uMXQqU9-PoELWA_6s4YEtmiOnTWvpkF4Ivw4ZB1QJ2qsLjH30ocEfqpQYmJNiz_etEsrIYhnzJ3D-fxJ2GqRT5gEy_bJ9zLTb3lINQphzTAqnovR7h0ifTyP_vbiKTxTVGQJEWF0Ky1gPZkSEIP5nNPZG_28S8C7FI7hsNjn83Ohqb8l5zKrH1zQmJNaL0G3GiLf5DQ-3sIUQYEkSsOAF9Sn0WBJP9Wr7lwvaaeqO4sXm1QrvkaQ3nGwugqh7Q5XD4FBl9qPazCXEkPPxSFvQzZsOYAuzDBWn6HrNAjjk_TWqUJE0TmsAt0Q0R520k1jlmy0OsfGEZ4qJbgV5H8po6lafm7uePUoLSyxXQVzvY3tGL3vfbtYm6_kA9E-E9ID3in_skXAVnPJU22qWz80"}}'
+      string: '{"attributes":{"created":1618441116,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1618441116},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/c598dd6b4fbc40e98dfa888144c89806","kty":"RSA-HSM","n":"skcJbL0WTnTRL9DQKzIHsGPa8bks6nIrM2Cy0Kibfl1JA1LTWK1I98r4D6aT7c_HTGW7EcSv0MSpF8Bb0uLWPSQ_uL3OeTXGP6miaDY_Q-liD-95T7yeCxeF7v4cKA_yWbGq1BFkjfC6DE0EC0Lo-pTEQSJEMlegwBNlm1iu133Lhc5FfU9GaL3afX1Bt3AGF66CtzmGTa2b0gHRPtcYO91NfHccVvl0Ezp_k05MLMhf4g4qbCA5JP71HTIpkAaSxw6r8enEPWtFW8A1v9CikdWHKRoB1R6vTajjJH_08Z3Xqsh3wkFHpRyEpL3N9Ug5HRy0JTCA9jN8xURjQDuWJT2AtuN5fj1CL6YGbcln5Ticm0OJJLI_M5VUaIpX5V-AjWmVRkjfWzod-f7rCEjv5YY8e39H9rUNmDKJsMW-Vb_-U9z-MKWhcmzlumGbfekYfCrC_QbRvaMuZfsiLwifJBzItjTwBxZEtnIihiuTJOK4t2nK1GgEBsiIWgcRKp2nemBbf2vwyfU2YGiQMhD58s6efzS19FcMfRybSxng9WdCaKJGC74Rqcbpkm9rXObZVJekwqn1V07OIFVkUJbctOGAF-Lz0lnYVDdZE5Nj_LYJTld6L7kxDYKNT3llvs6ljWqwS0GgAFQL-ChAeiosdGmQ2s56rLIe9kjSsx8uMmU"}}'
     headers:
       cache-control: no-cache
       content-length: '1073'
@@ -488,13 +488,13 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
-      x-ms-server-latency: '231'
+      x-ms-server-latency: '240'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/create?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/create?api-version=7.3-preview
 - request:
     body: '{"alg": "PS256", "value": "vgZc0NQUb6WMKX___V2JntcFRO_vszKwSAj7R2rL1zg"}'
     headers:
@@ -505,12 +505,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/02c55635cf2705189b27795a65e80238/sign?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/c598dd6b4fbc40e98dfa888144c89806/sign?api-version=7.3-preview
   response:
     body:
-      string: '{"alg":"PS256","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/02c55635cf2705189b27795a65e80238","value":"O9whbPFd4ajE6n8iKfOohrR_vYIYPqZS25OqRutK66jKtdANbyutxJ5mKNdZSUWSYSy3cWxnY3uELGBb43kJ-JtPQX-mOvRT1yeRvlVob036zlPNVQysmoFcGdVbPNy3dJF-Phioh6EeJu39fdB5FyUFkbzknGIu-7QtEBYJvGQqY8uZSGc56p3-Mfd14FWQM--d4YONXTiOmdWcqfKp691SmcuN1No12LA-_zYwQJOdzrV4iYa3QUwj3ro1W-nSqzyFzktGcCeMo69NIrBkwe2QI-Vmy5sUxWQRY4oy3BN3VZl9DA9I9R68hPhDVuXJHNn_6AiGGYD02m3RvQHtiBW3uaBOBJ6zk8pWlNCluKhaburpRIbOMK2QbtSjl3bXjwRPwpIsdEMtiZszQBPmnrNgil1dLFHDdKgXWZ1XliipqXd0E_DpDrg9A0YN1kIZzfQ21ZkDrXV8l3rDD7Y5QDof6N-e7l1e-HB9DDp3fOq3XT7LbW3AUD-bOqJCLC5TB53jlftHDMwlb86XDLpRpRzHHtbykrm5zsutEjkqcwYDVY4XC7Y3XEs3W02xpXHYVUXi58zxwAeGLJkGCuoAtXgbH0fBPobvHSC-KjY6qhd_pYj-vTMd4OujTNVY6NJGa5HMa-HlPrV3mc8ErWSG5rSUyuSS8NI0BfX9utLsUd0"}'
+      string: '{"alg":"PS256","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/c598dd6b4fbc40e98dfa888144c89806","value":"Wjip-wB54hLbX6gJQwRcW64ajpGUoJsRIlUm0tygOKXHxNP7zoymboYIefW_UCuHnQAjudwfO5TTE61Q3SkQH6OvRQq716PZ-kLz4fJUhkk3cC_hCl552r1qVPDAxgDadABZiHThHWS9eQLnVBxDgYBtNoVZWk-IYWO2CzK0pk7l0b0bujbcNn68iWRPGze35TaNrmIDGRO9aDgFl9hsSKTwznUdRtH5FZW2rzDHRhFM4p8GyES31EdW3ec8qpr7Cq285n5i46dch6jkkvXOHDYkO7WURbCJPIM-132Q9x22SMiCwCh1h060pOSAuytJd5rt0vsd1wZRXFGsv7bbCaSDRNfpeQPc6no83GL57zTIYqDQhajZF_jFHOZSk4MyZziTQNdqWcBPfeSXEcfuvtNlSvN6g8qEWFd_KG4Xn1t8L7QwbJnYhgMQjNoOn5w2A086Q3QJMF3dz3yHnX_-h_p7VZJAi4Ilf1X0RsaTMcDqTAhydHKTR1ej26RVRZDquHCnzpW646wrt_wpRYK_o5jbu1y4a1mB1ZbmZ_0a9jFxNLJOC9vAR5DX1JCoD3dfe_C7plxmsbrk9W4E0Ixqm3G422YAWGcW2nxytywYqHfcyRIUdacyYsMdzoMaU6sUu4oxBUj6oTAIyuKlxSjctR-gPXHvKW2K1VOgGMuz6kA"}'
     headers:
       cache-control: no-cache
       content-length: '834'
@@ -519,13 +519,13 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
-      x-ms-server-latency: '108'
+      x-ms-server-latency: '97'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/02c55635cf2705189b27795a65e80238/sign?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/c598dd6b4fbc40e98dfa888144c89806/sign?api-version=7.3-preview
 - request:
     body: '{"alg": "PS384", "value": "OnZY76NXJ8_MBkjnc9b9RiaL5OYscmrTal040wQuLFlRrnLvJFecIvZl2KjXqwVB"}'
     headers:
@@ -536,12 +536,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/02c55635cf2705189b27795a65e80238/sign?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/c598dd6b4fbc40e98dfa888144c89806/sign?api-version=7.3-preview
   response:
     body:
-      string: '{"alg":"PS384","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/02c55635cf2705189b27795a65e80238","value":"17iPUQtxC35yWQ61aNwzSyorCj_bcBNI2q-nR-3uNU_F_i2wT7Ksztm_Eda33bp27AiyhDBjH0VxywdWNyxeifJLRZjSjLdmUcNDUDfjqr_ZBf8t7-yLr-9Aj_JggISx7CFodviV2TN9Py_KTElYbYJS8i8cP0teg-NlpeiPos1LbdHU4D1cxTSQt-kT1tC3VXip6IfdmEkswKZVhtIUN408ccFZByL68n8_zJ8Gj2xNk8qcHYaii0ENiNXicAVkQZUkpOF6rNQ43UHNtytCb_Zn3Qyi3ZMq6PCfHGZWeVWwUKtLNWme4_kd5WeIXgiuPEOXjciqC36B8m4sFodKq6ZCs6CdVplY0MXBG69SwjRgxIEYBV8YiE_5SdOeWeGpl3IJdVQJ8DhKG-W7pabAdf_E_1EsF0cjBYFG28N7y2jlW5B0-rIGH1zgHZG4ixMl7TpCpQRzA7IoCzDtMh9dB-IqbOgqh12wPt07tCHNSXN_SiGwQOgP1PUf3LZMKrrkWguDlbSEhZcp3hL3-8DWUD4s_zuS5Nvco_1Rthb_U8zicknay5vhVNf6k1mKr-Wv4c0Lob9QW_PAsxWhpafkETJdjF_nrHD2p0M288RL5Ce993i1938Q8ZoXzwsHPznCDft8BtwfWI8kAf9FaPHRyUUOd6xq4F5mtdkWMbRhVPA"}'
+      string: '{"alg":"PS384","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/c598dd6b4fbc40e98dfa888144c89806","value":"a7Fip1eCzddeJyZHWulAeTtrT2phalCqW-Ukrlu2Od1soqjwvMxo77k11oGl32U57t8d7eqO8miJNfewnTVqOsh2jBhXObXXX_vBhqUY9sH-UZ2Qo3vJuXi-h_bHTpQd4ua4kJLEhPrqwIoBlrEFGoJ81uYLVgcIMJhJY7Fk_SEWMRbQCTTA6idRmXErZ3lBTguweddVdBskkssmLgli2n3zRZrhRc00_3ewjpu7T8PXyL32iHChKyLtv6hY7hMd551Py2dRNCgTXdQc0oLnZ1A9ycrQXcAS94N4_itNx9M6UsWfl9oulqXEQmhJbaMIhSysUcSUln3uJ9Va-gy-Jm5pAmFpu2a-N0B42CQKJOR0oJJUcFJl-0m_tlA-9f4hYxh5vxCV0iV0YsgsI7L54ucpu87z9mQBoItU8JZ89YMfixwD2cUnL94udH7i-tPiphMkQEtSwcYO-lwaX_CteRQSJGNn4QXq-wJag6uZUkmvQhVzNkLukG1xxGOW9umDx4twKY7Gacl-QfcRmnuh2vRcS06NkbgMnRcmhPq8k3g4XwUGxo_Dl2JHYyycwQN7qqMkxfCfvKnqFYq1Qt93SYXaPj1oS6aJ780BuH8WNugka9Nj6Wiqpdm95v0oQHtItCPHsFPExwdLbsbxytVyah9eRaIJjoFhf_tAWrSGmaA"}'
     headers:
       cache-control: no-cache
       content-length: '834'
@@ -550,13 +550,13 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
       x-ms-server-latency: '13'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/02c55635cf2705189b27795a65e80238/sign?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/c598dd6b4fbc40e98dfa888144c89806/sign?api-version=7.3-preview
 - request:
     body: '{"alg": "PS512", "value": "zZyL-eOHDnnq34aZaWgBMobx4x2Pm3mPRo4eqnRmLK6sE0jsXZFOFhMXaTcvILQxovTsMMh9JupeojYCnDvfrQ"}'
     headers:
@@ -567,12 +567,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/02c55635cf2705189b27795a65e80238/sign?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/c598dd6b4fbc40e98dfa888144c89806/sign?api-version=7.3-preview
   response:
     body:
-      string: '{"alg":"PS512","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/02c55635cf2705189b27795a65e80238","value":"hn3Ht0XsYzR35666DI2zk7hNFK5xO5IqZvqo9jOwUg-eHpUiwavIv6LIR_jyz3-u3h6-LO8cpFO7v01hKBOIObB-niSOhlUpLTsvmbjzfG6mABn9toCinnWDJHOlYYMQcokqkfSHRiycoEOBvjdrZwqtsqP4BnqzzIlaytpLWkhyGm3xAhjGpWz2ilCyvbB8Cd1luj5Fax4CIZ6sVL1U0IV74RmZh73SiJaY41T-k5iTJgyAoctQkwIYwvZ07KU9ZHmRa8sM0qhoTCJHd0oX5Ab3GqHBNLWDSbNTtrsk4MLk5ehAiohGO9msf6dxnoFAi2Cm1ip7uXj5LLlNdFn2F5MckrjdYcWjzWD3w7wk0xWT500pN45ocppefLASbj-adZ9E5-GD9m057_oTyAbwggHa2hIV8TOciGPpa5VETgQewRGKb22TPkMSkolliREFeuGqcz1FelpMLvoyzIRs4f3KsvoeL-uPumAQlWurmFfEjvGUD_kXE8ABI5j-XqAEN7ScVTWEWp2c94pxfsYnYPV7Kzij3c-YzwbHjlSERudWYXef3PqXFsO9UyYqA_kBTdG33JgcjsD4CEoyBuUGmWqMCBrDisCNV4OWmxUJEzXFG1uKNm3TEZv9SaAoan_l0-moNNwXv4KeioO6iKf4viC3Nj6oUF5mRW1wF-Ixyz4"}'
+      string: '{"alg":"PS512","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/c598dd6b4fbc40e98dfa888144c89806","value":"sLyzbzzubJ_OiM2ZKchQ1Pm1EGmixjRfCKCrL1STi0Bjb2yot0jFyLIN8X1CSjDkgp1B2KUkVdCk_gqSTOVvjf5aMLugGkBbbEySa66vNlRn0ixkCRLtVOwnEmMlH8rHFVTy8jvZ_fPYtvw89Ml-y62dy9rcl1pFpYn6qjv_khJKa83ids0aPdDG7xLyx3C6UvxtDpaQB2ciwxz5Af47dYNDRc7yXAbBhhxByHZmC6wY6bv2MyymfA2DAzI9y6FlTvNkIhJ1SJs-j89TcJ_L9HSRGf6jvGVo8a9qQhCeI7hGPMPVR_UJeashZIpuHxuvVRVzvNpTPHgLx8mumRnKAjj1plCfpaeavXhrzF1YV3LS5ZH81Yr5wNcwyp8lgWLASVR9xxV69MjRnbz3cmSs7bCS_vBk2b-uHLbntnHiTSsjxslCW-3qt4ipvA84XCbUOWhqw07mwtLPXnGeiesl9HSNRnDJLNepV5FZ2atALtE-LdNP7DOaX07bwlbot75v8ik20XBbO6FtCbzeSXjRndOLGcZHZtuMTH2uT_fktu1HKS0KGn2OyQ-GtfbrLQj5qJr7Ie-_QnHQhjf2OL9lmrC_vN8t8Ni13JSbSB8xfTi-uEW1PdLYKcfiO3Yq7x6KtUVxa3cOu9CLodm0JIjDdhnsurxvkyhThHdnN_xKbWQ"}'
     headers:
       cache-control: no-cache
       content-length: '834'
@@ -581,13 +581,13 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
       x-ms-server-latency: '13'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/02c55635cf2705189b27795a65e80238/sign?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/c598dd6b4fbc40e98dfa888144c89806/sign?api-version=7.3-preview
 - request:
     body: '{"alg": "RS256", "value": "vgZc0NQUb6WMKX___V2JntcFRO_vszKwSAj7R2rL1zg"}'
     headers:
@@ -598,12 +598,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/02c55635cf2705189b27795a65e80238/sign?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/c598dd6b4fbc40e98dfa888144c89806/sign?api-version=7.3-preview
   response:
     body:
-      string: '{"alg":"RS256","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/02c55635cf2705189b27795a65e80238","value":"OSKpSSf2hSTY7zIxam-6uivfLWJgWNV6e-JsqstLXcxQhRQFrVoskp92XGHwT_RTOZ6O_5nXw6fSw5EU7yUd6pGjU58ly1RowsspHQBst_42wA3Br-PR_2twgZVDQh7A0pLrtSWauuttI5Ji_cGsZg0ltM5N62J4BY77jSj5be0XmkFVDxDp-UDPDDyqeQpNBMwE8khM2ojdHSnkcUAedn06DgZ9dA6e22475d1XDPSgSM-tSbACKWjP3wU3AJSTTYULsOc2RUZ39n6ltzI7l1vPv3C6AxVgFxqZjnFqZHGQRA5lQMHSMr3XNlNjC0EBeyb0WBL55XMioiRpszCIvsOm8Es_ntO27VUia_nH38syvPtU7wE4_JpUQlqaaL-Ofn5-MZn89w9zDm6zKvswJXN25YxNqHfCuy2lv1nRqngs3yCeXp_u7Eq9ZWcsak7b6oV1NFzN8GhIJwWZDpUAq7W6muB6cLAVHbBfgStBlsqclYUZQnhR6m4Ljr2b-o-i1KsOuFGEC4mhWWiz7hOMhuldPC06zQdAVOiO1dY4ZqtJRDjE2vXcM_Z4eMvIsLxvMFkatS-GA9x8KQcGmEY_3Sy-mwCo6UQq2_HBYHPNSvoUUFpZtJ5vE0ihyKXYelr45E85HpHwCwkyvyizT5xgBtWppSfzPQRkua2r8dR66gw"}'
+      string: '{"alg":"RS256","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/c598dd6b4fbc40e98dfa888144c89806","value":"oSo6d27xOVqe5N6TobxOfVhZO6FCk-zt_iCX4SLpAKhTwgRK4lNxKE23yff2VM2VwBUTWm7iZ7Tl4fjNlNFM9hQF_uBERuHsGr4-tCZYCIXXv-NKHZQrj3mho1_liD660lIwk_JRdHsA0Iku5HQ9_FUlJcN4fv0oPELGOxJ1OV9dNFc1OI0ym42ixhCUW-lTbiMnz330bRnKdJOurInvo8D1ZsEh8BBbQHPtSGrpzmoMWMO-fvcvLB8GCXnOLYspX7wYe44YqC8K_5iRSvbdseq12cGx8MO383gY3nxwIXJ9j4rHJx2SUFIhOElsMKnqSW52CoUkV2c33-1d-eL-Ig6EqkZWkPmZrQSpz2ClUrurG0uz6TX0hwQ4u20q-xcpySzDi35wYWWmhh1l6zTLkx_U33e9JnD_SE4UzxpApwoXBjr-38rQxt4TtI18NTMKhLxVg6kfg5y6I2xKjUJlwqj88nyGRjFJ6hky_LPHCBAKfKDe6G3yDcTPhmGiD0dCfbNRsUW_3Exrg-jM5GXTNxLdK9khRoixQPpE6Yw3RXZKUOKU6hNrE4tGE48orIcxDWtpG6E8asmOGTeD9fFlmm4j2FTJS4hjpk_KBRrskf7NO7Qr9MKcF4j8zA6B9g1kB_ZzdpAIMCtf2lRRNLmXcvP-_EUATRC0_lZuH-WIQJs"}'
     headers:
       cache-control: no-cache
       content-length: '834'
@@ -612,13 +612,13 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
       x-ms-server-latency: '13'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/02c55635cf2705189b27795a65e80238/sign?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/c598dd6b4fbc40e98dfa888144c89806/sign?api-version=7.3-preview
 - request:
     body: '{"alg": "RS384", "value": "OnZY76NXJ8_MBkjnc9b9RiaL5OYscmrTal040wQuLFlRrnLvJFecIvZl2KjXqwVB"}'
     headers:
@@ -629,12 +629,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/02c55635cf2705189b27795a65e80238/sign?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/c598dd6b4fbc40e98dfa888144c89806/sign?api-version=7.3-preview
   response:
     body:
-      string: '{"alg":"RS384","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/02c55635cf2705189b27795a65e80238","value":"Ky-GAeojvMoVPbG7in-0IMeZav4bccQQuY1np9GNuSZZ2SjO7w_Ft59h9f7JYejnhuAs8K-bL7y-SM4AH8aD5sDzVrGR4BPOVk55FTzEXdOek0B-T0XukgIZSGikni1hvXL7yJVV4z_pXaoIMatLofYjUSzfG8764hO9Q_zfMf-JGR5jhiCUaLlxOxXyqOm1sjf1R1v1ep3BDjNhaFSqgIjxcS2h_9PPsRw2tg_1qx3Jan_VqVYw6z7ZfaFuZJqvDNv_S7kmquIe60ucmeGO0Uhc1QU3QbemQZeTO3qhDS15iNU_Ch-lKTuT-08GVbX95SePP3Owrc5YDz7WkT_N_6ZvSRPhn7LGEFqlDaJN4MEcBxutfdXlzASeOvm3YunLV-1kmG4S8_bZ3hZAYpVVaCSklxvSzEQoHIWUO-f7NxDzz-wyY1AUHtZZ5nacfYpuKb6TmVJyjDJ2H4_gLqUpkxKO-L_PYNlxawMKqGrtM-n7wJ-Goa6BDkclvvHazmR-LVxO7YP2LtqUxifghoO0rUzwFierh6YZx0EpJpykFbDwJHCbZML93n7CehWEhh6sxZZ9y2e2Ve5H8ET15PdqKghQhnPxxzSLDiwmPIB_7IHfofly1sBEcrvNSFzqzqRjNzteVFDWUyGfDeRYMdu-zbj6U1CE84EeZCkjm2SPkuU"}'
+      string: '{"alg":"RS384","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/c598dd6b4fbc40e98dfa888144c89806","value":"ddeif0D58B7q_O6cdRdx9hHDCrvB4jnv4DOM7ly0q5Waf2mdHSGSBshPfqEuCrbpl6iaDg4Y_tfTs6dEbdG2pBayTAFo2ylBsLofnUlyOFa48oMzzv8BW6k5qf1wKd5DnJgBYJGeXNqP1_Os5j-0T5aGz_4X-Y1qb-CyJtV6zv2Bu8K9bYEFsHhNCTOGDLdOt-1EptkjlyKwpTq96GUaALljB5ukXdwwbBawa08OzMIA7cvP0dad6um_LUgbMLp8orGEZX8sbU7uOkv1BVkPlGff83vdg-ukAceLKcCsE4AGn-9GD6FLVgILKG01W0s_Ahz45lQt5ivizRbfZebI4Nveh4IukIkbBTBtqc5fgQ1Xi4tMbMbxtDPl2MwgGqLNixrycCTB1Rp0mV_qT6OHrwrvlvuA3UW9P3gS7eTGPeLbH-euZjbnr_Ya-YfSYpPXMksH293scEqEAYsQO6jcKNLziiuhDnEfe8MdaE0UcQlXkxkoIcdsNUKMCM5H5mAYw2KhgDtR0ZNcVeGqlAzzBIVraEGxHSri3hfUQk-MTpzoRc-rV4a8-NbZKBojitG1BY99TV0snQajQKtMdXuAPtDxYv0v5aIBE64wg-ars-CYfsipEBPjKGK4IjVZ59PJvpGENX0Tf-dkEYmpT49CrBfaFuU6cVseoNNFOo1svO0"}'
     headers:
       cache-control: no-cache
       content-length: '834'
@@ -643,13 +643,13 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
       x-ms-server-latency: '13'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/02c55635cf2705189b27795a65e80238/sign?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/c598dd6b4fbc40e98dfa888144c89806/sign?api-version=7.3-preview
 - request:
     body: '{"alg": "RS512", "value": "zZyL-eOHDnnq34aZaWgBMobx4x2Pm3mPRo4eqnRmLK6sE0jsXZFOFhMXaTcvILQxovTsMMh9JupeojYCnDvfrQ"}'
     headers:
@@ -660,12 +660,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/02c55635cf2705189b27795a65e80238/sign?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/c598dd6b4fbc40e98dfa888144c89806/sign?api-version=7.3-preview
   response:
     body:
-      string: '{"alg":"RS512","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/02c55635cf2705189b27795a65e80238","value":"czP7SG7faBQvoYgXaDUBL3dqqe6JFjv2Rksf52O1xBl_4XPX0nXMNdBnsF9OtPTc0fTz8TTtj3oGTDPzzkG05lkJBMuX7iW-uV7AUYmcwfv2AX-SXiD5CxvZ5kQUZd9ZjV0Bklw7RRADBGeSbenrHF-Afu551GUXVtvuOsI3aSWbKH72Vlf8T5T_kyTn2kkr5GSnAYPQXwVd-xgnA1-R8sluWBi0vyzkWUrMSbQHm6YyTPttsx5I9Sm-ndFafSRySuDM-UHy4hqhxxauBVCKjBXHdRsGv711V7ybXJpSFWEfGF97imfKtWCHvNurglDx-AxsYZ8trCyWVnyRq9KUpwG-M456PzDookTQtRZWiia8h1hIiScX67uDqcKgiFWAW4IVD9Lydd-P59OB3yI3tzFo_1IevOkF1bm9iI2UaoMGUwGJaImfUI8DDT3ZMqc_oDFVQMNusZONTEV9wfyQzsw4WJHVQtgh_8XMjTaVKNBtlbb_xyUgzAaB-R7RDWvTCmMEdMn5GkgdX0VQNDn2EGxGQJ89DGEL9ZiA20XpSPR1AGXCh0z60fpfDhT3ra9GVTw0HBCTzUqfS9JeG-McAJC8DghvuUEIxNqMnKCSwCarRVcOtDkY6avsmjeZIg-NP_GPgqZ7xmTAUc6k5ImBWIk1anVk_z05cpOXxQHs9YM"}'
+      string: '{"alg":"RS512","kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/c598dd6b4fbc40e98dfa888144c89806","value":"UVCOg_COdvG48uy-fOFZervAmPUZIzPJxiBJLN-ACp9g1vsDLHWP6lWAF7RyoFYS42v1gzSWujEyYHQGGOHW7i1tYFmy4d4GJ5FL2LpsK2boPW551HGjgBQug-D3JRYAuBiwU1RH__5qSjYEgg2W2XhnvE76YiWjEsaZd-Twfi6pNxgrgnBJPvc_f_fs5P-d8cMNf1ZdTmfv7QS5I_IlL_LQFtM1DGw66SzmmMnL_oGyuFZZIgETZzRzYEuBs3AWzDG81fRAlV_ElibhEunsbFQeZrM10UfRJLSMoqW3UfUxofwQxiSdVMSjVeDDyzSwne6WauOopvXoR5igFVR01lCxljm7CKwSBQb-vjXaT4M-GBGPVxCFHQBccLld__x4yGOzLmUg1n4gc5qMXbRN8uIUMIjIufVrGFLn4XmdO_9Ae8-pwUiQNso32fot0Am33LoBDiV9W5B7tQWcQATYJQxMmppT7UF0StvfcoOhYbHoBgl-FrdYWCf8PC_E5q32Ca1RulpWnJMsAAa8aEO2Y0LqaP3-pUy0gHjglTmZ9h9z5vb1ReeTRBKaxQ9AjAo1et0Caiz6zQmWHvkWBbr49bkRhsnHOErSgNCsGCKb8pRR2bOeiVkl-ndr6M7Z7GWPvHIWxH9tOX-iddOPvMcHRfc-kPkdFa84f2e1UmAQEZc"}'
     headers:
       cache-control: no-cache
       content-length: '834'
@@ -674,11 +674,11 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
-      x-ms-server-latency: '12'
+      x-ms-server-latency: '13'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/02c55635cf2705189b27795a65e80238/sign?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestrsa-verify-4096283b1521/c598dd6b4fbc40e98dfa888144c89806/sign?api-version=7.3-preview
 version: 1

@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-key-name72141126/create?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-key-name72141126/create?api-version=7.3-preview
   response:
     body:
       string: ''
@@ -56,12 +56,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-key-name72141126/create?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-key-name72141126/create?api-version=7.3-preview
   response:
     body:
-      string: '{"attributes":{"created":1616111203,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1616111203},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-key-name72141126/bdd8feb0e10103e88e54e4277f59edc9","kty":"RSA-HSM","n":"s3vsNNSNNJF8vUmS-87ufX_4GGv-rovpr7-1QZEFVN9ykSEFVMcHhFVYFz9vh6cO0QpMJOzKadiAR6ugG3OlWwBU-QuGLi0EB4PJarHTZgZ6KIS58Dduyk-K4deKwSD_0cWPgMbQxE2HkbloU3M6mJ4zRrxqmZpjvqMIcp477V7xjHmVpHZhvffu92zmUnv3_644zvgMeMhXs2jZ3WrjM6hUef7zSM2yDL1mjqFG-mgcqwFhw41SCWfXQETk5qA1yapG4UeyKAYWAPqrBZJs0JaVblPzlRiZMuPcr0P48pFdDKM8xyf_sO4UzP4tqtMlPiDvFWzJRwJv7VWln0TPtw"}}'
+      string: '{"attributes":{"created":1618441499,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1618441499},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestrsa-key-name72141126/281b2afbf6da46e791952b1bb5241c91","kty":"RSA-HSM","n":"iWqlMdBwXAwb5YGKUgj-lc1uODvNQvawvAfTX1XVtMrGmEBZ1tZs6JQsVyAE2tZ5IHtMAioO-4LcjoQY_3Naf1NuvvQ9TYBorKpPdbBYOq6AssoUQE_2-TxOeyc3k6OSAF3zOgpwUYW2NCJaqCof6q8S5MZi-vR63JafwlaPlaHFPkuB68tmHLmIsw3jdsG8nizOewh2r4ei8FXZYlGnOpP9Y8NsTHgBBBwp_WmXGcM8HLPaPCSwQfgPMzjYF4JN7YH4trTzSK6wG6QznfJ2G7thaxcqerVBfLe-PiuS271ySO4jadyPlGYc8ZKONvGF-DWrcRaQoqSiqjfdpS7IbQ"}}'
     headers:
       cache-control:
       - no-cache
@@ -78,11 +78,11 @@ interactions:
       x-frame-options:
       - SAMEORIGIN
       x-ms-keyvault-network-info:
-      - addr=172.92.159.124
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region:
       - eastus2
       x-ms-server-latency:
-      - '241'
+      - '228'
     status:
       code: 200
       message: OK
