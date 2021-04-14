@@ -20,6 +20,8 @@ class AddressDetails(Model):
 
     :param first_name: First name.
     :type first_name: str
+    :param middle_name: Middle name.
+    :type middle_name: str
     :param last_name: Last name.
     :type last_name: str
     :param company_name: Company name.
@@ -53,6 +55,7 @@ class AddressDetails(Model):
 
     _attribute_map = {
         'first_name': {'key': 'firstName', 'type': 'str'},
+        'middle_name': {'key': 'middleName', 'type': 'str'},
         'last_name': {'key': 'lastName', 'type': 'str'},
         'company_name': {'key': 'companyName', 'type': 'str'},
         'address_line1': {'key': 'addressLine1', 'type': 'str'},
@@ -70,6 +73,7 @@ class AddressDetails(Model):
     def __init__(self, **kwargs):
         super(AddressDetails, self).__init__(**kwargs)
         self.first_name = kwargs.get('first_name', None)
+        self.middle_name = kwargs.get('middle_name', None)
         self.last_name = kwargs.get('last_name', None)
         self.company_name = kwargs.get('company_name', None)
         self.address_line1 = kwargs.get('address_line1', None)
@@ -132,8 +136,9 @@ class Agreement(Resource):
     :ivar agreement_link: The URL to download the agreement.
     :vartype agreement_link: str
     :ivar category: The category of the agreement signed by a customer.
-     Possible values include: 'MicrosoftCustomerAgreement',
-     'AffiliatePurchaseTerms', 'Other'
+     Possible values include: 'AffiliatePurchaseTerms',
+     'IndirectForGovernmentAgreement', 'MicrosoftCustomerAgreement',
+     'MicrosoftPartnerAgreement', 'Other', 'UKCloudComputeFramework'
     :vartype category: str or ~azure.mgmt.billing.models.Category
     :ivar acceptance_mode: The mode of acceptance for an agreement. Possible
      values include: 'ClickToAccept', 'ESignEmbedded', 'ESignOffline'
@@ -318,6 +323,9 @@ class BillingAccount(Resource):
     :ivar has_read_access: Indicates whether user has read access to the
      billing account.
     :vartype has_read_access: bool
+    :param notification_email_address: Notification email address, only for
+     legacy accounts
+    :type notification_email_address: str
     """
 
     _validation = {
@@ -345,6 +353,7 @@ class BillingAccount(Resource):
         'departments': {'key': 'properties.departments', 'type': '[Department]'},
         'enrollment_accounts': {'key': 'properties.enrollmentAccounts', 'type': '[EnrollmentAccount]'},
         'has_read_access': {'key': 'properties.hasReadAccess', 'type': 'bool'},
+        'notification_email_address': {'key': 'properties.notificationEmailAddress', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -359,6 +368,7 @@ class BillingAccount(Resource):
         self.departments = kwargs.get('departments', None)
         self.enrollment_accounts = kwargs.get('enrollment_accounts', None)
         self.has_read_access = None
+        self.notification_email_address = kwargs.get('notification_email_address', None)
 
 
 class BillingAccountUpdateRequest(Model):
@@ -399,6 +409,9 @@ class BillingAccountUpdateRequest(Model):
     :ivar has_read_access: Indicates whether user has read access to the
      billing account.
     :vartype has_read_access: bool
+    :param notification_email_address: Notification email address, only for
+     legacy accounts
+    :type notification_email_address: str
     """
 
     _validation = {
@@ -420,6 +433,7 @@ class BillingAccountUpdateRequest(Model):
         'departments': {'key': 'properties.departments', 'type': '[Department]'},
         'enrollment_accounts': {'key': 'properties.enrollmentAccounts', 'type': '[EnrollmentAccount]'},
         'has_read_access': {'key': 'properties.hasReadAccess', 'type': 'bool'},
+        'notification_email_address': {'key': 'properties.notificationEmailAddress', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -434,6 +448,7 @@ class BillingAccountUpdateRequest(Model):
         self.departments = kwargs.get('departments', None)
         self.enrollment_accounts = kwargs.get('enrollment_accounts', None)
         self.has_read_access = None
+        self.notification_email_address = kwargs.get('notification_email_address', None)
 
 
 class BillingPeriod(Resource):
@@ -579,6 +594,8 @@ class BillingProfile(Resource):
      clouds.
     :vartype target_clouds: list[str or
      ~azure.mgmt.billing.models.TargetCloud]
+    :param tags: Tags of billing profiles.
+    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -617,6 +634,7 @@ class BillingProfile(Resource):
         'status_reason_code': {'key': 'properties.statusReasonCode', 'type': 'str'},
         'spending_limit': {'key': 'properties.spendingLimit', 'type': 'str'},
         'target_clouds': {'key': 'properties.targetClouds', 'type': '[str]'},
+        'tags': {'key': 'properties.tags', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
@@ -637,6 +655,7 @@ class BillingProfile(Resource):
         self.status_reason_code = None
         self.spending_limit = None
         self.target_clouds = None
+        self.tags = kwargs.get('tags', None)
 
 
 class BillingProfileCreationRequest(Model):
@@ -1365,6 +1384,8 @@ class EnrollmentAccount(Resource):
     :type cost_center: str
     :param account_owner: The owner of the enrollment account.
     :type account_owner: str
+    :param account_owner_email: The enrollment account owner email address.
+    :type account_owner_email: str
     :param status: The status of the enrollment account.
     :type status: str
     :param start_date: The start date of the enrollment account.
@@ -1389,6 +1410,7 @@ class EnrollmentAccount(Resource):
         'account_name': {'key': 'properties.accountName', 'type': 'str'},
         'cost_center': {'key': 'properties.costCenter', 'type': 'str'},
         'account_owner': {'key': 'properties.accountOwner', 'type': 'str'},
+        'account_owner_email': {'key': 'properties.accountOwnerEmail', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'start_date': {'key': 'properties.startDate', 'type': 'iso-8601'},
         'end_date': {'key': 'properties.endDate', 'type': 'iso-8601'},
@@ -1400,6 +1422,7 @@ class EnrollmentAccount(Resource):
         self.account_name = kwargs.get('account_name', None)
         self.cost_center = kwargs.get('cost_center', None)
         self.account_owner = kwargs.get('account_owner', None)
+        self.account_owner_email = kwargs.get('account_owner_email', None)
         self.status = kwargs.get('status', None)
         self.start_date = kwargs.get('start_date', None)
         self.end_date = kwargs.get('end_date', None)
@@ -1482,9 +1505,9 @@ class EnrollmentPolicies(Model):
     :ivar department_admin_view_charges: The policy that controls whether
      Department Administrators can view charges.
     :vartype department_admin_view_charges: bool
-    :ivar marketplaces_enabled: The policy that controls whether Azure
+    :ivar marketplace_enabled: The policy that controls whether Azure
      marketplace purchases are allowed in the enrollment.
-    :vartype marketplaces_enabled: bool
+    :vartype marketplace_enabled: bool
     :ivar reserved_instances_enabled: The policy that controls whether Azure
      reservation purchases are allowed in the enrollment.
     :vartype reserved_instances_enabled: bool
@@ -1493,14 +1516,14 @@ class EnrollmentPolicies(Model):
     _validation = {
         'account_owner_view_charges': {'readonly': True},
         'department_admin_view_charges': {'readonly': True},
-        'marketplaces_enabled': {'readonly': True},
+        'marketplace_enabled': {'readonly': True},
         'reserved_instances_enabled': {'readonly': True},
     }
 
     _attribute_map = {
         'account_owner_view_charges': {'key': 'accountOwnerViewCharges', 'type': 'bool'},
         'department_admin_view_charges': {'key': 'departmentAdminViewCharges', 'type': 'bool'},
-        'marketplaces_enabled': {'key': 'marketplacesEnabled', 'type': 'bool'},
+        'marketplace_enabled': {'key': 'marketplaceEnabled', 'type': 'bool'},
         'reserved_instances_enabled': {'key': 'reservedInstancesEnabled', 'type': 'bool'},
     }
 
@@ -1508,7 +1531,7 @@ class EnrollmentPolicies(Model):
         super(EnrollmentPolicies, self).__init__(**kwargs)
         self.account_owner_view_charges = None
         self.department_admin_view_charges = None
-        self.marketplaces_enabled = None
+        self.marketplace_enabled = None
         self.reserved_instances_enabled = None
 
 
@@ -2069,22 +2092,27 @@ class Operation(Model):
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
     :vartype name: str
+    :ivar is_data_action: Identifies if the operation is a data operation.
+    :vartype is_data_action: bool
     :param display: The object that represents the operation.
     :type display: ~azure.mgmt.billing.models.OperationDisplay
     """
 
     _validation = {
         'name': {'readonly': True},
+        'is_data_action': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
     def __init__(self, **kwargs):
         super(Operation, self).__init__(**kwargs)
         self.name = None
+        self.is_data_action = None
         self.display = kwargs.get('display', None)
 
 
@@ -2101,18 +2129,22 @@ class OperationDisplay(Model):
     :vartype resource: str
     :ivar operation: Operation type such as read, write and delete.
     :vartype operation: str
+    :ivar description: Description of operation.
+    :vartype description: str
     """
 
     _validation = {
         'provider': {'readonly': True},
         'resource': {'readonly': True},
         'operation': {'readonly': True},
+        'description': {'readonly': True},
     }
 
     _attribute_map = {
         'provider': {'key': 'provider', 'type': 'str'},
         'resource': {'key': 'resource', 'type': 'str'},
         'operation': {'key': 'operation', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -2120,6 +2152,7 @@ class OperationDisplay(Model):
         self.provider = None
         self.resource = None
         self.operation = None
+        self.description = None
 
 
 class Participants(Model):
@@ -2459,6 +2492,277 @@ class Reseller(Model):
         super(Reseller, self).__init__(**kwargs)
         self.reseller_id = None
         self.description = None
+
+
+class Reservation(Model):
+    """The definition of the reservation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The id of the reservation.
+    :vartype id: str
+    :ivar name: The name of the reservation.
+    :vartype name: str
+    :ivar type: The type of the reservation.
+    :vartype type: str
+    :ivar location: The location of the reservation.
+    :vartype location: str
+    :param sku: The sku information associated to this reservation
+    :type sku: ~azure.mgmt.billing.models.ReservationSkuProperty
+    :param applied_scopes: The array of applied scopes of a reservation. Will
+     be null if the reservation is in Shared scope
+    :type applied_scopes: list[str]
+    :ivar applied_scope_type: The applied scope type of the reservation.
+    :vartype applied_scope_type: str
+    :ivar reserved_resource_type: The reserved source type of the reservation,
+     e.g. virtual machine.
+    :vartype reserved_resource_type: str
+    :ivar quantity: The number of the reservation.
+    :vartype quantity: float
+    :ivar provisioning_state: The provisioning state of the reservation, e.g.
+     Succeeded
+    :vartype provisioning_state: str
+    :ivar expiry_date: The expiry date of the reservation
+    :vartype expiry_date: str
+    :ivar provisioning_sub_state: The provisioning state of the reservation,
+     e.g. Succeeded
+    :vartype provisioning_sub_state: str
+    :ivar display_name: The display name of the reservation
+    :vartype display_name: str
+    :ivar display_provisioning_state: The provisioning state of the
+     reservation for display, e.g. Succeeded
+    :vartype display_provisioning_state: str
+    :ivar user_friendly_renew_state: The renew state of the reservation for
+     display, e.g. On
+    :vartype user_friendly_renew_state: str
+    :ivar user_friendly_applied_scope_type: The applied scope type of the
+     reservation for display, e.g. Shared
+    :vartype user_friendly_applied_scope_type: str
+    :ivar effective_date_time: The effective date time of the reservation
+    :vartype effective_date_time: str
+    :ivar sku_description: The sku description of the reservation
+    :vartype sku_description: str
+    :ivar term: The term of the reservation, e.g. P1Y
+    :vartype term: str
+    :ivar renew: The renew state of the reservation
+    :vartype renew: bool
+    :ivar renew_source: The renew source of the reservation
+    :vartype renew_source: str
+    :ivar utilization: Reservation utilization
+    :vartype utilization:
+     ~azure.mgmt.billing.models.ReservationPropertyUtilization
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'readonly': True},
+        'applied_scope_type': {'readonly': True},
+        'reserved_resource_type': {'readonly': True},
+        'quantity': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'expiry_date': {'readonly': True},
+        'provisioning_sub_state': {'readonly': True},
+        'display_name': {'readonly': True},
+        'display_provisioning_state': {'readonly': True},
+        'user_friendly_renew_state': {'readonly': True},
+        'user_friendly_applied_scope_type': {'readonly': True},
+        'effective_date_time': {'readonly': True},
+        'sku_description': {'readonly': True},
+        'term': {'readonly': True},
+        'renew': {'readonly': True},
+        'renew_source': {'readonly': True},
+        'utilization': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'ReservationSkuProperty'},
+        'applied_scopes': {'key': 'properties.appliedScopes', 'type': '[str]'},
+        'applied_scope_type': {'key': 'properties.appliedScopeType', 'type': 'str'},
+        'reserved_resource_type': {'key': 'properties.reservedResourceType', 'type': 'str'},
+        'quantity': {'key': 'properties.quantity', 'type': 'float'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'expiry_date': {'key': 'properties.expiryDate', 'type': 'str'},
+        'provisioning_sub_state': {'key': 'properties.provisioningSubState', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'display_provisioning_state': {'key': 'properties.displayProvisioningState', 'type': 'str'},
+        'user_friendly_renew_state': {'key': 'properties.userFriendlyRenewState', 'type': 'str'},
+        'user_friendly_applied_scope_type': {'key': 'properties.userFriendlyAppliedScopeType', 'type': 'str'},
+        'effective_date_time': {'key': 'properties.effectiveDateTime', 'type': 'str'},
+        'sku_description': {'key': 'properties.skuDescription', 'type': 'str'},
+        'term': {'key': 'properties.term', 'type': 'str'},
+        'renew': {'key': 'properties.renew', 'type': 'bool'},
+        'renew_source': {'key': 'properties.renewSource', 'type': 'str'},
+        'utilization': {'key': 'properties.utilization', 'type': 'ReservationPropertyUtilization'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Reservation, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = None
+        self.sku = kwargs.get('sku', None)
+        self.applied_scopes = kwargs.get('applied_scopes', None)
+        self.applied_scope_type = None
+        self.reserved_resource_type = None
+        self.quantity = None
+        self.provisioning_state = None
+        self.expiry_date = None
+        self.provisioning_sub_state = None
+        self.display_name = None
+        self.display_provisioning_state = None
+        self.user_friendly_renew_state = None
+        self.user_friendly_applied_scope_type = None
+        self.effective_date_time = None
+        self.sku_description = None
+        self.term = None
+        self.renew = None
+        self.renew_source = None
+        self.utilization = None
+
+
+class ReservationPropertyUtilization(Model):
+    """Reservation utilization.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar trend: The number of days trend for a reservation
+    :vartype trend: str
+    :param aggregates: The array of aggregates of a reservation's utilization
+    :type aggregates:
+     list[~azure.mgmt.billing.models.ReservationUtilizationAggregates]
+    """
+
+    _validation = {
+        'trend': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'trend': {'key': 'trend', 'type': 'str'},
+        'aggregates': {'key': 'aggregates', 'type': '[ReservationUtilizationAggregates]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ReservationPropertyUtilization, self).__init__(**kwargs)
+        self.trend = None
+        self.aggregates = kwargs.get('aggregates', None)
+
+
+class ReservationSkuProperty(Model):
+    """The property of reservation sku object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: The name of the reservation sku.
+    :vartype name: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ReservationSkuProperty, self).__init__(**kwargs)
+        self.name = None
+
+
+class ReservationSummary(Model):
+    """The roll up count summary of reservations in each state.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar succeeded_count: The number of reservation in Succeeded state
+    :vartype succeeded_count: float
+    :ivar failed_count: The number of reservation in Failed state
+    :vartype failed_count: float
+    :ivar expiring_count: The number of reservation in Expiring state
+    :vartype expiring_count: float
+    :ivar expired_count: The number of reservation in Expired state
+    :vartype expired_count: float
+    :ivar pending_count: The number of reservation in Pending state
+    :vartype pending_count: float
+    :ivar cancelled_count: The number of reservation in Cancelled state
+    :vartype cancelled_count: float
+    """
+
+    _validation = {
+        'succeeded_count': {'readonly': True},
+        'failed_count': {'readonly': True},
+        'expiring_count': {'readonly': True},
+        'expired_count': {'readonly': True},
+        'pending_count': {'readonly': True},
+        'cancelled_count': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'succeeded_count': {'key': 'succeededCount', 'type': 'float'},
+        'failed_count': {'key': 'failedCount', 'type': 'float'},
+        'expiring_count': {'key': 'expiringCount', 'type': 'float'},
+        'expired_count': {'key': 'expiredCount', 'type': 'float'},
+        'pending_count': {'key': 'pendingCount', 'type': 'float'},
+        'cancelled_count': {'key': 'cancelledCount', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ReservationSummary, self).__init__(**kwargs)
+        self.succeeded_count = None
+        self.failed_count = None
+        self.expiring_count = None
+        self.expired_count = None
+        self.pending_count = None
+        self.cancelled_count = None
+
+
+class ReservationUtilizationAggregates(Model):
+    """The aggregate values of reservation utilization.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar grain: The grain of the aggregate
+    :vartype grain: float
+    :ivar grain_unit: The grain unit of the aggregate
+    :vartype grain_unit: str
+    :ivar value: The aggregate value
+    :vartype value: float
+    :ivar value_unit: The aggregate value unit
+    :vartype value_unit: str
+    """
+
+    _validation = {
+        'grain': {'readonly': True},
+        'grain_unit': {'readonly': True},
+        'value': {'readonly': True},
+        'value_unit': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'grain': {'key': 'grain', 'type': 'float'},
+        'grain_unit': {'key': 'grainUnit', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'float'},
+        'value_unit': {'key': 'valueUnit', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ReservationUtilizationAggregates, self).__init__(**kwargs)
+        self.grain = None
+        self.grain_unit = None
+        self.value = None
+        self.value_unit = None
 
 
 class Transaction(Resource):
@@ -2828,10 +3132,16 @@ class ValidateSubscriptionTransferEligibilityError(Model):
     """Error details of the transfer eligibility validation.
 
     :param code: Error code for the product transfer validation. Possible
-     values include: 'InvalidSource', 'SubscriptionNotActive',
-     'InsufficientPermissionOnSource', 'InsufficientPermissionOnDestination',
-     'DestinationBillingProfilePastDue', 'SubscriptionTypeNotSupported',
-     'CrossBillingAccountNotAllowed', 'NotAvailableForDestinationMarket'
+     values include: 'BillingAccountInactive', 'CrossBillingAccountNotAllowed',
+     'DestinationBillingProfileInactive', 'DestinationBillingProfileNotFound',
+     'DestinationBillingProfilePastDue', 'DestinationInvoiceSectionInactive',
+     'DestinationInvoiceSectionNotFound',
+     'InsufficientPermissionOnDestination', 'InsufficientPermissionOnSource',
+     'InvalidDestination', 'InvalidSource',
+     'MarketplaceNotEnabledOnDestination', 'NotAvailableForDestinationMarket',
+     'ProductInactive', 'ProductNotFound', 'ProductTypeNotSupported',
+     'SourceBillingProfilePastDue', 'SourceInvoiceSectionInactive',
+     'SubscriptionNotActive', 'SubscriptionTypeNotSupported'
     :type code: str or
      ~azure.mgmt.billing.models.SubscriptionTransferValidationErrorCode
     :param message: The error message.

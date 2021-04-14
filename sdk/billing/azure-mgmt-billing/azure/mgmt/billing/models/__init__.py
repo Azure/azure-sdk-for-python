@@ -54,6 +54,11 @@ try:
     from ._models_py3 import Product
     from ._models_py3 import RebillDetails
     from ._models_py3 import Reseller
+    from ._models_py3 import Reservation
+    from ._models_py3 import ReservationPropertyUtilization
+    from ._models_py3 import ReservationSkuProperty
+    from ._models_py3 import ReservationSummary
+    from ._models_py3 import ReservationUtilizationAggregates
     from ._models_py3 import Resource
     from ._models_py3 import Transaction
     from ._models_py3 import TransferBillingSubscriptionRequestProperties
@@ -108,6 +113,11 @@ except (SyntaxError, ImportError):
     from ._models import Product
     from ._models import RebillDetails
     from ._models import Reseller
+    from ._models import Reservation
+    from ._models import ReservationPropertyUtilization
+    from ._models import ReservationSkuProperty
+    from ._models import ReservationSummary
+    from ._models import ReservationUtilizationAggregates
     from ._models import Resource
     from ._models import Transaction
     from ._models import TransferBillingSubscriptionRequestProperties
@@ -133,6 +143,7 @@ from ._paged_models import InvoiceSectionPaged
 from ._paged_models import InvoiceSectionWithCreateSubPermissionPaged
 from ._paged_models import OperationPaged
 from ._paged_models import ProductPaged
+from ._paged_models import ReservationPaged
 from ._paged_models import TransactionPaged
 from ._billing_management_client_enums import (
     AddressValidationStatus,
@@ -216,6 +227,11 @@ __all__ = [
     'Product',
     'RebillDetails',
     'Reseller',
+    'Reservation',
+    'ReservationPropertyUtilization',
+    'ReservationSkuProperty',
+    'ReservationSummary',
+    'ReservationUtilizationAggregates',
     'Resource',
     'Transaction',
     'TransferBillingSubscriptionRequestProperties',
@@ -240,6 +256,7 @@ __all__ = [
     'BillingRoleDefinitionPaged',
     'BillingRoleAssignmentPaged',
     'AgreementPaged',
+    'ReservationPaged',
     'EnrollmentAccountSummaryPaged',
     'BillingPeriodPaged',
     'AddressValidationStatus',

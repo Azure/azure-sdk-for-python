@@ -27,6 +27,7 @@ from ._operations import Operations
 from ._billing_role_definitions_operations import BillingRoleDefinitionsOperations
 from ._billing_role_assignments_operations import BillingRoleAssignmentsOperations
 from ._agreements_operations import AgreementsOperations
+from ._reservations_operations import ReservationsOperations
 from ._enrollment_accounts_operations import EnrollmentAccountsOperations
 from ._billing_periods_operations import BillingPeriodsOperations
 
@@ -49,6 +50,7 @@ __all__ = [
     'BillingRoleDefinitionsOperations',
     'BillingRoleAssignmentsOperations',
     'AgreementsOperations',
+    'ReservationsOperations',
     'EnrollmentAccountsOperations',
     'BillingPeriodsOperations',
 ]

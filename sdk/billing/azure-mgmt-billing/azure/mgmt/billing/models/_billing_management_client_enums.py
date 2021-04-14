@@ -20,14 +20,26 @@ class AddressValidationStatus(str, Enum):
 
 class SubscriptionTransferValidationErrorCode(str, Enum):
 
-    invalid_source = "InvalidSource"
-    subscription_not_active = "SubscriptionNotActive"
-    insufficient_permission_on_source = "InsufficientPermissionOnSource"
-    insufficient_permission_on_destination = "InsufficientPermissionOnDestination"
-    destination_billing_profile_past_due = "DestinationBillingProfilePastDue"
-    subscription_type_not_supported = "SubscriptionTypeNotSupported"
+    billing_account_inactive = "BillingAccountInactive"
     cross_billing_account_not_allowed = "CrossBillingAccountNotAllowed"
+    destination_billing_profile_inactive = "DestinationBillingProfileInactive"
+    destination_billing_profile_not_found = "DestinationBillingProfileNotFound"
+    destination_billing_profile_past_due = "DestinationBillingProfilePastDue"
+    destination_invoice_section_inactive = "DestinationInvoiceSectionInactive"
+    destination_invoice_section_not_found = "DestinationInvoiceSectionNotFound"
+    insufficient_permission_on_destination = "InsufficientPermissionOnDestination"
+    insufficient_permission_on_source = "InsufficientPermissionOnSource"
+    invalid_destination = "InvalidDestination"
+    invalid_source = "InvalidSource"
+    marketplace_not_enabled_on_destination = "MarketplaceNotEnabledOnDestination"
     not_available_for_destination_market = "NotAvailableForDestinationMarket"
+    product_inactive = "ProductInactive"
+    product_not_found = "ProductNotFound"
+    product_type_not_supported = "ProductTypeNotSupported"
+    source_billing_profile_past_due = "SourceBillingProfilePastDue"
+    source_invoice_section_inactive = "SourceInvoiceSectionInactive"
+    subscription_not_active = "SubscriptionNotActive"
+    subscription_type_not_supported = "SubscriptionTypeNotSupported"
 
 
 class AgreementType(str, Enum):
@@ -252,9 +264,12 @@ class ViewCharges(str, Enum):
 
 class Category(str, Enum):
 
-    microsoft_customer_agreement = "MicrosoftCustomerAgreement"
     affiliate_purchase_terms = "AffiliatePurchaseTerms"
+    indirect_for_government_agreement = "IndirectForGovernmentAgreement"
+    microsoft_customer_agreement = "MicrosoftCustomerAgreement"
+    microsoft_partner_agreement = "MicrosoftPartnerAgreement"
     other = "Other"
+    uk_cloud_compute_framework = "UKCloudComputeFramework"
 
 
 class AcceptanceMode(str, Enum):

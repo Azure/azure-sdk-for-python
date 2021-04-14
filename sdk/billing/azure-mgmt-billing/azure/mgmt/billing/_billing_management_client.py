@@ -31,6 +31,7 @@ from .operations import Operations
 from .operations import BillingRoleDefinitionsOperations
 from .operations import BillingRoleAssignmentsOperations
 from .operations import AgreementsOperations
+from .operations import ReservationsOperations
 from .operations import EnrollmentAccountsOperations
 from .operations import BillingPeriodsOperations
 from . import models
@@ -78,6 +79,8 @@ class BillingManagementClient(SDKClient):
     :vartype billing_role_assignments: azure.mgmt.billing.operations.BillingRoleAssignmentsOperations
     :ivar agreements: Agreements operations
     :vartype agreements: azure.mgmt.billing.operations.AgreementsOperations
+    :ivar reservations: Reservations operations
+    :vartype reservations: azure.mgmt.billing.operations.ReservationsOperations
     :ivar enrollment_accounts: EnrollmentAccounts operations
     :vartype enrollment_accounts: azure.mgmt.billing.operations.EnrollmentAccountsOperations
     :ivar billing_periods: BillingPeriods operations
@@ -137,6 +140,8 @@ class BillingManagementClient(SDKClient):
         self.billing_role_assignments = BillingRoleAssignmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.agreements = AgreementsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.reservations = ReservationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.enrollment_accounts = EnrollmentAccountsOperations(
             self._client, self.config, self._serialize, self._deserialize)

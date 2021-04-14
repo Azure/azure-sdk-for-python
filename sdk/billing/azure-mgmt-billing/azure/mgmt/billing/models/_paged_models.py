@@ -207,6 +207,19 @@ class AgreementPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(AgreementPaged, self).__init__(*args, **kwargs)
+class ReservationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Reservation <azure.mgmt.billing.models.Reservation>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Reservation]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ReservationPaged, self).__init__(*args, **kwargs)
 class EnrollmentAccountSummaryPaged(Paged):
     """
     A paging container for iterating over a list of :class:`EnrollmentAccountSummary <azure.mgmt.billing.models.EnrollmentAccountSummary>` object
