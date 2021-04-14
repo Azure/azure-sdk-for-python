@@ -47,12 +47,91 @@ class ProviderShareSubscriptionsOperations(object):
         self._deserialize = deserializer
         self._config = config
 
+    def adjust(
+        self,
+        resource_group_name,  # type: str
+        account_name,  # type: str
+        share_name,  # type: str
+        provider_share_subscription_id,  # type: str
+        provider_share_subscription,  # type: "_models.ProviderShareSubscription"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.ProviderShareSubscription"
+        """Adjust the expiration date of a share subscription in a provider share.
+
+        Adjust a share subscription's expiration date in a provider share.
+
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
+        :param account_name: The name of the share account.
+        :type account_name: str
+        :param share_name: The name of the share.
+        :type share_name: str
+        :param provider_share_subscription_id: To locate shareSubscription.
+        :type provider_share_subscription_id: str
+        :param provider_share_subscription: The provider share subscription.
+        :type provider_share_subscription: ~azure.mgmt.datashare.models.ProviderShareSubscription
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ProviderShareSubscription, or the result of cls(response)
+        :rtype: ~azure.mgmt.datashare.models.ProviderShareSubscription
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProviderShareSubscription"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-09-01"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.adjust.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'shareName': self._serialize.url("share_name", share_name, 'str'),
+            'providerShareSubscriptionId': self._serialize.url("provider_share_subscription_id", provider_share_subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(provider_share_subscription, 'ProviderShareSubscription')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.DataShareError, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('ProviderShareSubscription', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    adjust.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataShare/accounts/{accountName}/shares/{shareName}/providerShareSubscriptions/{providerShareSubscriptionId}/adjust'}  # type: ignore
+
     def reinstate(
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
         share_name,  # type: str
         provider_share_subscription_id,  # type: str
+        provider_share_subscription,  # type: "_models.ProviderShareSubscription"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.ProviderShareSubscription"
@@ -68,6 +147,8 @@ class ProviderShareSubscriptionsOperations(object):
         :type share_name: str
         :param provider_share_subscription_id: To locate shareSubscription.
         :type provider_share_subscription_id: str
+        :param provider_share_subscription: The provider share subscription.
+        :type provider_share_subscription: ~azure.mgmt.datashare.models.ProviderShareSubscription
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProviderShareSubscription, or the result of cls(response)
         :rtype: ~azure.mgmt.datashare.models.ProviderShareSubscription
@@ -78,7 +159,8 @@ class ProviderShareSubscriptionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-11-01"
+        api_version = "2020-09-01"
+        content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
@@ -98,15 +180,19 @@ class ProviderShareSubscriptionsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        request = self._client.post(url, query_parameters, header_parameters)
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(provider_share_subscription, 'ProviderShareSubscription')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DataShareError, response)
+            error = self._deserialize.failsafe_deserialize(_models.DataShareError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ProviderShareSubscription', pipeline_response)
@@ -131,7 +217,7 @@ class ProviderShareSubscriptionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-11-01"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         # Construct URL
@@ -159,7 +245,7 @@ class ProviderShareSubscriptionsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DataShareError, response)
+            error = self._deserialize.failsafe_deserialize(_models.DataShareError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -197,8 +283,8 @@ class ProviderShareSubscriptionsOperations(object):
         :type provider_share_subscription_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either ProviderShareSubscription or the result of cls(response)
@@ -285,7 +371,7 @@ class ProviderShareSubscriptionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-11-01"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         # Construct URL
@@ -313,7 +399,7 @@ class ProviderShareSubscriptionsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DataShareError, response)
+            error = self._deserialize.failsafe_deserialize(_models.DataShareError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ProviderShareSubscription', pipeline_response)
@@ -355,7 +441,7 @@ class ProviderShareSubscriptionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-11-01"
+        api_version = "2020-09-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -400,7 +486,7 @@ class ProviderShareSubscriptionsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DataShareError, response)
+                error = self._deserialize.failsafe_deserialize(_models.DataShareError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

@@ -14,19 +14,20 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/repoe5c92023/_tags/does_not_exist
   response:
     body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "repository", "Name": "repoe5c92023", "Action": "metadata_write"}]}]}'
+      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"repoe5c92023","Action":"metadata_write"}]}]}
+
+        '
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '216'
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 12:55:52 GMT
+      date: Tue, 13 Apr 2021 16:02:28 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate: Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:repoe5c92023:metadata_write"
       x-content-type-options: nosniff
     status:
       code: 401
@@ -50,11 +51,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 12:55:53 GMT
+      date: Tue, 13 Apr 2021 16:02:29 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '333.283333'
+      x-ms-ratelimit-remaining-calls-per-second: '165.8'
     status:
       code: 200
       message: OK
@@ -78,11 +79,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 12:55:53 GMT
+      date: Tue, 13 Apr 2021 16:02:29 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '333.266667'
+      x-ms-ratelimit-remaining-calls-per-second: '165.783333'
     status:
       code: 200
       message: OK
@@ -109,7 +110,7 @@ interactions:
       connection: keep-alive
       content-length: '81'
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 12:55:53 GMT
+      date: Tue, 13 Apr 2021 16:02:30 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
