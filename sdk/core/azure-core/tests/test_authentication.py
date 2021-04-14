@@ -237,12 +237,12 @@ def test_azure_sas_credential_policy_raises():
 def test_azure_named_key_credential():
     cred = AzureNamedKeyCredential("sample_name", "samplekey")
 
-    assert cred.name == "sample_name"
-    assert cred.key == "samplekey"
+    assert cred.credential.name == "sample_name"
+    assert cred.credential.key == "samplekey"
 
     cred.update("newname", "newkey")
-    assert cred.name == "newname"
-    assert cred.key == "newkey"
+    assert cred.credential.name == "newname"
+    assert cred.credential.key == "newkey"
 
 
 def test_azure_named_key_credential_raises():
@@ -250,8 +250,8 @@ def test_azure_named_key_credential_raises():
         cred = AzureNamedKeyCredential("sample_name", 123345)
 
     cred = AzureNamedKeyCredential("sample_name", "samplekey")
-    assert cred.name == "sample_name"
-    assert cred.key == "samplekey"
+    assert cred.credential.name == "sample_name"
+    assert cred.credential.key == "samplekey"
 
     with pytest.raises(TypeError, match="Both name and key must be Strings."):
         cred.update(1234, "newkey")
@@ -267,7 +267,7 @@ def test_azure_named_key_credential_policy():
 
     transport=Mock(send=verify_authorization_header)
     credential = AzureNamedKeyCredential(key_name, api_key)
-    credential_policy = AzureNamedKeyCredentialPolicy(credential=credential)
+    credential_policy = AzureNamedKeyCredentialPolicy(credential=credential, name=key_name)
     pipeline = Pipeline(transport=transport, policies=[credential_policy])
 
     pipeline.run(HttpRequest("GET", "https://test_key_credential"))

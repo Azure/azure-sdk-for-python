@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 from typing import TYPE_CHECKING
+from collections import namedtuple
 import six
 
 
@@ -26,9 +27,10 @@ if TYPE_CHECKING:
 
 
 else:
-    from collections import namedtuple
-
     AccessToken = namedtuple("AccessToken", ["token", "expires_on"])
+
+AzureNamedKey = namedtuple("AzureNamedKey", ["name", "key"])
+
 
 __all__ = ["AzureKeyCredential", "AzureSasCredential", "AccessToken", "AzureNamedKeyCredential"]
 
@@ -125,26 +127,16 @@ class AzureNamedKeyCredential(object):
         # type: (str, str) -> None
         if not isinstance(name, six.string_types) or not isinstance(key, six.string_types):
             raise TypeError("Both name and key must be Strings.")
-        self._name = name
-        self._key = key
+        self._credential = AzureNamedKey(name, key)
 
     @property
-    def name(self):
+    def credential(self):
         # type () -> str
         """The value of the configured name.
 
         :rtype: str
         """
-        return self._name
-
-    @property
-    def key(self):
-        # type () -> str
-        """The value of the configured key.
-
-        :rtype: str
-        """
-        return self._key
+        return self._credential
 
     def update(self, name, key):
         # type: (str, str) -> None
@@ -155,5 +147,4 @@ class AzureNamedKeyCredential(object):
         """
         if not isinstance(name, six.string_types) or not isinstance(key, six.string_types):
             raise TypeError("Both name and key must be Strings.")
-        self._name = name
-        self._key = key
+        self._credential = AzureNamedKey(name, key)

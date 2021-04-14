@@ -160,11 +160,11 @@ class AzureNamedKeyCredentialPolicy(SansIOHTTPPolicy):
     :type credential: ~azure.core.credentials.AzureNamedKeyCredential
     :raises: ValueError or TypeError
     """
-    def __init__(self, credential, **kwargs):  # pylint: disable=unused-argument
+    def __init__(self, credential, name, **kwargs):  # pylint: disable=unused-argument
         # type: (AzureNamedKeyCredential, **Any) -> None
         super(AzureNamedKeyCredentialPolicy, self).__init__()
-        self._key = credential.key
-        self._name = credential.name
+        self._credential = credential
+        self._name = name
 
     def on_request(self, request):
-        request.http_request.headers[self._name] = self._key
+        request.http_request.headers[self._name] = self._credential.credential.key
