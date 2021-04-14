@@ -48,16 +48,19 @@ class ARecord(Model):
 class Resource(Model):
     """Resource.
 
+    Common fields that are returned in the response for all Azure Resource
+    Manager resources.
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -81,19 +84,21 @@ class Resource(Model):
 
 
 class AzureEntityResource(Resource):
-    """The resource model definition for a Azure Resource Manager resource with an
-    etag.
+    """Entity Resource.
+
+    The resource model definition for an Azure Resource Manager resource with
+    an etag.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -119,9 +124,9 @@ class AzureEntityResource(Resource):
 
 
 class CloudError(Model):
-    """CloudError.
+    """An error response from the service.
 
-    :param error:
+    :param error: Cloud error body.
     :type error: ~azure.mgmt.dns.v2016_04_01.models.CloudErrorBody
     """
 
@@ -147,15 +152,18 @@ class CloudErrorException(HttpOperationError):
 
 
 class CloudErrorBody(Model):
-    """CloudErrorBody.
+    """An error response from the service.
 
-    :param code:
+    :param code: An identifier for the error. Codes are invariant and are
+     intended to be consumed programmatically.
     :type code: str
-    :param message:
+    :param message: A message describing the error, intended to be suitable
+     for display in a user interface.
     :type message: str
-    :param target:
+    :param target: The target of the particular error. For example, the name
+     of the property in error.
     :type target: str
-    :param details:
+    :param details: A list of additional details about the error.
     :type details: list[~azure.mgmt.dns.v2016_04_01.models.CloudErrorBody]
     """
 
@@ -227,19 +235,21 @@ class NsRecord(Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have
-    everything other than required location and tags.
+    """Proxy Resource.
+
+    The resource model definition for a Azure Resource Manager proxy resource.
+    It will not have tags and a location.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -279,6 +289,9 @@ class RecordSet(Model):
     """Describes a DNS record set (a collection of DNS records with the same name
     and type).
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param id: The ID of the record set.
     :type id: str
     :param name: The name of the record set.
@@ -291,6 +304,8 @@ class RecordSet(Model):
     :type metadata: dict[str, str]
     :param ttl: The TTL (time-to-live) of the records in the record set.
     :type ttl: long
+    :ivar fqdn: Fully qualified domain name of the record set.
+    :vartype fqdn: str
     :param arecords: The list of A records in the record set.
     :type arecords: list[~azure.mgmt.dns.v2016_04_01.models.ARecord]
     :param aaaa_records: The list of AAAA records in the record set.
@@ -311,6 +326,10 @@ class RecordSet(Model):
     :type soa_record: ~azure.mgmt.dns.v2016_04_01.models.SoaRecord
     """
 
+    _validation = {
+        'fqdn': {'readonly': True},
+    }
+
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
@@ -318,6 +337,7 @@ class RecordSet(Model):
         'etag': {'key': 'etag', 'type': 'str'},
         'metadata': {'key': 'properties.metadata', 'type': '{str}'},
         'ttl': {'key': 'properties.TTL', 'type': 'long'},
+        'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
         'arecords': {'key': 'properties.ARecords', 'type': '[ARecord]'},
         'aaaa_records': {'key': 'properties.AAAARecords', 'type': '[AaaaRecord]'},
         'mx_records': {'key': 'properties.MXRecords', 'type': '[MxRecord]'},
@@ -337,6 +357,7 @@ class RecordSet(Model):
         self.etag = kwargs.get('etag', None)
         self.metadata = kwargs.get('metadata', None)
         self.ttl = kwargs.get('ttl', None)
+        self.fqdn = None
         self.arecords = kwargs.get('arecords', None)
         self.aaaa_records = kwargs.get('aaaa_records', None)
         self.mx_records = kwargs.get('mx_records', None)
@@ -452,20 +473,23 @@ class SubResource(Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+    """Tracked Resource.
+
+    The resource model definition for an Azure Resource Manager tracked top
+    level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
@@ -518,13 +542,13 @@ class Zone(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
@@ -536,6 +560,10 @@ class Zone(TrackedResource):
      can be created in this DNS zone.  This is a read-only property and any
      attempt to set this value will be ignored.
     :type max_number_of_record_sets: long
+    :ivar max_number_of_records_per_record_set: The maximum number of records
+     per record set that can be created in this DNS zone.  This is a read-only
+     property and any attempt to set this value will be ignored.
+    :vartype max_number_of_records_per_record_set: long
     :param number_of_record_sets: The current number of record sets in this
      DNS zone.  This is a read-only property and any attempt to set this value
      will be ignored.
@@ -543,6 +571,9 @@ class Zone(TrackedResource):
     :ivar name_servers: The name servers for this DNS zone. This is a
      read-only property and any attempt to set this value will be ignored.
     :vartype name_servers: list[str]
+    :param zone_type: The type of this DNS zone (Public or Private). Possible
+     values include: 'Public', 'Private'. Default value: "Public" .
+    :type zone_type: str or ~azure.mgmt.dns.v2016_04_01.models.ZoneType
     """
 
     _validation = {
@@ -550,6 +581,7 @@ class Zone(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'max_number_of_records_per_record_set': {'readonly': True},
         'name_servers': {'readonly': True},
     }
 
@@ -561,16 +593,20 @@ class Zone(TrackedResource):
         'location': {'key': 'location', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'max_number_of_record_sets': {'key': 'properties.maxNumberOfRecordSets', 'type': 'long'},
+        'max_number_of_records_per_record_set': {'key': 'properties.maxNumberOfRecordsPerRecordSet', 'type': 'long'},
         'number_of_record_sets': {'key': 'properties.numberOfRecordSets', 'type': 'long'},
         'name_servers': {'key': 'properties.nameServers', 'type': '[str]'},
+        'zone_type': {'key': 'properties.zoneType', 'type': 'ZoneType'},
     }
 
     def __init__(self, **kwargs):
         super(Zone, self).__init__(**kwargs)
         self.etag = kwargs.get('etag', None)
         self.max_number_of_record_sets = kwargs.get('max_number_of_record_sets', None)
+        self.max_number_of_records_per_record_set = None
         self.number_of_record_sets = kwargs.get('number_of_record_sets', None)
         self.name_servers = None
+        self.zone_type = kwargs.get('zone_type', "Public")
 
 
 class ZoneDeleteResult(Model):

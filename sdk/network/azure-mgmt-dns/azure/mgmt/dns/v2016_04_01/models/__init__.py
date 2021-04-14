@@ -48,6 +48,7 @@ except (SyntaxError, ImportError):
 from ._paged_models import RecordSetPaged
 from ._paged_models import ZonePaged
 from ._dns_management_client_enums import (
+    ZoneType,
     OperationStatus,
     HttpStatusCode,
     RecordType,
@@ -73,6 +74,7 @@ __all__ = [
     'ZoneDeleteResult',
     'RecordSetPaged',
     'ZonePaged',
+    'ZoneType',
     'OperationStatus',
     'HttpStatusCode',
     'RecordType',

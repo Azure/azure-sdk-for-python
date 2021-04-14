@@ -12,6 +12,12 @@
 from enum import Enum
 
 
+class ZoneType(str, Enum):
+
+    public = "Public"
+    private = "Private"
+
+
 class OperationStatus(str, Enum):
 
     in_progress = "InProgress"

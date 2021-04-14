@@ -71,9 +71,9 @@ class CaaRecord(Model):
 
 
 class CloudError(Model):
-    """An error message.
+    """An error response from the service.
 
-    :param error: The error message body
+    :param error: Cloud error body.
     :type error: ~azure.mgmt.dns.v2018_05_01.models.CloudErrorBody
     """
 
@@ -99,15 +99,18 @@ class CloudErrorException(HttpOperationError):
 
 
 class CloudErrorBody(Model):
-    """The body of an error message.
+    """An error response from the service.
 
-    :param code: The error code
+    :param code: An identifier for the error. Codes are invariant and are
+     intended to be consumed programmatically.
     :type code: str
-    :param message: A description of what caused the error
+    :param message: A message describing the error, intended to be suitable
+     for display in a user interface.
     :type message: str
-    :param target: The target resource of the error message
+    :param target: The target of the particular error. For example, the name
+     of the property in error.
     :type target: str
-    :param details: Extra error information
+    :param details: A list of additional details about the error.
     :type details: list[~azure.mgmt.dns.v2018_05_01.models.CloudErrorBody]
     """
 
@@ -540,6 +543,10 @@ class Zone(Resource):
      can be created in this DNS zone.  This is a read-only property and any
      attempt to set this value will be ignored.
     :vartype max_number_of_record_sets: long
+    :ivar max_number_of_records_per_record_set: The maximum number of records
+     per record set that can be created in this DNS zone.  This is a read-only
+     property and any attempt to set this value will be ignored.
+    :vartype max_number_of_records_per_record_set: long
     :ivar number_of_record_sets: The current number of record sets in this DNS
      zone.  This is a read-only property and any attempt to set this value will
      be ignored.
@@ -568,6 +575,7 @@ class Zone(Resource):
         'type': {'readonly': True},
         'location': {'required': True},
         'max_number_of_record_sets': {'readonly': True},
+        'max_number_of_records_per_record_set': {'readonly': True},
         'number_of_record_sets': {'readonly': True},
         'name_servers': {'readonly': True},
     }
@@ -580,6 +588,7 @@ class Zone(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
         'max_number_of_record_sets': {'key': 'properties.maxNumberOfRecordSets', 'type': 'long'},
+        'max_number_of_records_per_record_set': {'key': 'properties.maxNumberOfRecordsPerRecordSet', 'type': 'long'},
         'number_of_record_sets': {'key': 'properties.numberOfRecordSets', 'type': 'long'},
         'name_servers': {'key': 'properties.nameServers', 'type': '[str]'},
         'zone_type': {'key': 'properties.zoneType', 'type': 'ZoneType'},
@@ -591,6 +600,7 @@ class Zone(Resource):
         super(Zone, self).__init__(location=location, tags=tags, **kwargs)
         self.etag = etag
         self.max_number_of_record_sets = None
+        self.max_number_of_records_per_record_set = None
         self.number_of_record_sets = None
         self.name_servers = None
         self.zone_type = zone_type
