@@ -19,11 +19,13 @@ class Base64Url:
     """
     @staticmethod
     def encode(unencoded):
+        # type(bytes)->str
         base64val= base64.urlsafe_b64encode(unencoded)
         strip_trailing=base64val.split(b'=')[0] # pick the string before the trailing =
         return str(strip_trailing, 'utf-8')
 
     @staticmethod
     def decode(encoded):
+        # type(str)->bytes
         padding_added = encoded + "=" * ((len(encoded)* -1) % 4)
-        return base64.urlsafe_b64decode(padding_added)
+        return base64.urlsafe_b64decode(padding_added.encode('utf-8'))
