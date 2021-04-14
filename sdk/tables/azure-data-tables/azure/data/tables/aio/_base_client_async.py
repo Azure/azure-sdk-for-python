@@ -28,7 +28,7 @@ from azure.core.pipeline.transport import (
 )
 
 from .._generated.aio import AzureTable
-from .._base_client import AccountHostsMixin
+from .._base_client import AccountHostsMixin, get_api_version
 from .._authentication import SharedKeyCredentialPolicy
 from .._constants import STORAGE_OAUTH_SCOPE
 from .._models import BatchErrorException, BatchTransactionResult
@@ -52,6 +52,8 @@ class AsyncTablesBaseClient(AccountHostsMixin):
             policies=kwargs.pop('policies', self._policies),
             **kwargs
         )
+        self._client._config.version = get_api_version(kwargs, self._client._config.version)  # pylint: disable=protected-access
+
 
     async def __aenter__(self):
         await self._client.__aenter__()
@@ -171,7 +173,6 @@ class AsyncTransportWrapper(AsyncHttpTransport):
     by a `get_client` method does not close the outer transport for the parent
     when used in a context manager.
     """
-
     def __init__(self, async_transport):
         self._transport = async_transport
 

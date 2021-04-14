@@ -18,7 +18,7 @@ from ._models import (
     service_properties_deserialize,
     TableItem
 )
-from ._base_client import parse_connection_str, TablesBaseClient
+from ._base_client import parse_connection_str, TablesBaseClient, TransportWrapper
 from ._models import LocationMode
 from ._error import _process_table_error
 from ._table_client import TableClient
@@ -346,21 +346,17 @@ class TableServiceClient(TablesBaseClient):
         :rtype: ~azure.data.tables.TableClient
 
         """
-
-        _pipeline = Pipeline(
-            transport=self._client._client._pipeline._transport,  # pylint: disable=protected-access
-            policies=self._policies,  # pylint: disable=protected-access
+        pipeline = Pipeline(
+            transport=TransportWrapper(self._client._client._pipeline._transport), # pylint: disable = protected-access
+            policies=self._policies
         )
-
         return TableClient(
             self.url,
             table_name=table_name,
             credential=self.credential,
             api_version=self.api_version,
-            transport=self._client._client._pipeline._transport,  # pylint: disable=protected-access
-            policies=self._policies,
-            _configuration=self._client._config,  # pylint: disable=protected-access
-            _location_mode=self._location_mode,
+            pipeline=pipeline,
+            location_mode=self._location_mode,
             _hosts=self._hosts,
             **kwargs
         )

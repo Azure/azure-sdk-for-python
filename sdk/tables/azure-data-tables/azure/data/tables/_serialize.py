@@ -20,9 +20,6 @@ from ._common_conversion import _encode_base64, _to_utc_datetime
 from ._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED
 
 
-_SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07"]
-
-
 def _get_match_headers(kwargs, match_param, etag_param):
     if_match = None
     if_none_match = None
@@ -78,19 +75,6 @@ def _parameter_filter_substitution(parameters, query_filter):
                     filter_strings[index] = "'{}'".format(val.replace("'", "''"))
         return ' '.join(filter_strings)
     return query_filter
-
-
-def get_api_version(kwargs, default):
-    # type: (Dict[str, Any], str) -> str
-    api_version = kwargs.pop("api_version", None)
-    if api_version and api_version not in _SUPPORTED_API_VERSIONS:
-        versions = "\n".join(_SUPPORTED_API_VERSIONS)
-        raise ValueError(
-            "Unsupported API version '{}'. Please select from:\n{}".format(
-                api_version, versions
-            )
-        )
-    return api_version or default
 
 
 def _to_entity_binary(value):

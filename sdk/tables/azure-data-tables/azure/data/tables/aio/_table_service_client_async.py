@@ -24,7 +24,7 @@ from .._error import _process_table_error
 from .._models import TableItem
 from .._serialize import _parameter_filter_substitution
 from ._table_client_async import TableClient
-from ._base_client_async import AsyncTablesBaseClient
+from ._base_client_async import AsyncTablesBaseClient, AsyncTransportWrapper
 from ._models import TablePropertiesPaged
 
 
@@ -370,20 +370,17 @@ class TableServiceClient(AsyncTablesBaseClient):
         :rtype: ~azure.data.tables.TableClient
 
         """
-        _pipeline = AsyncPipeline(
-            transport=self._client._client._pipeline._transport,  # pylint: disable=protected-access
-            policies=self._policies,  # pylint: disable = protected-access
+        pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._client._client._pipeline._transport), # pylint:disable=protected-access
+            policies=self._policies,
         )
-
         return TableClient(
             self.url,
             table_name=table_name,
             credential=self.credential,
             api_version=self.api_version,
-            transport=self._client._client._pipeline._transport,  # pylint: disable=protected-access
-            policies=self._policies,
-            _configuration=self._client._config,  # pylint: disable=protected-access
-            _location_mode=self._location_mode,
+            pipeline=pipeline,
+            location_mode=self._location_mode,
             _hosts=self._hosts,
             **kwargs
         )

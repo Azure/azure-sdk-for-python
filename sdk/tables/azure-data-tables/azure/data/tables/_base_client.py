@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Tuple, Optional, Any, List
+from typing import Dict, Optional, Any, List
 from uuid import uuid4
 try:
     from urllib.parse import parse_qs, quote, urlparse
@@ -53,6 +53,21 @@ from ._policies import (
 )
 from ._models import BatchErrorException
 from ._sdk_moniker import SDK_MONIKER
+
+_SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07"]
+
+
+def get_api_version(kwargs, default):
+    # type: (Dict[str, Any], str) -> str
+    api_version = kwargs.pop("api_version", None)
+    if api_version and api_version not in _SUPPORTED_API_VERSIONS:
+        versions = "\n".join(_SUPPORTED_API_VERSIONS)
+        raise ValueError(
+            "Unsupported API version '{}'. Please select from:\n{}".format(
+                api_version, versions
+            )
+        )
+    return api_version or default
 
 
 class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
@@ -196,13 +211,13 @@ class TablesBaseClient(AccountHostsMixin):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-
         super(TablesBaseClient, self).__init__(account_url, credential=credential, **kwargs)
         self._client = AzureTable(
             self.url,
             policies=kwargs.pop('policies', self._policies),
             **kwargs
         )
+        self._client._config.version = get_api_version(kwargs, self._client._config.version)  # pylint: disable=protected-access
 
     def __enter__(self):
         self._client.__enter__()
@@ -229,7 +244,7 @@ class TablesBaseClient(AccountHostsMixin):
         ]
 
     def _configure_credential(self, credential):
-        # type: (Any) -> Tuple[Configuration, Pipeline]
+        # type: (Any) -> None
         if hasattr(credential, "get_token"):
             self._credential_policy = BearerTokenCredentialPolicy(
                 credential, STORAGE_OAUTH_SCOPE
@@ -321,7 +336,6 @@ class TransportWrapper(HttpTransport):
     by a `get_client` method does not close the outer transport for the parent
     when used in a context manager.
     """
-
     def __init__(self, transport):
         self._transport = transport
 
@@ -337,7 +351,7 @@ class TransportWrapper(HttpTransport):
     def __enter__(self):
         pass
 
-    def __exit__(self, *args):
+    def __exit__(self, *args):  # pylint: disable=arguments-differ
         pass
 
 
